@@ -1,0 +1,281 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{E8EFC5DB-1665-4079-9F4E-BD60AB104630}</ProjectGuid>
+    <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AW2</RootNamespace>
+    <AssemblyName>AssaultWing</AssemblyName>
+    <XnaFrameworkVersion>v2.0</XnaFrameworkVersion>
+    <XnaPlatform>Windows</XnaPlatform>
+    <ApplicationIcon>Game.ico</ApplicationIcon>
+    <ManifestCertificateThumbprint>1E0AA55F62C90CF38F2BB72B706D393E150ECBB0</ManifestCertificateThumbprint>
+    <ManifestKeyFile>AssaultWing_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>false</SignManifests>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <Thumbnail>GameThumbnail.png</Thumbnail>
+    <XnaCrossPlatformGroupID>{15153d80-6b81-4a3d-b3f9-536b30b7a7d0}</XnaCrossPlatformGroupID>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x86\Debug</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NO_GEOMETRY_APPROXIMATE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+    <DocumentationFile>bin\x86\Debug\AssaultWing.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL" />
+    <Reference Include="mscorlib">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Events\PlayerControlEvent.cs">
+      <Name>PlayerControlEvent</Name>
+    </Compile>
+    <Compile Include="Events\SoundEffectEvent.cs">
+      <Name>SoundEffectEvent</Name>
+    </Compile>
+    <Compile Include="Game\Arena.cs">
+      <Name>Arena</Name>
+    </Compile>
+    <Compile Include="Game\Gobs\Bonus.cs" />
+    <Compile Include="Game\Gobs\Dock.cs">
+      <Name>Dock</Name>
+    </Compile>
+    <Compile Include="Game\Gobs\Explosion.cs" />
+    <Compile Include="Game\Gobs\Rocket.cs" />
+    <Compile Include="Game\Gobs\WallModel.cs">
+      <Name>WallModel</Name>
+    </Compile>
+    <Compile Include="Game\Particles\DotEmitter.cs" />
+    <Compile Include="Game\Particles\Emitter.cs" />
+    <Compile Include="Game\Particles\ExplodeEmitter.cs" />
+    <Compile Include="Game\Particles\Particle.cs" />
+    <Compile Include="Game\Particles\ParticleEngine.cs" />
+    <Compile Include="Game\TypeLoader.cs">
+      <Name>TypeLoader</Name>
+    </Compile>
+    <Compile Include="Game\Gobs\Bullet.cs">
+      <Name>Bullet</Name>
+    </Compile>
+    <Compile Include="Game\DataEngine.cs">
+      <Name>DataEngine</Name>
+    </Compile>
+    <Compile Include="Game\DataEngineImpl.cs">
+      <Name>DataEngineImpl</Name>
+    </Compile>
+    <Compile Include="Events\Event.cs">
+      <Name>Event</Name>
+    </Compile>
+    <Compile Include="Events\EventEngine.cs">
+      <Name>EventEngine</Name>
+    </Compile>
+    <Compile Include="Events\EventEngineImpl.cs">
+      <Name>EventEngineImpl</Name>
+    </Compile>
+    <Compile Include="Events\NetworkableEvent.cs">
+      <Name>NetworkableEvent</Name>
+    </Compile>
+    <Compile Include="Game\Gob.cs">
+      <Name>Gob</Name>
+    </Compile>
+    <Compile Include="Game\Gobs\Gravity.cs">
+      <Name>Gravity</Name>
+    </Compile>
+    <Compile Include="Game\Gobs\Wall.cs">
+      <Name>Wall</Name>
+    </Compile>
+    <Compile Include="Game\IGob.cs">
+      <Name>IGob</Name>
+    </Compile>
+    <Compile Include="Game\PhysicsEngine.cs">
+      <Name>PhysicsEngine</Name>
+    </Compile>
+    <Compile Include="Game\PhysicsEngineImpl.cs">
+      <Name>PhysicsEngineImpl</Name>
+    </Compile>
+    <Compile Include="Game\Player.cs">
+      <Name>Player</Name>
+    </Compile>
+    <Compile Include="Game\Gobs\Ship.cs">
+      <Name>Ship</Name>
+    </Compile>
+    <Compile Include="Game\Weapon.cs">
+      <Name>Weapon</Name>
+    </Compile>
+    <Compile Include="Game\Weapons\ForwardShot.cs">
+      <Name>ForwardShot</Name>
+    </Compile>
+    <Compile Include="Graphics\GraphicsEngine.cs">
+      <Name>GraphicsEngine</Name>
+    </Compile>
+    <Compile Include="Graphics\GraphicsEngineImpl.cs">
+      <Name>GraphicsEngineImpl</Name>
+    </Compile>
+    <Compile Include="Game\LogicEngine.cs">
+      <Name>LogicEngine</Name>
+    </Compile>
+    <Compile Include="Game\LogicEngineImpl.cs">
+      <Name>LogicEngineImpl</Name>
+    </Compile>
+    <Compile Include="Graphics\MenuEngineImpl.cs">
+      <SubType>Code</SubType>
+      <Name>MenuEngineImpl</Name>
+    </Compile>
+    <Compile Include="Graphics\AWViewport.cs">
+      <Name>AWViewport</Name>
+    </Compile>
+    <Compile Include="Graphics\OverlayDialog.cs" />
+    <Compile Include="Helpers\AWMathHelper.cs" />
+    <Compile Include="Helpers\ExpectedValue.cs" />
+    <Compile Include="Helpers\Geometry.cs">
+      <Name>Geometry</Name>
+    </Compile>
+    <Compile Include="Helpers\Log.cs">
+      <Name>Log</Name>
+    </Compile>
+    <Compile Include="Helpers\Graphics3D.cs">
+      <Name>Graphics3D</Name>
+    </Compile>
+    <Compile Include="Helpers\RandomHelper.cs">
+      <Name>RandomHelper</Name>
+    </Compile>
+    <Compile Include="Helpers\Serialization.cs">
+      <Name>Serialization</Name>
+    </Compile>
+    <Compile Include="Helpers\Statistics.cs" />
+    <Compile Include="Helpers\StringHelper.cs">
+      <Name>StringHelper</Name>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <Name>AssemblyInfo</Name>
+    </Compile>
+    <Compile Include="Program.cs">
+      <Name>Program</Name>
+    </Compile>
+    <Compile Include="AssaultWing.cs">
+      <Name>AssaultWing</Name>
+    </Compile>
+    <Compile Include="Sound\SoundEngine.cs">
+      <Name>SoundEngine</Name>
+    </Compile>
+    <Compile Include="Sound\SoundEngineImpl.cs">
+      <Name>SoundEngineImpl</Name>
+    </Compile>
+    <Compile Include="Sound\SoundOptions.cs">
+      <Name>SoundOptions</Name>
+    </Compile>
+    <Compile Include="UI\Controls.cs">
+      <Name>Controls</Name>
+    </Compile>
+    <Compile Include="UI\Keyboard.cs">
+      <Name>Keyboard</Name>
+    </Compile>
+    <Compile Include="UI\UIEngine.cs">
+      <Name>UIEngine</Name>
+    </Compile>
+    <Compile Include="UI\UIEngineImpl.cs">
+      <Name>UIEngineImpl</Name>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Game.ico">
+      <Name>Game</Name>
+    </Content>
+    <Content Include="GameThumbnail.png">
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <NestedContentProject Include="Content.contentproj">
+      <Project>{37327719-5d88-4ead-9b6c-a97611027858}</Project>
+      <Visible>False</Visible>
+    </NestedContentProject>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\R-Tree Framework\R-Tree Framework.csproj">
+      <Project>{C9573BCD-617A-4AD3-9A47-BEBE46A4E079}</Project>
+      <Name>R-Tree Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\R-Tree\R-Tree.csproj">
+      <Project>{A4C6C32A-ACF2-46E9-8416-1C31F61FF581}</Project>
+      <Name>R-Tree</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishFile Include="nunit.framework">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <FileType>Assembly</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\v2.0\Microsoft.Xna.GameStudio.Common.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\v2.0\Microsoft.Xna.GameStudio.NestedContent.targets" />
+</Project>

@@ -1,0 +1,1085 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Xna.Framework;
+using AW2.Events;
+using AW2.Helpers;
+using Edu.Psu.Cse.R_Tree_Framework.Indexes;
+using Edu.Psu.Cse.R_Tree_Framework.Framework;
+
+namespace AW2.Game
+{
+    /// <summary>
+    /// A basic physics engine implementation.
+    /// </summary>
+    /// The physics engine performs collisions between gobs as follows.
+    /// 
+    /// Basic concepts:
+    /// - <b>Overlap</b> of two gobs means that their collision primitives intersect.
+    /// - <b>Collision</b> is the event of reacting to overlap of two gobs.
+    /// - <b>Physical collision</b> is collision performed by physics engine based on
+    /// which subinterfaces of IGob the gobs implement.
+    /// - <b>Custom collisions</b> are collisions performed by Gob subclasses.
+    /// 
+    /// For a collision to occur between two gobs, at least the following conditions must hold:
+    /// - the gobs must implement ICollidable or some ICollidable subinterfaces
+    /// - the subinterfaces must allow collisions to happen (decided by physics engine)
+    /// - the gobs must overlap
+    /// 
+    /// If these conditions are met, custom collisions are performed for the two gobs.
+    /// In addition, if the following condition is met, also physical collision is
+    /// performed for the two gobs:
+    /// - the subinterfaces must disallow overlap (decided by physics engine)
+    class PhysicsEngineImpl : PhysicsEngine
+    {
+        #region Type definitions
+
+        private struct CollidablePair : IEquatable<CollidablePair>
+        {
+            public CollisionArea a;
+            public CollisionArea b;
+            public CollidablePair(CollisionArea a, CollisionArea b) { this.a = a; this.b = b; }
+
+            #region IEquatable<CollidablePair> Members
+
+            /// <summary>
+            /// Returns true iff this collidable pair equals the other one.
+            /// Equality means that members <b>a</b> and <b>b</b> are the same,
+            /// regardless of order.
+            /// </summary>
+            /// <param name="other">The other collidable pair.</param>
+            /// <returns>True iff the pairs are equal.</returns>
+            public bool Equals(CollidablePair other)
+            {
+                return (this.a == other.a && this.b == other.b)
+                    || (this.a == other.b && this.b == other.a);
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Data about a collidable gob.
+        /// </summary>
+        [System.Diagnostics.DebuggerDisplay("ID:{recordID} box:(min:({minimumBoundingBox.minX},{minimumBoundingBox.minY}) max:({minimumBoundingBox.maxX},{minimumBoundingBox.maxY})) collisionArea:{collisionArea.name}")]
+        private class CollisionData : Record
+        {
+            CollisionArea collisionArea;
+
+            /// <summary>
+            /// The collision area whose record this is.
+            /// </summary>
+            [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
+            public CollisionArea CollisionArea { get { return collisionArea; } }
+
+            /// <summary>
+            /// Creates a collision data record for a collision area.
+            /// </summary>
+            /// <param name="recordID">A unique ID.</param>
+            /// <param name="collisionArea">The collision area.</param>
+            public CollisionData(int recordID, CollisionArea collisionArea)
+                : base(recordID, new MinimumBoundingBox(
+                    collisionArea.Area.BoundingBox.Min.X,
+                    collisionArea.Area.BoundingBox.Min.Y, 
+                    collisionArea.Area.BoundingBox.Max.X, 
+                    collisionArea.Area.BoundingBox.Max.Y))
+            {
+                this.collisionArea = collisionArea;
+            }
+        }
+
+        /// <summary>
+        /// Ways of being outside the arena boundaries.
+        /// </summary>
+        /// The arena boundary is the rectangle spanned by points (0, 0) and
+        /// (arenaWidth, arenaHeight). The outer arena boundary is the arena
+        /// boundary stretched a constant distance to all directions.
+        [Flags]
+        private enum OutOfArenaBounds
+        {
+            /// <summary>
+            /// Over the top boundary.
+            /// </summary>
+            Top = 0x0001,
+
+            /// <summary>
+            /// Below the bottom boundary.
+            /// </summary>
+            Bottom = 0x0002,
+
+            /// <summary>
+            /// Left of the left boundary.
+            /// </summary>
+            Left = 0x0004,
+
+            /// <summary>
+            /// Right of the right boundary.
+            /// </summary>
+            Right = 0x0008,
+
+            /// <summary>
+            /// Over the outer top boundary.
+            /// </summary>
+            OuterTop = 0x0010,
+
+            /// <summary>
+            /// Below the outer bottom boundary.
+            /// </summary>
+            OuterBottom = 0x0020,
+
+            /// <summary>
+            /// Left of the outer left boundary.
+            /// </summary>
+            OuterLeft = 0x0040,
+
+            /// <summary>
+            /// Right of the outer right boundary.
+            /// </summary>
+            OuterRight = 0x0080,
+
+            /// <summary>
+            /// Inside the arena boundary.
+            /// Absolute value, not to be OR'ed or AND'ed.
+            /// </summary>
+            None = 0,
+
+            /// <summary>
+            /// Out of the outer arena boundary.
+            /// </summary>
+            OuterBoundary = OuterTop | OuterBottom | OuterLeft | OuterRight,
+        }
+
+        /// <summary>
+        /// Flags that control search of physical overlappers.
+        /// </summary>
+        [Flags]
+        private enum OverlapperFlags
+        {
+            /// <summary>
+            /// Check overlap against gob's physical collision area.
+            /// </summary>
+            CheckPhysical = 0x0001,
+
+            /// <summary>
+            /// Check overlap against gob's receptor collision areas.
+            /// </summary>
+            CheckReceptor = 0x0002,
+
+            /// <summary>
+            /// Consider gob's inconsistent position as not overlapping anyone.
+            /// </summary>
+            ConsiderConsistency = 0x0010,
+
+            /// <summary>
+            /// Consider gob's coldness as not overlapping its own.
+            /// </summary>
+            ConsiderColdness = 0x0020,
+        }
+
+        #endregion Type definitions
+
+        #region Constants
+
+        /// <summary>
+        /// Distance outside the arena boundaries that we still allow
+        /// some gobs stay alive.
+        /// </summary>
+        float arenaOuterBoundaryThickness = 1000;
+
+        /// <summary>
+        /// Accuracy of finding the point of collision. Measured in time,
+        /// with one frame as the unit.
+        /// </summary>
+        /// Exactly, when a collision occurs, the moving gob's point of collision
+        /// will be no more than <b>collisionAccuracy</b> of a frame's time
+        /// away from the actual point of collision.
+        /// <b>1</b> means no iteration;
+        /// <b>0</b> means iteration to infinite precision.
+        float collisionAccuracy = 0.5f;
+
+        /// <summary>
+        /// Accuracy to which movement of a gob in a frame is done. 
+        /// Measured in time, with one frame as the unit.
+        /// </summary>
+        /// This constant is to work around rounding errors.
+        float movementAccuracy = 0.001f;
+
+        /// <summary>
+        /// The maximum number of times to try to move a gob in one frame.
+        /// Each movement attempt ends either in success or a collision.
+        /// </summary>
+        /// Higher number means more accurate and responsive collisions
+        /// but requires more CPU power in complex situations.
+        /// Low numbers may result in "lazy" collisions.
+        int moveTryMaximum = 5;
+
+        /// <summary>
+        /// Radius at which to start looking for a free position in the game world,
+        /// measured in meters.
+        /// </summary>
+        float freePosRadiusMin = 50;
+
+        /// <summary>
+        /// Radius at which to stop looking for a free position in the game world,
+        /// measured in meters.
+        /// </summary>
+        float freePosRadiusMax = 500;
+
+        /// <summary>
+        /// How much to increase the free position search radius after each failed
+        /// attempt, measured in meters.
+        /// </summary>
+        float freePosRadiusStep = 10;
+
+        #endregion Constants
+
+        #region Fields
+
+        /// <summary>
+        /// The number of seconds the current frame represents.
+        /// </summary>
+        GameTime gameTime;
+
+        /// <summary>
+        /// The time at which collisions were checked the last time.
+        /// </summary>
+        TimeSpan collisionTimestamp;
+
+        /// <summary>
+        /// The list of gobs that have collided at collision timestamp.
+        /// </summary>
+        /// This is a symmetric relation but each gob pair (A,B) is to be stored here
+        /// only as (A,B) and not as (B,A). The equality of CollidablePair completes
+        /// the relation to a symmetric one.
+        Dictionary<CollidablePair, bool> collidedGobs;
+
+        /// <summary>
+        /// The spatial index of physical collision areas collidable gobs.
+        /// </summary>
+        /// Receptors are kept in their own list as they don't
+        /// collide with each other.
+        R_Tree collidables;
+
+        /// <summary>
+        /// The next index to use for a new record in <b>collidables</b>.
+        /// </summary>
+        int unusedCollidablesIndex;
+
+        /// <summary>
+        /// Collision areas that are receptors, as opposed to physical collision areas.
+        /// </summary>
+        /// Receptors are not in the spatial index of physical collision areas
+        /// because they don't collide with each other, and thus no-one
+        /// needs to query for collision with a receptor.
+        LinkedList<CollisionData> receptors;
+
+        #endregion Fields
+
+        /// <summary>
+        /// Creates a new physics engine.
+        /// </summary>
+        public PhysicsEngineImpl()
+        {
+            this.collidedGobs = new Dictionary<CollidablePair, bool>(100*100);
+            this.collidables = new R_Tree();
+            this.receptors = new LinkedList<CollisionData>();
+            this.unusedCollidablesIndex = 0;
+            this.gameTime = new GameTime();
+        }
+
+        #region PhysicsEngine Members
+
+        /// <summary>
+        /// Game timing information for the current frame.
+        /// </summary>
+        /// This is meant to be set by LogicEngine at the beginning of each frame
+        /// and can be used all over game logic.
+        public GameTime TimeStep { get { return gameTime; } set { gameTime = value; } }
+
+        /// <summary>
+        /// Applies drag to the given gob.
+        /// </summary>
+        /// Drag is the force that resists movement in a medium.
+        /// <param name="gob">The gob to apply drag to.</param>
+        public void ApplyDrag(Gob gob)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        /// <summary>
+        /// Moves the given gob and takes care of collisions.
+        /// </summary>
+        /// <param name="gob">The gob to move.</param>
+        public void Move(Gob gob)
+        {
+            if (collisionTimestamp < gameTime.TotalGameTime)
+            {
+                collidedGobs.Clear();
+                collisionTimestamp = gameTime.TotalGameTime;
+            }
+
+            if ((gob.PhysicsApplyMode & PhysicsApplyMode.Move) != 0)
+            {
+                MoveAndCollidePhysical(gob);
+            }
+            else
+            {
+                // The gob doesn't move, so its position never needs to be corrected.
+                gob.HadSafePosition = true;
+            }
+        }
+
+        /// <summary>
+        /// Performs additional collision checks. Must be called every frame
+        /// after all gob movement is done.
+        /// </summary>
+        public void MovesDone()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            foreach (CollisionData collData in receptors)
+            {
+                CollisionArea collArea = collData.CollisionArea;
+#if false // This doesn't work as expected. Refactor code by writing a general GetOverlappers method.
+                // Receptor collisions with gobs that don't have a physical collision area.
+                data.ForEachGob<ICollidable>(delegate(Gob gob2)
+                {
+                    if (gob2.PhysicalArea != -1) return;
+                    if (gob2.Cold && gob2.Owner != null &&
+                        gob2.Owner == ((Gob)collArea.Owner).Owner)
+                        return;
+                    if (Geometry.Intersect(collArea.Area, new Helpers.Point(gob2.Pos)))
+                    {
+                        collArea.Owner.Collide((ICollidable)gob2, collArea.Name);
+                        if (collArea.Owner is Gob &&
+                            (((Gob)collArea.Owner).PhysicsApplyMode & PhysicsApplyMode.ReceptorCollidesPhysically) != 0)
+                        {
+                            PerformCollision(collArea.Owner, (ICollidable)gob2);
+                        }
+                    }
+                });
+#endif
+                // Receptor collisions only with physical collision areas.
+                List<CollisionArea> potentials = GetPotentialPhysicalOverlappers(collArea);
+                foreach (CollisionArea collArea2 in potentials)
+                    if (Geometry.Intersect(collArea.Area, collArea2.Area))
+                    {
+                        collArea.Owner.Collide(collArea2.Owner, collArea.Name);
+                        if (collArea.Owner is Gob && 
+                            (((Gob)collArea.Owner).PhysicsApplyMode & PhysicsApplyMode.ReceptorCollidesPhysically) != 0)
+                        {
+                            PerformCollision(collArea.Owner, collArea2.Owner);
+                        }
+                    }
+            }
+        }
+
+        /// <summary>
+        /// Registers a gob for collisions.
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        public void Register(Gob gob)
+        {
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null) return;
+            CollisionArea[] collisionAreas = gobCollidable.GetPrimitives();
+            for (int i = 0; i < collisionAreas.Length; ++i)
+            {
+                if (collisionAreas[i].CollisionData != null) continue;
+                CollisionData collData = new CollisionData(unusedCollidablesIndex++, collisionAreas[i]);
+                collisionAreas[i].CollisionData = collData;
+                if (collisionAreas[i].IsReceptor)
+                    receptors.AddLast(collData);
+                else
+                    collidables.Insert(collData);
+            }
+        }
+
+        /// <summary>
+        /// Removes a previously registered gob from the register.
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        public void Unregister(Gob gob)
+        {
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null) return;
+            CollisionArea[] collisionAreas = gobCollidable.GetPrimitives();
+            for (int i = 0; i < collisionAreas.Length; ++i)
+            {
+                if (collisionAreas[i].CollisionData == null) continue;
+                CollisionData collData = (CollisionData)collisionAreas[i].CollisionData;
+                if (collisionAreas[i].IsReceptor)
+                    receptors.Remove(collData);
+                else
+                    collidables.Delete(collData);
+                collisionAreas[i].CollisionData = null;
+            }
+        }
+
+        /// <summary>
+        /// Applies the given force to the given gob.
+        /// </summary>
+        /// Note that the larger the mass of the gob is, the more force is needed to give it
+        /// a good push.
+        /// <param name="gob">The gob to apply the force to.</param>
+        /// <param name="force">The force to apply, measured in Newtons.</param>
+        public void ApplyForce(Gob gob, Vector2 force)
+        {
+            gob.Move += force / gob.Mass * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        /// <summary>
+        /// Applies the given force to a gob, preventing gob speed from
+        /// growing beyond a limit.
+        /// </summary>
+        /// Note that the larger the mass of the gob is, the more force is needed to give it
+        /// a good push. Although the gob's speed cannot grow beyond <b>maxSpeed</b>,
+        /// it can still maintain its value even if it's larger than <b>maxSpeed</b>.
+        /// <param name="gob">The gob to apply the force to.</param>
+        /// <param name="force">The force to apply, measured in Newtons.</param>
+        /// <param name="maxSpeed">The speed limit beyond which the gob's speed cannot grow.</param>
+        public void ApplyLimitedForce(Gob gob, Vector2 force, float maxSpeed)
+        {
+            float oldSpeed = gob.Move.Length();
+            gob.Move += force / gob.Mass * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float speed = gob.Move.Length();
+            float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
+            if (speed > speedLimit)
+                gob.Move *= speedLimit/speed;
+        }
+
+        /// <summary>
+        /// Applies the given momentum to the given gob.
+        /// </summary>
+        /// Note that the larger the mass of the gob is, the more momentum is needed to give it
+        /// a good push.
+        /// <param name="gob">The gob to apply the momentum to.</param>
+        /// <param name="momentum">The momentum to apply, measured in Newton seconds.</param>
+        public void ApplyMomentum(Gob gob, Vector2 momentum)
+        {
+            gob.Move += momentum / gob.Mass;
+        }
+
+        /// <summary>
+        /// Returns the scalar amount that represents how much the given scalar change speed
+        /// affects during the current frame.
+        /// </summary>
+        /// <param name="changePerSecond">The speed of change per second.</param>
+        /// <returns>The amount of change during the current frame.</returns>
+        public float ApplyChange(float changePerSecond)
+        {
+            return changePerSecond * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        /// <summary>
+        /// Returns a position, near a preferred position, in the game world 
+        /// where a gob is overlap consistent (e.g. not inside a wall).
+        /// </summary>
+        /// <param name="gob">The gob to position.</param>
+        /// <param name="preferred">Preferred position, or <b>null</b>.</param>
+        /// <returns>A position for the gob where it is overlap consistent.</returns>
+        public Vector2 GetFreePosition(Gob gob, Vector2? preferred)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
+            // Randomise a location if none is preferred.
+            if (preferred == null)
+                preferred = RandomHelper.GetRandomVector2(Vector2.Zero, data.Arena.Dimensions);
+
+            // Non-collidable gobs are fine anywhere.
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null)
+                return preferred.Value;
+
+            // Iterate around the preferred location, steadily loosening the requirements.
+            // Ultimately we give up and return something that we know is bad.
+            Vector2 oldPos = gob.Pos;
+            Vector2 tryPos = preferred.Value;
+            for (float radius = freePosRadiusMin; radius < freePosRadiusMax; radius += freePosRadiusStep)
+            {
+                tryPos = RandomHelper.GetRandomVector2(preferred.Value, radius);
+                gob.Pos = tryPos;
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical | OverlapperFlags.CheckReceptor;
+                if (GetPhysicalOverlappers(gobCollidable, flags).Count == 0)
+                    break;
+            }
+            gob.Pos = oldPos;
+            return tryPos;
+        }
+
+        #endregion // PhysicsEngine Members
+
+        #region Arena boundary methods
+
+        /// <summary>
+        /// Returns the status of the gob's location with respect to arena boundary.
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        /// <returns>How is the gob out of the arena boundary, or is it inside.</returns>
+        private OutOfArenaBounds IsOutOfArenaBounds(Gob gob)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            OutOfArenaBounds result = OutOfArenaBounds.None;
+
+            // The arena boundary.
+            if (gob.Pos.X < 0) result |= OutOfArenaBounds.Left;
+            if (gob.Pos.Y < 0) result |= OutOfArenaBounds.Bottom;
+            if (gob.Pos.X > data.Arena.Dimensions.X) result |= OutOfArenaBounds.Right;
+            if (gob.Pos.Y > data.Arena.Dimensions.Y) result |= OutOfArenaBounds.Top;
+
+            // The outer arena boundary.
+            if (gob.Pos.X < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterLeft;
+            if (gob.Pos.Y < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterBottom;
+            if (gob.Pos.X > data.Arena.Dimensions.X + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterRight;
+            if (gob.Pos.Y > data.Arena.Dimensions.Y + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterTop;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns true iff the gob is positioned legally in respect of 
+        /// the arena boundaries. Think of this as physical overlap
+        /// consistency but against arena boundaries instead of other gobs.
+        /// </summary>
+        /// <param name="gob">The gob to check.</param>
+        /// <returns><b>true</b> iff the gob is positioned legally in respect of 
+        /// the arena boundaries.</returns>
+        private bool ArenaBoundaryLegal(Gob gob)
+        {
+            // Ships must stay inside arena boundaries.
+            if (gob is Gobs.Ship)
+            {
+                OutOfArenaBounds outOfBounds = IsOutOfArenaBounds(gob);
+                return outOfBounds == OutOfArenaBounds.None;
+            }
+            
+            // Other gobs can be anywhere.
+            return true;
+        }
+
+        /// <summary>
+        /// Performs necessary actions on the gob in respect of its position
+        /// and the arena boundaries. Think of this as physical collision
+        /// but against arena boundaries instead of other gobs.
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        private void ArenaBoundaryActions(Gob gob)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            OutOfArenaBounds outOfBounds = IsOutOfArenaBounds(gob);
+
+            // Ships we restrict to the arena boundary.
+            if (gob is Gobs.Ship)
+            {
+                if ((outOfBounds & OutOfArenaBounds.Left) != 0)
+                    gob.Move = new Vector2(MathHelper.Max(0, gob.Move.X), gob.Move.Y);
+                if ((outOfBounds & OutOfArenaBounds.Bottom) != 0)
+                    gob.Move = new Vector2(gob.Move.X, MathHelper.Max(0, gob.Move.Y));
+                if ((outOfBounds & OutOfArenaBounds.Right) != 0)
+                    gob.Move = new Vector2(MathHelper.Min(0, gob.Move.X), gob.Move.Y);
+                if ((outOfBounds & OutOfArenaBounds.Top) != 0)
+                    gob.Move = new Vector2(gob.Move.X, MathHelper.Min(0, gob.Move.Y));
+                return;
+            }
+
+            // Other projectiles disintegrate if they are outside 
+            // the outer arena boundary.
+            if ((outOfBounds & OutOfArenaBounds.OuterBoundary) != 0)
+                data.RemoveGob(gob);
+            return;
+        }
+
+        #endregion Arena boundary methods
+
+        #region Collision checking methods
+
+        /// <summary>
+        /// Moves a gob for one frame and performs physical collisions when necessary.
+        /// </summary>
+        /// <param name="gob">The gob to move and collide physically.</param>
+        private void MoveAndCollidePhysical(Gob gob)
+        {
+            UnregisterPhysical(gob);
+            float moveLeft = 1; // interpolation coefficient; between 0 and 1
+            int moveTries = 0;
+            while (moveLeft > movementAccuracy && moveTries < moveTryMaximum)
+            {
+                Vector2 oldMove = gob.Move;
+                moveLeft = TryMove(gob, moveLeft);
+                ++moveTries;
+
+                // If we just have to wait for another gob to move out of the way,
+                // there's nothing more we can do.
+                if (gob.Move == oldMove)
+                    break;
+            }
+            RegisterPhysical(gob);
+
+            ArenaBoundaryActions(gob);
+
+            // Possibly promote to having a safe position.
+            if (!gob.HadSafePosition && !gob.Cold && OverlapConsistent(gob))
+                gob.HadSafePosition = true;
+        }
+
+        /// <summary>
+        /// Registers a gob's physical collision area for collisions.
+        /// </summary>
+        /// <see cref="Register(Gob)"/>
+        /// <param name="gob">The gob.</param>
+        private void RegisterPhysical(Gob gob)
+        {
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null) return;
+            CollisionArea[] collisionAreas = gobCollidable.GetPrimitives();
+            for (int i = 0; i < collisionAreas.Length; ++i)
+            {
+                if (collisionAreas[i].CollisionData != null) continue;
+                if (collisionAreas[i].IsReceptor) continue;
+                CollisionData collData = new CollisionData(unusedCollidablesIndex++, collisionAreas[i]);
+                collisionAreas[i].CollisionData = collData;
+                collidables.Insert(collData);
+            }
+        }
+
+        /// <summary>
+        /// Removes a previously registered gob's physical collision area
+        /// from the register.
+        /// </summary>
+        /// <see cref="Unregister(Gob)"/>
+        /// <param name="gob">The gob.</param>
+        private void UnregisterPhysical(Gob gob)
+        {
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null) return;
+            CollisionArea[] collisionAreas = gobCollidable.GetPrimitives();
+            for (int i = 0; i < collisionAreas.Length; ++i)
+            {
+                if (collisionAreas[i].CollisionData == null) continue;
+                if (collisionAreas[i].IsReceptor) continue;
+                CollisionData collData = (CollisionData)collisionAreas[i].CollisionData;
+                collidables.Delete(collData);
+                collisionAreas[i].CollisionData = null;
+            }
+        }
+
+        /// <summary>
+        /// Tries to move a gob, stopping it at the first physical collision 
+        /// and performing the physical collision.
+        /// </summary>
+        /// <param name="gob">The gob to move.</param>
+        /// <param name="moveLeft">How much of the gob's movement is left this frame.
+        /// <b>0</b> means the gob has completed moving;
+        /// <b>1</b> means the gob has not moved yet.</param>
+        /// <returns>How much of the gob's movement is still left,
+        /// between <b>0</b> and <b>1</b>.</returns>
+        private float TryMove(Gob gob, float moveLeft)
+        {
+            Vector2 oldPos = gob.Pos;
+            Vector2 goalPos = gob.Pos + gob.Move * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float moveGood = 0; // last known safe position
+            float moveBad = moveLeft; // last known unsafe position, if 'badFound'
+            bool badFound = false;
+
+            // Find out last non-collision position and first colliding position, 
+            // up to required accuracy.
+            float moveTry = moveLeft;
+            while (moveBad - moveGood > collisionAccuracy)
+            {
+                gob.Pos = Vector2.Lerp(oldPos, goalPos, moveTry);
+                if (ArenaBoundaryLegal(gob) && OverlapConsistent(gob))
+                    moveGood = moveTry;
+                else
+                {
+                    moveBad = moveTry;
+                    badFound = true;
+                }
+                moveTry = MathHelper.Lerp(moveGood, moveBad, 0.5f);
+            }
+
+            // Perform physical collisions.
+            if (badFound)
+            {
+                gob.Pos = Vector2.Lerp(oldPos, goalPos, moveBad);
+                CollidePhysical(gob);
+                ArenaBoundaryActions(gob);
+            }
+
+            // Return to last non-colliding position.
+            gob.Pos = Vector2.Lerp(oldPos, goalPos, moveGood);
+            return moveLeft - moveGood;
+        }
+
+        /// <summary>
+        /// Performs physical collisions for the gob.
+        /// </summary>
+        /// Nothing will happen unless the gob has a physical collision area
+        /// and it overlaps some other physical collision area.
+        /// <param name="gob">The gob.</param>
+        private void CollidePhysical(Gob gob)
+        {
+            ICollidable gobCollidable1 = gob as ICollidable;
+            if (gobCollidable1 == null) return;
+
+            OverlapperFlags flags = OverlapperFlags.CheckPhysical |
+                OverlapperFlags.ConsiderColdness | OverlapperFlags.ConsiderConsistency;
+            foreach (CollisionArea collArea2 in GetPhysicalOverlappers(gobCollidable1, flags))
+            {
+                PerformCollision(gobCollidable1, collArea2.Owner);
+            }
+        }
+
+        /// <summary>
+        /// Checks for collisions with gob and acts accordingly.
+        /// </summary>
+        /// <param name="gob">The gob whose collisions to check.</param>
+        /// <param name="oldPos">The position of the gob before the last update.</param>
+        [Obsolete]
+        private void CheckCollisions(Gob gob, Vector2 oldPos)
+        {
+            ICollidable gobCollidable1 = gob as ICollidable;
+            if (gobCollidable1 == null) return;
+
+            // Update spatial index.
+            if (!(gob is IProjectile))
+                Unregister(gob);
+
+            foreach (CollisionArea collArea in gobCollidable1.GetPrimitives())
+            {
+                CollisionArea[] colliders = GetColliders(collArea);
+
+                // Perform custom collision operations.
+                ICollidable compromiser = null;
+                foreach (CollisionArea collArea2 in colliders)
+                {
+                    if (collArea.IsReceptor && !collArea2.IsReceptor)
+                        collArea.Owner.Collide(collArea2.Owner, collArea.Name);
+                    if (!collArea.IsReceptor && collArea2.IsReceptor)
+                        collArea2.Owner.Collide(collArea.Owner, collArea2.Name);
+                    if (!collArea.IsReceptor && !collArea2.IsReceptor)
+                    {
+                        collArea.Owner.Collide(collArea2.Owner, collArea.Name);
+                        collArea2.Owner.Collide(collArea.Owner, collArea2.Name);
+
+                        // Remember the gob if it's an overlap consistency compromiser.
+                        if (collArea2.Owner.HadSafePosition && !CanOverlap(collArea.Owner, collArea2.Owner))
+                            compromiser = collArea2.Owner;
+                    }
+                }
+
+                // Maintain overlap consistency.
+                // TODO: Take all overlap consistency compromisers, not just one, and
+                // perform a physical collision with all of them at once.
+                if (collArea.Owner.HadSafePosition && compromiser != null)
+                {
+                    // TODO: Some iteration between gob.Pos and oldPos for a snug collision location.
+                    gob.Pos = oldPos;
+                    PerformCollision(collArea.Owner, compromiser);
+                }
+                if (!gobCollidable1.HadSafePosition && OverlapConsistent(gobCollidable1))
+                    gobCollidable1.HadSafePosition = true;
+            }
+
+            // Update spatial index.
+            if (!(gob is IProjectile))
+                Register(gob);
+        }
+
+        /// <summary>
+        /// Returns the gobs that a collision area collides with.
+        /// </summary>
+        /// <param name="collArea">The collision area that is colliding.</param>
+        /// <return>The gobs that the given gob collides with.</return>
+        [Obsolete]
+        private CollisionArea[] GetColliders(CollisionArea collArea)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            List<CollisionArea> colliders = new List<CollisionArea>();
+            ICollidable gobCollidable1 = collArea.Owner;
+            Action<CollisionArea> checkCollision = delegate(CollisionArea collArea2)
+            {
+                ICollidable gobCollidable2 = collArea2.Owner;
+
+                // Two receptors cannot collide.
+                if (collArea.IsReceptor && collArea2.IsReceptor) return;
+
+                // A gob cannot collide with itself.
+                if (gobCollidable2 == gobCollidable1) return;
+
+                // Certain Gob subclasses don't want to collide with certain others.
+                if (!CanCollide(gobCollidable1, gobCollidable2)) return;
+
+                // Cold gobs don't collide with their own.
+                Gob gobGob1 = gobCollidable1 as Gob;
+                Gob gobGob2 = gobCollidable2 as Gob;
+                if (gobGob1 != null && gobGob2 != null &&
+                    (gobGob1.Cold || gobGob2.Cold) &&
+                    gobGob1.Owner == gobGob2.Owner &&
+                    gobGob1.Owner != null)
+                {
+                    // Cold gob may regain an unsafe position.
+                    if (!collArea.IsReceptor && !collArea2.IsReceptor)
+                    {
+                        if (gobGob1.Cold)
+                            gobCollidable1.HadSafePosition = false;
+                        if (gobGob2.Cold)
+                            gobCollidable2.HadSafePosition = false;
+                    }
+                    return;
+                }
+
+                CollidablePair gobPair = new CollidablePair(collArea, collArea2);
+                if (collidedGobs.ContainsKey(gobPair)) return;
+                if (Geometry.Intersect(collArea.Area, collArea2.Area))
+                {
+                    collidedGobs[gobPair] = true;
+                    colliders.Add(collArea2);
+                }
+            };
+            foreach (CollisionArea potential in GetPotentialPhysicalOverlappers(collArea))
+                checkCollision(potential);
+            
+            return colliders.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a list of physical collision areas that potentially overlap a
+        /// collision area.
+        /// </summary>
+        /// <param name="collArea">The collision area.</param>
+        /// <returns>A list of physical collision areas that potentially overlap a
+        /// collision area.</returns>
+        private List<CollisionArea> GetPotentialPhysicalOverlappers(CollisionArea collArea)
+        {
+            BoundingBox box = collArea.Area.BoundingBox;
+            WindowQuery query = new WindowQuery(box.Min.X, box.Min.Y, box.Max.X, box.Max.Y);
+            List<Record> potentials = collidables.Search(query);
+            return potentials.ConvertAll<CollisionArea>(delegate(Record record) { return ((CollisionData)record).CollisionArea; });
+        }
+
+        /// <summary>
+        /// Returns the list of physical collision areas that overlap a gob.
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        /// <param name="flags">Flags that control what is considered overlapping.</param>
+        /// <returns>The list of physical collision areas that overlap the gob.</returns>
+        private List<CollisionArea> GetPhysicalOverlappers(ICollidable gob, OverlapperFlags flags)
+        {
+            int physicalAreaI = gob.PhysicalArea;
+            if ((flags & OverlapperFlags.ConsiderConsistency) != 0 && !gob.HadSafePosition)
+                return new List<CollisionArea>(0);
+            if ((flags & OverlapperFlags.CheckPhysical) != 0 && physicalAreaI == -1)
+                return new List<CollisionArea>(0);
+
+            // Find potential overlappers from the spatial index.
+            List<CollisionArea> potentials;
+            if ((flags & (OverlapperFlags.CheckPhysical | OverlapperFlags.CheckReceptor)) == OverlapperFlags.CheckPhysical)
+                potentials = GetPotentialPhysicalOverlappers(gob.GetPrimitives()[physicalAreaI]);
+            else
+            {
+                potentials = new List<CollisionArea>();
+                foreach (CollisionArea collArea in gob.GetPrimitives())
+                    if (((flags & OverlapperFlags.CheckPhysical) != 0 && !collArea.IsReceptor) ||
+                        ((flags & OverlapperFlags.CheckReceptor) != 0 && collArea.IsReceptor))
+                        potentials.AddRange(GetPotentialPhysicalOverlappers(collArea));
+            }
+
+            List<CollisionArea> compromisers = potentials.FindAll(delegate(CollisionArea collArea2)
+            {
+                ICollidable gobCollidable2 = collArea2.Owner;
+
+                // A gob is allowed to overlap itself.
+                if (gobCollidable2 == gob) return false;
+
+                // Certain Gob subclasses are allowed to overlap.
+                if (CanOverlap(gob, gobCollidable2)) return false;
+
+                // Gobs with unsafe position are allowed to overlap anyone.
+                if ((flags & OverlapperFlags.ConsiderConsistency) != 0 &&
+                    !gobCollidable2.HadSafePosition) 
+                    return false;
+
+                // Cold gobs are allowed to overlap their own.
+                if ((flags & OverlapperFlags.ConsiderColdness) != 0)
+                {
+                    Gob gobGob1 = gob as Gob;
+                    Gob gobGob2 = gobCollidable2 as Gob;
+                    if (gobGob1 != null && gobGob2 != null &&
+                        (gobGob1.Cold || gobGob2.Cold) &&
+                        gobGob1.Owner == gobGob2.Owner &&
+                        gobGob1.Owner != null)
+                        return false;
+                }
+
+                return Geometry.Intersect(gob.GetPrimitives()[physicalAreaI].Area, collArea2.Area);
+            });
+            return compromisers;
+        }
+
+        /// <summary>
+        /// Returns true iff the given gob doesn't overlap gobs that it shouldn't overlap.
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        /// <returns>True iff the gob is overlap consistent.</returns>
+        [Obsolete]
+        private bool OverlapConsistent(Gob gob)
+        {
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null) return true;
+            return OverlapConsistent(gobCollidable);
+        }
+
+        /// <summary>
+        /// Returns true iff the given gob doesn't overlap gobs that it shouldn't overlap.
+        /// </summary>
+        /// <param name="gobCollidable">The gob.</param>
+        /// <returns>True iff the gob is overlap consistent.</returns>
+        [Obsolete]
+        private bool OverlapConsistent(ICollidable gobCollidable)
+        {
+            OverlapperFlags flags = OverlapperFlags.CheckPhysical;
+            return GetPhysicalOverlappers(gobCollidable, flags).Count == 0;
+        }
+
+        /// <summary>
+        /// Performs a physical collision between the two gobs.
+        /// </summary>
+        /// Physical collisions are a means to maintain overlap consistency.
+        /// <param name="gobCollidable1">The gob whose movement led into the collision.</param>
+        /// <param name="gobCollidable2">The other gob who stayed still.</param>
+        public void PerformCollision(ICollidable gobCollidable1, ICollidable gobCollidable2)
+        {
+            /* UNDONE if (gobCollidable1 is IThick && gobCollidable2 is IProjectile)
+                PerformCollisionProjectileThick((IProjectile)gobCollidable2, (IThick)gobCollidable1);
+            else if (gobCollidable1 is IProjectile && gobCollidable2 is IThick)
+                PerformCollisionProjectileThick((IProjectile)gobCollidable1, (IThick)gobCollidable2);
+            else*/ if (gobCollidable1 is IThick && gobCollidable2 is ISolid)
+                PerformCollisionSolidThick((ISolid)gobCollidable2, (IThick)gobCollidable1);
+            else if (gobCollidable1 is ISolid && gobCollidable2 is IThick)
+                PerformCollisionSolidThick((ISolid)gobCollidable1, (IThick)gobCollidable2);
+            else if (gobCollidable1 is ISolid && gobCollidable2 is ISolid)
+                PerformCollisionSolidSolid((ISolid)gobCollidable1, (ISolid)gobCollidable2);
+        }
+
+        /// <summary>
+        /// Actualises a projectile's impact on a thick gob. The thick gob gets punctured and
+        /// the projectile dies.
+        /// </summary>
+        /// <param name="gobProjectile1">The projectile.</param>
+        /// <param name="gobThick2">The thick gob.</param>
+        [Obsolete]
+        private void PerformCollisionProjectileThick(IProjectile gobProjectile1, IThick gobThick2)
+        {
+            // TODO: Move to Bullet.Collide etc. when projectiles' areas become receptors.
+            Helpers.Polygon poly = gobProjectile1.ImpactArea;
+            gobThick2.MakeHole(poly);
+            ((Gob)gobProjectile1).Die();
+
+            // Play a sound.
+            EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+            SoundEffectEvent soundEvent = new SoundEffectEvent();
+            soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
+            eventEngine.SendEvent(soundEvent);
+        }
+
+        /// <summary>
+        /// Bounces a solid gob off a thick gob. The thick gob isn't affected.
+        /// </summary>
+        /// <param name="gobSolid1">The solid gob.</param>
+        /// <param name="gobThick2">The thick gob.</param>
+        private void PerformCollisionSolidThick(ISolid gobSolid1, IThick gobThick2)
+        {
+            // Play a sound.
+            if (gobSolid1.Move.Length() > 1f) // HACK: Figure out a better skip condition for collision sounds
+            {
+                EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+                SoundEffectEvent soundEvent = new SoundEffectEvent();
+                soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
+                eventEngine.SendEvent(soundEvent);
+            }
+
+            // We perform an elastic collision.
+            float elasticity = 0.1f; // TODO: Add elasticity and friction to Wall.
+            float friction = 1.0f;
+            Vector2 xUnit = gobThick2.GetNormal(gobSolid1.Pos);
+            Vector2 yUnit = new Vector2(-xUnit.Y, xUnit.X);
+            Vector2 move1 = new Vector2(Vector2.Dot(gobSolid1.Move, xUnit),
+                                        Vector2.Dot(gobSolid1.Move, yUnit));
+
+            // Only perform physical collision if the gobs are actually closing in on each other.
+            if (move1.X < 0)
+            {
+                Vector2 move1after = new Vector2(-move1.X * elasticity, move1.Y * friction);
+                gobSolid1.Move = xUnit * move1after.X + yUnit * move1after.Y;
+            }
+        }
+
+        /// <summary>
+        ///  Bounces two solid gobs off each other.
+        /// </summary>
+        /// <param name="gobSolid1">One solid gob.</param>
+        /// <param name="gobSolid2">The other solid gob.</param>
+        private void PerformCollisionSolidSolid(ISolid gobSolid1, ISolid gobSolid2)
+        {
+            // We perform a perfectly elastic collision.
+            // First make gob2 as the point of reference,
+            // then turn the coordinate axes so that both gobs are on the X-axis;
+            // 'xUnit' and 'yUnit' will be the unit vectors of this system represented in game world coordinates;
+            // 'move1' will be the movement vector of gob1 in this system (and gob2 stays put);
+            // 'move1after' will be the resulting movement vector of gob1 in this system.
+            Vector2 relMove = gobSolid1.Move - gobSolid2.Move;
+            Vector2 xUnit = Vector2.Normalize(gobSolid2.Pos - gobSolid1.Pos);
+            Vector2 yUnit = new Vector2(-xUnit.Y, xUnit.X);
+            Vector2 move1 = new Vector2(Vector2.Dot(relMove, xUnit),
+                                        Vector2.Dot(relMove, yUnit));
+
+            // Only perform physical collision if the gobs are actually closing in on each other.
+            if (move1.X > 0)
+            {
+                Vector2 move1after = new Vector2(move1.X * (gobSolid1.Mass - gobSolid2.Mass) / (gobSolid1.Mass + gobSolid2.Mass), move1.Y);
+                Vector2 move2after = new Vector2(move1.X * 2 * gobSolid1.Mass / (gobSolid1.Mass + gobSolid2.Mass), 0);
+                gobSolid1.Move = xUnit * move1after.X + yUnit * move1after.Y + gobSolid2.Move;
+                gobSolid2.Move = xUnit * move2after.X + yUnit * move2after.Y + gobSolid2.Move;
+            }
+
+            // Play a sound.
+            if (relMove.Length() > 1f) // HACK: Figure out a better skip condition for collision sounds
+            {
+                EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+                SoundEffectEvent soundEvent = new SoundEffectEvent();
+                soundEvent.setAction(AW2.Sound.SoundOptions.Action.Shipcollision);
+                eventEngine.SendEvent(soundEvent);
+            }
+        }
+
+        /// <summary>
+        /// Returns true iff the two collidable gobs are allowed to overlap.
+        /// </summary>
+        /// Overlap consistency must be maintained for gobs for which this method returns false.
+        /// <param name="gob1">One gob.</param>
+        /// <param name="gob2">The other gob.</param>
+        /// <returns>True iff the two collidable gobs can overlap.</returns>
+        private bool CanOverlap(ICollidable gob1, ICollidable gob2)
+        {
+            if (gob1 is ISolid && gob2 is ISolid) return false;
+            if (gob1 is IGas && gob2 is IThick) return false;
+            if (gob1 is IThick && gob2 is IGas) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true iff overlaps of the two collidable gobs are ever noticed.
+        /// </summary>
+        /// Collisions will never be performed for gobs for which this method returns false.
+        /// <param name="gob1">One gob.</param>
+        /// <param name="gob2">The other gob.</param>
+        /// <returns>True iff overlaps of the two collidable gobs are ever noticed.</returns>
+        private bool CanCollide(ICollidable gob1, ICollidable gob2)
+        {
+            if (gob1 is IProjectile && gob2 is IProjectile) return false;
+            return true;
+        }
+
+        #endregion // Collision checking methods
+
+    }
+}

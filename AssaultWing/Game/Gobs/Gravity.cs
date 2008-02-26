@@ -27,14 +27,14 @@ namespace AW2.Game.Gobs
         {
             force = new Vector2(0, -10);
             base.collisionAreas = new CollisionArea[] {
-                new CollisionArea("Gravity", new Helpers.Circle(Vector2.Zero, 500f), this),
-                new CollisionArea("Gravity", new Helpers.Polygon(new Vector2[] {
+                new CollisionArea("Force", new Helpers.Circle(Vector2.Zero, 500f), this),
+                new CollisionArea("Force", new Helpers.Polygon(new Vector2[] {
                     new Vector2(0,0),
                     new Vector2(500,0),
                     new Vector2(500,500), 
                     new Vector2(0,500),
                 }), this),
-                new CollisionArea("Gravity", new Helpers.Everything(), this),
+                new CollisionArea("Force", new Helpers.Everything(), this),
             };
         }
 

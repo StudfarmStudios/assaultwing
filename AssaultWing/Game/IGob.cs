@@ -19,6 +19,27 @@ namespace AW2.Game
     #region ICollidable and subinterfaces, i.e. collision types
 
     /// <summary>
+    /// Type of collision area.
+    /// </summary>
+    public enum CollisionAreaType
+    {
+        /// <summary>
+        /// Physical collision area.
+        /// </summary>
+        Physical,
+
+        /// <summary>
+        /// Collision area acting as a receptor.
+        /// </summary>
+        Receptor,
+
+        /// <summary>
+        /// Collision area providing a force.
+        /// </summary>
+        Force,
+    }
+
+    /// <summary>
     /// An area with which a gob can overlap with other gobs' areas,
     /// resulting in a collision.
     /// </summary>
@@ -53,8 +74,22 @@ namespace AW2.Game
         public string Name { get { return name; } }
 
         /// <summary>
+        /// The type of the collision area.
+        /// </summary>
+        public CollisionAreaType Type
+        {
+            get
+            {
+                return name == "General" ? CollisionAreaType.Physical
+              : name == "Force" ? CollisionAreaType.Force
+              : CollisionAreaType.Receptor;
+            }
+        }
+
+        /// <summary>
         /// Is this collision area a receptor.
         /// </summary>
+        [Obsolete("Write Type == CollisionAreaType.Receptor instead")]
         public bool IsReceptor { get { return name != "General"; } }
 
         /// <summary>
@@ -238,7 +273,7 @@ namespace AW2.Game
     /// A thick gob is a solid gob that is too thick for gas to pass through it.
     /// A thick gob is also "too thick" to move around, thus it's unaffected by
     /// collisions with other solid gobs.
-    public interface IThick : ISolid
+    public interface IThick : ICollidable
     {
         /// <summary>
         /// Returns the unit normal vector from the thick gob

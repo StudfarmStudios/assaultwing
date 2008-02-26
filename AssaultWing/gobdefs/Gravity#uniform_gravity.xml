@@ -11,7 +11,7 @@
   </deathGobTypes>
   <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Gravity</name>
+      <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Force</name>
       <area type="AW2.Helpers.Everything, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     </Item>
   </collisionAreas>

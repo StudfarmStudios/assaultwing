@@ -155,14 +155,11 @@ namespace AW2.Game.Gobs
             if (damaGob != null)
                 damaGob.InflictDamage(impactDamage);
 
-            if (gob is ISolid)
-            {
-                Die();
+            Die();
 
-                // Fake safe position to make physical collisions happen.
-                // We can do this only because we know we're dead already.
-                HadSafePosition = true;
-            }
+            // Fake safe position to make physical collisions happen.
+            // We can do this only because we know we're dead already.
+            HadSafePosition = true;
         }
 
         #endregion

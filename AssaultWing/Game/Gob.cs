@@ -804,14 +804,14 @@ namespace AW2.Game
             get
             {
                 for (int i = 0; i < collisionAreas.Length; ++i)
-                    if (!collisionAreas[i].IsReceptor)
+                    if (collisionAreas[i].Type == CollisionAreaType.Physical)
                         return i;
                 return -1;
             }
         }
             
         /// <summary>
-        /// Returns the distance from the edge of the general collision area
+        /// Returns the distance from the edge of the physical collision area
         /// of the collidable gob to a point in the game world.
         /// </summary>
         /// <param name="point">The point.</param>
@@ -820,7 +820,7 @@ namespace AW2.Game
         public float DistanceTo(Vector2 point)
         {
             foreach (CollisionArea area in collisionAreas)
-                if (!area.IsReceptor)
+                if (area.Type == CollisionAreaType.Physical)
                     return area.Area.DistanceTo(point);
 
             // We're far away unless proven otherwise.

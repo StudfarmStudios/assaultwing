@@ -273,6 +273,14 @@ namespace AW2.Game
         /// needs to query for collision with a receptor.
         LinkedList<CollisionData> receptors;
 
+        /// <summary>
+        /// Collision areas that provide a force, as opposed to physical collision areas
+        /// and receptors.
+        /// </summary>
+        /// Forces apply to gobs based on their location, not by their collision areas.
+        /// That is why they are stored in a separate container.
+        LinkedList<CollisionData> forces;
+
         #endregion Fields
 
         /// <summary>
@@ -283,6 +291,7 @@ namespace AW2.Game
             this.collidedGobs = new Dictionary<CollidablePair, bool>(100*100);
             this.collidables = new R_Tree();
             this.receptors = new LinkedList<CollisionData>();
+            this.forces = new LinkedList<CollisionData>();
             this.unusedCollidablesIndex = 0;
             this.gameTime = new GameTime();
         }
@@ -336,29 +345,11 @@ namespace AW2.Game
         public void MovesDone()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
+            // Perform receptor collisions against physical collision areas.
             foreach (CollisionData collData in receptors)
             {
                 CollisionArea collArea = collData.CollisionArea;
-#if false // This doesn't work as expected. Refactor code by writing a general GetOverlappers method.
-                // Receptor collisions with gobs that don't have a physical collision area.
-                data.ForEachGob<ICollidable>(delegate(Gob gob2)
-                {
-                    if (gob2.PhysicalArea != -1) return;
-                    if (gob2.Cold && gob2.Owner != null &&
-                        gob2.Owner == ((Gob)collArea.Owner).Owner)
-                        return;
-                    if (Geometry.Intersect(collArea.Area, new Helpers.Point(gob2.Pos)))
-                    {
-                        collArea.Owner.Collide((ICollidable)gob2, collArea.Name);
-                        if (collArea.Owner is Gob &&
-                            (((Gob)collArea.Owner).PhysicsApplyMode & PhysicsApplyMode.ReceptorCollidesPhysically) != 0)
-                        {
-                            PerformCollision(collArea.Owner, (ICollidable)gob2);
-                        }
-                    }
-                });
-#endif
-                // Receptor collisions only with physical collision areas.
                 List<CollisionArea> potentials = GetPotentialPhysicalOverlappers(collArea);
                 foreach (CollisionArea collArea2 in potentials)
                     if (Geometry.Intersect(collArea.Area, collArea2.Area))
@@ -370,6 +361,17 @@ namespace AW2.Game
                             PerformCollision(collArea.Owner, collArea2.Owner);
                         }
                     }
+            }
+
+            // Perform force collisions against gob locations.
+            foreach (CollisionData collData in forces)
+            {
+                CollisionArea collArea = collData.CollisionArea;
+                data.ForEachGob<ISolid>(delegate(Gob gob2)
+                {
+                    if (Geometry.Intersect(collArea.Area, new Helpers.Point(gob2.Pos)))
+                        collArea.Owner.Collide((ICollidable)gob2, collArea.Name);
+                });
             }
         }
 
@@ -387,10 +389,18 @@ namespace AW2.Game
                 if (collisionAreas[i].CollisionData != null) continue;
                 CollisionData collData = new CollisionData(unusedCollidablesIndex++, collisionAreas[i]);
                 collisionAreas[i].CollisionData = collData;
-                if (collisionAreas[i].IsReceptor)
-                    receptors.AddLast(collData);
-                else
-                    collidables.Insert(collData);
+                switch (collisionAreas[i].Type)
+                {
+                    case CollisionAreaType.Physical:
+                        collidables.Insert(collData);
+                        break;
+                    case CollisionAreaType.Receptor:
+                        receptors.AddLast(collData);
+                        break;
+                    case CollisionAreaType.Force:
+                        forces.AddLast(collData);
+                        break;
+                }
             }
         }
 
@@ -407,10 +417,18 @@ namespace AW2.Game
             {
                 if (collisionAreas[i].CollisionData == null) continue;
                 CollisionData collData = (CollisionData)collisionAreas[i].CollisionData;
-                if (collisionAreas[i].IsReceptor)
-                    receptors.Remove(collData);
-                else
-                    collidables.Delete(collData);
+                switch (collisionAreas[i].Type)
+                {
+                    case CollisionAreaType.Physical:
+                        collidables.Delete(collData);
+                        break;
+                    case CollisionAreaType.Receptor:
+                        receptors.Remove(collData);
+                        break;
+                    case CollisionAreaType.Force:
+                        forces.Remove(collData);
+                        break;
+                }
                 collisionAreas[i].CollisionData = null;
             }
         }
@@ -634,7 +652,7 @@ namespace AW2.Game
             for (int i = 0; i < collisionAreas.Length; ++i)
             {
                 if (collisionAreas[i].CollisionData != null) continue;
-                if (collisionAreas[i].IsReceptor) continue;
+                if (collisionAreas[i].Type != CollisionAreaType.Physical) continue;
                 CollisionData collData = new CollisionData(unusedCollidablesIndex++, collisionAreas[i]);
                 collisionAreas[i].CollisionData = collData;
                 collidables.Insert(collData);
@@ -655,7 +673,7 @@ namespace AW2.Game
             for (int i = 0; i < collisionAreas.Length; ++i)
             {
                 if (collisionAreas[i].CollisionData == null) continue;
-                if (collisionAreas[i].IsReceptor) continue;
+                if (collisionAreas[i].Type != CollisionAreaType.Physical) continue;
                 CollisionData collData = (CollisionData)collisionAreas[i].CollisionData;
                 collidables.Delete(collData);
                 collisionAreas[i].CollisionData = null;
@@ -878,8 +896,8 @@ namespace AW2.Game
             {
                 potentials = new List<CollisionArea>();
                 foreach (CollisionArea collArea in gob.GetPrimitives())
-                    if (((flags & OverlapperFlags.CheckPhysical) != 0 && !collArea.IsReceptor) ||
-                        ((flags & OverlapperFlags.CheckReceptor) != 0 && collArea.IsReceptor))
+                    if (((flags & OverlapperFlags.CheckPhysical) != 0 && collArea.Type == CollisionAreaType.Physical) ||
+                        ((flags & OverlapperFlags.CheckReceptor) != 0 && collArea.Type == CollisionAreaType.Receptor))
                         potentials.AddRange(GetPotentialPhysicalOverlappers(collArea));
             }
 
@@ -920,7 +938,6 @@ namespace AW2.Game
         /// </summary>
         /// <param name="gob">The gob.</param>
         /// <returns>True iff the gob is overlap consistent.</returns>
-        [Obsolete]
         private bool OverlapConsistent(Gob gob)
         {
             ICollidable gobCollidable = gob as ICollidable;
@@ -933,7 +950,6 @@ namespace AW2.Game
         /// </summary>
         /// <param name="gobCollidable">The gob.</param>
         /// <returns>True iff the gob is overlap consistent.</returns>
-        [Obsolete]
         private bool OverlapConsistent(ICollidable gobCollidable)
         {
             OverlapperFlags flags = OverlapperFlags.CheckPhysical;
@@ -1061,6 +1077,8 @@ namespace AW2.Game
         private bool CanOverlap(ICollidable gob1, ICollidable gob2)
         {
             if (gob1 is ISolid && gob2 is ISolid) return false;
+            if (gob1 is ISolid && gob2 is IThick) return false;
+            if (gob1 is IThick && gob2 is ISolid) return false;
             if (gob1 is IGas && gob2 is IThick) return false;
             if (gob1 is IThick && gob2 is IGas) return false;
             return true;

@@ -73,7 +73,7 @@ namespace AW2.Game.Gobs
             Ship gobShip = gob as Ship;
             if (gobShip != null)
             {
-                switch (RandomHelper.GetRandomInt(2))
+                switch (RandomHelper.GetRandomInt(3))
                 {
                     case 0: // Explosion
                         DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
@@ -83,6 +83,9 @@ namespace AW2.Game.Gobs
                         break;
                     case 1: // Special weapon upgrade
                         gobShip.Owner.UpgradeWeapon2();
+                        break;
+                    case 2: // Primary weapon load time upgrade
+                        gobShip.Owner.UpgradeWeapon1LoadTime();
                         break;
                     default:
                         Log.Write("Bonus didn't do anything, programmer's mistake");

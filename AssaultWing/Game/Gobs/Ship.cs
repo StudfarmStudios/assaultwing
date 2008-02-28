@@ -304,6 +304,13 @@ namespace AW2.Game.Gobs
             int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs,
                 delegate(KeyValuePair<string, int> pair) { return pair.Value; });
             Weapon weapon = Weapon.CreateWeapon(weaponName, this, ownerHandle, boneIndices);
+
+            // Apply appropriate player bonuses.
+            if (ownerHandle == 1 && (Owner.Bonuses & PlayerBonus.Weapon1LoadTime) != 0)
+                weapon.LoadTime /= 2;
+            if (ownerHandle == 2 && (Owner.Bonuses & PlayerBonus.Weapon2LoadTime) != 0)
+                weapon.LoadTime /= 2;
+
             data.AddWeapon(weapon);
             return weapon;
         }

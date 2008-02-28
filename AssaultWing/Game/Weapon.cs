@@ -137,6 +137,12 @@ namespace AW2.Game
         public int OwnerHandle { get { return ownerHandle; } set { ownerHandle = value; } }
 
         /// <summary>
+        /// The time in seconds that it takes for the weapon to fire again 
+        /// after being fired once.
+        /// </summary>
+        public float LoadTime { get { return loadTime; } set { loadTime = value; } }
+
+        /// <summary>
         /// Is the weapon loaded.
         /// </summary>
         public bool Loaded { get { return loadedTime <= physics.TimeStep.TotalGameTime; } }

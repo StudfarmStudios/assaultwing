@@ -8,6 +8,28 @@ using Microsoft.Xna.Framework;
 namespace AW2.Game
 {
     /// <summary>
+    /// On/off bonuses that a player can have.
+    /// </summary>
+    [Flags]
+    public enum PlayerBonus
+    {
+        /// <summary>
+        /// No bonuses
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// Primary weapon's load time upgrade
+        /// </summary>
+        Weapon1LoadTime = 0x0001,
+
+        /// <summary>
+        /// Secondary weapon's load time upgrade
+        /// </summary>
+        Weapon2LoadTime = 0x0002,
+    }
+
+    /// <summary>
     /// Player of the game. 
     /// </summary>
     public class Player
@@ -26,12 +48,18 @@ namespace AW2.Game
 
         /// <summary>
         /// Type of primary weapon the player has chosen to use.
+        /// Note that the player may be forced to use a weapon different from
+        /// his original choice.
         /// </summary>
+        /// <seealso cref="Weapon1Name"/>
         string weapon1Name;
 
         /// <summary>
         /// Type of secondary weapon the player has chosen to use.
+        /// Note that the player may be forced to use a weapon different from
+        /// his original choice.
         /// </summary>
+        /// <seealso cref="Weapon2Name"/>
         string weapon2Name;
 
         /// <summary>
@@ -49,6 +77,13 @@ namespace AW2.Game
         /// <b>1</b> means the first upgrade of the selected secondary weapon is in use,
         /// etc.
         int weapon2Upgrades;
+
+        /// <summary>
+        /// On/off bonuses that the player currently has.
+        /// </summary>
+        /// <seealso cref="weapon1Upgrades"/>
+        /// <seealso cref="weapon2Upgrades"/>
+        PlayerBonus bonuses;
 
         /// <summary>
         /// The player's controls for moving in menus and controlling his ship.
@@ -89,6 +124,41 @@ namespace AW2.Game
         /// </summary>
         public string Name { get { return name; } }
 
+        /// <summary>
+        /// The name of the primary weapon, considering all current bonuses.
+        /// </summary>
+        public string Weapon1Name
+        {
+            get
+            {
+                if (weapon1Upgrades == 0)
+                    return weapon1Name;
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+                return weapon1.UpgradeNames[weapon1Upgrades - 1];
+            }
+        }
+
+        /// <summary>
+        /// The name of the secondary weapon, considering all current bonuses.
+        /// </summary>
+        public string Weapon2Name
+        {
+            get
+            {
+                if (weapon2Upgrades == 0)
+                    return weapon2Name;
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
+                return weapon2.UpgradeNames[weapon2Upgrades - 1];
+            }
+        }
+
+        /// <summary>
+        /// On/off bonuses that the player currently has.
+        /// </summary>
+        public PlayerBonus Bonuses { get { return bonuses; } }
+
         #endregion Player properties
 
         /// <summary>
@@ -109,6 +179,7 @@ namespace AW2.Game
             this.weapon2Name = weapon2Name;
             this.weapon1Upgrades = 0;
             this.weapon2Upgrades = 0;
+            this.bonuses = PlayerBonus.None;
             this.lives = 3;
         }
 
@@ -128,6 +199,7 @@ namespace AW2.Game
             --lives;
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
+            bonuses = PlayerBonus.None;
 
             if (lives > 0)
             {
@@ -141,6 +213,8 @@ namespace AW2.Game
             }
         }
 
+        #region Methods related to bonuses
+
         /// <summary>
         /// Adds an incremental upgrade on the player's primary weapon.
         /// </summary>
@@ -149,7 +223,7 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
-            ship.Weapon1Name = weapon1.UpgradeNames[weapon1Upgrades - 1];
+            ship.Weapon1Name = Weapon1Name;
         }
 
         /// <summary>
@@ -160,7 +234,31 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
-            ship.Weapon2Name = weapon2.UpgradeNames[weapon2Upgrades - 1];
+            ship.Weapon2Name = Weapon2Name;
         }
+
+        /// <summary>
+        /// Upgrades primary weapon's load time.
+        /// </summary>
+        public void UpgradeWeapon1LoadTime()
+        {
+            bonuses |= PlayerBonus.Weapon1LoadTime;
+
+            // Make our ship recreate its weapon.
+            ship.Weapon1Name = Weapon1Name;
+        }
+
+        /// <summary>
+        /// Upgrades secondary weapon's load time.
+        /// </summary>
+        public void UpgradeWeapon2LoadTime()
+        {
+            bonuses |= PlayerBonus.Weapon2LoadTime;
+
+            // Make our ship recreate its weapon.
+            ship.Weapon2Name = Weapon2Name;
+        }
+
+        #endregion Methods related to bonuses
     }
 }

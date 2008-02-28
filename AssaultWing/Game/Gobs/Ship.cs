@@ -165,7 +165,7 @@ namespace AW2.Game.Gobs
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                     data.RemoveWeapon(weapon1);
                 }
-                weapon1 = CreateWeapons(value);
+                weapon1 = CreateWeapons(value, 1);
             }
         }
 
@@ -181,7 +181,7 @@ namespace AW2.Game.Gobs
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                         data.RemoveWeapon(weapon2);
                 }
-                weapon2 = CreateWeapons(value);
+                weapon2 = CreateWeapons(value, 2);
             }
         }
 
@@ -279,8 +279,8 @@ namespace AW2.Game.Gobs
         public Ship(string typeName, Player owner, Vector2 pos, string weapon1Name, string weapon2Name)
             : base(typeName, owner, pos, Vector2.Zero, Gob.defaultRotation)
         {
-            this.weapon1 = CreateWeapons(weapon1Name);
-            this.weapon2 = CreateWeapons(weapon2Name);
+            this.weapon1 = CreateWeapons(weapon1Name, 1);
+            this.weapon2 = CreateWeapons(weapon2Name, 2);
             this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2Charge = this.weapon2ChargeMax;
         }
@@ -292,8 +292,10 @@ namespace AW2.Game.Gobs
         /// gun barrels on the ship are covered.
         /// </summary>
         /// <param name="weaponName">Name of the weapon type.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
+        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
         /// <returns>The created weapon.</returns>
-        private Weapon CreateWeapons(string weaponName)
+        private Weapon CreateWeapons(string weaponName, int ownerHandle)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             KeyValuePair<string, int>[] boneIs = GetNamedPositions("Gun");
@@ -301,7 +303,7 @@ namespace AW2.Game.Gobs
                 Log.Write("Warning: Ship found no gun barrels in its 3D model");
             int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs,
                 delegate(KeyValuePair<string, int> pair) { return pair.Value; });
-            Weapon weapon = Weapon.CreateWeapon(weaponName, this, boneIndices);
+            Weapon weapon = Weapon.CreateWeapon(weaponName, this, ownerHandle, boneIndices);
             data.AddWeapon(weapon);
             return weapon;
         }
@@ -456,11 +458,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire1()
         {
-            if (Weapon1Loaded && weapon1Charge >= weapon1.FireCharge)
-            {
-                weapon1Charge -= weapon1.FireCharge;
-                weapon1.Fire();
-            }
+            weapon1.Fire();
         }
 
         /// <summary>
@@ -468,11 +466,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire2()
         {
-            if (Weapon2Loaded && weapon2Charge >= weapon2.FireCharge)
-            {
-                weapon2Charge -= weapon2.FireCharge;
-                weapon2.Fire();
-            }
+            weapon2.Fire();
         }
 
         /// <summary>
@@ -481,6 +475,48 @@ namespace AW2.Game.Gobs
         public void DoExtra()
         {
             // !!! not implemented
+        }
+
+        /// <summary>
+        /// Returns the amount of charge available for a weapon with
+        /// a certain handle.
+        /// </summary>
+        /// <param name="ownerHandle">The owner handle of the weapon.</param>
+        /// <returns>The amount of charge available for the weapon.</returns>
+        public float GetCharge(int ownerHandle)
+        {
+            switch (ownerHandle)
+            {
+                case 1: return Weapon1Charge;
+                case 2: return Weapon2Charge;
+                default:
+                    Log.Write("Warning: Someone inquired weapon charge for owner handle "
+                        + ownerHandle);
+                    return 0;
+            }
+        }
+        
+        /// <summary>
+        /// Uses an amount of charge available for a weapon with
+        /// a certain handle.
+        /// </summary>
+        /// <param name="ownerHandle">The owner handle of the weapon.</param>
+        /// <param name="amount">The amount of charge to use.</param>
+        public void UseCharge(int ownerHandle, float amount)
+        {
+            switch (ownerHandle)
+            {
+                case 1:
+                    weapon1Charge = MathHelper.Clamp(weapon1Charge - amount, 0, weapon1ChargeMax);
+                    break;
+                case 2:
+                    weapon2Charge = MathHelper.Clamp(weapon2Charge - amount, 0, weapon2ChargeMax);
+                    break;
+                default:
+                    Log.Write("Warning: Someone tried to use weapon charge for owner handle "
+                        + ownerHandle);
+                    break;
+            }
         }
 
         #endregion Ship public methods

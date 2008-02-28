@@ -141,10 +141,12 @@ namespace AW2.Game.Weapons
         /// </summary>
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
+        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
-        public ForwardShot(string typeName, Ship owner, int[] boneIndices)
-            : base(typeName, owner, boneIndices)
+        public ForwardShot(string typeName, Ship owner, int ownerHandle, int[] boneIndices)
+            : base(typeName, owner, ownerHandle, boneIndices)
         {
             this.shotsLeft = 0;
             this.nextShot = new TimeSpan(0);
@@ -157,23 +159,25 @@ namespace AW2.Game.Weapons
         /// <summary>
         /// Fires the weapon.
         /// </summary>
-        /// <returns><b>true</b> iff firing was possible.</returns>
-        public override bool Fire()
+        public override void Fire()
         {
+            // Do something with existing shots if any exist and
+            // if there is anything to be done with them.
             if (fireAction == FireAction.KillAll && liveShots.Count > 0)
             {
                 foreach (Gob gob in liveShots)
                     gob.Die();
-                return false;
             }
-
-            bool canFire = base.Fire();
-            if (!canFire) return false;
-
-            // Start a new series.
-            shotsLeft = shotCount;
-            nextShot = physics.TimeStep.TotalGameTime;
-            return true;
+            else
+            // Otherwise fire new shots if possible.
+            if (CanFire)
+            {
+                // Start a new series.
+                StartFiring();
+                owner.UseCharge(ownerHandle, fireCharge);
+                shotsLeft = shotCount;
+                nextShot = physics.TimeStep.TotalGameTime;
+            }
         }
 
         /// <summary>
@@ -218,6 +222,9 @@ namespace AW2.Game.Weapons
                         }
                 }
                 muzzleFireCreated = true;
+
+                // Let our owner feel the consequences.
+                ApplyRecoil();
 
                 // Play a firing sound.
                 SoundEffectEvent soundEvent = new SoundEffectEvent();

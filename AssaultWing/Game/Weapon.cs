@@ -62,6 +62,14 @@ namespace AW2.Game
         protected Ship owner;
 
         /// <summary>
+        /// A handle for identifying us at the owner.
+        /// </summary>
+        /// In practice this is <b>1</b> for primary weapons and
+        /// <b>2</b> for secondary weapons.
+        [RuntimeState]
+        protected int ownerHandle;
+
+        /// <summary>
         /// Indices of the bones that defines the weapon's barrels' locations 
         /// on the owning ship.
         /// </summary>
@@ -124,6 +132,11 @@ namespace AW2.Game
         public Ship Owner { get { return owner; } set { owner = value; } } // !!! hack
 
         /// <summary>
+        /// A handle for identifying the weapon at the owner.
+        /// </summary>
+        public int OwnerHandle { get { return ownerHandle; } set { ownerHandle = value; } }
+
+        /// <summary>
         /// Is the weapon loaded.
         /// </summary>
         public bool Loaded { get { return loadedTime <= physics.TimeStep.TotalGameTime; } }
@@ -132,6 +145,11 @@ namespace AW2.Game
         /// Amount of charge required to fire the weapon.
         /// </summary>
         public float FireCharge { get { return fireCharge; } }
+
+        /// <summary>
+        /// <b>true</b> iff there is no obstruction to the weapon being fired.
+        /// </summary>
+        public bool CanFire { get { return Loaded && FireCharge <= owner.GetCharge(ownerHandle); } }
 
         #endregion // Weapon properties
 
@@ -145,8 +163,8 @@ namespace AW2.Game
                 if (null == type.GetConstructor(Type.EmptyTypes))
                     throw new Exception("Missing constructor " + type.Name + "()");
                 if (null == type.GetConstructor(new Type[] { 
-                    typeof(string), typeof(Ship), typeof(int[]), }))
-                    throw new Exception("Missing constructor " + type.Name + "(string, Ship, int[])");
+                    typeof(string), typeof(Ship), typeof(int), typeof(int[]), }))
+                    throw new Exception("Missing constructor " + type.Name + "(string, Ship, int, int[])");
             }
         }
 
@@ -159,6 +177,7 @@ namespace AW2.Game
             this.typeName = "dummyweapontype";
             this.upgradeNames = new string[] { "dummyweapontype", };
             this.owner = null;
+            this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };
             this.shotTypeName = "dummygobtype";
             this.loadTime = 0.5f;
@@ -184,6 +203,7 @@ namespace AW2.Game
                 field.SetValue(this, field.GetValue(template));
 
             this.owner = null;
+            this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };
             this.loadedTime = new TimeSpan(0);
             this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
@@ -194,12 +214,15 @@ namespace AW2.Game
         /// </summary>
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
+        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
-        public Weapon(string typeName, Ship owner, int[] boneIndices)
+        public Weapon(string typeName, Ship owner, int ownerHandle, int[] boneIndices)
             : this(typeName)
         {
             this.owner = owner;
+            this.ownerHandle = ownerHandle;
             this.boneIndices = boneIndices;
             this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
         }
@@ -212,24 +235,27 @@ namespace AW2.Game
         /// takes care of finding the correct subclass.
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
+        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
         /// <param name="args">Any arguments to pass to the subclass' constructor.</param>
         /// <returns>The newly created weapon.</returns>
-        public static Weapon CreateWeapon(string typeName, Ship owner, int[] boneIndices, params object[] args)
+        public static Weapon CreateWeapon(string typeName, Ship owner, int ownerHandle, int[] boneIndices, params object[] args)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon template = (Weapon)data.GetTypeTemplate(typeof(Weapon), typeName);
             Type type = template.GetType();
             if (args.Length == 0)
-                return (Weapon)Activator.CreateInstance(type, typeName, owner, boneIndices);
+                return (Weapon)Activator.CreateInstance(type, typeName, owner, ownerHandle, boneIndices);
             else
             {
-                object[] newArgs = new object[args.Length + 3];
+                object[] newArgs = new object[args.Length + 4];
                 newArgs[0] = typeName;
                 newArgs[1] = owner;
-                newArgs[2] = boneIndices;
-                Array.Copy(args, 0, newArgs, 3, args.Length);
+                newArgs[2] = ownerHandle;
+                newArgs[3] = boneIndices;
+                Array.Copy(args, 0, newArgs, 4, args.Length);
                 return (Weapon)Activator.CreateInstance(type, newArgs);
             }
         }
@@ -237,29 +263,7 @@ namespace AW2.Game
         /// <summary>
         /// Fires the weapon.
         /// </summary>
-        /// Overriding methods should first call <b>base.Fire()</b> and only
-        /// perform firing action if it returns <b>true</b>.
-        /// <returns><b>true</b> iff firing was possible.</returns>
-        public virtual bool Fire()
-        {
-            if (Loaded)
-            {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
-                // Apply recoil momentum.
-                Vector2 momentum = new Vector2((float)Math.Cos(Owner.Rotation), (float)Math.Sin(Owner.Rotation))
-                    * -recoilMomentum;
-                data.CustomOperations += delegate(object obj)
-                {
-                    physics.ApplyMomentum(Owner, momentum);
-                };
-
-                // Make the weapon unloaded for eternity until subclass calls DoneFiring().
-                loadedTime = new TimeSpan(long.MaxValue);
-                return true;
-            }
-            return false;
-        }
+        public abstract void Fire();
 
         /// <summary>
         /// Updates the weapon's state and performs actions true to its nature.
@@ -267,11 +271,42 @@ namespace AW2.Game
         public abstract void Update();
 
         /// <summary>
-        /// Resets the weapon's load time counter. Subclasses should call this
-        /// method when their firing action has stopped.
+        /// Prepares the weapon for firing.
+        /// Subclasses should call this method when they start a new firing action.
         /// </summary>
+        /// A call to <b>StartFiring</b> must be matched by a later call to
+        /// <b>DoneFiring</b>.
+        protected void StartFiring()
+        {
+            // Make the weapon unloaded for eternity until subclass calls DoneFiring().
+            loadedTime = new TimeSpan(long.MaxValue);
+        }
+
+        /// <summary>
+        /// Applies recoil to the owner of the weapon.
+        /// Subclasses should call this method when they emit a new shot
+        /// during a firing action.
+        /// </summary>
+        protected void ApplyRecoil()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Vector2 momentum = new Vector2((float)Math.Cos(Owner.Rotation), (float)Math.Sin(Owner.Rotation))
+                * -recoilMomentum;
+            data.CustomOperations += delegate(object obj)
+            {
+                physics.ApplyMomentum(Owner, momentum);
+            };
+        }
+
+        /// <summary>
+        /// Wraps up a finished firing of the weapon.
+        /// Subclasses should call this method when their firing action has stopped.
+        /// </summary>
+        /// A call to <b>DoneFiring</b> must be matched by an earlier call to
+        /// <b>StartFiring</b>.
         protected void DoneFiring()
         {
+            // Reset the weapon's load time counter.
             long ticks = (long)(10 * 1000 * 1000 * loadTime);
             loadedTime = physics.TimeStep.TotalGameTime.Add(new TimeSpan(ticks));
         }

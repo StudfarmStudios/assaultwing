@@ -10,20 +10,24 @@ namespace AW2.Events
     public class Event
     {
         /// <summary>
-        /// Meaning yet undefined.
+        /// Time at which the event is to be processed, or 
+        /// <b>0</b> if the event is to be processed immediately.
+        /// Measured in game time.
         /// </summary>
-        protected GameTime eventTime;
+        protected TimeSpan eventTime;
 
         /// <summary>
-        /// Meaning yet undefined.
+        /// Time at which the event is to be processed, or 
+        /// <b>0</b> if the event is to be processed immediately.
+        /// Measured in game time.
         /// </summary>
-        public GameTime EventTime { get { return eventTime; } set { eventTime = value; } }
+        public TimeSpan EventTime { get { return eventTime; } set { eventTime = value; } }
 
         /// <summary>
         /// Creates a new event.
         /// </summary>
         /// <param name="eventTime">Undefined.</param>
-        public Event(GameTime eventTime)
+        public Event(TimeSpan eventTime)
         {
             this.eventTime = eventTime;
         }

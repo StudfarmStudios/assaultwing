@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\BonusExpiryEvent.cs" />
     <Compile Include="Events\PlayerControlEvent.cs">
       <Name>PlayerControlEvent</Name>
     </Compile>
@@ -182,6 +183,7 @@
     <Compile Include="Helpers\Graphics3D.cs">
       <Name>Graphics3D</Name>
     </Compile>
+    <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\RandomHelper.cs">
       <Name>RandomHelper</Name>
     </Compile>

@@ -4,21 +4,48 @@ using NUnit.Framework;
 #endif
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using AW2.Helpers;
 
 namespace AW2.Events
 {
+    /// <summary>
+    /// Comparer of events. Comparisons are based on scheduled event processing times.
+    /// </summary>
+    public class EventComparer : IComparer
+    {
+        #region IComparer Members
+
+        /// <summary>
+        /// Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
+        /// </summary>
+        /// <param name="x">The first object to compare.</param>
+        /// <param name="y">The second object to compare.</param>
+        /// <returns>Less than zero, if x is less than y. 
+        /// Zero, if x equals y. 
+        /// Greater than zero, if x is greater than y.</returns>
+        public int Compare(object x, object y)
+        {
+            if (!(x is Event) || !(y is Event))
+                throw new ArgumentException("EventComparer can compare only Event instances");
+            return ((Event)x).EventTime.CompareTo(((Event)y).EventTime);
+        }
+
+        #endregion
+    }
+    
     /// <summary>
     /// Basic Event Engine implementation.
     /// </summary>
     class EventEngineImpl : EventEngine
     {
-        Dictionary<Type, Queue<Event>> eventDictionary;
+        Dictionary<Type, BinaryPriorityQueue> eventDictionary;
 
         public EventEngineImpl()
         {
-            eventDictionary = new Dictionary<Type, Queue<Event>>();
+            eventDictionary = new Dictionary<Type, BinaryPriorityQueue>();
         }
 
         #region EventEngine Members
@@ -30,10 +57,10 @@ namespace AW2.Events
         public void SendEvent(Event eventToSend)
         {
             if (eventDictionary.ContainsKey(eventToSend.GetType())) {
-                eventDictionary[eventToSend.GetType()].Enqueue(eventToSend);
+                eventDictionary[eventToSend.GetType()].Push(eventToSend);
             } else {
-                Queue<Event> lista = new Queue<Event>();
-                lista.Enqueue(eventToSend);
+                BinaryPriorityQueue lista = new BinaryPriorityQueue(new EventComparer());
+                lista.Push(eventToSend);
                 eventDictionary[eventToSend.GetType()] = lista;
             }
         }
@@ -48,11 +75,9 @@ namespace AW2.Events
         {
             if (eventDictionary.ContainsKey(type))
             {
-                if (eventDictionary[type].Count > 0)
-                {
-                    Event returnedEvent = eventDictionary[type].Dequeue();
-                    return returnedEvent;
-                }
+                Event eve = (Event)eventDictionary[type].Peek();
+                if (eve != null && eve.EventTime <= AssaultWing.Instance.GameTime.TotalGameTime)
+                    return (Event)eventDictionary[type].Pop();
             }
             return null;
         }

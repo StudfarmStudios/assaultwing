@@ -18,7 +18,7 @@ namespace AW2.Events
         /// Get the values from info and assign them to the appropriate properties
         public NetworkableEvent(SerializationInfo info, StreamingContext ctxt)
         {
-            eventTime = (GameTime)info.GetValue("eventTime", typeof(GameTime));
+            eventTime = (TimeSpan)info.GetValue("eventTime", typeof(TimeSpan));
         }
         
         /// <summary>Serialization function.</summary>

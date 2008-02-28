@@ -62,9 +62,10 @@ namespace AW2.Game
         protected Ship owner;
 
         /// <summary>
-        /// Index of the bone that defines the weapon's location on the owning ship.
+        /// Indices of the bones that defines the weapon's barrels' locations 
+        /// on the owning ship.
         /// </summary>
-        protected int boneIndex;
+        protected int[] boneIndices;
 
         /// <summary>
         /// What type of gobs the weapon shoots out.
@@ -144,8 +145,8 @@ namespace AW2.Game
                 if (null == type.GetConstructor(Type.EmptyTypes))
                     throw new Exception("Missing constructor " + type.Name + "()");
                 if (null == type.GetConstructor(new Type[] { 
-                    typeof(string), typeof(Ship), typeof(int), }))
-                    throw new Exception("Missing constructor " + type.Name + "(string)");
+                    typeof(string), typeof(Ship), typeof(int[]), }))
+                    throw new Exception("Missing constructor " + type.Name + "(string, Ship, int[])");
             }
         }
 
@@ -158,7 +159,7 @@ namespace AW2.Game
             this.typeName = "dummyweapontype";
             this.upgradeNames = new string[] { "dummyweapontype", };
             this.owner = null;
-            this.boneIndex = 0;
+            this.boneIndices = new int[] { 0 };
             this.shotTypeName = "dummygobtype";
             this.loadTime = 0.5f;
             this.loadedTime = new TimeSpan(1, 2, 3);
@@ -183,7 +184,7 @@ namespace AW2.Game
                 field.SetValue(this, field.GetValue(template));
 
             this.owner = null;
-            this.boneIndex = 0;
+            this.boneIndices = new int[] { 0 };
             this.loadedTime = new TimeSpan(0);
             this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
         }
@@ -193,13 +194,13 @@ namespace AW2.Game
         /// </summary>
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="boneIndex">Index of the bone that defines the weapon's
-        /// location on the owning ship.</param>
-        public Weapon(string typeName, Ship owner, int boneIndex)
+        /// <param name="boneIndices">Indices of the bones that define the weapon's
+        /// barrels' locations on the owning ship.</param>
+        public Weapon(string typeName, Ship owner, int[] boneIndices)
             : this(typeName)
         {
             this.owner = owner;
-            this.boneIndex = boneIndex;
+            this.boneIndices = boneIndices;
             this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
         }
   
@@ -211,23 +212,23 @@ namespace AW2.Game
         /// takes care of finding the correct subclass.
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="boneIndex">Index of the bone that defines the weapon's
-        /// location on the owning ship.</param>
+        /// <param name="boneIndices">Indices of the bones that define the weapon's
+        /// barrels' locations on the owning ship.</param>
         /// <param name="args">Any arguments to pass to the subclass' constructor.</param>
         /// <returns>The newly created weapon.</returns>
-        public static Weapon CreateWeapon(string typeName, Ship owner, int boneIndex, params object[] args)
+        public static Weapon CreateWeapon(string typeName, Ship owner, int[] boneIndices, params object[] args)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon template = (Weapon)data.GetTypeTemplate(typeof(Weapon), typeName);
             Type type = template.GetType();
             if (args.Length == 0)
-                return (Weapon)Activator.CreateInstance(type, typeName, owner, boneIndex);
+                return (Weapon)Activator.CreateInstance(type, typeName, owner, boneIndices);
             else
             {
                 object[] newArgs = new object[args.Length + 3];
                 newArgs[0] = typeName;
                 newArgs[1] = owner;
-                newArgs[2] = boneIndex;
+                newArgs[2] = boneIndices;
                 Array.Copy(args, 0, newArgs, 3, args.Length);
                 return (Weapon)Activator.CreateInstance(type, newArgs);
             }

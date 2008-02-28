@@ -41,13 +41,13 @@ namespace AW2.Game.Gobs
         /// Primary weapons of the ship.
         /// </summary>
         [RuntimeState]
-        Weapon[] weapons1;
+        Weapon weapons1;
 
         /// <summary>
         /// Secondary weapons of the ship.
         /// </summary>
         [RuntimeState]
-        Weapon[] weapons2;
+        Weapon weapons2;
 
         /// <summary>
         /// Maximum amount of charge for primary weapons.
@@ -163,8 +163,7 @@ namespace AW2.Game.Gobs
                 if (weapons1 != null)
                 {
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    foreach (Weapon weapon in weapons1)
-                        data.RemoveWeapon(weapon);
+                    data.RemoveWeapon(weapons1);
                 }
                 weapons1 = CreateWeapons(value);
             }
@@ -180,8 +179,7 @@ namespace AW2.Game.Gobs
                 if (weapons2 != null)
                 {
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    foreach (Weapon weapon in weapons2)
-                        data.RemoveWeapon(weapon);
+                        data.RemoveWeapon(weapons2);
                 }
                 weapons2 = CreateWeapons(value);
             }
@@ -194,9 +192,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                foreach (Weapon weapon in weapons1)
-                    if (weapon.Loaded) return true;
-                return false;
+                return weapons1.Loaded;
             }
         }
 
@@ -207,9 +203,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                foreach (Weapon weapon in weapons2)
-                    if (weapon.Loaded) return true;
-                return false;
+                return weapons2.Loaded;
             }
         }
 
@@ -294,25 +288,22 @@ namespace AW2.Game.Gobs
         #endregion Ship constructors
 
         /// <summary>
-        /// Creates new instances of a named weapon type, one instance for each
-        /// gun barrel on the ship.
+        /// Creates a new instance of a named weapon type so that all
+        /// gun barrels on the ship are covered.
         /// </summary>
         /// <param name="weaponName">Name of the weapon type.</param>
-        /// <returns>The list of created weapons.</returns>
-        private Weapon[] CreateWeapons(string weaponName)
+        /// <returns>The created weapon.</returns>
+        private Weapon CreateWeapons(string weaponName)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             KeyValuePair<string, int>[] boneIs = GetNamedPositions("Gun");
             if (boneIs.Length == 0)
                 Log.Write("Warning: Ship found no gun barrels in its 3D model");
-            Weapon[] weapons = new Weapon[boneIs.Length];
-            for (int i = 0; i < boneIs.Length; ++i)
-            {
-                Weapon weapon = Weapon.CreateWeapon(weaponName, this, boneIs[i].Value);
-                data.AddWeapon(weapon);
-                weapons[i] = weapon;
-            }
-            return weapons;
+            int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs,
+                delegate(KeyValuePair<string, int> pair) { return pair.Value; });
+            Weapon weapon = Weapon.CreateWeapon(weaponName, this, boneIndices);
+            data.AddWeapon(weapon);
+            return weapon;
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -379,10 +370,8 @@ namespace AW2.Game.Gobs
         public override void Dispose()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            foreach (Weapon weapon in weapons1)
-                data.RemoveWeapon(weapon);
-            foreach (Weapon weapon in weapons2)
-                data.RemoveWeapon(weapon);
+            data.RemoveWeapon(weapons1);
+            data.RemoveWeapon(weapons2);
             base.Dispose();
         }
 
@@ -467,11 +456,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire1()
         {
-            if (Weapon1Loaded && weapon1Charge >= weapons1[0].FireCharge)
+            if (Weapon1Loaded && weapon1Charge >= weapons1.FireCharge)
             {
-                weapon1Charge -= weapons1[0].FireCharge;
-                foreach (Weapon weapon in weapons1)
-                    weapon.Fire();
+                weapon1Charge -= weapons1.FireCharge;
+                weapons1.Fire();
             }
         }
 
@@ -480,11 +468,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire2()
         {
-            if (Weapon2Loaded && weapon2Charge >= weapons2[0].FireCharge)
+            if (Weapon2Loaded && weapon2Charge >= weapons2.FireCharge)
             {
-                weapon2Charge -= weapons2[0].FireCharge;
-                foreach (Weapon weapon in weapons2)
-                    weapon.Fire();
+                weapon2Charge -= weapons2.FireCharge;
+                weapons2.Fire();
             }
         }
 

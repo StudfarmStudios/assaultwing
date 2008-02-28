@@ -41,13 +41,13 @@ namespace AW2.Game.Gobs
         /// Primary weapons of the ship.
         /// </summary>
         [RuntimeState]
-        Weapon weapons1;
+        Weapon weapon1;
 
         /// <summary>
         /// Secondary weapons of the ship.
         /// </summary>
         [RuntimeState]
-        Weapon weapons2;
+        Weapon weapon2;
 
         /// <summary>
         /// Maximum amount of charge for primary weapons.
@@ -160,12 +160,12 @@ namespace AW2.Game.Gobs
         {
             set
             {
-                if (weapons1 != null)
+                if (weapon1 != null)
                 {
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    data.RemoveWeapon(weapons1);
+                    data.RemoveWeapon(weapon1);
                 }
-                weapons1 = CreateWeapons(value);
+                weapon1 = CreateWeapons(value);
             }
         }
 
@@ -176,12 +176,12 @@ namespace AW2.Game.Gobs
         {
             set
             {
-                if (weapons2 != null)
+                if (weapon2 != null)
                 {
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                        data.RemoveWeapon(weapons2);
+                        data.RemoveWeapon(weapon2);
                 }
-                weapons2 = CreateWeapons(value);
+                weapon2 = CreateWeapons(value);
             }
         }
 
@@ -192,7 +192,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                return weapons1.Loaded;
+                return weapon1.Loaded;
             }
         }
 
@@ -203,7 +203,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                return weapons2.Loaded;
+                return weapon2.Loaded;
             }
         }
 
@@ -242,8 +242,8 @@ namespace AW2.Game.Gobs
             this.thrustForce = 100;
             this.turnSpeed = 3;
             this.maxSpeed = 200;
-            this.weapons1 = null;
-            this.weapons2 = null;
+            this.weapon1 = null;
+            this.weapon2 = null;
             this.rollAngle = 0;
             this.rollMax = (float)MathHelper.PiOver4;
             this.rollSpeed = (float)(MathHelper.TwoPi / 2.0);
@@ -262,8 +262,8 @@ namespace AW2.Game.Gobs
         public Ship(string typeName)
             : base(typeName)
         {
-            this.weapons1 = null;
-            this.weapons2 = null;
+            this.weapon1 = null;
+            this.weapon2 = null;
             this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2Charge = this.weapon2ChargeMax;
         }
@@ -279,8 +279,8 @@ namespace AW2.Game.Gobs
         public Ship(string typeName, Player owner, Vector2 pos, string weapon1Name, string weapon2Name)
             : base(typeName, owner, pos, Vector2.Zero, Gob.defaultRotation)
         {
-            this.weapons1 = CreateWeapons(weapon1Name);
-            this.weapons2 = CreateWeapons(weapon2Name);
+            this.weapon1 = CreateWeapons(weapon1Name);
+            this.weapon2 = CreateWeapons(weapon2Name);
             this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2Charge = this.weapon2ChargeMax;
         }
@@ -370,8 +370,8 @@ namespace AW2.Game.Gobs
         public override void Dispose()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.RemoveWeapon(weapons1);
-            data.RemoveWeapon(weapons2);
+            data.RemoveWeapon(weapon1);
+            data.RemoveWeapon(weapon2);
             base.Dispose();
         }
 
@@ -456,10 +456,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire1()
         {
-            if (Weapon1Loaded && weapon1Charge >= weapons1.FireCharge)
+            if (Weapon1Loaded && weapon1Charge >= weapon1.FireCharge)
             {
-                weapon1Charge -= weapons1.FireCharge;
-                weapons1.Fire();
+                weapon1Charge -= weapon1.FireCharge;
+                weapon1.Fire();
             }
         }
 
@@ -468,10 +468,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire2()
         {
-            if (Weapon2Loaded && weapon2Charge >= weapons2.FireCharge)
+            if (Weapon2Loaded && weapon2Charge >= weapon2.FireCharge)
             {
-                weapon2Charge -= weapons2.FireCharge;
-                weapons2.Fire();
+                weapon2Charge -= weapon2.FireCharge;
+                weapon2.Fire();
             }
         }
 

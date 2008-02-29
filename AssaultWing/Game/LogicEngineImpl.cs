@@ -73,10 +73,9 @@ namespace AW2.Game
             bool doneFire1 = false;
             bool doneFire2 = false;
             bool doneExtra = false;
-            for (Event eve = eventer.GetEvent(typeof(PlayerControlEvent)); eve != null;
-                eve = eventer.GetEvent(typeof(PlayerControlEvent)))
+            for (PlayerControlEvent controlEve = eventer.GetEvent<PlayerControlEvent>(); controlEve != null;
+                controlEve = eventer.GetEvent<PlayerControlEvent>())
             {
-                PlayerControlEvent controlEve = (PlayerControlEvent)eve;
                 Player player = data.GetPlayer(controlEve.PlayerName);
                 if (player == null) continue;
                 switch (controlEve.ControlType)
@@ -123,6 +122,13 @@ namespace AW2.Game
                         throw new ArgumentException("Unexpected player control type " + 
                             Enum.GetName(typeof(PlayerControlType), controlEve.ControlType));
                 }
+            }
+
+            // Process bonus events.
+            for (BonusExpiryEvent eve = eventer.GetEvent<BonusExpiryEvent>(); eve != null;
+                eve = eventer.GetEvent<BonusExpiryEvent>())
+            {
+                // TODO: Bonus event handling.
             }
 
             // Update gobs.

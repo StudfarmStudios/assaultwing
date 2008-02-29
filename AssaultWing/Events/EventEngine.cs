@@ -22,5 +22,13 @@ namespace AW2.Events
         /// <param name="type">The type of event to get.</param>
         /// <returns>The oldest event of that type, or null if no such events are waiting.</returns>
         Event GetEvent(Type type);
-    }
+
+        /// <summary>
+        /// Returns the oldest event of the given type from the event queue,
+        /// or null if there are no events of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type of event to get.</typeparam>
+        /// <returns>The oldest event of that type, or null if no such events are waiting.</returns>
+        T GetEvent<T>() where T : Event;
+}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using AW2.Helpers;
 using Microsoft.Xna.Framework;
+using AW2.Events;
 
 namespace AW2.Game.Gobs
 {
@@ -73,20 +74,33 @@ namespace AW2.Game.Gobs
             Ship gobShip = gob as Ship;
             if (gobShip != null)
             {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                EventEngine eventer = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
                 switch (RandomHelper.GetRandomInt(3))
                 {
                     case 0: // Explosion
-                        DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                         Gob explosion = Gob.CreateGob("bomb explosion");
                         explosion.Pos = this.Pos;
                         data.AddGob(explosion);
                         break;
                     case 1: // Special weapon upgrade
+                    {
                         gobShip.Owner.UpgradeWeapon2();
-                        break;
-                    case 2: // Primary weapon load time upgrade
+                        TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
+                            + new TimeSpan((long)(10.0f * 10 * 1000 * 1000));
+                        BonusExpiryEvent bonusEve = new BonusExpiryEvent(gobShip.Owner.Name,
+                            PlayerBonus.Weapon2Upgrade, expiryTime);
+                        eventer.SendEvent(bonusEve);
+                    } break;
+                case 2: // Primary weapon load time upgrade
+                    {
                         gobShip.Owner.UpgradeWeapon1LoadTime();
-                        break;
+                        TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
+                            + new TimeSpan((long)(10.0f * 10 * 1000 * 1000));
+                        BonusExpiryEvent bonusEve = new BonusExpiryEvent(gobShip.Owner.Name,
+                            PlayerBonus.Weapon1LoadTime, expiryTime);
+                        eventer.SendEvent(bonusEve);
+                    } break;
                     default:
                         Log.Write("Bonus didn't do anything, programmer's mistake");
                         break;

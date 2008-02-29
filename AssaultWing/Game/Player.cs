@@ -27,6 +27,20 @@ namespace AW2.Game
         /// Secondary weapon's load time upgrade
         /// </summary>
         Weapon2LoadTime = 0x0002,
+
+        /// <summary>
+        /// Primary weapon upgrade
+        /// </summary>
+        /// This bonus is cumulative and the number of accumulated
+        /// primary weapon upgrades is not expressed in these flags.
+        Weapon1Upgrade = 0x0004,
+
+        /// <summary>
+        /// Secondary weapon upgrade
+        /// </summary>
+        /// This bonus is cumulative and the number of accumulated
+        /// secondary weapon upgrades is not expressed in these flags.
+        Weapon2Upgrade = 0x0008,
     }
 
     /// <summary>
@@ -81,6 +95,9 @@ namespace AW2.Game
         /// <summary>
         /// On/off bonuses that the player currently has.
         /// </summary>
+        /// <b>Weapon1Upgrade</b> and <b>Weapon2Upgrade</b> are not marked
+        /// in these flags. Instead, the number of accumulated weapon upgrades
+        /// is stored in <b>weapon1Upgrades</b> and <b>weapon2Upgrades</b>.
         /// <seealso cref="weapon1Upgrades"/>
         /// <seealso cref="weapon2Upgrades"/>
         PlayerBonus bonuses;
@@ -227,6 +244,17 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Removes an incremental upgrade from the player's primary weapon.
+        /// </summary>
+        public void DeupgradeWeapon1()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            weapon1Upgrades = Math.Max(weapon1Upgrades - 1, 0);
+            ship.Weapon1Name = Weapon1Name;
+        }
+
+        /// <summary>
         /// Adds an incremental upgrade on the player's secondary weapon.
         /// </summary>
         public void UpgradeWeapon2()
@@ -234,6 +262,17 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
+            ship.Weapon2Name = Weapon2Name;
+        }
+
+        /// <summary>
+        /// Removes an incremental upgrade from the player's secondary weapon.
+        /// </summary>
+        public void DeupgradeWeapon2()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            weapon2Upgrades = Math.Max(weapon2Upgrades - 1, 0);
             ship.Weapon2Name = Weapon2Name;
         }
 
@@ -249,11 +288,33 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Cancels a previous upgrade of primary weapon's load time.
+        /// </summary>
+        public void DeupgradeWeapon1LoadTime()
+        {
+            bonuses &= ~PlayerBonus.Weapon1LoadTime;
+
+            // Make our ship recreate its weapon.
+            ship.Weapon1Name = Weapon1Name;
+        }
+
+        /// <summary>
         /// Upgrades secondary weapon's load time.
         /// </summary>
         public void UpgradeWeapon2LoadTime()
         {
             bonuses |= PlayerBonus.Weapon2LoadTime;
+
+            // Make our ship recreate its weapon.
+            ship.Weapon2Name = Weapon2Name;
+        }
+
+        /// <summary>
+        /// Cancels a previous upgrade of secondary weapon's load time.
+        /// </summary>
+        public void DeupgradeWeapon2LoadTime()
+        {
+            bonuses &= ~PlayerBonus.Weapon2LoadTime;
 
             // Make our ship recreate its weapon.
             ship.Weapon2Name = Weapon2Name;

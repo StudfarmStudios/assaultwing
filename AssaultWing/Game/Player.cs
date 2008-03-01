@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AW2.Helpers;
 using AW2.UI;
 using Ship = AW2.Game.Gobs.Ship;
 using Microsoft.Xna.Framework;
@@ -44,6 +45,55 @@ namespace AW2.Game
         /// This bonus is cumulative and the number of accumulated
         /// secondary weapon upgrades is not expressed in these flags.
         Weapon2Upgrade = 0x0008,
+    }
+
+    /// <summary>
+    /// Times associated with bonuses of a player instance.
+    /// All times are measured in game time.
+    /// </summary>
+    public class PlayerBonusTimes
+    {
+        /// <summary>
+        /// Times of each type of player bonus, measured in game time.
+        /// Indexed by bit positions of single flags of <b>PlayerBonus</b>.
+        /// </summary>
+        TimeSpan[] times;
+
+        /// <summary>
+        /// Player bonus times, measured in game time.
+        /// </summary>
+        /// <param name="bonus">The player bonus.</param>
+        /// <returns>The time associated with the bonus.</returns>
+        public TimeSpan this[PlayerBonus bonus]
+        {
+            get
+            {
+                // Make sure we're initialised.
+                if (times == null)
+                    times = new TimeSpan[sizeof(int) * 8];
+
+                for (int bit = 0; bit < sizeof(int) * 8; ++bit)
+                    if (((int)bonus & (1 << bit)) != 0)
+                        return times[bit];
+                Log.Write("Warning: Unknown player bonus " + bonus);
+                return new TimeSpan();
+            }
+
+            set
+            {
+                // Make sure we're initialised.
+                if (times == null)
+                    times = new TimeSpan[sizeof(int) * 8];
+
+                for (int bit = 0; bit < sizeof(int) * 8; ++bit)
+                    if (((int)bonus & (1 << bit)) != 0)
+                    {
+                        times[bit] = value;
+                        return;
+                    }
+                Log.Write("Warning: Unknown player bonus " + bonus);
+            }
+        }
     }
 
     /// <summary>
@@ -98,12 +148,26 @@ namespace AW2.Game
         /// <summary>
         /// Bonuses that the player currently has.
         /// </summary>
-        /// <b>Weapon1Upgrade</b> and <b>Weapon2Upgrade</b> are not marked
-        /// in these flags. Instead, the number of accumulated weapon upgrades
+        /// <b>Weapon1Upgrade</b> and <b>Weapon2Upgrade</b> are set
+        /// if the player has one or more upgrades in the weapon. 
+        /// The number of accumulated weapon upgrades
         /// is stored in <b>weapon1Upgrades</b> and <b>weapon2Upgrades</b>.
         /// <seealso cref="weapon1Upgrades"/>
         /// <seealso cref="weapon2Upgrades"/>
         PlayerBonus bonuses;
+
+        /// <summary>
+        /// Starting times of the player's bonuses.
+        /// </summary>
+        /// Starting time is the time when the bonus was activated.
+        /// <seealso cref="PlayerBonus"/>
+        PlayerBonusTimes bonusTimeins;
+
+        /// <summary>
+        /// Ending times of the player's bonuses.
+        /// </summary>
+        /// <seealso cref="PlayerBonus"/>
+        PlayerBonusTimes bonusTimeouts;
 
         /// <summary>
         /// The player's controls for moving in menus and controlling his ship.
@@ -179,6 +243,17 @@ namespace AW2.Game
         /// </summary>
         public PlayerBonus Bonuses { get { return bonuses; } }
 
+        /// <summary>
+        /// Starting times of the player's bonuses.
+        /// </summary>
+        /// Starting time is the time at which the bonus was activated.
+        public PlayerBonusTimes BonusTimeins { get { return bonusTimeins; } set { bonusTimeins = value; } }
+
+        /// <summary>
+        /// Ending times of the player's bonuses.
+        /// </summary>
+        public PlayerBonusTimes BonusTimeouts { get { return bonusTimeouts; } set { bonusTimeouts = value; } }
+
         #endregion Player properties
 
         /// <summary>
@@ -200,6 +275,8 @@ namespace AW2.Game
             this.weapon1Upgrades = 0;
             this.weapon2Upgrades = 0;
             this.bonuses = PlayerBonus.None;
+            this.bonusTimeins = new PlayerBonusTimes();
+            this.bonusTimeouts = new PlayerBonusTimes();
             this.lives = 3;
         }
 
@@ -244,17 +321,19 @@ namespace AW2.Game
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
             ship.Weapon1Name = Weapon1Name;
+            bonuses |= PlayerBonus.Weapon1Upgrade;
         }
 
         /// <summary>
-        /// Removes an incremental upgrade from the player's primary weapon.
+        /// Removes all incremental upgrades from the player's primary weapon.
         /// </summary>
         public void DeupgradeWeapon1()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            weapon1Upgrades = Math.Max(weapon1Upgrades - 1, 0);
+            weapon1Upgrades = 0;
             ship.Weapon1Name = Weapon1Name;
+            bonuses &= ~PlayerBonus.Weapon1Upgrade;
         }
 
         /// <summary>
@@ -266,17 +345,19 @@ namespace AW2.Game
             Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
             ship.Weapon2Name = Weapon2Name;
+            bonuses |= PlayerBonus.Weapon2Upgrade;
         }
 
         /// <summary>
-        /// Removes an incremental upgrade from the player's secondary weapon.
+        /// Removes all incremental upgrades from the player's secondary weapon.
         /// </summary>
         public void DeupgradeWeapon2()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            weapon2Upgrades = Math.Max(weapon2Upgrades - 1, 0);
+            weapon2Upgrades = 0;
             ship.Weapon2Name = Weapon2Name;
+            bonuses &= ~PlayerBonus.Weapon2Upgrade;
         }
 
         /// <summary>

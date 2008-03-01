@@ -210,14 +210,18 @@ namespace AW2.Game.Gobs
                             break;
                     }
 
-                    // Send the timed event for undoing the bonus, if required.
                     if (playerBonus != PlayerBonus.None)
                     {
+                        // Send the timed event for undoing the bonus, if required.
                         TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
                             + new TimeSpan((long)(poss.duration * 10 * 1000 * 1000));
                         BonusExpiryEvent bonusEve = new BonusExpiryEvent(gobShip.Owner.Name,
                             playerBonus, expiryTime);
                         eventer.SendEvent(bonusEve);
+
+                        // Set the player's bonus timing.
+                        gobShip.Owner.BonusTimeins[playerBonus] = AssaultWing.Instance.GameTime.TotalGameTime;
+                        gobShip.Owner.BonusTimeouts[playerBonus] = expiryTime;
                     }
 
                     // We found the action, break out of the search.

@@ -468,8 +468,8 @@ namespace AW2.Graphics
             Vector2 bonusPos = new Vector2(viewport.InternalViewport.Width * 2,
                 viewport.InternalViewport.Height - overlays[(int)ViewportOverlay.BonusBackground].Height * bonusCount) / 2;
 
-            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad /* TODO: weapon icons */, PlayerBonus.Weapon1Upgrade, viewport.Player);
-            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad /* TODO: weapon icons */, PlayerBonus.Weapon2Upgrade, viewport.Player);
+            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */, PlayerBonus.Weapon1Upgrade, viewport.Player);
+            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */, PlayerBonus.Weapon2Upgrade, viewport.Player);
             DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon1LoadTime, PlayerBonus.Weapon1LoadTime, viewport.Player);
             DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon2LoadTime, PlayerBonus.Weapon2LoadTime, viewport.Player);
 

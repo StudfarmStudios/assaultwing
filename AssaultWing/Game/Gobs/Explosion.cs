@@ -24,6 +24,14 @@ namespace AW2.Game.Gobs
         Curve inflictDamage;
 
         /// <summary>
+        /// Momentum delivered by the explosion's shockwave, measured
+        /// in Newton seconds. The momentum is presented as 
+        /// a function of distance from the explosion.
+        /// </summary>
+        [TypeParameter]
+        Curve shockMomentum;
+
+        /// <summary>
         /// Names of the particle engines to create.
         /// </summary>
         [TypeParameter]
@@ -50,7 +58,12 @@ namespace AW2.Game.Gobs
             inflictDamage.PreLoop = CurveLoopType.Constant;
             inflictDamage.PostLoop = CurveLoopType.Constant;
             inflictDamage.Keys.Add(new CurveKey(0, 200, 0, 0, CurveContinuity.Smooth));
-            inflictDamage.Keys.Add(new CurveKey(300, 0, -10, -10, CurveContinuity.Smooth));
+            inflictDamage.Keys.Add(new CurveKey(300, 0, -3, -3, CurveContinuity.Smooth));
+            shockMomentum = new Curve();
+            shockMomentum.PreLoop = CurveLoopType.Constant;
+            shockMomentum.PostLoop = CurveLoopType.Constant;
+            shockMomentum.Keys.Add(new CurveKey(0, 6000, 0, 0, CurveContinuity.Smooth));
+            shockMomentum.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
             particleEngineNames = new string[] { "dummyparticleengine", };
             sound = SoundOptions.Action.Explosion;
         }
@@ -121,12 +134,26 @@ namespace AW2.Game.Gobs
         /// <param name="receptorName">The name of our colliding receptor area.</param>
         public override void Collide(ICollidable gob, string receptorName)
         {
-            IDamageable gobDamageable = gob as IDamageable;
-            if (gobDamageable != null)
+            if (receptorName == "Hit")
             {
-                float distance = gob.DistanceTo(this.Pos);
-                float damage = inflictDamage.Evaluate(distance);
-                gobDamageable.InflictDamage(damage);
+                IDamageable gobDamageable = gob as IDamageable;
+                if (gobDamageable != null)
+                {
+                    float distance = gob.DistanceTo(this.Pos);
+                    float damage = inflictDamage.Evaluate(distance);
+                    gobDamageable.InflictDamage(damage);
+                }
+            }
+            else if (receptorName == "Force")
+            {
+                Gob gobGob = gob as Gob;
+                if (gobGob != null && (gobGob.PhysicsApplyMode & PhysicsApplyMode.Move) != 0)
+                {
+                    Vector2 difference = gobGob.Pos - this.Pos;
+                    Vector2 momentum = Vector2.Normalize(difference) *
+                        shockMomentum.Evaluate(difference.Length());
+                    physics.ApplyMomentum(gobGob, momentum);
+                }
             }
         }
 

@@ -124,6 +124,7 @@ namespace AW2.Game
                 }
             }
 
+            /* UNDONE: Bonuses are more practical to handle straight by player's bonus time counters.
             // Process bonus events.
             for (BonusExpiryEvent eve = eventer.GetEvent<BonusExpiryEvent>(); eve != null;
                 eve = eventer.GetEvent<BonusExpiryEvent>())
@@ -150,6 +151,35 @@ namespace AW2.Game
                         break;
                 }
             }
+            */
+
+            // Player bonus expirations.
+            data.ForEachPlayer(delegate(Player player)
+            {
+                foreach (PlayerBonus playerBonus in Enum.GetValues(typeof(PlayerBonus)))
+                    if (playerBonus != PlayerBonus.None &&
+                        (player.Bonuses & playerBonus) != 0 &&
+                        player.BonusTimeouts[playerBonus] <= AssaultWing.Instance.GameTime.TotalGameTime)
+                        switch (playerBonus)
+                        {
+                            case PlayerBonus.Weapon1LoadTime:
+                                player.DeupgradeWeapon1LoadTime();
+                                break;
+                            case PlayerBonus.Weapon2LoadTime:
+                                player.DeupgradeWeapon2LoadTime();
+                                break;
+                            case PlayerBonus.Weapon1Upgrade:
+                                player.DeupgradeWeapon1();
+                                break;
+                            case PlayerBonus.Weapon2Upgrade:
+                                player.DeupgradeWeapon2();
+                                break;
+                            default:
+                                Helpers.Log.Write("Warning: Don't know how to handle expiration of player bonus " +
+                                    playerBonus);
+                                break;
+                        }
+            });
 
             // Update gobs.
             Action<Gob> updateGob = delegate(Gob gob)

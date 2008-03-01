@@ -69,6 +69,16 @@ namespace AW2.Graphics
             /// Player bonus duration meter.
             /// </summary>
             BonusDuration,
+
+            /// <summary>
+            /// Player bonus icon for primary weapon load time upgrade.
+            /// </summary>
+            BonusIconWeapon1LoadTime,
+
+            /// <summary>
+            /// Player bonus icon for secondary weapon load time upgrade.
+            /// </summary>
+            BonusIconWeapon2LoadTime,
         }
 
         /// <summary>
@@ -98,6 +108,8 @@ namespace AW2.Graphics
                 "gui_playerinfo_white_rect",
                 "gui_bonus_bg",
                 "gui_bonus_duration",
+                "b_icon_general",
+                "b_icon_general",
             };
             overlays = new Texture2D[Enum.GetValues(typeof(ViewportOverlay)).Length];
         }
@@ -456,10 +468,10 @@ namespace AW2.Graphics
             Vector2 bonusPos = new Vector2(viewport.InternalViewport.Width * 2,
                 viewport.InternalViewport.Height - overlays[(int)ViewportOverlay.BonusBackground].Height * bonusCount) / 2;
 
-            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad, PlayerBonus.Weapon1Upgrade, viewport.Player);
-            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad, PlayerBonus.Weapon2Upgrade, viewport.Player);
-            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad, PlayerBonus.Weapon1LoadTime, viewport.Player);
-            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad, PlayerBonus.Weapon2LoadTime, viewport.Player);
+            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad /* TODO: weapon icons */, PlayerBonus.Weapon1Upgrade, viewport.Player);
+            DrawBonusBox(ref bonusPos, ViewportOverlay.IconWeaponLoad /* TODO: weapon icons */, PlayerBonus.Weapon2Upgrade, viewport.Player);
+            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon1LoadTime, PlayerBonus.Weapon1LoadTime, viewport.Player);
+            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon2LoadTime, PlayerBonus.Weapon2LoadTime, viewport.Player);
 
             spriteBatch.End();
         }

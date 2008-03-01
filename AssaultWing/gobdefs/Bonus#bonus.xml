@@ -8,6 +8,23 @@
   <scale type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.12</scale>
   <deathGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
   </deathGobTypes>
+  <possibilities type="AW2.Game.Gobs.BonusActionPossibility[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Gobs.BonusActionPossibility, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</weight>
+      <action type="AW2.Game.Gobs.BonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Explode</action>
+      <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</duration>
+    </Item>
+    <Item type="AW2.Game.Gobs.BonusActionPossibility, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</weight>
+      <action type="AW2.Game.Gobs.BonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">UpgradeWeapon2</action>
+      <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10</duration>
+    </Item>
+    <Item type="AW2.Game.Gobs.BonusActionPossibility, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.5</weight>
+      <action type="AW2.Game.Gobs.BonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">UpgradeWeapon1LoadTime</action>
+      <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">15</duration>
+    </Item>
+  </possibilities>
   <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">General</name>

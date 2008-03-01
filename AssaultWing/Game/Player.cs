@@ -8,8 +8,11 @@ using Microsoft.Xna.Framework;
 namespace AW2.Game
 {
     /// <summary>
-    /// On/off bonuses that a player can have.
+    /// Bonuses that a player can have.
     /// </summary>
+    /// This enum is closely related to the enum BonusAction which lists
+    /// what can happen when a bonus is activated.
+    /// <seealso cref="AW2.Game.Gobs.BonusAction"/>
     [Flags]
     public enum PlayerBonus
     {
@@ -93,7 +96,7 @@ namespace AW2.Game
         int weapon2Upgrades;
 
         /// <summary>
-        /// On/off bonuses that the player currently has.
+        /// Bonuses that the player currently has.
         /// </summary>
         /// <b>Weapon1Upgrade</b> and <b>Weapon2Upgrade</b> are not marked
         /// in these flags. Instead, the number of accumulated weapon upgrades

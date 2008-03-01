@@ -92,7 +92,7 @@ namespace AW2.Game.Gobs
                             PlayerBonus.Weapon2Upgrade, expiryTime);
                         eventer.SendEvent(bonusEve);
                     } break;
-                case 2: // Primary weapon load time upgrade
+                    case 2: // Primary weapon load time upgrade
                     {
                         gobShip.Owner.UpgradeWeapon1LoadTime();
                         TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime

@@ -133,7 +133,7 @@ namespace AW2.Game.Gobs
             {
                 exhaustEngines[i].Position = new Vector3(GetNamedPosition(exhaustBoneIs[i]), 0);
                 ((DotEmitter)exhaustEngines[i].Emitter).Direction = Rotation + MathHelper.Pi;
-                if (physics.TimeStep.TotalGameTime < thrustEndTime)
+                if (physics.TimeStep.TotalGameTime >= thrustEndTime)
                     exhaustEngines[i].IsAlive = false;
             }
         }

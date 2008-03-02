@@ -35,6 +35,8 @@ namespace AW2.Game.Particles
         private TimeSpan nextBirth; // Time of next particle birth, in game time.
         [RuntimeState]
         private Vector3 position = new Vector3(0, 0, 0); //Position of the system
+        [RuntimeState]
+        private Vector3 movement = new Vector3(0, 0, 0); //Movement of the system
         [TypeParameter]
         private float depthLayer = 0.5f; // Depth layer for sprite draw order; 0 is front; 1 is back
         [TypeParameter]
@@ -154,6 +156,18 @@ namespace AW2.Game.Particles
 
                 if (emitter != null)
                     emitter.Position = value;
+            }
+        }
+
+        /// <summary>
+        /// Movement of the particle system.
+        /// </summary>
+        public Vector3 Movement
+        {
+            get { return movement; }
+            set
+            {
+                movement = value;
             }
         }
 
@@ -402,7 +416,7 @@ namespace AW2.Game.Particles
             emitter.EmittPosition(out position, out direction);
 
             particle.Position = position + this.Position;
-            particle.Velocity = direction * particleSpeed.GetRandomValue();
+            particle.Velocity = movement + direction * particleSpeed.GetRandomValue();
             particle.Acceleration = direction * particleAcceleration.GetRandomValue();
             particle.Mass = particleMass.GetRandomValue();
 

@@ -130,6 +130,14 @@ namespace AW2.Game.Gobs
         #region Ship fields related to other things
 
         /// <summary>
+        /// Armour of the ship as a function that maps
+        /// the amount of damage delivered to the ship
+        /// to the amount of damage the ship actually receives.
+        /// </summary>
+        [TypeParameter]
+        Curve armour;
+
+        /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
         /// </summary>
         bool exhaustAmountUpdated;
@@ -253,6 +261,14 @@ namespace AW2.Game.Gobs
             this.weapon2ChargeMax = 5000;
             this.weapon2ChargeSpeed = 500;
             this.weapon2Charge = this.weapon2ChargeMax;
+            this.armour = new Curve();
+            this.armour.PreLoop = CurveLoopType.Linear;
+            this.armour.PostLoop = CurveLoopType.Linear;
+            this.armour.Keys.Add(new CurveKey(-500, -500, 1, 500 * 1, CurveContinuity.Smooth));
+            this.armour.Keys.Add(new CurveKey(0, 0, 500 * 1, 10 * 0.3f, CurveContinuity.Smooth));
+            this.armour.Keys.Add(new CurveKey(10, 7, 10 * 1, 40 * 1, CurveContinuity.Smooth));
+            this.armour.Keys.Add(new CurveKey(50, 50, 40 * 1, 450 * 1, CurveContinuity.Smooth));
+            this.armour.Keys.Add(new CurveKey(500, 500, 450 * 1, 1, CurveContinuity.Smooth));
         }
 
         /// <summary>
@@ -535,6 +551,16 @@ namespace AW2.Game.Gobs
 
         #region IDamageable Members
         // Some members are implemented in class Gob.
+
+        /// <summary>
+        /// Inflicts damage on the entity.
+        /// </summary>
+        /// <param name="damageAmount">If positive, amount of damage;
+        /// if negative, amount of repair.</param>
+        public override void InflictDamage(float damageAmount)
+        {
+            base.InflictDamage(armour.Evaluate(damageAmount));
+        }
 
         #endregion
 

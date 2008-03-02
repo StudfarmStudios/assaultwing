@@ -748,7 +748,7 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             KeyValuePair<string, int>[] boneIs = GetNamedPositions("Thruster");
             if (boneIs.Length == 0)
-                Log.Write("Warning: Gob found no thrusters in its 3D model");
+                Log.Write("Warning: Gob (" + typeName + ") found no thrusters in its 3D model");
 
             // Create proper exhaust engines.
             int templates = exhaustEngineNames.Length;

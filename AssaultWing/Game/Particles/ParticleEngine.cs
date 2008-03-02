@@ -23,7 +23,7 @@ namespace AW2.Game.Particles
         [RuntimeState]
         private bool isAlive = true;
 
-        [RuntimeState]
+        [TypeParameter]
         private bool loop = false; //If the particle system is infinite or not
         [TypeParameter]
         private int totalNumberParticles = 0; //Particles emitted in the total lifetime of the system

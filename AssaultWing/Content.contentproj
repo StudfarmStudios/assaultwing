@@ -747,6 +747,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="models\bouncefire.X">
+      <Name>bouncefire</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\ParticleEngine#shotgunfire.xml">
       <Name>ParticleEngine#shotgunfire</Name>
       <Importer>XmlImporter</Importer>

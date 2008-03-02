@@ -21,6 +21,11 @@ namespace AW2.Graphics
         SpriteBatch spriteBatch;
 
         /// <summary>
+        /// The font to use for player view overlay text.
+        /// </summary>
+        SpriteFont overlayFont;
+
+        /// <summary>
         /// Type of player viewport overlay graphics.
         /// </summary>
         enum ViewportOverlay
@@ -125,6 +130,9 @@ namespace AW2.Graphics
             DataEngine data = (DataEngine)game.Services.GetService(typeof(DataEngine));
 
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
+
+            // Load fonts.
+            overlayFont = this.Game.Content.Load<SpriteFont>(System.IO.Path.Combine("fonts", "ConsoleFont"));
 
             // Loop through gob types and load all the 3D models and textures they need.
             data.ForEachTypeTemplate<Gob>(delegate(Gob gobTemplate)
@@ -468,10 +476,18 @@ namespace AW2.Graphics
             Vector2 bonusPos = new Vector2(viewport.InternalViewport.Width * 2,
                 viewport.InternalViewport.Height - overlays[(int)ViewportOverlay.BonusBackground].Height * bonusCount) / 2;
 
-            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */, PlayerBonus.Weapon1Upgrade, viewport.Player);
-            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */, PlayerBonus.Weapon2Upgrade, viewport.Player);
-            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon1LoadTime, PlayerBonus.Weapon1LoadTime, viewport.Player);
-            DrawBonusBox(ref bonusPos, ViewportOverlay.BonusIconWeapon2LoadTime, PlayerBonus.Weapon2LoadTime, viewport.Player);
+            DrawBonusBox(ref bonusPos, viewport.Player.Weapon1Name,
+                ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */,
+                PlayerBonus.Weapon1Upgrade, viewport.Player);
+            DrawBonusBox(ref bonusPos, viewport.Player.Weapon2Name, 
+                ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */, 
+                PlayerBonus.Weapon2Upgrade, viewport.Player);
+            DrawBonusBox(ref bonusPos, viewport.Player.Weapon1Name + "\nspeedloader",
+                ViewportOverlay.BonusIconWeapon1LoadTime, 
+                PlayerBonus.Weapon1LoadTime, viewport.Player);
+            DrawBonusBox(ref bonusPos, viewport.Player.Weapon2Name + "\nspeedloader",
+                ViewportOverlay.BonusIconWeapon2LoadTime, 
+                PlayerBonus.Weapon2LoadTime, viewport.Player);
 
             spriteBatch.End();
         }
@@ -481,11 +497,12 @@ namespace AW2.Graphics
         /// </summary>
         /// <param name="bonusPos">The position at which to draw the background.
         /// This is updated for the next bonus.</param>
+        /// <param name="bonusText">A short textual explanation of the bonus.</param>
         /// <param name="bonusIcon">The overlay texture of the bonus icon.</param>
         /// <param name="playerBonus">Which player bonus it is.</param>
         /// <param name="player">The player whose bonus it is.</param>
-        private void DrawBonusBox(ref Vector2 bonusPos, ViewportOverlay bonusIcon, 
-            PlayerBonus playerBonus, Player player)
+        private void DrawBonusBox(ref Vector2 bonusPos, string bonusText,
+            ViewportOverlay bonusIcon, PlayerBonus playerBonus, Player player)
         {
             if ((player.Bonuses & playerBonus) == 0)
                 return;
@@ -507,6 +524,11 @@ namespace AW2.Graphics
                 iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.Draw(overlays[(int)ViewportOverlay.BonusDuration],
                 durationPos, durationClip, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+            // Draw bonus text.
+            Vector2 textSize = overlayFont.MeasureString(bonusText);
+            Vector2 textPos = bonusPos - backgroundOrigin + new Vector2(32, 23.5f - textSize.Y / 2);
+            spriteBatch.DrawString(overlayFont, bonusText, textPos, Color.White);
 
             bonusPos += new Vector2(0, overlays[(int)ViewportOverlay.BonusBackground].Height);
         }

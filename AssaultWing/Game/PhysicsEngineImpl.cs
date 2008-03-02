@@ -742,6 +742,8 @@ namespace AW2.Game
                 OverlapperFlags.ConsiderColdness | OverlapperFlags.ConsiderConsistency;
             foreach (CollisionArea collArea2 in GetPhysicalOverlappers(gobCollidable1, flags))
             {
+                gobCollidable1.Collide(collArea2.Owner, "General");
+                collArea2.Owner.Collide(gobCollidable1, collArea2.Name);
                 PerformCollision(gobCollidable1, collArea2.Owner);
             }
         }

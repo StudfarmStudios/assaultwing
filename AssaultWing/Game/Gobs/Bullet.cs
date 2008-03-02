@@ -99,11 +99,17 @@ namespace AW2.Game.Gobs
             if (damaGob != null)
                 damaGob.InflictDamage(impactDamage);
 
-            Die();
+            // A casual bullet dies on any impact.
+            // A bullet with a physical collision area only bounces off
+            // collidables that don't receive damage.
+            if (damaGob != null || receptorName != "General")
+            {
+                Die();
 
-            // Fake safe position to make physical collisions happen.
-            // We can do this only because we know we're dead already.
-            HadSafePosition = true;
+                // Fake safe position to make physical collisions happen.
+                // We can do this only because we know we're dead already.
+                HadSafePosition = true;
+            }
         }
 
         #endregion

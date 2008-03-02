@@ -36,6 +36,8 @@ namespace AW2.Game.Particles
         [RuntimeState]
         private Vector3 position = new Vector3(0, 0, 0); //Position of the system
         [RuntimeState]
+        private Vector3 oldPosition = new Vector3(Single.NaN); //Previous position of the system
+        [RuntimeState]
         private Vector3 movement = new Vector3(0, 0, 0); //Movement of the system
         [TypeParameter]
         private float depthLayer = 0.5f; // Depth layer for sprite draw order; 0 is front; 1 is back
@@ -152,6 +154,9 @@ namespace AW2.Game.Particles
             get { return position; }
             set
             {
+                oldPosition = Single.IsNaN(oldPosition.X)
+                    ? value
+                    : position;
                 position = value;
 
                 if (emitter != null)
@@ -359,27 +364,30 @@ namespace AW2.Game.Particles
                     particles.RemoveAt(j);
             }
 
-            /* DEBUG print
-            if (_particles.Count > 0)
-            {
-                Log.Write("total age: " + _particles[0].TotalAge.ToString());
-                Log.Write("      age: " + _particles[0].Age.ToString());
-                Log.Write(" color: " + _particles[0].CurrentColor.ToString());
-                Log.Write("dcolor: " + _particles[0].DeltaColor.ToString());
-            }
-            */
-
             // Create new particles.
             if (isAlive && (loop || (!loop && (createdParticles < totalNumberParticles))))
             {
+                // Count how many to create.
+                int createCount = 0;
                 while (nextBirth <= gameTime.TotalGameTime)
                 {
-                    CreateParticle();
+                    ++createCount;
                     if (birthRate != 0)
                     {
                         long ticks = (long)(10 * 1000 * 1000 / birthRate);
                         nextBirth = nextBirth.Add(new TimeSpan(ticks));
                     }
+                }
+
+                // Create the particles at even spaces between oldPosition and position.
+                Vector3 startPos = this.oldPosition;
+                Vector3 endPos = this.position;
+                for (int i = 0; i < createCount; ++i)
+                {
+                    float weight = (i + 1) / (float)createCount;
+                    Vector3 iPos = Vector3.Lerp(startPos, endPos, weight);
+                    this.emitter.Position = this.position = iPos;
+                    CreateParticle();
                 }
             }
 

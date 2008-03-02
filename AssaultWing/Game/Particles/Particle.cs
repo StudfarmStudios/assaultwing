@@ -206,7 +206,7 @@ namespace AW2.Game.Particles
             acceleration += parent.Gravity * mass;
 
             velocity += acceleration * time;
-            velocity *= (float) Math.Pow(parent.DragForce, time);
+//            velocity *= (float) Math.Pow(parent.DragForce, time);
 
             float ageDone = totalAge - Math.Max(age, 0);
             float ageRatio = ageDone / totalAge;

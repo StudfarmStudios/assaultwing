@@ -528,6 +528,8 @@ namespace AW2.Graphics
             // Draw bonus text.
             Vector2 textSize = overlayFont.MeasureString(bonusText);
             Vector2 textPos = bonusPos - backgroundOrigin + new Vector2(32, 23.5f - textSize.Y / 2);
+            textPos.X = (float)Math.Round(textPos.X);
+            textPos.Y = (float)Math.Round(textPos.Y);
             spriteBatch.DrawString(overlayFont, bonusText, textPos, Color.White);
 
             bonusPos += new Vector2(0, overlays[(int)ViewportOverlay.BonusBackground].Height);

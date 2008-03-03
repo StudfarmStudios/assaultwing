@@ -97,6 +97,42 @@ namespace AW2.Graphics
         Texture2D[] overlays;
 
         /// <summary>
+        /// The X-movement curve of a bonux box that enters a player's
+        /// viewport overlay.
+        /// </summary>
+        /// The curve defines the relative X-coordinate (between 0 and 1)
+        /// of the bonus box in respect of time in seconds. 0 means the box is
+        /// not visible; 1 means the box is fully visible.
+        Curve bonusBoxEntry;
+
+        /// <summary>
+        /// The X-movement curve of a bonux box that leaves a player's
+        /// viewport overlay.
+        /// </summary>
+        /// The curve defines the relative X-coordinate (between 0 and 1)
+        /// of the bonus box in respect of time in seconds. 0 means the box is
+        /// not visible; 1 means the box is fully visible.
+        Curve bonusBoxExit;
+
+        /// <summary>
+        /// The Y-movement curve of a bonux box that is giving space for another
+        /// bonus box that is entering a player's viewport overlay.
+        /// </summary>
+        /// The curve defines the relative Y-coordinate (between 0 and 1)
+        /// of the bonus box in respect of time in seconds. 0 means the box is
+        /// still blocking the other box; 1 means the box has moved totally aside.
+        Curve bonusBoxAvoid;
+
+        /// <summary>
+        /// The Y-movement curve of a bonux box that is closing in space from another
+        /// bonus box that is leaving a player's viewport overlay.
+        /// </summary>
+        /// The curve defines the relative Y-coordinate (between 0 and 1)
+        /// of the bonus box in respect of time in seconds. 0 means the box is
+        /// still blocking the other box; 1 means the box has moved totally aside.
+        Curve bonusBoxClose;
+
+        /// <summary>
         /// Creates a new graphics engine.
         /// </summary>
         /// <param name="game">The Game to add the component to.</param>
@@ -117,6 +153,32 @@ namespace AW2.Graphics
                 "b_icon_general",
             };
             overlays = new Texture2D[Enum.GetValues(typeof(ViewportOverlay)).Length];
+            bonusBoxEntry = new Curve();
+            bonusBoxEntry.Keys.Add(new CurveKey(0, 0));
+            bonusBoxEntry.Keys.Add(new CurveKey(0.3f, 1));
+            bonusBoxEntry.Keys.Add(new CurveKey(0.9f, 1));
+            bonusBoxEntry.Keys.Add(new CurveKey(2.0f, 1));
+            bonusBoxEntry.ComputeTangents(CurveTangent.Smooth);
+            bonusBoxEntry.PostLoop = CurveLoopType.Constant;
+            bonusBoxExit = new Curve();
+            bonusBoxExit.Keys.Add(new CurveKey(0, 1));
+            bonusBoxExit.Keys.Add(new CurveKey(0.4f, 0.2f));
+            bonusBoxExit.Keys.Add(new CurveKey(1.0f, 0));
+            bonusBoxExit.ComputeTangents(CurveTangent.Smooth);
+            bonusBoxExit.PostLoop = CurveLoopType.Constant;
+            bonusBoxAvoid = new Curve();
+            bonusBoxAvoid.Keys.Add(new CurveKey(0, 0));
+            bonusBoxAvoid.Keys.Add(new CurveKey(0.2f, 0.8f));
+            bonusBoxAvoid.Keys.Add(new CurveKey(0.5f, 1));
+            bonusBoxAvoid.Keys.Add(new CurveKey(1.0f, 1));
+            bonusBoxAvoid.ComputeTangents(CurveTangent.Smooth);
+            bonusBoxAvoid.PostLoop = CurveLoopType.Constant;
+            bonusBoxClose = new Curve();
+            bonusBoxClose.Keys.Add(new CurveKey(0, 1));
+            bonusBoxClose.Keys.Add(new CurveKey(0.4f, 0.8f));
+            bonusBoxClose.Keys.Add(new CurveKey(1.0f, 0));
+            bonusBoxClose.ComputeTangents(CurveTangent.Smooth);
+            bonusBoxClose.PostLoop = CurveLoopType.Constant;
         }
 
         /// <summary>
@@ -467,48 +529,115 @@ namespace AW2.Graphics
                     new Vector2(0, overlays[(int)ViewportOverlay.IconWeaponLoad].Height) / 2,
                     1, SpriteEffects.None, 0);
 
-            // Bonus display. First we count how many bonuses there are to display
-            // in order to center the bonus boxes.
-            int bonusCount = 0;
-            for (int bit = 0; bit < sizeof(int) * 8; ++bit)
-                if (((int)viewport.Player.Bonuses & (1 << bit)) != 0)
-                    ++bonusCount;
-            Vector2 bonusPos = new Vector2(viewport.InternalViewport.Width * 2,
-                viewport.InternalViewport.Height - overlays[(int)ViewportOverlay.BonusBackground].Height * bonusCount) / 2;
+            // Draw bonus display.
+            Vector2 bonusBoxSize = new Vector2(overlays[(int)ViewportOverlay.BonusBackground].Width,
+                                               overlays[(int)ViewportOverlay.BonusBackground].Height);
 
-            DrawBonusBox(ref bonusPos, viewport.Player.Weapon1Name,
-                ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */,
-                PlayerBonus.Weapon1Upgrade, viewport.Player);
-            DrawBonusBox(ref bonusPos, viewport.Player.Weapon2Name, 
-                ViewportOverlay.BonusIconWeapon1LoadTime /* TODO: weapon icons */, 
-                PlayerBonus.Weapon2Upgrade, viewport.Player);
-            DrawBonusBox(ref bonusPos, viewport.Player.Weapon1Name + "\nspeedloader",
-                ViewportOverlay.BonusIconWeapon1LoadTime, 
-                PlayerBonus.Weapon1LoadTime, viewport.Player);
-            DrawBonusBox(ref bonusPos, viewport.Player.Weapon2Name + "\nspeedloader",
-                ViewportOverlay.BonusIconWeapon2LoadTime, 
-                PlayerBonus.Weapon2LoadTime, viewport.Player);
+            // 'bonusPos' lists bottom left coordinates of displayed bonus boxes
+            // relative to bonus box area top right corner, with the exception that
+            // the first coordinates are (0,0).
+            // The last Y coordinate will thus state the height of the whole bonus box area.
+            // 'bonusBonus' lists the types of bonuses whose coordinates are in 'bonusPos'.
+            List<Vector2> bonusPos = new List<Vector2>();
+            List<PlayerBonus> bonusBonus = new List<PlayerBonus>();
+            bonusPos.Add(Vector2.Zero);
+            bonusBonus.Add(PlayerBonus.None);
+            foreach (PlayerBonus bonus in Enum.GetValues(typeof(PlayerBonus)))
+            {
+                if (bonus == PlayerBonus.None) continue;
+
+                // Calculate bonus box position.
+                float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
+                    - viewport.BonusEntryTimeins[bonus].TotalSeconds);
+                Vector2 adjustment = viewport.BonusEntryPosAdjustments[bonus];
+                Vector2 curvePos = viewport.BonusEntryDirections[bonus]
+                    ? new Vector2(bonusBoxEntry.Evaluate(slideTime), bonusBoxAvoid.Evaluate(slideTime))
+                    : new Vector2(bonusBoxExit.Evaluate(slideTime), bonusBoxClose.Evaluate(slideTime));
+                Vector2 relativePos = new Vector2(
+                    adjustment.X + (1 - adjustment.X) * curvePos.X,
+                    adjustment.Y + (1 - adjustment.Y) * curvePos.Y);
+                Vector2 newBonusPos = new Vector2(-bonusBoxSize.X * relativePos.X,
+                        bonusPos[bonusPos.Count - 1].Y + bonusBoxSize.Y * relativePos.Y);
+
+                // React to changes in player's bonuses.
+                if ((viewport.Player.Bonuses & bonus) != 0 &&
+                    !viewport.BonusEntryDirections[bonus])
+                {
+                    viewport.BonusEntryDirections[bonus] = true;
+                    viewport.BonusEntryPosAdjustments[bonus] = relativePos;
+                    viewport.BonusEntryTimeins[bonus] = AssaultWing.Instance.GameTime.TotalGameTime;
+                }
+                if ((viewport.Player.Bonuses & bonus) == 0 &&
+                    viewport.BonusEntryDirections[bonus])
+                {
+                    viewport.BonusEntryDirections[bonus] = false;
+                    viewport.BonusEntryPosAdjustments[bonus] = Vector2.One - relativePos;
+                    viewport.BonusEntryTimeins[bonus] = AssaultWing.Instance.GameTime.TotalGameTime;
+                }
+
+                // Draw the box only if it's visible.
+                if (newBonusPos.X < 0)
+                {
+                    bonusBonus.Add(bonus);
+                    bonusPos.Add(newBonusPos);
+                }
+            }
+            Vector2 bonusBoxAreaTopRight = new Vector2(viewport.InternalViewport.Width * 2,
+                viewport.InternalViewport.Height - bonusPos[bonusPos.Count - 1].Y) / 2;
+            for (int i = 1; i < bonusBonus.Count; ++i)
+                DrawBonusBox(bonusPos[i] + bonusBoxAreaTopRight, bonusBonus[i], viewport.Player);
 
             spriteBatch.End();
         }
 
         /// <summary>
-        /// Draws a player bonus box if the player has the bonus.
+        /// Draws a player bonus box.
         /// </summary>
-        /// <param name="bonusPos">The position at which to draw the background.
-        /// This is updated for the next bonus.</param>
-        /// <param name="bonusText">A short textual explanation of the bonus.</param>
-        /// <param name="bonusIcon">The overlay texture of the bonus icon.</param>
+        /// <param name="bonusPos">The position at which to draw the background.</param>
         /// <param name="playerBonus">Which player bonus it is.</param>
         /// <param name="player">The player whose bonus it is.</param>
-        private void DrawBonusBox(ref Vector2 bonusPos, string bonusText,
-            ViewportOverlay bonusIcon, PlayerBonus playerBonus, Player player)
+        private void DrawBonusBox(Vector2 bonusPos, PlayerBonus playerBonus, Player player)
         {
-            if ((player.Bonuses & playerBonus) == 0)
-                return;
-            Vector2 backgroundOrigin = new Vector2(
-                overlays[(int)ViewportOverlay.BonusBackground].Width, 0);
+            // Figure out what to draw for this bonus.
+            string bonusText;
+            ViewportOverlay bonusIcon;
+            switch (playerBonus)
+            {
+                case PlayerBonus.Weapon1LoadTime:
+                    bonusText = player.Weapon1Name + "\nspeedloader";
+                    bonusIcon = ViewportOverlay.BonusIconWeapon1LoadTime;
+                    break;
+                case PlayerBonus.Weapon2LoadTime:
+                    bonusText = player.Weapon2Name + "\nspeedloader";
+                    bonusIcon = ViewportOverlay.BonusIconWeapon2LoadTime;
+                    break;
+                case PlayerBonus.Weapon1Upgrade:
+                    bonusText = player.Weapon1Name;
+                    bonusIcon = ViewportOverlay.BonusIconWeapon1LoadTime; // TODO: Weapon icons
+                    break;
+                case PlayerBonus.Weapon2Upgrade:
+                    bonusText = player.Weapon2Name;
+                    bonusIcon = ViewportOverlay.BonusIconWeapon1LoadTime; // TODO: Weapon icons
+                    break;
+                default:
+                    bonusText = "<unknown>";
+                    bonusIcon = ViewportOverlay.IconWeaponLoad;
+                    Log.Write("Warning: Don't know how to draw player bonus box " + playerBonus);
+                    break;
+            }
+
+            // Draw bonus box background.
+            Vector2 backgroundOrigin = new Vector2(0,
+                overlays[(int)ViewportOverlay.BonusBackground].Height);
+            spriteBatch.Draw(overlays[(int)ViewportOverlay.BonusBackground],
+                bonusPos, null, Color.White, 0, backgroundOrigin, 1, SpriteEffects.None, 0);
+
+            // Draw bonus icon.
             Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(112, 9);
+            spriteBatch.Draw(overlays[(int)bonusIcon],
+                iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+
+            // Draw bonus duration meter.
             float startSeconds = (float)player.BonusTimeins[playerBonus].TotalSeconds;
             float endSeconds = (float)player.BonusTimeouts[playerBonus].TotalSeconds;
             float nowSeconds = (float)AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds;
@@ -518,21 +647,16 @@ namespace AW2.Graphics
             Rectangle durationClip = new Rectangle(0, durationY,
                 overlays[(int)ViewportOverlay.BonusDuration].Width, durationHeight);
             Vector2 durationPos = bonusPos - backgroundOrigin + new Vector2(14, 8 + durationY);
-            spriteBatch.Draw(overlays[(int)ViewportOverlay.BonusBackground],
-                bonusPos, null, Color.White, 0, backgroundOrigin, 1, SpriteEffects.None, 0);
-            spriteBatch.Draw(overlays[(int)bonusIcon],
-                iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.Draw(overlays[(int)ViewportOverlay.BonusDuration],
                 durationPos, durationClip, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus text.
+            // Round coordinates for beautiful text.
             Vector2 textSize = overlayFont.MeasureString(bonusText);
             Vector2 textPos = bonusPos - backgroundOrigin + new Vector2(32, 23.5f - textSize.Y / 2);
             textPos.X = (float)Math.Round(textPos.X);
             textPos.Y = (float)Math.Round(textPos.Y);
             spriteBatch.DrawString(overlayFont, bonusText, textPos, Color.White);
-
-            bonusPos += new Vector2(0, overlays[(int)ViewportOverlay.BonusBackground].Height);
         }
 
         /// <summary>

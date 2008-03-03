@@ -48,6 +48,8 @@ namespace AW2.Graphics
     /// </summary>
     class PlayerViewport : AWViewport
     {
+        #region PlayerViewport fields
+
         /// <summary>
         /// The player we are following.
         /// </summary>
@@ -69,6 +71,30 @@ namespace AW2.Graphics
         protected Matrix projection;
 
         /// <summary>
+        /// Times, in game time, at which the player's bonus boxes started
+        /// sliding in to the player's viewport overlay or out of it.
+        /// </summary>
+        PlayerBonusItems<TimeSpan> bonusEntryTimeins;
+
+        /// <summary>
+        /// Start position X and Y adjustments for sliding bonus boxes, 
+        /// usually between 0 and 1. Value 0, the usual case, means that
+        /// the bonus box started sliding from the very beginning.
+        /// Value 0.5 means that the bonus started sliding midway between
+        /// the expected and the resulting position.
+        /// </summary>
+        PlayerBonusItems<Vector2> bonusEntryPosAdjustments;
+
+        /// <summary>
+        /// Which directions the player's bonus boxes are moving in.
+        /// <b>true</b> means entry movement;
+        /// <b>false</b> means exit movement.
+        /// </summary>
+        PlayerBonusItems<bool> bonusEntryDirections;
+
+        #endregion PlayerViewport fields
+
+        /// <summary>
         /// Creates a new player viewport.
         /// </summary>
         /// <param name="player">Which player the viewport will follow.</param>
@@ -85,9 +111,13 @@ namespace AW2.Graphics
             viewport.MaxDepth = 1f;
             view = Matrix.CreateLookAt(Vector3.Backward, Vector3.Zero, Vector3.Up);
             projection = Matrix.Identity;
+            bonusEntryTimeins = new PlayerBonusItems<TimeSpan>();
+            bonusEntryPosAdjustments = new PlayerBonusItems<Vector2>();
+            bonusEntryDirections = new PlayerBonusItems<bool>();
         }
 
-        public Viewport InternalViewport { get { return viewport; } }
+        #region PlayerViewport properties
+
         public Player Player { get { return player; } }
 
         public Vector2 ScreenUpperLeft
@@ -110,7 +140,37 @@ namespace AW2.Graphics
         /// </summary>
         public Vector2 WorldAreaMax { get { return new Vector2(
             player.Ship.Pos.X + viewport.Width / 2, 
-            player.Ship.Pos.Y + viewport.Height / 2); } }
+            player.Ship.Pos.Y + viewport.Height / 2); }
+        }
+
+
+        /// <summary>
+        /// Times, in game time, at which the player's bonus boxes started
+        /// sliding in to the player's viewport overlay or out of it.
+        /// </summary>
+        public PlayerBonusItems<TimeSpan> BonusEntryTimeins { get { return bonusEntryTimeins; } set { bonusEntryTimeins = value; } }
+
+        /// <summary>
+        /// Start position adjustments for sliding bonus boxes, 
+        /// usually between 0 and 1. Value 0, the usual case, means that
+        /// the bonus box started sliding from the very beginning.
+        /// Value 0.5 means that the bonus started sliding midway between
+        /// the expected and the resulting position.
+        /// </summary>
+        public PlayerBonusItems<Vector2> BonusEntryPosAdjustments { get { return bonusEntryPosAdjustments; } set { bonusEntryPosAdjustments = value; } }
+
+        /// <summary>
+        /// Which directions the player's bonus boxes are moving in.
+        /// <b>true</b> means entry movement;
+        /// <b>false</b> means exit movement.
+        /// </summary>
+        public PlayerBonusItems<bool> BonusEntryDirections { get { return bonusEntryDirections; } set { bonusEntryDirections = value; } }
+
+        #endregion PlayerViewport properties
+
+        #region AWViewport implementation
+
+        public Viewport InternalViewport { get { return viewport; } }
 
         public Matrix ViewMatrix
         {
@@ -172,5 +232,7 @@ namespace AW2.Graphics
                 return false;
             return true;
         }
+
+        #endregion AWViewport implementation
     }
 }

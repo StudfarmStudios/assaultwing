@@ -48,51 +48,50 @@ namespace AW2.Game
     }
 
     /// <summary>
-    /// Times associated with bonuses of a player instance.
-    /// All times are measured in game time.
+    /// A collection of values associated with bonuses of a player instance.
     /// </summary>
-    public class PlayerBonusTimes
+    public class PlayerBonusItems<T>
     {
         /// <summary>
-        /// Times of each type of player bonus, measured in game time.
+        /// Items associated with each type of player bonus.
         /// Indexed by bit positions of single flags of <b>PlayerBonus</b>.
         /// </summary>
-        TimeSpan[] times;
+        T[] items;
 
         /// <summary>
-        /// Player bonus times, measured in game time.
+        /// Items associated with player bonuses.
         /// </summary>
         /// <param name="bonus">The player bonus.</param>
-        /// <returns>The time associated with the bonus.</returns>
-        public TimeSpan this[PlayerBonus bonus]
+        /// <returns>The item associated with the bonus.</returns>
+        public T this[PlayerBonus bonus]
         {
             get
             {
-                // Make sure we're initialised.
-                if (times == null)
-                    times = new TimeSpan[sizeof(int) * 8];
-
                 for (int bit = 0; bit < sizeof(int) * 8; ++bit)
                     if (((int)bonus & (1 << bit)) != 0)
-                        return times[bit];
+                        return items[bit];
                 Log.Write("Warning: Unknown player bonus " + bonus);
-                return new TimeSpan();
+                return items[0];
             }
 
             set
             {
-                // Make sure we're initialised.
-                if (times == null)
-                    times = new TimeSpan[sizeof(int) * 8];
-
                 for (int bit = 0; bit < sizeof(int) * 8; ++bit)
                     if (((int)bonus & (1 << bit)) != 0)
                     {
-                        times[bit] = value;
+                        items[bit] = value;
                         return;
                     }
                 Log.Write("Warning: Unknown player bonus " + bonus);
             }
+        }
+
+        /// <summary>
+        /// Creates a new item collection for player bonuses.
+        /// </summary>
+        public PlayerBonusItems()
+        {
+            items = new T[sizeof(int) * 8];
         }
     }
 
@@ -161,13 +160,13 @@ namespace AW2.Game
         /// </summary>
         /// Starting time is the time when the bonus was activated.
         /// <seealso cref="PlayerBonus"/>
-        PlayerBonusTimes bonusTimeins;
+        PlayerBonusItems<TimeSpan> bonusTimeins;
 
         /// <summary>
         /// Ending times of the player's bonuses.
         /// </summary>
         /// <seealso cref="PlayerBonus"/>
-        PlayerBonusTimes bonusTimeouts;
+        PlayerBonusItems<TimeSpan> bonusTimeouts;
 
         /// <summary>
         /// The player's controls for moving in menus and controlling his ship.
@@ -247,12 +246,12 @@ namespace AW2.Game
         /// Starting times of the player's bonuses.
         /// </summary>
         /// Starting time is the time at which the bonus was activated.
-        public PlayerBonusTimes BonusTimeins { get { return bonusTimeins; } set { bonusTimeins = value; } }
+        public PlayerBonusItems<TimeSpan> BonusTimeins { get { return bonusTimeins; } set { bonusTimeins = value; } }
 
         /// <summary>
         /// Ending times of the player's bonuses.
         /// </summary>
-        public PlayerBonusTimes BonusTimeouts { get { return bonusTimeouts; } set { bonusTimeouts = value; } }
+        public PlayerBonusItems<TimeSpan> BonusTimeouts { get { return bonusTimeouts; } set { bonusTimeouts = value; } }
 
         #endregion Player properties
 
@@ -275,8 +274,8 @@ namespace AW2.Game
             this.weapon1Upgrades = 0;
             this.weapon2Upgrades = 0;
             this.bonuses = PlayerBonus.None;
-            this.bonusTimeins = new PlayerBonusTimes();
-            this.bonusTimeouts = new PlayerBonusTimes();
+            this.bonusTimeins = new PlayerBonusItems<TimeSpan>();
+            this.bonusTimeouts = new PlayerBonusItems<TimeSpan>();
             this.lives = 3;
         }
 

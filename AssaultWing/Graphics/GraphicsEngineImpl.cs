@@ -533,10 +533,11 @@ namespace AW2.Graphics
             Vector2 bonusBoxSize = new Vector2(overlays[(int)ViewportOverlay.BonusBackground].Width,
                                                overlays[(int)ViewportOverlay.BonusBackground].Height);
 
-            // 'bonusPos' lists bottom left coordinates of displayed bonus boxes
-            // relative to bonus box area top right corner, with the exception that
-            // the first coordinates are (0,0).
-            // The last Y coordinate will thus state the height of the whole bonus box area.
+            // 'bonusPos' lists bottom left coordinates of areas reserved for
+            // displayed bonus boxes relative to bonus box area top right corner,
+            // with the exception that the first coordinates are (0,0).
+            // Bonus boxes are then drawn vertically centered in these areas.
+            // The last Y coordinate will state the height of the whole reserved bonus box area.
             // 'bonusBonus' lists the types of bonuses whose coordinates are in 'bonusPos'.
             List<Vector2> bonusPos = new List<Vector2>();
             List<PlayerBonus> bonusBonus = new List<PlayerBonus>();
@@ -550,12 +551,32 @@ namespace AW2.Graphics
                 float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
                     - viewport.BonusEntryTimeins[bonus].TotalSeconds);
                 Vector2 adjustment = viewport.BonusEntryPosAdjustments[bonus];
-                Vector2 curvePos = viewport.BonusEntryDirections[bonus]
-                    ? new Vector2(bonusBoxEntry.Evaluate(slideTime), bonusBoxAvoid.Evaluate(slideTime))
-                    : new Vector2(bonusBoxExit.Evaluate(slideTime), bonusBoxClose.Evaluate(slideTime));
+                Vector2 curvePos, shift, scale;
+                if (viewport.BonusEntryDirections[bonus])
+                {   
+                    curvePos = new Vector2(bonusBoxEntry.Evaluate(slideTime), bonusBoxAvoid.Evaluate(slideTime));
+                    shift = new Vector2(adjustment.X - bonusBoxEntry.Evaluate(0),
+                        adjustment.Y - bonusBoxAvoid.Evaluate(0));
+                    scale = new Vector2((adjustment.X - bonusBoxEntry.Keys[bonusBoxEntry.Keys.Count - 1].Value)
+                        / (bonusBoxEntry.Evaluate(0) - bonusBoxEntry.Keys[bonusBoxEntry.Keys.Count - 1].Value),
+                        (adjustment.Y - bonusBoxAvoid.Keys[bonusBoxAvoid.Keys.Count - 1].Value)
+                        / (bonusBoxAvoid.Evaluate(0) - bonusBoxAvoid.Keys[bonusBoxAvoid.Keys.Count - 1].Value));
+                }
+                else
+                {
+                    curvePos = new Vector2(bonusBoxExit.Evaluate(slideTime), bonusBoxClose.Evaluate(slideTime));
+                    shift = new Vector2(adjustment.Y - bonusBoxExit.Evaluate(0),
+                        adjustment.Y - bonusBoxClose.Evaluate(0));
+                    scale = new Vector2((adjustment.X - bonusBoxExit.Keys[bonusBoxExit.Keys.Count - 1].Value)
+                        / (bonusBoxExit.Evaluate(0) - bonusBoxExit.Keys[bonusBoxExit.Keys.Count - 1].Value),
+                        (adjustment.Y - bonusBoxClose.Keys[bonusBoxClose.Keys.Count - 1].Value)
+                        / (bonusBoxClose.Evaluate(0) - bonusBoxClose.Keys[bonusBoxClose.Keys.Count - 1].Value));
+                }
                 Vector2 relativePos = new Vector2(
-                    adjustment.X + (1 - adjustment.X) * curvePos.X,
-                    adjustment.Y + (1 - adjustment.Y) * curvePos.Y);
+                    (curvePos.X + shift.X) * scale.X,
+                    (curvePos.Y + shift.Y) * scale.Y);
+                    //adjustment.X + (1 - adjustment.X) * curvePos.X,
+                    //adjustment.Y + (1 - adjustment.Y) * curvePos.Y);
                 Vector2 newBonusPos = new Vector2(-bonusBoxSize.X * relativePos.X,
                         bonusPos[bonusPos.Count - 1].Y + bonusBoxSize.Y * relativePos.Y);
 
@@ -571,7 +592,7 @@ namespace AW2.Graphics
                     viewport.BonusEntryDirections[bonus])
                 {
                     viewport.BonusEntryDirections[bonus] = false;
-                    viewport.BonusEntryPosAdjustments[bonus] = Vector2.One - relativePos;
+                    viewport.BonusEntryPosAdjustments[bonus] = relativePos;
                     viewport.BonusEntryTimeins[bonus] = AssaultWing.Instance.GameTime.TotalGameTime;
                 }
 
@@ -585,7 +606,11 @@ namespace AW2.Graphics
             Vector2 bonusBoxAreaTopRight = new Vector2(viewport.InternalViewport.Width * 2,
                 viewport.InternalViewport.Height - bonusPos[bonusPos.Count - 1].Y) / 2;
             for (int i = 1; i < bonusBonus.Count; ++i)
-                DrawBonusBox(bonusPos[i] + bonusBoxAreaTopRight, bonusBonus[i], viewport.Player);
+            {
+                Vector2 leftMiddlePoint = new Vector2(bonusPos[i].X + bonusBoxAreaTopRight.X,
+                    MathHelper.Lerp(bonusPos[i].Y + bonusBoxAreaTopRight.Y, bonusPos[i - 1].Y + bonusBoxAreaTopRight.Y, 0.5f));
+                DrawBonusBox(leftMiddlePoint, bonusBonus[i], viewport.Player);
+            }
 
             spriteBatch.End();
         }
@@ -593,7 +618,8 @@ namespace AW2.Graphics
         /// <summary>
         /// Draws a player bonus box.
         /// </summary>
-        /// <param name="bonusPos">The position at which to draw the background.</param>
+        /// <param name="bonusPos">The position at which to draw 
+        /// the background's left middle point.</param>
         /// <param name="playerBonus">Which player bonus it is.</param>
         /// <param name="player">The player whose bonus it is.</param>
         private void DrawBonusBox(Vector2 bonusPos, PlayerBonus playerBonus, Player player)
@@ -628,7 +654,7 @@ namespace AW2.Graphics
 
             // Draw bonus box background.
             Vector2 backgroundOrigin = new Vector2(0,
-                overlays[(int)ViewportOverlay.BonusBackground].Height);
+                overlays[(int)ViewportOverlay.BonusBackground].Height) / 2;
             spriteBatch.Draw(overlays[(int)ViewportOverlay.BonusBackground],
                 bonusPos, null, Color.White, 0, backgroundOrigin, 1, SpriteEffects.None, 0);
 

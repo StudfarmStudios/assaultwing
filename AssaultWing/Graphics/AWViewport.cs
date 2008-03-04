@@ -77,11 +77,10 @@ namespace AW2.Graphics
         PlayerBonusItems<TimeSpan> bonusEntryTimeins;
 
         /// <summary>
-        /// Start position X and Y adjustments for sliding bonus boxes, 
-        /// usually between 0 and 1. Value 0, the usual case, means that
-        /// the bonus box started sliding from the very beginning.
-        /// Value 0.5 means that the bonus started sliding midway between
-        /// the expected and the resulting position.
+        /// Start position relative X and Y adjustments for sliding bonus boxes, 
+        /// usually between 0 and 1. The adjustment is the relative coordinate
+        /// at which the box was when it started its current movement.
+        /// Normally this is 0 for entering boxes and 1 for exiting boxes.
         /// </summary>
         PlayerBonusItems<Vector2> bonusEntryPosAdjustments;
 

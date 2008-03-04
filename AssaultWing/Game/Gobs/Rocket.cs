@@ -37,7 +37,7 @@ namespace AW2.Game.Gobs
         /// Duration of thrust, measured in seconds.
         /// </summary>
         [TypeParameter]
-        float thurstDuration;
+        float thrustDuration;
 
         /// <summary>
         /// Maximum turning speed of the rocket, measured in radians per second.
@@ -66,7 +66,7 @@ namespace AW2.Game.Gobs
                 new Vector2(-5,5),
                 new Vector2(7,0)});
             this.thrustForce = 100;
-            this.thurstDuration = 2;
+            this.thrustDuration = 2;
             this.turnSpeed = 5;
             this.thrustEndTime = new TimeSpan(0,0,0,9);
         }
@@ -79,7 +79,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             double endTicks = 10 * 1000 * 1000 *
-                (physics.TimeStep.TotalGameTime.TotalSeconds + this.thurstDuration);
+                (physics.TimeStep.TotalGameTime.TotalSeconds + this.thrustDuration);
             this.thrustEndTime = new TimeSpan((long)endTicks);
             base.physicsApplyMode = PhysicsApplyMode.All | PhysicsApplyMode.ReceptorCollidesPhysically;
         }

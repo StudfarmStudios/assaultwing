@@ -379,6 +379,9 @@ namespace AW2.Game.Particles
                     }
                 }
 
+                if (!loop)
+                    createCount = Math.Min(createCount, totalNumberParticles - createdParticles);
+
                 // Create the particles at even spaces between oldPosition and position.
                 Vector3 startPos = this.oldPosition;
                 Vector3 endPos = this.position;

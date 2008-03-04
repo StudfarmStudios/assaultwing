@@ -306,8 +306,8 @@ namespace AW2
             plr2Controls.left = new KeyboardKey(Keys.A);
             plr2Controls.right = new KeyboardKey(Keys.D);
             plr2Controls.down = new KeyboardKey(Keys.X);
-            plr2Controls.fire1 = new KeyboardKey(Keys.D1);
-            plr2Controls.fire2 = new KeyboardKey(Keys.Tab);
+            plr2Controls.fire1 = new KeyboardKey(Keys.LeftControl);
+            plr2Controls.fire2 = new KeyboardKey(Keys.LeftShift);
             plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
 
             Player player1 = new Player("Kaiser Lohengramm", "Hyperion", "peashooter", "rockets", plr1Controls);

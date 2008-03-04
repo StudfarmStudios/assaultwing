@@ -16,7 +16,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The gravitational acceleration vector of the gravitational pull, in m/s^2.
         /// </summary>
-        [Helpers.TypeParameter]
+        [Helpers.RuntimeState]
         Vector2 force;
 
         /// <summary>

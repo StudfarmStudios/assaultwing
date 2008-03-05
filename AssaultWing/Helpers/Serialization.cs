@@ -211,7 +211,7 @@ namespace AW2.Helpers
             if (reader.IsEmptyElement)
             {
                 reader.Read();
-                return Activator.CreateInstance(writtenType);
+                return Serialization.CreateInstance(writtenType);
             }
             reader.Read();
             object returnValue;

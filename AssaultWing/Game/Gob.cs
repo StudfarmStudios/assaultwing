@@ -109,6 +109,12 @@ namespace AW2.Game
         float scale;
 
         /// <summary>
+        /// Types of gobs to create on birth.
+        /// </summary>
+        [TypeParameter]
+        string[] birthGobTypes;
+
+        /// <summary>
         /// Types of gobs to create on death.
         /// </summary>
         /// You might want to put some gob types of subclass Explosion here.
@@ -367,6 +373,8 @@ namespace AW2.Game
             this.mass = 1;
             this.modelName = "dummymodel";
             this.scale = 1f;
+            this.birthGobTypes = new string[] {
+            };
             this.deathGobTypes = new string[] {
                 "explosion",
             };
@@ -522,6 +530,16 @@ namespace AW2.Game
         /// an ongoing play of the game.
         public virtual void Activate()
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
+            // Create birth gobs.
+            foreach (string gobType in birthGobTypes)
+            {
+                Gob gob = CreateGob(gobType);
+                gob.Pos = this.Pos;
+                gob.Rotation = this.Rotation;
+                data.AddGob(gob);
+            }
         }
 
         /// <summary>

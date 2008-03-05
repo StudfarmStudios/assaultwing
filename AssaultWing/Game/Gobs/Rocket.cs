@@ -97,6 +97,8 @@ namespace AW2.Game.Gobs
             CreateExhaustEngines();
             foreach (ParticleEngine engine in exhaustEngines)
                 engine.IsAlive = true;
+
+            base.Activate();
         }
 
         /// <summary>

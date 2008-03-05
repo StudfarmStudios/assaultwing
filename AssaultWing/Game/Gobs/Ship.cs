@@ -340,6 +340,8 @@ namespace AW2.Game.Gobs
         {
             this.CreateExhaustEngines();
             this.exhaustAmountUpdated = false;
+
+            base.Activate();
         }
 
         /// <summary>

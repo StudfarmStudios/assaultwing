@@ -100,6 +100,8 @@ namespace AW2.Game.Gobs
                 particleEngines[i].Position = new Vector3(this.Pos, 0);
                 data.AddParticleEngine(particleEngines[i]);
             }
+
+            base.Activate();
         }
 
         /// <summary>

@@ -318,8 +318,13 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            int oldWeapon1Upgrades = weapon1Upgrades;
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
-            ship.Weapon1Name = Weapon1Name;
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon1Upgrades != weapon1Upgrades)
+                ship.Weapon1Name = Weapon1Name;
+
             bonuses |= PlayerBonus.Weapon1Upgrade;
         }
 
@@ -330,8 +335,13 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            int oldWeapon1Upgrades = weapon1Upgrades;
             weapon1Upgrades = 0;
-            ship.Weapon1Name = Weapon1Name;
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon1Upgrades != weapon1Upgrades)
+                ship.Weapon1Name = Weapon1Name;
+
             bonuses &= ~PlayerBonus.Weapon1Upgrade;
         }
 
@@ -342,8 +352,13 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
+            int oldWeapon2Upgrades = weapon2Upgrades;
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
-            ship.Weapon2Name = Weapon2Name;
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon2Upgrades != weapon2Upgrades)
+                ship.Weapon2Name = Weapon2Name;
+
             bonuses |= PlayerBonus.Weapon2Upgrade;
         }
 
@@ -354,8 +369,13 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            int oldWeapon2Upgrades = weapon2Upgrades;
             weapon2Upgrades = 0;
-            ship.Weapon2Name = Weapon2Name;
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon2Upgrades != weapon2Upgrades)
+                ship.Weapon2Name = Weapon2Name;
+
             bonuses &= ~PlayerBonus.Weapon2Upgrade;
         }
 

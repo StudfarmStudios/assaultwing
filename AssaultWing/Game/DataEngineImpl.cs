@@ -286,6 +286,7 @@ namespace AW2.Game
         /// <param name="weapon">Weapon to remove from the update and draw cycle.</param>
         public void RemoveWeapon(Weapon weapon)
         {
+            weapon.Dispose();
             weapons.Remove(weapon);
         }
 

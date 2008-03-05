@@ -271,6 +271,19 @@ namespace AW2.Game.Weapons
             }
         }
 
+        /// <summary>
+        /// Releases all resources allocated by the weapon.
+        /// </summary>
+        public override void Dispose()
+        {
+            // Kill existing shots if any exist and there is danger that 
+            // they won't die soon by themselves.
+            if (fireAction == FireAction.KillAll && liveShots.Count > 0)
+            {
+                foreach (Gob gob in liveShots)
+                    gob.Die();
+            }
+        }
         #region IConsistencyCheckable Members
 
         /// <summary>

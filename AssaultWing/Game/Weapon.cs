@@ -266,6 +266,8 @@ namespace AW2.Game
             }
         }
 
+        #region Weapon public methods
+
         /// <summary>
         /// Fires the weapon.
         /// </summary>
@@ -275,6 +277,15 @@ namespace AW2.Game
         /// Updates the weapon's state and performs actions true to its nature.
         /// </summary>
         public abstract void Update();
+
+        /// <summary>
+        /// Releases all resources allocated by the weapon.
+        /// </summary>
+        public abstract void Dispose();
+
+        #endregion Weapon public methods
+
+        #region Weapon protected methods
 
         /// <summary>
         /// Prepares the weapon for firing.
@@ -316,5 +327,7 @@ namespace AW2.Game
             long ticks = (long)(10 * 1000 * 1000 * loadTime);
             loadedTime = physics.TimeStep.TotalGameTime.Add(new TimeSpan(ticks));
         }
+
+        #endregion Weapon protected methods
     }
 }

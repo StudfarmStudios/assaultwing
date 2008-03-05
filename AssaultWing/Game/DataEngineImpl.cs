@@ -216,6 +216,13 @@ namespace AW2.Game
         /// <param name="gob">The gob to remove.</param>
         public void RemoveGob(Gob gob)
         {
+            // HACK: We treat particle engines specially, although they are gobs.
+            if (gob is ParticleEngine)
+            {
+                RemoveParticleEngine((ParticleEngine)gob);
+                return;
+            }
+
             removedGobs.Add(gob);
         }
 

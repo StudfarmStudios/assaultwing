@@ -379,9 +379,12 @@ namespace AW2.Game.Particles
             // Update ourselves
             if (leader != null)
             {
-                // Let go of a dead leader.
+                // Die by our dead leader.
                 if (leader.Dead)
+                {
+                    Die();
                     leader = null;
+                }
                 else
                 {
                     pos = leader.Pos;
@@ -434,8 +437,17 @@ namespace AW2.Game.Particles
                 }
             }
 
-            if (particles.Count == 0)
-                isAlive = false;
+            if (!loop && createdParticles >= totalNumberParticles && particles.Count == 0)
+                Die();
+        }
+
+        
+        /// <summary>
+        /// Kills the gob, i.e. performs a death ritual and removes the gob from the game world.
+        /// </summary>
+        public override void Die()
+        {
+            IsAlive = false;
         }
 
         #endregion

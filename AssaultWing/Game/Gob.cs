@@ -538,6 +538,8 @@ namespace AW2.Game
                 Gob gob = CreateGob(gobType);
                 gob.Pos = this.Pos;
                 gob.Rotation = this.Rotation;
+                if (gob is ParticleEngine)
+                    ((ParticleEngine)gob).Leader = this;
                 data.AddGob(gob);
             }
         }

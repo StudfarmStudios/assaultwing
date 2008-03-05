@@ -366,7 +366,7 @@ namespace AW2.Game.Gobs
             UpdateModelPartTransforms(model);
             for (int i = 0; i < exhaustEngines.Length; ++i)
             {
-                exhaustEngines[i].Position = new Vector3(GetNamedPosition(exhaustBoneIs[i]), 0);
+                exhaustEngines[i].Pos = GetNamedPosition(exhaustBoneIs[i]);
                 ((DotEmitter)exhaustEngines[i].Emitter).Direction = Rotation + MathHelper.Pi;
                 if (!exhaustAmountUpdated)
                     exhaustEngines[i].IsAlive = false;

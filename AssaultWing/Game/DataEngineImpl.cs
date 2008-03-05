@@ -199,6 +199,13 @@ namespace AW2.Game
         /// <param name="gob">The gob to add.</param>
         public void AddGob(Gob gob)
         {
+            // HACK: We treat particle engines specially, although they are gobs.
+            if (gob is ParticleEngine)
+            {
+                AddParticleEngine((ParticleEngine)gob);
+                return;
+            }
+
             addedGobs.Add(gob);
             gob.Activate();
         }
@@ -246,6 +253,7 @@ namespace AW2.Game
         public void AddParticleEngine(ParticleEngine pEng)
         {
             particleEngines.AddLast(pEng);
+            pEng.Activate();
         }
 
         /// <summary>

@@ -75,13 +75,13 @@ namespace AW2.Game
         /// Position of the gob in the game world.
         /// </summary>
         [RuntimeState]
-        Vector2 pos;
+        protected Vector2 pos;
 
         /// <summary>
         /// Movement vector of the gob.
         /// </summary>
         [RuntimeState]
-        Vector2 move;
+        protected Vector2 move;
 
         /// <summary>
         /// Gob rotation around the Z-axis in radians.
@@ -243,7 +243,7 @@ namespace AW2.Game
         /// <summary>
         /// Get or set the gob position in the game world.
         /// </summary>
-        public Vector2 Pos
+        public virtual Vector2 Pos
         {
             get { return pos; }
             set
@@ -625,9 +625,12 @@ namespace AW2.Game
         /// <summary>
         /// Draws the gob.
         /// </summary>
+        /// Assumes that the sprite batch has been Begun already and will be
+        /// Ended later by someone else.
         /// <param name="view">The view matrix.</param>
         /// <param name="projection">The projection matrix.</param>
-        public virtual void Draw(Matrix view, Matrix projection)
+        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
+        public virtual void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Model model = data.GetModel(modelName);

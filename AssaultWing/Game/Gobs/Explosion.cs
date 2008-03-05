@@ -97,7 +97,7 @@ namespace AW2.Game.Gobs
             for (int i = 0; i < particleEngineNames.Length; ++i)
             {
                 particleEngines[i] = new ParticleEngine(particleEngineNames[i]);
-                particleEngines[i].Position = new Vector3(this.Pos, 0);
+                particleEngines[i].Pos = this.Pos;
                 data.AddParticleEngine(particleEngines[i]);
             }
 
@@ -119,9 +119,12 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Draws the gob.
         /// </summary>
+        /// Assumes that the sprite batch has been Begun already and will be
+        /// Ended later by someone else.
         /// <param name="view">The view matrix.</param>
         /// <param name="projection">The projection matrix.</param>
-        public override void Draw(Microsoft.Xna.Framework.Matrix view, Microsoft.Xna.Framework.Matrix projection)
+        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
+        public override void Draw(Matrix view, Matrix projection, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
         {
             // Our particle engines do the visual stuff.
         }

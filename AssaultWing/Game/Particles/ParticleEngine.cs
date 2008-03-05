@@ -12,14 +12,12 @@ namespace AW2.Game.Particles
     /// Represents a group of particles with a specific behavior
     /// </summary>
     [LimitedSerialization]
-    public class ParticleEngine
+    public class ParticleEngine : Gob
     {
         #region Fields
 
         //SYSTEM SETTINGS 
         private int id = -1;
-        [TypeParameter]
-        private string typeName = "dummyParticleEngine";
         [RuntimeState]
         private bool isAlive = true;
 
@@ -34,9 +32,7 @@ namespace AW2.Game.Particles
         [RuntimeState]
         private TimeSpan nextBirth; // Time of next particle birth, in game time.
         [RuntimeState]
-        private Vector3 position = new Vector3(0, 0, 0); //Position of the system
-        [RuntimeState]
-        private Vector3 oldPosition = new Vector3(Single.NaN); //Previous position of the system
+        private Vector2 oldPosition = new Vector2(Single.NaN); //Previous position of the system
         [RuntimeState]
         private Vector3 movement = new Vector3(0, 0, 0); //Movement of the system
         [TypeParameter]
@@ -49,6 +45,8 @@ namespace AW2.Game.Particles
         private Vector3 gravity = new Vector3(0, 0, 0); //Gravity for the particles of the system
         [TypeParameter]
         private string textureName = "dummytexture"; // Name of texture for particles
+
+        Gob leader = null; // The leader who we follow, or null.
 
         //PARTICLES DATA
         [TypeParameter]
@@ -93,11 +91,6 @@ namespace AW2.Game.Particles
             get { return id; }
             internal set { id = value; }
         }
-
-        /// <summary>
-        /// Name of the particle engine type.
-        /// </summary>
-        public string TypeName { get { return typeName; } }
 
         /// <summary>
         /// IsAlive is set to false when no particles exist in this system.
@@ -149,18 +142,17 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Center of the particle system. This is where the emitter will be centered.
         /// </summary>
-        public Vector3 Position
+        public override Vector2 Pos
         {
-            get { return position; }
             set
             {
                 oldPosition = Single.IsNaN(oldPosition.X)
                     ? value
-                    : position;
-                position = value;
+                    : pos;
+                pos = value;
 
                 if (emitter != null)
-                    emitter.Position = value;
+                    emitter.Position = new Vector3(value,0);
             }
         }
 
@@ -185,7 +177,7 @@ namespace AW2.Game.Particles
             set
             {
                 emitter = value;
-                emitter.Position = position;
+                emitter.Position = new Vector3(pos,0);
             }
         }
 
@@ -214,6 +206,29 @@ namespace AW2.Game.Particles
         {
             get { return textureName; }
             set { textureName = value; }
+        }
+
+        /// <summary>
+        /// Names of all textures that this gob type will ever use.
+        /// </summary>
+        public override List<string> TextureNames
+        {
+            get
+            {
+                List<string> textureNames = base.TextureNames;
+                textureNames.Add(textureName);
+                return textureNames;
+            }
+        }
+
+        /// <summary>
+        /// The leader who the particle system follows,
+        /// or <b>null</b> if the particle system is not following anyone.
+        /// </summary>
+        public Gob Leader
+        {
+            get { return leader; }
+            set { leader = value; }
         }
 
         /// <summary>
@@ -313,8 +328,6 @@ namespace AW2.Game.Particles
         /// Creates particle source with default parameters. Should be given an emitter.
         /// </summary>
         public ParticleEngine() {
-            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-            nextBirth = physics.TimeStep.TotalGameTime;
         }
 
         /// <summary>
@@ -329,15 +342,12 @@ namespace AW2.Game.Particles
         {
             // Initialise fields from the gob type's template.
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            ParticleEngine template = (ParticleEngine)data.GetTypeTemplate(typeof(ParticleEngine), typeName);
+            ParticleEngine template = (ParticleEngine)data.GetTypeTemplate(typeof(Gob), typeName);
             if (template.GetType() != this.GetType())
                 throw new Exception("Silly programmer tries to create a particle engine (type " +
                     typeName + ") using a wrong class (" + this.GetType().Name + ")");
             foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
                 field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
-        
-            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-            nextBirth = physics.TimeStep.TotalGameTime;
         }
 
         #endregion
@@ -345,12 +355,41 @@ namespace AW2.Game.Particles
         #region Methods
 
         /// <summary>
+        /// Activates the gob, i.e. performs an initialisation rite.
+        /// </summary>
+        /// DataEngine will call this method to make the gob do necessary 
+        /// initialisations to make it fully functional on addition to 
+        /// an ongoing play of the game.
+        public override void Activate()
+        {
+            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
+            nextBirth = physics.TimeStep.TotalGameTime;
+
+            base.Activate();
+        }
+
+        /// <summary>
         /// Updating a particle system consists in updating each particle's age, and then
         /// create and destroy particles
         /// </summary>
-        /// <param name="gameTime"></param>
-        public void Update(GameTime gameTime)
+        public override void Update()
         {
+            GameTime gameTime = AssaultWing.Instance.GameTime;
+
+            // Update ourselves
+            if (leader != null)
+            {
+                // Let go of a dead leader.
+                if (leader.Dead)
+                    leader = null;
+                else
+                {
+                    pos = leader.Pos;
+                    if (emitter != null && emitter is DotEmitter)
+                        ((DotEmitter)emitter).Direction = leader.Rotation;
+                }
+            }
+
             //Update the particles
             int j = 0;
             while (j < particles.Count)
@@ -382,14 +421,15 @@ namespace AW2.Game.Particles
                 if (!loop)
                     createCount = Math.Min(createCount, totalNumberParticles - createdParticles);
 
-                // Create the particles at even spaces between oldPosition and position.
-                Vector3 startPos = this.oldPosition;
-                Vector3 endPos = this.position;
+                // Create the particles at even spaces between oldPosition and pos.
+                Vector2 startPos = this.oldPosition;
+                Vector2 endPos = this.pos;
                 for (int i = 0; i < createCount; ++i)
                 {
                     float weight = (i + 1) / (float)createCount;
-                    Vector3 iPos = Vector3.Lerp(startPos, endPos, weight);
-                    this.emitter.Position = this.position = iPos;
+                    Vector2 iPos = Vector2.Lerp(startPos, endPos, weight);
+                    pos = iPos;
+                    emitter.Position = new Vector3(pos, 0);
                     CreateParticle();
                 }
             }
@@ -426,7 +466,7 @@ namespace AW2.Game.Particles
 
             emitter.EmittPosition(out position, out direction);
 
-            particle.Position = position + this.Position;
+            particle.Position = position + new Vector3(this.Pos, 0);
             particle.Velocity = movement + direction * particleSpeed.GetRandomValue();
             particle.Acceleration = direction * particleAcceleration.GetRandomValue();
             particle.Mass = particleMass.GetRandomValue();
@@ -448,7 +488,7 @@ namespace AW2.Game.Particles
         /// <param name="view">The view matrix.</param>
         /// <param name="projection">The projection matrix.</param>
         /// <param name="spriteBatch">The sprite batch to draw particles with.</param>
-        public void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
+        public override void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Texture2D tex = data.GetTexture(textureName);

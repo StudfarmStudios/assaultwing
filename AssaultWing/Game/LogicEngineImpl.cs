@@ -37,7 +37,7 @@ namespace AW2.Game
             TypeLoader particleLoader = new TypeLoader(typeof(ParticleEngine), "particledefs");
             ParticleEngine[] particleEngines = (ParticleEngine[])particleLoader.LoadAllTypes();
             foreach (ParticleEngine particleEngine in particleEngines)
-                data.AddTypeTemplate(typeof(ParticleEngine), particleEngine.TypeName, particleEngine);
+                data.AddTypeTemplate(typeof(Gob), particleEngine.TypeName, particleEngine);
             TypeLoader arenaLoader = new TypeLoader(typeof(Arena), "arenas");
             Arena[] arenas = (Arena[])arenaLoader.LoadAllTypes();
             foreach (Arena arena in arenas)
@@ -198,7 +198,7 @@ namespace AW2.Game
             // Update particle engines.
             Action<ParticleEngine> updateParticleEngine = delegate(ParticleEngine pEng)
             {
-                pEng.Update(gameTime);
+                pEng.Update();
             };
             data.ForEachParticleEngine(updateParticleEngine);
 

@@ -235,13 +235,6 @@ namespace AW2.Graphics
                 data.AddModel(modelName, wallModel);
             }
 
-            data.ForEachTypeTemplate<ParticleEngine>(delegate(ParticleEngine particleEngineTemplate) 
-            {
-                Texture2D texture = LoadTexture(game, particleEngineTemplate.TextureName);
-                data.AddTexture(particleEngineTemplate.TextureName, texture);
-                Log.Write("Loaded particle texture: " + particleEngineTemplate.TextureName);
-            });
-
             data.ForEachArena(delegate(Arena arenaTemplate)
             {
                 Log.Write("Loading textures for arena: " + arenaTemplate.Name);
@@ -318,7 +311,8 @@ namespace AW2.Graphics
                 
                 Action<Gob> drawGob = delegate(Gob gob)
                 {
-                    gob.Draw(viewport.ViewMatrix, viewport.ProjectionMatrix);
+                    if (!(gob is ParticleEngine)) // HACK: Should implement draw order to Gob
+                        gob.Draw(viewport.ViewMatrix, viewport.ProjectionMatrix, spriteBatch);
                 };
                 data.ForEachGob(drawGob);
                 

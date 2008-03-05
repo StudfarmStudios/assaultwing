@@ -247,7 +247,7 @@ namespace AW2.Game.Weapons
                     int boneI = boneIndices[barrel];
                     DotEmitter emitter = (DotEmitter)engine.Emitter;
                     emitter.Direction = Owner.Rotation;
-                    engine.Position = new Vector3(Owner.GetNamedPosition(boneI), 0);
+                    engine.Pos = Owner.GetNamedPosition(boneI);
                     engine.Movement = new Vector3(owner.Move, 0);
                 }
 

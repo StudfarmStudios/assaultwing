@@ -21,6 +21,18 @@ namespace AW2.Game.Gobs
         float repairSpeed;
 
         /// <summary>
+        /// Speed of charging primary weapons of ships, measured in charge/second.
+        /// </summary>
+        [TypeParameter]
+        float weapon1ChargeSpeed;
+
+        /// <summary>
+        /// Speed of charging secondary weapons of ships, measured in charge/second.
+        /// </summary>
+        [TypeParameter]
+        float weapon2ChargeSpeed;
+
+        /// <summary>
         /// Index of the general collision area in <b>base.collisionAreas</b>.
         /// </summary>
         int generalAreaI;
@@ -35,6 +47,8 @@ namespace AW2.Game.Gobs
             : base()
         {
             this.repairSpeed = -10;
+            this.weapon1ChargeSpeed = 100;
+            this.weapon2ChargeSpeed = 100;
         }
 
         /// <summary>
@@ -70,9 +84,16 @@ namespace AW2.Game.Gobs
         public override void Collide(ICollidable gob, string receptorName)
         {
             IDamageable damaGob = gob as IDamageable;
-            if (receptorName == "Dock" && damaGob != null)
+            Ship shipGob = gob as Ship;
+            if (receptorName == "Dock")
             {
-                damaGob.InflictDamage(physics.ApplyChange(repairSpeed));
+                if (damaGob != null)
+                    damaGob.InflictDamage(physics.ApplyChange(repairSpeed));
+                if (shipGob != null)
+                {
+                    shipGob.Weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);
+                    shipGob.Weapon2Charge += physics.ApplyChange(weapon2ChargeSpeed);
+                }
             }
         }
 

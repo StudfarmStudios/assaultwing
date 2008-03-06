@@ -219,7 +219,10 @@ namespace AW2.Game.Gobs
         /// Amount of charge for primary weapons,
         /// between <b>0</b> and <b>Weapon1ChargeMax</b>.
         /// </summary>
-        public float Weapon1Charge { get { return weapon1Charge; } }
+        public float Weapon1Charge { 
+            get { return weapon1Charge; }
+            set { weapon1Charge = MathHelper.Clamp(value, 0, weapon1ChargeMax); }
+        }
 
         /// <summary>
         /// Maximum amount of charge for primary weapons.
@@ -230,7 +233,10 @@ namespace AW2.Game.Gobs
         /// Amount of charge for secondary weapons,
         /// between <b>0</b> and <b>Weapon2ChargeMax</b>.
         /// </summary>
-        public float Weapon2Charge { get { return weapon2Charge; } }
+        public float Weapon2Charge { 
+            get { return weapon2Charge; }
+            set { weapon2Charge = MathHelper.Clamp(value, 0, weapon2ChargeMax); }
+        }
 
         /// <summary>
         /// Maximum amount of charge for secondary weapons.

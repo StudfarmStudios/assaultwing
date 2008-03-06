@@ -497,8 +497,11 @@ namespace AW2.Game
             CustomOperations = null;
 
             // Remove gobs to remove.
-            foreach (Gob gob in removedGobs)
+            // Don't use foreach because removed gobs may still add more items
+            // to 'removedGobs'.
+            for (int i = 0; i < removedGobs.Count; ++i)
             {
+                Gob gob = removedGobs[i];
                 physics.Unregister(gob);
                 gob.Dispose();
                 gobs.Remove(gob);

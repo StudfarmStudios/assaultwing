@@ -617,12 +617,21 @@ namespace AW2.Game
         private void MoveAndCollidePhysical(Gob gob)
         {
             UnregisterPhysical(gob);
+
+            // Find out original consistency compromisers.
+            List<CollisionArea> originalCompromisers = null;
+            if (!gob.HadSafePosition && gob is ICollidable)
+            {
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical;
+                originalCompromisers = GetPhysicalOverlappers((ICollidable)gob, flags);
+            }
+
             float moveLeft = 1; // interpolation coefficient; between 0 and 1
             int moveTries = 0;
             while (moveLeft > movementAccuracy && moveTries < moveTryMaximum)
             {
                 Vector2 oldMove = gob.Move;
-                moveLeft = TryMove(gob, moveLeft);
+                moveLeft = TryMove(gob, moveLeft, originalCompromisers);
                 ++moveTries;
 
                 // If we just have to wait for another gob to move out of the way,
@@ -634,10 +643,21 @@ namespace AW2.Game
 
             ArenaBoundaryActions(gob);
 
-            // Possibly promote to having a safe position.
-            OverlapperFlags flags = OverlapperFlags.CheckPhysical;
-            if (!gob.HadSafePosition && OverlapConsistent(gob, flags))
-                gob.HadSafePosition = true;
+            if (gob.HadSafePosition)
+            {
+                // Possibly demote to having an unsafe position.
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical |
+                    OverlapperFlags.ConsiderConsistency;
+                if (gob.Cold && !OverlapConsistent(gob, flags))
+                    gob.HadSafePosition = false;
+            }
+            else
+            {
+                // Possibly promote to having a safe position.
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical;
+                if (OverlapConsistent(gob, flags))
+                    gob.HadSafePosition = true;
+            }
         }
 
         /// <summary>
@@ -689,15 +709,18 @@ namespace AW2.Game
         /// <param name="moveLeft">How much of the gob's movement is left this frame.
         /// <b>0</b> means the gob has completed moving;
         /// <b>1</b> means the gob has not moved yet.</param>
+        /// <param name="originalCompromisers">The list of physical overlap consistency
+        /// compromisers of the gob. Only used if the gob is not physical overlap consistent.</param>
         /// <returns>How much of the gob's movement is still left,
         /// between <b>0</b> and <b>1</b>.</returns>
-        private float TryMove(Gob gob, float moveLeft)
+        private float TryMove(Gob gob, float moveLeft, List<CollisionArea> originalCompromisers)
         {
             Vector2 oldPos = gob.Pos;
             Vector2 goalPos = gob.Pos + gob.Move * (float)gameTime.ElapsedGameTime.TotalSeconds;
             float moveGood = 0; // last known safe position
             float moveBad = moveLeft; // last known unsafe position, if 'badFound'
             bool badFound = false;
+            List<CollisionArea> badCompromisers = null; // relevant compromisers at 'moveBad'
 
             // Find out last non-collision position and first colliding position, 
             // up to required accuracy.
@@ -705,13 +728,12 @@ namespace AW2.Game
             while (moveBad - moveGood > collisionAccuracy)
             {
                 gob.Pos = Vector2.Lerp(oldPos, goalPos, moveTry);
-                OverlapperFlags flags = OverlapperFlags.CheckPhysical |
-                    OverlapperFlags.ConsiderColdness |
-                    OverlapperFlags.ConsiderConsistency;
-                if (ArenaBoundaryLegal(gob) && OverlapConsistent(gob, flags))
+                List<CollisionArea> newCompromisers = GetNewCompromisers(gob, originalCompromisers);
+                if (ArenaBoundaryLegal(gob) && newCompromisers.Count == 0)
                     moveGood = moveTry;
                 else
                 {
+                    badCompromisers = newCompromisers;
                     moveBad = moveTry;
                     badFound = true;
                 }
@@ -722,7 +744,8 @@ namespace AW2.Game
             if (badFound)
             {
                 gob.Pos = Vector2.Lerp(oldPos, goalPos, moveBad);
-                CollidePhysical(gob);
+                if (badCompromisers != null && badCompromisers.Count > 0)
+                    CollidePhysical(gob, badCompromisers);
                 ArenaBoundaryActions(gob);
             }
 
@@ -732,19 +755,52 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Helper for TryMove.
+        /// Returns, for a gob, those physical consistency compromisers that
+        /// didn't compromise the gob before its movement.
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        /// <param name="originalCompromisers">The list of physical overlap consistency
+        /// compromisers of the gob before movement. Only used if the gob is 
+        /// not physical overlap consistent.</param>
+        /// <returns>The gob's new physical overlap consistency compromisers.</returns>
+        private List<CollisionArea> GetNewCompromisers(Gob gob, List<CollisionArea> originalCompromisers)
+        {
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null)
+                return new List<CollisionArea>(0);
+            if (gobCollidable.HadSafePosition)
+            {
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical |
+                    OverlapperFlags.ConsiderColdness |
+                    OverlapperFlags.ConsiderConsistency;
+                return GetPhysicalOverlappers(gobCollidable, flags);
+            }
+            else
+            {
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical;
+                List<CollisionArea> currentCompromisers = GetPhysicalOverlappers(gobCollidable, flags);
+                if (originalCompromisers == null)
+                    return currentCompromisers;
+                return currentCompromisers.FindAll(delegate(CollisionArea currentCompromiser)
+                {
+                    return !originalCompromisers.Contains(currentCompromiser);
+                });
+            }
+        }
+
+        /// <summary>
         /// Performs physical collisions for the gob.
         /// </summary>
-        /// Nothing will happen unless the gob has a physical collision area
-        /// and it overlaps some other physical collision area.
         /// <param name="gob">The gob.</param>
-        private void CollidePhysical(Gob gob)
+        /// <param name="compromisers">The gob's physical consistency compromisers
+        /// that participate in the physical collisions.</param>
+        private void CollidePhysical(Gob gob, List<CollisionArea> compromisers)
         {
             ICollidable gobCollidable1 = gob as ICollidable;
             if (gobCollidable1 == null) return;
 
-            OverlapperFlags flags = OverlapperFlags.CheckPhysical |
-                OverlapperFlags.ConsiderColdness | OverlapperFlags.ConsiderConsistency;
-            foreach (CollisionArea collArea2 in GetPhysicalOverlappers(gobCollidable1, flags))
+            foreach (CollisionArea collArea2 in compromisers)
             {
                 gobCollidable1.Collide(collArea2.Owner, "General");
                 collArea2.Owner.Collide(gobCollidable1, collArea2.Name);

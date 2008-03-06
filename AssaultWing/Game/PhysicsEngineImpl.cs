@@ -635,7 +635,8 @@ namespace AW2.Game
             ArenaBoundaryActions(gob);
 
             // Possibly promote to having a safe position.
-            if (!gob.HadSafePosition && !gob.Cold && OverlapConsistent(gob))
+            OverlapperFlags flags = OverlapperFlags.CheckPhysical;
+            if (!gob.HadSafePosition && OverlapConsistent(gob, flags))
                 gob.HadSafePosition = true;
         }
 
@@ -704,7 +705,10 @@ namespace AW2.Game
             while (moveBad - moveGood > collisionAccuracy)
             {
                 gob.Pos = Vector2.Lerp(oldPos, goalPos, moveTry);
-                if (ArenaBoundaryLegal(gob) && OverlapConsistent(gob))
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical |
+                    OverlapperFlags.ConsiderColdness |
+                    OverlapperFlags.ConsiderConsistency;
+                if (ArenaBoundaryLegal(gob) && OverlapConsistent(gob, flags))
                     moveGood = moveTry;
                 else
                 {
@@ -795,7 +799,10 @@ namespace AW2.Game
                     gob.Pos = oldPos;
                     PerformCollision(collArea.Owner, compromiser);
                 }
-                if (!gobCollidable1.HadSafePosition && OverlapConsistent(gobCollidable1))
+                OverlapperFlags flags = OverlapperFlags.CheckPhysical |
+                    OverlapperFlags.ConsiderColdness |
+                    OverlapperFlags.ConsiderConsistency;
+                if (!gobCollidable1.HadSafePosition && OverlapConsistent(gobCollidable1, flags))
                     gobCollidable1.HadSafePosition = true;
             }
 
@@ -939,22 +946,23 @@ namespace AW2.Game
         /// Returns true iff the given gob doesn't overlap gobs that it shouldn't overlap.
         /// </summary>
         /// <param name="gob">The gob.</param>
+        /// <param name="flags">Flags that control what is considered overlapping.</param>
         /// <returns>True iff the gob is overlap consistent.</returns>
-        private bool OverlapConsistent(Gob gob)
+        private bool OverlapConsistent(Gob gob, OverlapperFlags flags)
         {
             ICollidable gobCollidable = gob as ICollidable;
             if (gobCollidable == null) return true;
-            return OverlapConsistent(gobCollidable);
+            return OverlapConsistent(gobCollidable, flags);
         }
 
         /// <summary>
         /// Returns true iff the given gob doesn't overlap gobs that it shouldn't overlap.
         /// </summary>
         /// <param name="gobCollidable">The gob.</param>
+        /// <param name="flags">Flags that control what is considered overlapping.</param>
         /// <returns>True iff the gob is overlap consistent.</returns>
-        private bool OverlapConsistent(ICollidable gobCollidable)
+        private bool OverlapConsistent(ICollidable gobCollidable, OverlapperFlags flags)
         {
-            OverlapperFlags flags = OverlapperFlags.CheckPhysical;
             return GetPhysicalOverlappers(gobCollidable, flags).Count == 0;
         }
 

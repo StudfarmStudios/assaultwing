@@ -213,6 +213,21 @@ namespace AW2.Game
 
             // Check for receptor collisions.
             physics.MovesDone();
+
+            // Check for game end.
+            int playersAlive = 0;
+            Player alive = null; // any player who's alive
+            data.ForEachPlayer(delegate(Player player)
+            {
+                if (player.Lives > 0)
+                    ++playersAlive;
+                alive = player;
+            });
+            if (playersAlive <= 1)
+            {
+                // TODO: End game by displaying dialog.
+                AssaultWing.Instance.ToggleDialog();
+            }
         }
     }
 }

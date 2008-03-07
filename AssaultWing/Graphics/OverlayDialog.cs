@@ -19,6 +19,10 @@ namespace AW2.Graphics
         SpriteBatch spriteBatch;
         Texture2D dialogTexture;
 
+        /// <summary>
+        /// Creates an overlay dialog.
+        /// </summary>
+        /// <param name="game">The game instance to attach the dialog to.</param>
         public OverlayDialog(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
@@ -47,10 +51,10 @@ namespace AW2.Graphics
             base.Update(gameTime);
         }
 
-        //
-        // Summary:
-        //     Called when graphics resources need to be loaded. Override this method to
-        //     load any component-specific graphics resources.
+        /// <summary>
+        /// Called when graphics resources need to be loaded. Override this method to
+        /// load any component-specific graphics resources.
+        /// </summary>
         protected override void LoadContent()
         {           
             textWriter = this.Game.Content.Load<SpriteFont>(System.IO.Path.Combine("fonts", "DotMatrix"));
@@ -58,14 +62,11 @@ namespace AW2.Graphics
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
         }
 
-        //
-        // Summary:
-        //     Called when the DrawableGameComponent needs to be drawn. Override this method
-        //     with component-specific drawing code.
-        //
-        // Parameters:
-        //   gameTime:
-        //     Time passed since the last call to Microsoft.Xna.Framework.DrawableGameComponent.Draw(Microsoft.Xna.Framework.GameTime).
+        /// <summary>
+        /// Called when the DrawableGameComponent needs to be drawn. Override this method
+        /// with component-specific drawing code.
+        /// </summary>
+        /// <param name="gameTime">Time passed since the last call to Microsoft.Xna.Framework.DrawableGameComponent.Draw(Microsoft.Xna.Framework.GameTime).</param>
         public override void Draw(GameTime gameTime)
         {
             #region Overlay menu

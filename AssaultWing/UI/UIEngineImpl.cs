@@ -19,15 +19,28 @@ namespace AW2.UI
         private InputState oldState;
 
         /// <summary>
+        /// True iff mouse input is eaten by the game.
+        /// </summary>
+        bool eatMouse;
+
+        /// <summary>
         /// Controls for general functionality.
         /// </summary>
         // HACK: Remove from release builds: menuControl, showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl
         private Control exitControl1, menuControl, fullscreenControl, dialogControl;
         private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 
+        /// <summary>
+        /// If mouse input is being consumed for the purposes of using the mouse
+        /// for game controls. Such consumption prevents other programs from using
+        /// the mouse in any practical manner. Defaults to <b>false</b>.
+        /// </summary>
+        public bool MouseControlsEnabled { get { return eatMouse; } set { eatMouse = value; } }
+
         public UIEngineImpl(Microsoft.Xna.Framework.Game game) : base(game)
         {
             oldState = InputState.GetState();
+            eatMouse = false;
             exitControl1 = new KeyboardKey(Keys.Escape);
             menuControl = new KeyboardKey(Keys.M);
             dialogControl = new KeyboardKey(Keys.N);
@@ -48,8 +61,11 @@ namespace AW2.UI
             InputState newState = InputState.GetState();
 
             // Reset mouse cursor to the middle of the game window.
-            Mouse.SetPosition(AssaultWing.Instance.ClientBounds.Width / 2,
-                AssaultWing.Instance.ClientBounds.Height / 2);
+            if (eatMouse)
+            {
+                Mouse.SetPosition(AssaultWing.Instance.ClientBounds.Width / 2,
+                    AssaultWing.Instance.ClientBounds.Height / 2);
+            }
 
             // Update controls.
             Action<Control> updateControl = delegate(Control control)

@@ -313,6 +313,7 @@ namespace AW2
             plr2Controls.fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1, 1);
             plr2Controls.fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1, 1);
             plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
+            uiEngine.MouseControlsEnabled = true;
 #else
             plr2Controls.thrust = new KeyboardKey(Keys.W);
             plr2Controls.left = new KeyboardKey(Keys.A);
@@ -321,6 +322,7 @@ namespace AW2
             plr2Controls.fire1 = new KeyboardKey(Keys.LeftControl);
             plr2Controls.fire2 = new KeyboardKey(Keys.LeftShift);
             plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
+            uiEngine.MouseControlsEnabled = false;
 #endif
 
             Player player1 = new Player("Kaiser Lohengramm", "Hyperion", "peashooter", "rockets", plr1Controls);

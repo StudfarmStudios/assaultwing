@@ -205,9 +205,11 @@ namespace AW2.Helpers
         /// <param name="color">The color of the wireframe model.</param>
         /// <param name="vertexData">Where to store the vertex data.</param>
         public static void GetWireframeModelData(Polygon poly, float z, Color color,
-            out VertexPositionColor[] vertexData)
+            ref VertexPositionColor[] vertexData)
         {
-            vertexData = new VertexPositionColor[poly.Vertices.Length + 1];
+            int vertexDataLength = poly.Vertices.Length + 1;
+            if (vertexData == null || vertexData.Length != vertexDataLength)
+                vertexData = new VertexPositionColor[vertexDataLength];
             for (int i = 0; i < poly.Vertices.Length; ++i)
                 vertexData[i] = new VertexPositionColor(new Vector3(poly.Vertices[i], z), color);
             vertexData[poly.Vertices.Length] = vertexData[0];

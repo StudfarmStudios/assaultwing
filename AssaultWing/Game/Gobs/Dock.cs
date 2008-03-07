@@ -59,18 +59,28 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             this.physicsApplyMode = PhysicsApplyMode.None;
+        }
 
+        #region Methods related to gobs' functionality in the game world
+
+        /// <summary>
+        /// Activates the gob, i.e. performs an initialisation rite.
+        /// </summary>
+        public override void Activate()
+        {
             // Find our general collision area.
-            this.generalAreaI = -1;
+            generalAreaI = -1;
             for (int i = 0; i < collisionAreas.Length; ++i)
                 if (collisionAreas[i].Name == "General")
                 {
-                    this.generalAreaI = i;
+                    generalAreaI = i;
                     break;
                 }
-            if (this.generalAreaI == -1)
+            if (generalAreaI == -1)
                 Log.Write("Warning: Dock couldn't find its general collision area");
         }
+
+        #endregion Methods related to gobs' functionality in the game world
 
         #region ICollidable Members
         // Some members are implemented in class Gob.

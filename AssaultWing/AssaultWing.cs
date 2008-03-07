@@ -36,6 +36,8 @@ namespace AW2
         int preferredFullscreenWidth, preferredFullscreenHeight;
         SurfaceFormat preferredFullscreenFormat;
         TimeSpan gameTimeDelay;
+        TimeSpan lastFramerateCheck;
+        int framesSinceLastCheck;
 
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
@@ -96,6 +98,9 @@ namespace AW2
             frameRunControl = new KeyboardKey(Keys.F7);
             frameStep = false;
             gameTimeDelay = new TimeSpan(0);
+
+            lastFramerateCheck = new TimeSpan(0);
+            framesSinceLastCheck = 0;
         }
 
         /// <summary>
@@ -445,6 +450,16 @@ namespace AW2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            if ((gameTime.TotalRealTime - lastFramerateCheck).TotalSeconds < 1)
+            {
+                ++framesSinceLastCheck;
+            }
+            else
+            {
+                Window.Title = "Assault Wing [~" + framesSinceLastCheck + " fps]";
+                framesSinceLastCheck = 1;
+                lastFramerateCheck = gameTime.TotalRealTime;
+            }
             base.Draw(gameTime);
         }
     }

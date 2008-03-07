@@ -763,6 +763,11 @@ namespace AW2.Game
         public Vector2 GetNamedPosition(int boneIndex)
         {
             // Note: We assume that UpdateModelPartTransforms() has been called recently.
+            if (modelPartTransforms == null) // HACK to avoid crash when shooting on the very first frame
+            {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                UpdateModelPartTransforms(data.GetModel(modelName));
+            }
             return Vector2.Transform(Vector2.Zero, modelPartTransforms[boneIndex] * WorldMatrix);
         }
 

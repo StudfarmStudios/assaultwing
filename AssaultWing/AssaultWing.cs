@@ -302,6 +302,18 @@ namespace AW2
             plr1Controls.extra = new KeyboardKey(Keys.Enter);
 
             PlayerControls plr2Controls;
+#if false // mouse control
+            //plr2Controls.thrust = new MouseDirection(MouseDirections.Up, 2, 7, 5, 1);
+            plr2Controls.thrust = new MouseButton(MouseButtons.Left);
+            plr2Controls.left = new MouseDirection(MouseDirections.Left, 2, 9, 5, 1);
+            plr2Controls.right = new MouseDirection(MouseDirections.Right, 2, 9, 5, 1);
+            plr2Controls.down = new MouseDirection(MouseDirections.Down, 2, 12, 5, 1);
+            //plr2Controls.fire1 = new MouseDirection(MouseDirections.Down, 0, 12, 20, 1);
+            //plr2Controls.fire2 = new MouseButton(MouseButtons.Right);
+            plr2Controls.fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1, 1);
+            plr2Controls.fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1, 1);
+            plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
+#else
             plr2Controls.thrust = new KeyboardKey(Keys.W);
             plr2Controls.left = new KeyboardKey(Keys.A);
             plr2Controls.right = new KeyboardKey(Keys.D);
@@ -309,6 +321,7 @@ namespace AW2
             plr2Controls.fire1 = new KeyboardKey(Keys.LeftControl);
             plr2Controls.fire2 = new KeyboardKey(Keys.LeftShift);
             plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
+#endif
 
             Player player1 = new Player("Kaiser Lohengramm", "Hyperion", "peashooter", "rockets", plr1Controls);
             Player player2 = new Player("John Crichton", "Prowler", "shotgun", "bazooka", plr2Controls);

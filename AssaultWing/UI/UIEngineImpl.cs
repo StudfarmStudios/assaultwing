@@ -47,6 +47,10 @@ namespace AW2.UI
             EventEngine eventEngine = (EventEngine)Game.Services.GetService(typeof(EventEngine));
             InputState newState = InputState.GetState();
 
+            // Reset mouse cursor to the middle of the game window.
+            Mouse.SetPosition(AssaultWing.Instance.ClientBounds.Width / 2,
+                AssaultWing.Instance.ClientBounds.Height / 2);
+
             // Update controls.
             Action<Control> updateControl = delegate(Control control)
             {

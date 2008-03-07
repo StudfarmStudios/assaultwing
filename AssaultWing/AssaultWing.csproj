@@ -218,6 +218,7 @@
     <Compile Include="UI\Keyboard.cs">
       <Name>Keyboard</Name>
     </Compile>
+    <Compile Include="UI\Mouse.cs" />
     <Compile Include="UI\UIEngine.cs">
       <Name>UIEngine</Name>
     </Compile>

@@ -517,7 +517,7 @@ namespace AW2.Game
                 tryPos = RandomHelper.GetRandomVector2(preferred.Value, radius);
                 gob.Pos = tryPos;
                 OverlapperFlags flags = OverlapperFlags.CheckPhysical | OverlapperFlags.CheckReceptor;
-                if (GetPhysicalOverlappers(gobCollidable, flags).Count == 0)
+                if (ArenaBoundaryLegal(gob) && GetPhysicalOverlappers(gobCollidable, flags).Count == 0)
                     break;
             }
             gob.Pos = oldPos;

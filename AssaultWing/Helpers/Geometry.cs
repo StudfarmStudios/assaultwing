@@ -237,11 +237,55 @@ namespace AW2.Helpers
     /// A polygon in two-dimensional space.
     /// </summary>
     /// A polygon is always simple, i.e., its edge doesn't intersect itself.
-    public struct Polygon : IGeomPrimitive, IEquatable<Polygon>
+    [LimitedSerialization]
+    public struct Polygon : IGeomPrimitive, IEquatable<Polygon>, IConsistencyCheckable
     {
+        /// <summary>
+        /// A strip of faces of a polygon.
+        /// </summary>
+        public struct FaceStrip
+        {
+            /// <summary>
+            /// Index of the first vertex in the strip.
+            /// </summary>
+            public int startIndex;
+
+            /// <summary>
+            /// Index of the last vertex in the strip, (inclusive end).
+            /// If the strip ends the polygon, then <b>endIndex</b> equals
+            /// vertex count + 1 which denotes index 0.
+            /// </summary>
+            public int endIndex;
+
+            /// <summary>
+            /// Tight, axis-aligned bounding box for the face strip.
+            /// </summary>
+            /// The Z-coordinate is not used.
+            public BoundingBox boundingBox;
+
+            /// <summary>
+            /// Creates a face strip for a polygon.
+            /// </summary>
+            /// <param name="startIndex">Index of the first vertex in the strip.</param>
+            /// <param name="endIndex">Index of the first vertex not in the strip, (exclusive end).</param>
+            /// <param name="boundingBox">Bounding box for the face strip.</param>
+            public FaceStrip(int startIndex, int endIndex, BoundingBox boundingBox)
+            {
+                this.startIndex = startIndex;
+                this.endIndex = endIndex;
+                this.boundingBox = boundingBox;
+            }
+        }
+
+        /// <summary>
+        /// Maximum number of faces in one face strip.
+        /// </summary>
+        private static readonly int faceStripSize = 10;
+
         /// <summary>
         /// The vertices of the polygon. Each vertex is listed only once and in order.
         /// </summary>
+        [TypeParameter, RuntimeState]
         Vector2[] vertices;
 
         /// <summary>
@@ -251,11 +295,24 @@ namespace AW2.Helpers
         BoundingBox boundingBox;
 
         /// <summary>
+        /// The polygon's faces separated into strips, for optimisation purposes.
+        /// May be <b>null</b>.
+        /// </summary>
+        FaceStrip[] faceStrips;
+
+        /// <summary>
         /// Returns the vertices of the polygon.
         /// </summary>
         /// In order to preserve the simplicity of the polygon, the 
         /// vertices should not be modified. Rather, create a new polygon.
         public Vector2[] Vertices { get { return vertices; } }
+
+        /// <summary>
+        /// Grouping of the polygon's faces into small strips.
+        /// May be null.
+        /// </summary>
+        /// Face strips can be used for optimisation purposes.
+        public FaceStrip[] FaceStrips { get { return faceStrips; } }
 
         /// <summary>
         /// Creates a simple polygon.
@@ -273,7 +330,9 @@ namespace AW2.Helpers
             this.vertices = (Vector2[])vertices.Clone();
 
             boundingBox = new BoundingBox();
+            faceStrips = null;
             UpdateBoundingBox();
+            UpdateFaceStrips();
 
 #if DEBUG
             // Make sure the polygon is simple.
@@ -349,6 +408,39 @@ namespace AW2.Helpers
             boundingBox = new BoundingBox(new Vector3(min, 0), new Vector3(max, 0));
         }
 
+        /// <summary>
+        /// Updates <b>faceStrips</b>.
+        /// </summary>
+        private void UpdateFaceStrips()
+        {
+            faceStrips = null;
+
+            // Small polygons won't benefit from extra structures.
+            // UNDONE if (vertices.Length < faceStripSize * 2) 
+                return;
+
+            // Divide faces to maximal strips with no brilliant logic.
+            // This is a place for a clever algorithm. A good split into face strips
+            // is one where the total area of bounding boxes is small.
+            List<FaceStrip> faceStripList = new List<FaceStrip>();
+            int startIndex = 0;
+            while (startIndex < vertices.Length)
+            {
+                int endIndex = Math.Min(startIndex + faceStripSize, vertices.Length);
+                Vector2 min = vertices[startIndex];
+                Vector2 max = vertices[startIndex];
+                for (int i = startIndex + 1; i < endIndex; ++i)
+                {
+                    min = Vector2.Min(min, vertices[i]);
+                    max = Vector2.Max(max, vertices[i]);
+                }
+                faceStripList.Add(new FaceStrip(startIndex, endIndex, 
+                    new BoundingBox(new Vector3(min, 0), new Vector3(max, 0))));
+                startIndex = endIndex;
+            }
+            this.faceStrips = faceStripList.ToArray();
+        }
+
         #region IGeomPrimitive Members
 
         /// <summary>
@@ -369,6 +461,7 @@ namespace AW2.Helpers
             Polygon poly = new Polygon(vertices); // vertices are cloned
             Vector2.Transform(poly.vertices, ref transformation, poly.vertices);
             poly.UpdateBoundingBox();
+            poly.UpdateFaceStrips();
             return poly;
         }
 
@@ -563,6 +656,23 @@ namespace AW2.Helpers
         }
 #endif
         #endregion // Unit tests
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            UpdateBoundingBox();
+            UpdateFaceStrips();
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -1109,14 +1219,78 @@ namespace AW2.Helpers
         {
             if (Intersect(point, polygon))
                 return 0;
-            float bestDistanceSquared = Single.MaxValue;
-            Vector2 oldV = polygon.Vertices[polygon.Vertices.Length - 1];
-            foreach (Vector2 v in polygon.Vertices)
+            Vector2[] vertices = polygon.Vertices;
+            if (polygon.FaceStrips != null)
             {
-                bestDistanceSquared = MathHelper.Min(bestDistanceSquared, DistanceSquared(point, oldV, v));
-                oldV = v;
+                float bestDistanceSquared = Single.MaxValue;
+                float bestStripDistanceSquared = Single.MaxValue;
+                int bestStripI = -1;
+
+                // The distance (from the point) to each face strip is at most
+                // the least distance to the farthest corner of a face of the
+                // bounding box of the face strip, i.e. the second-shortest distance
+                // to a corner of the strip's bounding box. This is so because the
+                // bounding box is tight and thus there is at least one vertex
+                // of the face strip lying on each face of the bounding box.
+                // If the point is in the bounding box, the strip must be checked.
+                // From bounding boxes not containing the point, only the closest
+                // one's strip is checked.
+                for (int stripI = 0; stripI < polygon.FaceStrips.Length; ++stripI)
+                {
+                    Polygon.FaceStrip strip = polygon.FaceStrips[stripI];
+                    if (strip.boundingBox.Contains(new Vector3(point.Location, 0)) == ContainmentType.Contains)
+                    {
+                        // Deal with a face strip that contains the query point.
+                        int oldI = strip.endIndex % vertices.Length;
+                        for (int i = strip.startIndex; i < strip.endIndex; oldI = i++)
+                        {
+                            bestDistanceSquared = MathHelper.Min(bestDistanceSquared,
+                                DistanceSquared(point, vertices[oldI], vertices[i]));
+                        }
+                    }
+                    else
+                    {
+                        // Seek out the closest face strip of those that don't contain the query point.
+                        float[] cornerDistsSquared = new float[4] { 
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Min.X, strip.boundingBox.Min.Y)),
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Min.X, strip.boundingBox.Max.Y)),
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Max.X, strip.boundingBox.Min.Y)),
+                            Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Max.X, strip.boundingBox.Max.Y))
+                        };
+                        Array.Sort(cornerDistsSquared);
+                        float stripDistanceSquared = cornerDistsSquared[1];
+                        if (stripDistanceSquared < bestStripDistanceSquared)
+                        {
+                            bestStripDistanceSquared = stripDistanceSquared;
+                            bestStripI = stripI;
+                        }
+                    }
+                }
+
+                // Deal with the closest face strip that doesn't contain the query point.
+                if (bestStripI != -1) {
+                    Polygon.FaceStrip strip = polygon.FaceStrips[bestStripI];
+                    int oldI = strip.endIndex % vertices.Length;
+                    for (int i = strip.startIndex; i < strip.endIndex; oldI = i++)
+                    {
+                        bestDistanceSquared = MathHelper.Min(bestDistanceSquared,
+                            DistanceSquared(point, vertices[oldI], vertices[i]));
+                    }
+                }
+
+                return bestDistanceSquared;
             }
-            return bestDistanceSquared;
+            else
+            {
+                float bestDistanceSquared = Single.MaxValue;
+                Vector2 oldV = polygon.Vertices[vertices.Length - 1];
+                foreach (Vector2 v in vertices)
+                {
+                    bestDistanceSquared = MathHelper.Min(bestDistanceSquared, DistanceSquared(point, oldV, v));
+                    oldV = v;
+                }
+                return bestDistanceSquared;
+            }
         }
 
         /// <summary>

@@ -77,11 +77,14 @@ namespace AW2.Game.Gobs
         {
             base.Update();
 
-            // Fly nose first.
-            float rotationGoal = (float)Math.Acos(Move.X / Move.Length());
-            if (Move.Y < 0)
-                rotationGoal = MathHelper.TwoPi - rotationGoal;
-            Rotation = rotationGoal;
+            // Fly nose first, but only if we're moving fast enough.
+            if (move.LengthSquared() > 1 * 1)
+            {
+                float rotationGoal = (float)Math.Acos(Move.X / Move.Length());
+                if (Move.Y < 0)
+                    rotationGoal = MathHelper.TwoPi - rotationGoal;
+                Rotation = rotationGoal;
+            }
         }
 
         #region ICollidable Members

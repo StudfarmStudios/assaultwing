@@ -930,6 +930,5 @@ namespace AW2.Game
         }
 
         #endregion IDamageable Members
-
     }
 }

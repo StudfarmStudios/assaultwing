@@ -416,7 +416,7 @@ namespace AW2.Helpers
             faceStrips = null;
 
             // Small polygons won't benefit from extra structures.
-            // UNDONE if (vertices.Length < faceStripSize * 2) 
+            // UNDONE because of small bugs in face strip code: if (vertices.Length < faceStripSize * 2) 
                 return;
 
             // Divide faces to maximal strips with no brilliant logic.
@@ -429,10 +429,11 @@ namespace AW2.Helpers
                 int endIndex = Math.Min(startIndex + faceStripSize, vertices.Length);
                 Vector2 min = vertices[startIndex];
                 Vector2 max = vertices[startIndex];
-                for (int i = startIndex + 1; i < endIndex; ++i)
+                for (int i = startIndex + 1; i <= endIndex; ++i)
                 {
-                    min = Vector2.Min(min, vertices[i]);
-                    max = Vector2.Max(max, vertices[i]);
+                    int realI = i % vertices.Length;
+                    min = Vector2.Min(min, vertices[realI]);
+                    max = Vector2.Max(max, vertices[realI]);
                 }
                 faceStripList.Add(new FaceStrip(startIndex, endIndex, 
                     new BoundingBox(new Vector3(min, 0), new Vector3(max, 0))));
@@ -1241,11 +1242,13 @@ namespace AW2.Helpers
                     if (strip.boundingBox.Contains(new Vector3(point.Location, 0)) == ContainmentType.Contains)
                     {
                         // Deal with a face strip that contains the query point.
-                        int oldI = strip.endIndex % vertices.Length;
-                        for (int i = strip.startIndex; i < strip.endIndex; oldI = i++)
+                        int oldI = strip.startIndex;
+                        for (int i = strip.startIndex + 1; i <= strip.endIndex; ++i)
                         {
+                            int realI = i % vertices.Length;
                             bestDistanceSquared = MathHelper.Min(bestDistanceSquared,
-                                DistanceSquared(point, vertices[oldI], vertices[i]));
+                                DistanceSquared(point, vertices[oldI], vertices[realI]));
+                            oldI = realI;
                         }
                     }
                     else
@@ -1268,13 +1271,17 @@ namespace AW2.Helpers
                 }
 
                 // Deal with the closest face strip that doesn't contain the query point.
+                // Note: This can be skipped if the strip's bounding box's closest point
+                // is farther than the closest vertex found so far.
                 if (bestStripI != -1) {
                     Polygon.FaceStrip strip = polygon.FaceStrips[bestStripI];
-                    int oldI = strip.endIndex % vertices.Length;
-                    for (int i = strip.startIndex; i < strip.endIndex; oldI = i++)
+                    int oldI = strip.startIndex;
+                    for (int i = strip.startIndex + 1; i <= strip.endIndex; ++i)
                     {
+                        int realI = i % vertices.Length;
                         bestDistanceSquared = MathHelper.Min(bestDistanceSquared,
-                            DistanceSquared(point, vertices[oldI], vertices[i]));
+                            DistanceSquared(point, vertices[oldI], vertices[realI]));
+                        oldI = realI;
                     }
                 }
 

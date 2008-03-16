@@ -71,6 +71,16 @@ namespace AW2.Graphics
         protected Matrix projection;
 
         /// <summary>
+        /// The minimum X and Y coordinates of the game world this viewport is viewing.
+        /// </summary>
+        Vector2 worldAreaMin;
+
+        /// <summary>
+        /// The maximum X and Y coordinates of the game world this viewport is viewing.
+        /// </summary>
+        Vector2 worldAreaMax;
+
+        /// <summary>
         /// Times, in game time, at which the player's bonus boxes started
         /// sliding in to the player's viewport overlay or out of it.
         /// </summary>
@@ -109,7 +119,9 @@ namespace AW2.Graphics
             viewport.MinDepth = 0f;
             viewport.MaxDepth = 1f;
             view = Matrix.CreateLookAt(Vector3.Backward, Vector3.Zero, Vector3.Up);
-            projection = Matrix.Identity;
+            projection = Matrix.CreateOrthographic(viewport.Width, viewport.Height, 1f, 10000f);
+            worldAreaMin = Vector2.Zero;
+            worldAreaMax = new Vector2(viewport.Width, viewport.Height);
             bonusEntryTimeins = new PlayerBonusItems<TimeSpan>();
             bonusEntryPosAdjustments = new PlayerBonusItems<Vector2>();
             bonusEntryDirections = new PlayerBonusItems<bool>();
@@ -118,28 +130,33 @@ namespace AW2.Graphics
         #region PlayerViewport properties
 
         public Player Player { get { return player; } }
-
-        public Vector2 ScreenUpperLeft
-        {
-            get
-            {
-                return new Vector2(player.Ship.Pos.X - viewport.Width / 2, - player.Ship.Pos.Y - viewport.Height / 2);
-            }
-        }
       
         /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport is viewing.
         /// </summary>
-        public Vector2 WorldAreaMin { get { return new Vector2(
-            player.Ship.Pos.X - viewport.Width / 2, 
-            player.Ship.Pos.Y - viewport.Height / 2); } }
+        public Vector2 WorldAreaMin
+        {
+            get
+            {
+                if (player.Ship != null)
+                    worldAreaMin = new Vector2(
+                        player.Ship.Pos.X - viewport.Width / 2,
+                        player.Ship.Pos.Y - viewport.Height / 2);
+                return worldAreaMin;
+            }
+        }
 
         /// <summary>
         /// The maximum X and Y coordinates of the game world this viewport is viewing.
         /// </summary>
-        public Vector2 WorldAreaMax { get { return new Vector2(
-            player.Ship.Pos.X + viewport.Width / 2, 
-            player.Ship.Pos.Y + viewport.Height / 2); }
+        public Vector2 WorldAreaMax { 
+            get { 
+                if (player.Ship != null)
+                    worldAreaMax = new Vector2(
+                        player.Ship.Pos.X + viewport.Width / 2, 
+                        player.Ship.Pos.Y + viewport.Height / 2);
+                return worldAreaMax;
+            }
         }
 
 
@@ -185,7 +202,6 @@ namespace AW2.Graphics
         {
             get
             {
-                projection = Matrix.CreateOrthographic(viewport.Width, viewport.Height, 1f, 10000f);
                 return projection;
             }
         }

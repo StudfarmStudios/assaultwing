@@ -452,15 +452,18 @@ namespace AW2.Graphics
                 1, SpriteEffects.None, 0);
 
             // Damage meter
-            Rectangle damageBarRect = new Rectangle(0, 0,
-                (int)Math.Ceiling((1 - viewport.Player.Ship.DamageLevel / viewport.Player.Ship.MaxDamageLevel)
-                * overlays[(int)ViewportOverlay.BarShip].Width),
-                overlays[(int)ViewportOverlay.BarShip].Height);
-            spriteBatch.Draw(overlays[(int)ViewportOverlay.BarShip],
-                new Vector2(viewport.InternalViewport.Width, 8 * 2) / 2,
-                damageBarRect, Color.White, 0,
-                new Vector2(overlays[(int)ViewportOverlay.BarShip].Width, 0) / 2,
-                1, SpriteEffects.None, 0);
+            if (viewport.Player.Ship != null)
+            {
+                Rectangle damageBarRect = new Rectangle(0, 0,
+                    (int)Math.Ceiling((1 - viewport.Player.Ship.DamageLevel / viewport.Player.Ship.MaxDamageLevel)
+                    * overlays[(int)ViewportOverlay.BarShip].Width),
+                    overlays[(int)ViewportOverlay.BarShip].Height);
+                spriteBatch.Draw(overlays[(int)ViewportOverlay.BarShip],
+                    new Vector2(viewport.InternalViewport.Width, 8 * 2) / 2,
+                    damageBarRect, Color.White, 0,
+                    new Vector2(overlays[(int)ViewportOverlay.BarShip].Width, 0) / 2,
+                    1, SpriteEffects.None, 0);
+            }
 
             // Player lives left
             for (int i = 0; i < viewport.Player.Lives; ++i)
@@ -469,59 +472,70 @@ namespace AW2.Graphics
                                 overlays[(int)ViewportOverlay.BarShip].Width + (8 + i * 10) * 2,
                                 overlays[(int)ViewportOverlay.BarShip].Height + 8 * 2) / 2,
                     null,
-                    //plrViewport.Player.Ship.Weapon1Loaded ? Color.Green : Color.Red,
                     Color.White,
                     0,
                     new Vector2(0, overlays[(int)ViewportOverlay.IconShipsLeft].Height) / 2,
                     1, SpriteEffects.None, 0);
 
             // Primary weapon charge
-            Rectangle charge1BarRect = new Rectangle(0, 0,
-                (int)Math.Ceiling(viewport.Player.Ship.Weapon1Charge / viewport.Player.Ship.Weapon1ChargeMax
-                * overlays[(int)ViewportOverlay.BarMain].Width),
-                overlays[(int)ViewportOverlay.BarMain].Height);
-            spriteBatch.Draw(overlays[(int)ViewportOverlay.BarMain],
-                new Vector2(viewport.InternalViewport.Width, 24 * 2) / 2,
-                charge1BarRect, Color.White, 0,
-                new Vector2(overlays[(int)ViewportOverlay.BarMain].Width, 0) / 2,
-                1, SpriteEffects.None, 0);
+            if (viewport.Player.Ship != null)
+            {
+                Rectangle charge1BarRect = new Rectangle(0, 0,
+                    (int)Math.Ceiling(viewport.Player.Ship.Weapon1Charge / viewport.Player.Ship.Weapon1ChargeMax
+                    * overlays[(int)ViewportOverlay.BarMain].Width),
+                    overlays[(int)ViewportOverlay.BarMain].Height);
+                spriteBatch.Draw(overlays[(int)ViewportOverlay.BarMain],
+                    new Vector2(viewport.InternalViewport.Width, 24 * 2) / 2,
+                    charge1BarRect, Color.White, 0,
+                    new Vector2(overlays[(int)ViewportOverlay.BarMain].Width, 0) / 2,
+                    1, SpriteEffects.None, 0);
+            }
 
             // Primary weapon loadedness
-            if (viewport.Player.Ship.Weapon1Loaded)
-                spriteBatch.Draw(overlays[(int)ViewportOverlay.IconWeaponLoad],
-                    new Vector2(viewport.InternalViewport.Width +
-                                overlays[(int)ViewportOverlay.BarMain].Width + 8 * 2,
-                                overlays[(int)ViewportOverlay.BarMain].Height + 24 * 2) / 2,
-                    null,
-                    //plrViewport.Player.Ship.Weapon1Loaded ? Color.Green : Color.Red,
-                    Color.White,
-                    0,
-                    new Vector2(0, overlays[(int)ViewportOverlay.IconWeaponLoad].Height) / 2,
-                    1, SpriteEffects.None, 0);
+            if (viewport.Player.Ship != null)
+            {
+                if (viewport.Player.Ship.Weapon1Loaded)
+                    spriteBatch.Draw(overlays[(int)ViewportOverlay.IconWeaponLoad],
+                        new Vector2(viewport.InternalViewport.Width +
+                                    overlays[(int)ViewportOverlay.BarMain].Width + 8 * 2,
+                                    overlays[(int)ViewportOverlay.BarMain].Height + 24 * 2) / 2,
+                        null,
+                        //plrViewport.Player.Ship.Weapon1Loaded ? Color.Green : Color.Red,
+                        Color.White,
+                        0,
+                        new Vector2(0, overlays[(int)ViewportOverlay.IconWeaponLoad].Height) / 2,
+                        1, SpriteEffects.None, 0);
+            }
 
             // Secondary weapon charge
-            Rectangle charge2BarRect = new Rectangle(0, 0,
-                (int)Math.Ceiling(viewport.Player.Ship.Weapon2Charge / viewport.Player.Ship.Weapon2ChargeMax
-                * overlays[(int)ViewportOverlay.BarSpecial].Width),
-                overlays[(int)ViewportOverlay.BarSpecial].Height);
-            spriteBatch.Draw(overlays[(int)ViewportOverlay.BarSpecial],
-                new Vector2(viewport.InternalViewport.Width, 40 * 2) / 2,
-                charge2BarRect, Color.White, 0,
-                new Vector2(overlays[(int)ViewportOverlay.BarSpecial].Width, 0) / 2,
-                1, SpriteEffects.None, 0);
+            if (viewport.Player.Ship != null)
+            {
+                Rectangle charge2BarRect = new Rectangle(0, 0,
+                    (int)Math.Ceiling(viewport.Player.Ship.Weapon2Charge / viewport.Player.Ship.Weapon2ChargeMax
+                    * overlays[(int)ViewportOverlay.BarSpecial].Width),
+                    overlays[(int)ViewportOverlay.BarSpecial].Height);
+                spriteBatch.Draw(overlays[(int)ViewportOverlay.BarSpecial],
+                    new Vector2(viewport.InternalViewport.Width, 40 * 2) / 2,
+                    charge2BarRect, Color.White, 0,
+                    new Vector2(overlays[(int)ViewportOverlay.BarSpecial].Width, 0) / 2,
+                    1, SpriteEffects.None, 0);
+            }
 
             // Secondary weapon loadedness
-            if (viewport.Player.Ship.Weapon2Loaded)
-                spriteBatch.Draw(overlays[(int)ViewportOverlay.IconWeaponLoad],
-                    new Vector2(viewport.InternalViewport.Width +
-                                overlays[(int)ViewportOverlay.BarSpecial].Width + 8 * 2,
-                                overlays[(int)ViewportOverlay.BarSpecial].Height + 40 * 2) / 2,
-                    null,
-                    //plrViewport.Player.Ship.Weapon2Loaded ? Color.Green : Color.Red,
-                    Color.White,
-                    0,
-                    new Vector2(0, overlays[(int)ViewportOverlay.IconWeaponLoad].Height) / 2,
-                    1, SpriteEffects.None, 0);
+            if (viewport.Player.Ship != null)
+            {
+                if (viewport.Player.Ship.Weapon2Loaded)
+                    spriteBatch.Draw(overlays[(int)ViewportOverlay.IconWeaponLoad],
+                        new Vector2(viewport.InternalViewport.Width +
+                                    overlays[(int)ViewportOverlay.BarSpecial].Width + 8 * 2,
+                                    overlays[(int)ViewportOverlay.BarSpecial].Height + 40 * 2) / 2,
+                        null,
+                        //plrViewport.Player.Ship.Weapon2Loaded ? Color.Green : Color.Red,
+                        Color.White,
+                        0,
+                        new Vector2(0, overlays[(int)ViewportOverlay.IconWeaponLoad].Height) / 2,
+                        1, SpriteEffects.None, 0);
+            }
 
             // Draw bonus display.
             Vector2 bonusBoxSize = new Vector2(overlays[(int)ViewportOverlay.BonusBackground].Width,

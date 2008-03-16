@@ -100,6 +100,16 @@ namespace AW2.Game
     /// </summary>
     public class Player
     {
+        #region Player constants
+
+        /// <summary>
+        /// Time between death of player's ship and birth of a new ship,
+        /// measured in seconds.
+        /// </summary>
+        float mourningDelay = 3;
+
+        #endregion Player constants
+
         #region Player fields
 
         /// <summary>
@@ -182,6 +192,11 @@ namespace AW2.Game
         /// How many reincarnations the player has left.
         /// </summary>
         protected int lives;
+
+        /// <summary>
+        /// Time at which the player's ship is born, measured in game time.
+        /// </summary>
+        TimeSpan shipSpawnTime;
 
         #endregion Player fields
 
@@ -277,6 +292,28 @@ namespace AW2.Game
             this.bonusTimeins = new PlayerBonusItems<TimeSpan>();
             this.bonusTimeouts = new PlayerBonusItems<TimeSpan>();
             this.lives = 3;
+            this.shipSpawnTime = new TimeSpan(0, 0, 0);
+        }
+
+        /// <summary>
+        /// Updates the player.
+        /// </summary>
+        public void Update()
+        {
+            // Give birth to a new ship if it's time.
+            if (ship == null && lives > 0 &&
+                shipSpawnTime <= AssaultWing.Instance.GameTime.TotalGameTime)
+            {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
+
+                ship = (Ship)Gob.CreateGob(shipTypeName);
+                ship.Pos = physics.GetFreePosition(ship, null);
+                ship.Owner = this;
+                ship.Weapon1Name = weapon1Name;
+                ship.Weapon2Name = weapon2Name;
+                data.AddGob(ship);
+            }
         }
 
         /// <summary>
@@ -296,17 +333,11 @@ namespace AW2.Game
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
             bonuses = PlayerBonus.None;
+            ship = null;
 
-            if (lives > 0)
-            {
-                // TODO: Create dummy ship for a while, then create new ship.
-                ship = (Ship)Gob.CreateGob(shipTypeName);
-                ship.Pos = physics.GetFreePosition(ship, null);
-                ship.Owner = this;
-                ship.Weapon1Name = weapon1Name;
-                ship.Weapon2Name = weapon2Name;
-                data.AddGob(ship);
-            }
+            // Schedule the making of a new ship, lives permitting.
+            long ticks = (long)(mourningDelay * 10 * 1000 * 1000);
+            shipSpawnTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
         }
 
         #region Methods related to bonuses

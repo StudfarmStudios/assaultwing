@@ -339,14 +339,6 @@ namespace AW2
 
             dataEngine.InitializeFromArena("Blood Bowl");
             logicEngine.Reset();
-
-            Ship ship1 = new Ship("Hyperion", player1, new Vector2(100f, 100f), "peashooter", "rockets");
-            Ship ship2 = new Ship("Prowler", player2, new Vector2(200f, 200f), "shotgun", "bazooka");
-            dataEngine.AddGob(ship1);
-            dataEngine.AddGob(ship2);
-            player1.Ship = ship1;
-            player2.Ship = ship2;
-
             graphicsEngine.RearrangeViewports();
 
             base.BeginRun();

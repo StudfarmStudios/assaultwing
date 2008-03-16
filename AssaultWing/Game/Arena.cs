@@ -248,7 +248,7 @@ namespace AW2.Game
             spriteBatch.Begin();
             for (int i = 0; i < parallaxNames.Length; i++)
             {
-                Vector2 pos = new Vector2(-((PlayerViewport)viewport).ScreenUpperLeft.X * (1f-parallaxZ[i]), -((PlayerViewport)viewport).ScreenUpperLeft.Y*(1f-parallaxZ[i]));
+                Vector2 pos = new Vector2(-((PlayerViewport)viewport).WorldAreaMin.X * (1f - parallaxZ[i]), ((PlayerViewport)viewport).WorldAreaMin.Y * (1f - parallaxZ[i]));
                 Vector2 fillPos = new Vector2();
                 Texture2D tex = data.GetTexture(parallaxNames[i]);
                 int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);

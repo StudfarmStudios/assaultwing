@@ -78,6 +78,7 @@ namespace AW2.Game
             {
                 Player player = data.GetPlayer(controlEve.PlayerName);
                 if (player == null) continue;
+                if (player.Ship == null) continue;
                 switch (controlEve.ControlType)
                 {
                     case PlayerControlType.Thrust:
@@ -201,6 +202,13 @@ namespace AW2.Game
                 pEng.Update();
             };
             data.ForEachParticleEngine(updateParticleEngine);
+
+            // Update players.
+            Action<Player> updatePlayer = delegate(Player player)
+            {
+                player.Update();
+            };
+            data.ForEachPlayer(updatePlayer);
 
             // Create new bonuses.
             if (nextBonus <= physics.TimeStep.TotalGameTime)

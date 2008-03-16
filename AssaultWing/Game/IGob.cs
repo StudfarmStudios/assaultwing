@@ -46,13 +46,13 @@ namespace AW2.Game
     [LimitedSerialization]
     public struct CollisionArea
     {
-        [TypeParameter]
+        [TypeParameter, RuntimeState]
         string name;
 
         /// <summary>
         /// Area in gob coordinates, not world coordinates.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, RuntimeState]
         IGeomPrimitive area;
 
         /// <summary>

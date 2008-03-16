@@ -81,9 +81,17 @@ namespace AW2.Game.Gobs
         /// This constructor is only for serialisation.
         public Wall() : base() 
         {
-            vertexData = null;
-            polygons = null;
-            indexData = null;
+            vertexData = new VertexPositionNormalTexture[] {
+                new VertexPositionNormalTexture(new Vector3(0,0,0), -Vector3.UnitX, Vector2.Zero),
+                new VertexPositionNormalTexture(new Vector3(100,0,0), Vector3.UnitX, Vector2.UnitX),
+                new VertexPositionNormalTexture(new Vector3(0,100,0), Vector3.UnitY, Vector2.UnitY),
+            };
+            polygons = new CollisionArea[] {
+                new CollisionArea("General", new Polygon(new Vector2[] {
+                    new Vector2(0,0), new Vector2(100,0), new Vector2(0,100),
+                }), null),
+            };
+            indexData = new short[] { 0, 1, 2 };
             textureName = "dummytexture"; // initialised for serialisation
             effect = null;
             vertexDeclaration = null;
@@ -220,7 +228,12 @@ namespace AW2.Game.Gobs
         protected override void SetRuntimeState(Gob runtimeState)
         {
             base.SetRuntimeState(runtimeState);
-            base.collisionAreas = polygons;
+
+            // Gain ownership over our runtime collision areas.
+            collisionAreas = polygons;
+            for (int i = 0; i < collisionAreas.Length; ++i)
+                collisionAreas[i].Owner = (ICollidable)this;
+
 #if DEBUG
             Helpers.Graphics3D.TriangleWinding wind = Helpers.Graphics3D.GetTriangleWinding(vertexData, indexData);
             if (wind != AW2.Helpers.Graphics3D.TriangleWinding.Clockwise)

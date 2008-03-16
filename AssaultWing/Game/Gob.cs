@@ -491,8 +491,8 @@ namespace AW2.Game
         {
             Gob gob = CreateGob(runtimeState.TypeName);
             if (runtimeState.GetType() != gob.GetType())
-                throw new ArgumentException("Runtime gob (class " + runtimeState.GetType().Name +
-                    ") got type name " + runtimeState.typeName + " for class " + gob.GetType().Name);
+                throw new ArgumentException("Runtime gob of class " + runtimeState.GetType().Name +
+                    " has type name \"" + runtimeState.typeName + "\" which is for class " + gob.GetType().Name);
             gob.SetRuntimeState(runtimeState);
 
             // Do special things with meshes named like collision areas.

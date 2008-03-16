@@ -421,7 +421,7 @@ namespace AW2.Game
             this.owner = null;
             this.Pos = Vector2.Zero; // also translates collPrimitives
             this.move = Vector2.Zero;
-            this.rotation = 0;
+            this.rotation = Gob.defaultRotation;
 
             // If we are not ICollidable, we shouldn't have collision areas either.
             // If we are ICollidable, set us as the owner of each collision area.

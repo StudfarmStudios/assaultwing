@@ -497,14 +497,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Ship#noship.xml">
-      <Name>Ship#noship</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="particledefs\ParticleEngine#dummyparticleenginetype.xml">
       <Name>ParticleEngine#dummyparticleenginetype</Name>
       <Importer>XmlImporter</Importer>

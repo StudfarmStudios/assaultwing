@@ -292,7 +292,7 @@ namespace AW2.Game
             this.bonusTimeins = new PlayerBonusItems<TimeSpan>();
             this.bonusTimeouts = new PlayerBonusItems<TimeSpan>();
             this.lives = 3;
-            this.shipSpawnTime = new TimeSpan(0, 0, 0);
+            this.shipSpawnTime = new TimeSpan(1);
         }
 
         /// <summary>

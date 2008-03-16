@@ -89,7 +89,6 @@
       <Name>Dock</Name>
     </Compile>
     <Compile Include="Game\Gobs\Explosion.cs" />
-    <Compile Include="Game\Gobs\NoShip.cs" />
     <Compile Include="Game\Gobs\Rocket.cs" />
     <Compile Include="Game\Gobs\WallModel.cs">
       <Name>WallModel</Name>

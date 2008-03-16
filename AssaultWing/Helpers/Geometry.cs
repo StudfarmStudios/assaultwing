@@ -1234,22 +1234,22 @@ namespace AW2.Helpers
                 // bounding box is tight and thus there is at least one vertex
                 // of the face strip lying on each face of the bounding box.
                 // If the point is in the bounding box, the strip must be checked.
-                // From bounding boxes not containing the point, only the closest
-                // one's strip is checked.
+                // From bounding boxes not containing the point one must check
+                // the closest strip and all strips whose closest corner is closer
+                // than the second-closest corner of the closest strip.
+                // For this, the strips will be ordered in 'stripIs' by distance 
+                // to the closest corner. Strips that contain the query point
+                // we mark with distance zero, thus always making them to be checked.
+                // 'stripIs' and 'stripDistances' have the same indexing.
+                int[] stripIs = new int[polygon.FaceStrips.Length];
+                for (int i = 0; i < stripIs.Length; ++i) stripIs[i] = i;
+                float[] stripDistancesSquared = new float[polygon.FaceStrips.Length];
                 for (int stripI = 0; stripI < polygon.FaceStrips.Length; ++stripI)
                 {
                     Polygon.FaceStrip strip = polygon.FaceStrips[stripI];
                     if (strip.boundingBox.Contains(new Vector3(point.Location, 0)) == ContainmentType.Contains)
                     {
-                        // Deal with a face strip that contains the query point.
-                        int oldI = strip.startIndex;
-                        for (int i = strip.startIndex + 1; i <= strip.endIndex; ++i)
-                        {
-                            int realI = i % vertices.Length;
-                            bestDistanceSquared = MathHelper.Min(bestDistanceSquared,
-                                DistanceSquared(point, vertices[oldI], vertices[realI]));
-                            oldI = realI;
-                        }
+                        stripDistancesSquared[stripI] = 0;
                     }
                     else
                     {
@@ -1261,6 +1261,7 @@ namespace AW2.Helpers
                             Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Max.X, strip.boundingBox.Max.Y))
                         };
                         Array.Sort(cornerDistsSquared);
+                        stripDistancesSquared[stripI] = cornerDistsSquared[0];
                         float stripDistanceSquared = cornerDistsSquared[1];
                         if (stripDistanceSquared < bestStripDistanceSquared)
                         {
@@ -1270,15 +1271,14 @@ namespace AW2.Helpers
                     }
                 }
 
-                // Deal with the closest face strip that doesn't contain the query point.
-                // Note: This can be skipped if the strip's bounding box's closest point
-                // is farther than the closest vertex found so far.
-                if (bestStripI != -1) {
-                    Polygon.FaceStrip strip = polygon.FaceStrips[bestStripI];
+                Array.Sort(stripDistancesSquared, stripIs);
+                for (int stripI = 0; stripDistancesSquared[stripI] <= bestStripDistanceSquared; ++stripI)
+                {
+                    Polygon.FaceStrip strip = polygon.FaceStrips[stripIs[stripI]];
                     int oldI = strip.startIndex;
-                    for (int i = strip.startIndex + 1; i <= strip.endIndex; ++i)
+                    for (int vertI = strip.startIndex + 1; vertI <= strip.endIndex; ++vertI)
                     {
-                        int realI = i % vertices.Length;
+                        int realI = vertI % vertices.Length;
                         bestDistanceSquared = MathHelper.Min(bestDistanceSquared,
                             DistanceSquared(point, vertices[oldI], vertices[realI]));
                         oldI = realI;

@@ -126,7 +126,7 @@ namespace AW2.Game
         /// Time of birth of the gob, in game time.
         /// </summary>
         [RuntimeState]
-        TimeSpan birthTime;
+        protected TimeSpan birthTime;
 
         /// <summary>
         /// True iff the Die() has been called for this gob.
@@ -647,7 +647,7 @@ namespace AW2.Game
                 if (mesh.Name.StartsWith("mesh_Collision"))
                     continue;
                 if (!data.Viewport.Intersects(mesh.BoundingSphere.Transform(meshSphereTransform)))
-                    return;
+                    continue;
                 foreach (BasicEffect be in mesh.Effects)
                 {
                     data.PrepareEffect(be);

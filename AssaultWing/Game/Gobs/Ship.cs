@@ -138,6 +138,14 @@ namespace AW2.Game.Gobs
         Curve armour;
 
         /// <summary>
+        /// Alpha of the ship as a function that maps the age of the
+        /// ship (in seconds) to the alpha value to draw the ship with.
+        /// </summary>
+        /// Use this to implement alpha flashing on ship birth.
+        [TypeParameter]
+        Curve birthAlpha;
+
+        /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
         /// </summary>
         bool exhaustAmountUpdated;
@@ -251,7 +259,8 @@ namespace AW2.Game.Gobs
         /// Creates an uninitialised ship.
         /// </summary>
         /// This constructor is only for serialisation.
-        public Ship() : base() 
+        public Ship()
+            : base()
         {
             this.thrustForce = 100;
             this.turnSpeed = 3;
@@ -275,6 +284,16 @@ namespace AW2.Game.Gobs
             this.armour.Keys.Add(new CurveKey(10, 7, 10 * 1, 40 * 1, CurveContinuity.Smooth));
             this.armour.Keys.Add(new CurveKey(50, 50, 40 * 1, 450 * 1, CurveContinuity.Smooth));
             this.armour.Keys.Add(new CurveKey(500, 500, 450 * 1, 1, CurveContinuity.Smooth));
+            this.birthAlpha = new Curve();
+            this.birthAlpha.PreLoop = CurveLoopType.Constant;
+            this.birthAlpha.PostLoop = CurveLoopType.Constant;
+            for (float age = 0; age + 0.2f < 2; age += 0.4f)
+            {
+                this.birthAlpha.Keys.Add(new CurveKey(age, 0.2f));
+                this.birthAlpha.Keys.Add(new CurveKey(age + 0.2f, 0.8f));
+            }
+            this.birthAlpha.Keys.Add(new CurveKey(2, 1));
+            this.birthAlpha.ComputeTangents(CurveTangent.Flat);
         }
 
         /// <summary>
@@ -384,6 +403,11 @@ namespace AW2.Game.Gobs
             weapon1Charge = MathHelper.Clamp(weapon1Charge, 0, weapon1ChargeMax);
             weapon2Charge += physics.ApplyChange(weapon2ChargeSpeed);
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
+
+            // Flash if we're just born.
+            // TODO: Don't assume only one mesh and only one effect for the ship?
+            float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
+            (model.Meshes[0].Effects[0] as BasicEffect).Alpha = birthAlpha.Evaluate(age);
         }
 
         /// <summary>

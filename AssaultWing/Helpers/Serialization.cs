@@ -344,6 +344,7 @@ namespace AW2.Helpers
             settings.IgnoreProcessingInstructions = true;
             settings.IgnoreWhitespace = true;
             settings.CloseInput = true;
+            settings.ProhibitDtd = false;
             return XmlReader.Create(stream, settings);
         }
 

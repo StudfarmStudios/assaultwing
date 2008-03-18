@@ -110,6 +110,15 @@ namespace AW2.Game
         float scale;
 
         /// <summary>
+        /// Amount of bleach to use when drawing the gob's 3D model, between 0 and 1.
+        /// </summary>
+        /// A bleach of 0 means the 3D model looks normal. 
+        /// A bleach of 1 means the 3D model is drawn totally white.
+        /// Anything in between states the amount of blend from the
+        /// unbleached 3D model towards the totally white 3D model.
+        float bleach;
+
+        /// <summary>
         /// Types of gobs to create on birth.
         /// </summary>
         [TypeParameter]
@@ -295,6 +304,16 @@ namespace AW2.Game
         /// Get and set the scaling factor of the 3D model.
         /// </summary>
         public float Scale { get { return scale; } set { scale = value; } }
+
+        /// <summary>
+        /// Amount of bleach to use when drawing the gob's 3D model, between 0 and 1.
+        /// Is reset to zero after each frame.
+        /// </summary>
+        /// A bleach of 0 means the 3D model looks normal. 
+        /// A bleach of 1 means the 3D model is drawn totally white.
+        /// Anything in between states the amount of blend from the
+        /// unbleached 3D model towards the totally white 3D model.
+        public float Bleach { get { return bleach; } set { bleach = value; } }
 
         /// <summary>
         /// Returns the world matrix of the gob, i.e., the translation from
@@ -677,6 +696,48 @@ namespace AW2.Game
                     be.World = modelPartTransforms[mesh.ParentBone.Index] * world;
                 }
                 mesh.Draw();
+
+                // Blend towards white if required.
+                if (bleach > 0)
+                {
+                    // For now we assume only one ModelMeshPart. (Laziness.)
+                    if (mesh.Effects.Count > 1)
+                        throw new Exception("Error: Several effects on a flashing gob. Programmer must use arrays for saving BasicEffect state.");
+                    BasicEffect be = (BasicEffect)mesh.Effects[0];
+                    
+                    // Modify render state.
+                    RenderState renderState = AssaultWing.Instance.GraphicsDevice.RenderState;
+                    renderState.DepthBufferEnable = false;
+
+                    // Save effect state.
+                    bool oldLightingEnabled = be.LightingEnabled;
+                    bool oldTextureEnabled = be.TextureEnabled;
+                    bool oldVertexColorEnabled = be.VertexColorEnabled;
+                    Vector3 oldDiffuseColor = be.DiffuseColor;
+                    float oldAlpha = be.Alpha;
+
+                    // Set effect state to bleach.
+                    be.LightingEnabled = false;
+                    be.TextureEnabled = false;
+                    be.VertexColorEnabled = false;
+                    be.DiffuseColor = Vector3.One;
+                    be.Alpha = bleach;
+                    
+                    mesh.Draw();
+
+                    // Restore original effect state.
+                    be.LightingEnabled = oldLightingEnabled;
+                    be.TextureEnabled = oldTextureEnabled;
+                    be.VertexColorEnabled = oldVertexColorEnabled;
+                    be.DiffuseColor = oldDiffuseColor;
+                    be.Alpha = oldAlpha;
+
+                    // Restore render state.
+                    renderState.DepthBufferEnable = true;
+
+                    // Reset bleach for the next frame.
+                    bleach = 0;
+                }
             }
 
 #if false
@@ -946,6 +1007,8 @@ namespace AW2.Game
         {
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
+            if (damageAmount > 0)
+                bleach = MathHelper.Min(bleach + damageAmount / 100, 1);
             if (damage == maxDamage)
                 Die();
         }

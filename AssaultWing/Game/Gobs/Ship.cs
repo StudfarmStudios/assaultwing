@@ -405,9 +405,11 @@ namespace AW2.Game.Gobs
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
 
             // Flash and be disabled if we're just born.
-            // TODO: Don't assume only one mesh and only one effect for the ship?
             float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
-            (model.Meshes[0].Effects[0] as BasicEffect).Alpha = birthAlpha.Evaluate(age);
+            float alpha = birthAlpha.Evaluate(age);
+            foreach (ModelMesh mesh in model.Meshes)
+                foreach (BasicEffect be in mesh.Effects)
+                    be.Alpha = alpha;
             Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;
         }
 

@@ -329,7 +329,8 @@ namespace AW2.Game
 
             if ((gob.PhysicsApplyMode & PhysicsApplyMode.Move) != 0)
             {
-                MoveAndCollidePhysical(gob);
+                if (!gob.Disabled)
+                    MoveAndCollidePhysical(gob);
             }
             else
             {
@@ -352,15 +353,19 @@ namespace AW2.Game
                 CollisionArea collArea = collData.CollisionArea;
                 List<CollisionArea> potentials = GetPotentialPhysicalOverlappers(collArea);
                 foreach (CollisionArea collArea2 in potentials)
-                    if (Geometry.Intersect(collArea.Area, collArea2.Area))
+                {
+                    Gob gobGob2 = collArea2.Owner as Gob;
+                    if (!(gobGob2 != null && gobGob2.Disabled) &&
+                        Geometry.Intersect(collArea.Area, collArea2.Area))
                     {
                         collArea.Owner.Collide(collArea2.Owner, collArea.Name);
-                        if (collArea.Owner is Gob && 
+                        if (collArea.Owner is Gob &&
                             (((Gob)collArea.Owner).PhysicsApplyMode & PhysicsApplyMode.ReceptorCollidesPhysically) != 0)
                         {
                             PerformCollision(collArea.Owner, collArea2.Owner);
                         }
                     }
+                }
             }
 
             // Perform force collisions against gob locations.
@@ -369,7 +374,8 @@ namespace AW2.Game
                 CollisionArea collArea = collData.CollisionArea;
                 data.ForEachGob<ISolid>(delegate(Gob gob2)
                 {
-                    if (Geometry.Intersect(collArea.Area, new Helpers.Point(gob2.Pos)))
+                    if (!gob2.Disabled &&
+                        Geometry.Intersect(collArea.Area, new Helpers.Point(gob2.Pos)))
                         collArea.Owner.Collide((ICollidable)gob2, collArea.Name);
                 });
             }
@@ -981,11 +987,16 @@ namespace AW2.Game
                     !gobCollidable2.HadSafePosition) 
                     return false;
 
+                Gob gobGob2 = gobCollidable2 as Gob;
+
+                // Disabled gobs are allowed to overlap anyone.
+                if (gobGob2 != null && gobGob2.Disabled)
+                    return false;
+
                 // Cold gobs are allowed to overlap their own.
                 if ((flags & OverlapperFlags.ConsiderColdness) != 0)
                 {
                     Gob gobGob1 = gob as Gob;
-                    Gob gobGob2 = gobCollidable2 as Gob;
                     if (gobGob1 != null && gobGob2 != null &&
                         (gobGob1.Cold || gobGob2.Cold) &&
                         gobGob1.Owner == gobGob2.Owner &&

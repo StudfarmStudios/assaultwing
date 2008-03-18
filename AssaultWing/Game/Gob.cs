@@ -135,6 +135,12 @@ namespace AW2.Game
         bool dead;
 
         /// <summary>
+        /// True iff the gob is not regarded in movement and collisions.
+        /// </summary>
+        [RuntimeState]
+        bool disabled;
+
+        /// <summary>
         /// Choice of laws of physics to apply to the gob.
         /// </summary>
         /// Subclasses should set this according to their needs.
@@ -330,6 +336,20 @@ namespace AW2.Game
         /// are dead and remove the references if they are.
         public bool Dead { get { return dead; } }
 
+        /// <summary>
+        /// Is the gob disabled. A disabled gob is not regarded in movement and collisions.
+        /// </summary>
+        public bool Disabled
+        {
+            get { return disabled; }
+            set
+            {
+                if (disabled && !value)
+                    HadSafePosition = false;
+                disabled = value;
+            }
+        }
+
         #endregion Gob Properties
 
         #region Gob static and instance constructors, and static constructor-like methods
@@ -393,6 +413,7 @@ namespace AW2.Game
             this.maxDamage = 100;
             this.birthTime = new TimeSpan(23, 59, 59);
             this.dead = false;
+            this.disabled = false;
             this.physicsApplyMode = PhysicsApplyMode.All;
             this.physics = null;
             this.modelPartTransforms = null;

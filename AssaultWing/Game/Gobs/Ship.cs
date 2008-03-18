@@ -404,10 +404,11 @@ namespace AW2.Game.Gobs
             weapon2Charge += physics.ApplyChange(weapon2ChargeSpeed);
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
 
-            // Flash if we're just born.
+            // Flash and be disabled if we're just born.
             // TODO: Don't assume only one mesh and only one effect for the ship?
             float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
             (model.Meshes[0].Effects[0] as BasicEffect).Alpha = birthAlpha.Evaluate(age);
+            Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;
         }
 
         /// <summary>
@@ -457,6 +458,7 @@ namespace AW2.Game.Gobs
         /// <param name="force">Force of thrust; between 0 and 1.</param>
         public void Thrust(float force)
         {
+            if (Disabled) return;
             force = MathHelper.Clamp(force, 0f, 1f);
             Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
                 * force * thrustForce;
@@ -474,6 +476,7 @@ namespace AW2.Game.Gobs
         /// <param name="force">Force of turn; between 0 and 1.</param>
         public void TurnLeft(float force)
         {
+            if (Disabled) return;
             force = MathHelper.Clamp(force, 0f, 1f);
             Turn(force);
         }
@@ -484,6 +487,7 @@ namespace AW2.Game.Gobs
         /// <param name="force">Force of turn; between 0 and 1.</param>
         public void TurnRight(float force)
         {
+            if (Disabled) return;
             force = MathHelper.Clamp(force, 0f, 1f);
             Turn(-force);
         }
@@ -513,6 +517,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire1()
         {
+            if (Disabled) return;
             weapon1.Fire();
         }
 
@@ -521,6 +526,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Fire2()
         {
+            if (Disabled) return;
             weapon2.Fire();
         }
 
@@ -529,6 +535,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void DoExtra()
         {
+            if (Disabled) return;
             // !!! not implemented
         }
 

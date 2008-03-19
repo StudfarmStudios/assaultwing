@@ -61,6 +61,11 @@ namespace AW2.Graphics
         Viewport viewport;
 
         /// <summary>
+        /// Last point we looked at.
+        /// </summary>
+        Vector2 lookAt;
+
+        /// <summary>
         /// Last returned view matrix.
         /// </summary>
         protected Matrix view;
@@ -118,6 +123,7 @@ namespace AW2.Graphics
             viewport.Height = onScreen.Height;
             viewport.MinDepth = 0f;
             viewport.MaxDepth = 1f;
+            lookAt = Vector2.Zero;
             view = Matrix.CreateLookAt(Vector3.Backward, Vector3.Zero, Vector3.Up);
             projection = Matrix.CreateOrthographic(viewport.Width, viewport.Height, 1f, 10000f);
             worldAreaMin = Vector2.Zero;
@@ -194,7 +200,13 @@ namespace AW2.Graphics
             {
                 Gob ship = player.Ship;
                 if (ship != null)
-                    view = Matrix.CreateLookAt(new Vector3(ship.Pos, 500f), new Vector3(ship.Pos, 0f), Vector3.Up);
+                    lookAt = ship.Pos;
+                int sign = Helpers.RandomHelper.GetRandomInt(2) * 2 - 1; // -1 or +1
+                float viewShake = sign * player.Shake;
+                view = Matrix.CreateLookAt(new Vector3(lookAt, 500f), new Vector3(lookAt, 0f),
+                    new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),
+                                (float)Math.Sin(MathHelper.PiOver2 + viewShake),
+                                0));
                 return view;
             }
         }

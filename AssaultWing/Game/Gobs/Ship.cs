@@ -600,7 +600,10 @@ namespace AW2.Game.Gobs
         /// if negative, amount of repair.</param>
         public override void InflictDamage(float damageAmount)
         {
-            base.InflictDamage(armour.Evaluate(damageAmount));
+            float realDamage = armour.Evaluate(damageAmount);
+            if (Owner != null)
+                Owner.IncreaseShake(realDamage);
+            base.InflictDamage(realDamage);
         }
 
         #endregion

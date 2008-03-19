@@ -336,6 +336,7 @@ namespace AW2.Graphics
                 {
                     PlayerViewport plrViewport = (PlayerViewport)viewport;
                     DrawPlayerOverlay(plrViewport);
+                    plrViewport.Player.AttenuateShake();
                 }
 
                 #endregion

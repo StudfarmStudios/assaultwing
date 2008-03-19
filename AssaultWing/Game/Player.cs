@@ -198,6 +198,21 @@ namespace AW2.Game
         /// </summary>
         TimeSpan shipSpawnTime;
 
+        /// <summary>
+        /// Amount of accumulated damage that determines the amount of shake 
+        /// the player is suffering right now. Measured relative to
+        /// the maximum damage of the player's ship.
+        /// </summary>
+        /// Shaking affects the player's viewport and is caused by
+        /// the player's ship receiving damage.
+        float relativeShakeDamage;
+
+        /// <summary>
+        /// Function that maps relative shake damage to radians that the player's
+        /// viewport will tilt to produce sufficient shake.
+        /// </summary>
+        Curve shake;
+
         #endregion Player fields
 
         #region Player properties
@@ -216,7 +231,36 @@ namespace AW2.Game
         /// How many reincarnations the player has left.
         /// </summary>
         public int Lives { get { return lives; } set { lives = value; } }
-        
+
+        /// <summary>
+        /// Amount of shake the player is suffering right now, in radians.
+        /// Shaking affects the player's viewport and is caused by
+        /// the player's ship receiving damage.
+        /// </summary>
+        public float Shake { get { return shake.Evaluate(relativeShakeDamage); } }
+
+        /// <summary>
+        /// Increases the player's shake according to an amount of damage
+        /// the player's ship has received. Negative amount will reduce
+        /// shake.
+        /// </summary>
+        /// Shake won't get negative. There will be no shake if the player
+        /// doesn't have a ship.
+        /// <param name="damageAmount">The amount of damage.</param>
+        public void IncreaseShake(float damageAmount)
+        {
+            if (ship == null) return;
+            relativeShakeDamage = Math.Max(0, relativeShakeDamage + damageAmount / ship.MaxDamageLevel);
+        }
+
+        /// <summary>
+        /// Attenuates the amount of shake. Call this method after each draw.
+        /// </summary>
+        public void AttenuateShake()
+        {
+            relativeShakeDamage = Math.Max(relativeShakeDamage - 0.02f, 0);
+        }
+
         /// <summary>
         /// The name of the player.
         /// </summary>
@@ -293,6 +337,12 @@ namespace AW2.Game
             this.bonusTimeouts = new PlayerBonusItems<TimeSpan>();
             this.lives = 3;
             this.shipSpawnTime = new TimeSpan(1);
+            this.relativeShakeDamage = 0;
+            this.shake = new Curve();
+            this.shake.PreLoop = CurveLoopType.Constant;
+            this.shake.PostLoop = CurveLoopType.Constant;
+            this.shake.Keys.Add(new CurveKey(0, 0));
+            this.shake.Keys.Add(new CurveKey(1, MathHelper.PiOver4));
         }
 
         /// <summary>

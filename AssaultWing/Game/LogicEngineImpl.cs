@@ -233,8 +233,22 @@ namespace AW2.Game
             });
             if (playersAlive <= 1)
             {
-                // TODO: End game by displaying dialog.
-                AssaultWing.Instance.ToggleDialog();
+                string dialogText = playersAlive == 0
+                    ? "No-one survived!\nRematch?"
+                    : alive.Name + " survived!\nRematch?";
+                AssaultWing.Instance.ShowDialog(dialogText,
+                    delegate(object obj)
+                    {
+                        // TODO: Lose direct reference to DataEngine.
+                        DataEngine dataEngine = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                        dataEngine.InitializeFromArena("Blood Bowl");
+                        Reset();
+                        AssaultWing.Instance.ToggleDialog();
+                    },
+                    delegate(object obj)
+                    {
+                        AssaultWing.Instance.Exit();
+                    });
             }
         }
     }

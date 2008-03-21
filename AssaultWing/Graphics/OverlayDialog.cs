@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.Content;
+using AW2.UI;
+using AW2.Events;
 
 namespace AW2.Graphics
 {
@@ -18,6 +20,25 @@ namespace AW2.Graphics
         SpriteFont textWriter;
         SpriteBatch spriteBatch;
         Texture2D dialogTexture;
+        string dialogText;
+        Action<object> yesAction;
+        Action<object> noAction;
+        Control dialogYesControl, dialogNoControl;
+
+        /// <summary>
+        /// The text to display in the dialog.
+        /// </summary>
+        public string DialogText { get { return dialogText; } set { dialogText = value; } }
+
+        /// <summary>
+        /// The action to perform when the user gives positive input.
+        /// </summary>
+        public Action<object> YesAction { set { yesAction = value; } }
+
+        /// <summary>
+        /// The action to perform when the user gives negative input.
+        /// </summary>
+        public Action<object> NoAction { set { noAction = value; } }
 
         /// <summary>
         /// Creates an overlay dialog.
@@ -26,7 +47,11 @@ namespace AW2.Graphics
         public OverlayDialog(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            // TODO: Construct any child components here
+            dialogText = "Huh?";
+            yesAction = delegate(object obj) { };
+            noAction = delegate(object obj) { };
+            dialogYesControl = new KeyboardKey(Keys.Y);
+            dialogNoControl = new KeyboardKey(Keys.N);
         }
 
         /// <summary>
@@ -46,7 +71,23 @@ namespace AW2.Graphics
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            // TODO: Add your update code here
+            // Process player input.
+            EventEngine eventer = (EventEngine)Game.Services.GetService(typeof(EventEngine));
+            for (PlayerControlEvent eve = eventer.GetEvent<PlayerControlEvent>(); eve != null;
+                eve = eventer.GetEvent<PlayerControlEvent>())
+            {
+                // Positive input.
+                if (eve.ControlType == PlayerControlType.Fire1 ||
+                    eve.ControlType == PlayerControlType.Fire2)
+                {
+                    yesAction(null);
+                }
+                // Negative input.
+                else
+                {
+                    noAction(null);
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -71,8 +112,12 @@ namespace AW2.Graphics
         {
             #region Overlay menu
             spriteBatch.Begin();
-            spriteBatch.Draw(dialogTexture, new Vector2(0, this.Game.GraphicsDevice.Viewport.Height / 2 - dialogTexture.Height / 2), Color.White);
-            spriteBatch.DrawString(textWriter, "YOU WANT TO QUIT?", new Vector2(dialogTexture.Width/2, this.Game.GraphicsDevice.Viewport.Height / 2 - textWriter.LineSpacing / 2), Color.White);
+            Vector2 dialogTopLeft = new Vector2(0, AssaultWing.Instance.ClientBounds.Height - dialogTexture.Height) / 2;
+            Vector2 textCenter = dialogTopLeft + new Vector2(474, 150);
+            Vector2 textSize = textWriter.MeasureString(dialogText);
+            spriteBatch.Draw(dialogTexture, dialogTopLeft, Color.White);
+            spriteBatch.DrawString(textWriter, dialogText, textCenter, Color.White, 0,
+                textSize / 2, 1, SpriteEffects.None, 0);
             spriteBatch.End();
             #endregion
 

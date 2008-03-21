@@ -172,10 +172,27 @@ namespace AW2.Game
         public void InitializeFromArena(string name)
         {
             Arena arena = GetArena(name);
-            // TODO: First make sure nobody else refers to gobs in 'gobs'.
+
+            // Clear old data.
+            // TODO: First make sure nobody else refers to gobs in 'gobs' 
+            // or other objects in other lists.
             gobs.Clear();
+            particleEngines.Clear();
+            weapons.Clear();
+            addedGobs.Clear();
+            removedGobs.Clear();
+
+            // Create initial objects.
             foreach (Gob gob in arena.Gobs)
                 AddGob(Gob.CreateGob(gob));
+
+            // Reset players.
+            ForEachPlayer(delegate(Player player)
+            {
+                player.Lives = 3;
+                player.Ship = null;
+            });
+
             activeArena = arena;
         }
 

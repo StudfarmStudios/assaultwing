@@ -26,7 +26,7 @@ namespace AW2.UI
         /// <summary>
         /// Controls for general functionality.
         /// </summary>
-        // HACK: Remove from release builds: menuControl, showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl
+        // HACK: Remove from release builds: menuControl, dialogControl, showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl
         private Control exitControl1, menuControl, fullscreenControl, dialogControl;
         private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 

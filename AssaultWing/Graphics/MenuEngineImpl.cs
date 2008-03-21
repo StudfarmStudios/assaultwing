@@ -12,7 +12,7 @@ namespace AW2.Graphics
 {
     class MenuEngineImpl : DrawableGameComponent
     {
-        private float timeSinceLastMove = 0;
+        private float timeSinceLastMove = 0; // TODO: Remove timeSinceLastMove
         //private bool active;
         private int currentMenu = 0;
         private int currentSubMenu = 0;
@@ -90,6 +90,7 @@ namespace AW2.Graphics
                 switch (controlEve.ControlType)
                 {
                     case PlayerControlType.Thrust:
+                        if (!controlEve.Pulse) break;
                         if (currentMenuLevel == 0)
                         {
                             bigArrowDir = -1;
@@ -100,12 +101,15 @@ namespace AW2.Graphics
                         }
                         break;
                     case PlayerControlType.Left:
+                        if (!controlEve.Pulse) break;
                         // TODO: switch between menu & sub
                         break;
                     case PlayerControlType.Right:
+                        if (!controlEve.Pulse) break;
                         // TODO: switch between menu & sub
                         break;
                     case PlayerControlType.Down:
+                        if (!controlEve.Pulse) break;
                         if (currentMenuLevel == 0)
                         {
                             bigArrowDir = 1;
@@ -118,7 +122,7 @@ namespace AW2.Graphics
                         break;
                 }
             }
-            if (timeSinceLastMove > 250)
+            if (timeSinceLastMove >= 0)
             {
                 timeSinceLastMove = 0;
                 currentMenu += bigArrowDir;

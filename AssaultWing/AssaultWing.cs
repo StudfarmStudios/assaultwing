@@ -19,11 +19,34 @@ using AW2.Game.Particles;
 namespace AW2
 {
     /// <summary>
+    /// The state of the game.
+    /// </summary>
+    public enum GameState
+    {
+        /// <summary>
+        /// The game is active.
+        /// </summary>
+        Gameplay,
+
+        /// <summary>
+        /// The game overlay dialog is visible, game is active but paused.
+        /// </summary>
+        OverlayDialog,
+
+        /// <summary>
+        /// The menu is active.
+        /// </summary>
+        Menu,
+    }
+
+    /// <summary>
     /// The main class of the Assault Wing game. A singleton class.
     /// </summary>
     /// Game components can be requested from the AssaultWing.Services property.
     public class AssaultWing : Microsoft.Xna.Framework.Game
     {
+        #region AssaultWing fields
+
         UIEngineImpl uiEngine;
         GraphicsEngineImpl graphicsEngine;
         OverlayDialog overlayDialog;
@@ -38,6 +61,7 @@ namespace AW2
         TimeSpan gameTimeDelay;
         TimeSpan lastFramerateCheck;
         int framesSinceLastCheck;
+        GameState gameState;
 
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
@@ -51,7 +75,22 @@ namespace AW2
 
         GameTime gameTime;
 
+        #endregion AssaultWing fields
+
         #region AssaultWing properties
+
+        /// <summary>
+        /// Returns (after creating) the only instance of class AssaultWing.
+        /// </summary>
+        public static AssaultWing Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new AssaultWing();
+                return instance;
+            }
+        }
 
         /// <summary>
         /// The game time on this frame.
@@ -64,6 +103,8 @@ namespace AW2
         public Rectangle ClientBounds { get { return Window.ClientBounds; } }
 
         #endregion AssaultWing properties
+
+        #region AssaultWing private methods
 
         /// <summary>
         /// Creates a new Assault Wing - Galactic Battlefront game instance.
@@ -101,6 +142,7 @@ namespace AW2
 
             lastFramerateCheck = new TimeSpan(0);
             framesSinceLastCheck = 0;
+            gameState = GameState.Gameplay;
         }
 
         /// <summary>
@@ -136,101 +178,105 @@ namespace AW2
         }
 
         /// <summary>
-        /// Returns (after creating) the only instance of class AssaultWing.
+        /// Changes game state.
         /// </summary>
-        public static AssaultWing Instance
+        /// <param name="newState">The state to change to.</param>
+        void ChangeState(GameState newState)
         {
-            get
-            {
-                if (instance == null)
-                    instance = new AssaultWing();
-                return instance;
-            }
-        }
-
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
-        {
-            Log.Write("Assault Wing initializing");
-
-            uiEngine = new UIEngineImpl(this);
-            logicEngine = new LogicEngineImpl(this);
-            SoundEngineImpl soundEngine = new SoundEngineImpl(this);
-            graphicsEngine = new GraphicsEngineImpl(this);
-            menuEngine = new MenuEngineImpl(this);
-            overlayDialog = new OverlayDialog(this);
+            if (gameState == newState) return;
             
-            uiEngine.UpdateOrder = 1;
-            logicEngine.UpdateOrder = 2;
-            soundEngine.UpdateOrder = 3;
-            graphicsEngine.UpdateOrder = 4;
-            overlayDialog.UpdateOrder = 5;
-            menuEngine.UpdateOrder = 6;
+            // Disable current state.
+            switch (gameState)
+            {
+                case GameState.Gameplay:
+                    logicEngine.Enabled = false;
+                    graphicsEngine.Enabled = false;
+                    break;
+                case GameState.Menu:
+                    menuEngine.Enabled = false;
+                    break;
+                case GameState.OverlayDialog:
+                    graphicsEngine.Visible = false;
+                    overlayDialog.Enabled = false;
+                    break;
+                default:
+                    throw new Exception("Unhandled game state " + gameState + " in AssaultWing.ChangeState()");
+            }
 
-            Components.Add(logicEngine);
-            Components.Add(graphicsEngine);
-            Components.Add(overlayDialog);
-            Components.Add(uiEngine);
-            Components.Add(soundEngine);
-            Components.Add(menuEngine);
-            DataEngine dataEngine = new DataEngineImpl();
-            Services.AddService(typeof(DataEngine), dataEngine);
-            Services.AddService(typeof(EventEngine), new EventEngineImpl());
-            Services.AddService(typeof(PhysicsEngine), new PhysicsEngineImpl());
+            // Enable new state.
+            switch (newState)
+            {
+                case GameState.Gameplay:
+                    logicEngine.Enabled = true;
+                    graphicsEngine.Enabled = true;
+                    break;
+                case GameState.Menu:
+                    menuEngine.Enabled = true;
+                    break;
+                case GameState.OverlayDialog:
+                    graphicsEngine.Visible = true;
+                    overlayDialog.Enabled = true;
+                    break;
+                default:
+                    throw new Exception("Unhandled game state " + newState + " in AssaultWing.ChangeState()");
+            }
 
-
-            menuEngine.Visible = false; // no visible menu
-            menuEngine.Enabled = false; // menu doesn't consume keyboard events
-            overlayDialog.Visible = false; // no visible dialog
-            overlayDialog.Enabled = false; // dialog doesn't consume keyboard events
-
-#if DEBUG
-            SoundEffectEvent eventti = new SoundEffectEvent();
-            eventti.setAction(SoundOptions.Action.Artillery);
-            eventti.setEffect(SoundOptions.Effect.None);
-            EventEngine eventEngine = (EventEngine)this.Services.GetService(typeof(EventEngine));
-            eventEngine.SendEvent(eventti);
-#endif
-
-            TargetElapsedTime = new TimeSpan((long)(10000000.0 / 60.0)); // 60 frames per second
-
-            base.Initialize();
+            gameState = newState;
         }
+
+        #endregion AssaultWing private methods
 
         #region Methods for game components
 
         /// <summary>
         /// Switches between displaying the menu and the game view.
         /// </summary>
+        [Obsolete("Use ChangeState() instead.")]
         public void SwitchMenu()
         {
-            if (graphicsEngine.Visible)
+            if (gameState != GameState.Menu)
             {
                 graphicsEngine.Visible = false;
                 graphicsEngine.Enabled = false;
                 logicEngine.Enabled = false;
                 menuEngine.Enabled = true;
                 menuEngine.Visible = true;
+                gameState = GameState.Menu;
             }
-            else
+            else if (gameState == GameState.Menu)
             {
                 graphicsEngine.Visible = true;
                 graphicsEngine.Enabled = true;
                 logicEngine.Enabled = true;
                 menuEngine.Enabled = false;
                 menuEngine.Visible = false;
+                gameState = GameState.Gameplay;
             }
+        }
 
+        /// <summary>
+        /// Displays the dialog on top of the game and stops updating the game logic.
+        /// </summary>
+        /// <param name="dialogText">The text to display in the dialog.</param>
+        /// <param name="yesAction">How to react to positive input.</param>
+        /// <param name="noAction">How to react to negative input.</param>
+        public void ShowDialog(string dialogText, Action<object> yesAction, Action<object> noAction)
+        {
+            overlayDialog.DialogText = dialogText;
+            overlayDialog.YesAction = yesAction;
+            overlayDialog.NoAction = noAction;
+
+            // Enable dialog, disable other components.
+            graphicsEngine.Enabled = false;
+            logicEngine.Enabled = false;
+            overlayDialog.Enabled = true;
+            overlayDialog.Visible = true;
         }
 
         /// <summary>
         /// Switches between displaying the menu and the game view.
         /// </summary>
+        [Obsolete("Use ShowDialog() instead")]
         public void ToggleDialog()
         {
             if (!overlayDialog.Visible)
@@ -287,6 +333,62 @@ namespace AW2
 
         #endregion Methods for game components
 
+        #region Overridden Game methods
+
+        /// <summary>
+        /// Allows the game to perform any initialization it needs to before starting to run.
+        /// This is where it can query for any required services and load any non-graphic
+        /// related content.  Calling base.Initialize will enumerate through any components
+        /// and initialize them as well.
+        /// </summary>
+        protected override void Initialize()
+        {
+            Log.Write("Assault Wing initializing");
+
+            uiEngine = new UIEngineImpl(this);
+            logicEngine = new LogicEngineImpl(this);
+            SoundEngineImpl soundEngine = new SoundEngineImpl(this);
+            graphicsEngine = new GraphicsEngineImpl(this);
+            menuEngine = new MenuEngineImpl(this);
+            overlayDialog = new OverlayDialog(this);
+
+            uiEngine.UpdateOrder = 1;
+            logicEngine.UpdateOrder = 2;
+            soundEngine.UpdateOrder = 3;
+            graphicsEngine.UpdateOrder = 4;
+            overlayDialog.UpdateOrder = 5;
+            menuEngine.UpdateOrder = 6;
+
+            Components.Add(logicEngine);
+            Components.Add(graphicsEngine);
+            Components.Add(overlayDialog);
+            Components.Add(uiEngine);
+            Components.Add(soundEngine);
+            Components.Add(menuEngine);
+            DataEngine dataEngine = new DataEngineImpl();
+            Services.AddService(typeof(DataEngine), dataEngine);
+            Services.AddService(typeof(EventEngine), new EventEngineImpl());
+            Services.AddService(typeof(PhysicsEngine), new PhysicsEngineImpl());
+
+
+            menuEngine.Visible = false; // no visible menu
+            menuEngine.Enabled = false; // menu doesn't consume keyboard events
+            overlayDialog.Visible = false; // no visible dialog
+            overlayDialog.Enabled = false; // dialog doesn't consume keyboard events
+
+#if DEBUG
+            SoundEffectEvent eventti = new SoundEffectEvent();
+            eventti.setAction(SoundOptions.Action.Artillery);
+            eventti.setEffect(SoundOptions.Effect.None);
+            EventEngine eventEngine = (EventEngine)this.Services.GetService(typeof(EventEngine));
+            eventEngine.SendEvent(eventti);
+#endif
+
+            TargetElapsedTime = new TimeSpan((long)(10000000.0 / 60.0)); // 60 frames per second
+
+            base.Initialize();
+        }
+
         /// <summary>
         /// Called after all components are initialized but before the first update in the game loop. 
         /// </summary>
@@ -332,8 +434,6 @@ namespace AW2
 
             Player player1 = new Player("Kaiser Lohengramm", "Hyperion", "peashooter", "rockets", plr1Controls);
             Player player2 = new Player("John Crichton", "Prowler", "shotgun", "bazooka", plr2Controls);
-            player1.Lives = 3;
-            player2.Lives = 3;
             dataEngine.AddPlayer(player1);
             dataEngine.AddPlayer(player2);
 
@@ -381,7 +481,6 @@ namespace AW2
             // TODO: Load any ResourceManagementMode.Manual content
         }
 
-
         /// <summary>
         /// Unload your (graphics) content.
         /// </summary>
@@ -390,7 +489,6 @@ namespace AW2
                 // TODO: Unload any ResourceManagementMode.Automatic content
 //                content.Unload();
         }
-
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -435,7 +533,6 @@ namespace AW2
             data.CommitPending();
         }
 
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -454,5 +551,7 @@ namespace AW2
             }
             base.Draw(gameTime);
         }
+
+        #endregion Overridden Game methods
     }
 }

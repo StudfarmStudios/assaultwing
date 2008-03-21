@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\BonusExpiryEvent.cs" />
-    <Compile Include="Events\DialogControlEvent.cs" />
     <Compile Include="Events\PlayerControlEvent.cs">
       <Name>PlayerControlEvent</Name>
     </Compile>

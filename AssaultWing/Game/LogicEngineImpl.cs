@@ -65,65 +65,7 @@ namespace AW2.Game
             PhysicsEngine physics = (PhysicsEngine)Game.Services.GetService(typeof(PhysicsEngine));
             physics.TimeStep = gameTime;
             
-            // Process player input.
-            bool doneThrust = false;
-            bool doneLeft = false;
-            bool doneRight = false;
-            bool doneDown = false;
-            bool doneFire1 = false;
-            bool doneFire2 = false;
-            bool doneExtra = false;
-            for (PlayerControlEvent controlEve = eventer.GetEvent<PlayerControlEvent>(); controlEve != null;
-                controlEve = eventer.GetEvent<PlayerControlEvent>())
-            {
-                Player player = data.GetPlayer(controlEve.PlayerName);
-                if (player == null) continue;
-                if (player.Ship == null) continue;
-                switch (controlEve.ControlType)
-                {
-                    case PlayerControlType.Thrust:
-                        if (doneThrust) break;
-                        doneThrust = true;
-                        player.Ship.Thrust(controlEve.Force);
-                        break;
-                    case PlayerControlType.Left:
-                        if (doneLeft) break;
-                        doneLeft = true;
-                        player.Ship.TurnLeft(controlEve.Force);
-                        break;
-                    case PlayerControlType.Right:
-                        if (doneRight) break;
-                        doneRight = true;
-                        player.Ship.TurnRight(controlEve.Force);
-                        break;
-                    case PlayerControlType.Down:
-                        if (doneDown) break;
-                        doneDown = true;
-                        // This has no effect during a game.
-                        break;
-                    case PlayerControlType.Fire1:
-                        if (doneFire1) break;
-                        doneFire1 = true;
-                        if (controlEve.Pulse)
-                            player.Ship.Fire1();
-                        break;
-                    case PlayerControlType.Fire2:
-                        if (doneFire2) break;
-                        doneFire2 = true;
-                        if (controlEve.Pulse)
-                            player.Ship.Fire2();
-                        break;
-                    case PlayerControlType.Extra:
-                        if (doneExtra) break;
-                        doneExtra = true;
-                        if (controlEve.Pulse)
-                            player.Ship.DoExtra();
-                        break;
-                    default:
-                        throw new ArgumentException("Unexpected player control type " + 
-                            Enum.GetName(typeof(PlayerControlType), controlEve.ControlType));
-                }
-            }
+            UpdateControls();
 
             /* UNDONE: Bonuses are more practical to handle straight by player's bonus time counters.
             // Process bonus events.
@@ -250,6 +192,108 @@ namespace AW2.Game
                         AssaultWing.Instance.Exit();
                     });
             }
+        }
+
+        /// <summary>
+        /// Checks player controls and reacts to them.
+        /// </summary>
+        private void UpdateControls()
+        {
+            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
+            EventEngine eventEngine = (EventEngine)Game.Services.GetService(typeof(EventEngine));
+            data.ForEachPlayer(delegate(Player player)
+            {
+                if (player.Ship == null) return;
+
+                if (player.Controls[PlayerControlType.Thrust].Force > 0)
+                    player.Ship.Thrust(player.Controls[PlayerControlType.Thrust].Force);
+                if (player.Controls[PlayerControlType.Left].Force > 0)
+                    player.Ship.TurnLeft(player.Controls[PlayerControlType.Left].Force);
+                if (player.Controls[PlayerControlType.Right].Force > 0)
+                    player.Ship.TurnRight(player.Controls[PlayerControlType.Right].Force);
+                if (player.Controls[PlayerControlType.Fire1].Pulse)
+                    player.Ship.Fire1();
+                if (player.Controls[PlayerControlType.Fire2].Pulse)
+                    player.Ship.Fire2();
+                if (player.Controls[PlayerControlType.Extra].Pulse)
+                    player.Ship.DoExtra();
+
+#if false // Send events about player controls -- do this on client in the future
+                foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
+                {
+                    Control control = player.Controls[controlType];
+
+                    // TODO: We can skip sending an event if the control is known to be used only
+                    // as a pulse control and control.Pulse is false (even if control.Force > 0).
+                    if (control.Force > 0 || control.Pulse)
+                    {
+                        PlayerControlEvent eve = new PlayerControlEvent(player.Name, controlType, control.Force, control.Pulse);
+                        eventEngine.SendEvent(eve);
+                    }
+                }
+#endif
+            });
+
+#if false // Read player controls from received events -- use this code on the server in the future
+            bool doneThrust = false;
+            bool doneLeft = false;
+            bool doneRight = false;
+            bool doneDown = false;
+            bool doneFire1 = false;
+            bool doneFire2 = false;
+            bool doneExtra = false;
+            for (PlayerControlEvent controlEve = eventer.GetEvent<PlayerControlEvent>(); controlEve != null;
+                controlEve = eventer.GetEvent<PlayerControlEvent>())
+            {
+                Player player = data.GetPlayer(controlEve.PlayerName);
+                if (player == null) continue;
+                if (player.Ship == null) continue;
+                switch (controlEve.ControlType)
+                {
+                    case PlayerControlType.Thrust:
+                        if (doneThrust) break;
+                        doneThrust = true;
+                        player.Ship.Thrust(controlEve.Force);
+                        break;
+                    case PlayerControlType.Left:
+                        if (doneLeft) break;
+                        doneLeft = true;
+                        player.Ship.TurnLeft(controlEve.Force);
+                        break;
+                    case PlayerControlType.Right:
+                        if (doneRight) break;
+                        doneRight = true;
+                        player.Ship.TurnRight(controlEve.Force);
+                        break;
+                    case PlayerControlType.Down:
+                        if (doneDown) break;
+                        doneDown = true;
+                        // This has no effect during a game.
+                        break;
+                    case PlayerControlType.Fire1:
+                        if (doneFire1) break;
+                        doneFire1 = true;
+                        if (controlEve.Pulse)
+                            player.Ship.Fire1();
+                        break;
+                    case PlayerControlType.Fire2:
+                        if (doneFire2) break;
+                        doneFire2 = true;
+                        if (controlEve.Pulse)
+                            player.Ship.Fire2();
+                        break;
+                    case PlayerControlType.Extra:
+                        if (doneExtra) break;
+                        doneExtra = true;
+                        if (controlEve.Pulse)
+                            player.Ship.DoExtra();
+                        break;
+                    default:
+                        throw new ArgumentException("Unexpected player control type " + 
+                            Enum.GetName(typeof(PlayerControlType), controlEve.ControlType));
+                }
+            }
+#endif
         }
     }
 }

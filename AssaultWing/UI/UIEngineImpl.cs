@@ -102,23 +102,6 @@ namespace AW2.UI
                 AssaultWing.Instance.ShowOnlyPlayer(0);
             if (showOnlyPlayer2Control.Pulse)
                 AssaultWing.Instance.ShowOnlyPlayer(1);
-
-            // Check player controls.
-            Action<Player> playerControlCheck = delegate(Player player)
-            {
-                foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
-                {
-                    Control control = player.Controls[controlType];
-                    // TODO: We can skip sending an event if the control is known to be used only
-                    // as a pulse control and control.Pulse is false (even if control.Force > 0).
-                    if (control.Force > 0 || control.Pulse)
-                    {
-                        PlayerControlEvent eve = new PlayerControlEvent(player.Name, controlType, control.Force, control.Pulse);
-                        eventEngine.SendEvent(eve);
-                    }
-                }
-            };
-            data.ForEachPlayer(playerControlCheck);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace AW2.Graphics
         string dialogText;
         Action<object> yesAction;
         Action<object> noAction;
-        Control dialogYesControl, dialogNoControl;
+        List<Control> dialogYesControls, dialogNoControls;
 
         /// <summary>
         /// The text to display in the dialog.
@@ -50,8 +50,11 @@ namespace AW2.Graphics
             dialogText = "Huh?";
             yesAction = delegate(object obj) { };
             noAction = delegate(object obj) { };
-            dialogYesControl = new KeyboardKey(Keys.Y);
-            dialogNoControl = new KeyboardKey(Keys.N);
+            dialogYesControls = new List<Control>(); 
+            dialogYesControls.Add(new KeyboardKey(Keys.Y));
+            dialogNoControls = new List<Control>();
+            dialogNoControls.Add(new KeyboardKey(Keys.N));
+            dialogNoControls.Add(new KeyboardKey(Keys.Escape));
         }
 
         /// <summary>
@@ -71,23 +74,19 @@ namespace AW2.Graphics
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            // Process player input.
-            EventEngine eventer = (EventEngine)Game.Services.GetService(typeof(EventEngine));
-            for (PlayerControlEvent eve = eventer.GetEvent<PlayerControlEvent>(); eve != null;
-                eve = eventer.GetEvent<PlayerControlEvent>())
-            {
-                // Positive input.
-                if (eve.ControlType == PlayerControlType.Fire1 ||
-                    eve.ControlType == PlayerControlType.Fire2)
+            // Check our controls and react to them.
+            foreach (Control control in dialogYesControls)
+                if (control.Pulse)
                 {
                     yesAction(null);
+                    break;
                 }
-                // Negative input.
-                else
+            foreach (Control control in dialogNoControls)
+                if (control.Pulse)
                 {
                     noAction(null);
+                    break;
                 }
-            }
 
             base.Update(gameTime);
         }

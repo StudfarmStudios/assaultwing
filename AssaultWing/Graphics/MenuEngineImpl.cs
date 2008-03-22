@@ -7,6 +7,7 @@ using AW2.Helpers;
 using AW2.Events;
 using AW2.Game;
 using AW2.UI;
+using Microsoft.Xna.Framework.Input;
 
 namespace AW2.Graphics
 {
@@ -26,6 +27,12 @@ namespace AW2.Graphics
         private bool bigArrowStopped = true;
         private int bigArrowDir = 0;
 
+        /// <summary>
+        /// General controls for moving in the menu. These are in addition
+        /// to player controls that also may have a function in parts of the menu.
+        /// </summary>
+        private Control controlUp, controlDown;
+
         private Rectangle menuScreenRec;
         private Microsoft.Xna.Framework.Graphics.Viewport menuScreenView;
 
@@ -36,6 +43,8 @@ namespace AW2.Graphics
         public MenuEngineImpl(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
+            controlUp = new KeyboardKey(Keys.Up);
+            controlDown = new KeyboardKey(Keys.Down);
         }
 
         /// <summary>
@@ -75,53 +84,42 @@ namespace AW2.Graphics
         {
             timeSinceLastMove += (float)gameTime.ElapsedRealTime.TotalMilliseconds;
             EventEngine eventer = (EventEngine)Game.Services.GetService(typeof(EventEngine));
+            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
 
             bigArrowTarget = (110 + currentMenu * 83) * aspectY;
             if (bigArrowLocation > bigArrowTarget + bigArrowSpeed) bigArrowLocation -= bigArrowSpeed;
             else if (bigArrowLocation < bigArrowTarget - bigArrowSpeed) bigArrowLocation += bigArrowSpeed;
 
-            // Process player input.
-            for (Event eve = eventer.GetEvent(typeof(PlayerControlEvent)); eve != null;
-                eve = eventer.GetEvent(typeof(PlayerControlEvent)))
+            // Check our controls and react to them.
+            bool upDone = false;
+            bool downDone = false;
+            if (controlUp.Pulse && !upDone)
             {
-                PlayerControlEvent controlEve = (PlayerControlEvent)eve;
-//                Player player = data.GetPlayer(controlEve.PlayerName);
-//                if (player == null) continue;
-                switch (controlEve.ControlType)
-                {
-                    case PlayerControlType.Thrust:
-                        if (!controlEve.Pulse) break;
-                        if (currentMenuLevel == 0)
-                        {
-                            bigArrowDir = -1;
-                        }
-                        else
-                        {
-                            // TODO: process moving in submenu
-                        }
-                        break;
-                    case PlayerControlType.Left:
-                        if (!controlEve.Pulse) break;
-                        // TODO: switch between menu & sub
-                        break;
-                    case PlayerControlType.Right:
-                        if (!controlEve.Pulse) break;
-                        // TODO: switch between menu & sub
-                        break;
-                    case PlayerControlType.Down:
-                        if (!controlEve.Pulse) break;
-                        if (currentMenuLevel == 0)
-                        {
-                            bigArrowDir = 1;
-                        }
-                        else
-                        {
-                            // TODO: process moving in submenu
-                        }
-
-                        break;
-                }
+                upDone = true;
+                if (currentMenuLevel == 0)
+                    bigArrowDir = -1;
             }
+            if (controlDown.Pulse && !downDone)
+            {
+                downDone = true;
+                if (currentMenuLevel == 0)
+                    bigArrowDir = 1;
+            }
+            data.ForEachPlayer(delegate(Player player)
+            {
+                if (player.Controls[PlayerControlType.Thrust].Pulse && !upDone)
+                {
+                    upDone = true;
+                    if (currentMenuLevel == 0)
+                        bigArrowDir = -1;
+                }
+                if (player.Controls[PlayerControlType.Down].Pulse && !downDone)
+                {
+                    downDone = true;
+                    if (currentMenuLevel == 0)
+                        bigArrowDir = 1;
+                }
+            });
             if (timeSinceLastMove >= 0)
             {
                 timeSinceLastMove = 0;

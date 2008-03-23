@@ -89,6 +89,7 @@ namespace AW2.Graphics
                     break;
                 }
 
+#if DEBUG
             // Check for cheat codes.
             KeyboardState keys = Keyboard.GetState();
             if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
@@ -101,6 +102,7 @@ namespace AW2.Graphics
                         player.Ship.Die();
                 });
             }
+#endif
 
             base.Update(gameTime);
         }

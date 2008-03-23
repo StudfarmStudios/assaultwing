@@ -53,6 +53,9 @@ namespace AW2
         MenuEngineImpl menuEngine;
         LogicEngineImpl logicEngine;
         DataEngineImpl dataEngine;
+        PhysicsEngineImpl physicsEngine;
+        SoundEngineImpl soundEngine;
+        EventEngineImpl eventEngine;
         ContentManager content;
         GraphicsDeviceManager graphics;
         int preferredWindowWidth, preferredWindowHeight;
@@ -250,6 +253,16 @@ namespace AW2
             else
                 ChangeState(GameState.Gameplay);
             logicEngine.Reset();
+            physicsEngine.Reset();
+            graphicsEngine.RearrangeViewports();
+        }
+
+        /// <summary>
+        /// Resumes playing the current arena, closing the dialog if it's visible.
+        /// </summary>
+        public void ResumePlay()
+        {
+            ChangeState(GameState.Gameplay);
         }
 
         /// <summary>
@@ -340,11 +353,13 @@ namespace AW2
 
             uiEngine = new UIEngineImpl(this);
             logicEngine = new LogicEngineImpl(this);
-            SoundEngineImpl soundEngine = new SoundEngineImpl(this);
+            soundEngine = new SoundEngineImpl(this);
             graphicsEngine = new GraphicsEngineImpl(this);
             menuEngine = new MenuEngineImpl(this);
             overlayDialog = new OverlayDialog(this);
             dataEngine = new DataEngineImpl();
+            physicsEngine = new PhysicsEngineImpl();
+            eventEngine = new EventEngineImpl();
 
             uiEngine.UpdateOrder = 1;
             logicEngine.UpdateOrder = 2;
@@ -360,8 +375,8 @@ namespace AW2
             Components.Add(soundEngine);
             Components.Add(menuEngine);
             Services.AddService(typeof(DataEngine), dataEngine);
-            Services.AddService(typeof(EventEngine), new EventEngineImpl());
-            Services.AddService(typeof(PhysicsEngine), new PhysicsEngineImpl());
+            Services.AddService(typeof(EventEngine), eventEngine);
+            Services.AddService(typeof(PhysicsEngine), physicsEngine);
 
             // Disable all optional components.
             logicEngine.Enabled = false;
@@ -375,7 +390,6 @@ namespace AW2
             SoundEffectEvent eventti = new SoundEffectEvent();
             eventti.setAction(SoundOptions.Action.Artillery);
             eventti.setEffect(SoundOptions.Effect.None);
-            EventEngine eventEngine = (EventEngine)this.Services.GetService(typeof(EventEngine));
             eventEngine.SendEvent(eventti);
 #endif
 

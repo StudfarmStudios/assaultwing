@@ -447,7 +447,9 @@ namespace AW2
             dataEngine.AddPlayer(player2);
             graphicsEngine.RearrangeViewports();
 
-            dataEngine.ArenaPlaylist = new List<string>(new string[] { "Blood Bowl" });
+            List<string> arenaNames = new List<string>();
+            dataEngine.ForEachArena(delegate(Arena arena) { arenaNames.Add(arena.Name); });
+            dataEngine.ArenaPlaylist = arenaNames;
             ChangeState(GameState.Menu);
 
             base.BeginRun();

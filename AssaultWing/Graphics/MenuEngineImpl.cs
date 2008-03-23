@@ -57,6 +57,8 @@ namespace AW2.Graphics
         private float bigArrowSpeed;
         private bool bigArrowStopped = true;
         private int bigArrowDir = 0;
+        private SpriteFont fontMedium;
+
 
         /// <summary>
         /// General controls for moving in the menu. These are in addition
@@ -105,6 +107,16 @@ namespace AW2.Graphics
             spriteBatch.Draw(menuTexture, menuScreenRec, Color.White);
             spriteBatch.Draw(bigArrow, new Rectangle((int)Math.Round(220 * aspectX), (int)Math.Round(bigArrowLocation), 
                 (int)Math.Round(aspectX * 95), (int)Math.Round(aspectY * 101)), Color.White);
+
+            // Draw menu data screen contents.
+            if (currentMenu == MainMenuItem.LaunchDeck)
+            {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                string arenaNames = String.Join("\n", data.ArenaPlaylist.ToArray());
+                Vector2 arenaListPos = new Vector2(600, 200);
+                spriteBatch.DrawString(fontMedium, arenaNames, arenaListPos, Color.White);
+            }
+
             spriteBatch.End();
         }
 
@@ -190,6 +202,7 @@ namespace AW2.Graphics
             Log.Write("Menu engine loading menu graphics.");
             menuTexture = LoadTexture(game, "menubg");
             bigArrow = LoadTexture(game, "mainarrow");
+            fontMedium = game.Content.Load<SpriteFont>(System.IO.Path.Combine("fonts", "DotMatrix"));
         }
 
         private Texture2D LoadTexture(AssaultWing game, string name)

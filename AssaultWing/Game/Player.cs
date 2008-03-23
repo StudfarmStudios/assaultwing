@@ -390,6 +390,22 @@ namespace AW2.Game
             shipSpawnTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
         }
 
+        /// <summary>
+        /// Resets the player's internal state for a new arena.
+        /// Note that e.g. lives must be set by some external entity.
+        /// </summary>
+        public void Reset()
+        {
+            weapon1Upgrades = 0;
+            weapon2Upgrades = 0;
+            bonuses = PlayerBonus.None;
+            bonusTimeins = new PlayerBonusItems<TimeSpan>();
+            bonusTimeouts = new PlayerBonusItems<TimeSpan>();
+            ship = null;
+            shipSpawnTime = new TimeSpan(1);
+            relativeShakeDamage = 0;
+        }
+
         #region Methods related to bonuses
 
         /// <summary>

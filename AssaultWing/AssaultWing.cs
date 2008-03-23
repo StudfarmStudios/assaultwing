@@ -52,6 +52,7 @@ namespace AW2
         OverlayDialog overlayDialog;
         MenuEngineImpl menuEngine;
         LogicEngineImpl logicEngine;
+        DataEngineImpl dataEngine;
         ContentManager content;
         GraphicsDeviceManager graphics;
         int preferredWindowWidth, preferredWindowHeight;
@@ -183,21 +184,21 @@ namespace AW2
         /// <param name="newState">The state to change to.</param>
         void ChangeState(GameState newState)
         {
-            if (gameState == newState) return;
-            
             // Disable current state.
             switch (gameState)
             {
                 case GameState.Gameplay:
                     logicEngine.Enabled = false;
-                    graphicsEngine.Enabled = false;
+                    graphicsEngine.Visible = false;
                     break;
                 case GameState.Menu:
                     menuEngine.Enabled = false;
+                    menuEngine.Visible = false;
                     break;
                 case GameState.OverlayDialog:
-                    graphicsEngine.Visible = false;
                     overlayDialog.Enabled = false;
+                    overlayDialog.Visible = false;
+                    graphicsEngine.Visible = false;
                     break;
                 default:
                     throw new Exception("Unhandled game state " + gameState + " in AssaultWing.ChangeState()");
@@ -208,14 +209,16 @@ namespace AW2
             {
                 case GameState.Gameplay:
                     logicEngine.Enabled = true;
-                    graphicsEngine.Enabled = true;
+                    graphicsEngine.Visible = true;
                     break;
                 case GameState.Menu:
                     menuEngine.Enabled = true;
+                    menuEngine.Visible = true;
                     break;
                 case GameState.OverlayDialog:
-                    graphicsEngine.Visible = true;
                     overlayDialog.Enabled = true;
+                    overlayDialog.Visible = true;
+                    graphicsEngine.Visible = true;
                     break;
                 default:
                     throw new Exception("Unhandled game state " + newState + " in AssaultWing.ChangeState()");
@@ -229,29 +232,16 @@ namespace AW2
         #region Methods for game components
 
         /// <summary>
-        /// Switches between displaying the menu and the game view.
+        /// Starts or resumes playing with the next chosen arena.
         /// </summary>
-        [Obsolete("Use ChangeState() instead.")]
-        public void SwitchMenu()
+        public void PlayNextArena()
         {
-            if (gameState != GameState.Menu)
-            {
-                graphicsEngine.Visible = false;
-                graphicsEngine.Enabled = false;
-                logicEngine.Enabled = false;
-                menuEngine.Enabled = true;
-                menuEngine.Visible = true;
-                gameState = GameState.Menu;
-            }
-            else if (gameState == GameState.Menu)
-            {
-                graphicsEngine.Visible = true;
-                graphicsEngine.Enabled = true;
-                logicEngine.Enabled = true;
-                menuEngine.Enabled = false;
-                menuEngine.Visible = false;
-                gameState = GameState.Gameplay;
-            }
+            DataEngine data = (DataEngine)Services.GetService(typeof(DataEngine));
+            if (data.NextArena())
+                ChangeState(GameState.Menu);
+            else
+                ChangeState(GameState.Gameplay);
+            logicEngine.Reset();
         }
 
         /// <summary>
@@ -351,6 +341,7 @@ namespace AW2
             graphicsEngine = new GraphicsEngineImpl(this);
             menuEngine = new MenuEngineImpl(this);
             overlayDialog = new OverlayDialog(this);
+            dataEngine = new DataEngineImpl();
 
             uiEngine.UpdateOrder = 1;
             logicEngine.UpdateOrder = 2;
@@ -365,16 +356,17 @@ namespace AW2
             Components.Add(uiEngine);
             Components.Add(soundEngine);
             Components.Add(menuEngine);
-            DataEngine dataEngine = new DataEngineImpl();
             Services.AddService(typeof(DataEngine), dataEngine);
             Services.AddService(typeof(EventEngine), new EventEngineImpl());
             Services.AddService(typeof(PhysicsEngine), new PhysicsEngineImpl());
 
-
-            menuEngine.Visible = false; // no visible menu
-            menuEngine.Enabled = false; // menu doesn't consume keyboard events
-            overlayDialog.Visible = false; // no visible dialog
-            overlayDialog.Enabled = false; // dialog doesn't consume keyboard events
+            // Disable all optional components.
+            logicEngine.Enabled = false;
+            graphicsEngine.Visible = false;
+            menuEngine.Enabled = false;
+            menuEngine.Visible = false;
+            overlayDialog.Enabled = false;
+            overlayDialog.Visible = false;
 
 #if DEBUG
             SoundEffectEvent eventti = new SoundEffectEvent();
@@ -436,10 +428,10 @@ namespace AW2
             Player player2 = new Player("John Crichton", "Prowler", "shotgun", "bazooka", plr2Controls);
             dataEngine.AddPlayer(player1);
             dataEngine.AddPlayer(player2);
-
-            dataEngine.InitializeFromArena("Blood Bowl");
-            logicEngine.Reset();
             graphicsEngine.RearrangeViewports();
+
+            dataEngine.ArenaPlaylist = new List<string>(new string[] { "Blood Bowl" });
+            PlayNextArena();
 
             base.BeginRun();
         }

@@ -31,6 +31,17 @@ namespace AW2.Game
         Arena activeArena;
 
         /// <summary>
+        /// Arenas to play in one session.
+        /// </summary>
+        List<string> arenaPlaylist;
+
+        /// <summary>
+        /// Index of current arena in arena playlist,
+        /// or -1 if there is no current arena.
+        /// </summary>
+        int arenaPlaylistI;
+
+        /// <summary>
         /// The viewport we are currently drawing into.
         /// </summary>
         Viewport activeViewport;
@@ -40,7 +51,24 @@ namespace AW2.Game
         /// </summary>
         /// You can set this field by calling InitializeFromArena(string).
         public Arena Arena { get { return activeArena; } }
-        
+
+        /// <summary>
+        /// Arenas to play in one session.
+        /// </summary>
+        public List<string> ArenaPlaylist { 
+            get { return arenaPlaylist; } 
+            set { 
+                arenaPlaylist = value;
+                arenaPlaylistI = -1;
+            }
+        }
+
+        /// <summary>
+        /// Index of current arena in arena playlist,
+        /// or -1 if there is no current arena.
+        /// </summary>
+        public int ArenaPlaylistI { get { return arenaPlaylistI; } }
+
         /// <summary>
         /// The viewport we are currently drawing into.
         /// </summary>
@@ -63,6 +91,8 @@ namespace AW2.Game
             templates = new Dictionary<TypeStringPair, object>();
             arenas = new Dictionary<string, Arena>();
             activeArena = null;
+            arenaPlaylist = new List<string>();
+            arenaPlaylistI = -1;
         }
 
         #region models
@@ -166,6 +196,22 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Initialises the data engine with the next arena in the playlist.
+        /// </summary>
+        /// <returns><b>false</b> if the initialisation succeeded,
+        /// <b>true</b> otherwise.</returns>
+        public bool NextArena()
+        {
+            if (++arenaPlaylistI >= arenaPlaylist.Count)
+            {
+                activeArena = null;
+                return true;
+            }
+            InitializeFromArena(arenaPlaylist[arenaPlaylistI]);
+            return false;
+        }
+
+        /// <summary>
         /// Initialises the game data from a previously stored arena.
         /// </summary>
         /// <param name="name">The name of the arena.</param>
@@ -189,8 +235,8 @@ namespace AW2.Game
             // Reset players.
             ForEachPlayer(delegate(Player player)
             {
+                player.Reset();
                 player.Lives = 3;
-                player.Ship = null;
             });
 
             activeArena = arena;

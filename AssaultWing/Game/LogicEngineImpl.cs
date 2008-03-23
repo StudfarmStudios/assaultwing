@@ -181,11 +181,7 @@ namespace AW2.Game
                 AssaultWing.Instance.ShowDialog(dialogText,
                     delegate(object obj)
                     {
-                        // TODO: Lose direct reference to DataEngine.
-                        DataEngine dataEngine = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                        dataEngine.InitializeFromArena("Blood Bowl");
-                        Reset();
-                        AssaultWing.Instance.ToggleDialog();
+                        AssaultWing.Instance.PlayNextArena();
                     },
                     delegate(object obj)
                     {

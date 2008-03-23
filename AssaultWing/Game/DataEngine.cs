@@ -20,6 +20,17 @@ namespace AW2.Game
         Arena Arena { get; }
 
         /// <summary>
+        /// Arenas to play in one session.
+        /// </summary>
+        List<string> ArenaPlaylist { get; set; }
+
+        /// <summary>
+        /// Index of current arena in arena playlist,
+        /// or -1 if there is no current arena.
+        /// </summary>
+        int ArenaPlaylistI { get; }
+
+        /// <summary>
         /// The viewport we are currently drawing into.
         /// </summary>
         Viewport Viewport { get; }
@@ -75,6 +86,13 @@ namespace AW2.Game
         /// <param name="name">The name of the arena.</param>
         /// <returns>The arena.</returns>
         Arena GetArena(string name);
+
+        /// <summary>
+        /// Initialises the data engine with the next arena in the playlist.
+        /// </summary>
+        /// <returns><b>false</b> if the initialisation succeeded,
+        /// <b>true</b> otherwise.</returns>
+        bool NextArena();
 
         /// <summary>
         /// Initialises the game data from a previously stored arena.

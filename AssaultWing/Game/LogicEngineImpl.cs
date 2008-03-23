@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using AW2.Events;
 using AW2.UI;
 using AW2.Game.Particles;
+using Microsoft.Xna.Framework.Input;
 
 namespace AW2.Game
 {
@@ -18,8 +19,11 @@ namespace AW2.Game
         /// </summary>
         TimeSpan nextBonus;
 
+        Control controlPause;
+
         public LogicEngineImpl(Microsoft.Xna.Framework.Game game) : base(game)
         {
+            controlPause = new KeyboardKey(Keys.Pause);
         }
 
         public override void Initialize()
@@ -191,12 +195,26 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Checks player controls and reacts to them.
+        /// Checks player controls and general game controls and reacts to them.
         /// </summary>
         private void UpdateControls()
         {
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             EventEngine eventEngine = (EventEngine)Game.Services.GetService(typeof(EventEngine));
+
+            // Check general game controls.
+            if (controlPause.Pulse)
+            {
+                AssaultWing.Instance.ShowDialog("Paused\nY resumes", delegate(object obj)
+                {
+                    AssaultWing.Instance.ResumePlay();
+                },
+                delegate(object obj)
+                {
+                    AssaultWing.Instance.ResumePlay();
+                });
+            }
+
             data.ForEachPlayer(delegate(Player player)
             {
                 if (player.Ship == null) return;

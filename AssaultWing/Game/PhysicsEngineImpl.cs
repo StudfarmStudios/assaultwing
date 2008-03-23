@@ -306,6 +306,19 @@ namespace AW2.Game
         public GameTime TimeStep { get { return gameTime; } set { gameTime = value; } }
 
         /// <summary>
+        /// Resets the physics engine for a new arena.
+        /// </summary>
+        public void Reset()
+        {
+            gameTime = new GameTime();
+            collisionTimestamp = new TimeSpan();
+            collidedGobs.Clear();
+            collidables = new R_Tree();
+            receptors.Clear();
+            forces.Clear();
+        }
+
+        /// <summary>
         /// Applies drag to the given gob.
         /// </summary>
         /// Drag is the force that resists movement in a medium.

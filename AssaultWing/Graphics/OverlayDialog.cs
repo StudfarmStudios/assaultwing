@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.Content;
 using AW2.UI;
 using AW2.Events;
+using AW2.Game;
 
 namespace AW2.Graphics
 {
@@ -87,6 +88,19 @@ namespace AW2.Graphics
                     noAction(null);
                     break;
                 }
+
+            // Check for cheat codes.
+            KeyboardState keys = Keyboard.GetState();
+            if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
+            {
+                // K + P = kill players
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                data.ForEachPlayer(delegate(Player player)
+                {
+                    if (player.Ship != null)
+                        player.Ship.Die();
+                });
+            }
 
             base.Update(gameTime);
         }

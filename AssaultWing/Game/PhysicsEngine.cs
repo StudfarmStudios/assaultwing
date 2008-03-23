@@ -54,6 +54,11 @@ namespace AW2.Game
         GameTime TimeStep { get; set; }
 
         /// <summary>
+        /// Resets the physics engine for a new arena.
+        /// </summary>
+        void Reset();
+
+        /// <summary>
         /// Applies drag to the given gob.
         /// </summary>
         /// Drag is the force that resists movement in a medium.

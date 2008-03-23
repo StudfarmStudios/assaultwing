@@ -11,11 +11,42 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AW2.Graphics
 {
+    /// <summary>
+    /// An item on the main menu.
+    /// </summary>
+    enum MainMenuItem
+    {
+        /// <summary>
+        /// Start a play session.
+        /// </summary>
+        LaunchDeck,
+
+        Pilots,
+        FlightSquadrons,
+        ConflictGroups,
+        Settings,
+
+        /// <summary>
+        /// Shut down the game program.
+        /// </summary>
+        Quit,
+
+        /// <summary>
+        /// The first item in the main menu.
+        /// </summary>
+        _FirstItem = LaunchDeck,
+
+        /// <summary>
+        /// The last item in the main menu.
+        /// </summary>
+        _LastItem = Quit,
+    }
+
     class MenuEngineImpl : DrawableGameComponent
     {
         private float timeSinceLastMove = 0; // TODO: Remove timeSinceLastMove
         //private bool active;
-        private int currentMenu = 0;
+        private MainMenuItem currentMenu = MainMenuItem._FirstItem;
         private int currentSubMenu = 0;
         private int currentMenuLevel = 0; // 0 = main menu, 1 = submenu
         private SpriteBatch spriteBatch;
@@ -31,7 +62,7 @@ namespace AW2.Graphics
         /// General controls for moving in the menu. These are in addition
         /// to player controls that also may have a function in parts of the menu.
         /// </summary>
-        private Control controlUp, controlDown;
+        private Control controlUp, controlDown, controlSelect;
 
         private Rectangle menuScreenRec;
         private Microsoft.Xna.Framework.Graphics.Viewport menuScreenView;
@@ -45,6 +76,7 @@ namespace AW2.Graphics
         {
             controlUp = new KeyboardKey(Keys.Up);
             controlDown = new KeyboardKey(Keys.Down);
+            controlSelect = new KeyboardKey(Keys.Enter);
         }
 
         /// <summary>
@@ -86,13 +118,14 @@ namespace AW2.Graphics
             EventEngine eventer = (EventEngine)Game.Services.GetService(typeof(EventEngine));
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
 
-            bigArrowTarget = (110 + currentMenu * 83) * aspectY;
+            bigArrowTarget = (110 + (int)currentMenu * 83) * aspectY;
             if (bigArrowLocation > bigArrowTarget + bigArrowSpeed) bigArrowLocation -= bigArrowSpeed;
             else if (bigArrowLocation < bigArrowTarget - bigArrowSpeed) bigArrowLocation += bigArrowSpeed;
 
             // Check our controls and react to them.
             bool upDone = false;
             bool downDone = false;
+            bool selectDone = false;
             if (controlUp.Pulse && !upDone)
             {
                 upDone = true;
@@ -104,6 +137,14 @@ namespace AW2.Graphics
                 downDone = true;
                 if (currentMenuLevel == 0)
                     bigArrowDir = 1;
+            }
+            if (controlSelect.Pulse && !selectDone)
+            {
+                selectDone = true;
+                if (currentMenuLevel == 0 && currentMenu == MainMenuItem.LaunchDeck)
+                    AssaultWing.Instance.StartPlaying();
+                if (currentMenuLevel == 0 && currentMenu == MainMenuItem.Quit)
+                    AssaultWing.Instance.Exit();
             }
             data.ForEachPlayer(delegate(Player player)
             {
@@ -119,14 +160,22 @@ namespace AW2.Graphics
                     if (currentMenuLevel == 0)
                         bigArrowDir = 1;
                 }
+                if (player.Controls[PlayerControlType.Fire1].Pulse && !selectDone)
+                {
+                    selectDone = true;
+                    if (currentMenuLevel == 0 && currentMenu == MainMenuItem.LaunchDeck)
+                        AssaultWing.Instance.StartPlaying();
+                    if (currentMenuLevel == 0 && currentMenu == MainMenuItem.Quit)
+                        AssaultWing.Instance.Exit();
+                }
             });
             if (timeSinceLastMove >= 0)
             {
                 timeSinceLastMove = 0;
                 currentMenu += bigArrowDir;
                 bigArrowDir = 0;
-                if (currentMenu > 5) currentMenu = 5;
-                if (currentMenu < 0) currentMenu = 0;
+                if (currentMenu > MainMenuItem._LastItem) currentMenu = MainMenuItem._LastItem;
+                if (currentMenu < MainMenuItem._FirstItem) currentMenu = MainMenuItem._FirstItem;
             }
         }
 

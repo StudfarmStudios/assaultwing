@@ -67,7 +67,7 @@ namespace AW2.Game
         /// Index of current arena in arena playlist,
         /// or -1 if there is no current arena.
         /// </summary>
-        public int ArenaPlaylistI { get { return arenaPlaylistI; } }
+        public int ArenaPlaylistI { get { return arenaPlaylistI; } set { arenaPlaylistI = value; } }
 
         /// <summary>
         /// The viewport we are currently drawing into.

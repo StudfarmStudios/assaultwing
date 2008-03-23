@@ -232,12 +232,20 @@ namespace AW2
         #region Methods for game components
 
         /// <summary>
-        /// Starts or resumes playing with the next chosen arena.
+        /// Starts playing the chosen arenas, starting from the first.
+        /// </summary>
+        public void StartPlaying()
+        {
+            dataEngine.ArenaPlaylistI = -1;
+            PlayNextArena();
+        }
+
+        /// <summary>
+        /// Resumes playing with the next chosen arena.
         /// </summary>
         public void PlayNextArena()
         {
-            DataEngine data = (DataEngine)Services.GetService(typeof(DataEngine));
-            if (data.NextArena())
+            if (dataEngine.NextArena())
                 ChangeState(GameState.Menu);
             else
                 ChangeState(GameState.Gameplay);
@@ -255,12 +263,7 @@ namespace AW2
             overlayDialog.DialogText = dialogText;
             overlayDialog.YesAction = yesAction;
             overlayDialog.NoAction = noAction;
-
-            // Enable dialog, disable other components.
-            graphicsEngine.Enabled = false;
-            logicEngine.Enabled = false;
-            overlayDialog.Enabled = true;
-            overlayDialog.Visible = true;
+            ChangeState(GameState.OverlayDialog);
         }
 
         /// <summary>
@@ -431,7 +434,7 @@ namespace AW2
             graphicsEngine.RearrangeViewports();
 
             dataEngine.ArenaPlaylist = new List<string>(new string[] { "Blood Bowl" });
-            PlayNextArena();
+            ChangeState(GameState.Menu);
 
             base.BeginRun();
         }

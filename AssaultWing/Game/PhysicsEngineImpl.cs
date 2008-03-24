@@ -231,6 +231,13 @@ namespace AW2.Game
         /// </summary>
         float freePosRadiusStep = 10;
 
+        /// <summary>
+        /// Downgrade ammount for collision damage
+        /// attempt, measured in meters.
+        /// </summary>
+        double collisionDamageDownGrade = 0.001f;
+
+
         #endregion Constants
 
         #region Fields
@@ -1116,6 +1123,19 @@ namespace AW2.Game
             {
                 Vector2 move1after = new Vector2(-move1.X * elasticity, move1.Y * friction);
                 gobSolid1.Move = xUnit * move1after.X + yUnit * move1after.Y;
+                if (gobSolid1 is Gobs.Ship)
+                {
+                    Vector2 moveDelta = move1 - move1after;
+                    if (move1after.Length() > 20)
+                    {
+                        double damageFromHit = move1after.Length() * gobSolid1.Mass * collisionDamageDownGrade;
+                        IDamageable damaGob1 = gobSolid1 as IDamageable;
+                        damaGob1.InflictDamage((float)damageFromHit);
+                        
+                    }
+
+                }
+
             }
         }
 
@@ -1146,18 +1166,16 @@ namespace AW2.Game
                 gobSolid1.Move = xUnit * move1after.X + yUnit * move1after.Y + gobSolid2.Move;
                 gobSolid2.Move = xUnit * move2after.X + yUnit * move2after.Y + gobSolid2.Move;
 
-                /*We want to deal damage in physics engine because calculations only happens once per collision!*/
+                /*We want to deal damage in physics engine because calculations only happen once per collision!*/
                 if (gobSolid2 is Gobs.Ship && gobSolid1 is Gobs.Ship)
                 {
-                    double collisionDelta=AWMathHelper.pythagoreanTheorem(move1.X-move1after.X,move1.Y-move1after.Y);
-                    if (collisionDelta > 20)
+                    Vector2 moveDelta = move1 - move1after;
+                    if (moveDelta.Length() > 20)
                     {
-                        double damageFromGob1 = collisionDelta * gobSolid1.Mass * 0.001;
-                        double damageFromGob2 = collisionDelta * gobSolid2.Mass * 0.001;
+                        double damageFromGob1 = moveDelta.Length() * gobSolid1.Mass  * collisionDamageDownGrade;
+                        double damageFromGob2 = moveDelta.Length() * gobSolid2.Mass  * collisionDamageDownGrade;
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         IDamageable damaGob2 = gobSolid2 as IDamageable;
-                        Console.WriteLine(gobSolid1.Mass+"Damage from gob1: " + damageFromGob1);
-                        Console.WriteLine("Damage from gob2: " + damageFromGob2);
                         damaGob1.InflictDamage((float)damageFromGob2);
                         damaGob2.InflictDamage((float)damageFromGob1);
                     }

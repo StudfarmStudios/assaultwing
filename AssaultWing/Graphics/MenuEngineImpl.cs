@@ -58,7 +58,7 @@ namespace AW2.Graphics
         private bool bigArrowStopped = true;
         private int bigArrowDir = 0;
         private SpriteFont fontMedium;
-
+        private Texture2D tex_MainItemHighlight;
 
         /// <summary>
         /// General controls for moving in the menu. These are in addition
@@ -103,8 +103,13 @@ namespace AW2.Graphics
         public override void Draw(GameTime gameTime)
         {
             game.GraphicsDevice.Viewport = menuScreenView;
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
             spriteBatch.Draw(menuTexture, menuScreenRec, Color.White);
+
+            // Draw main menu focus.
+            spriteBatch.Draw(tex_MainItemHighlight, new Rectangle((int)Math.Round(30 * aspectX), (int)Math.Round(bigArrowTarget),
+                (int)Math.Round(aspectX * 230), (int)Math.Round(aspectY * 101)),
+                new Rectangle(0, 0, (int)Math.Round(aspectX * 230), (int)Math.Round(aspectY * 101)), Color.White);
             spriteBatch.Draw(bigArrow, new Rectangle((int)Math.Round(220 * aspectX), (int)Math.Round(bigArrowLocation), 
                 (int)Math.Round(aspectX * 95), (int)Math.Round(aspectY * 101)), Color.White);
 
@@ -203,6 +208,7 @@ namespace AW2.Graphics
             menuTexture = LoadTexture(game, "menubg");
             bigArrow = LoadTexture(game, "mainarrow");
             fontMedium = game.Content.Load<SpriteFont>(System.IO.Path.Combine("fonts", "DotMatrix"));
+            tex_MainItemHighlight = game.Content.Load<Texture2D>(System.IO.Path.Combine("textures", "main_hilite"));
         }
 
         private Texture2D LoadTexture(AssaultWing game, string name)

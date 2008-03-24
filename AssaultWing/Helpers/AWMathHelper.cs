@@ -50,6 +50,13 @@ namespace AW2.Helpers
                 ? from + Math.Min(step, difference)
                 : from - Math.Min(step, MathHelper.TwoPi - difference);
         }
+        public static double pythagoreanTheorem(float x, float y)
+        {
+            double dx = x;
+            double dy = y;
+            double z2 = Math.Pow(dx,2d) + Math.Pow(dy,2d);
+            return Math.Sqrt(z2);
+        }
 
         #region Unit tests
 #if DEBUG

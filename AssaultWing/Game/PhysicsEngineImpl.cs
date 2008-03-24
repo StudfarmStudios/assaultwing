@@ -1145,6 +1145,25 @@ namespace AW2.Game
                 Vector2 move2after = new Vector2(move1.X * 2 * gobSolid1.Mass / (gobSolid1.Mass + gobSolid2.Mass), 0);
                 gobSolid1.Move = xUnit * move1after.X + yUnit * move1after.Y + gobSolid2.Move;
                 gobSolid2.Move = xUnit * move2after.X + yUnit * move2after.Y + gobSolid2.Move;
+
+                /*We want to deal damage in physics engine because calculations only happens once per collision!*/
+                if (gobSolid2 is Gobs.Ship && gobSolid1 is Gobs.Ship)
+                {
+                    double collisionDelta=AWMathHelper.pythagoreanTheorem(move1.X-move1after.X,move1.Y-move1after.Y);
+                    if (collisionDelta > 20)
+                    {
+                        double damageFromGob1 = collisionDelta * gobSolid1.Mass * 0.001;
+                        double damageFromGob2 = collisionDelta * gobSolid2.Mass * 0.001;
+                        IDamageable damaGob1 = gobSolid1 as IDamageable;
+                        IDamageable damaGob2 = gobSolid2 as IDamageable;
+                        Console.WriteLine(gobSolid1.Mass+"Damage from gob1: " + damageFromGob1);
+                        Console.WriteLine("Damage from gob2: " + damageFromGob2);
+                        damaGob1.InflictDamage((float)damageFromGob2);
+                        damaGob2.InflictDamage((float)damageFromGob1);
+                    }
+
+                }
+
             }
 
             // Play a sound.

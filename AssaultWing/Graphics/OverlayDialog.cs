@@ -18,6 +18,29 @@ namespace AW2.Graphics
     /// </summary>
     public class OverlayDialog : Microsoft.Xna.Framework.DrawableGameComponent
     {
+        enum DialogMode
+        {
+            /// <summary>
+            /// Dialog is out of the screen.
+            /// </summary>
+            Out,
+
+            /// <summary>
+            /// Dialog is entering the screen.
+            /// </summary>
+            Entry,
+
+            /// <summary>
+            /// Dialog is totally in the screen.
+            /// </summary>
+            In,
+
+            /// <summary>
+            /// Dialog is exiting the screen.
+            /// </summary>
+            Exit,
+        }
+
         SpriteFont textWriter;
         SpriteBatch spriteBatch;
         Texture2D dialogTexture;
@@ -25,6 +48,30 @@ namespace AW2.Graphics
         Action<object> yesAction;
         Action<object> noAction;
         List<Control> dialogYesControls, dialogNoControls;
+
+        /// <summary>
+        /// Curve along which the dialog moves on entry and exit.
+        /// Maps time since movement start, measured in real time seconds,
+        /// to relative coordinates between 0 (movement started)
+        /// and 1 (movement finished).
+        /// </summary>
+        Curve dialogEntry;
+
+        /// <summary>
+        /// The time it takes the dialog to enter or exit.
+        /// </summary>
+        TimeSpan dialogMoveDuration;
+
+        /// <summary>
+        /// Location of the dialog.
+        /// </summary>
+        DialogMode dialogMode;
+
+        /// <summary>
+        /// Time, in real time, at which the dialog's movement started,
+        /// or unspecified if <b>dialogMode</b> is In or Out.
+        /// </summary>
+        TimeSpan dialogMoveStart;
 
         /// <summary>
         /// The text to display in the dialog.
@@ -56,6 +103,17 @@ namespace AW2.Graphics
             dialogNoControls = new List<Control>();
             dialogNoControls.Add(new KeyboardKey(Keys.N));
             dialogNoControls.Add(new KeyboardKey(Keys.Escape));
+            dialogEntry = new Curve();
+            dialogEntry.Keys.Add(new CurveKey(0, 0));
+            dialogEntry.Keys.Add(new CurveKey(0.15f, 0.33f));
+            dialogEntry.Keys.Add(new CurveKey(0.45f, 0.80f));
+            dialogEntry.Keys.Add(new CurveKey(0.6f, 0.95f));
+            dialogEntry.Keys.Add(new CurveKey(1.0f, 1));
+            dialogEntry.ComputeTangents(CurveTangent.Smooth);
+            dialogEntry.PostLoop = CurveLoopType.Constant;
+            dialogMoveDuration = new TimeSpan((long)(10 * 1000 * 1000 * dialogEntry.Keys[dialogEntry.Keys.Count - 1].Position));
+            dialogMode = DialogMode.Out;
+            dialogMoveStart = new TimeSpan();
         }
 
         /// <summary>
@@ -75,6 +133,12 @@ namespace AW2.Graphics
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
+            // Update dialog mode.
+            if (dialogMode == DialogMode.Entry && dialogMoveStart + dialogMoveDuration <= gameTime.TotalRealTime)
+                dialogMode = DialogMode.In;
+            if (dialogMode == DialogMode.Exit && dialogMoveStart + dialogMoveDuration <= gameTime.TotalRealTime)
+                dialogMode = DialogMode.Out;
+
             // Check our controls and react to them.
             foreach (Control control in dialogYesControls)
                 if (control.Pulse)
@@ -126,8 +190,15 @@ namespace AW2.Graphics
         public override void Draw(GameTime gameTime)
         {
             #region Overlay menu
+            Vector2 dialogShift = Vector2.Zero;
+            float timeMoved = (float)(gameTime.TotalRealTime.TotalSeconds - dialogMoveStart.TotalSeconds);
+            if (dialogMode == DialogMode.Entry)
+                dialogShift = new Vector2((dialogEntry.Evaluate(timeMoved) - 1) * dialogTexture.Width, 0);
+            if (dialogMode == DialogMode.Exit)
+                dialogShift = new Vector2(-dialogEntry.Evaluate(timeMoved) * dialogTexture.Width, 0);
             spriteBatch.Begin();
-            Vector2 dialogTopLeft = new Vector2(0, AssaultWing.Instance.ClientBounds.Height - dialogTexture.Height) / 2;
+            Vector2 dialogTopLeft = new Vector2(0, AssaultWing.Instance.ClientBounds.Height - dialogTexture.Height) / 2
+                + dialogShift;
             Vector2 textCenter = dialogTopLeft + new Vector2(474, 150);
             Vector2 textSize = textWriter.MeasureString(dialogText);
             spriteBatch.Draw(dialogTexture, dialogTopLeft, Color.White);
@@ -138,6 +209,19 @@ namespace AW2.Graphics
 
         }
 
-
+        /// <summary>
+        /// Called when the Visible property changes. Raises the VisibleChanged event.
+        /// </summary>
+        /// <param name="sender">The DrawableGameComponent.</param>
+        /// <param name="args">Arguments to the VisibleChanged event.</param>
+        protected override void OnVisibleChanged(object sender, EventArgs args)
+        {
+            if (Visible)
+            {
+                dialogMode = DialogMode.Entry;
+                dialogMoveStart = AssaultWing.Instance.GameTime.TotalRealTime;
+            }
+            base.OnVisibleChanged(sender, args);
+        }
     }
 }

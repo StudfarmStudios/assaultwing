@@ -50,7 +50,7 @@ namespace AW2.Graphics
         List<Control> dialogYesControls, dialogNoControls;
 
         /// <summary>
-        /// Curve along which the dialog moves on entry and exit.
+        /// Curve along which the dialog moves on entry.
         /// Maps time since movement start, measured in real time seconds,
         /// to relative coordinates between 0 (movement started)
         /// and 1 (movement finished).
@@ -58,9 +58,22 @@ namespace AW2.Graphics
         Curve dialogEntry;
 
         /// <summary>
-        /// The time it takes the dialog to enter or exit.
+        /// Curve along which the dialog moves on exit.
+        /// Maps time since movement start, measured in real time seconds,
+        /// to relative coordinates between 0 (movement started)
+        /// and 1 (movement finished).
         /// </summary>
-        TimeSpan dialogMoveDuration;
+        Curve dialogExit;
+
+        /// <summary>
+        /// The time it takes the dialog to enter.
+        /// </summary>
+        TimeSpan dialogEntryDuration;
+
+        /// <summary>
+        /// The time it takes the dialog to exit.
+        /// </summary>
+        TimeSpan dialogExitDuration;
 
         /// <summary>
         /// Location of the dialog.
@@ -72,6 +85,20 @@ namespace AW2.Graphics
         /// or unspecified if <b>dialogMode</b> is In or Out.
         /// </summary>
         TimeSpan dialogMoveStart;
+
+        /// <summary>
+        /// The relative coordinate of the dialog,
+        /// between 0 (movement started) and 1 (movement finished),
+        /// at the beginning of the current entry or exit.
+        /// Usually 0 unless movement started at an unusual position.
+        /// </summary>
+        float dialogShiftStart;
+
+        /// <summary>
+        /// Time, measured in real time seconds, of how long has the dialog
+        /// been moving in the current movement (exit or entry).
+        /// </summary>
+        float TimeMoved { get { return (float)(AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds - dialogMoveStart.TotalSeconds); } }
 
         /// <summary>
         /// The text to display in the dialog.
@@ -111,9 +138,19 @@ namespace AW2.Graphics
             dialogEntry.Keys.Add(new CurveKey(1.0f, 1));
             dialogEntry.ComputeTangents(CurveTangent.Smooth);
             dialogEntry.PostLoop = CurveLoopType.Constant;
-            dialogMoveDuration = new TimeSpan((long)(10 * 1000 * 1000 * dialogEntry.Keys[dialogEntry.Keys.Count - 1].Position));
+            dialogExit = new Curve();
+            dialogExit.Keys.Add(new CurveKey(0, 0));
+            dialogExit.Keys.Add(new CurveKey(0.15f, 0.33f));
+            dialogExit.Keys.Add(new CurveKey(0.45f, 0.80f));
+            dialogExit.Keys.Add(new CurveKey(0.6f, 0.95f));
+            dialogExit.Keys.Add(new CurveKey(1.0f, 1));
+            dialogExit.ComputeTangents(CurveTangent.Smooth);
+            dialogExit.PostLoop = CurveLoopType.Constant;
+            dialogEntryDuration = new TimeSpan((long)(10 * 1000 * 1000 * dialogEntry.Keys[dialogEntry.Keys.Count - 1].Position));
+            dialogExitDuration = new TimeSpan((long)(10 * 1000 * 1000 * dialogExit.Keys[dialogExit.Keys.Count - 1].Position));
             dialogMode = DialogMode.Out;
             dialogMoveStart = new TimeSpan();
+            dialogShiftStart = 0;
         }
 
         /// <summary>
@@ -134,16 +171,20 @@ namespace AW2.Graphics
         public override void Update(GameTime gameTime)
         {
             // Update dialog mode.
-            if (dialogMode == DialogMode.Entry && dialogMoveStart + dialogMoveDuration <= gameTime.TotalRealTime)
+            if (dialogMode == DialogMode.Entry && dialogMoveStart + dialogEntryDuration <= gameTime.TotalRealTime)
                 dialogMode = DialogMode.In;
-            if (dialogMode == DialogMode.Exit && dialogMoveStart + dialogMoveDuration <= gameTime.TotalRealTime)
+            if (dialogMode == DialogMode.Exit && dialogMoveStart + dialogExitDuration <= gameTime.TotalRealTime)
+            {
                 dialogMode = DialogMode.Out;
+                yesAction(null);
+            }
 
             // Check our controls and react to them.
             foreach (Control control in dialogYesControls)
                 if (control.Pulse)
                 {
-                    yesAction(null);
+                    // Make the dialog exit and then perform the 'yes' action.
+                    ChangeMode(DialogMode.Exit);
                     break;
                 }
             foreach (Control control in dialogNoControls)
@@ -190,12 +231,13 @@ namespace AW2.Graphics
         public override void Draw(GameTime gameTime)
         {
             #region Overlay menu
-            Vector2 dialogShift = Vector2.Zero;
-            float timeMoved = (float)(gameTime.TotalRealTime.TotalSeconds - dialogMoveStart.TotalSeconds);
+            float relativePos = 0;
             if (dialogMode == DialogMode.Entry)
-                dialogShift = new Vector2((dialogEntry.Evaluate(timeMoved) - 1) * dialogTexture.Width, 0);
+                relativePos = dialogShiftStart + (1 - dialogShiftStart) * (dialogEntry.Evaluate(TimeMoved) - 1);
             if (dialogMode == DialogMode.Exit)
-                dialogShift = new Vector2(-dialogEntry.Evaluate(timeMoved) * dialogTexture.Width, 0);
+                relativePos = dialogShiftStart + (1 - dialogShiftStart) * -dialogEntry.Evaluate(TimeMoved);
+            Vector2 dialogShift = new Vector2(dialogTexture.Width, 0) * relativePos;
+
             spriteBatch.Begin();
             Vector2 dialogTopLeft = new Vector2(0, AssaultWing.Instance.ClientBounds.Height - dialogTexture.Height) / 2
                 + dialogShift;
@@ -218,10 +260,42 @@ namespace AW2.Graphics
         {
             if (Visible)
             {
-                dialogMode = DialogMode.Entry;
-                dialogMoveStart = AssaultWing.Instance.GameTime.TotalRealTime;
+                ChangeMode(DialogMode.Entry);
             }
             base.OnVisibleChanged(sender, args);
+        }
+
+        /// <summary>
+        /// Changes the dialog's mode.
+        /// </summary>
+        /// <param name="newMode">The new mode. Use <b>DialogMode.Entry</b>
+        /// or <b>DialogMode.Exit</b>.</param>
+        void ChangeMode(DialogMode newMode)
+        {
+            if (newMode == dialogMode) return;
+            switch (newMode)
+            {
+                case DialogMode.In:
+                    throw new ArgumentException("Please use DialogMode.Entry or DialogMode.Exit");
+                case DialogMode.Out:
+                    throw new ArgumentException("Please use DialogMode.Entry or DialogMode.Exit");
+                case DialogMode.Entry:
+                    // Entry starts midway an exit?
+                    if (dialogMode == DialogMode.Exit)
+                        dialogShiftStart = 1 - dialogExit.Evaluate(TimeMoved);
+                    else
+                        dialogShiftStart = 0;
+                    break;
+                case DialogMode.Exit:
+                    // Exit starts midway an entry?
+                    if (dialogMode == DialogMode.Entry)
+                        dialogShiftStart = 1 - dialogEntry.Evaluate(TimeMoved);
+                    else
+                        dialogShiftStart = 0;
+                    break;
+            }
+            dialogMoveStart = AssaultWing.Instance.GameTime.TotalRealTime;
+            dialogMode = newMode;
         }
     }
 }

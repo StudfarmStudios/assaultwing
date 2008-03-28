@@ -195,7 +195,7 @@ namespace AW2.Game
         /// away from the actual point of collision.
         /// <b>1</b> means no iteration;
         /// <b>0</b> means iteration to infinite precision.
-        float collisionAccuracy = 0.5f;
+        float collisionAccuracy = 0.2f;
 
         /// <summary>
         /// Accuracy to which movement of a gob in a frame is done. 
@@ -1119,6 +1119,13 @@ namespace AW2.Game
                                         Vector2.Dot(gobSolid1.Move, yUnit));
 
             // Only perform physical collision if the gobs are actually closing in on each other.
+            if (move1.X >= 0)
+            {
+                // To work around rounding errors when the solid gob is sliding
+                // almost parallel to the thick gob's surface, fake the solid to
+                // go a bit more towards the thick.
+                move1.X -= 0.05f;
+            }
             if (move1.X < 0)
             {
                 Vector2 move1after = new Vector2(-move1.X * elasticity, move1.Y * friction);
@@ -1131,11 +1138,8 @@ namespace AW2.Game
                         double damageFromHit = move1after.Length() * gobSolid1.Mass * collisionDamageDownGrade;
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         damaGob1.InflictDamage((float)damageFromHit);
-                        
                     }
-
                 }
-
             }
         }
 

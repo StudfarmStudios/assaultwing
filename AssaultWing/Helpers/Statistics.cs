@@ -62,5 +62,19 @@ namespace AW2.Helpers
             }
             return sum / (values.Length);
         }
+
+        /// <summary>
+        /// Computes the standard deviation of a set of values X. O(n) implementation.
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public static float StandardDeviation(float[] values)
+        {
+            float mean = Mean(values);
+            float squareSum = 0;
+            foreach (float value in values)
+                squareSum += value * value;
+            return (float)Math.Sqrt((squareSum - values.Length * mean * mean) / values.Length);
+        }
     }
 }

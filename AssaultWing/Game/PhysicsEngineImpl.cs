@@ -235,7 +235,7 @@ namespace AW2.Game
         /// Downgrade ammount for collision damage
         /// attempt, measured in meters.
         /// </summary>
-        double collisionDamageDownGrade = 0.001f;
+        double collisionDamageDownGrade = 0.0006f;
 
 
         #endregion Constants
@@ -1133,9 +1133,9 @@ namespace AW2.Game
                 if (gobSolid1 is Gobs.Ship)
                 {
                     Vector2 moveDelta = move1 - move1after;
-                    if (move1after.Length() > 20)
+                    if (moveDelta.Length() > 20)
                     {
-                        double damageFromHit = move1after.Length() * gobSolid1.Mass * collisionDamageDownGrade;
+                        double damageFromHit = (moveDelta.Length()/2) * gobSolid1.Mass * collisionDamageDownGrade;
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         damaGob1.InflictDamage((float)damageFromHit);
                     }
@@ -1176,8 +1176,8 @@ namespace AW2.Game
                     Vector2 moveDelta = move1 - move1after;
                     if (moveDelta.Length() > 20)
                     {
-                        double damageFromGob1 = moveDelta.Length() * gobSolid1.Mass  * collisionDamageDownGrade;
-                        double damageFromGob2 = moveDelta.Length() * gobSolid2.Mass  * collisionDamageDownGrade;
+                        double damageFromGob1 = ((moveDelta.Length()/2) + (move2after.Length()/2)) * gobSolid1.Mass  * collisionDamageDownGrade;
+                        double damageFromGob2 = (moveDelta.Length()/2) * gobSolid2.Mass  * collisionDamageDownGrade;
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         IDamageable damaGob2 = gobSolid2 as IDamageable;
                         damaGob1.InflictDamage((float)damageFromGob2);

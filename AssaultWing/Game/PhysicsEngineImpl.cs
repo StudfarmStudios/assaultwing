@@ -1132,12 +1132,11 @@ namespace AW2.Game
                 gobSolid1.Move = xUnit * move1after.X + yUnit * move1after.Y;
                 if (gobSolid1 is Gobs.Ship)
                 {
-                    Vector2 moveDelta = move1 - move1after;
-                    if (moveDelta.Length() > 20)
+                    Vector2 move1Delta = move1 - move1after;
+                    if (move1Delta.Length() > 20)
                     {
-                        double damageFromHit = (moveDelta.Length()/2) * gobSolid1.Mass * collisionDamageDownGrade;
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
-                        damaGob1.InflictDamage((float)damageFromHit);
+                        damaGob1.InflictDamage(CollisionDamage(gobSolid1,move1Delta));
                     }
                 }
             }
@@ -1173,15 +1172,19 @@ namespace AW2.Game
                 /*We want to deal damage in physics engine because calculations only happen once per collision!*/
                 if (gobSolid2 is Gobs.Ship && gobSolid1 is Gobs.Ship)
                 {
-                    Vector2 moveDelta = move1 - move1after;
-                    if (moveDelta.Length() > 20)
+                    Vector2 move1Delta = move1 - move1after;
+                    if (move1Delta.Length() > 20)
                     {
-                        double damageFromGob1 = (moveDelta.Length()/2) * gobSolid1.Mass  * collisionDamageDownGrade;
-                        double damageFromGob2 = (moveDelta.Length()/2) * gobSolid2.Mass  * collisionDamageDownGrade;
+                        Vector2 move2 = new Vector2();
+                        move2.X = (gobSolid1.Mass * move1after.X + gobSolid2.Mass * move2after.X - gobSolid1.Mass * move1.X) / gobSolid2.Mass;
+                        move2.Y = (gobSolid1.Mass * move1after.Y + gobSolid2.Mass * move2after.Y - gobSolid1.Mass * move1.Y) / gobSolid2.Mass;
+                        Vector2 move2Delta = move2 - move2after; 
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         IDamageable damaGob2 = gobSolid2 as IDamageable;
-                        damaGob1.InflictDamage((float)damageFromGob2);
-                        damaGob2.InflictDamage((float)damageFromGob1);
+                        damaGob1.InflictDamage(CollisionDamage(gobSolid1,move1Delta));
+                        damaGob2.InflictDamage(CollisionDamage(gobSolid2,move2Delta));
+                        
+
                     }
 
                 }
@@ -1226,6 +1229,12 @@ namespace AW2.Game
         {
             if (gob1 is IProjectile && gob2 is IProjectile) return false;
             return true;
+        }
+
+        private float CollisionDamage(ISolid gobSolid, Vector2 moveDelta)
+        {
+            float damage =(float)((moveDelta.Length() / 2) * gobSolid.Mass * collisionDamageDownGrade);
+            return damage;
         }
 
         #endregion // Collision checking methods

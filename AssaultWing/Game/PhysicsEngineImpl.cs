@@ -1175,16 +1175,11 @@ namespace AW2.Game
                     Vector2 move1Delta = move1 - move1after;
                     if (move1Delta.Length() > 20)
                     {
-                        Vector2 move2 = new Vector2();
-                        move2.X = (gobSolid1.Mass * move1after.X + gobSolid2.Mass * move2after.X - gobSolid1.Mass * move1.X) / gobSolid2.Mass;
-                        move2.Y = (gobSolid1.Mass * move1after.Y + gobSolid2.Mass * move2after.Y - gobSolid1.Mass * move1.Y) / gobSolid2.Mass;
-                        Vector2 move2Delta = move2 - move2after; 
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         IDamageable damaGob2 = gobSolid2 as IDamageable;
                         damaGob1.InflictDamage(CollisionDamage(gobSolid1,move1Delta));
-                        damaGob2.InflictDamage(CollisionDamage(gobSolid2,move2Delta));
-                        
-
+                        //move2after = move2Delta because collision is calculated from the 2nd gob's point of view (2nd gob is still)
+                        damaGob2.InflictDamage(CollisionDamage(gobSolid2,move2after));
                     }
 
                 }

@@ -1176,7 +1176,7 @@ namespace AW2.Game
                     Vector2 moveDelta = move1 - move1after;
                     if (moveDelta.Length() > 20)
                     {
-                        double damageFromGob1 = ((moveDelta.Length()/2) + (move2after.Length()/2)) * gobSolid1.Mass  * collisionDamageDownGrade;
+                        double damageFromGob1 = (moveDelta.Length()/2) * gobSolid1.Mass  * collisionDamageDownGrade;
                         double damageFromGob2 = (moveDelta.Length()/2) * gobSolid2.Mass  * collisionDamageDownGrade;
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         IDamageable damaGob2 = gobSolid2 as IDamageable;

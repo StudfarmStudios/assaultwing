@@ -249,7 +249,7 @@ namespace AW2
         public void PlayNextArena()
         {
             if (dataEngine.NextArena())
-                ChangeState(GameState.Menu);
+                ShowMenu();
             else
                 ChangeState(GameState.Gameplay);
             logicEngine.Reset();
@@ -277,6 +277,14 @@ namespace AW2
             overlayDialog.YesAction = yesAction;
             overlayDialog.NoAction = noAction;
             ChangeState(GameState.OverlayDialog);
+        }
+
+        /// <summary>
+        /// Displays the main menu and stops any ongoing gameplay.
+        /// </summary>
+        public void ShowMenu()
+        {
+            ChangeState(GameState.Menu);
         }
 
         /// <summary>

@@ -180,8 +180,8 @@ namespace AW2.Game
             if (playersAlive <= 1)
             {
                 string dialogText = playersAlive == 0
-                    ? "No-one survived!\nRematch?"
-                    : alive.Name + " survived!\nRematch?";
+                    ? "No-one survived!\nNext arena?"
+                    : alive.Name + " survived!\nNext arena?";
                 AssaultWing.Instance.ShowDialog(dialogText,
                     delegate(object obj)
                     {
@@ -189,7 +189,7 @@ namespace AW2.Game
                     },
                     delegate(object obj)
                     {
-                        AssaultWing.Instance.Exit();
+                        AssaultWing.Instance.ShowMenu();
                     });
             }
         }

@@ -1,12 +1,8 @@
 Signature = XACT2;
-Version = 16;
-Content Version = 43;
-Release = August 2007;
+Version = 13;
 
 Options
 {
-    Verbose Report = 0;
-    Generate C/C++ Headers = 1;
 }
 
 Global Settings
@@ -16,8 +12,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 675046768;
-    Last Modified High = 29912283;
+    Last Modified Low = 29912283;
+    Last Modified High = 675046768;
 
     Category
     {
@@ -161,7 +157,7 @@ Global Settings
         Value = 0.000000;
         Initial Value = 0.000000;
         Min = 0.000000;
-        Max = 15.000001;
+        Max = 15.000000;
     }
 
     Variable
@@ -178,7 +174,7 @@ Global Settings
         Value = 0.000000;
         Initial Value = 0.000000;
         Min = 0.000000;
-        Max = 15.000001;
+        Max = 15.000000;
     }
 
     Variable
@@ -234,8 +230,6 @@ Wave Bank
     Name = effects;
     Xbox File = xact\Xbox\Wave Bank.xwb;
     Windows File = xact\Win\Wave Bank.xwb;
-    Xbox Bank Path Edited = 1;
-    Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
     Xbox Bank Last Modified Low = 0;
@@ -244,8 +238,6 @@ Wave Bank
     PC Bank Last Modified High = 29912283;
     Header Last Modified Low = 0;
     Header Last Modified High = 0;
-    Bank Last Revised Low = 1394681552;
-    Bank Last Revised High = 29912283;
 
     Wave
     {
@@ -621,8 +613,6 @@ Sound Bank
     Name = Sound Bank;
     Xbox File = xact\Xbox\Sound Bank.xsb;
     Windows File = xact\Win\Sound Bank.xsb;
-    Xbox Bank Path Edited = 1;
-    Windows Bank Path Edited = 1;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -1396,19 +1386,6 @@ Sound Bank
             Weight Min = 0;
             Weight Max = 255;
         }
-
-        Instance Limit
-        {
-            Max Instances = 5;
-            Behavior = 0;
-
-            Crossfade
-            {
-                Fade In = 0;
-                Fade Out = 0;
-                Crossfade Type = 0;
-            }
-        }
     }
 
     Cue
@@ -1468,19 +1445,6 @@ Sound Bank
             Index = 5;
             Weight Min = 0;
             Weight Max = 255;
-        }
-
-        Instance Limit
-        {
-            Max Instances = 5;
-            Behavior = 0;
-
-            Crossfade
-            {
-                Fade In = 0;
-                Fade Out = 0;
-                Crossfade Type = 0;
-            }
         }
     }
 

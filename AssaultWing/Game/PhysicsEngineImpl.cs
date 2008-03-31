@@ -231,11 +231,25 @@ namespace AW2.Game
         /// </summary>
         float freePosRadiusStep = 10;
 
+
         /// <summary>
-        /// Downgrade ammount for collision damage
+        /// Loud collision sound variable
         /// attempt, measured in meters.
         /// </summary>
-        double collisionDamageDownGrade = 0.0006f;
+        double collisionDamageDownGrade = 0.0006;
+
+        /// <summary>
+        /// Loud collision sound variable
+        /// attempt, measured in meters.
+        /// </summary>
+        float loudCollisionSound = 100f;
+
+        /// <summary>
+        /// Minimum move delta
+        /// For collision damage, sound effects
+        /// </summary>
+        float minimumCollisionDelta = 20f;
+
 
 
         #endregion Constants
@@ -1102,13 +1116,7 @@ namespace AW2.Game
         private void PerformCollisionSolidThick(ISolid gobSolid1, IThick gobThick2)
         {
             // Play a sound.
-            if (gobSolid1.Move.Length() > 1f) // HACK: Figure out a better skip condition for collision sounds
-            {
-                EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-                SoundEffectEvent soundEvent = new SoundEffectEvent();
-                soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
-                eventEngine.SendEvent(soundEvent);
-            }
+
 
             // We perform an elastic collision.
             float elasticity = 0.1f; // TODO: Add elasticity and friction to Wall.
@@ -1133,11 +1141,18 @@ namespace AW2.Game
                 if (gobSolid1 is Gobs.Ship)
                 {
                     Vector2 move1Delta = move1 - move1after;
-                    if (move1Delta.Length() > 20)
+                    if (move1Delta.Length() > minimumCollisionDelta)
                     {
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
                         damaGob1.InflictDamage(CollisionDamage(gobSolid1,move1Delta));
                     }
+                }
+                if (((Vector2)(move1 - move1after)).Length() > minimumCollisionDelta) // HACK: Figure out a better skip condition for collision sounds
+                {
+                    EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+                    SoundEffectEvent soundEvent = new SoundEffectEvent();
+                    soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
+                    eventEngine.SendEvent(soundEvent);
                 }
             }
         }
@@ -1173,27 +1188,33 @@ namespace AW2.Game
                 if (gobSolid2 is Gobs.Ship && gobSolid1 is Gobs.Ship)
                 {
                     Vector2 move1Delta = move1 - move1after;
-                    if (move1Delta.Length() > 20)
+                    if (move1Delta.Length() > minimumCollisionDelta)
                     {
                         IDamageable damaGob1 = gobSolid1 as IDamageable;
-                        IDamageable damaGob2 = gobSolid2 as IDamageable;
                         damaGob1.InflictDamage(CollisionDamage(gobSolid1,move1Delta));
+                        
+                    }
+                    if (move2after.Length() > minimumCollisionDelta)
+                    {
                         //move2after = move2Delta because collision is calculated from the 2nd gob's point of view (2nd gob is still)
-                        damaGob2.InflictDamage(CollisionDamage(gobSolid2,move2after));
+                        IDamageable damaGob2 = gobSolid2 as IDamageable;
+                        damaGob2.InflictDamage(CollisionDamage(gobSolid2, move2after));
                     }
 
                 }
 
+                // Play a sound only if actual collision happened!.
+                if (((Vector2)(move1 - move1after)).Length() > minimumCollisionDelta || move2after.Length()>minimumCollisionDelta) // HACK: Figure out a better skip condition for collision sounds
+                {
+                    EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+                    SoundEffectEvent soundEvent = new SoundEffectEvent();
+                    soundEvent.setAction(AW2.Sound.SoundOptions.Action.Shipcollision);
+                    eventEngine.SendEvent(soundEvent);
+                }
+
             }
 
-            // Play a sound.
-            if (relMove.Length() > 1f) // HACK: Figure out a better skip condition for collision sounds
-            {
-                EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-                SoundEffectEvent soundEvent = new SoundEffectEvent();
-                soundEvent.setAction(AW2.Sound.SoundOptions.Action.Shipcollision);
-                eventEngine.SendEvent(soundEvent);
-            }
+
         }
 
         /// <summary>

@@ -380,7 +380,7 @@ namespace AW2.Graphics
             // different NxM grids.
             Rectangle window = AssaultWing.Instance.ClientBounds;
             float bestAspectRatio = Single.MaxValue;
-            int bestRows = 0;
+            int bestRows = 1;
             for (int rows = 1; rows <= players; ++rows)
             {
                 // Only check out grids with cells as many as players.

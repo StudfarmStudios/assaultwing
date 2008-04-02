@@ -29,7 +29,7 @@
       </Item>
     </keys>
   </inflictDamage>
-  <shockMomentum type="Microsoft.Xna.Framework.Curve, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+  <flowSpeed type="Microsoft.Xna.Framework.Curve, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
     <preLoop type="Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">Constant</preLoop>
     <postLoop type="Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">Constant</postLoop>
     <keys type="Microsoft.Xna.Framework.CurveKeyCollection, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
@@ -48,5 +48,5 @@
         <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">Smooth</continuity>
       </Item>
     </keys>
-  </shockMomentum>
+  </flowSpeed>
 </GobType>

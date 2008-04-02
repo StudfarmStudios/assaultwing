@@ -24,12 +24,24 @@ namespace AW2.Game.Gobs
         Curve inflictDamage;
 
         /// <summary>
-        /// Momentum delivered by the explosion's shockwave, measured
-        /// in Newton seconds. The momentum is presented as 
-        /// a function of distance from the explosion.
+        /// Speed of gas flow away from the explosion's center, measured in
+        /// meters per second as a function of the distance from the explosion's
+        /// center. Gas flow affects the movement of gobs.
         /// </summary>
         [TypeParameter]
-        Curve shockMomentum;
+        Curve flowSpeed;
+
+        /// <summary>
+        /// Time, in seconds of game time, of how long there is a gas flow away
+        /// from the center of the explosion.
+        /// </summary>
+        [TypeParameter]
+        float flowTime;
+
+        /// <summary>
+        /// Time of gas flow end, in game time.
+        /// </summary>
+        TimeSpan flowEndTime;
 
         /// <summary>
         /// Names of the particle engines to create.
@@ -59,11 +71,12 @@ namespace AW2.Game.Gobs
             inflictDamage.PostLoop = CurveLoopType.Constant;
             inflictDamage.Keys.Add(new CurveKey(0, 200, 0, 0, CurveContinuity.Smooth));
             inflictDamage.Keys.Add(new CurveKey(300, 0, -3, -3, CurveContinuity.Smooth));
-            shockMomentum = new Curve();
-            shockMomentum.PreLoop = CurveLoopType.Constant;
-            shockMomentum.PostLoop = CurveLoopType.Constant;
-            shockMomentum.Keys.Add(new CurveKey(0, 6000, 0, 0, CurveContinuity.Smooth));
-            shockMomentum.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
+            flowSpeed = new Curve();
+            flowSpeed.PreLoop = CurveLoopType.Constant;
+            flowSpeed.PostLoop = CurveLoopType.Constant;
+            flowSpeed.Keys.Add(new CurveKey(0, 6000, 0, 0, CurveContinuity.Smooth));
+            flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
+            flowTime = 0.5f;
             particleEngineNames = new string[] { "dummyparticleengine", };
             sound = SoundOptions.Action.Explosion;
         }
@@ -75,6 +88,7 @@ namespace AW2.Game.Gobs
         public Explosion(string typeName)
             : base(typeName)
         {
+            flowEndTime = new TimeSpan(1);
             particleEngines = null;
             base.physicsApplyMode = PhysicsApplyMode.Move;
         }
@@ -101,6 +115,10 @@ namespace AW2.Game.Gobs
                 data.AddParticleEngine(particleEngines[i]);
             }
 
+            // Count end time of gas flow.
+            long ticks = (long)(10 * 1000 * 1000 * flowTime);
+            flowEndTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
+
             base.Activate();
         }
 
@@ -112,8 +130,23 @@ namespace AW2.Game.Gobs
             // Have our collisions checked.
             base.Update();
 
-            // There's nothing more to do.
-            Die();
+            // Remove damage-inflicting collision area for future frames.
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            data.CustomOperations += delegate(object obj)
+            {
+                physics.Unregister(this);
+                collisionAreas = Array.FindAll(collisionAreas, delegate(CollisionArea collArea)
+                {
+                    return collArea.Name != "Hit"; 
+                });
+                physics.Register(this);
+            };
+
+            // When the flow ends, there's nothing more to do.
+            if (AssaultWing.Instance.GameTime.TotalGameTime >= flowEndTime)
+            {
+                Die();
+            }
         }
 
         /// <summary>
@@ -155,9 +188,10 @@ namespace AW2.Game.Gobs
                 if (gobGob != null && (gobGob.PhysicsApplyMode & PhysicsApplyMode.Move) != 0)
                 {
                     Vector2 difference = gobGob.Pos - this.Pos;
-                    Vector2 momentum = Vector2.Normalize(difference) *
-                        shockMomentum.Evaluate(difference.Length());
-                    physics.ApplyMomentum(gobGob, momentum);
+                    float differenceLength = difference.Length();
+                    Vector2 flow = difference / differenceLength *
+                        flowSpeed.Evaluate(differenceLength);
+                    physics.ApplyDrag(gobGob, flow, 0.003f);
                 }
             }
         }

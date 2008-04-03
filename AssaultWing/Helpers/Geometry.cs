@@ -280,7 +280,7 @@ namespace AW2.Helpers
         /// <summary>
         /// Maximum number of faces in one face strip.
         /// </summary>
-        private static readonly int faceStripSize = 10;
+        private static readonly int faceStripSize = 20;
 
         /// <summary>
         /// The vertices of the polygon. Each vertex is listed only once and in order.
@@ -416,7 +416,7 @@ namespace AW2.Helpers
             faceStrips = null;
 
             // Small polygons won't benefit from extra structures.
-            // UNDONE because of small bugs in face strip code: if (vertices.Length < faceStripSize * 2) 
+            if (vertices.Length < faceStripSize * 2) 
                 return;
 
             // Divide faces to maximal strips with no brilliant logic.
@@ -1194,6 +1194,124 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns the distance between a point and a rectangle.
+        /// </summary>
+        /// The distance is the least distance between the point and any
+        /// point that lies in the rectangle. In particular, if the point itself
+        /// lies inside the rectangle, zero will be returned.
+        /// <param name="point">The point.</param>
+        /// <param name="rectangle">The rectangle. Z-coordinates are not used.</param>
+        /// <returns>The distance between the point and the rectangle.</returns>
+        public static float Distance(Point point, BoundingBox rectangle)
+        {
+            bool left = point.Location.X < rectangle.Min.X;
+            bool right = rectangle.Max.X < point.Location.X;
+            bool under = point.Location.Y < rectangle.Min.Y;
+            bool over = rectangle.Max.Y < point.Location.Y;
+
+            // Is the shortest distance measured from a face?
+            if (!left && !right)
+            {
+                if (under)
+                    return rectangle.Min.Y - point.Location.Y;
+                if (over)
+                    return point.Location.Y - rectangle.Max.Y;
+                return 0;
+            }
+            if (!under && !over)
+            {
+                if (left)
+                    return rectangle.Min.X - point.Location.X;
+                if (right)
+                    return point.Location.X - rectangle.Max.X;
+                return 0;
+            }
+
+            // Shortest distance is measured from a corner.
+            if (left)
+            {
+                if (under)
+                    return (float)Math.Sqrt(
+                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
+                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y));
+                else // over
+                    return (float)Math.Sqrt(
+                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
+                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y));
+            }
+            else // right
+            {
+                if (under)
+                    return (float)Math.Sqrt(
+                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
+                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y));
+                else // over
+                    return (float)Math.Sqrt(
+                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
+                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y));
+            }
+        }
+
+        /// <summary>
+        /// Returns the squared distance between a point and a rectangle.
+        /// </summary>
+        /// The distance is the least distance between the point and any
+        /// point that lies in the rectangle. In particular, if the point itself
+        /// lies inside the rectangle, zero will be returned.
+        /// <param name="point">The point.</param>
+        /// <param name="rectangle">The rectangle. Z-coordinates are not used.</param>
+        /// <returns>The squared distance between the point and the rectangle.</returns>
+        public static float DistanceSquared(Point point, BoundingBox rectangle)
+        {
+            bool left = point.Location.X < rectangle.Min.X;
+            bool right = rectangle.Max.X < point.Location.X;
+            bool under = point.Location.Y < rectangle.Min.Y;
+            bool over = rectangle.Max.Y < point.Location.Y;
+
+            // Is the shortest distance measured from a face?
+            if (!left && !right)
+            {
+                if (under)
+                    return (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
+                if (over)
+                    return (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
+                return 0;
+            }
+            if (!under && !over)
+            {
+                if (left)
+                    return (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X);
+                if (right)
+                    return (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X);
+                return 0;
+            }
+
+            // Shortest distance is measured from a corner.
+            if (left)
+            {
+                if (under)
+                    return 
+                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
+                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
+                else // over
+                    return 
+                        (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
+                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
+            }
+            else // right
+            {
+                if (under)
+                    return 
+                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
+                        (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
+                else // over
+                    return 
+                        (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
+                        (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
+            }
+        }
+
+        /// <summary>
         /// Returns the distance between the given point and polygon.
         /// </summary>
         /// The returned distance is the least distance between the point and any
@@ -1238,7 +1356,7 @@ namespace AW2.Helpers
                 // the closest strip and all strips whose closest corner is closer
                 // than the second-closest corner of the closest strip.
                 // For this, the strips will be ordered in 'stripIs' by distance 
-                // to the closest corner. Strips that contain the query point
+                // to their bounding box. Strips that contain the query point
                 // we mark with distance zero, thus always making them to be checked.
                 // 'stripIs' and 'stripDistances' have the same indexing.
                 int[] stripIs = new int[polygon.FaceStrips.Length];
@@ -1261,7 +1379,7 @@ namespace AW2.Helpers
                             Vector2.DistanceSquared(point.Location, new Vector2(strip.boundingBox.Max.X, strip.boundingBox.Max.Y))
                         };
                         Array.Sort(cornerDistsSquared);
-                        stripDistancesSquared[stripI] = cornerDistsSquared[0];
+                        stripDistancesSquared[stripI] = DistanceSquared(point, strip.boundingBox);
                         float stripDistanceSquared = cornerDistsSquared[1];
                         if (stripDistanceSquared < bestStripDistanceSquared)
                         {
@@ -1272,7 +1390,7 @@ namespace AW2.Helpers
                 }
 
                 Array.Sort(stripDistancesSquared, stripIs);
-                for (int stripI = 0; stripDistancesSquared[stripI] <= bestStripDistanceSquared; ++stripI)
+                for (int stripI = 0; stripI < stripDistancesSquared.Length && stripDistancesSquared[stripI] <= bestStripDistanceSquared; ++stripI)
                 {
                     Polygon.FaceStrip strip = polygon.FaceStrips[stripIs[stripI]];
                     int oldI = strip.startIndex;

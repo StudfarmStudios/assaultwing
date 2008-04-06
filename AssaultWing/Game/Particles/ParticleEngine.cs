@@ -442,7 +442,7 @@ namespace AW2.Game.Particles
 
             // Remove the particle engine if it's created all its particles and
             // the particles have died.
-            if (!isAlive && particles.Count == 0)
+            if (!loop && !isAlive && particles.Count == 0)
             {
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 data.RemoveParticleEngine(this);

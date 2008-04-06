@@ -195,7 +195,7 @@ namespace AW2.Game
         /// away from the actual point of collision.
         /// <b>1</b> means no iteration;
         /// <b>0</b> means iteration to infinite precision.
-        float collisionAccuracy = 0.2f;
+        float collisionAccuracy = 0.6f;
 
         /// <summary>
         /// Accuracy to which movement of a gob in a frame is done. 
@@ -211,7 +211,7 @@ namespace AW2.Game
         /// Higher number means more accurate and responsive collisions
         /// but requires more CPU power in complex situations.
         /// Low numbers may result in "lazy" collisions.
-        int moveTryMaximum = 5;
+        int moveTryMaximum = 2;
 
         /// <summary>
         /// Radius at which to start looking for a free position in the game world,

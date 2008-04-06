@@ -22,6 +22,7 @@ namespace AW2.Game
         LinkedList<Weapon> weapons;
         List<Gob> addedGobs;
         List<Gob> removedGobs;
+        List<ParticleEngine> removedParticleEngines;
         LinkedList<Player> players;
         List<Viewport> viewports;
         Dictionary<string, Model> models;
@@ -83,6 +84,7 @@ namespace AW2.Game
             addedGobs = new List<Gob>();
             removedGobs = new List<Gob>();
             particleEngines = new LinkedList<ParticleEngine>();
+            removedParticleEngines = new List<ParticleEngine>();
             weapons = new LinkedList<Weapon>();
             players = new LinkedList<Player>();
             viewports = new List<Viewport>();
@@ -332,7 +334,7 @@ namespace AW2.Game
         /// <param name="pEng">Particle generator to add to update and draw cycle</param>
         public void RemoveParticleEngine(ParticleEngine pEng)
         {
-            particleEngines.Remove(pEng);
+            removedParticleEngines.Add(pEng);
         }
 
         /// <summary>
@@ -570,6 +572,16 @@ namespace AW2.Game
                 gobs.Remove(gob);
             }
             removedGobs.Clear();
+
+            // Remove particle engines to remove.
+            // Don't use foreach because removed particle engines may still add more items
+            // to 'removedParticleEngines'.
+            for (int i = 0; i < removedParticleEngines.Count; ++i)
+            {
+                ParticleEngine pEng = removedParticleEngines[i];
+                particleEngines.Remove(pEng);
+            }
+            removedParticleEngines.Clear();
         }
 
         #endregion miscellaneous

@@ -51,15 +51,6 @@ namespace AW2.Game
         Vector2 dimensions;
 
         #region Lighting settings for the arena
-        // TODO: Take away 3D model material properties from arena fields. Also remove from XML.
-        [TypeParameter]
-        float alpha;
-
-        [TypeParameter]
-        Vector3 ambientLightColor;
-
-        [TypeParameter]
-        Vector3 diffuseColor;
 
         [TypeParameter]
         Vector3 light0DiffuseColor;
@@ -98,9 +89,6 @@ namespace AW2.Game
         Vector3 light2SpecularColor;
 
         [TypeParameter]
-        Vector3 emissiveColor;
-
-        [TypeParameter]
         Vector3 fogColor;
 
         [TypeParameter]
@@ -111,15 +99,6 @@ namespace AW2.Game
 
         [TypeParameter]
         float fogStart;
-
-        [TypeParameter]
-        bool lightingEnabled;
-
-        [TypeParameter]
-        Vector3 specularColor;
-
-        [TypeParameter]
-        float specularPower;
 
         #endregion
 
@@ -178,9 +157,6 @@ namespace AW2.Game
             this.gobs.Add(Gob.CreateGob("dummygobtype"));
             this.parallaxNames = new string[] { "dummytexture" };
             this.parallaxZ = new float[] { 0.5f };
-            this.alpha = 1.0f;
-            this.ambientLightColor = Vector3.Zero;
-            this.diffuseColor = Vector3.Zero;
             this.light0DiffuseColor = Vector3.Zero;
             this.light0Direction = -Vector3.UnitZ;
             this.light0Enabled = true;
@@ -193,14 +169,10 @@ namespace AW2.Game
             this.light2Direction = -Vector3.UnitZ;
             this.light2Enabled = false;
             this.light2SpecularColor = Vector3.Zero;
-            this.emissiveColor = Vector3.Zero;
             this.fogColor = Vector3.Zero;
             this.fogEnabled = false;
             this.fogEnd = 1.0f;
             this.fogStart = 0.0f;
-            this.lightingEnabled = true;
-            this.specularColor = Vector3.Zero;
-            this.specularPower = 1.0f;
         }
 
         /// <summary>
@@ -209,10 +181,6 @@ namespace AW2.Game
         /// <param name="effect">The effect to modify.</param>
         public void PrepareEffect(BasicEffect effect)
         {
-
-            //effect.Alpha = alpha;
-            //effect.AmbientLightColor = ambientLightColor;
-            //effect.DiffuseColor = diffuseColor;
             //effect.TextureEnabled = true;
             effect.DirectionalLight0.DiffuseColor = light0DiffuseColor;
             effect.DirectionalLight0.Direction = light0Direction;
@@ -226,14 +194,11 @@ namespace AW2.Game
             effect.DirectionalLight2.Direction = light2Direction;
             effect.DirectionalLight2.Enabled = light2Enabled;
             effect.DirectionalLight2.SpecularColor = light2SpecularColor;
-            //effect.EmissiveColor = emissiveColor;
             effect.FogColor = fogColor;
             effect.FogEnabled = fogEnabled;
             effect.FogEnd = fogEnd;
             effect.FogStart = fogStart;
-            effect.LightingEnabled = lightingEnabled;
-            //effect.SpecularColor = specularColor;
-            //effect.SpecularPower = specularPower;
+            effect.LightingEnabled = true;
         }
 
         /// <summary>
@@ -294,9 +259,6 @@ namespace AW2.Game
             }
             dimensions = Vector2.Max(dimensions, new Vector2(500));
             
-            alpha = MathHelper.Clamp(alpha, 0, 1);
-            ambientLightColor = Vector3.Clamp(ambientLightColor, Vector3.Zero, Vector3.One);
-            diffuseColor = Vector3.Clamp(diffuseColor, Vector3.Zero, Vector3.One);
             light0DiffuseColor = Vector3.Clamp(light0DiffuseColor, Vector3.Zero, Vector3.One);
             light0Direction.Normalize();
             light0SpecularColor = Vector3.Clamp(light0SpecularColor, Vector3.Zero, Vector3.One);
@@ -306,12 +268,9 @@ namespace AW2.Game
             light2DiffuseColor = Vector3.Clamp(light2DiffuseColor, Vector3.Zero, Vector3.One);
             light2Direction.Normalize();
             light2SpecularColor = Vector3.Clamp(light2SpecularColor, Vector3.Zero, Vector3.One);
-            emissiveColor = Vector3.Clamp(emissiveColor, Vector3.Zero, Vector3.One);
             fogColor = Vector3.Clamp(fogColor, Vector3.Zero, Vector3.One);
             fogEnd = MathHelper.Max(fogEnd, 0);
             fogStart = MathHelper.Max(fogStart, 0);
-            specularColor = Vector3.Clamp(specularColor, Vector3.Zero, Vector3.One);
-            specularPower = MathHelper.Max(specularPower, 0);
         }
 
         #endregion

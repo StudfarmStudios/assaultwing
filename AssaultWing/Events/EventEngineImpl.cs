@@ -126,7 +126,7 @@ namespace AW2.Events
             {
                 Event eventti = new Event();
                 engine.SendEvent(eventti);
-                Event reply = engine.GetEvent(typeof(Event));
+                Event reply = engine.GetEvent(typeof(Event)); // TODO: Needs AssaultWing.GameTime set
                 Assert.IsNotNull(reply);
                 Assert.AreEqual(reply, eventti);
             }
@@ -148,7 +148,7 @@ namespace AW2.Events
                 Event send2 = new SoundEffectEvent();
                 engine.SendEvent(send1);
                 engine.SendEvent(send2);
-                Event return1 = engine.GetEvent(typeof(SoundEffectEvent));
+                Event return1 = engine.GetEvent(typeof(SoundEffectEvent)); // TODO: Needs AssaultWing.GameTime set
                 Event return2 = engine.GetEvent(typeof(SoundEffectEvent));
 
                 Assert.IsNotNull(return1);

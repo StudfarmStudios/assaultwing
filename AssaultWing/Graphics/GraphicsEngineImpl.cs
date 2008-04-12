@@ -84,6 +84,16 @@ namespace AW2.Graphics
             /// Player bonus icon for secondary weapon load time upgrade.
             /// </summary>
             BonusIconWeapon2LoadTime,
+
+            /// <summary>
+            /// Player bonus icon for secondary weapon upgrade Berserkers.
+            /// </summary>
+            Weapon2Berserkers,
+
+            /// <summary>
+            /// Player bonus icon for secondary weapon upgrade Bouncegun.
+            /// </summary>
+            Weapon2Bouncegun,
         }
 
         /// <summary>
@@ -149,8 +159,10 @@ namespace AW2.Graphics
                 "gui_playerinfo_white_rect",
                 "gui_bonus_bg",
                 "gui_bonus_duration",
-                "b_icon_general",
-                "b_icon_general",
+                "b_icon_rapid_fire_1",
+                "b_icon_rapid_fire_1",
+                "b_icon_berserkers",
+                "b_icon_bouncegun",
             };
             overlays = new Texture2D[Enum.GetValues(typeof(ViewportOverlay)).Length];
             bonusBoxEntry = new Curve();
@@ -652,7 +664,19 @@ namespace AW2.Graphics
                     break;
                 case PlayerBonus.Weapon2Upgrade:
                     bonusText = player.Weapon2Name;
-                    bonusIcon = ViewportOverlay.BonusIconWeapon1LoadTime; // TODO: Weapon icons
+                    // HACK: Store an icon for each weapon.
+                    switch (player.Weapon2Name)
+                    {
+                        case "berserkers": 
+                            bonusIcon = ViewportOverlay.Weapon2Berserkers;
+                            break;
+                        case "bouncegun":
+                            bonusIcon = ViewportOverlay.Weapon2Bouncegun;
+                            break;
+                        default:
+                            throw new Exception("Can't figure out icon for player weapon " + player.Weapon2Name);
+                            break;
+                    }
                     break;
                 default:
                     bonusText = "<unknown>";

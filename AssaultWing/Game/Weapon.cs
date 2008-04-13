@@ -57,6 +57,13 @@ namespace AW2.Game
         string[] upgradeNames;
 
         /// <summary>
+        /// Name of the icon of the weapon, to be displayed in weapon selection 
+        /// and bonus display.
+        /// </summary>
+        [TypeParameter]
+        string iconName;
+
+        /// <summary>
         /// The ship this weapon is attached to.
         /// </summary>
         protected Ship owner;
@@ -127,6 +134,29 @@ namespace AW2.Game
         public string[] UpgradeNames { get { return upgradeNames; } }
 
         /// <summary>
+        /// Name of the icon of the weapon, to be displayed in weapon selection 
+        /// and bonus display.
+        /// </summary>
+        public string IconName
+        {
+            get { return iconName; }
+            set { iconName = value; }
+        }
+
+        /// <summary>
+        /// Names of all textures that this weapon will ever use.
+        /// </summary>
+        public List<string> TextureNames
+        {
+            get
+            {
+                List<string> textureNames = new List<string>();
+                textureNames.Add(iconName);
+                return textureNames;
+            }
+        }
+
+        /// <summary>
         /// The ship this weapon is attached to.
         /// </summary>
         public Ship Owner { get { return owner; } set { owner = value; } } // !!! hack
@@ -182,6 +212,7 @@ namespace AW2.Game
         {
             this.typeName = "dummyweapontype";
             this.upgradeNames = new string[] { "dummyweapontype", };
+            this.iconName = "dummyicon";
             this.owner = null;
             this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };

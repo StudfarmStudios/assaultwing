@@ -170,6 +170,16 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
+        /// The primary weapon of the ship.
+        /// </summary>
+        public Weapon Weapon1 { get { return weapon1; } }
+
+        /// <summary>
+        /// The secondary weapon of the ship.
+        /// </summary>
+        public Weapon Weapon2 { get { return weapon2; } }
+
+        /// <summary>
         /// Name of the type of main weapon the ship is using.
         /// </summary>
         public string Weapon1Name

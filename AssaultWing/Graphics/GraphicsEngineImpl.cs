@@ -247,10 +247,28 @@ namespace AW2.Graphics
                 data.AddModel(modelName, wallModel);
             }
 
+            // Load all textures that each arena needs.
             data.ForEachArena(delegate(Arena arenaTemplate)
             {
-                Log.Write("Loading textures for arena: " + arenaTemplate.Name);
+                Log.Write("Loading textures for arena " + arenaTemplate.Name);
                 foreach (string textureName in arenaTemplate.ParallaxNames) 
+                {
+                    try
+                    {
+                        data.AddTexture(textureName, LoadTexture(game, textureName));
+                    }
+                    catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
+                    {
+                        Log.Write("Error loading texture " + textureName + " (" + e.Message + ")");
+                    }
+                }
+            });
+
+            // Load all textures that each weapon needs.
+            data.ForEachTypeTemplate<Weapon>(delegate(Weapon weapon)
+            {
+                Log.Write("Loading textures for weapon " + weapon.TypeName);
+                foreach (string textureName in weapon.TextureNames)
                 {
                     try
                     {
@@ -645,42 +663,42 @@ namespace AW2.Graphics
         /// <param name="player">The player whose bonus it is.</param>
         private void DrawBonusBox(Vector2 bonusPos, PlayerBonus playerBonus, Player player)
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
             // Figure out what to draw for this bonus.
             string bonusText;
-            ViewportOverlay bonusIcon;
+            Texture2D bonusIcon;
             switch (playerBonus)
             {
                 case PlayerBonus.Weapon1LoadTime:
                     bonusText = player.Weapon1Name + "\nspeedloader";
-                    bonusIcon = ViewportOverlay.BonusIconWeapon1LoadTime;
+                    bonusIcon = overlays[(int)ViewportOverlay.BonusIconWeapon1LoadTime];
                     break;
                 case PlayerBonus.Weapon2LoadTime:
                     bonusText = player.Weapon2Name + "\nspeedloader";
-                    bonusIcon = ViewportOverlay.BonusIconWeapon2LoadTime;
+                    bonusIcon = overlays[(int)ViewportOverlay.BonusIconWeapon2LoadTime];
                     break;
                 case PlayerBonus.Weapon1Upgrade:
-                    bonusText = player.Weapon1Name;
-                    bonusIcon = ViewportOverlay.BonusIconWeapon1LoadTime; // TODO: Weapon icons
+                    {
+                        Weapon weapon1 = player.Ship != null
+                            ? player.Ship.Weapon1
+                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
+                        bonusText = player.Weapon1Name;
+                        bonusIcon = data.GetTexture(weapon1.IconName);
+                    }
                     break;
                 case PlayerBonus.Weapon2Upgrade:
-                    bonusText = player.Weapon2Name;
-                    // HACK: Store an icon for each weapon.
-                    switch (player.Weapon2Name)
                     {
-                        case "berserkers": 
-                            bonusIcon = ViewportOverlay.Weapon2Berserkers;
-                            break;
-                        case "bouncegun":
-                            bonusIcon = ViewportOverlay.Weapon2Bouncegun;
-                            break;
-                        default:
-                            throw new Exception("Can't figure out icon for player weapon " + player.Weapon2Name);
-                            break;
+                        Weapon weapon2 = player.Ship != null
+                            ? player.Ship.Weapon2
+                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
+                        bonusText = player.Weapon2Name;
+                        bonusIcon = data.GetTexture(weapon2.IconName);
                     }
                     break;
                 default:
                     bonusText = "<unknown>";
-                    bonusIcon = ViewportOverlay.IconWeaponLoad;
+                    bonusIcon = overlays[(int)ViewportOverlay.IconWeaponLoad];
                     Log.Write("Warning: Don't know how to draw player bonus box " + playerBonus);
                     break;
             }
@@ -693,7 +711,7 @@ namespace AW2.Graphics
 
             // Draw bonus icon.
             Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(112, 9);
-            spriteBatch.Draw(overlays[(int)bonusIcon],
+            spriteBatch.Draw(bonusIcon,
                 iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus duration meter.

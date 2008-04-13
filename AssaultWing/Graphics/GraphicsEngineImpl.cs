@@ -535,9 +535,16 @@ namespace AW2.Graphics
                     (int)Math.Ceiling((1 - viewport.Player.Ship.DamageLevel / viewport.Player.Ship.MaxDamageLevel)
                     * overlays[(int)ViewportOverlay.BarShip].Width),
                     overlays[(int)ViewportOverlay.BarShip].Height);
+                Color damageBarColor = Color.White;
+                if (viewport.Player.Ship.DamageLevel / viewport.Player.Ship.MaxDamageLevel >= 0.8f)
+                {
+                    float seconds = (float)AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds;
+                    if (seconds % 0.5f < 0.25f)
+                        damageBarColor = Color.Red;
+                }
                 spriteBatch.Draw(overlays[(int)ViewportOverlay.BarShip],
                     new Vector2(viewport.InternalViewport.Width, 8 * 2) / 2,
-                    damageBarRect, Color.White, 0,
+                    damageBarRect, damageBarColor, 0,
                     new Vector2(overlays[(int)ViewportOverlay.BarShip].Width, 0) / 2,
                     1, SpriteEffects.None, 0);
             }

@@ -579,16 +579,24 @@ namespace AW2.Graphics
             if (viewport.Player.Ship != null)
             {
                 if (viewport.Player.Ship.Weapon1Loaded)
-                    spriteBatch.Draw(overlays[(int)ViewportOverlay.IconWeaponLoad],
-                        new Vector2(viewport.InternalViewport.Width +
+                {
+                    float seconds = (float)(AssaultWing.Instance.GameTime.TotalGameTime - viewport.Player.Ship.Weapon1.LoadedTime).TotalSeconds;
+                    Texture2D texture = overlays[(int)ViewportOverlay.IconWeaponLoad];
+                    float scale = 1;
+                    Color color = Color.White;
+                    if (seconds < 0.2f)
+                    {
+                        scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
+                        color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.1f), Vector4.One, seconds / 0.2f));
+                    }
+                    spriteBatch.Draw(texture,
+                        new Vector2(viewport.InternalViewport.Width + texture.Width +
                                     overlays[(int)ViewportOverlay.BarMain].Width + 8 * 2,
                                     overlays[(int)ViewportOverlay.BarMain].Height + 24 * 2) / 2,
-                        null,
-                        //plrViewport.Player.Ship.Weapon1Loaded ? Color.Green : Color.Red,
-                        Color.White,
-                        0,
-                        new Vector2(0, overlays[(int)ViewportOverlay.IconWeaponLoad].Height) / 2,
-                        1, SpriteEffects.None, 0);
+                        null, color, 0,
+                        new Vector2(texture.Width, texture.Height) / 2,
+                        scale, SpriteEffects.None, 0);
+                }
             }
 
             // Secondary weapon charge
@@ -609,16 +617,24 @@ namespace AW2.Graphics
             if (viewport.Player.Ship != null)
             {
                 if (viewport.Player.Ship.Weapon2Loaded)
-                    spriteBatch.Draw(overlays[(int)ViewportOverlay.IconWeaponLoad],
-                        new Vector2(viewport.InternalViewport.Width +
+                {
+                    float seconds = (float)(AssaultWing.Instance.GameTime.TotalGameTime - viewport.Player.Ship.Weapon2.LoadedTime).TotalSeconds;
+                    Texture2D texture = overlays[(int)ViewportOverlay.IconWeaponLoad];
+                    float scale = 1;
+                    Color color = Color.White;
+                    if (seconds < 0.2f)
+                    {
+                        scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
+                        color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.2f), Vector4.One, seconds / 0.2f));
+                    }
+                    spriteBatch.Draw(texture,
+                        new Vector2(viewport.InternalViewport.Width + texture.Width +
                                     overlays[(int)ViewportOverlay.BarSpecial].Width + 8 * 2,
                                     overlays[(int)ViewportOverlay.BarSpecial].Height + 40 * 2) / 2,
-                        null,
-                        //plrViewport.Player.Ship.Weapon2Loaded ? Color.Green : Color.Red,
-                        Color.White,
-                        0,
-                        new Vector2(0, overlays[(int)ViewportOverlay.IconWeaponLoad].Height) / 2,
-                        1, SpriteEffects.None, 0);
+                        null, color, 0,
+                        new Vector2(texture.Width, texture.Height) / 2,
+                        scale, SpriteEffects.None, 0);
+                }
             }
 
             // Draw bonus display.

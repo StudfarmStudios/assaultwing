@@ -31,6 +31,11 @@ namespace AW2.Graphics
         enum ViewportOverlay
         {
             /// <summary>
+            /// Vertical viewport separator.
+            /// </summary>
+            ViewportSeparatorVertical,
+
+            /// <summary>
             /// Player status display background.
             /// </summary>
             StatusDisplay,
@@ -150,6 +155,7 @@ namespace AW2.Graphics
             : base(game)
         {
             overlayNames = new string[] {
+                "viewport_border_vertical",
                 "gui_playerinfo_bg",
                 "gui_playerinfo_bar_ship",
                 "gui_playerinfo_bar_main",
@@ -313,8 +319,8 @@ namespace AW2.Graphics
             Viewport screen = graphics.GraphicsDevice.Viewport;
             screen.X = 0;
             screen.Y = 0;
-            screen.Width = graphics.GraphicsDevice.DisplayMode.Width;
-            screen.Height = graphics.GraphicsDevice.DisplayMode.Height;
+            screen.Width = AssaultWing.Instance.ClientBounds.Width;
+            screen.Height = AssaultWing.Instance.ClientBounds.Height;
             graphics.GraphicsDevice.Viewport = screen;
             graphics.GraphicsDevice.Clear(new Color(0x40, 0x40, 0x40));
 
@@ -374,8 +380,42 @@ namespace AW2.Graphics
             };
             data.ForEachViewport(drawViewport);
 
-            graphics.GraphicsDevice.Viewport = screen; // return back to original
+            // Restore viewport to the whole client window.
+            graphics.GraphicsDevice.Viewport = screen;
 
+            // Draw viewport separators.
+            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            data.ForEachViewportSeparator(delegate(ViewportSeparator separator)
+            {
+                Texture2D separatorTexture = overlays[(int)ViewportOverlay.ViewportSeparatorVertical];
+                Vector2 separatorOrigin = new Vector2(separatorTexture.Width, 0) / 2;
+                if (separator.vertical)
+                {
+                    // Loop the texture vertically, centered on the screen.
+                    // 'extraLength' is how many pixels more is the least sufficiently long 
+                    // multiple of a pair of the separator texture than the screen height;
+                    // it helps us center the looping separator texture.
+                    int extraLength = 2 * separatorTexture.Height - screen.Height % (2 * separatorTexture.Height);
+                    for (Vector2 pos = new Vector2(separator.coordinate, -extraLength / 2);
+                        pos.Y < screen.Height; pos.Y += separatorTexture.Height)
+                        spriteBatch.Draw(separatorTexture, pos, null, Color.White, 0,
+                            separatorOrigin, 1, SpriteEffects.None, 0);
+                }
+                else
+                {
+                    // Loop the texture horizontally, centered on the screen.
+                    // We use the vertical texture rotated 90 degrees to the left.
+                    // 'extraLength' is how many pixels more is the least sufficiently long 
+                    // multiple of a pair of the separator texture than the screen width;
+                    // it helps us center the looping separator texture.
+                    int extraLength = 2 * separatorTexture.Height - screen.Width % (2 * separatorTexture.Height);
+                    for (Vector2 pos = new Vector2(-extraLength / 2, separator.coordinate);
+                        pos.X < screen.Width; pos.X += separatorTexture.Height)
+                        spriteBatch.Draw(separatorTexture, pos, null, Color.White, -MathHelper.PiOver2,
+                            separatorOrigin, 1, SpriteEffects.None, 0);
+                }
+            });
+            spriteBatch.End();
         }
 
         /// <summary>
@@ -443,6 +483,12 @@ namespace AW2.Graphics
                 data.AddViewport(viewport);
                 ++playerI;
             });
+
+            // Register all needed viewport separators.
+            for (int i = 1; i < bestColumns; ++i)
+                data.AddViewportSeparator(new ViewportSeparator(true, window.Width * i / bestColumns));
+            for (int i = 1; i < bestRows; ++i)
+                data.AddViewportSeparator(new ViewportSeparator(false, window.Height * i / bestRows));
         }
 
         /// <summary>

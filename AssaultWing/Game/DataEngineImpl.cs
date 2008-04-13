@@ -25,6 +25,7 @@ namespace AW2.Game
         List<ParticleEngine> removedParticleEngines;
         LinkedList<Player> players;
         List<Viewport> viewports;
+        List<ViewportSeparator> viewportSeparators;
         Dictionary<string, Model> models;
         Dictionary<string, Texture2D> textures;
         Dictionary<TypeStringPair, object> templates;
@@ -88,6 +89,7 @@ namespace AW2.Game
             weapons = new LinkedList<Weapon>();
             players = new LinkedList<Player>();
             viewports = new List<Viewport>();
+            viewportSeparators = new List<ViewportSeparator>();
             models = new Dictionary<string, Model>();
             textures = new Dictionary<string, Texture2D>();
             templates = new Dictionary<TypeStringPair, object>();
@@ -499,11 +501,21 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Removes all viewports.
+        /// Adds a viewport separator to be displayed.
+        /// </summary>
+        /// <param name="separator">The viewport separator.</param>
+        public void AddViewportSeparator(ViewportSeparator separator)
+        {
+            viewportSeparators.Add(separator);
+        }
+
+        /// <summary>
+        /// Removes all viewports and viewport separators.
         /// </summary>
         public void ClearViewports()
         {
             viewports.Clear();
+            viewportSeparators.Clear();
         }
 
         /// <summary>
@@ -516,6 +528,18 @@ namespace AW2.Game
             {
                 activeViewport = viewport;
                 action(viewport);
+            }
+        }
+
+        /// <summary>
+        /// Performs the specified action on each viewport separator.
+        /// </summary>
+        /// <param name="action">The Action delegate to perform on each viewport separator.</param>
+        public void ForEachViewportSeparator(Action<ViewportSeparator> action)
+        {
+            foreach (ViewportSeparator separator in viewportSeparators)
+            {
+                action(separator);
             }
         }
 

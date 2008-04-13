@@ -42,6 +42,35 @@ namespace AW2.Graphics
         /// <b>true</b> otherwise.</returns>
         bool Intersects(BoundingBox volume);
     }
+
+    /// <summary>
+    /// A visual separator between viewports.
+    /// </summary>
+    public struct ViewportSeparator
+    {
+        /// <summary>
+        /// If <b>true</b>, the separator is vertical;
+        /// if <b>false</b>, the separator is horizontal.
+        /// </summary>
+        public bool vertical;
+
+        /// <summary>
+        /// The X coordinate of a vertical separator, or
+        /// the Y coordinate of a horizontal separator.
+        /// </summary>
+        public int coordinate;
+
+        /// <summary>
+        /// Creates a new viewport separator.
+        /// </summary>
+        /// <param name="vertical">Is the separator vertical.</param>
+        /// <param name="coordinate">The X or Y coordinate of the separator.</param>
+        public ViewportSeparator(bool vertical, int coordinate)
+        {
+            this.vertical = vertical;
+            this.coordinate = coordinate;
+        }
+    }
     
     /// <summary>
     /// An viewport that follows a player.

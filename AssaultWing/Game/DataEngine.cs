@@ -255,7 +255,13 @@ namespace AW2.Game
         void AddViewport(Viewport viewport);
 
         /// <summary>
-        /// Removes all viewports.
+        /// Adds a viewport separator to be displayed.
+        /// </summary>
+        /// <param name="separator">The viewport separator.</param>
+        void AddViewportSeparator(ViewportSeparator separator);
+
+        /// <summary>
+        /// Removes all viewports and viewport separators.
         /// </summary>
         void ClearViewports();
 
@@ -266,6 +272,12 @@ namespace AW2.Game
         /// <see cref="DataEngine.Viewport"/>
         /// <param name="action">The Action delegate to perform on each viewport.</param>
         void ForEachViewport(Action<Viewport> action);
+
+        /// <summary>
+        /// Performs the specified action on each viewport separator.
+        /// </summary>
+        /// <param name="action">The Action delegate to perform on each viewport separator.</param>
+        void ForEachViewportSeparator(Action<ViewportSeparator> action);
 
         #endregion
 

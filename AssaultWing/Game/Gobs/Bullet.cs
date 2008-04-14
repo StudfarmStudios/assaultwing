@@ -102,6 +102,11 @@ namespace AW2.Game.Gobs
             if (damaGob != null)
                 damaGob.InflictDamage(impactDamage);
 
+            // Make a hole if it's possible.
+            IThick thickGob = gob as IThick;
+            if (thickGob != null)
+                thickGob.MakeHole(ImpactArea);
+
             // A casual bullet dies on any impact.
             // A bullet with a physical collision area only bounces off
             // collidables that don't receive damage.

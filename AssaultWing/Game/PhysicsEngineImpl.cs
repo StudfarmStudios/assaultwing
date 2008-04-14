@@ -1095,27 +1095,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Actualises a projectile's impact on a thick gob. The thick gob gets punctured and
-        /// the projectile dies.
-        /// </summary>
-        /// <param name="gobProjectile1">The projectile.</param>
-        /// <param name="gobThick2">The thick gob.</param>
-        [Obsolete]
-        private void PerformCollisionProjectileThick(IProjectile gobProjectile1, IThick gobThick2)
-        {
-            // TODO: Move to Bullet.Collide etc. when projectiles' areas become receptors.
-            Helpers.Polygon poly = gobProjectile1.ImpactArea;
-            gobThick2.MakeHole(poly);
-            ((Gob)gobProjectile1).Die();
-
-            // Play a sound.
-            EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-            SoundEffectEvent soundEvent = new SoundEffectEvent();
-            soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
-            eventEngine.SendEvent(soundEvent);
-        }
-
-        /// <summary>
         /// Bounces a solid gob off a thick gob. The thick gob isn't affected.
         /// </summary>
         /// <param name="gobSolid1">The solid gob.</param>

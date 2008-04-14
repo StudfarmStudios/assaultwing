@@ -383,7 +383,7 @@ namespace AW2.Helpers
             }
             catch (Exception e)
             {
-                e.Data.Add("debug", polyVertices);
+                e.Data.Add("debug", polyVertices.ToArray());
                 throw e;
             }
 

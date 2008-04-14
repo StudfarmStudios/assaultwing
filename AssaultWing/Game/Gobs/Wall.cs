@@ -184,8 +184,8 @@ namespace AW2.Game.Gobs
             }
             effect.End();
 
+#if true
             // HACK: Draw wireframe model for debugging Graphics3D.RemoveArea
-            return; // anti-HACK :)
             gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
             BasicEffect eff = new BasicEffect(gfx, null);
             data.PrepareEffect(eff);
@@ -217,6 +217,7 @@ namespace AW2.Game.Gobs
                 pass.End();
             }
             eff.End();
+#endif
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -273,7 +274,7 @@ namespace AW2.Game.Gobs
         /// <param name="area">The area to remove. The polygon must be convex.</param>
         public void MakeHole(Polygon area)
         {
-            return; // HACK: RemoveArea isn't ready yet
+            // return; // HACK: RemoveArea isn't ready yet
             Helpers.Graphics3D.RemoveArea(ref vertexData, ref indexData, area);
             if (indexData.Length == 0)
                 this.Die();
@@ -285,22 +286,24 @@ namespace AW2.Game.Gobs
 #endif
 
             // Update collision polygon.
-#if false
+#if true
             // HACK: Exceptions pass debug information
             try
             {
                 // NON-HACK: This block content
-                Polygon poly = Helpers.Math.GetOutline(vertexData, indexData);
-                base.originalCollPrimitives = new IGeomPrimitive[] { poly };
-                base.collPrimitives = new IGeomPrimitive[base.originalCollPrimitives.Length];
-                base.Pos = base.Pos; // initialises base.collPrimitives
+                physics.Unregister(this);
+                Polygon poly = Graphics3D.GetOutline(vertexData, indexData);
+                base.collisionAreas = polygons = new CollisionArea[] {
+                    new CollisionArea("General", poly, this),
+                };
+                physics.Register(this);
             }
             catch (Exception e)
             {
                 Vector2[] vertices = (Vector2[])e.Data["debug"];
                 wireVertexData2 = new VertexPositionColor[vertices.Length];
                 for (int i = 0; i < vertices.Length; ++i)
-                    wireVertexData2[i] = new VertexPositionColor(new Vector3(vertices[i], 150), Color.Ivory);
+                    wireVertexData2[i] = new VertexPositionColor(new Vector3(vertices[i], 350), Color.Ivory);
             }
 #endif
             // HACK: Update wireframe model for debugging Graphics3D.RemoveArea

@@ -973,7 +973,7 @@ namespace AW2.Helpers
                 if (val2 > 0 || val2 < val3) return LineIntersectionType.None;
             }
 
-            if (val3 == 0) return LineIntersectionType.Segment;
+            if (val3 == 0) return LineIntersectionType.Segment; // TODO: Fix case of point intersection
             return LineIntersectionType.Point;
         }
 
@@ -1709,19 +1709,26 @@ namespace AW2.Helpers
                 Vector2 p11 = new Vector2(10f, 0f);
                 Vector2 p12 = new Vector2(0f, -10f);
                 Vector2 p13 = new Vector2(0f, 10f);
+                Vector2 p14 = new Vector2(70f, 10f);
+                Vector2 p15 = new Vector2(70f, 20f);
+                Vector2 p16 = new Vector2(70f, 30f);
+                Vector2 p17 = new Vector2(70f, 40f);
 
                 // General cases
-                Assert.AreEqual(Geometry.Intersect(p10, p11, p12, p13), Geometry.LineIntersectionType.Point); // orthogonal crossing
-                Assert.AreEqual(Geometry.Intersect(p1, p2, p3, p4), Geometry.LineIntersectionType.Point);     // general crossing
-                Assert.AreEqual(Geometry.Intersect(p1, p4, p2, p3), Geometry.LineIntersectionType.None);      // lines cross but segments don't
-                Assert.AreEqual(Geometry.Intersect(p1, p5, p3, p4), Geometry.LineIntersectionType.None);      // line crosses segment, segments don't
+                Assert.AreEqual(Geometry.LineIntersectionType.Point, Geometry.Intersect(p10, p11, p12, p13)); // orthogonal crossing
+                Assert.AreEqual(Geometry.LineIntersectionType.Point, Geometry.Intersect(p1, p2, p3, p4));     // general crossing
+                Assert.AreEqual(Geometry.LineIntersectionType.None, Geometry.Intersect(p1, p4, p2, p3));      // lines cross but segments don't
+                Assert.AreEqual(Geometry.LineIntersectionType.None, Geometry.Intersect(p1, p5, p3, p4));      // line crosses segment, segments don't
 
                 // Special cases
-                Assert.AreEqual(Geometry.Intersect(p1, p2, p2, p3), Geometry.LineIntersectionType.Point);  // Endpoints connect
-                Assert.AreEqual(Geometry.Intersect(p1, p3, p2, p3), Geometry.LineIntersectionType.Point);  // Endpoints connect
-                Assert.AreEqual(Geometry.Intersect(p1, p2, p8, p9), Geometry.LineIntersectionType.None); // parallel lines far away
-                Assert.AreEqual(Geometry.Intersect(p1, p2, p6, p7), Geometry.LineIntersectionType.Segment); // one line contained in another
-                Assert.AreEqual(Geometry.Intersect(p1, p2, p1, p2), Geometry.LineIntersectionType.Segment); // the same line
+                Assert.AreEqual(Geometry.LineIntersectionType.Point, Geometry.Intersect(p1, p2, p2, p3));  // Endpoints connect
+                Assert.AreEqual(Geometry.LineIntersectionType.Point, Geometry.Intersect(p1, p3, p2, p3));  // Endpoints connect
+                Assert.AreEqual(Geometry.LineIntersectionType.None, Geometry.Intersect(p1, p2, p8, p9)); // parallel lines far away
+                Assert.AreEqual(Geometry.LineIntersectionType.Segment, Geometry.Intersect(p1, p2, p6, p7)); // one line contained in another
+                Assert.AreEqual(Geometry.LineIntersectionType.Segment, Geometry.Intersect(p1, p2, p1, p2)); // the same line
+                Assert.AreEqual(Geometry.LineIntersectionType.None, Geometry.Intersect(p14, p15, p16, p17)); // segments on same line, not intersecting
+                Assert.AreEqual(Geometry.LineIntersectionType.Point, Geometry.Intersect(p14, p15, p15, p16)); // segments on same line, intersecting at a point
+                Assert.AreEqual(Geometry.LineIntersectionType.Segment, Geometry.Intersect(p14, p16, p15, p17)); // segments on same line, intersecting at a segment
             }
 
             /// <summary>

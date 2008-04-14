@@ -173,6 +173,11 @@ namespace AW2.Game
         public float LoadTime { get { return loadTime; } set { loadTime = value; } }
 
         /// <summary>
+        /// Time from which on the weapon is loaded, in game time.
+        /// </summary>
+        public TimeSpan LoadedTime { get { return loadedTime; } }
+
+        /// <summary>
         /// Is the weapon loaded.
         /// </summary>
         public bool Loaded { get { return loadedTime <= physics.TimeStep.TotalGameTime; } }

@@ -27,14 +27,13 @@ namespace AW2.Game.Particles
 
         # endregion
 
-        public override void EmittPosition(out Vector3 position, out Vector3 direction)
+        public override void EmittPosition(out Vector3 position, out Vector3 direction, out float directionAngle)
         {
-            float angle = 2 * (float)Math.PI * RandomHelper.GetRandomFloat();
+            directionAngle = 2 * (float)Math.PI * RandomHelper.GetRandomFloat();
             float distance = RandomHelper.GetRandomFloat() * radius;
-            position = new Vector3((float)Math.Cos(angle) * distance, (float)Math.Sin(angle) * distance, 0f); // dot emitter always creates particles in it's center
-            Matrix rot = new Matrix();
-            Matrix.CreateRotationZ(angle, out rot);
-            direction = Vector3.TransformNormal(new Vector3(1f, 0f, 0f), rot);
+            position = new Vector3((float)Math.Cos(directionAngle) * distance, (float)Math.Sin(directionAngle) * distance, 0f); // dot emitter always creates particles in it's center
+            Matrix rot = Matrix.CreateRotationZ(directionAngle);
+            direction = Vector3.TransformNormal(Vector3.UnitX, rot);
         }
     }
 }

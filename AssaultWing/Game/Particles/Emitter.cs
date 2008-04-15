@@ -37,8 +37,9 @@ namespace AW2.Game.Particles
         /// Method that calculates the initial position and direction of a particle.
         /// </summary>
         /// <param name="position">Initial position of the particle.</param>
-        /// <param name="direction">Initial direction of the particle. This vector must be normalized.</param>
-        public abstract void EmittPosition(out Vector3 position, out Vector3 direction);
+        /// <param name="direction">Initial direction of the particle. The returned vector is normalized.</param>
+        /// <param name="directionAngle">Initial direction angle of the particle.</param>
+        public abstract void EmittPosition(out Vector3 position, out Vector3 direction, out float directionAngle);
 
         #endregion
 

@@ -408,6 +408,13 @@ namespace AW2.Game.Gobs
             }
             exhaustAmountUpdated = false;
 
+            // Manage cough engines.
+            // We do this after the ship's position has been updated by
+            // base.Update() to get cough particles in the right spot.
+            float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
+            coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
+            // TODO: Pass coughArgument to cough engines.
+
             // Update weapon charges.
             weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);
             weapon1Charge = MathHelper.Clamp(weapon1Charge, 0, weapon1ChargeMax);

@@ -47,19 +47,23 @@ namespace AW2.Game.Particles
         private string textureName = "dummytexture"; // Name of texture for particles
 
         Gob leader = null; // The leader who we follow, or null.
+        float argument = 0; // Argument for FloatFactory instances that need it.
 
         //PARTICLES DATA
         [TypeParameter]
-        private ExpectedValue particleAge = new ExpectedValue(2, 0); // Expected age of a particle
+        private FloatFactory particleAge = new ExpectedValue(2, 0); // Expected age of a particle
 
         [TypeParameter]
-        private ExpectedValue particleInitialSize = new ExpectedValue(1, 0); //Initial size of a particle
+        private FloatFactory particleInitialSize = new ExpectedValue(1, 0); //Initial size of a particle
 
         [TypeParameter]
-        private ExpectedValue particleFinalSize = new ExpectedValue(2, 0); //Final size of a particle
+        private FloatFactory particleFinalSize = new ExpectedValue(2, 0); //Final size of a particle
 
         [TypeParameter]
-        private ExpectedValue particleRotationSpeed = new ExpectedValue(); // Expected rotation speed of a particle
+        private FloatFactory particleInitialRotation = new ExpectedValue(0, MathHelper.Pi); // Expected initial rotation of a particle
+
+        [TypeParameter]
+        private FloatFactory particleRotationSpeed = new ExpectedValue(); // Expected rotation speed of a particle
 
         [TypeParameter]
         private Color particleInitialColor = new Color(255, 255, 255, 255); //Initial color of the particle
@@ -68,13 +72,13 @@ namespace AW2.Game.Particles
         private Color particleFinalColor = new Color(0, 0, 0, 0); //Final color of the particle
 
         [TypeParameter]
-        private ExpectedValue particleSpeed = new ExpectedValue(1, 0); //Expected speed of a particle
+        private FloatFactory particleSpeed = new ExpectedValue(1, 0); //Expected speed of a particle
 
         [TypeParameter]
-        private ExpectedValue particleAcceleration = new ExpectedValue(); //Expected acceleration of a particle
+        private FloatFactory particleAcceleration = new ExpectedValue(); //Expected acceleration of a particle
 
         [TypeParameter]
-        private ExpectedValue particleMass = new ExpectedValue(); // Expected mass of a particle
+        private FloatFactory particleMass = new ExpectedValue(); // Expected mass of a particle
 
         [RuntimeState]
         private List<Particle> particles = new List<Particle>();
@@ -232,9 +236,14 @@ namespace AW2.Game.Particles
         }
 
         /// <summary>
+        /// Argument for particle parameters that need it.
+        /// </summary>
+        public float Argument { get { return argument; } set { argument = value; } }
+
+        /// <summary>
         /// Expected time in seconds that the created particles will live.
         /// </summary>
-        public ExpectedValue ParticleAge
+        public FloatFactory ParticleAge
         {
             get { return particleAge; }
             set { particleAge = value; }
@@ -243,7 +252,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Size of the particle when it's created. This is used to scale the particle sprite.
         /// </summary>
-        public ExpectedValue ParticleInitialSize
+        public FloatFactory ParticleInitialSize
         {
             get { return particleInitialSize; }
             set { particleInitialSize = value; }
@@ -252,7 +261,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Size of the particle just before it dies. This is used to scale the particle sprite.
         /// </summary>
-        public ExpectedValue ParticleFinalSize
+        public FloatFactory ParticleFinalSize
         {
             get { return particleFinalSize; }
             set { particleFinalSize = value; }
@@ -261,7 +270,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Particles expected rotation speed.
         /// </summary>
-        public ExpectedValue ParticleRotationSpeed
+        public FloatFactory ParticleRotationSpeed
         {
             get { return particleRotationSpeed; }
             set { particleRotationSpeed = value; }
@@ -288,7 +297,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Particles speed when it's created.
         /// </summary>
-        public ExpectedValue ParticleSpeed
+        public FloatFactory ParticleSpeed
         {
             get { return particleSpeed; }
             set { particleSpeed = value; }
@@ -297,7 +306,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Particles acceleration when it's created.
         /// </summary>
-        public ExpectedValue ParticleAcceleration
+        public FloatFactory ParticleAcceleration
         {
             get { return particleAcceleration; }
             set { particleAcceleration = value; }
@@ -306,7 +315,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Particles mass when it's created.
         /// </summary>
-        public ExpectedValue ParticleMass
+        public FloatFactory ParticleMass
         {
             get { return particleMass; }
             set { particleMass = value; }
@@ -463,39 +472,48 @@ namespace AW2.Game.Particles
         #region Helper Methods
 
         /// <summary>
-        /// Creates a new particle and sets it's properties
+        /// Creates a new particle and sets its properties.
         /// </summary>
         private void CreateParticle()
         {
             Particle particle = new Particle();
             Vector3 position, direction;
+            float directionAngle;
+
+            emitter.EmittPosition(out position, out direction, out directionAngle);
 
             // Particle creation
-            particle.Age = particleAge.GetRandomValue();
+            particle.Age = GetFloatFromFactory(ref particleAge);
 
-            particle.InitialSize = particleInitialSize.GetRandomValue();
-            particle.FinalSize = particleFinalSize.GetRandomValue();
-            
-            // Log.Write("created particle with age: " + particle.Age + " init size: " + particle.InitialSize);
+            particle.InitialSize = GetFloatFromFactory(ref particleInitialSize);
+            particle.FinalSize = GetFloatFromFactory(ref particleFinalSize);
 
-            particle.DeltaRotation = particleRotationSpeed.GetRandomValue();
-            particle.Rotation = MathHelper.TwoPi * RandomHelper.GetRandomFloat();
+            particle.DeltaRotation = GetFloatFromFactory(ref particleRotationSpeed);
+            particle.Rotation = directionAngle + GetFloatFromFactory(ref particleInitialRotation);
 
             particle.InitialColor = particleInitialColor;
             particle.FinalColor = particleFinalColor;
 
-            emitter.EmittPosition(out position, out direction);
-
             particle.Position = position + new Vector3(this.Pos, 0);
-            particle.Velocity = movement + direction * particleSpeed.GetRandomValue();
-            particle.Acceleration = direction * particleAcceleration.GetRandomValue();
-            particle.Mass = particleMass.GetRandomValue();
+            particle.Velocity = movement + direction * GetFloatFromFactory(ref particleSpeed);
+            particle.Acceleration = direction * GetFloatFromFactory(ref particleAcceleration);
+            particle.Mass = GetFloatFromFactory(ref particleMass);
 
             particle.Parent = this;
 
             // Add the particle to the system
             particles.Add(particle);
             createdParticles++;
+        }
+
+        private float GetFloatFromFactory(ref FloatFactory floatFactory)
+        {
+            switch (floatFactory.ArgumentCount)
+            {
+                case 0: return floatFactory.GetValue();
+                case 1: return floatFactory.GetValue(argument);
+                default: throw new ArgumentException("Float factory requires " + floatFactory.ArgumentCount + " arguments");
+            }
         }
 
         #endregion

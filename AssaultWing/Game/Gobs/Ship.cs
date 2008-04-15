@@ -127,6 +127,21 @@ namespace AW2.Game.Gobs
 
         #endregion Ship fields related to rolling
 
+        #region Ship fields related to coughing
+
+        /// <summary>
+        /// Names of cough engine types.
+        /// </summary>
+        [TypeParameter]
+        string[] coughEngineNames;
+
+        /// <summary>
+        /// Particle engines that manage coughing.
+        /// </summary>
+        ParticleEngine[] coughEngines;
+
+        #endregion Ship fields related to coughing
+
         #region Ship fields related to other things
 
         /// <summary>
@@ -304,6 +319,7 @@ namespace AW2.Game.Gobs
             }
             this.birthAlpha.Keys.Add(new CurveKey(2, 1));
             this.birthAlpha.ComputeTangents(CurveTangent.Flat);
+            this.coughEngineNames = new string[] { "dummyparticleengine", };
         }
 
         /// <summary>
@@ -334,6 +350,7 @@ namespace AW2.Game.Gobs
             this.weapon2 = CreateWeapons(weapon2Name, 2);
             this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2Charge = this.weapon2ChargeMax;
+            this.coughEngines = new ParticleEngine[0];
         }
 
         #endregion Ship constructors
@@ -366,6 +383,23 @@ namespace AW2.Game.Gobs
             return weapon;
         }
 
+        /// <summary>
+        /// Creates cough engines for the ship.
+        /// </summary>
+        private void CreateCoughEngines()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            coughEngines = new ParticleEngine[coughEngineNames.Length];
+            for (int i = 0; i < coughEngineNames.Length; ++i)
+            {
+                coughEngines[i] = new ParticleEngine(coughEngineNames[i]);
+                coughEngines[i].Loop = true;
+                coughEngines[i].IsAlive = false;
+                coughEngines[i].Leader = this;
+                data.AddParticleEngine(coughEngines[i]);
+            }
+        }
+
         #region Methods related to gobs' functionality in the game world
 
         /// <summary>
@@ -373,9 +407,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Activate()
         {
-            this.CreateExhaustEngines();
-            this.exhaustAmountUpdated = false;
-
+            CreateExhaustEngines();
+            exhaustAmountUpdated = false;
+            CreateCoughEngines();
             base.Activate();
         }
 
@@ -413,7 +447,11 @@ namespace AW2.Game.Gobs
             // base.Update() to get cough particles in the right spot.
             float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
             coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
-            // TODO: Pass coughArgument to cough engines.
+            foreach (ParticleEngine coughEngine in coughEngines)
+            {
+                coughEngine.Argument = coughArgument;
+                coughEngine.IsAlive = coughArgument > 0;
+            }
 
             // Update weapon charges.
             weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);

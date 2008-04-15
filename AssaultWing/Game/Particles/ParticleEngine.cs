@@ -28,7 +28,7 @@ namespace AW2.Game.Particles
         [RuntimeState]
         private int createdParticles = 0; //Number of emitted particles so far
         [TypeParameter]
-        private float birthRate = 5; //Particles emitted per second
+        private FloatFactory birthRate = new ExpectedValue(5,0); //Particles emitted per second
         [RuntimeState]
         private TimeSpan nextBirth; // Time of next particle birth, in game time.
         [RuntimeState]
@@ -137,7 +137,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Speed of particle creation, in particles/second.
         /// </summary>
-        public float BirthRate
+        public FloatFactory BirthRate
         {
             get { return birthRate; }
             set { birthRate = value; }
@@ -396,7 +396,7 @@ namespace AW2.Game.Particles
                 }
                 else
                 {
-                    pos = leader.Pos;
+                    this.Pos = leader.Pos;
                     if (emitter != null && emitter is DotEmitter)
                         ((DotEmitter)emitter).Direction = leader.Rotation;
                 }
@@ -423,9 +423,10 @@ namespace AW2.Game.Particles
                 while (nextBirth <= gameTime.TotalGameTime)
                 {
                     ++createCount;
-                    if (birthRate != 0)
+                    float birthRateNow = GetFloatFromFactory(ref birthRate);
+                    if (birthRateNow != 0)
                     {
-                        long ticks = (long)(10 * 1000 * 1000 / birthRate);
+                        long ticks = (long)(10 * 1000 * 1000 / birthRateNow);
                         nextBirth = nextBirth.Add(new TimeSpan(ticks));
                     }
                 }

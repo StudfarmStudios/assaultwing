@@ -3,7 +3,7 @@
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocketfire</typeName>
   <textureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">p_yellowball</textureName>
   <depthLayer type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.51</depthLayer>
-  <birthRate type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">43</birthRate>
+  <birthRate type="AW2.Helpers.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"><value type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">43</value></birthRate>
   <totalNumberParticles type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">6</totalNumberParticles>
   <emitter type="AW2.Game.Particles.DotEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <jitter type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</jitter>

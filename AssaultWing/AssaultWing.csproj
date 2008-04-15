@@ -173,7 +173,9 @@
     </Compile>
     <Compile Include="Graphics\OverlayDialog.cs" />
     <Compile Include="Helpers\AWMathHelper.cs" />
+    <Compile Include="Helpers\ConstantValue.cs" />
     <Compile Include="Helpers\ExpectedValue.cs" />
+    <Compile Include="Helpers\ExpectedValueCurve.cs" />
     <Compile Include="Helpers\FloatFactory.cs" />
     <Compile Include="Helpers\Geometry.cs">
       <Name>Geometry</Name>

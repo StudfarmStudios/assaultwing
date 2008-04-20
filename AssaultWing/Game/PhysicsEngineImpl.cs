@@ -571,6 +571,26 @@ namespace AW2.Game
             return tryPos;
         }
 
+        /// <summary>
+        /// Is a gob overlap consistent (e.g. not inside a wall) at a position. 
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        /// <param name="position">The position.</param>
+        /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
+        public bool IsFreePosition(Gob gob, Vector2 position)
+        {
+            // Non-collidable gobs are fine anywhere.
+            ICollidable gobCollidable = gob as ICollidable;
+            if (gobCollidable == null)
+                return true;
+
+            Vector2 oldPos = gob.Pos;
+            OverlapperFlags flags = OverlapperFlags.CheckPhysical | OverlapperFlags.ConsiderColdness;
+            bool result = ArenaBoundaryLegal(gob) && GetPhysicalOverlappers(gobCollidable, flags).Count == 0;
+            gob.Pos = oldPos;
+            return result;
+        }
+
         #endregion // PhysicsEngine Members
 
         #region Arena boundary methods

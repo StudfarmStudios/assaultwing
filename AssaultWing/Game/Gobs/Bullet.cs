@@ -91,6 +91,21 @@ namespace AW2.Game.Gobs
         // Some members are implemented in class Gob.
 
         /// <summary>
+        /// Activates the gob, i.e. performs an initialisation rite.
+        /// </summary>
+        public override void Activate()
+        {
+            base.Activate();
+
+            // If we have a physical collision area, i.e. we want to bounce
+            // off walls, but we are born inside a wall, we die immediately
+            // lest we face the treacherous consistency manoeuver of flying
+            // through it, void of even the most minute intention to perish.
+            if (!physics.IsFreePosition(this, this.Pos))
+                Die();
+        }
+
+        /// <summary>
         /// Performs collision operations with a gob whose general collision area
         /// has collided with one of our receptor areas.
         /// </summary>

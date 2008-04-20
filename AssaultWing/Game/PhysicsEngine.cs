@@ -142,5 +142,13 @@ namespace AW2.Game
         /// <param name="preferred">Preferred position, or <b>null</b>.</param>
         /// <returns>A position for the gob where it is overlap consistent.</returns>
         Vector2 GetFreePosition(Gob gob, Vector2? preferred);
-    }
+
+        /// <summary>
+        /// Is a gob overlap consistent (e.g. not inside a wall) at a position. 
+        /// </summary>
+        /// <param name="gob">The gob.</param>
+        /// <param name="position">The position.</param>
+        /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
+        bool IsFreePosition(Gob gob, Vector2 position);
+}
 }

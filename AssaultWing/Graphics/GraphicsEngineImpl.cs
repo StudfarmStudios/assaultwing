@@ -246,6 +246,7 @@ namespace AW2.Graphics
             });
             
             // HACK: These model names are known only runtime. FIX THIS SOON
+            
             foreach (string modelName in new string[] { "snow_wall_1", "snow_wall_2", "snow_wall_3", "snow_wall_4", "snow_wall_5", "snow_wall_6", "snow_wall_7", "snow_wall_8", "snow_wall_9", "snow_wall_10", "snow_wall_11", "snow_wall_12",
                 "wall_1", "wall_2", "wall_3", "wall_4", "wall_5", "wall_6", "wall_7", "wall_8", "wall_9", "wall_10", "wall_11", "wall_12", "shield", "demonskull", "greendiamond", "orangediamond", "bluediamond", "spear", "bones", "gravestone", })
             {

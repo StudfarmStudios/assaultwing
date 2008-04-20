@@ -456,7 +456,12 @@ namespace AW2
             graphicsEngine.RearrangeViewports();
 
             List<string> arenaNames = new List<string>();
-            dataEngine.ForEachArena(delegate(Arena arena) { arenaNames.Add(arena.Name); });
+            dataEngine.ForEachArena(delegate(Arena arena) 
+            {
+                // HACK to avoid playing the crummy default arena.
+                if (arena.Name != "dummyarena")
+                    arenaNames.Add(arena.Name); 
+            });
             dataEngine.ArenaPlaylist = arenaNames;
             ChangeState(GameState.Menu);
 

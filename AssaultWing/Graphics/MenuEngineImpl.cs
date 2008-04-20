@@ -114,13 +114,23 @@ namespace AW2.Graphics
                 (int)Math.Round(aspectX * 95), (int)Math.Round(aspectY * 101)), Color.White);
 
             // Draw menu data screen contents.
-            if (currentMenu == MainMenuItem.LaunchDeck)
+            switch (currentMenu)
             {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                string arenaNames = String.Join("\n", data.ArenaPlaylist.ToArray());
-                Vector2 arenaListPos = new Vector2(600, 200);
-                spriteBatch.DrawString(fontMedium, arenaNames, arenaListPos, Color.White);
-            }
+                case MainMenuItem.LaunchDeck:
+                    {
+                        DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                        string arenaNames = "Play arenas:\n" +
+                            String.Join("\n", data.ArenaPlaylist.ToArray());
+                        Vector2 arenaListPos = new Vector2(600, 200);
+                        spriteBatch.DrawString(fontMedium, arenaNames, arenaListPos, Color.White);
+                    } break;
+                case MainMenuItem.Quit:
+                    {
+                        string text = "Exit the game";
+                        Vector2 textPos = new Vector2(600, 200);
+                        spriteBatch.DrawString(fontMedium, text, textPos, Color.White);
+                    } break;
+            }                    
 
             spriteBatch.End();
         }
@@ -147,13 +157,13 @@ namespace AW2.Graphics
             {
                 upDone = true;
                 if (currentMenuLevel == 0)
-                    bigArrowDir = -1;
+                    bigArrowDir = -6;
             }
             if (controlDown.Pulse && !downDone)
             {
                 downDone = true;
                 if (currentMenuLevel == 0)
-                    bigArrowDir = 1;
+                    bigArrowDir = 6;
             }
             if (controlSelect.Pulse && !selectDone)
             {
@@ -169,13 +179,13 @@ namespace AW2.Graphics
                 {
                     upDone = true;
                     if (currentMenuLevel == 0)
-                        bigArrowDir = -1;
+                        bigArrowDir = -6;
                 }
                 if (player.Controls[PlayerControlType.Down].Pulse && !downDone)
                 {
                     downDone = true;
                     if (currentMenuLevel == 0)
-                        bigArrowDir = 1;
+                        bigArrowDir = 6;
                 }
                 if (player.Controls[PlayerControlType.Fire1].Pulse && !selectDone)
                 {

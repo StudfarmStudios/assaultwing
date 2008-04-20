@@ -23,6 +23,13 @@ namespace AW2.Game
     /// initialise their type parameter fields by copying them from a template instance.
     /// Template instances are referred to by human-readable names such as "rocket pod".
     /// 
+    /// Class Gob manages exhaust engines, i.e. particle engines that produce
+    /// engine exhaust fumes or similar. Exhaust engines are created automatically,
+    /// provided that the gob's 3D model has bones whose name begins with Thruster
+    /// and <b>exhaustEngineNames</b> contains at least one valid particle engine name.
+    /// All exhaust engines are set on loop and their position and direction
+    /// are set each frame. The subclass should manage other parameters of the engines.
+    /// 
     /// Class Gob also provides methods required by certain interfaces such as
     /// ICollidable and IDamageable, although Gob itself doesn't inherit the interfaces.
     /// This serves to unify the collision and other code that would otherwise have to be
@@ -583,16 +590,19 @@ namespace AW2.Game
                     ((ParticleEngine)gob).Leader = this;
                 data.AddGob(gob);
             }
+
+            CreateExhaustEngines();
         }
 
         /// <summary>
         /// Updates the gob according to physical laws.
         /// </summary>
-        /// Overriden Update methods must explicitly call this method in order to have 
-        /// physical laws apply to the gob.
+        /// Overriden Update methods should explicitly call this method in order to have 
+        /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
             physics.Move(this);
+            UpdateExhaustEngines();
         }
 
         /// <summary>
@@ -873,7 +883,7 @@ namespace AW2.Game
 
         #endregion Gob public methods
 
-        #region Gob protected methods
+        #region Gob methods related to thrusters
 
         /// <summary>
         /// Creates exhaust engines for the gob in all thrusters named in its 3D model.
@@ -882,12 +892,10 @@ namespace AW2.Game
         /// if it wants to have visible thrusters,
         /// and then do final adjustments on the newly created <b>exhaustEngines</b>.
         /// The subclass should regularly <b>Update</b> its <b>exhaustEngines</b>.
-        protected void CreateExhaustEngines()
+        private void CreateExhaustEngines()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             KeyValuePair<string, int>[] boneIs = GetNamedPositions("Thruster");
-            if (boneIs.Length == 0)
-                Log.Write("Warning: Gob (" + typeName + ") found no thrusters in its 3D model");
 
             // Create proper exhaust engines.
             int templates = exhaustEngineNames.Length;
@@ -900,12 +908,36 @@ namespace AW2.Game
                     exhaustBoneIs[i] = boneIs[thrustI].Value;
                     exhaustEngines[i] = new ParticleEngine(exhaustEngineNames[tempI]);
                     exhaustEngines[i].Loop = true;
-                    exhaustEngines[i].IsAlive = false;
-                    DotEmitter exhaustEmitter = (DotEmitter)exhaustEngines[i].Emitter;
-                    exhaustEmitter.Direction = Rotation + MathHelper.Pi;
+                    exhaustEngines[i].IsAlive = true;
+                    DotEmitter exhaustEmitter = exhaustEngines[i].Emitter as DotEmitter;
+                    if (exhaustEmitter != null)
+                        exhaustEmitter.Direction = Rotation + MathHelper.Pi;
                     data.AddParticleEngine(exhaustEngines[i]);
                 }
         }
+
+        /// <summary>
+        /// Updates the gob's exhaust engines.
+        /// </summary>
+        /// This method should be called after the gob's position and direction
+        /// have been updated so that the exhaust engines have an up-to-date location.
+        private void UpdateExhaustEngines()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Model model = data.GetModel(ModelName);
+            UpdateModelPartTransforms(model);
+            for (int i = 0; i < exhaustEngines.Length; ++i)
+            {
+                exhaustEngines[i].Pos = GetNamedPosition(exhaustBoneIs[i]);
+                DotEmitter dotEmitter = exhaustEngines[i].Emitter as DotEmitter;
+                if (dotEmitter != null)
+                    dotEmitter.Direction = Rotation + MathHelper.Pi;
+            }
+        }
+
+        #endregion Gob methods related to thrusters
+
+        #region Gob miscellaneous protected methods
 
         /// <summary>
         /// Updates <b>modelPartTransforms</b> to contain the absolute transforms
@@ -921,7 +953,7 @@ namespace AW2.Game
             model.CopyAbsoluteBoneTransformsTo(modelPartTransforms);
         }
 
-        #endregion Gob protected methods
+        #endregion Gob miscellaneous protected methods
 
         #region ICollidable Members // Implemented here for subclasses
 

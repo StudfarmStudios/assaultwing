@@ -407,10 +407,11 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Activate()
         {
-            CreateExhaustEngines();
+            base.Activate();
+            foreach (ParticleEngine engine in exhaustEngines)
+                engine.IsAlive = false;
             exhaustAmountUpdated = false;
             CreateCoughEngines();
-            base.Activate();
         }
 
         /// <summary>
@@ -428,23 +429,12 @@ namespace AW2.Game.Gobs
             base.Update();
             
             // Manage exhaust engines.
-            // We do this after the ship's position has been updated by
-            // base.Update() to get exhaust fumes in the right spot.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.GetModel(ModelName);
-            UpdateModelPartTransforms(model);
             for (int i = 0; i < exhaustEngines.Length; ++i)
-            {
-                exhaustEngines[i].Pos = GetNamedPosition(exhaustBoneIs[i]);
-                ((DotEmitter)exhaustEngines[i].Emitter).Direction = Rotation + MathHelper.Pi;
                 if (!exhaustAmountUpdated)
                     exhaustEngines[i].IsAlive = false;
-            }
             exhaustAmountUpdated = false;
 
             // Manage cough engines.
-            // We do this after the ship's position has been updated by
-            // base.Update() to get cough particles in the right spot.
             float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
             coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
             foreach (ParticleEngine coughEngine in coughEngines)
@@ -460,6 +450,8 @@ namespace AW2.Game.Gobs
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
 
             // Flash and be disabled if we're just born.
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Model model = data.GetModel(ModelName);
             float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
             float alpha = birthAlpha.Evaluate(age);
             foreach (ModelMesh mesh in model.Meshes)
@@ -501,7 +493,6 @@ namespace AW2.Game.Gobs
         protected override void SetRuntimeState(Gob runtimeState)
         {
             base.SetRuntimeState(runtimeState);
-            CreateExhaustEngines();
             exhaustAmountUpdated = false;
         }
 

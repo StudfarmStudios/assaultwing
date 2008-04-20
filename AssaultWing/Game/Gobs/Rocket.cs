@@ -94,10 +94,6 @@ namespace AW2.Game.Gobs
         /// an ongoing play of the game.
         public override void Activate()
         {
-            CreateExhaustEngines();
-            foreach (ParticleEngine engine in exhaustEngines)
-                engine.IsAlive = true;
-
             base.Activate();
         }
 
@@ -126,18 +122,9 @@ namespace AW2.Game.Gobs
             base.Update();
 
             // Manage exhaust engines.
-            // We do this after our position has been updated by
-            // base.Update() to get exhaust fumes in the right spot.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.GetModel(ModelName);
-            UpdateModelPartTransforms(model);
-            for (int i = 0; i < exhaustEngines.Length; ++i)
-            {
-                exhaustEngines[i].Pos = GetNamedPosition(exhaustBoneIs[i]);
-                ((DotEmitter)exhaustEngines[i].Emitter).Direction = Rotation + MathHelper.Pi;
-                if (physics.TimeStep.TotalGameTime >= thrustEndTime)
+            if (physics.TimeStep.TotalGameTime >= thrustEndTime)
+                for (int i = 0; i < exhaustEngines.Length; ++i)
                     exhaustEngines[i].IsAlive = false;
-            }
         }
 
         #endregion Methods related to gobs' functionality in the game world

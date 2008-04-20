@@ -205,10 +205,7 @@ namespace AW2.Graphics
         protected override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");
-
-            AssaultWing game = (AssaultWing)Game;
-            DataEngine data = (DataEngine)game.Services.GetService(typeof(DataEngine));
-
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
 
             // Load fonts.
@@ -217,95 +214,94 @@ namespace AW2.Graphics
             // Loop through gob types and load all the 3D models and textures they need.
             data.ForEachTypeTemplate<Gob>(delegate(Gob gobTemplate)
             {
-                List<string> modelNames = gobTemplate.ModelNames;
-                foreach (string modelName in modelNames)
+                foreach (string modelName in gobTemplate.ModelNames)
                 {
-                    try
-                    {
-                        string modelNamePath = System.IO.Path.Combine("models", modelName);
-                        Model model = game.Content.Load<Model>(modelNamePath);
+                    Model model = LoadModel(modelName);
+                    if (model != null)
                         data.AddModel(modelName, model);
-                    }
-                    catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
-                    {
-                        Log.Write("Error loading model " + modelName + " (" + e.Message + ")");
-                    }
                 }
-                List<string> textureNames = gobTemplate.TextureNames;
-                foreach (string textureName in textureNames)
+                foreach (string textureName in gobTemplate.TextureNames)
                 {
-                    try
-                    {
-                        data.AddTexture(textureName, LoadTexture(game, textureName));
-                    }
-                    catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
-                    {
-                        Log.Write("Error loading texture " + textureName + " (" + e.Message + ")");
-                    }
+                    Texture2D texture = LoadTexture(textureName);
+                    if (texture != null)
+                        data.AddTexture(textureName, texture);
                 }
             });
             
-            // HACK: These model names are known only runtime. FIX THIS SOON
-            
-            foreach (string modelName in new string[] { "snow_wall_1", "snow_wall_2", "snow_wall_3", "snow_wall_4", "snow_wall_5", "snow_wall_6", "snow_wall_7", "snow_wall_8", "snow_wall_9", "snow_wall_10", "snow_wall_11", "snow_wall_12",
-                "wall_1", "wall_2", "wall_3", "wall_4", "wall_5", "wall_6", "wall_7", "wall_8", "wall_9", "wall_10", "wall_11", "wall_12", "shield", "demonskull", "greendiamond", "orangediamond", "bluediamond", "spear", "bones", "gravestone", })
-            {
-                Model wallModel = game.Content.Load<Model>(System.IO.Path.Combine("models", modelName));
-                data.AddModel(modelName, wallModel);
-            }
-
-            // Load all textures that each arena needs.
+            // Loop through arenas and load all the 3D models and textures they need.
             data.ForEachArena(delegate(Arena arenaTemplate)
             {
-                Log.Write("Loading textures for arena " + arenaTemplate.Name);
+                foreach (Gob gob in arenaTemplate.Gobs)
+                    foreach (string modelName in gob.ModelNames)
+                    {
+                        Model model = LoadModel(modelName);
+                        if (model != null)
+                            data.AddModel(modelName, model);
+                    }
                 foreach (string textureName in arenaTemplate.ParallaxNames) 
                 {
-                    try
-                    {
-                        data.AddTexture(textureName, LoadTexture(game, textureName));
-                    }
-                    catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
-                    {
-                        Log.Write("Error loading texture " + textureName + " (" + e.Message + ")");
-                    }
+                    Texture2D texture = LoadTexture(textureName);
+                    if (texture != null)
+                        data.AddTexture(textureName, texture);
                 }
             });
 
             // Load all textures that each weapon needs.
             data.ForEachTypeTemplate<Weapon>(delegate(Weapon weapon)
             {
-                Log.Write("Loading textures for weapon " + weapon.TypeName);
                 foreach (string textureName in weapon.TextureNames)
                 {
-                    try
-                    {
-                        data.AddTexture(textureName, LoadTexture(game, textureName));
-                    }
-                    catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
-                    {
-                        Log.Write("Error loading texture " + textureName + " (" + e.Message + ")");
-                    }
+                    Texture2D texture = LoadTexture(textureName);
+                    if (texture != null)
+                        data.AddTexture(textureName, texture);
                 }
             });
 
             // Load overlay graphics.
             foreach (ViewportOverlay overlay in Enum.GetValues(typeof(ViewportOverlay)))
             {
-                try
-                {
-                    overlays[(int)overlay] = LoadTexture(game, overlayNames[(int)overlay]);
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Error loading texture " + overlayNames[(int)overlay] + " (" + e.Message + ")");
-                }
+                overlays[(int)overlay] = LoadTexture(overlayNames[(int)overlay]);
             }
         }
 
-        private Texture2D LoadTexture(AssaultWing game, string name)
+        /// <summary>
+        /// Loads a texture by name and manages errors.
+        /// </summary>
+        /// <param name="name">The names of the textures.</param>
+        /// <returns>The loaded texture, or <b>null</b> on error.</returns>
+        private Texture2D LoadTexture(string name)
         {
-            string textureNamePath = System.IO.Path.Combine("textures", name);
-            return game.Content.Load<Texture2D>(textureNamePath);
+            try
+            {
+                string textureNamePath = System.IO.Path.Combine("textures", name);
+                Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(textureNamePath);
+                return texture;
+            }
+            catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
+            {
+                Log.Write("Error loading texture " + name + " (" + e.Message + ")");
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Loads a 3D model by name and manages errors.
+        /// </summary>
+        /// <param name="name">The name of the 3D model.</param>
+        /// <returns>The loaded 3D model, or <b>null</b> on error.</returns>
+        private Model LoadModel(string name)
+        {
+            try
+            {
+                string modelNamePath = System.IO.Path.Combine("models", name);
+                Model model = AssaultWing.Instance.Content.Load<Model>(modelNamePath);
+                return model;
+            }
+            catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
+            {
+                Log.Write("Error loading 3D model " + name + " (" + e.Message + ")");
+            }
+            return null;
         }
 
         /// <summary>

@@ -162,42 +162,7 @@
         <continuity type="&CurveContinuity;">Step</continuity>
       </Item>
       <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-        <position type="&float;">2.0</position>
-        <internalValue type="&float;">0.2</internalValue>
-        <tangentOut type="&float;">0</tangentOut>
-        <tangentIn type="&float;">0</tangentIn>
-        <continuity type="&CurveContinuity;">Step</continuity>
-      </Item>
-      <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-        <position type="&float;">2.2</position>
-        <internalValue type="&float;">0.8</internalValue>
-        <tangentOut type="&float;">0</tangentOut>
-        <tangentIn type="&float;">0</tangentIn>
-        <continuity type="&CurveContinuity;">Step</continuity>
-      </Item>
-      <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-        <position type="&float;">2.4</position>
-        <internalValue type="&float;">0.2</internalValue>
-        <tangentOut type="&float;">0</tangentOut>
-        <tangentIn type="&float;">0</tangentIn>
-        <continuity type="&CurveContinuity;">Step</continuity>
-      </Item>
-      <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-        <position type="&float;">2.6</position>
-        <internalValue type="&float;">0.8</internalValue>
-        <tangentOut type="&float;">0</tangentOut>
-        <tangentIn type="&float;">0</tangentIn>
-        <continuity type="&CurveContinuity;">Step</continuity>
-      </Item>
-      <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-        <position type="&float;">2.8</position>
-        <internalValue type="&float;">0.2</internalValue>
-        <tangentOut type="&float;">0</tangentOut>
-        <tangentIn type="&float;">0</tangentIn>
-        <continuity type="&CurveContinuity;">Step</continuity>
-      </Item>
-      <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-        <position type="&float;">3</position>
+        <position type="&float;">2</position>
         <internalValue type="&float;">1</internalValue>
         <tangentOut type="&float;">0</tangentOut>
         <tangentIn type="&float;">0</tangentIn>

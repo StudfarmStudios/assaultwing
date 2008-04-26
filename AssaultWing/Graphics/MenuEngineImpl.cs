@@ -114,6 +114,7 @@ namespace AW2.Graphics
                 (int)Math.Round(aspectX * 95), (int)Math.Round(aspectY * 101)), Color.White);
 
             // Draw menu data screen contents.
+            spriteBatch.DrawString(fontMedium, "First Playable Demo 2008-04-27", new Vector2(420, 50), Color.LightGray);
             switch (currentMenu)
             {
                 case MainMenuItem.LaunchDeck:
@@ -121,14 +122,28 @@ namespace AW2.Graphics
                         DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                         string arenaNames = "Play arenas:\n" +
                             String.Join("\n", data.ArenaPlaylist.ToArray());
-                        Vector2 arenaListPos = new Vector2(600, 200);
-                        spriteBatch.DrawString(fontMedium, arenaNames, arenaListPos, Color.White);
+                        string keysText1 = @"Player 1 controls:
+W - Thrust
+A - Turn left
+D - Turn right
+Left Ctrl - Fire primary
+Left Shift - Fire secondary";
+                        string keysText2 = @"Player 2 controls:
+Numpad 8 - Thrust
+Numpad 4 - Turn left
+Numpad 6 - Turn right
+Right Ctrl - Fire primary
+Right Shift - Fire secondary";
+                        string keysOther = "Esc closes the whole game.";
+                        spriteBatch.DrawString(fontMedium, arenaNames, new Vector2(550, 150), Color.White);
+                        spriteBatch.DrawString(fontMedium, keysText1, new Vector2(450, 300), Color.White);
+                        spriteBatch.DrawString(fontMedium, keysText2, new Vector2(450, 460), Color.White);
+                        spriteBatch.DrawString(fontMedium, keysOther, new Vector2(450, 620), Color.White);
                     } break;
                 case MainMenuItem.Quit:
                     {
                         string text = "Exit the game";
-                        Vector2 textPos = new Vector2(600, 200);
-                        spriteBatch.DrawString(fontMedium, text, textPos, Color.White);
+                        spriteBatch.DrawString(fontMedium, text, new Vector2(550, 150), Color.White);
                     } break;
             }                    
 

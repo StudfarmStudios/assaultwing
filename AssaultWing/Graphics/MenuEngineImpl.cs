@@ -107,14 +107,16 @@ namespace AW2.Graphics
             spriteBatch.Draw(menuTexture, menuScreenRec, Color.White);
 
             // Draw main menu focus.
-            spriteBatch.Draw(tex_MainItemHighlight, new Rectangle((int)Math.Round(30 * aspectX), (int)Math.Round(bigArrowTarget),
+            spriteBatch.Draw(tex_MainItemHighlight, 
+                new Rectangle((int)Math.Round(50 * aspectX), (int)Math.Round(bigArrowTarget),
                 (int)Math.Round(aspectX * 230), (int)Math.Round(aspectY * 101)),
-                new Rectangle(0, 0, (int)Math.Round(aspectX * 230), (int)Math.Round(aspectY * 101)), Color.White);
+                Color.White);
             spriteBatch.Draw(bigArrow, new Rectangle((int)Math.Round(220 * aspectX), (int)Math.Round(bigArrowLocation), 
                 (int)Math.Round(aspectX * 95), (int)Math.Round(aspectY * 101)), Color.White);
 
             // Draw menu data screen contents.
-            spriteBatch.DrawString(fontMedium, "First Playable Demo 2008-04-27", new Vector2(420, 50), Color.LightGray);
+            Vector2 aspects = new Vector2(aspectX, aspectY);
+            spriteBatch.DrawString(fontMedium, "First Playable Demo 2008-04-27", aspects * new Vector2(420, 50), Color.LightGray);
             switch (currentMenu)
             {
                 case MainMenuItem.LaunchDeck:
@@ -135,15 +137,15 @@ Numpad 6 - Turn right
 Right Ctrl - Fire primary
 Right Shift - Fire secondary";
                         string keysOther = "Esc closes the whole game.";
-                        spriteBatch.DrawString(fontMedium, arenaNames, new Vector2(550, 150), Color.White);
-                        spriteBatch.DrawString(fontMedium, keysText1, new Vector2(450, 300), Color.White);
-                        spriteBatch.DrawString(fontMedium, keysText2, new Vector2(450, 460), Color.White);
-                        spriteBatch.DrawString(fontMedium, keysOther, new Vector2(450, 620), Color.White);
+                        spriteBatch.DrawString(fontMedium, arenaNames, aspects * new Vector2(550, 150), Color.White);
+                        spriteBatch.DrawString(fontMedium, keysText1, aspects * new Vector2(450, 300), Color.White);
+                        spriteBatch.DrawString(fontMedium, keysText2, aspects * new Vector2(450, 460), Color.White);
+                        spriteBatch.DrawString(fontMedium, keysOther, aspects * new Vector2(450, 620), Color.White);
                     } break;
                 case MainMenuItem.Quit:
                     {
                         string text = "Exit the game";
-                        spriteBatch.DrawString(fontMedium, text, new Vector2(550, 150), Color.White);
+                        spriteBatch.DrawString(fontMedium, text, aspects * new Vector2(550, 150), Color.White);
                     } break;
             }                    
 

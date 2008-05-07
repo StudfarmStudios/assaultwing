@@ -262,19 +262,6 @@ namespace AW2.Game
         GameTime gameTime;
 
         /// <summary>
-        /// The time at which collisions were checked the last time.
-        /// </summary>
-        TimeSpan collisionTimestamp;
-
-        /// <summary>
-        /// The list of gobs that have collided at collision timestamp.
-        /// </summary>
-        /// This is a symmetric relation but each gob pair (A,B) is to be stored here
-        /// only as (A,B) and not as (B,A). The equality of CollidablePair completes
-        /// the relation to a symmetric one.
-        Dictionary<CollidablePair, bool> collidedGobs;
-
-        /// <summary>
         /// The spatial index of physical collision areas collidable gobs.
         /// </summary>
         /// Receptors are kept in their own list as they don't
@@ -309,7 +296,6 @@ namespace AW2.Game
         /// </summary>
         public PhysicsEngineImpl()
         {
-            this.collidedGobs = new Dictionary<CollidablePair, bool>(100*100);
             this.collidables = new R_Tree();
             this.receptors = new LinkedList<CollisionData>();
             this.forces = new LinkedList<CollisionData>();
@@ -332,8 +318,6 @@ namespace AW2.Game
         public void Reset()
         {
             gameTime = new GameTime();
-            collisionTimestamp = new TimeSpan();
-            collidedGobs.Clear();
             collidables = new R_Tree();
             receptors.Clear();
             forces.Clear();
@@ -362,12 +346,6 @@ namespace AW2.Game
         /// <param name="gob">The gob to move.</param>
         public void Move(Gob gob)
         {
-            if (collisionTimestamp < gameTime.TotalGameTime)
-            {
-                collidedGobs.Clear();
-                collisionTimestamp = gameTime.TotalGameTime;
-            }
-
             if ((gob.PhysicsApplyMode & PhysicsApplyMode.Move) != 0)
             {
                 if (!gob.Disabled)
@@ -873,122 +851,6 @@ namespace AW2.Game
                 collArea2.Owner.Collide(gobCollidable1, collArea2.Name);
                 PerformCollision(gobCollidable1, collArea2.Owner);
             }
-        }
-
-        /// <summary>
-        /// Checks for collisions with gob and acts accordingly.
-        /// </summary>
-        /// <param name="gob">The gob whose collisions to check.</param>
-        /// <param name="oldPos">The position of the gob before the last update.</param>
-        [Obsolete]
-        private void CheckCollisions(Gob gob, Vector2 oldPos)
-        {
-            ICollidable gobCollidable1 = gob as ICollidable;
-            if (gobCollidable1 == null) return;
-
-            // Update spatial index.
-            if (!(gob is IProjectile))
-                Unregister(gob);
-
-            foreach (CollisionArea collArea in gobCollidable1.GetPrimitives())
-            {
-                CollisionArea[] colliders = GetColliders(collArea);
-
-                // Perform custom collision operations.
-                ICollidable compromiser = null;
-                foreach (CollisionArea collArea2 in colliders)
-                {
-                    if (collArea.IsReceptor && !collArea2.IsReceptor)
-                        collArea.Owner.Collide(collArea2.Owner, collArea.Name);
-                    if (!collArea.IsReceptor && collArea2.IsReceptor)
-                        collArea2.Owner.Collide(collArea.Owner, collArea2.Name);
-                    if (!collArea.IsReceptor && !collArea2.IsReceptor)
-                    {
-                        collArea.Owner.Collide(collArea2.Owner, collArea.Name);
-                        collArea2.Owner.Collide(collArea.Owner, collArea2.Name);
-
-                        // Remember the gob if it's an overlap consistency compromiser.
-                        if (collArea2.Owner.HadSafePosition && !CanOverlap(collArea.Owner, collArea2.Owner))
-                            compromiser = collArea2.Owner;
-                    }
-                }
-
-                // Maintain overlap consistency.
-                // TODO: Take all overlap consistency compromisers, not just one, and
-                // perform a physical collision with all of them at once.
-                if (collArea.Owner.HadSafePosition && compromiser != null)
-                {
-                    // TODO: Some iteration between gob.Pos and oldPos for a snug collision location.
-                    gob.Pos = oldPos;
-                    PerformCollision(collArea.Owner, compromiser);
-                }
-                OverlapperFlags flags = OverlapperFlags.CheckPhysical |
-                    OverlapperFlags.ConsiderColdness |
-                    OverlapperFlags.ConsiderConsistency;
-                if (!gobCollidable1.HadSafePosition && OverlapConsistent(gobCollidable1, flags))
-                    gobCollidable1.HadSafePosition = true;
-            }
-
-            // Update spatial index.
-            if (!(gob is IProjectile))
-                Register(gob);
-        }
-
-        /// <summary>
-        /// Returns the gobs that a collision area collides with.
-        /// </summary>
-        /// <param name="collArea">The collision area that is colliding.</param>
-        /// <return>The gobs that the given gob collides with.</return>
-        [Obsolete]
-        private CollisionArea[] GetColliders(CollisionArea collArea)
-        {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            List<CollisionArea> colliders = new List<CollisionArea>();
-            ICollidable gobCollidable1 = collArea.Owner;
-            Action<CollisionArea> checkCollision = delegate(CollisionArea collArea2)
-            {
-                ICollidable gobCollidable2 = collArea2.Owner;
-
-                // Two receptors cannot collide.
-                if (collArea.IsReceptor && collArea2.IsReceptor) return;
-
-                // A gob cannot collide with itself.
-                if (gobCollidable2 == gobCollidable1) return;
-
-                // Certain Gob subclasses don't want to collide with certain others.
-                if (!CanCollide(gobCollidable1, gobCollidable2)) return;
-
-                // Cold gobs don't collide with their own.
-                Gob gobGob1 = gobCollidable1 as Gob;
-                Gob gobGob2 = gobCollidable2 as Gob;
-                if (gobGob1 != null && gobGob2 != null &&
-                    (gobGob1.Cold || gobGob2.Cold) &&
-                    gobGob1.Owner == gobGob2.Owner &&
-                    gobGob1.Owner != null)
-                {
-                    // Cold gob may regain an unsafe position.
-                    if (!collArea.IsReceptor && !collArea2.IsReceptor)
-                    {
-                        if (gobGob1.Cold)
-                            gobCollidable1.HadSafePosition = false;
-                        if (gobGob2.Cold)
-                            gobCollidable2.HadSafePosition = false;
-                    }
-                    return;
-                }
-
-                CollidablePair gobPair = new CollidablePair(collArea, collArea2);
-                if (collidedGobs.ContainsKey(gobPair)) return;
-                if (Geometry.Intersect(collArea.Area, collArea2.Area))
-                {
-                    collidedGobs[gobPair] = true;
-                    colliders.Add(collArea2);
-                }
-            };
-            foreach (CollisionArea potential in GetPotentialPhysicalOverlappers(collArea))
-                checkCollision(potential);
-            
-            return colliders.ToArray();
         }
 
         /// <summary>

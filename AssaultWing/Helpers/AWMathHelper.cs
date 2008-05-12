@@ -51,6 +51,53 @@ namespace AW2.Helpers
                 : from - Math.Min(step, MathHelper.TwoPi - difference);
         }
 
+        /// <summary>
+        /// Returns the minimum and maximum X and Y coordinates out of
+        /// given three tuples of X, Y and Z coordinates.
+        /// </summary>
+        public static void MinAndMax(Vector3 v1, Vector3 v2, Vector3 v3, out Vector2 min, out Vector2 max)
+        {
+            min = new Vector2(Math.Min(v1.X, Math.Min(v2.X, v3.X)),
+                              Math.Min(v1.Y, Math.Min(v2.Y, v3.Y)));
+            max = new Vector2(Math.Max(v1.X, Math.Max(v2.X, v3.X)),
+                              Math.Max(v1.Y, Math.Max(v2.Y, v3.Y)));
+        }
+        
+        /// <summary>
+        /// Returns the least power of two that is more than or equal to a value.
+        /// Return value is undefined for zero and negative arguments.
+        /// </summary>
+        public static int CeilingPowerTwo(int value)
+        {
+            // Idea by I0 from http://www.perlmonks.org/?node_id=46889 on 2008-04-23.
+            value -= 1;
+
+            // Paint the highest one bit down all the way.
+            value |= value >> 1;
+            value |= value >> 2;
+            value |= value >> 4;
+            value |= value >> 8;
+            value |= value >> 16;
+
+            return value + 1;
+        }
+
+        /// <summary>
+        /// Returns the greatest power of two that is less than or equal to a value.
+        /// Return value is undefined for zero and negative arguments.
+        /// </summary>
+        public static int FloorPowerTwo(int value)
+        {
+            // Paint the highest one bit down all the way.
+            value |= value >> 1;
+            value |= value >> 2;
+            value |= value >> 4;
+            value |= value >> 8;
+            value |= value >> 16;
+
+            return (value >> 1) + 1;
+        }
+
         #region Unit tests
 #if DEBUG
         [TestFixture]
@@ -129,6 +176,60 @@ namespace AW2.Helpers
                 a = ((a % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
                 b = ((b % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
                 return Math.Abs(a - b) < epsilon;
+            }
+
+            /// <summary>
+            /// Tests obtaining min and max Vector2's from Vector3's.
+            /// </summary>
+            [Test]
+            public void TestMinAndMax()
+            {
+                Vector2 min, max;
+                Vector3 v1 = new Vector3(0, 0, 0);
+                Vector3 v2 = new Vector3(1, 2, 3);
+                Vector3 v3 = new Vector3(2, 3, 4);
+                Vector3 v4 = new Vector3(-10, 10, 100);
+                Vector3 v5 = new Vector3(-20, 0, -100);
+                Vector3 v6 = new Vector3(-5, -5, -5);
+
+                MinAndMax(v1, v2, v3, out min, out max);
+                Assert.AreEqual(new Vector2(0, 0), min);
+                Assert.AreEqual(new Vector2(2, 3), max);
+
+                MinAndMax(v3, v1, v2, out min, out max);
+                Assert.AreEqual(new Vector2(0, 0), min);
+                Assert.AreEqual(new Vector2(2, 3), max);
+
+                MinAndMax(v3, v2, v1, out min, out max);
+                Assert.AreEqual(new Vector2(0, 0), min);
+                Assert.AreEqual(new Vector2(2, 3), max);
+
+                MinAndMax(v4, v5, v6, out min, out max);
+                Assert.AreEqual(new Vector2(-20, -5), min);
+                Assert.AreEqual(new Vector2(-5, 10), max);
+            }
+
+            /// <summary>
+            /// Tests rounding to powers of two.
+            /// </summary>
+            [Test]
+            public void TestRoundPowerTwo()
+            {
+                for (int power = 0; power < 31; ++power)
+                {
+                    int n = 1 << power;
+                    Assert.AreEqual(n, CeilingPowerTwo(n));
+                    Assert.AreEqual(n, FloorPowerTwo(n));
+                }
+                Assert.AreEqual(4, CeilingPowerTwo(3));
+                Assert.AreEqual(2, FloorPowerTwo(3));
+                Assert.AreEqual(8, CeilingPowerTwo(7));
+                Assert.AreEqual(4, FloorPowerTwo(7));
+                Assert.AreEqual(16, CeilingPowerTwo(9));
+                Assert.AreEqual(8, FloorPowerTwo(9));
+                Assert.AreEqual(0x40000000, CeilingPowerTwo(0x3fffffff));
+                Assert.AreEqual(0x20000000, FloorPowerTwo(0x3fffffff));
+                Assert.AreEqual(0x40000000, FloorPowerTwo(0x50fa7e57));
             }
         }
 #endif

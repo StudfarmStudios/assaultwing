@@ -193,6 +193,7 @@
     <Compile Include="Helpers\Serialization.cs">
       <Name>Serialization</Name>
     </Compile>
+    <Compile Include="Helpers\SpatialGrid.cs" />
     <Compile Include="Helpers\Statistics.cs" />
     <Compile Include="Helpers\StringHelper.cs">
       <Name>StringHelper</Name>

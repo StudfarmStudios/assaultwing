@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 
 namespace AW2.Game
@@ -40,11 +41,41 @@ namespace AW2.Game
     }
 
     /// <summary>
+    /// Interface for structs that are like <b>CollisionArea</b>.
+    /// </summary>
+    public interface ICollisionArea
+    {
+        /// <summary>
+        /// Collision area name; either "General" for general collision
+        /// checking (including physical collisions), or something else
+        /// for a receptor area that can react to other gobs' general
+        /// areas.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// The type of the collision area.
+        /// </summary>
+        CollisionAreaType Type { get; }
+
+        /// <summary>
+        /// The geometric area for overlap testing, in game world coordinates,
+        /// translated according to the hosting gob's location.
+        /// </summary>
+        IGeomPrimitive Area { get; }
+
+        /// <summary>
+        /// The gob whose collision area this is.
+        /// </summary>
+        ICollidable Owner { get; }
+    }
+
+    /// <summary>
     /// An area with which a gob can overlap with other gobs' areas,
     /// resulting in a collision.
     /// </summary>
     [LimitedSerialization]
-    public struct CollisionArea
+    public struct CollisionArea : ICollisionArea
     {
         [TypeParameter, RuntimeState]
         string name;
@@ -85,12 +116,6 @@ namespace AW2.Game
               : CollisionAreaType.Receptor;
             }
         }
-
-        /// <summary>
-        /// Is this collision area a receptor.
-        /// </summary>
-        [Obsolete("Write Type == CollisionAreaType.Receptor instead")]
-        public bool IsReceptor { get { return name != "General"; } }
 
         /// <summary>
         /// The geometric area for overlap testing, in game world coordinates,
@@ -282,12 +307,6 @@ namespace AW2.Game
         /// <param name="pos">The location for the normal to point to.</param>
         /// <returns>The unit normal pointing to the given location.</returns>
         Vector2 GetNormal(Vector2 pos);
-
-        /// <summary>
-        /// Removes an area from the thick gob. 
-        /// </summary>
-        /// <param name="area">The area to remove. The polygon must be convex.</param>
-        void MakeHole(Helpers.Polygon area);
     }
 
     /// <summary>
@@ -346,5 +365,35 @@ namespace AW2.Game
         /// <param name="damageAmount">If positive, amount of damage;
         /// if negative, amount of repair.</param>
         void InflictDamage(float damageAmount);
+    }
+
+    /// <summary>
+    /// An entity that can be holed.
+    /// </summary>
+    public interface IHoleable
+    {
+        /// <summary>
+        /// Index data of the entity's 3D model.
+        /// </summary>
+        short[] IndexData { get; }
+
+        /// <summary>
+        /// Vertex data of the entity's 3D model.
+        /// </summary>
+        VertexPositionNormalTexture[] VertexData { get; }
+
+        /// <summary>
+        /// Handles for all triangles in the entity's 3D model.
+        /// Used internally by <b>PhysicsEngine</b>.
+        /// </summary>
+        /// <remarks>Note for implementors: The returned array length
+        /// must be at least one third of the length of <b>IndexData</b>.</remarks>
+        object[] WallTriangleHandles { get; }
+
+        /// <summary>
+        /// Removes an area from the entity. 
+        /// </summary>
+        /// <param name="pos">Center of the area to remove, in world coordinates.</param>
+        void MakeHole(Vector2 pos);
     }
 }

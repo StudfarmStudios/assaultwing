@@ -37,7 +37,7 @@ namespace AW2.Game
         /// </summary>
         ReceptorCollidesPhysically = 0x0010,
     }
-    
+
     /// <summary>
     /// Interface for a physics engine. The physics engine takes care of applying
     /// all forces and delta values in the right proportion relative to elapsed time
@@ -71,13 +71,13 @@ namespace AW2.Game
         /// at the gob's location.</param>
         /// <param name="drag">Drag constant for the medium and the gob.</param>
         void ApplyDrag(Gob gob, Vector2 flow, float drag);
-        
+
         /// <summary>
         /// Moves the given gob and takes care of collisions.
         /// </summary>
         /// <param name="gob">The gob to move.</param>
         void Move(Gob gob);
-                
+
         /// <summary>
         /// Performs additional collision checks. Must be called every frame
         /// after all gob movement is done.
@@ -104,7 +104,7 @@ namespace AW2.Game
         /// <param name="gob">The gob to apply the force to.</param>
         /// <param name="force">The force to apply, measured in Newtons.</param>
         void ApplyForce(Gob gob, Vector2 force);
-        
+
         /// <summary>
         /// Applies the given force to a gob, preventing gob speed from
         /// growing beyond a limit.
@@ -150,5 +150,11 @@ namespace AW2.Game
         /// <param name="position">The position.</param>
         /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
         bool IsFreePosition(Gob gob, Vector2 position);
-}
+
+        /// <summary>
+        /// Removes a triangle from a wall that has been registered for collisions.
+        /// </summary>
+        /// <param name="wallTriangleHandle">A handle to the wall triangle to remove.</param>
+        void RemoveWallTriangle(object wallTriangleHandle);
+    }
 }

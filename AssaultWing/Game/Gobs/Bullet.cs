@@ -118,9 +118,9 @@ namespace AW2.Game.Gobs
                 damaGob.InflictDamage(impactDamage);
 
             // Make a hole if it's possible.
-            IThick thickGob = gob as IThick;
-            if (thickGob != null)
-                thickGob.MakeHole(ImpactArea);
+            IHoleable holeGob = gob as IHoleable;
+            if (holeGob != null)
+                holeGob.MakeHole(Pos/* HACK: Where is Bullet.ImpactArea ? */);
 
             // A casual bullet dies on any impact.
             // A bullet with a physical collision area only bounces off
@@ -140,7 +140,7 @@ namespace AW2.Game.Gobs
         #region IProjectile Members
 
         /// <summary>
-        /// The area the projectile destroys from thick gobs on impact.
+        /// The area the projectile destroys from holeable gobs on impact.
         /// </summary>
         /// The area is translated according to the gob's location.
         public Polygon ImpactArea

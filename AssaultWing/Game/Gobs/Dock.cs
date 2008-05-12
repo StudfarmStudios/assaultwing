@@ -125,15 +125,6 @@ namespace AW2.Game.Gobs
                 return Vector2.UnitY;
         }
 
-        /// <summary>
-        /// Removes an area from the thick gob. 
-        /// </summary>
-        /// <param name="area">The area to remove. The polygon must be convex.</param>
-        public void MakeHole(Polygon area)
-        {
-            // TODO: Replace MakeHole from IThick into some new interface?
-        }
-
         #endregion IThick Members
     }
 }

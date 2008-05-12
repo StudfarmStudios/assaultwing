@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Events;
 using AW2.Helpers;
 using Edu.Psu.Cse.R_Tree_Framework.Indexes;
@@ -34,30 +35,6 @@ namespace AW2.Game
     {
         #region Type definitions
 
-        private struct CollidablePair : IEquatable<CollidablePair>
-        {
-            public CollisionArea a;
-            public CollisionArea b;
-            public CollidablePair(CollisionArea a, CollisionArea b) { this.a = a; this.b = b; }
-
-            #region IEquatable<CollidablePair> Members
-
-            /// <summary>
-            /// Returns true iff this collidable pair equals the other one.
-            /// Equality means that members <b>a</b> and <b>b</b> are the same,
-            /// regardless of order.
-            /// </summary>
-            /// <param name="other">The other collidable pair.</param>
-            /// <returns>True iff the pairs are equal.</returns>
-            public bool Equals(CollidablePair other)
-            {
-                return (this.a == other.a && this.b == other.b)
-                    || (this.a == other.b && this.b == other.a);
-            }
-
-            #endregion
-        }
-
         /// <summary>
         /// Data about a collidable gob.
         /// </summary>
@@ -86,6 +63,79 @@ namespace AW2.Game
             {
                 this.collisionArea = collisionArea;
             }
+        }
+
+        /// <summary>
+        /// A triangle in the 3D model of a piece of wall in an arena.
+        /// </summary>
+        private struct WallTriangle : ICollisionArea
+        {
+            /// <summary>
+            /// The wall instance where the triangle is from.
+            /// </summary>
+            public IHoleable wall;
+
+            /// <summary>
+            /// Index to <b>indexData</b> of the wall instance's 3D model
+            /// where the triangle starts.
+            /// </summary>
+            public int triangleIndex;
+
+            /// <summary>
+            /// Creates a new wall triangle.
+            /// </summary>
+            /// <param name="wall">The wall the triangle belongs to.</param>
+            /// <param name="triangleIndex">The starting index of the triangle in 
+            /// the wall's 3D model's index data.</param>
+            public WallTriangle(IHoleable wall, int triangleIndex)
+            {
+                this.wall = wall;
+                this.triangleIndex = triangleIndex;
+            }
+
+            #region ICollisionArea Members
+
+            /// <summary>
+            /// Collision area name; either "General" for general collision
+            /// checking (including physical collisions), or something else
+            /// for a receptor area that can react to other gobs' general
+            /// areas.
+            /// </summary>
+            public string Name { get { return "General"; } }
+
+            /// <summary>
+            /// The type of the collision area.
+            /// </summary>
+            public CollisionAreaType Type { get { return CollisionAreaType.Physical; } }
+
+            /// <summary>
+            /// The geometric area for overlap testing, in game world coordinates,
+            /// translated according to the hosting gob's location.
+            /// </summary>
+            public IGeomPrimitive Area
+            {
+                get
+                {
+                    VertexPositionNormalTexture[] vertexData = wall.VertexData;
+                    short[] indexData = wall.IndexData;
+                    Vector3 v1 = vertexData[indexData[triangleIndex + 0]].Position;
+                    Vector3 v2 = vertexData[indexData[triangleIndex + 1]].Position;
+                    Vector3 v3 = vertexData[indexData[triangleIndex + 2]].Position;
+                    Polygon triangle = new Polygon(new Vector2[] {
+                            new Vector2(v1.X, v1.Y),
+                            new Vector2(v2.X, v2.Y),
+                            new Vector2(v3.X, v3.Y),
+                        });
+                    return triangle;
+                }
+            }
+
+            /// <summary>
+            /// The gob whose collision area this is.
+            /// </summary>
+            public ICollidable Owner { get { return wall as ICollidable; } }
+
+            #endregion
         }
 
         /// <summary>
@@ -231,7 +281,6 @@ namespace AW2.Game
         /// </summary>
         float freePosRadiusStep = 10;
 
-
         /// <summary>
         /// Loud collision sound variable
         /// attempt, measured in meters.
@@ -250,7 +299,16 @@ namespace AW2.Game
         /// </summary>
         float minimumCollisionDelta = 20f;
 
+        /// <summary>
+        /// Maximum length of an edge of a triangle in a wall's 3D model.
+        /// </summary>
+        float wallTriangleMaxSize = 15;
 
+        /// <summary>
+        /// Excess area to cover by the spatial index of wall triangles,
+        /// in addition to arena boundaries.
+        /// </summary>
+        float wallTriangleArenaExcess = 200;
 
         #endregion Constants
 
@@ -289,6 +347,13 @@ namespace AW2.Game
         /// That is why they are stored in a separate container.
         LinkedList<CollisionData> forces;
 
+        /// <summary>
+        /// Triangles of walls.
+        /// </summary>
+        /// Walls have special physical collision areas; they consist of
+        /// triangles and they never move. Wall triangles can be removed, though.
+        SpatialGrid<WallTriangle> wallTriangles;
+
         #endregion Fields
 
         /// <summary>
@@ -299,6 +364,7 @@ namespace AW2.Game
             this.collidables = new R_Tree();
             this.receptors = new LinkedList<CollisionData>();
             this.forces = new LinkedList<CollisionData>();
+            this.wallTriangles = null;
             this.unusedCollidablesIndex = 0;
             this.gameTime = new GameTime();
         }
@@ -321,6 +387,10 @@ namespace AW2.Game
             collidables = new R_Tree();
             receptors.Clear();
             forces.Clear();
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
+            wallTriangles = new SpatialGrid<WallTriangle>(wallTriangleMaxSize,
+                -areaExcess, data.Arena.Dimensions + areaExcess);
         }
 
         /// <summary>
@@ -370,19 +440,17 @@ namespace AW2.Game
             foreach (CollisionData collData in receptors)
             {
                 CollisionArea collArea = collData.CollisionArea;
-                List<CollisionArea> potentials = GetPotentialPhysicalOverlappers(collArea);
-                foreach (CollisionArea collArea2 in potentials)
+                List<KeyValuePair<ICollisionArea, List<ICollisionArea>>> potentials = new List<KeyValuePair<ICollisionArea,List<ICollisionArea>>>();
+                potentials.Add(new KeyValuePair<ICollisionArea,List<ICollisionArea>>(collArea, GetPotentialPhysicalOverlappers(collArea)));
+                OverlapperFlags flags = OverlapperFlags.ConsiderConsistency | OverlapperFlags.ConsiderColdness;
+                List<ICollisionArea> compromisers = ReducePotentialPhysicalOverlappers(potentials, flags);
+                foreach (ICollisionArea collArea2 in compromisers)
                 {
-                    Gob gobGob2 = collArea2.Owner as Gob;
-                    if (!(gobGob2 != null && gobGob2.Disabled) &&
-                        Geometry.Intersect(collArea.Area, collArea2.Area))
+                    collArea.Owner.Collide(collArea2.Owner, collArea.Name);
+                    if (collArea.Owner is Gob &&
+                        (((Gob)collArea.Owner).PhysicsApplyMode & PhysicsApplyMode.ReceptorCollidesPhysically) != 0)
                     {
-                        collArea.Owner.Collide(collArea2.Owner, collArea.Name);
-                        if (collArea.Owner is Gob &&
-                            (((Gob)collArea.Owner).PhysicsApplyMode & PhysicsApplyMode.ReceptorCollidesPhysically) != 0)
-                        {
-                            PerformCollision(collArea.Owner, collArea2.Owner);
-                        }
+                        PerformCollision(collArea.Owner, collArea2.Owner);
                     }
                 }
             }
@@ -406,8 +474,29 @@ namespace AW2.Game
         /// <param name="gob">The gob.</param>
         public void Register(Gob gob)
         {
+            // Non-collidable gobs need not be registered.
             ICollidable gobCollidable = gob as ICollidable;
             if (gobCollidable == null) return;
+
+            // Walls get their collisions by their 3D model triangles.
+            IHoleable gobHoleable = gob as IHoleable;
+            if (gobHoleable != null)
+            {
+                for (int i = 0; i + 2 < gobHoleable.IndexData.Length; i += 3)
+                {
+                    Vector2 min, max;
+                    AWMathHelper.MinAndMax(
+                        gobHoleable.VertexData[gobHoleable.IndexData[i + 0]].Position,
+                        gobHoleable.VertexData[gobHoleable.IndexData[i + 1]].Position,
+                        gobHoleable.VertexData[gobHoleable.IndexData[i + 2]].Position,
+                        out min, out max);
+                    object handle = wallTriangles.Add(new WallTriangle(gobHoleable, i), min, max);
+                    gobHoleable.WallTriangleHandles[i / 3] = handle;
+                }
+                return;
+            }
+
+            // Other gobs provide their own collision areas.
             CollisionArea[] collisionAreas = gobCollidable.GetPrimitives();
             for (int i = 0; i < collisionAreas.Length; ++i)
             {
@@ -569,6 +658,18 @@ namespace AW2.Game
             return result;
         }
 
+        /// <summary>
+        /// Removes a triangle from a wall that has been registered for collisions.
+        /// </summary>
+        /// <param name="wallTriangleHandle">A handle to the wall triangle to remove.</param>
+        public void RemoveWallTriangle(object wallTriangleHandle)
+        {
+            SpatialGridElement<WallTriangle> element = wallTriangleHandle as SpatialGridElement<WallTriangle>;
+            if (element == null)
+                throw new ArgumentException("Cannot remove a non-SpatialGridElement<WallTriangle> instance");
+            wallTriangles.Remove(element);
+        }
+
         #endregion // PhysicsEngine Members
 
         #region Arena boundary methods
@@ -664,7 +765,7 @@ namespace AW2.Game
             UnregisterPhysical(gob);
 
             // Find out original consistency compromisers.
-            List<CollisionArea> originalCompromisers = null;
+            List<ICollisionArea> originalCompromisers = null;
             if (!gob.HadSafePosition && gob is ICollidable)
             {
                 OverlapperFlags flags = OverlapperFlags.CheckPhysical;
@@ -758,14 +859,14 @@ namespace AW2.Game
         /// compromisers of the gob. Only used if the gob is not physical overlap consistent.</param>
         /// <returns>How much of the gob's movement is still left,
         /// between <b>0</b> and <b>1</b>.</returns>
-        private float TryMove(Gob gob, float moveLeft, List<CollisionArea> originalCompromisers)
+        private float TryMove(Gob gob, float moveLeft, List<ICollisionArea> originalCompromisers)
         {
             Vector2 oldPos = gob.Pos;
             Vector2 goalPos = gob.Pos + gob.Move * (float)gameTime.ElapsedGameTime.TotalSeconds;
             float moveGood = 0; // last known safe position
             float moveBad = moveLeft; // last known unsafe position, if 'badFound'
             bool badFound = false;
-            List<CollisionArea> badCompromisers = null; // relevant compromisers at 'moveBad'
+            List<ICollisionArea> badCompromisers = null; // relevant compromisers at 'moveBad'
 
             // Find out last non-collision position and first colliding position, 
             // up to required accuracy.
@@ -773,7 +874,7 @@ namespace AW2.Game
             while (moveBad - moveGood > collisionAccuracy)
             {
                 gob.Pos = Vector2.Lerp(oldPos, goalPos, moveTry);
-                List<CollisionArea> newCompromisers = GetNewCompromisers(gob, originalCompromisers);
+                List<ICollisionArea> newCompromisers = GetNewCompromisers(gob, originalCompromisers);
                 if (ArenaBoundaryLegal(gob) && newCompromisers.Count == 0)
                     moveGood = moveTry;
                 else
@@ -809,11 +910,11 @@ namespace AW2.Game
         /// compromisers of the gob before movement. Only used if the gob is 
         /// not physical overlap consistent.</param>
         /// <returns>The gob's new physical overlap consistency compromisers.</returns>
-        private List<CollisionArea> GetNewCompromisers(Gob gob, List<CollisionArea> originalCompromisers)
+        private List<ICollisionArea> GetNewCompromisers(Gob gob, List<ICollisionArea> originalCompromisers)
         {
             ICollidable gobCollidable = gob as ICollidable;
             if (gobCollidable == null)
-                return new List<CollisionArea>(0);
+                return new List<ICollisionArea>(0);
             if (gobCollidable.HadSafePosition)
             {
                 OverlapperFlags flags = OverlapperFlags.CheckPhysical |
@@ -824,10 +925,10 @@ namespace AW2.Game
             else
             {
                 OverlapperFlags flags = OverlapperFlags.CheckPhysical;
-                List<CollisionArea> currentCompromisers = GetPhysicalOverlappers(gobCollidable, flags);
+                List<ICollisionArea> currentCompromisers = GetPhysicalOverlappers(gobCollidable, flags);
                 if (originalCompromisers == null)
                     return currentCompromisers;
-                return currentCompromisers.FindAll(delegate(CollisionArea currentCompromiser)
+                return currentCompromisers.FindAll(delegate(ICollisionArea currentCompromiser)
                 {
                     return !originalCompromisers.Contains(currentCompromiser);
                 });
@@ -840,12 +941,12 @@ namespace AW2.Game
         /// <param name="gob">The gob.</param>
         /// <param name="compromisers">The gob's physical consistency compromisers
         /// that participate in the physical collisions.</param>
-        private void CollidePhysical(Gob gob, List<CollisionArea> compromisers)
+        private void CollidePhysical(Gob gob, List<ICollisionArea> compromisers)
         {
             ICollidable gobCollidable1 = gob as ICollidable;
             if (gobCollidable1 == null) return;
 
-            foreach (CollisionArea collArea2 in compromisers)
+            foreach (ICollisionArea collArea2 in compromisers)
             {
                 gobCollidable1.Collide(collArea2.Owner, "General");
                 collArea2.Owner.Collide(gobCollidable1, collArea2.Name);
@@ -860,12 +961,71 @@ namespace AW2.Game
         /// <param name="collArea">The collision area.</param>
         /// <returns>A list of physical collision areas that potentially overlap a
         /// collision area.</returns>
-        private List<CollisionArea> GetPotentialPhysicalOverlappers(CollisionArea collArea)
+        private List<ICollisionArea> GetPotentialPhysicalOverlappers(ICollisionArea collArea)
         {
             BoundingBox box = collArea.Area.BoundingBox;
             WindowQuery query = new WindowQuery(box.Min.X, box.Min.Y, box.Max.X, box.Max.Y);
-            List<Record> potentials = collidables.Search(query);
-            return potentials.ConvertAll<CollisionArea>(delegate(Record record) { return ((CollisionData)record).CollisionArea; });
+            List<Record> potentialRecords = collidables.Search(query);
+            List<ICollisionArea> potentials = potentialRecords.ConvertAll<ICollisionArea>(delegate(Record record) { return ((CollisionData)record).CollisionArea; });
+            Vector2 min = new Vector2(box.Min.X, box.Min.Y);
+            Vector2 max = new Vector2(box.Max.X, box.Max.Y);
+            wallTriangles.ForEachElement(min, max, delegate(WallTriangle wallTriangle) { potentials.Add(wallTriangle); });
+            return potentials;
+        }
+
+        /// <summary>
+        /// Reduces a list of potentially overlapping physical collision areas
+        /// to those that actually overlap.
+        /// </summary>
+        /// <param name="potentials">Potential overlappers for various collision areas.
+        /// 'potentials' lists potential overlappers with the following semantics:
+        /// It is a list of pairs (area, list), where
+        /// 'area' is some collision area, and
+        /// 'list' contains potential overlapping collision areas of 'area'.
+        /// </param>
+        /// <param name="flags">Flags that control what is considered overlapping.</param>
+        /// <returns>The list of actual overlappers.</returns>
+        private List<ICollisionArea> ReducePotentialPhysicalOverlappers(
+            List<KeyValuePair<ICollisionArea, List<ICollisionArea>>> potentials, OverlapperFlags flags)
+        {
+            List<ICollisionArea> compromisers = new List<ICollisionArea>();
+            foreach (KeyValuePair<ICollisionArea, List<ICollisionArea>> pair in potentials)
+                compromisers.AddRange(pair.Value.FindAll(delegate(ICollisionArea collArea2)
+                {
+                    ICollidable gobCollidable1 = pair.Key.Owner;
+                    ICollidable gobCollidable2 = collArea2.Owner;
+
+                    // A gob is allowed to overlap itself.
+                    if (gobCollidable2 == gobCollidable1) return false;
+
+                    // Certain Gob subclasses are allowed to overlap.
+                    if (CanOverlap(gobCollidable1, gobCollidable2)) return false;
+
+                    // Gobs with unsafe position are allowed to overlap anyone.
+                    if ((flags & OverlapperFlags.ConsiderConsistency) != 0 &&
+                        !gobCollidable2.HadSafePosition)
+                        return false;
+
+                    Gob gobGob2 = gobCollidable2 as Gob;
+
+                    // Disabled gobs are allowed to overlap anyone.
+                    if (gobGob2 != null && gobGob2.Disabled)
+                        return false;
+
+                    // Cold gobs are allowed to overlap their own.
+                    if ((flags & OverlapperFlags.ConsiderColdness) != 0)
+                    {
+                        Gob gobGob1 = gobCollidable1 as Gob;
+                        if (gobGob1 != null && gobGob2 != null &&
+                            (gobGob1.Cold || gobGob2.Cold) &&
+                            gobGob1.Owner == gobGob2.Owner &&
+                            gobGob1.Owner != null)
+                            return false;
+                    }
+
+                    return Geometry.Intersect(pair.Key.Area, collArea2.Area);
+                }));
+            return compromisers;
         }
 
         /// <summary>
@@ -874,62 +1034,21 @@ namespace AW2.Game
         /// <param name="gob">The gob.</param>
         /// <param name="flags">Flags that control what is considered overlapping.</param>
         /// <returns>The list of physical collision areas that overlap the gob.</returns>
-        private List<CollisionArea> GetPhysicalOverlappers(ICollidable gob, OverlapperFlags flags)
+        private List<ICollisionArea> GetPhysicalOverlappers(ICollidable gob, OverlapperFlags flags)
         {
             int physicalAreaI = gob.PhysicalArea;
             if ((flags & OverlapperFlags.ConsiderConsistency) != 0 && !gob.HadSafePosition)
-                return new List<CollisionArea>(0);
+                return new List<ICollisionArea>(0);
             if ((flags & OverlapperFlags.CheckPhysical) != 0 && physicalAreaI == -1)
-                return new List<CollisionArea>(0);
+                return new List<ICollisionArea>(0);
 
-            // Find potential overlappers from the spatial index.
-            List<CollisionArea> potentials;
-            if ((flags & (OverlapperFlags.CheckPhysical | OverlapperFlags.CheckReceptor)) == OverlapperFlags.CheckPhysical)
-                potentials = GetPotentialPhysicalOverlappers(gob.GetPrimitives()[physicalAreaI]);
-            else
-            {
-                potentials = new List<CollisionArea>();
-                foreach (CollisionArea collArea in gob.GetPrimitives())
-                    if (((flags & OverlapperFlags.CheckPhysical) != 0 && collArea.Type == CollisionAreaType.Physical) ||
-                        ((flags & OverlapperFlags.CheckReceptor) != 0 && collArea.Type == CollisionAreaType.Receptor))
-                        potentials.AddRange(GetPotentialPhysicalOverlappers(collArea));
-            }
-
-            List<CollisionArea> compromisers = potentials.FindAll(delegate(CollisionArea collArea2)
-            {
-                ICollidable gobCollidable2 = collArea2.Owner;
-
-                // A gob is allowed to overlap itself.
-                if (gobCollidable2 == gob) return false;
-
-                // Certain Gob subclasses are allowed to overlap.
-                if (CanOverlap(gob, gobCollidable2)) return false;
-
-                // Gobs with unsafe position are allowed to overlap anyone.
-                if ((flags & OverlapperFlags.ConsiderConsistency) != 0 &&
-                    !gobCollidable2.HadSafePosition) 
-                    return false;
-
-                Gob gobGob2 = gobCollidable2 as Gob;
-
-                // Disabled gobs are allowed to overlap anyone.
-                if (gobGob2 != null && gobGob2.Disabled)
-                    return false;
-
-                // Cold gobs are allowed to overlap their own.
-                if ((flags & OverlapperFlags.ConsiderColdness) != 0)
-                {
-                    Gob gobGob1 = gob as Gob;
-                    if (gobGob1 != null && gobGob2 != null &&
-                        (gobGob1.Cold || gobGob2.Cold) &&
-                        gobGob1.Owner == gobGob2.Owner &&
-                        gobGob1.Owner != null)
-                        return false;
-                }
-
-                return Geometry.Intersect(gob.GetPrimitives()[physicalAreaI].Area, collArea2.Area);
-            });
-            return compromisers;
+            List<KeyValuePair<ICollisionArea, List<ICollisionArea>>> potentials = new List<KeyValuePair<ICollisionArea, List<ICollisionArea>>>();
+            foreach (ICollisionArea collArea in gob.GetPrimitives())
+                if (((flags & OverlapperFlags.CheckPhysical) != 0 && collArea.Type == CollisionAreaType.Physical) ||
+                    ((flags & OverlapperFlags.CheckReceptor) != 0 && collArea.Type == CollisionAreaType.Receptor))
+                    potentials.Add(new KeyValuePair<ICollisionArea, List<ICollisionArea>>(collArea,
+                        GetPotentialPhysicalOverlappers(collArea)));
+            return ReducePotentialPhysicalOverlappers(potentials, flags);
         }
 
         /// <summary>

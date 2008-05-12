@@ -750,6 +750,95 @@ namespace AW2.Helpers
             }
         }
 
+        /// <summary>
+        /// Fines the triangles of a 3D model. Triangles are split to smaller ones
+        /// until they don't have edges longer than the given maximum dimension.
+        /// Z coordinates don't affect the fining.
+        /// </summary>
+        /// <param name="maxDimension">The maximum length of edges in resulting triangles.</param>
+        /// <param name="vertexData">The vertices of the 3D model.</param>
+        /// <param name="indexData">The indices of the 3D model's triangles as a triangle list.</param>
+        /// <param name="newVertexData">Where to store the vertex data of the fined 3D model.</param>
+        /// <param name="newIndexData">Where to store the index data of the fined 3D model,
+        /// as a triangle list.</param>
+        public static void FineTriangles(float maxDimension, VertexPositionNormalTexture[] vertexData, short[] indexData,
+            out VertexPositionNormalTexture[] newVertexData, out short[] newIndexData)
+        {
+            int originalIndexLength = indexData.Length;
+            float maxDimensionSquared = maxDimension * maxDimension;
+            List<short> fineIndexData = new List<short>(indexData.Length);
+            List<VertexPositionNormalTexture> fineVertexData = new List<VertexPositionNormalTexture>(vertexData);
+
+            // Iterate over the 3D model until it's fine enough.
+            while (true)
+            {
+                // Loop through triangles.
+                for (int i = 0; i + 2 < indexData.Length; i += 3)
+                {
+                    // If any face of the triangle is too long, we split the triangle in two by
+                    // adding a new vertex in the middle of the longest face of the triangle.
+                    Vector2 v0 = new Vector2(fineVertexData[indexData[i + 0]].Position.X, fineVertexData[indexData[i + 0]].Position.Y);
+                    Vector2 v1 = new Vector2(fineVertexData[indexData[i + 1]].Position.X, fineVertexData[indexData[i + 1]].Position.Y);
+                    Vector2 v2 = new Vector2(fineVertexData[indexData[i + 2]].Position.X, fineVertexData[indexData[i + 2]].Position.Y);
+                    Vector2[] verts = new Vector2[] { v0, v1, v2 }; // for indexing with variables
+                    float length01Squared = Vector2.DistanceSquared(v0, v1);
+                    float length02Squared = Vector2.DistanceSquared(v0, v2);
+                    float length12Squared = Vector2.DistanceSquared(v1, v2);
+                    int splitFace = -1; // -1 or the face [splitFace, (splitFace + 1) % 3]
+                    if (length01Squared >= length02Squared &&
+                        length01Squared >= length12Squared &&
+                        length01Squared > maxDimensionSquared)
+                        splitFace = 0;
+                    if (length02Squared >= length01Squared &&
+                        length02Squared >= length12Squared &&
+                        length02Squared > maxDimensionSquared)
+                        splitFace = 2;
+                    if (length12Squared >= length01Squared &&
+                        length12Squared >= length02Squared &&
+                        length12Squared > maxDimensionSquared)
+                        splitFace = 1;
+                    if (splitFace == -1)
+                    {
+                        fineIndexData.Add(indexData[i + 0]);
+                        fineIndexData.Add(indexData[i + 1]);
+                        fineIndexData.Add(indexData[i + 2]);
+                    }
+                    else
+                    {
+#if false // single precision interpolation -- copies of the same vertex run apart
+                        Vector2 newPos = (verts[splitFace] + verts[(splitFace + 1) % 3]) / 2;
+                        VertexPositionNormalTexture newVertex = AW2.Helpers.Graphics3D.InterpolateVertex(
+                            fineVertexData[indexData[i + 0]], fineVertexData[indexData[i + 1]],
+                            fineVertexData[indexData[i + 2]], newPos);
+#else // double precision interpolation -- good
+                        double newPosX = ((double)verts[splitFace].X + verts[(splitFace + 1) % 3].X) / 2;
+                        double newPosY = ((double)verts[splitFace].Y + verts[(splitFace + 1) % 3].Y) / 2;
+                        VertexPositionNormalTexture newVertex = InterpolateVertex(
+                            fineVertexData[indexData[i + 0]], fineVertexData[indexData[i + 1]],
+                            fineVertexData[indexData[i + 2]], newPosX, newPosY);
+#endif
+                        short newIndex = (short)fineVertexData.Count;
+                        fineVertexData.Add(newVertex);
+                        fineIndexData.Add(newIndex);
+                        fineIndexData.Add(indexData[i + (splitFace + 1) % 3]);
+                        fineIndexData.Add(indexData[i + (splitFace + 2) % 3]);
+
+                        fineIndexData.Add(newIndex);
+                        fineIndexData.Add(indexData[i + (splitFace + 2) % 3]);
+                        fineIndexData.Add(indexData[i + (splitFace + 0) % 3]);
+                    }
+                }
+
+                // If no triangles were split, they are all small enough.
+                if (indexData.Length == fineIndexData.Count) break;
+
+                indexData = fineIndexData.ToArray();
+                fineIndexData.Clear();
+            }
+            newVertexData = fineVertexData.ToArray();
+            newIndexData = fineIndexData.ToArray();
+        }
+
         #endregion Methods for modifying 3D models
 
         #region Utility methods for 3D graphics
@@ -779,6 +868,37 @@ namespace AW2.Helpers
             Vector3 newNormal = Vector3.Barycentric(vert0.Normal, vert1.Normal, vert2.Normal,
                 amount2, amount3);
             Vector2 newTextureCoord = Vector2.Barycentric(vert0.TextureCoordinate, vert1.TextureCoordinate, vert2.TextureCoordinate,
+                amount2, amount3);
+            return new VertexPositionNormalTexture(newPos, newNormal, newTextureCoord);
+        }
+
+        /// <summary>
+        /// Interpolates a new 3D model vertex based on three other vertices.
+        /// </summary>
+        /// The vertices are assumed to be lifted from the X-Y-plane and thus the interpolation
+        /// is done solely based on the X and Y coordinates. If the three vertices form a reduced
+        /// triangle, the return value is undefined but probably still usable.
+        /// <param name="vert0">First known vertex.</param>
+        /// <param name="vert1">Second known vertex.</param>
+        /// <param name="vert2">Third known vertex.</param>
+        /// <param name="posX">X coordinate of new vertex to interpolate.</param>
+        /// <param name="posY">Y coordinate of new vertex to interpolate.</param>
+        /// <returns>The new, interpolated vertex.</returns>
+        private static VertexPositionNormalTexture InterpolateVertex(VertexPositionNormalTexture vert0,
+            VertexPositionNormalTexture vert1, VertexPositionNormalTexture vert2,
+            double posX, double posY)
+        {
+            double amount2, amount3;
+            Geometry.CartesianToBarycentric(new Vector2(vert0.Position.X, vert0.Position.Y),
+                new Vector2(vert1.Position.X, vert1.Position.Y),
+                new Vector2(vert2.Position.X, vert2.Position.Y),
+                posX, posY, out amount2, out amount3);
+
+            Vector3 newPos = Geometry.BarycentricToCartesian(vert0.Position, vert1.Position, vert2.Position,
+                amount2, amount3);
+            Vector3 newNormal = Geometry.BarycentricToCartesian(vert0.Normal, vert1.Normal, vert2.Normal,
+                amount2, amount3);
+            Vector2 newTextureCoord = Geometry.BarycentricToCartesian(vert0.TextureCoordinate, vert1.TextureCoordinate, vert2.TextureCoordinate,
                 amount2, amount3);
             return new VertexPositionNormalTexture(newPos, newNormal, newTextureCoord);
         }

@@ -1522,6 +1522,80 @@ namespace AW2.Helpers
             }
         }
 
+        /// <summary>
+        /// Translates cartesian coordinates into normalised barycentric 
+        /// coordinates relative to a triangle.
+        /// </summary>
+        /// The triangle is given as the three vectors, v1, v2 and v3, and the
+        /// coordinates to translate as the vector p. The resulting barycentric
+        /// coordinates are (A,B,C), of which B and C are stored to amount2 and
+        /// amount3, and A is 1-amount2-amount3.
+        /// If the triangle is reduced, the return value is undefined.
+        /// <param name="v1">First vertex of the triangle.</param>
+        /// <param name="v2">Second vertex of the triangle.</param>
+        /// <param name="v3">Third vertex of the triangle.</param>
+        /// <param name="pX">X coordinate to translate.</param>
+        /// <param name="pY">Y coordinate to translate.</param>
+        /// <param name="amount2">Resulting barycentric coordinate B.</param>
+        /// <param name="amount3">Resulting barycentric coordinate C.</param>
+        public static void CartesianToBarycentric(Vector2 v1, Vector2 v2, Vector2 v3,
+            double pX, double pY,
+            out double amount2, out double amount3)
+        {
+            double denom = ((double)v2.X - (double)v1.X) * ((double)v3.Y - (double)v1.Y)
+                + ((double)v1.X - (double)v3.X) * ((double)v2.Y - (double)v1.Y);
+            if (denom == 0)
+            {
+                // Triangle's faces are all parallel.
+                amount2 = 0;
+                amount3 = 0;
+            }
+            else
+            {
+                amount2 = (((double)v1.X - pX) * ((double)v1.Y - (double)v3.Y)
+                    + ((double)v3.X - (double)v1.X) * ((double)v1.Y - pY)) / denom;
+                amount3 = (((double)v2.X - (double)v1.X) * ((double)pY - (double)v1.Y)
+                    + (pX - (double)v1.X) * ((double)v1.Y - (double)v2.Y)) / denom;
+            }
+        }
+
+        /// <summary>
+        /// Translates normalised barycentric coordinates relative to a triangle 
+        /// into Cartesian coordinates.
+        /// </summary>
+        /// The weight of the triangle's first vertex is 1 - amount2 - amount3.
+        /// <param name="v1">First vertex of the triangle.</param>
+        /// <param name="v2">Second vertex of the triangle.</param>
+        /// <param name="v3">Third vertex of the triangle.</param>
+        /// <param name="amount2">Barycentric coordinate 2; weight of triangle's second vertex.</param>
+        /// <param name="amount3">Barycentric coordinate 3; weight of triangle's third vertex.</param>
+        public static Vector2 BarycentricToCartesian(Vector2 v1, Vector2 v2, Vector2 v3,
+            double amount2, double amount3)
+        {
+            double amount1 = 1 - amount2 - amount3;
+            return new Vector2((float)(v1.X * amount1 + v2.X * amount2 + v3.X * amount3),
+                (float)(v1.Y * amount1 + v2.Y * amount2 + v3.Y * amount3));
+        }
+
+        /// <summary>
+        /// Translates normalised barycentric coordinates relative to a triangle 
+        /// into Cartesian coordinates.
+        /// </summary>
+        /// The weight of the triangle's first vertex is 1 - amount2 - amount3.
+        /// <param name="v1">First vertex of the triangle.</param>
+        /// <param name="v2">Second vertex of the triangle.</param>
+        /// <param name="v3">Third vertex of the triangle.</param>
+        /// <param name="amount2">Barycentric coordinate 2; weight of triangle's second vertex.</param>
+        /// <param name="amount3">Barycentric coordinate 3; weight of triangle's third vertex.</param>
+        public static Vector3 BarycentricToCartesian(Vector3 v1, Vector3 v2, Vector3 v3,
+            double amount2, double amount3)
+        {
+            double amount1 = 1 - amount2 - amount3;
+            return new Vector3((float)(v1.X * amount1 + v2.X * amount2 + v3.X * amount3),
+                (float)(v1.Y * amount1 + v2.Y * amount2 + v3.Y * amount3),
+                (float)(v1.Z * amount1 + v2.Z * amount2 + v3.Z * amount3));
+        }
+
         #endregion Other methods
 
         #region Unit tests

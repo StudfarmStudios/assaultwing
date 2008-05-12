@@ -66,6 +66,7 @@ namespace AW2
         TimeSpan lastFramerateCheck;
         int framesSinceLastCheck;
         GameState gameState;
+        GameTime gameTime;
 
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
@@ -76,8 +77,6 @@ namespace AW2
         /// The only existing instance of this class.
         /// </summary>
         static AssaultWing instance;
-
-        GameTime gameTime;
 
         #endregion AssaultWing fields
 
@@ -147,6 +146,7 @@ namespace AW2
             lastFramerateCheck = new TimeSpan(0);
             framesSinceLastCheck = 0;
             gameState = GameState.Gameplay;
+            gameTime = new GameTime();
         }
 
         /// <summary>

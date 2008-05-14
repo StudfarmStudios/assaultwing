@@ -39,6 +39,14 @@ namespace AW2.Game.Gobs
         object[] wallTriangleHandles;
 
         /// <summary>
+        /// Polygon representations of the 3D model's triangles. Any element in the array
+        /// may be <b>null</b>, meaning that the triangle has been removed.
+        /// </summary>
+        /// Index n corresponds to the triangle that is defined by <b>indexData</b>
+        /// indices 3n, 3n+1 and 3n+2.
+        Polygon?[] wallTrianglePolygons;
+
+        /// <summary>
         /// Triangle index map of the wall's 3D model in the X-Y plane.
         /// </summary>
         /// If indexMap[y,x] == null then no triangle covers index map point (x,y).
@@ -63,6 +71,11 @@ namespace AW2.Game.Gobs
         /// need to be deleted before the triangle is erased from the 3D model.
         /// A negative cover count marks a deleted triangle.
         int[] triangleCovers;
+
+        /// <summary>
+        /// The number of triangles in the wall's 3D model not yet removed.
+        /// </summary>
+        int triangleCount;
 
         // HACK: Extra fields for debugging Graphics3D.RemoveArea
         VertexPositionColor[] wireVertexData;
@@ -125,7 +138,9 @@ namespace AW2.Game.Gobs
                 }), null),
             };
             indexData = new short[] { 0, 1, 2 };
-            wallTriangleHandles = new object[indexData.Length / 3];
+            triangleCount = indexData.Length / 3;
+            wallTriangleHandles = new object[triangleCount];
+            wallTrianglePolygons = new Polygon?[triangleCount];
             textureName = "dummytexture"; // initialised for serialisation
             effect = null;
             vertexDeclaration = null;
@@ -142,6 +157,8 @@ namespace AW2.Game.Gobs
             this.vertexData = null;
             this.indexData = null;
             this.wallTriangleHandles = null;
+            this.wallTrianglePolygons = null;
+            this.triangleCount = 0;
             this.polygons = null;
             this.effect = new BasicEffect(gfx, null);
             this.vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
@@ -234,7 +251,9 @@ namespace AW2.Game.Gobs
         protected override void SetRuntimeState(Gob runtimeState)
         {
             base.SetRuntimeState(runtimeState);
-            wallTriangleHandles = new object[indexData.Length / 3];
+            triangleCount = indexData.Length / 3;
+            wallTriangleHandles = new object[triangleCount];
+            wallTrianglePolygons = new Polygon?[triangleCount];
 
             // Gain ownership over our runtime collision areas.
             collisionAreas = polygons;
@@ -270,8 +289,13 @@ namespace AW2.Game.Gobs
         /// <returns>The unit normal pointing to the given location.</returns>
         public Vector2 GetNormal(Vector2 pos)
         {
-            // TODO: Normal from multiple polygons, perhaps?
-            return Helpers.Geometry.GetNormal((Polygon)(polygons[0]).Area, new Helpers.Point(pos));
+            Helpers.Point posPoint = new Helpers.Point(pos);
+            // TODO: Check only closest triangles; utilise PhysicsEngineImpl.wallTriangles
+            List<Polygon> checkTriangles = new List<Polygon>(triangleCount);
+            foreach (Polygon? triangle in wallTrianglePolygons)
+                if (triangle.HasValue)
+                    checkTriangles.Add(triangle.Value);
+            return Helpers.Geometry.GetNormal(checkTriangles, posPoint);
         }
 
         #endregion IThick Members
@@ -293,6 +317,12 @@ namespace AW2.Game.Gobs
         /// Used internally by <b>PhysicsEngine</b>.
         /// </summary>
         public object[] WallTriangleHandles { get { return wallTriangleHandles; } }
+
+        /// <summary>
+        /// Polygons for all triangles in the entity's 3D model. Any element in the array
+        /// may be <b>null</b>, meaning that the triangle has been removed.
+        /// </summary>
+        public Polygon?[] WallTrianglePolygons { get { return wallTrianglePolygons; } }
 
         /// <summary>
         /// Removes an area from the gob. 
@@ -320,6 +350,7 @@ namespace AW2.Game.Gobs
                     foreach (int index in indexMap[y, x])
                     {
                         if (--triangleCovers[index] != 0) continue;
+
                         // Replace the triangle in the 3D model with a trivial one.
                         indexData[3 * index + 0] = 0;
                         indexData[3 * index + 1] = 0;
@@ -327,11 +358,19 @@ namespace AW2.Game.Gobs
 
                         // Remove the triangle from physics engine.
                         physics.RemoveWallTriangle(wallTriangleHandles[index]);
+                        wallTriangleHandles[index] = null;
+                        wallTrianglePolygons[index] = null;
+                        --triangleCount;
                     }
                     //indexMap[y, x] = null;
                 }
 
-            // TODO: data.RemoveGob(this) if all triangles have been removed.
+            // Remove the wall gob if all its triangles have been removed.
+            if (triangleCount == 0)
+            {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                data.RemoveGob(this);
+            }
         }
 
         #endregion

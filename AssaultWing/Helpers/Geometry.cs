@@ -1429,42 +1429,93 @@ namespace AW2.Helpers
         /// <returns>A point in the polygon that is maximally close to the given point.</returns>
         public static Point GetClosestPoint(Polygon polygon, Point point)
         {
+            float distance;
+            return GetClosestPoint(polygon, point, out distance);
+        }
+
+        /// <summary>
+        /// Returns a point in the polygon that is maximally close to the given point.
+        /// Also computes the distance from the polygon to the returned point.
+        /// </summary>
+        /// There may not be a unique closest point. In such a case the exact return
+        /// value is undefined but will still meet the definition of the return value.
+        /// If the given point is inside the polygon, the same point is returned.
+        /// <param name="polygon">The polygon.</param>
+        /// <param name="point">The point.</param>
+        /// <param name="distance">Where to store the distance between the polygon and the returned point.</param>
+        /// <returns>A point in the polygon that is maximally close to the given point.</returns>
+        public static Point GetClosestPoint(Polygon polygon, Point point, out float distance)
+        {
             if (Intersect(point, polygon))
+            {
+                distance = 0;
                 return point;
+            }
             float bestDistance = Single.MaxValue;
             Point bestPoint = point;
             int oldI = polygon.Vertices.Length - 1;
             for (int i = 0; i < polygon.Vertices.Length; oldI = i++)
             {
-                float distance;
-                Point closestPoint = GetClosestPoint(polygon.Vertices[oldI], polygon.Vertices[i], point, out distance);
-                if (distance < bestDistance)
+                float currentDistance;
+                Point closestPoint = GetClosestPoint(polygon.Vertices[oldI], polygon.Vertices[i], point, out currentDistance);
+                if (currentDistance < bestDistance)
                 {
-                    bestDistance = distance;
+                    bestDistance = currentDistance;
                     bestPoint = closestPoint;
                 }
             }
+            distance = bestDistance;
             return bestPoint;
         }
 
         /// <summary>
-        /// Returns a unit normal vector from the given polygon pointing towards the given point.
+        /// Returns a unit normal vector from the a polygon pointing towards a point.
         /// </summary>
         /// The returned vector will be normalised, it will be parallel to a shortest
         /// line segment that connects the polygon and the point, and it will
         /// point from the polygon towards the point. If the point lies inside
         /// the polygon, the zero vector will be returned.
-        /// Note that normal is not unique in all cases. In ambiguous cases the exact
+        /// Note that the normal is not unique in all cases. In ambiguous cases the exact
         /// result is undefined but will obey the specified return conditions.
         /// <param name="polygon">The polygon.</param>
         /// <param name="point">The point for the normal to point to.</param>
         /// <returns>A unit normal pointing to the given location.</returns>
         public static Vector2 GetNormal(Polygon polygon, Point point)
         {
-            if (Intersect(point, polygon))
-                return Vector2.Zero;
             Point closestPoint = GetClosestPoint(polygon, point);
-            return Vector2.Normalize(point.Location - closestPoint.Location);
+            Vector2 difference = point.Location - closestPoint.Location;
+            if (difference == Vector2.Zero)
+                return Vector2.Zero;
+            return Vector2.Normalize(difference);
+        }
+
+        /// <summary>
+        /// Returns a unit normal vector from a set of polygons pointing towards a point.
+        /// </summary>
+        /// The returned vector will be normalised, it will be parallel to a shortest
+        /// line segment that connects the polygons and the point, and it will
+        /// point from the closest polygon towards the point. If the point lies inside
+        /// a polygon, the zero vector will be returned.
+        /// Note that the normal is not unique in all cases. In ambiguous cases the exact
+        /// result is undefined but will obey the specified return conditions.
+        /// <param name="polygons">The polygons.</param>
+        /// <param name="point">The point the normal will point to.</param>
+        /// <returns>A unit normal pointing to the given location.</returns>
+        public static Vector2 GetNormal(IEnumerable<Polygon> polygons, Point point)
+        {
+            float bestDistance = float.MaxValue;
+            Point bestPoint = new Point();
+            foreach (Polygon polygon in polygons)
+            {
+                float distance;
+                Point closestPoint = GetClosestPoint(polygon, point, out distance);
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestPoint = closestPoint;
+                }
+            }
+            return Vector2.Normalize(point.Location - bestPoint.Location);
         }
 
         /// <summary>

@@ -66,79 +66,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// A triangle in the 3D model of a piece of wall in an arena.
-        /// </summary>
-        private struct WallTriangle : ICollisionArea
-        {
-            /// <summary>
-            /// The wall instance where the triangle is from.
-            /// </summary>
-            public IHoleable wall;
-
-            /// <summary>
-            /// Index to <b>indexData</b> of the wall instance's 3D model
-            /// where the triangle starts.
-            /// </summary>
-            public int triangleIndex;
-
-            /// <summary>
-            /// Creates a new wall triangle.
-            /// </summary>
-            /// <param name="wall">The wall the triangle belongs to.</param>
-            /// <param name="triangleIndex">The starting index of the triangle in 
-            /// the wall's 3D model's index data.</param>
-            public WallTriangle(IHoleable wall, int triangleIndex)
-            {
-                this.wall = wall;
-                this.triangleIndex = triangleIndex;
-            }
-
-            #region ICollisionArea Members
-
-            /// <summary>
-            /// Collision area name; either "General" for general collision
-            /// checking (including physical collisions), or something else
-            /// for a receptor area that can react to other gobs' general
-            /// areas.
-            /// </summary>
-            public string Name { get { return "General"; } }
-
-            /// <summary>
-            /// The type of the collision area.
-            /// </summary>
-            public CollisionAreaType Type { get { return CollisionAreaType.Physical; } }
-
-            /// <summary>
-            /// The geometric area for overlap testing, in game world coordinates,
-            /// translated according to the hosting gob's location.
-            /// </summary>
-            public IGeomPrimitive Area
-            {
-                get
-                {
-                    VertexPositionNormalTexture[] vertexData = wall.VertexData;
-                    short[] indexData = wall.IndexData;
-                    Vector3 v1 = vertexData[indexData[triangleIndex + 0]].Position;
-                    Vector3 v2 = vertexData[indexData[triangleIndex + 1]].Position;
-                    Vector3 v3 = vertexData[indexData[triangleIndex + 2]].Position;
-                    Polygon triangle = new Polygon(new Vector2[] {
-                            new Vector2(v1.X, v1.Y),
-                            new Vector2(v2.X, v2.Y),
-                            new Vector2(v3.X, v3.Y),
-                        });
-                    return triangle;
-                }
-            }
-
-            /// <summary>
-            /// The gob whose collision area this is.
-            /// </summary>
-            public ICollidable Owner { get { return wall as ICollidable; } }
-
-            #endregion
-        }
-
-        /// <summary>
         /// Ways of being outside the arena boundaries.
         /// </summary>
         /// The arena boundary is the rectangle spanned by points (0, 0) and
@@ -490,8 +417,9 @@ namespace AW2.Game
                         gobHoleable.VertexData[gobHoleable.IndexData[i + 1]].Position,
                         gobHoleable.VertexData[gobHoleable.IndexData[i + 2]].Position,
                         out min, out max);
-                    object handle = wallTriangles.Add(new WallTriangle(gobHoleable, i), min, max);
+                    SpatialGridElement<WallTriangle> handle = wallTriangles.Add(new WallTriangle(gobHoleable, i), min, max);
                     gobHoleable.WallTriangleHandles[i / 3] = handle;
+                    gobHoleable.WallTrianglePolygons[i / 3] = (Polygon)handle.Value.Area;
                 }
                 return;
             }
@@ -1102,9 +1030,6 @@ namespace AW2.Game
         /// <param name="gobThick2">The thick gob.</param>
         private void PerformCollisionSolidThick(ISolid gobSolid1, IThick gobThick2)
         {
-            // Play a sound.
-
-
             // We perform an elastic collision.
             float elasticity = 0.1f; // TODO: Add elasticity and friction to Wall.
             float friction = 1.0f;
@@ -1134,6 +1059,8 @@ namespace AW2.Game
                         damaGob1.InflictDamage(CollisionDamage(gobSolid1,move1Delta));
                     }
                 }
+
+                // Play a sound.
                 if (((Vector2)(move1 - move1after)).Length() > minimumCollisionDelta) // HACK: Figure out a better skip condition for collision sounds
                 {
                     EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));

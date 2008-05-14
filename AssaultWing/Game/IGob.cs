@@ -209,6 +209,80 @@ namespace AW2.Game
     }
 
     /// <summary>
+    /// A triangle in the 3D model of a piece of wall in an arena.
+    /// </summary>
+    public struct WallTriangle : ICollisionArea
+    {
+        /// <summary>
+        /// The wall instance where the triangle is from.
+        /// </summary>
+        public IHoleable wall;
+
+        /// <summary>
+        /// Index to <b>indexData</b> of the wall instance's 3D model
+        /// where the triangle starts.
+        /// </summary>
+        public int triangleIndex;
+
+        /// <summary>
+        /// The wall triangle as a polygon.
+        /// </summary>
+        private Polygon triangle;
+
+        /// <summary>
+        /// Creates a new wall triangle.
+        /// </summary>
+        /// <param name="wall">The wall the triangle belongs to.</param>
+        /// <param name="triangleIndex">The starting index of the triangle in 
+        /// the wall's 3D model's index data.</param>
+        public WallTriangle(IHoleable wall, int triangleIndex)
+        {
+            this.wall = wall;
+            this.triangleIndex = triangleIndex;
+
+            // Construct a polygon representation of the triangle.
+            VertexPositionNormalTexture[] vertexData = wall.VertexData;
+            short[] indexData = wall.IndexData;
+            Vector3 v1 = vertexData[indexData[triangleIndex + 0]].Position;
+            Vector3 v2 = vertexData[indexData[triangleIndex + 1]].Position;
+            Vector3 v3 = vertexData[indexData[triangleIndex + 2]].Position;
+            triangle = new Polygon(new Vector2[] {
+                new Vector2(v1.X, v1.Y),
+                new Vector2(v2.X, v2.Y),
+                new Vector2(v3.X, v3.Y),
+            });
+        }
+
+        #region ICollisionArea Members
+
+        /// <summary>
+        /// Collision area name; either "General" for general collision
+        /// checking (including physical collisions), or something else
+        /// for a receptor area that can react to other gobs' general
+        /// areas.
+        /// </summary>
+        public string Name { get { return "General"; } }
+
+        /// <summary>
+        /// The type of the collision area.
+        /// </summary>
+        public CollisionAreaType Type { get { return CollisionAreaType.Physical; } }
+
+        /// <summary>
+        /// The geometric area for overlap testing, in game world coordinates,
+        /// translated according to the hosting gob's location.
+        /// </summary>
+        public IGeomPrimitive Area { get { return triangle; } }
+
+        /// <summary>
+        /// The gob whose collision area this is.
+        /// </summary>
+        public ICollidable Owner { get { return wall as ICollidable; } }
+
+        #endregion
+    }
+
+    /// <summary>
     /// Interface for gobs that can collide.
     /// </summary>
     /// A collidable gob has one or more collision primitives (e.g. circles)
@@ -389,6 +463,14 @@ namespace AW2.Game
         /// <remarks>Note for implementors: The returned array length
         /// must be at least one third of the length of <b>IndexData</b>.</remarks>
         object[] WallTriangleHandles { get; }
+
+        /// <summary>
+        /// Polygons for all triangles in the entity's 3D model. Any element in the array
+        /// may be <b>null</b>, meaning that the triangle has been removed.
+        /// </summary>
+        /// <remarks>Note for implementors: The returned array length
+        /// must be at least one third of the length of <b>IndexData</b>.</remarks>
+        Polygon?[] WallTrianglePolygons { get; }
 
         /// <summary>
         /// Removes an area from the entity. 

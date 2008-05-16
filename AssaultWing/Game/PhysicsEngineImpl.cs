@@ -235,7 +235,7 @@ namespace AW2.Game
         /// Excess area to cover by the spatial index of wall triangles,
         /// in addition to arena boundaries.
         /// </summary>
-        float wallTriangleArenaExcess = 200;
+        float wallTriangleArenaExcess = 1000;
 
         #endregion Constants
 

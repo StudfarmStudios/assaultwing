@@ -334,7 +334,8 @@ namespace AW2.Helpers
             UpdateBoundingBox();
             UpdateFaceStrips();
 
-#if DEBUG
+#if false// HACK: polygon simplicity check skipped 
+//#if DEBUG
             // Make sure the polygon is simple.
             // This is O(n^2) -- slow code and thus not wanted in release builds.
             // This could be done in O(n log n) by a scanline algorithm, or

@@ -22,21 +22,21 @@ namespace AW2.Game.Gobs
         /// The location of the wall's vertices in the game world.
         /// </summary>
         [RuntimeState]
-        VertexPositionNormalTexture[] vertexData;
+        protected VertexPositionNormalTexture[] vertexData;
 
         /// <summary>
         /// The index data where every consequtive index triplet signifies
         /// one triangle. The indices index 'vertexData'.
         /// </summary>
         [RuntimeState]
-        short[] indexData;
+        protected short[] indexData;
 
         /// <summary>
         /// Handles to the 3D model's triangles. For <b>PhysicsEngine</b>.
         /// </summary>
         /// Index n corresponds to the triangle that is defined by <b>indexData</b>
         /// indices 3n, 3n+1 and 3n+2.
-        object[] wallTriangleHandles;
+        protected object[] wallTriangleHandles;
 
         /// <summary>
         /// Polygon representations of the 3D model's triangles. Any element in the array
@@ -44,7 +44,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Index n corresponds to the triangle that is defined by <b>indexData</b>
         /// indices 3n, 3n+1 and 3n+2.
-        Polygon?[] wallTrianglePolygons;
+        protected Polygon?[] wallTrianglePolygons;
 
         /// <summary>
         /// Triangle index map of the wall's 3D model in the X-Y plane.
@@ -75,7 +75,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The number of triangles in the wall's 3D model not yet removed.
         /// </summary>
-        int triangleCount;
+        protected int triangleCount;
 
         // HACK: Extra fields for debugging Graphics3D.RemoveArea
         VertexPositionColor[] wireVertexData;
@@ -96,9 +96,14 @@ namespace AW2.Game.Gobs
         string textureName;
 
         /// <summary>
+        /// The texture to draw the wall's 3D model with.
+        /// </summary>
+        protected Texture2D texture;
+
+        /// <summary>
         /// The effect for drawing the wall.
         /// </summary>
-        BasicEffect effect;
+        protected BasicEffect effect;
 
         VertexDeclaration vertexDeclaration;
 
@@ -186,8 +191,8 @@ namespace AW2.Game.Gobs
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         public override void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
+            // TODO: Bounding volume clipping for Wall.Draw()
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Texture2D texture = data.GetTexture(textureName);
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
             effect.World = Matrix.Identity;
@@ -250,10 +255,12 @@ namespace AW2.Game.Gobs
         /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
         protected override void SetRuntimeState(Gob runtimeState)
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             base.SetRuntimeState(runtimeState);
             triangleCount = indexData.Length / 3;
             wallTriangleHandles = new object[triangleCount];
             wallTrianglePolygons = new Polygon?[triangleCount];
+            texture = data.GetTexture(textureName);
 
             // Gain ownership over our runtime collision areas.
             collisionAreas = polygons;
@@ -331,8 +338,7 @@ namespace AW2.Game.Gobs
         public void MakeHole(Vector2 holePos)
         {
             float holeRadius = 10; // HACK: hole size and shape
-            Vector2 posInWall = holePos - this.Pos;
-            Vector2 posInIndexMap = Vector2.Transform(posInWall, indexMapTransform);
+            Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
 
             // Eat a square hole.
             int minX = (int)Math.Round(posInIndexMap.X - holeRadius);

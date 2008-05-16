@@ -15,7 +15,7 @@ namespace AW2.Game.Gobs
     /// Instead, a wall acts like a polygon. For visual purposes, walls have 
     /// also a third dimension.
     /// <see cref="AW2.Game.Gobs.Wall"/>
-    public class WallModel : Gob, IThick
+    public class WallModel : Wall
     {
         #region WallModel Fields
 
@@ -73,12 +73,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             this.wallModelName = "dummymodel";
-            base.physicsApplyMode = PhysicsApplyMode.None;
         }
-
-        #region Methods related to gobs' functionality in the game world
-
-        #endregion Methods related to gobs' functionality in the game world
 
         /// <summary>
         /// Copies the gob's runtime state from another gob.
@@ -86,46 +81,39 @@ namespace AW2.Game.Gobs
         /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
         protected override void SetRuntimeState(Gob runtimeState)
         {
-            base.SetRuntimeState(runtimeState);
-            base.ModelName = wallModelName;
-
-            // Create a collision polygon out of the 3D model.
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            base.SetRuntimeState(runtimeState);
+
+            // Recover wall data from its 3D model, overwriting what
+            // Wall.SetRuntimeState erroneously set before.
             Model model = data.GetModel(wallModelName);
+            Graphics3D.GetModelData(model, out vertexData, out indexData);
+            Matrix worldMatrix = WorldMatrix;
+            for (int i = 0; i < vertexData.Length; ++i)
+            {
+                vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
+                vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
+            }
+            MakeConsistent(typeof(RuntimeStateAttribute));
+            if (model.Meshes.Count > 1)
+                throw new ArgumentOutOfRangeException("Wall model has more than one mesh");
+            if (model.Meshes[0].Effects.Count > 1)
+                throw new ArgumentOutOfRangeException("Wall model mesh has more than one effect");
+            effect = model.Meshes[0].Effects[0] as BasicEffect;
+            if (effect == null)
+                throw new ArgumentException("Wall model mesh's effect isn't a BasicEffect");
+            texture = effect.Texture;
+            triangleCount = indexData.Length / 3;
+            wallTriangleHandles = new object[triangleCount];
+            wallTrianglePolygons = new Polygon?[triangleCount];
+
+#if false // TODO: remove old code about polygonal collision outlines for walls
+            // Create a collision polygon out of the 3D model.
             Polygon poly = Graphics3D.GetOutline(model);
             base.collisionAreas = new CollisionArea[] {
                 new CollisionArea("General", poly, this),
             };
+#endif
         }
-
-        #region ICollidable Members
-        // Some members are implemented in class Gob.
-
-        #endregion ICollidable Members
-
-        #region IThick Members
-
-        /// <summary>
-        /// Returns the unit normal vector from the thick gob
-        /// pointing towards the given location.
-        /// </summary>
-        /// <param name="pos">The location for the normal to point to.</param>
-        /// <returns>The unit normal pointing to the given location.</returns>
-        public Vector2 GetNormal(Vector2 pos)
-        {
-            return Helpers.Geometry.GetNormal((Polygon)(base.collisionAreas[0].Area), new Helpers.Point(pos));
-        }
-
-        /// <summary>
-        /// Removes an area from the thick gob. 
-        /// </summary>
-        /// <param name="area">The area to remove. The polygon must be convex.</param>
-        public void MakeHole(Polygon area)
-        {
-            // TODO
-            //Helpers.Math.RemoveArea(ref vertexData, ref indexData, area);
-        }
-
-        #endregion IThick Members
     }
 }

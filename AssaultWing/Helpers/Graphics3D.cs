@@ -115,10 +115,12 @@ namespace AW2.Helpers
         /// <param name="model">The 3D model.</param>
         /// <param name="vertexData">Where to store the vertex data.</param>
         /// <param name="indexData">Where to store the triangle data.</param>
-        private static void GetModelData(Model model, out VertexPositionNormalTexture[] vertexData,
+        public static void GetModelData(Model model, out VertexPositionNormalTexture[] vertexData,
             out short[] indexData)
         {
             // TODO: Get rid of our assumption that the model has only one mesh.
+            if (model.Meshes.Count > 1)
+                throw new ArgumentOutOfRangeException("Model has more than one mesh");
             GetMeshData(model.Meshes[0], out vertexData, out indexData);
         }
         
@@ -133,6 +135,8 @@ namespace AW2.Helpers
             out short[] indexData)
         {
             // TODO: Get rid of our assumption that the mesh has only one part.
+            if (mesh.MeshParts.Count > 1)
+                throw new ArgumentOutOfRangeException("ModelMesh has more than one part");
             VertexBuffer vertexBuffer = mesh.VertexBuffer;
             IndexBuffer indexBuffer = mesh.IndexBuffer;
             int vertexCount = mesh.MeshParts[0].NumVertices;
@@ -145,7 +149,10 @@ namespace AW2.Helpers
             for (ModelBone bone = mesh.ParentBone; bone != null; bone = bone.Parent)
                 worldMatrix *= bone.Transform;
             for (int i = 0; i < vertexData.Length; ++i)
+            {
                 vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
+                vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
+            }
         }
 
         /// <summary>
@@ -770,6 +777,7 @@ namespace AW2.Helpers
             List<VertexPositionNormalTexture> fineVertexData = new List<VertexPositionNormalTexture>(vertexData);
 
             // Iterate over the 3D model until it's fine enough.
+            VertexPositionNormalTexture newVertex = new VertexPositionNormalTexture();
             while (true)
             {
                 // Loop through triangles.
@@ -788,15 +796,24 @@ namespace AW2.Helpers
                     if (length01Squared >= length02Squared &&
                         length01Squared >= length12Squared &&
                         length01Squared > maxDimensionSquared)
+                    {
                         splitFace = 0;
-                    if (length02Squared >= length01Squared &&
+                        newVertex = InterpolateEdge(fineVertexData[indexData[i + 0]], fineVertexData[indexData[i + 1]]);
+                    }
+                    else if (length02Squared >= length01Squared &&
                         length02Squared >= length12Squared &&
                         length02Squared > maxDimensionSquared)
+                    {
                         splitFace = 2;
-                    if (length12Squared >= length01Squared &&
-                        length12Squared >= length02Squared &&
-                        length12Squared > maxDimensionSquared)
+                        newVertex = InterpolateEdge(fineVertexData[indexData[i + 2]], fineVertexData[indexData[i + 0]]);
+                    }
+                    else if (length12Squared >= length01Squared &&
+                            length12Squared >= length02Squared &&
+                            length12Squared > maxDimensionSquared)
+                    {
                         splitFace = 1;
+                        newVertex = InterpolateEdge(fineVertexData[indexData[i + 1]], fineVertexData[indexData[i + 2]]);
+                    }
                     if (splitFace == -1)
                     {
                         fineIndexData.Add(indexData[i + 0]);
@@ -805,18 +822,6 @@ namespace AW2.Helpers
                     }
                     else
                     {
-#if false // single precision interpolation -- copies of the same vertex run apart
-                        Vector2 newPos = (verts[splitFace] + verts[(splitFace + 1) % 3]) / 2;
-                        VertexPositionNormalTexture newVertex = AW2.Helpers.Graphics3D.InterpolateVertex(
-                            fineVertexData[indexData[i + 0]], fineVertexData[indexData[i + 1]],
-                            fineVertexData[indexData[i + 2]], newPos);
-#else // double precision interpolation -- good
-                        double newPosX = ((double)verts[splitFace].X + verts[(splitFace + 1) % 3].X) / 2;
-                        double newPosY = ((double)verts[splitFace].Y + verts[(splitFace + 1) % 3].Y) / 2;
-                        VertexPositionNormalTexture newVertex = InterpolateVertex(
-                            fineVertexData[indexData[i + 0]], fineVertexData[indexData[i + 1]],
-                            fineVertexData[indexData[i + 2]], newPosX, newPosY);
-#endif
                         short newIndex = (short)fineVertexData.Count;
                         fineVertexData.Add(newVertex);
                         fineIndexData.Add(newIndex);
@@ -901,6 +906,32 @@ namespace AW2.Helpers
             Vector2 newTextureCoord = Geometry.BarycentricToCartesian(vert0.TextureCoordinate, vert1.TextureCoordinate, vert2.TextureCoordinate,
                 amount2, amount3);
             return new VertexPositionNormalTexture(newPos, newNormal, newTextureCoord);
+        }
+
+        /// <summary>
+        /// Interpolates a new 3D model vertex midway between two other vertices.
+        /// </summary>
+        /// <param name="vert0">First known vertex.</param>
+        /// <param name="vert1">Second known vertex.</param>
+        /// <returns>The new, interpolated vertex.</returns>
+        private static VertexPositionNormalTexture InterpolateEdge(VertexPositionNormalTexture vert0,
+            VertexPositionNormalTexture vert1)
+        {
+#if false // single precision interpolation -- ugly results
+            return new VertexPositionNormalTexture(Vector3.Lerp(vert0.Position, vert1.Position, 0.5f),
+                Vector3.Lerp(vert0.Normal, vert1.Normal, 0.5f),
+                Vector2.Lerp(vert0.TextureCoordinate, vert0.TextureCoordinate, 0.5f));
+#else // double precision interpolation -- beautiful results
+            Vector3 position = new Vector3((float)(((double)vert0.Position.X + vert1.Position.X) / 2),
+                (float)(((double)vert0.Position.Y + vert1.Position.Y) / 2),
+                (float)(((double)vert0.Position.Z + vert1.Position.Z) / 2));
+            Vector3 normal = new Vector3((float)(((double)vert0.Normal.X + vert1.Normal.X) / 2),
+                (float)(((double)vert0.Normal.Y + vert1.Normal.Y) / 2),
+                (float)(((double)vert0.Normal.Z + vert1.Normal.Z) / 2));
+            Vector2 textureCoordinate = new Vector2((float)(((double)vert0.TextureCoordinate.X + vert1.TextureCoordinate.X) / 2),
+                (float)(((double)vert0.TextureCoordinate.Y + vert1.TextureCoordinate.Y) / 2));
+            return new VertexPositionNormalTexture(position, normal, textureCoordinate);
+#endif
         }
 
         #endregion Utility methods for 3D graphics

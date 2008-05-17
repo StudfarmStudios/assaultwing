@@ -44,7 +44,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Index n corresponds to the triangle that is defined by <b>indexData</b>
         /// indices 3n, 3n+1 and 3n+2.
-        protected Polygon?[] wallTrianglePolygons;
+        protected Polygon[] wallTrianglePolygons;
 
         /// <summary>
         /// Triangle index map of the wall's 3D model in the X-Y plane.
@@ -75,7 +75,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The number of triangles in the wall's 3D model not yet removed.
         /// </summary>
-        protected int triangleCount;
+        int triangleCount;
 
         // HACK: Extra fields for debugging Graphics3D.RemoveArea
         VertexPositionColor[] wireVertexData;
@@ -98,14 +98,19 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The texture to draw the wall's 3D model with.
         /// </summary>
-        protected Texture2D texture;
+        Texture2D texture;
 
         /// <summary>
         /// The effect for drawing the wall.
         /// </summary>
-        protected BasicEffect effect;
+        BasicEffect effect;
 
         VertexDeclaration vertexDeclaration;
+
+        /// <summary>
+        /// The wall's 3D model's bounding box, in world coordinates.
+        /// </summary>
+        BoundingBox boundingBox;
 
         #endregion // Wall Fields
 
@@ -132,22 +137,20 @@ namespace AW2.Game.Gobs
         /// This constructor is only for serialisation.
         public Wall() : base() 
         {
-            vertexData = new VertexPositionNormalTexture[] {
-                new VertexPositionNormalTexture(new Vector3(0,0,0), -Vector3.UnitX, Vector2.Zero),
-                new VertexPositionNormalTexture(new Vector3(100,0,0), Vector3.UnitX, Vector2.UnitX),
-                new VertexPositionNormalTexture(new Vector3(0,100,0), Vector3.UnitY, Vector2.UnitY),
-            };
+            Set3DModel(new VertexPositionNormalTexture[] 
+                {
+                    new VertexPositionNormalTexture(new Vector3(0,0,0), -Vector3.UnitX, Vector2.Zero),
+                    new VertexPositionNormalTexture(new Vector3(100,0,0), Vector3.UnitX, Vector2.UnitX),
+                    new VertexPositionNormalTexture(new Vector3(0,100,0), Vector3.UnitY, Vector2.UnitY),
+                },
+                new short[] { 0, 1, 2 },
+                null, null);
             polygons = new CollisionArea[] {
                 new CollisionArea("General", new Polygon(new Vector2[] {
                     new Vector2(0,0), new Vector2(100,0), new Vector2(0,100),
                 }), null),
             };
-            indexData = new short[] { 0, 1, 2 };
-            triangleCount = indexData.Length / 3;
-            wallTriangleHandles = new object[triangleCount];
-            wallTrianglePolygons = new Polygon?[triangleCount];
-            textureName = "dummytexture"; // initialised for serialisation
-            effect = null;
+            textureName = "dummytexture";
             vertexDeclaration = null;
         }
 
@@ -167,6 +170,7 @@ namespace AW2.Game.Gobs
             this.polygons = null;
             this.effect = new BasicEffect(gfx, null);
             this.vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
+            this.boundingBox = new BoundingBox();
             base.physicsApplyMode = PhysicsApplyMode.None;
         }
 
@@ -191,8 +195,9 @@ namespace AW2.Game.Gobs
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         public override void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
-            // TODO: Bounding volume clipping for Wall.Draw()
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            if (!data.Viewport.Intersects(boundingBox)) return;
+
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
             effect.World = Matrix.Identity;
@@ -259,8 +264,11 @@ namespace AW2.Game.Gobs
             base.SetRuntimeState(runtimeState);
             triangleCount = indexData.Length / 3;
             wallTriangleHandles = new object[triangleCount];
-            wallTrianglePolygons = new Polygon?[triangleCount];
+            wallTrianglePolygons = new Polygon[triangleCount];
             texture = data.GetTexture(textureName);
+            boundingBox = BoundingBox.CreateFromPoints(
+                Array.ConvertAll<VertexPositionNormalTexture, Vector3>(vertexData,
+                delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
 
             // Gain ownership over our runtime collision areas.
             collisionAreas = polygons;
@@ -293,15 +301,23 @@ namespace AW2.Game.Gobs
         /// pointing towards the given location.
         /// </summary>
         /// <param name="pos">The location for the normal to point to.</param>
+        /// <param name="areas">The collision areas where to limit the search for normals.</param>
         /// <returns>The unit normal pointing to the given location.</returns>
-        public Vector2 GetNormal(Vector2 pos)
+        public Vector2 GetNormal(Vector2 pos, List<ICollisionArea> areas)
         {
+            if (areas == null)
+                return Vector2.Zero;
             Helpers.Point posPoint = new Helpers.Point(pos);
-            // TODO: Check only closest triangles; utilise PhysicsEngineImpl.wallTriangles
             List<Polygon> checkTriangles = new List<Polygon>(triangleCount);
-            foreach (Polygon? triangle in wallTrianglePolygons)
-                if (triangle.HasValue)
-                    checkTriangles.Add(triangle.Value);
+            foreach (ICollisionArea collArea in areas)
+            {
+                if (!(collArea is WallTriangle) || collArea.Owner != this)
+                    throw new ArgumentException("Collision areas are not from this wall");
+                checkTriangles.Add((Polygon)((WallTriangle)collArea).Area);
+            }
+            //foreach (Polygon? triangle in wallTrianglePolygons)
+            //    if (triangle.HasValue)
+            //        checkTriangles.Add(triangle.Value);
             return Helpers.Geometry.GetNormal(checkTriangles, posPoint);
         }
 
@@ -329,7 +345,7 @@ namespace AW2.Game.Gobs
         /// Polygons for all triangles in the entity's 3D model. Any element in the array
         /// may be <b>null</b>, meaning that the triangle has been removed.
         /// </summary>
-        public Polygon?[] WallTrianglePolygons { get { return wallTrianglePolygons; } }
+        public Polygon[] WallTrianglePolygons { get { return wallTrianglePolygons; } }
 
         /// <summary>
         /// Removes an area from the gob. 
@@ -393,18 +409,51 @@ namespace AW2.Game.Gobs
         public void MakeConsistent(Type limitationAttribute)
         {
             if (limitationAttribute == typeof(RuntimeStateAttribute))
-            {
-                VertexPositionNormalTexture[] fineVertexData;
-                short[] fineIndexData;
-                Graphics3D.FineTriangles(15, vertexData, indexData, out fineVertexData, out fineIndexData);
-                indexData = fineIndexData;
-                vertexData = fineVertexData;
-            }
+                FineTriangles();
         }
 
         #endregion
 
+        #region Protected methods
+
+        /// <summary>
+        /// Sets the wall's 3D model. To be called before the wall is Activate()d.
+        /// </summary>
+        /// <param name="vertexData">Vertex data of the 3D model.</param>
+        /// <param name="indexData">Index data of the 3D model as triangle list.</param>
+        /// <param name="texture">Texture of the 3D model.</param>
+        /// <param name="effect">Effect of the 3D model.</param>
+        protected void Set3DModel(VertexPositionNormalTexture[] vertexData, short[] indexData,
+            Texture2D texture, BasicEffect effect)
+        {
+            this.vertexData = vertexData;
+            this.indexData = indexData;
+            this.texture = texture;
+            this.effect = effect;
+            FineTriangles();
+            triangleCount = this.indexData.Length / 3;
+            wallTriangleHandles = new object[triangleCount];
+            wallTrianglePolygons = new Polygon[triangleCount];
+            boundingBox = BoundingBox.CreateFromPoints(
+                Array.ConvertAll<VertexPositionNormalTexture, Vector3>(this.vertexData,
+                delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
+        }
+
+        #endregion Protected methods
+
         #region Private methods
+
+        /// <summary>
+        /// Fines the wall's 3D model's triangles.
+        /// </summary>
+        private void FineTriangles()
+        {
+            VertexPositionNormalTexture[] fineVertexData;
+            short[] fineIndexData;
+            Graphics3D.FineTriangles(15, vertexData, indexData, out fineVertexData, out fineIndexData);
+            indexData = fineIndexData;
+            vertexData = fineVertexData;
+        }
 
         /// <summary>
         /// Initialises the wall's index map from the wall's 3D model.

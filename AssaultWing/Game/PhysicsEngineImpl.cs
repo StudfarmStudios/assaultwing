@@ -377,7 +377,7 @@ namespace AW2.Game
                     if (collArea.Owner is Gob &&
                         (((Gob)collArea.Owner).PhysicsApplyMode & PhysicsApplyMode.ReceptorCollidesPhysically) != 0)
                     {
-                        PerformCollision(collArea.Owner, collArea2.Owner);
+                        PerformCollision(collArea.Owner, collArea2.Owner, null);
                     }
                 }
             }
@@ -874,11 +874,25 @@ namespace AW2.Game
             ICollidable gobCollidable1 = gob as ICollidable;
             if (gobCollidable1 == null) return;
 
-            foreach (ICollisionArea collArea2 in compromisers)
+            // Sort compromising collision areas by their owners, 
+            // then perform collision for each gob at a time, passing its
+            // compromising collision areas as additional, optimising data.
+            bool[] compromisersDone = new bool[compromisers.Count];
+            for (int firstCompromiserI = 0; firstCompromiserI < compromisers.Count; ++firstCompromiserI)
             {
-                gobCollidable1.Collide(collArea2.Owner, "General");
-                collArea2.Owner.Collide(gobCollidable1, collArea2.Name);
-                PerformCollision(gobCollidable1, collArea2.Owner);
+                if (compromisersDone[firstCompromiserI]) continue;
+                ICollidable owner = compromisers[firstCompromiserI].Owner;
+                List<ICollisionArea> ownerAreas = new List<ICollisionArea>();
+                for (int compromiserI = firstCompromiserI; compromiserI < compromisers.Count; ++compromiserI)
+                    if (!compromisersDone[compromiserI] && compromisers[compromiserI].Owner == owner)
+                    {
+                        compromisersDone[compromiserI] = true;
+                        ownerAreas.Add(compromisers[compromiserI]);
+                    }
+                gobCollidable1.Collide(owner, "General");
+                foreach (ICollisionArea collArea2 in ownerAreas)
+                    owner.Collide(gobCollidable1, collArea2.Name);
+                PerformCollision(gobCollidable1, owner, ownerAreas);
             }
         }
 
@@ -1009,16 +1023,16 @@ namespace AW2.Game
         /// Physical collisions are a means to maintain overlap consistency.
         /// <param name="gobCollidable1">The gob whose movement led into the collision.</param>
         /// <param name="gobCollidable2">The other gob who stayed still.</param>
-        public void PerformCollision(ICollidable gobCollidable1, ICollidable gobCollidable2)
+        /// <param name="compromisers">The collision areas of the other gob 
+        /// that are involved in the collision, or <b>null</b> if not relevant.</param>
+        public void PerformCollision(ICollidable gobCollidable1, ICollidable gobCollidable2,
+            List<ICollisionArea> compromisers)
         {
-            /* UNDONE if (gobCollidable1 is IThick && gobCollidable2 is IProjectile)
-                PerformCollisionProjectileThick((IProjectile)gobCollidable2, (IThick)gobCollidable1);
-            else if (gobCollidable1 is IProjectile && gobCollidable2 is IThick)
-                PerformCollisionProjectileThick((IProjectile)gobCollidable1, (IThick)gobCollidable2);
-            else*/ if (gobCollidable1 is IThick && gobCollidable2 is ISolid)
-                PerformCollisionSolidThick((ISolid)gobCollidable2, (IThick)gobCollidable1);
+            if (gobCollidable1 is IThick && gobCollidable2 is ISolid)
+                //PerformCollisionSolidThick((ISolid)gobCollidable2, (IThick)gobCollidable1);
+                throw new Exception("Unexpected order of collidable gobs -- thick vs. solid");
             else if (gobCollidable1 is ISolid && gobCollidable2 is IThick)
-                PerformCollisionSolidThick((ISolid)gobCollidable1, (IThick)gobCollidable2);
+                PerformCollisionSolidThick((ISolid)gobCollidable1, (IThick)gobCollidable2, compromisers);
             else if (gobCollidable1 is ISolid && gobCollidable2 is ISolid)
                 PerformCollisionSolidSolid((ISolid)gobCollidable1, (ISolid)gobCollidable2);
         }
@@ -1028,12 +1042,15 @@ namespace AW2.Game
         /// </summary>
         /// <param name="gobSolid1">The solid gob.</param>
         /// <param name="gobThick2">The thick gob.</param>
-        private void PerformCollisionSolidThick(ISolid gobSolid1, IThick gobThick2)
+        /// <param name="compromisers">The collision areas of the thick gob 
+        /// that are involved in the collision.</param>
+        private void PerformCollisionSolidThick(ISolid gobSolid1, IThick gobThick2,
+            List<ICollisionArea> compromisers)
         {
             // We perform an elastic collision.
             float elasticity = 0.1f; // TODO: Add elasticity and friction to Wall.
             float friction = 1.0f;
-            Vector2 xUnit = gobThick2.GetNormal(gobSolid1.Pos);
+            Vector2 xUnit = gobThick2.GetNormal(gobSolid1.Pos, compromisers);
             Vector2 yUnit = new Vector2(-xUnit.Y, xUnit.X);
             Vector2 move1 = new Vector2(Vector2.Dot(gobSolid1.Move, xUnit),
                                         Vector2.Dot(gobSolid1.Move, yUnit));

@@ -87,6 +87,8 @@ namespace AW2.Game.Gobs
             // Recover wall data from its 3D model, overwriting what
             // Wall.SetRuntimeState erroneously set before.
             Model model = data.GetModel(wallModelName);
+            VertexPositionNormalTexture[] vertexData;
+            short[] indexData;
             Graphics3D.GetModelData(model, out vertexData, out indexData);
             Matrix worldMatrix = WorldMatrix;
             for (int i = 0; i < vertexData.Length; ++i)
@@ -94,18 +96,14 @@ namespace AW2.Game.Gobs
                 vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
                 vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
             }
-            MakeConsistent(typeof(RuntimeStateAttribute));
             if (model.Meshes.Count > 1)
                 throw new ArgumentOutOfRangeException("Wall model has more than one mesh");
             if (model.Meshes[0].Effects.Count > 1)
                 throw new ArgumentOutOfRangeException("Wall model mesh has more than one effect");
-            effect = model.Meshes[0].Effects[0] as BasicEffect;
+            BasicEffect effect = model.Meshes[0].Effects[0] as BasicEffect;
             if (effect == null)
                 throw new ArgumentException("Wall model mesh's effect isn't a BasicEffect");
-            texture = effect.Texture;
-            triangleCount = indexData.Length / 3;
-            wallTriangleHandles = new object[triangleCount];
-            wallTrianglePolygons = new Polygon?[triangleCount];
+            Set3DModel(vertexData, indexData, effect.Texture, effect);
 
 #if false // TODO: remove old code about polygonal collision outlines for walls
             // Create a collision polygon out of the 3D model.

@@ -379,8 +379,9 @@ namespace AW2.Game
         /// pointing towards the given location.
         /// </summary>
         /// <param name="pos">The location for the normal to point to.</param>
+        /// <param name="areas">The collision areas where to limit the search for normals.</param>
         /// <returns>The unit normal pointing to the given location.</returns>
-        Vector2 GetNormal(Vector2 pos);
+        Vector2 GetNormal(Vector2 pos, List<ICollisionArea> areas);
     }
 
     /// <summary>
@@ -470,7 +471,7 @@ namespace AW2.Game
         /// </summary>
         /// <remarks>Note for implementors: The returned array length
         /// must be at least one third of the length of <b>IndexData</b>.</remarks>
-        Polygon?[] WallTrianglePolygons { get; }
+        Polygon[] WallTrianglePolygons { get; }
 
         /// <summary>
         /// Removes an area from the entity. 

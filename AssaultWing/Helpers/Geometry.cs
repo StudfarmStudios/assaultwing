@@ -40,7 +40,7 @@ namespace AW2.Helpers
     /// <summary>
     /// The whole two-dimensional space.
     /// </summary>
-    public struct Everything : IGeomPrimitive
+    public class Everything : IGeomPrimitive
     {
         #region IGeomPrimitive Members
 
@@ -87,7 +87,7 @@ namespace AW2.Helpers
     /// <summary>
     /// A point in two-dimensional space.
     /// </summary>
-    public struct Point : IGeomPrimitive
+    public class Point : IGeomPrimitive
     {
         Vector2 location;
 
@@ -95,6 +95,14 @@ namespace AW2.Helpers
         /// Gets and sets the location of the point.
         /// </summary>
         public Vector2 Location { get { return location; } set { location = value; } }
+
+        /// <summary>
+        /// Creates a point at the origin.
+        /// </summary>
+        public Point()
+        {
+            location = Vector2.Zero;
+        }
 
         /// <summary>
         /// Creates an arbitrary point.
@@ -161,7 +169,7 @@ namespace AW2.Helpers
     /// <summary>
     /// A circle in two-dimensional space.
     /// </summary>
-    public struct Circle : IGeomPrimitive
+    public class Circle : IGeomPrimitive
     {
         Vector2 center;
         float radius;
@@ -175,6 +183,15 @@ namespace AW2.Helpers
         /// Gets and sets the radius of the circle.
         /// </summary>
         public float Radius { get { return radius; } set { radius = MathHelper.Max(value, 0f); } }
+
+        /// <summary>
+        /// Creates a zero-radius circle at the origin.
+        /// </summary>
+        public Circle()
+        {
+            center = Vector2.Zero;
+            radius = 0;
+        }
 
         /// <summary>
         /// Creates an arbitrary circle.
@@ -238,7 +255,7 @@ namespace AW2.Helpers
     /// </summary>
     /// A polygon is always simple, i.e., its edge doesn't intersect itself.
     [LimitedSerialization]
-    public struct Polygon : IGeomPrimitive, IEquatable<Polygon>, IConsistencyCheckable
+    public class Polygon : IGeomPrimitive, IEquatable<Polygon>, IConsistencyCheckable
     {
         /// <summary>
         /// A strip of faces of a polygon.
@@ -313,6 +330,14 @@ namespace AW2.Helpers
         /// </summary>
         /// Face strips can be used for optimisation purposes.
         public FaceStrip[] FaceStrips { get { return faceStrips; } }
+
+        /// <summary>
+        /// Creates an uninitialised polygon.
+        /// </summary>
+        public Polygon()
+        {
+            vertices = null;
+        }
 
         /// <summary>
         /// Creates a simple polygon.
@@ -1505,7 +1530,7 @@ namespace AW2.Helpers
         public static Vector2 GetNormal(IEnumerable<Polygon> polygons, Point point)
         {
             float bestDistance = float.MaxValue;
-            Point bestPoint = new Point();
+            Point bestPoint = null;
             foreach (Polygon polygon in polygons)
             {
                 float distance;

@@ -116,8 +116,9 @@ namespace AW2.Game.Gobs
         /// pointing towards the given location.
         /// </summary>
         /// <param name="pos">The location for the normal to point to.</param>
+        /// <param name="areas">The collision areas where to limit the search for normals.</param>
         /// <returns>The unit normal pointing to the given location.</returns>
-        public Vector2 GetNormal(Vector2 pos)
+        public Vector2 GetNormal(Vector2 pos, List<ICollisionArea> areas)
         {
             if (generalAreaI != -1)
                 return Geometry.GetNormal((Polygon)base.collisionAreas[generalAreaI].Area, new AW2.Helpers.Point(pos));

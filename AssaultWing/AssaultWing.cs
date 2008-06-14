@@ -73,6 +73,20 @@ namespace AW2
         Control frameRunControl;
         bool frameStep;
 
+#if DEBUG_PROFILE
+        /// <summary>
+        /// Gob count for the current frame.
+        /// </summary>
+        public int gobCount;
+        /// <summary>
+        /// Collision count for the current frame.
+        /// </summary>
+        public int collisionCount;
+        List<int> frameCounts = new List<int>();
+        List<int> gobCounts = new List<int>();
+        List<int> collisionCounts = new List<int>();
+#endif
+
         /// <summary>
         /// The only existing instance of this class.
         /// </summary>
@@ -491,6 +505,28 @@ namespace AW2
             };
             data.ForEachPlayer(controlRelease);
 
+#if DEBUG_PROFILE
+            // HACK: profiling printout for gnuplot
+            using (System.IO.StreamWriter sw = System.IO.File.CreateText("framecounts.txt"))
+            {
+                foreach (int x in frameCounts)
+                    sw.WriteLine(x);
+                sw.Close();
+            }
+            using (System.IO.StreamWriter sw = System.IO.File.CreateText("gobcounts.txt"))
+            {
+                foreach (int x in gobCounts)
+                    sw.WriteLine(x);
+                sw.Close();
+            }
+            using (System.IO.StreamWriter sw = System.IO.File.CreateText("collisioncounts.txt"))
+            {
+                foreach (int x in collisionCounts)
+                    sw.WriteLine(x);
+                sw.Close();
+            }
+#endif
+
             base.EndRun();
         }
         
@@ -569,6 +605,12 @@ namespace AW2
             }
             else
             {
+#if DEBUG_PROFILE
+                frameCounts.Add(framesSinceLastCheck);
+                gobCounts.Add(gobCount);
+                collisionCounts.Add(collisionCount);
+                gobCount = collisionCount = 0;
+#endif
                 Window.Title = "Assault Wing [~" + framesSinceLastCheck + " fps]";
                 framesSinceLastCheck = 1;
                 lastFramerateCheck = gameTime.TotalRealTime;

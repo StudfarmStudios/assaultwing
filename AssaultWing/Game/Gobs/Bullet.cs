@@ -9,7 +9,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// A simple bullet.
     /// </summary>
-    public class Bullet : Gob, IProjectile
+    public class Bullet : Gob
     {
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
@@ -67,7 +67,6 @@ namespace AW2.Game.Gobs
         {
             int modelNameI = RandomHelper.GetRandomInt(bulletModelNames.Length);
             base.ModelName = bulletModelNames[modelNameI];
-            base.physicsApplyMode = PhysicsApplyMode.All | PhysicsApplyMode.ReceptorCollidesPhysically;
         }
 
         /// <summary>
@@ -106,48 +105,31 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Performs collision operations with a gob whose general collision area
-        /// has collided with one of our receptor areas.
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
         /// </summary>
-        /// <param name="gob">The gob we collided with.</param>
-        /// <param name="receptorName">The name of our colliding receptor area.</param>
-        public override void Collide(ICollidable gob, string receptorName)
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
+        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
+        /// then up to this gob and the other gob to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
         {
-            IDamageable damaGob = gob as IDamageable;
-            if (damaGob != null)
-                damaGob.InflictDamage(impactDamage);
-
-            // Make a hole if it's possible.
-            IHoleable holeGob = gob as IHoleable;
-            if (holeGob != null)
-                holeGob.MakeHole(Pos/* HACK: Where is Bullet.ImpactArea ? */);
-
-            // A casual bullet dies on any impact.
-            // A bullet with a physical collision area only bounces off
-            // collidables that don't receive damage.
-            if (damaGob != null || receptorName != "General")
+            if (TypeName == "bouncebomb") // HACK until implemented class BounceBullet : Bullet
             {
-                Die();
-
-                // Fake safe position to make physical collisions happen.
-                // We can do this only because we know we're dead already.
-                HadSafePosition = true;
+                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                {
+                    theirArea.Owner.InflictDamage(impactDamage);
+                    Die();
+                }
             }
-        }
-
-        #endregion
-        
-        #region IProjectile Members
-
-        /// <summary>
-        /// The area the projectile destroys from holeable gobs on impact.
-        /// </summary>
-        /// The area is translated according to the gob's location.
-        public Polygon ImpactArea
-        {
-            get
+            else
             {
-                return (Polygon)impactArea.Transform(WorldMatrix);
+                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                    theirArea.Owner.InflictDamage(impactDamage);
+                if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
+                    ((Wall)theirArea.Owner).MakeHole(Pos/* HACK: Where is Bullet.ImpactArea ? */);
+                Die();
             }
         }
 

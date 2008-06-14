@@ -49,7 +49,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("typeName:{typeName} pos:{pos} move:{move}")]
-    public class Gob
+    public class Gob : IConsistencyCheckable
     {
         // HACK
         VertexPositionColor[] boundVertexData = null;
@@ -157,10 +157,11 @@ namespace AW2.Game
         bool disabled;
 
         /// <summary>
-        /// Choice of laws of physics to apply to the gob.
+        /// True iff the gob moves around by the laws of physics.
         /// </summary>
         /// Subclasses should set this according to their needs.
-        protected PhysicsApplyMode physicsApplyMode;
+        [TypeParameter]
+        protected bool movable;
 
         /// <summary>
         /// The physics engine of the game instance this gob belongs to.
@@ -195,9 +196,7 @@ namespace AW2.Game
 
         #endregion Fields for gobs with thrusters
 
-        #region Fields for ICollidable
-        // The following fields are implemented here but are used only in
-        // subclasses that implement ICollidable.
+        #region Fields for collisions
 
         /// <summary>
         /// Collision primitives, translated according to the gob's location.
@@ -205,16 +204,9 @@ namespace AW2.Game
         [TypeParameter]
         protected CollisionArea[] collisionAreas;
 
-        /// <summary>
-        /// True iff the gob's position at the beginning of the frame was not colliding.
-        /// </summary>
-        bool hadSafePosition;
+        #endregion Fields for collisions
 
-        #endregion Fields for ICollidable
-
-        #region Fields for IDamageable
-        // The following fields are implemented here but are used only in
-        // subclasses that implement IDamageable.
+        #region Fields for damage
 
         /// <summary>
         /// The amount of damage; 0 means perfect condition;
@@ -229,7 +221,7 @@ namespace AW2.Game
         [TypeParameter]
         float maxDamage;
 
-        #endregion Fields for IDamageable
+        #endregion Fields for damage
 
         #region Gob properties
 
@@ -337,9 +329,9 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Choice of laws of physics to apply to the gob.
+        /// The collision areas of the gob.
         /// </summary>
-        public PhysicsApplyMode PhysicsApplyMode { get { return physicsApplyMode; } }
+        public CollisionArea[] CollisionAreas { get { return collisionAreas; } }
 
         /// <summary>
         /// Is the gob cold.
@@ -365,16 +357,12 @@ namespace AW2.Game
         /// <summary>
         /// Is the gob disabled. A disabled gob is not regarded in movement and collisions.
         /// </summary>
-        public bool Disabled
-        {
-            get { return disabled; }
-            set
-            {
-                if (disabled && !value)
-                    HadSafePosition = false;
-                disabled = value;
-            }
-        }
+        public bool Disabled { get { return disabled; } set { disabled = value; } }
+
+        /// <summary>
+        /// True iff the gob moves around by the laws of physics.
+        /// </summary>
+        public bool Movable { get { return movable; } }
 
         #endregion Gob Properties
 
@@ -426,21 +414,23 @@ namespace AW2.Game
                 "explosion",
             };
             this.collisionAreas = new CollisionArea[] {
-                new CollisionArea("General", new Circle(Vector2.Zero, 10f), null),
+                new CollisionArea("General", new Circle(Vector2.Zero, 10f), null,
+                CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
                 new CollisionArea("General", new Polygon(new Vector2[] {
                     new Vector2(10,0),
                     new Vector2(0,7), 
                     new Vector2(0,-7)
-                }), null),
-                new CollisionArea("General", new Everything(), null),
+                }), null,
+                CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
+                new CollisionArea("General", new Everything(), null,
+                CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
             };
-            this.hadSafePosition = false;
             this.damage = 0;
             this.maxDamage = 100;
             this.birthTime = new TimeSpan(23, 59, 59);
             this.dead = false;
             this.disabled = false;
-            this.physicsApplyMode = PhysicsApplyMode.All;
+            this.movable = true;
             this.physics = null;
             this.modelPartTransforms = null;
             this.exhaustEngineNames = new string[] { "dummyparticleengine", };
@@ -470,15 +460,13 @@ namespace AW2.Game
             this.move = Vector2.Zero;
             this.rotation = Gob.defaultRotation;
 
-            // If we are not ICollidable, we shouldn't have collision areas either.
-            // If we are ICollidable, set us as the owner of each collision area.
-            if (typeof(ICollidable).IsAssignableFrom(this.GetType()))
-                for (int i = 0; i < collisionAreas.Length; ++i)
-                    collisionAreas[i].Owner = (ICollidable)this;
-            else
+            // Set us as the owner of each collision area.
+            if (collisionAreas == null)
                 collisionAreas = new CollisionArea[0];
-            this.hadSafePosition = false; // we don't know, so do this to be sure
-            this.physicsApplyMode = PhysicsApplyMode.All;
+            for (int i = 0; i < collisionAreas.Length; ++i)
+                collisionAreas[i].Owner = this;
+
+            this.movable = true;
             this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             this.birthTime = this.physics.TimeStep.TotalGameTime;
             this.modelPartTransforms = null;
@@ -548,11 +536,27 @@ namespace AW2.Game
             List<CollisionArea> meshAreas = new List<CollisionArea>();
             foreach (ModelMesh mesh in model.Meshes)
             {
-                if (mesh.Name.StartsWith("mesh_Collision") && gob is ICollidable)
+                // A specially named mesh can replace the geometric area of a named collision area.
+                if (mesh.Name.StartsWith("mesh_Collision"))
                 {
                     string areaName = mesh.Name.Replace("mesh_Collision", "");
-                    IGeomPrimitive area = Graphics3D.GetOutline(mesh);
-                    meshAreas.Add(new CollisionArea(areaName, area, (ICollidable)gob));
+                    CollisionArea changeArea = null;
+                    foreach (CollisionArea area in gob.collisionAreas)
+                        if (area.Name == areaName)
+                        {
+                            changeArea = area;
+                            break;
+                        }
+                    if (changeArea == null)
+                        Log.Write("Warning: Gob found collision mesh \"" + areaName +
+                            "\" that didn't match any collision area name.");
+                    else
+                    {
+                        IGeomPrimitive geomArea = Graphics3D.GetOutline(mesh);
+                        if (!gob.Movable)
+                            geomArea = geomArea.Transform(gob.WorldMatrix);
+                        changeArea.AreaGob = geomArea;
+                    }
                 }
             }
             if (meshAreas.Count > 0)
@@ -714,7 +718,7 @@ namespace AW2.Game
                     if (mesh.Effects.Count > 1)
                         throw new Exception("Error: Several effects on a flashing gob. Programmer must use arrays for saving BasicEffect state.");
                     BasicEffect be = (BasicEffect)mesh.Effects[0];
-                    
+
                     // Modify render state.
                     RenderState renderState = AssaultWing.Instance.GraphicsDevice.RenderState;
                     renderState.DepthBufferEnable = false;
@@ -732,7 +736,7 @@ namespace AW2.Game
                     be.VertexColorEnabled = false;
                     be.DiffuseColor = Vector3.One;
                     be.Alpha = bleach;
-                    
+
                     mesh.Draw();
 
                     // Restore original effect state.
@@ -955,68 +959,39 @@ namespace AW2.Game
 
         #endregion Gob miscellaneous protected methods
 
-        #region ICollidable Members // Implemented here for subclasses
+        #region Collision methods
 
         /// <summary>
-        /// Returns the collision primitives of the gob.
+        /// The physical collision area of the gob or <b>null</b> if it doesn't have one.
         /// </summary>
-        /// <returns>The collision primitives of the gob.</returns>
-        public CollisionArea[] GetPrimitives()
-        {
-            return collisionAreas;
-        }
-
-        /// <summary>
-        /// The index of the physical collision area of the collidable gob
-        /// in <b>GetPrimitives()</b> or <b>-1</b> if it has none.
-        /// </summary>
-        public int PhysicalArea
+        public CollisionArea PhysicalArea
         {
             get
             {
-                for (int i = 0; i < collisionAreas.Length; ++i)
-                    if (collisionAreas[i].Type == CollisionAreaType.Physical)
-                        return i;
-                return -1;
+                if (collisionAreas.Length == 0) return null;
+                if ((collisionAreas[0].Type & CollisionAreaType.Physical) == 0) return null;
+                return collisionAreas[0];
             }
         }
-            
-        /// <summary>
-        /// Returns the distance from the edge of the physical collision area
-        /// of the collidable gob to a point in the game world.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns>The shortest distance between the point and the gob's
-        /// physical collision area.</returns>
-        public float DistanceTo(Vector2 point)
-        {
-            foreach (CollisionArea area in collisionAreas)
-                if (area.Type == CollisionAreaType.Physical)
-                    return area.Area.DistanceTo(point);
-
-            // We're far away unless proven otherwise.
-            return Single.MaxValue;
-        }
 
         /// <summary>
-        /// Returns true iff the gob's position at the beginning of the frame was not colliding.
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
         /// </summary>
-        /// <returns>True iff the gob's position at the beginning of the frame was not colliding</returns>
-        public bool HadSafePosition { get { return hadSafePosition; } set { hadSafePosition = value; } }
-
-        /// <summary>
-        /// Performs collision operations with a gob whose general collision area
-        /// has collided with one of our receptor areas.
-        /// </summary>
-        /// <param name="gob">The gob we collided with.</param>
-        /// <param name="receptorName">The name of our colliding receptor area.</param>
-        public virtual void Collide(ICollidable gob, string receptorName)
+        /// Called only when <b>theirArea.Type</b> matches either <b>myArea.CollidesAgainst</b> or
+        /// <b>myArea.CannotOverlap</b>.
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
+        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
+        /// then up to this gob and the other gob to resolve the overlap.</param>
+        public virtual void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
         {
         }
 
-        #endregion ICollidable Members
+        #endregion Collision methods
 
-        #region IDamageable Members // Implemented here for subclasses
+        #region Damage methods
 
         /// <summary>
         /// The amount of damage, between 0 and <b>MaxDamageLevel</b>.
@@ -1045,6 +1020,33 @@ namespace AW2.Game
                 Die();
         }
 
-        #endregion IDamageable Members
+        #endregion Damage methods
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            // Rearrange our collision areas to have a physical area be first, 
+            // if there is such.
+            if (collisionAreas.Length == 0) return;
+            if ((collisionAreas[0].Type & CollisionAreaType.Physical) != 0) return;
+            for (int i = 0; i < collisionAreas.Length; ++i)
+                if ((collisionAreas[i].Type & CollisionAreaType.Physical) != 0)
+                {
+                    CollisionArea swap = collisionAreas[i];
+                    collisionAreas[i] = collisionAreas[0];
+                    collisionAreas[0] = swap;
+                    break;
+                }
+        }
+
+        #endregion
     }
 }

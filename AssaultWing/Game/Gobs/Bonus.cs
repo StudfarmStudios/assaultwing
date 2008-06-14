@@ -82,7 +82,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// A bonus that can be collected by a player.
     /// </summary>
-    public class Bonus : Gob, ISolid, IDamageable, IConsistencyCheckable
+    public class Bonus : Gob, IConsistencyCheckable
     {
         #region Bonus fields
 
@@ -149,20 +149,22 @@ namespace AW2.Game.Gobs
 
         #endregion Methods related to gobs' functionality in the game world
 
-        #region ICollidable Members
-        // Some members are implemented in class Gob.
-
         /// <summary>
-        /// Performs collision operations with a gob whose general collision area
-        /// has collided with one of our receptor areas.
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
         /// </summary>
-        /// <param name="gob">The gob we collided with.</param>
-        /// <param name="receptorName">The name of our colliding receptor area.</param>
-        public override void Collide(ICollidable gob, string receptorName)
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
+        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
+        /// then up to this gob and the other gob to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
         {
-            Ship gobShip = gob as Ship;
-            if (gobShip != null)
+            // We assume we have only one receptor area and that's the one for
+            // bonus collection. That means that the other gob is a ship.
+            if (myArea.Type == CollisionAreaType.Receptor)
             {
+                Ship ship = (Ship)theirArea.Owner;
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 EventEngine eventer = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
 
@@ -190,19 +192,19 @@ namespace AW2.Game.Gobs
                             data.AddGob(explosion);
                             break;
                         case BonusAction.UpgradeWeapon1:
-                            gobShip.Owner.UpgradeWeapon1();
+                            ship.Owner.UpgradeWeapon1();
                             playerBonus = PlayerBonus.Weapon1Upgrade;
                             break;
                         case BonusAction.UpgradeWeapon2:
-                            gobShip.Owner.UpgradeWeapon2();
+                            ship.Owner.UpgradeWeapon2();
                             playerBonus = PlayerBonus.Weapon2Upgrade;
                             break;
                         case BonusAction.UpgradeWeapon1LoadTime:
-                            gobShip.Owner.UpgradeWeapon1LoadTime();
+                            ship.Owner.UpgradeWeapon1LoadTime();
                             playerBonus = PlayerBonus.Weapon1LoadTime;
                             break;
                         case BonusAction.UpgradeWeapon2LoadTime:
-                            gobShip.Owner.UpgradeWeapon2LoadTime();
+                            ship.Owner.UpgradeWeapon2LoadTime();
                             playerBonus = PlayerBonus.Weapon2LoadTime;
                             break;
                         default:
@@ -215,13 +217,13 @@ namespace AW2.Game.Gobs
                         // Send the timed event for undoing the bonus, if required.
                         TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
                             + new TimeSpan((long)(poss.duration * 10 * 1000 * 1000));
-                        BonusExpiryEvent bonusEve = new BonusExpiryEvent(gobShip.Owner.Name,
+                        BonusExpiryEvent bonusEve = new BonusExpiryEvent(ship.Owner.Name,
                             playerBonus, expiryTime);
                         eventer.SendEvent(bonusEve);
 
                         // Set the player's bonus timing.
-                        gobShip.Owner.BonusTimeins[playerBonus] = AssaultWing.Instance.GameTime.TotalGameTime;
-                        gobShip.Owner.BonusTimeouts[playerBonus] = expiryTime;
+                        ship.Owner.BonusTimeins[playerBonus] = AssaultWing.Instance.GameTime.TotalGameTime;
+                        ship.Owner.BonusTimeouts[playerBonus] = expiryTime;
                     }
 
                     // We found the action, break out of the search.
@@ -230,13 +232,6 @@ namespace AW2.Game.Gobs
                 Die();
             }
         }
-
-        #endregion
-
-        #region IDamageable Members
-        // Some members are implemented in class Gob.
-
-        #endregion
 
         #region IConsistencyCheckable Members
 
@@ -247,8 +242,21 @@ namespace AW2.Game.Gobs
         /// <param name="limitationAttribute">Check only fields marked with 
         /// this limitation attribute.</param>
         /// <see cref="Serialization"/>
-        public void MakeConsistent(Type limitationAttribute)
+        public new void MakeConsistent(Type limitationAttribute)
         {
+            // NOTE: This method is meant to re-implement the interface member
+            // IConsistencyCheckable.MakeConsistent(Type) that is already implemented
+            // in the base class Gob. According to the C# Language Specification 1.2
+            // (and not corrected in the specification version 2.0), adding the 'new'
+            // keyword to this re-implementation would make this code
+            // 
+            //      Wall wall;
+            //      ((IConsistencyCheckable)wall).MakeConsistent(type)
+            //
+            // call Gob.MakeConsistent(Type). However, debugging reveals this is not the
+            // case. By leaving out the 'new' keyword, the semantics stays the same, as
+            // seen by debugging, but the compiler produces a warning.
+            base.MakeConsistent(limitationAttribute);
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 lifetime = Math.Max(0.5f, lifetime);

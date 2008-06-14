@@ -128,14 +128,6 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each gob.</param>
         void ForEachGob(Action<Gob> action);
 
-        /// <summary>
-        /// Performs the specified action on each gob of the specified category.
-        /// </summary>
-        /// The intended values for the type parameter are subinterfaces of IGob.
-        /// <param name="action">The Action delegate to perform on each gob of the specified category.</param>
-        /// <typeparam name="T">The kind of gobs to loop through.</typeparam>
-        void ForEachGob<T>(Action<Gob> action) where T : IGob;
-
         #endregion
 
         #region particles

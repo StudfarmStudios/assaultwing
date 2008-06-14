@@ -11,7 +11,7 @@ namespace AW2.Game.Gobs
     /// </summary>
     /// Gravity is tought of simply as a constant acceleration vector that is the same
     /// for everyone regardless of their location and mass.
-    public class Gravity : Gob, IGravity
+    public class Gravity : Gob
     {
         /// <summary>
         /// The gravitational acceleration vector of the gravitational pull, in m/s^2.
@@ -27,14 +27,17 @@ namespace AW2.Game.Gobs
         {
             force = new Vector2(0, -10);
             base.collisionAreas = new CollisionArea[] {
-                new CollisionArea("Force", new Helpers.Circle(Vector2.Zero, 500f), this),
+                new CollisionArea("Force", new Helpers.Circle(Vector2.Zero, 500f), this, 
+                CollisionAreaType.Receptor, CollisionAreaType.PhysicalMovable, CollisionAreaType.None),
                 new CollisionArea("Force", new Helpers.Polygon(new Vector2[] {
                     new Vector2(0,0),
                     new Vector2(500,0),
                     new Vector2(500,500), 
                     new Vector2(0,500),
-                }), this),
-                new CollisionArea("Force", new Helpers.Everything(), this),
+                }), this, 
+                CollisionAreaType.Receptor, CollisionAreaType.PhysicalMovable, CollisionAreaType.None),
+                new CollisionArea("Force", new Helpers.Everything(), this, 
+                CollisionAreaType.Receptor, CollisionAreaType.PhysicalMovable, CollisionAreaType.None),
             };
         }
 
@@ -45,7 +48,7 @@ namespace AW2.Game.Gobs
         public Gravity(string typeName)
             : base(typeName)
         {
-            base.physicsApplyMode = PhysicsApplyMode.None;
+            movable = false;
         }
 
         /// <summary>
@@ -61,40 +64,19 @@ namespace AW2.Game.Gobs
             // You must feel the force. You can't see it.
         }
 
-        #region IGravity Members
-
         /// <summary>
-        /// Returns the acceleration that the gravitational force applies to a mass
-        /// located at the given position.
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
         /// </summary>
-        /// <param name="pos">The position of the mass that is pulled by the force.</param>
-        /// <returns>The acceleration created by the force.</returns>
-        public Vector2 GetGravity(Vector2 pos)
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
+        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
+        /// then up to this gob and the other gob to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
         {
-            return force;
+            // We assume that we have only one collision area which collides with movables.
+            physics.ApplyForce(theirArea.Owner, force * theirArea.Owner.Mass);
         }
-
-        #endregion
-
-        #region ICollidable Members
-
-        /// <summary>
-        /// Performs collision operations with a gob whose general collision area
-        /// has collided with one of our receptor areas.
-        /// </summary>
-        /// <param name="gob">The gob we collided with.</param>
-        /// <param name="receptorName">The name of our colliding receptor area.</param>
-        public override void Collide(ICollidable gob, string receptorName)
-        {
-            // We have only one receptor, "Gravity".
-            //if (!receptorName.Equals("Gravity")) return;
-            if (!(gob is ISolid && gob is Gob)) return;
-            if (gob is IThick) return;
-            Gob gobgob = (Gob)gob;
-            if ((gobgob.PhysicsApplyMode & PhysicsApplyMode.Gravity) != 0)
-                physics.ApplyForce(gobgob, force * gobgob.Mass);
-        }
-
-        #endregion // ICollidable Members
     }
 }

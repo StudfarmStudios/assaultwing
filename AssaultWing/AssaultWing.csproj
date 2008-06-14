@@ -36,7 +36,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NO_GEOMETRY_APPROXIMATE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DEBUG_PROFILE NO_GEOMETRY_APPROXIMATE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -249,16 +249,6 @@
       <Project>{37327719-5d88-4ead-9b6c-a97611027858}</Project>
       <Visible>False</Visible>
     </NestedContentProject>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\R-Tree Framework\R-Tree Framework.csproj">
-      <Project>{C9573BCD-617A-4AD3-9A47-BEBE46A4E079}</Project>
-      <Name>R-Tree Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\R-Tree\R-Tree.csproj">
-      <Project>{A4C6C32A-ACF2-46E9-8416-1C31F61FF581}</Project>
-      <Name>R-Tree</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PublishFile Include="nunit.framework">

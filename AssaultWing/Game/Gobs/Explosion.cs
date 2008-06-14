@@ -12,7 +12,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// An explosion; inflicts damage, makes a big flash, throws some stuff around.
     /// </summary>
-    class Explosion : Gob, IGas
+    class Explosion : Gob
     {
         #region Explosion fields
 
@@ -90,7 +90,6 @@ namespace AW2.Game.Gobs
         {
             flowEndTime = new TimeSpan(1);
             particleEngines = null;
-            base.physicsApplyMode = PhysicsApplyMode.Move;
         }
 
         /// <summary>
@@ -162,40 +161,34 @@ namespace AW2.Game.Gobs
             // Our particle engines do the visual stuff.
         }
 
-        #region ICollidable Members
-
         /// <summary>
-        /// Performs collision operations with a gob whose general collision area
-        /// has collided with one of our receptor areas.
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
         /// </summary>
-        /// <param name="gob">The gob we collided with.</param>
-        /// <param name="receptorName">The name of our colliding receptor area.</param>
-        public override void Collide(ICollidable gob, string receptorName)
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
+        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
+        /// then up to this gob and the other gob to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
         {
-            if (receptorName == "Hit")
+            // We assume we have only two collision areas, both receptors with specific names:
+            // "Hit" is assumed to collide only against damageables;
+            // "Force" is assumed to collide only against movables.
+            if (myArea.Name == "Hit")
             {
-                IDamageable gobDamageable = gob as IDamageable;
-                if (gobDamageable != null)
-                {
-                    float distance = gob.DistanceTo(this.Pos);
-                    float damage = inflictDamage.Evaluate(distance);
-                    gobDamageable.InflictDamage(damage);
-                }
+                float distance = theirArea.Area.DistanceTo(this.Pos);
+                float damage = inflictDamage.Evaluate(distance);
+                theirArea.Owner.InflictDamage(damage);
             }
-            else if (receptorName == "Force")
+            else if (myArea.Name == "Force")
             {
-                Gob gobGob = gob as Gob;
-                if (gobGob != null && (gobGob.PhysicsApplyMode & PhysicsApplyMode.Move) != 0)
-                {
-                    Vector2 difference = gobGob.Pos - this.Pos;
-                    float differenceLength = difference.Length();
-                    Vector2 flow = difference / differenceLength *
-                        flowSpeed.Evaluate(differenceLength);
-                    physics.ApplyDrag(gobGob, flow, 0.003f);
-                }
+                Vector2 difference = theirArea.Owner.Pos - this.Pos;
+                float differenceLength = difference.Length();
+                Vector2 flow = difference / differenceLength *
+                    flowSpeed.Evaluate(differenceLength);
+                physics.ApplyDrag(theirArea.Owner, flow, 0.003f);
             }
         }
-
-        #endregion ICollidable Members
     }
 }

@@ -9,7 +9,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// A docking platform.
     /// </summary>
-    public class Dock : Gob, IThick
+    public class Dock : Gob
     {
         #region Dock fields
 
@@ -32,11 +32,6 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         float weapon2ChargeSpeed;
 
-        /// <summary>
-        /// Index of the general collision area in <b>base.collisionAreas</b>.
-        /// </summary>
-        int generalAreaI;
-
         #endregion Dock fields
 
         /// <summary>
@@ -58,74 +53,32 @@ namespace AW2.Game.Gobs
         public Dock(string typeName)
             : base(typeName)
         {
-            this.physicsApplyMode = PhysicsApplyMode.None;
+            movable = false;
         }
 
-        #region Methods related to gobs' functionality in the game world
-
         /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
         /// </summary>
-        public override void Activate()
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
+        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
+        /// then up to this gob and the other gob to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
         {
-            // Find our general collision area.
-            generalAreaI = -1;
-            for (int i = 0; i < collisionAreas.Length; ++i)
-                if (collisionAreas[i].Name == "General")
-                {
-                    generalAreaI = i;
-                    break;
-                }
-            if (generalAreaI == -1)
-                Log.Write("Warning: Dock couldn't find its general collision area");
-        }
-
-        #endregion Methods related to gobs' functionality in the game world
-
-        #region ICollidable Members
-        // Some members are implemented in class Gob.
-
-        /// <summary>
-        /// Performs collision operations with a gob whose general collision area
-        /// has collided with one of our receptor areas.
-        /// </summary>
-        /// <param name="gob">The gob we collided with.</param>
-        /// <param name="receptorName">The name of our colliding receptor area.</param>
-        public override void Collide(ICollidable gob, string receptorName)
-        {
-            IDamageable damaGob = gob as IDamageable;
-            Ship shipGob = gob as Ship;
-            if (receptorName == "Dock")
+            // We assume we have only one Receptor collision area which handles docking.
+            // Then 'theirArea.Owner' must be damageable.
+            if (myArea.Type == CollisionAreaType.Receptor)
             {
-                if (damaGob != null)
-                    damaGob.InflictDamage(physics.ApplyChange(repairSpeed));
-                if (shipGob != null)
+                theirArea.Owner.InflictDamage(physics.ApplyChange(repairSpeed));
+                Ship ship = theirArea.Owner as Ship;
+                if (ship != null)
                 {
-                    shipGob.Weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);
-                    shipGob.Weapon2Charge += physics.ApplyChange(weapon2ChargeSpeed);
+                    ship.Weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);
+                    ship.Weapon2Charge += physics.ApplyChange(weapon2ChargeSpeed);
                 }
             }
         }
-
-        #endregion ICollidable Members
-
-        #region IThick Members
-
-        /// <summary>
-        /// Returns the unit normal vector from the thick gob
-        /// pointing towards the given location.
-        /// </summary>
-        /// <param name="pos">The location for the normal to point to.</param>
-        /// <param name="areas">The collision areas where to limit the search for normals.</param>
-        /// <returns>The unit normal pointing to the given location.</returns>
-        public Vector2 GetNormal(Vector2 pos, List<ICollisionArea> areas)
-        {
-            if (generalAreaI != -1)
-                return Geometry.GetNormal((Polygon)base.collisionAreas[generalAreaI].Area, new AW2.Helpers.Point(pos));
-            else
-                return Vector2.UnitY;
-        }
-
-        #endregion IThick Members
     }
 }

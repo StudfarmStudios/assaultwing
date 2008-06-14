@@ -11,7 +11,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// A rocket that has its own means of propulsion.
     /// </summary>
-    class Rocket : Gob, IProjectile
+    class Rocket : Gob
     {
         #region Rocket fields
 
@@ -81,7 +81,6 @@ namespace AW2.Game.Gobs
             double endTicks = 10 * 1000 * 1000 *
                 (physics.TimeStep.TotalGameTime.TotalSeconds + this.thrustDuration);
             this.thrustEndTime = new TimeSpan((long)endTicks);
-            base.physicsApplyMode = PhysicsApplyMode.All | PhysicsApplyMode.ReceptorCollidesPhysically;
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -129,44 +128,22 @@ namespace AW2.Game.Gobs
 
         #endregion Methods related to gobs' functionality in the game world
 
-        #region ICollidable Members
-        // Some members are implemented in class Gob.
-
         /// <summary>
-        /// Performs collision operations with a gob whose general collision area
-        /// has collided with one of our receptor areas.
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
         /// </summary>
-        /// <param name="gob">The gob we collided with.</param>
-        /// <param name="receptorName">The name of our colliding receptor area.</param>
-        public override void Collide(ICollidable gob, string receptorName)
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
+        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
+        /// then up to this gob and the other gob to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
         {
-            IDamageable damaGob = gob as IDamageable;
-            if (damaGob != null)
-                damaGob.InflictDamage(impactDamage);
-
+            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                theirArea.Owner.InflictDamage(impactDamage);
+            if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
+                ((Wall)theirArea.Owner).MakeHole(Pos/* HACK: Where is Bullet.ImpactArea ? */);
             Die();
-
-            // Fake safe position to make physical collisions happen.
-            // We can do this only because we know we're dead already.
-            HadSafePosition = true;
         }
-
-        #endregion
-        
-        #region IProjectile Members
-
-        /// <summary>
-        /// The area the projectile destroys from thick gobs on impact.
-        /// </summary>
-        /// The area is translated according to the gob's location.
-        public Polygon ImpactArea
-        {
-            get
-            {
-                return (Polygon)impactArea.Transform(WorldMatrix);
-            }
-        }
-
-        #endregion
     }
 }

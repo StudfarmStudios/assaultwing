@@ -303,19 +303,6 @@ namespace AW2.Game
                 action(gob);
         }
 
-        /// <summary>
-        /// Performs the specified action on each gob of the specified category.
-        /// </summary>
-        /// The intended values for the type parameter are subinterfaces of IGob.
-        /// <param name="action">The Action delegate to perform on each gob of the specified category.</param>
-        /// <typeparam name="T">The kind of gobs to loop through.</typeparam>
-        public void ForEachGob<T>(Action<Gob> action) where T : IGob
-        {
-            foreach (Gob gob in gobs)
-                if (gob is T)
-                    action(gob);
-        }
-
         #endregion gobs
 
         #region particles
@@ -606,6 +593,10 @@ namespace AW2.Game
                 particleEngines.Remove(pEng);
             }
             removedParticleEngines.Clear();
+
+#if DEBUG_PROFILE
+            AssaultWing.Instance.gobCount = gobs.Count;
+#endif
         }
 
         #endregion miscellaneous

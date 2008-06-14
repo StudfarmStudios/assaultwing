@@ -2,6 +2,9 @@
 #if DEBUG
 using NUnit.Framework;
 #endif
+#if !DEBUG
+  #define TRUSTED_VISIBILITY_BREACH // makes code faster at the cost of naughty class design
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -89,19 +92,27 @@ namespace AW2.Helpers
     /// </summary>
     public class Point : IGeomPrimitive
     {
+#if TRUSTED_VISIBILITY_BREACH
+        public Vector2 Location;
+#else
         Vector2 location;
 
         /// <summary>
         /// Gets and sets the location of the point.
         /// </summary>
         public Vector2 Location { get { return location; } set { location = value; } }
+#endif
 
         /// <summary>
         /// Creates a point at the origin.
         /// </summary>
         public Point()
         {
+#if TRUSTED_VISIBILITY_BREACH
+            Location = Vector2.Zero;
+#else
             location = Vector2.Zero;
+#endif
         }
 
         /// <summary>
@@ -110,7 +121,11 @@ namespace AW2.Helpers
         /// <param name="location">The point's location.</param>
         public Point(Vector2 location)
         {
+#if TRUSTED_VISIBILITY_BREACH
+            Location = location;
+#else
             this.location = location;
+#endif
         }
 
         /// <summary>
@@ -132,12 +147,12 @@ namespace AW2.Helpers
         /// </summary>
         /// The Z-coordinates are irrelevant.
         public BoundingBox BoundingBox
-        {
-            get
-            {
-                return new BoundingBox(new Vector3(location, 0),
-                                       new Vector3(location, 0));
-            }
+        { 
+#if TRUSTED_VISIBILITY_BREACH
+            get { return new BoundingBox(new Vector3(Location, 0), new Vector3(Location, 0)); } 
+#else
+            get { return new BoundingBox(new Vector3(location, 0), new Vector3(location, 0)); } 
+#endif
         }
 
         /// <summary>
@@ -147,7 +162,11 @@ namespace AW2.Helpers
         /// <returns>The transformed geometric primitive.</returns>
         public IGeomPrimitive Transform(Matrix transformation)
         {
+#if TRUSTED_VISIBILITY_BREACH
+            return new Point(Vector2.Transform(Location, transformation));
+#else
             return new Point(Vector2.Transform(location, transformation));
+#endif
         }
 
         /// <summary>
@@ -159,7 +178,11 @@ namespace AW2.Helpers
         /// and the point.</returns>
         public float DistanceTo(Vector2 point)
         {
-            return Vector2.Distance(this.location, point);
+#if TRUSTED_VISIBILITY_BREACH
+            return Vector2.Distance(Location, point);
+#else
+            return Vector2.Distance(location, point);
+#endif
         }
 
         #endregion IGeomPrimitive Members
@@ -173,6 +196,12 @@ namespace AW2.Helpers
     {
         Vector2 center;
         float radius;
+
+        /// <summary>
+        /// A rectangle containing the triangle.
+        /// </summary>
+        /// The Z-coordinate is irrelevant.
+        BoundingBox boundingBox;
 
         /// <summary>
         /// Gets and sets the center of the circle.
@@ -191,6 +220,7 @@ namespace AW2.Helpers
         {
             center = Vector2.Zero;
             radius = 0;
+            boundingBox = new BoundingBox(Vector3.Zero, Vector3.Zero);
         }
 
         /// <summary>
@@ -202,6 +232,8 @@ namespace AW2.Helpers
         {
             this.center = center;
             this.radius = radius;
+            boundingBox = new BoundingBox(new Vector3(center.X - radius, center.Y - radius, 0),
+                                          new Vector3(center.X + radius, center.Y + radius, 0));
         }
 
         #region IGeomPrimitive Members
@@ -210,14 +242,7 @@ namespace AW2.Helpers
         /// A rectangle that contains the geometric primitive.
         /// </summary>
         /// The Z-coordinates are irrelevant.
-        public BoundingBox BoundingBox
-        {
-            get
-            {
-                return new BoundingBox(new Vector3(center.X - radius, center.Y - radius, 0),
-                                       new Vector3(center.X + radius, center.Y + radius, 0));
-            }
-        }
+        public BoundingBox BoundingBox { get { return boundingBox; } }
 
         /// <summary>
         /// Transforms the geometric primitive by a transformation matrix.
@@ -247,7 +272,154 @@ namespace AW2.Helpers
         }
 
         #endregion IGeomPrimitive Members
+    }
 
+    /// <summary>
+    /// A triangle in two-dimensional space. The triangle is formed by three
+    /// corner points that are ordered in clockwise order.
+    /// A triangle can also be degenerate, i.e. all the corner points
+    /// lie on the same line.
+    /// </summary>
+    public class Triangle : IGeomPrimitive
+    {
+#if TRUSTED_VISIBILITY_BREACH
+        public Vector2 P1, P2, P3;
+#else
+        Vector2 p1, p2, p3;
+#endif
+        Vector2 n12, n13, n23;
+
+        /// <summary>
+        /// A rectangle containing the triangle.
+        /// </summary>
+        /// The Z-coordinate is irrelevant.
+        BoundingBox boundingBox;
+
+#if !TRUSTED_VISIBILITY_BREACH
+        /// <summary>
+        /// The first corner point.
+        /// </summary>
+        public Vector2 P1 { get { return p1; } }
+
+        /// <summary>
+        /// The second corner point.
+        /// </summary>
+        public Vector2 P2 { get { return p2; } }
+
+        /// <summary>
+        /// The third corner point.
+        /// </summary>
+        public Vector2 P3 { get { return p3; } }
+#endif
+
+        /// <summary>
+        /// The unit normal pointing away from the triangle at the edge
+        /// defined by P1 and P2.
+        /// </summary>
+        public Vector2 Normal12 { get { return n12; } }
+
+        /// <summary>
+        /// The unit normal pointing away from the triangle at the edge
+        /// defined by P1 and P3.
+        /// </summary>
+        public Vector2 Normal13 { get { return n13; } }
+
+        /// <summary>
+        /// The unit normal pointing away from the triangle at the edge
+        /// defined by P2 and P3.
+        /// </summary>
+        public Vector2 Normal23 { get { return n23; } }
+
+        /// <summary>
+        /// Creates a triangle. The corner points will be reordered
+        /// to clockwise order.
+        /// </summary>
+        /// <param name="p1">The first corner point.</param>
+        /// <param name="p2">The second corner point.</param>
+        /// <param name="p3">The third corner point.</param>
+        public Triangle(Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            boundingBox = AWMathHelper.MinAndMax(p1, p2, p3);
+
+            // Assign p1 as given, but possibly swap p2 and p3 to enforce
+            // clockwise order of corner points.
+            Vector2 e12LeftNormal = new Vector2(p1.Y - p2.Y, p2.X - p1.X);
+            Vector2 e23 = p3 - p2;
+            float dot = Vector2.Dot(e12LeftNormal, e23);
+            if (dot > 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                P1 = p1;
+                P2 = p3;
+                P3 = p2;
+#else
+                this.p1 = p1;
+                this.p2 = p3;
+                this.p3 = p2;
+#endif
+                n13 = -e12LeftNormal;
+                n12 = new Vector2(p1.Y - p3.Y, p3.X - p1.X);
+                n23 = new Vector2(p3.Y - p2.Y, p2.X - p3.X);
+            }
+            else
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                P1 = p1;
+                P2 = p2;
+                P3 = p3;
+#else
+                this.p1 = p1;
+                this.p2 = p2;
+                this.p3 = p3;
+#endif
+                n12 = e12LeftNormal;
+                n13 = new Vector2(p3.Y - p1.Y, p1.X - p3.X);
+                n23 = new Vector2(p2.Y - p3.Y, p3.X - p2.X);
+            }
+            n12.Normalize();
+            n13.Normalize();
+            n23.Normalize();
+        }
+
+        #region IGeomPrimitive Members
+
+        /// <summary>
+        /// A rectangle that contains the geometric primitive.
+        /// </summary>
+        /// The Z-coordinates are irrelevant.
+        public BoundingBox BoundingBox { get { return boundingBox; } }
+
+        /// <summary>
+        /// Transforms the geometric primitive by a transformation matrix.
+        /// </summary>
+        /// <param name="transformation">The transformation matrix.</param>
+        /// <returns>The transformed geometric primitive.</returns>
+        public IGeomPrimitive Transform(Matrix transformation)
+        {
+#if TRUSTED_VISIBILITY_BREACH
+            return new Triangle(Vector2.Transform(P1, transformation),
+                Vector2.Transform(P2, transformation),
+                Vector2.Transform(P3, transformation));
+#else
+            return new Triangle(Vector2.Transform(p1, transformation),
+                Vector2.Transform(p2, transformation),
+                Vector2.Transform(p3, transformation));
+#endif
+        }
+
+        /// <summary>
+        /// Returns the shortest distance between the geometric primitive
+        /// and a point.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <returns>The shortest distance between the geometric primitive
+        /// and the point.</returns>
+        public float DistanceTo(Vector2 point)
+        {
+            return Geometry.Distance(new Point(point), this);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -761,32 +933,58 @@ namespace AW2.Helpers
         /// <returns>True iff the two geometric primitives intersect.</returns>
         public static bool Intersect(IGeomPrimitive prim1, IGeomPrimitive prim2)
         {
+            // Check trivial cases.
             if (prim1 is Everything || prim2 is Everything)
                 return true;
+
+            // Check fast cases.
             if (prim1 is Point)
             {
                 Point point1 = (Point)prim1;
                 if (prim2 is Point) return point1.Location.Equals(((Point)prim2).Location);
                 if (prim2 is Circle) return Intersect(point1, (Circle)prim2);
-                if (prim2 is Polygon) return Intersect(point1, (Polygon)prim2);
             }
             if (prim1 is Circle)
             {
                 Circle circle1 = (Circle)prim1;
                 if (prim2 is Point) return Intersect((Point)prim2, circle1);
                 if (prim2 is Circle) return Intersect(circle1, (Circle)prim2);
+            }
+
+            // Prune further checks by bounding boxes.
+            if (!prim1.BoundingBox.Intersects(prim2.BoundingBox)) return false;
+
+            // Check remaining, slow cases.
+            if (prim1 is Point)
+            {
+                Point point1 = (Point)prim1;
+                if (prim2 is Triangle) return Intersect(point1, (Triangle)prim2);
+                if (prim2 is Polygon) return Intersect(point1, (Polygon)prim2);
+            }
+            if (prim1 is Circle)
+            {
+                Circle circle1 = (Circle)prim1;
+                if (prim2 is Triangle) return Intersect(circle1, (Triangle)prim2);
                 if (prim2 is Polygon) return Intersect(circle1, (Polygon)prim2);
+            }
+            if (prim1 is Triangle)
+            {
+                Triangle triangle1 = (Triangle)prim1;
+                if (prim2 is Point) return Intersect((Point)prim2, triangle1);
+                if (prim2 is Circle) return Intersect((Circle)prim2, triangle1);
+                if (prim2 is Triangle) return Intersect(triangle1, (Triangle)prim2);
+                if (prim2 is Polygon) return Intersect(triangle1, (Polygon)prim2);
             }
             if (prim1 is Polygon)
             {
                 Polygon polygon1 = (Polygon)prim1;
                 if (prim2 is Point) return Intersect((Point)prim2, polygon1);
                 if (prim2 is Circle) return Intersect((Circle)prim2, polygon1);
+                if (prim2 is Triangle) return Intersect((Triangle)prim2, polygon1);
                 if (prim2 is Polygon) return Intersect(polygon1, (Polygon)prim2);
             }
-            Log.Write("Unknown geometric primitives in Geometry.Intersect(): " +
+            throw new Exception("Unknown geometric primitives in Geometry.Intersect(): " +
                       prim1.GetType().Name + " " + prim2.GetType().Name);
-            return false;
         }
 
         /// <summary>
@@ -814,6 +1012,64 @@ namespace AW2.Helpers
             // their radii apart. We can just as well compare the squares of the distances.
             float radiiSum = circle1.Radius + circle2.Radius;
             return Vector2.DistanceSquared(circle1.Center, circle2.Center) <= radiiSum * radiiSum;
+        }
+
+        /// <summary>
+        /// Returns if a point lies inside a triangle.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="triangle">The triangle.</param>
+        /// <returns><b>true</b>if the point lies inside the triangle, 
+        /// <b>false</b> otherwise.</returns>
+        public static bool Intersect(Point point, Triangle triangle)
+        {
+            // Adapted from C code by Eric Haines, from http://www.graphicsgems.org/.
+
+            // Shoot a test ray along +X axis.  The strategy is to compare vertex Y values
+            // to the testing point's Y and quickly discard edges which are entirely to one
+            // side of the test ray.
+            Vector2 p1 = triangle.P1;
+            Vector2 p2 = triangle.P2;
+            Vector2 p3 = triangle.P3;
+            bool yflag1 = p1.Y >= point.Location.Y;
+            bool yflag2 = p2.Y >= point.Location.Y;
+            bool yflag3 = p3.Y >= point.Location.Y;
+            bool inside_flag = false;
+            if (yflag1 != yflag2 &&
+                yflag2 == ((p2.Y - point.Location.Y) * (p1.X - p2.X) >= (p2.X - point.Location.X) * (p1.Y - p2.Y)))
+                inside_flag = !inside_flag;
+            if (yflag2 != yflag3 &&
+                yflag3 == ((p3.Y - point.Location.Y) * (p2.X - p3.X) >= (p3.X - point.Location.X) * (p2.Y - p3.Y)))
+                inside_flag = !inside_flag;
+            if (yflag3 != yflag1 &&
+                yflag1 == ((p1.Y - point.Location.Y) * (p3.X - p1.X) >= (p1.X - point.Location.X) * (p3.Y - p1.Y)))
+                inside_flag = !inside_flag;
+            return inside_flag;
+        }
+
+        /// <summary>
+        /// Returns if a circle intersects a triangle.
+        /// </summary>
+        /// <param name="circle">The circle.</param>
+        /// <param name="triangle">The triangle.</param>
+        /// <returns><b>true</b>if the circle intersects the triangle, 
+        /// <b>false</b> otherwise.</returns>
+        public static bool Intersect(Circle circle, Triangle triangle)
+        {
+            float radius = circle.Radius;
+            return DistanceSquared(new Point(circle.Center), triangle) <= radius * radius;
+        }
+
+        /// <summary>
+        /// Returns if two triangles intersect.
+        /// </summary>
+        /// <param name="triangle1">One triangle.</param>
+        /// <param name="triangle2">Another triangle.</param>
+        /// <returns><b>true</b>if the two triangles intersect, 
+        /// <b>false</b> otherwise.</returns>
+        public static bool Intersect(Triangle triangle1, Triangle triangle2)
+        {
+            throw new Exception("Method not implemented: Intersect(Triangle, Triangle)");
         }
 
         /// <summary>
@@ -1104,6 +1360,18 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns if a triangle intersects a polygon.
+        /// </summary>
+        /// <param name="triangle">The triangle.</param>
+        /// <param name="polygon">The polygon.</param>
+        /// <returns><b>true</b>if the circle intersects the polygon, 
+        /// <b>false</b> otherwise.</returns>
+        public static bool Intersect(Triangle triangle, Polygon polygon)
+        {
+            throw new Exception("Method not implemented: Intersect(Triangle, Polygon)");
+        }
+
+        /// <summary>
         /// Returns true iff the two polygons intersect.
         /// </summary>
         /// The polygons are considered to contain their respective edges.
@@ -1112,8 +1380,7 @@ namespace AW2.Helpers
         /// <returns>True iff the two polygons intersect.</returns>
         public static bool Intersect(Polygon polygon1, Polygon polygon2)
         {
-            // TODO: Implement polygon-polygon intersection.
-            return false;
+            throw new Exception("Method not implemented: Intersect(Polygon, Polygon)");
         }
 
         #endregion Intersection methods
@@ -1217,6 +1484,134 @@ namespace AW2.Helpers
 
             distance = (point.Location - closestPoint.Location).Length();
             return closestPoint;
+        }
+
+        /// <summary>
+        /// Returns the distance from a point to a triangle.
+        /// If the point is inside the triangle, the distance is zero.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="triangle">The triangle.</param>
+        /// <returns>The distance from the point to the triangle.</returns>
+        public static float Distance(Point point, Triangle triangle)
+        {
+            // First test corners for being the closest points on the triangle.
+            // This should cover the most probable cases, assuming the triangle
+            // is small relative to the distance 'p' is from 't' on average
+            // over several calls to this method.
+            // The second most probable case is that the closest point lies
+            // on an edge of 't'.
+            // The least probable case is that 'p' lies inside 't'.
+
+            Vector2 p1 = triangle.P1;
+            Vector2 p2 = triangle.P2;
+            Vector2 p3 = triangle.P3;
+
+            // Is 't.P1' the closest point?
+            Vector2 p1p = point.Location - p1;
+            Vector2 e12 = p2 - p1;
+            Vector2 e13 = p3 - p1;
+            float halfplane12 = Vector2.Dot(p1p, e12);
+            float halfplane13 = Vector2.Dot(p1p, e13);
+            if (halfplane12 <= 0 && halfplane13 <= 0)
+                return Vector2.Distance(point.Location, p1);
+
+            // Is 't.P2' the closest point?
+            Vector2 p2p = point.Location - p2;
+            Vector2 e23 = p3 - p2;
+            float halfplane21 = -Vector2.Dot(p2p, e12);
+            float halfplane23 = Vector2.Dot(p2p, e23);
+            if (halfplane21 <= 0 && halfplane23 <= 0)
+                return Vector2.Distance(point.Location, p2);
+
+            // Is 't.P3' the closest point?
+            Vector2 p3p = point.Location - p3;
+            float halfplane31 = -Vector2.Dot(p3p, e13);
+            float halfplane32 = -Vector2.Dot(p3p, e23);
+            if (halfplane31 <= 0 && halfplane32 <= 0)
+                return Vector2.Distance(point.Location, p3);
+
+            // Is the closest point on the edge between 't.P2' and 't.P3'?
+            float distance23 = Vector2.Dot(triangle.Normal23, p2p);
+            if (distance23 >= 0 && halfplane23 >= 0 && halfplane32 >= 0)
+                return distance23;
+
+            // Is the closest point on the edge between 't.P1' and 't.P3'?
+            float distance13 = Vector2.Dot(triangle.Normal13, p1p);
+            if (distance13 >= 0 && halfplane13 >= 0 && halfplane31 >= 0)
+                return distance13;
+
+            // Is the closest point on the edge between 't.P1' and 't.P2'?
+            float distance12 = Vector2.Dot(triangle.Normal12, p1p);
+            if (distance12 >= 0 && halfplane12 >= 0 && halfplane21 >= 0)
+                return distance12;
+
+            // Otherwise 'p' lies inside 't'.
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns the squared distance from a point to a triangle.
+        /// If the point is inside the triangle, the distance is zero.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="triangle">The triangle.</param>
+        /// <returns>The squared distance from the point to the triangle.</returns>
+        public static float DistanceSquared(Point point, Triangle triangle)
+        {
+            // First, test corners for being the closest points on the triangle.
+            // This should cover the most probable cases, assuming the triangle
+            // is small relative to the distance 'p' is from 't' on average
+            // over several calls to this method.
+            // The second most probable case is that the closest point lies
+            // on an edge of 't'.
+            // The least probable case is that 'p' lies inside 't'.
+
+            Vector2 p1 = triangle.P1;
+            Vector2 p2 = triangle.P2;
+            Vector2 p3 = triangle.P3;
+
+            // Is 'p1' the closest point?
+            Vector2 p1p = point.Location - p1;
+            Vector2 e12 = p2 - p1;
+            Vector2 e13 = p3 - p1;
+            float halfplane12 = Vector2.Dot(p1p, e12);
+            float halfplane13 = Vector2.Dot(p1p, e13);
+            if (halfplane12 <= 0 && halfplane13 <= 0)
+                return Vector2.DistanceSquared(point.Location, p1);
+
+            // Is 'p2' the closest point?
+            Vector2 p2p = point.Location - p2;
+            Vector2 e23 = p3 - p2;
+            float halfplane21 = -Vector2.Dot(p2p, e12);
+            float halfplane23 = Vector2.Dot(p2p, e23);
+            if (halfplane21 <= 0 && halfplane23 <= 0)
+                return Vector2.DistanceSquared(point.Location, p2);
+
+            // Is 'p3' the closest point?
+            Vector2 p3p = point.Location - p3;
+            float halfplane31 = -Vector2.Dot(p3p, e13);
+            float halfplane32 = -Vector2.Dot(p3p, e23);
+            if (halfplane31 <= 0 && halfplane32 <= 0)
+                return Vector2.DistanceSquared(point.Location, p3);
+
+            // Is the closest point on the edge between 'p2' and 'p3'?
+            float distance23 = Vector2.Dot(triangle.Normal23, p2p);
+            if (distance23 >= 0 && halfplane23 >= 0 && halfplane32 >= 0)
+                return distance23 * distance23;
+
+            // Is the closest point on the edge between 'p1' and 'p3'?
+            float distance13 = Vector2.Dot(triangle.Normal13, p1p);
+            if (distance13 >= 0 && halfplane13 >= 0 && halfplane31 >= 0)
+                return distance13 * distance13;
+
+            // Is the closest point on the edge between 'p1' and 'p2'?
+            float distance12 = Vector2.Dot(triangle.Normal12, p1p);
+            if (distance12 >= 0 && halfplane12 >= 0 && halfplane21 >= 0)
+                return distance12 * distance12;
+
+            // Otherwise 'p' lies inside 't'.
+            return 0;
         }
 
         /// <summary>
@@ -1495,7 +1890,138 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Returns a unit normal vector from the a polygon pointing towards a point.
+        /// Returns a normalised vector pointing from an area toward another,
+        /// or the zero vector if there's no candidate for the normal.
+        /// </summary>
+        /// <param name="prim1">The area to point from.</param>
+        /// <param name="prim2">The area to point to.</param>
+        /// <returns>A normalised vector pointing from an the first area toward the other,
+        /// or the zero vector in difficult cases.</returns>
+        public static Vector2 GetNormal(IGeomPrimitive prim1, IGeomPrimitive prim2)
+        {
+            if (prim1 is Everything || prim2 is Everything)
+                return Vector2.Zero;
+            if (prim1 is Point)
+            {
+                Point point1 = (Point)prim1;
+                if (prim2 is Point)
+                {
+                    Vector2 difference = ((Point)prim2).Location - point1.Location;
+                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
+                }
+                if (prim2 is Circle)
+                {
+                    Vector2 difference = ((Circle)prim2).Center - point1.Location;
+                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
+                }
+                if (prim2 is Triangle) return -GetNormal((Triangle)prim2, point1);
+                if (prim2 is Polygon) return -GetNormal((Polygon)prim2, point1);
+            }
+            if (prim1 is Circle)
+            {
+                Circle circle1 = (Circle)prim1;
+                if (prim2 is Point)
+                {
+                    Vector2 difference = ((Point)prim2).Location - circle1.Center;
+                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
+                }
+                if (prim2 is Circle) 
+                {
+                    Vector2 difference = ((Circle)prim2).Center - circle1.Center;
+                    return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
+                }
+                if (prim2 is Triangle) return -GetNormal((Triangle)prim2, new Point(circle1.Center));
+                if (prim2 is Polygon) return -GetNormal((Polygon)prim2, new Point(circle1.Center));
+            }
+            if (prim1 is Triangle)
+            {
+                Triangle triangle1 = (Triangle)prim1;
+                if (prim2 is Point) return GetNormal(triangle1, (Point)prim2);
+                if (prim2 is Circle) return GetNormal(triangle1, new Point(((Circle)prim2).Center));
+                if (prim2 is Triangle) throw new Exception("Geometry.GetNormal(Triangle, Triangle) not implemented");
+                if (prim2 is Polygon) throw new Exception("Geometry.GetNormal(Triangle, Polygon) not implemented");
+            }
+            if (prim1 is Polygon)
+            {
+                Polygon polygon1 = (Polygon)prim1;
+                if (prim2 is Point) return GetNormal(polygon1, (Point)prim2);
+                if (prim2 is Circle) return GetNormal(polygon1, new Point(((Circle)prim2).Center));
+                if (prim2 is Triangle) throw new Exception("Geometry.GetNormal(Polygon, Triangle) not implemented");
+                if (prim2 is Polygon) throw new Exception("Geometry.GetNormal(Polygon, Polygon) not implemented");
+            }
+            throw new Exception("Unknown geometric primitives in Geometry.GetNormal(): " +
+                      prim1.GetType().Name + " " + prim2.GetType().Name);
+        }
+
+        /// <summary>
+        /// Returns a unit normal vector from a triangle pointing towards a point.
+        /// </summary>
+        /// The returned vector will be normalised, it will be parallel to a shortest
+        /// line segment that connects the triangle and the point, and it will
+        /// point from the triangle towards the point. If the point lies inside
+        /// the triangle, the zero vector will be returned.
+        /// <param name="triangle">The triangle.</param>
+        /// <param name="point">The point for the normal to point to.</param>
+        /// <returns>A unit normal pointing to the given location.</returns>
+        public static Vector2 GetNormal(Triangle triangle, Point point)
+        {
+            // First test corners for being the closest points on the triangle.
+            // This should cover the most probable cases, assuming the triangle
+            // is small relative to the distance 'p' is from 't' on average
+            // over several calls to this method.
+            // The second most probable case is that the closest point lies
+            // on an edge of 't'.
+            // The least probable case is that 'p' lies inside 't'.
+
+            Vector2 p1 = triangle.P1;
+            Vector2 p2 = triangle.P2;
+            Vector2 p3 = triangle.P3;
+
+            // Is 't.P1' the closest point?
+            Vector2 p1p = point.Location - p1;
+            Vector2 e12 = p2 - p1;
+            Vector2 e13 = p3 - p1;
+            float halfplane12 = Vector2.Dot(p1p, e12);
+            float halfplane13 = Vector2.Dot(p1p, e13);
+            if (halfplane12 <= 0 && halfplane13 <= 0)
+                return Vector2.Normalize(point.Location - p1);
+
+            // Is 't.P2' the closest point?
+            Vector2 p2p = point.Location - p2;
+            Vector2 e23 = p3 - p2;
+            float halfplane21 = -Vector2.Dot(p2p, e12);
+            float halfplane23 = Vector2.Dot(p2p, e23);
+            if (halfplane21 <= 0 && halfplane23 <= 0)
+                return Vector2.Normalize(point.Location - p2);
+
+            // Is 't.P3' the closest point?
+            Vector2 p3p = point.Location - p3;
+            float halfplane31 = -Vector2.Dot(p3p, e13);
+            float halfplane32 = -Vector2.Dot(p3p, e23);
+            if (halfplane31 <= 0 && halfplane32 <= 0)
+                return Vector2.Normalize(point.Location - p3);
+
+            // Is the closest point on the edge between 't.P2' and 't.P3'?
+            float distance23 = Vector2.Dot(triangle.Normal23, p2p);
+            if (distance23 >= 0 && halfplane23 >= 0 && halfplane32 >= 0)
+                return triangle.Normal23;
+
+            // Is the closest point on the edge between 't.P1' and 't.P3'?
+            float distance13 = Vector2.Dot(triangle.Normal13, p1p);
+            if (distance13 >= 0 && halfplane13 >= 0 && halfplane31 >= 0)
+                return triangle.Normal13;
+
+            // Is the closest point on the edge between 't.P1' and 't.P2'?
+            float distance12 = Vector2.Dot(triangle.Normal12, p1p);
+            if (distance12 >= 0 && halfplane12 >= 0 && halfplane21 >= 0)
+                return triangle.Normal12;
+
+            // Otherwise 'p' lies inside 't'.
+            return Vector2.Zero;
+        }
+
+        /// <summary>
+        /// Returns a unit normal vector from a polygon pointing towards a point.
         /// </summary>
         /// The returned vector will be normalised, it will be parallel to a shortest
         /// line segment that connects the polygon and the point, and it will
@@ -1986,6 +2512,52 @@ namespace AW2.Helpers
                 Assert.IsFalse(Geometry.Intersect(poly2, poly3)); // no intersection
                 Assert.IsTrue(Geometry.Intersect(poly1, poly4)); // polygon in polygon
                 Assert.IsTrue(Geometry.Intersect(poly1, poly5)); // vertices out, edge intersects polygon
+            }
+
+            /// <summary>
+            /// Tests point-triangle intersections
+            /// </summary>
+            [Test]
+            public void TestIntersectPointTriangle()
+            {
+                Point p1 = new Point(new Vector2(0f, 0f));
+                Point p2 = new Point(new Vector2(19.9999f, 49.9999f));
+                Point p3 = new Point(new Vector2(10f, 0f));
+                Point p4 = new Point(new Vector2(0f, -20f));
+                Vector2 v1 = new Vector2(0f, -10f);
+                Vector2 v2 = new Vector2(20f, 50f);
+                Vector2 v3 = new Vector2(-50f, 70f);
+                Triangle t1 = new Triangle(v1, v2, v3);
+                Assert.IsTrue(Intersect(p1, t1));
+                Assert.IsTrue(Intersect(p2, t1));
+                Assert.IsFalse(Intersect(p3, t1));
+                Assert.IsFalse(Intersect(p4, t1));
+            }
+
+            /// <summary>
+            /// Tests circle-triangle intersections
+            /// </summary>
+            [Test]
+            public void TestIntersectCircleTriangle()
+            {
+                Vector2 p1 = new Vector2(0f, 0f);
+                Vector2 p2 = new Vector2(20f, 50f);
+                Vector2 p3 = new Vector2(10f, 0f);
+                Vector2 p4 = new Vector2(0f, -20f);
+                Vector2 v1 = new Vector2(0f, -10f);
+                Vector2 v2 = new Vector2(20f, 50f);
+                Vector2 v3 = new Vector2(-50f, 70f);
+                Triangle t1 = new Triangle(v1, v2, v3);
+                Assert.IsTrue(Intersect(new Circle(p1, 1), t1)); // circle included
+                Assert.IsTrue(Intersect(new Circle(p1, 20), t1)); // neither included
+                Assert.IsTrue(Intersect(new Circle(p1, 2000), t1)); // triangle included
+                Assert.IsTrue(Intersect(new Circle(p2, 0), t1));
+                Assert.IsTrue(Intersect(new Circle(p2, 20), t1));
+                Assert.IsFalse(Intersect(new Circle(p3, 5), t1));
+                Assert.IsTrue(Intersect(new Circle(p3, 10), t1));
+                Assert.IsFalse(Intersect(new Circle(p4, 9.9999f), t1)); // barely out
+                Assert.IsTrue(Intersect(new Circle(p4, 10), t1)); // borders intersect
+                Assert.IsTrue(Intersect(new Circle(p4, 10.0001f), t1)); // barely in
             }
 
             /// <summary>

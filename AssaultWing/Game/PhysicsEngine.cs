@@ -6,39 +6,6 @@ using Microsoft.Xna.Framework;
 namespace AW2.Game
 {
     /// <summary>
-    /// Choice of laws of physics that should apply.
-    /// </summary>
-    /// <see cref="AW2.Game.Gob.PhysicsApplyMode"/>
-    [Flags]
-    public enum PhysicsApplyMode
-    {
-        /// <summary>
-        /// The gob moves with physics.
-        /// </summary>
-        Move = 0x0001,
-
-        /// <summary>
-        /// The gob is affected by gravity.
-        /// </summary>
-        Gravity = 0x0002,
-
-        /// <summary>
-        /// The gob goes along all physical laws.
-        /// </summary>
-        All = 0x0003,
-
-        /// <summary>
-        /// The gob doesn't follow physical laws.
-        /// </summary>
-        None = 0x0000,
-
-        /// <summary>
-        /// The gob wants a physical collision even when only its receptor overlaps.
-        /// </summary>
-        ReceptorCollidesPhysically = 0x0010,
-    }
-
-    /// <summary>
     /// Interface for a physics engine. The physics engine takes care of applying
     /// all forces and delta values in the right proportion relative to elapsed time
     /// on each frame. The physics engine also takes care of finding out collisions
@@ -97,6 +64,12 @@ namespace AW2.Game
         void Unregister(Gob gob);
 
         /// <summary>
+        /// Removes a previously registered collision area from the register.
+        /// </summary>
+        /// <param name="area">The collision area.</param>
+        void Unregister(CollisionArea area);
+
+        /// <summary>
         /// Applies the given force to the given gob.
         /// </summary>
         /// Note that the larger the mass of the gob is, the more force is needed to give it
@@ -150,11 +123,5 @@ namespace AW2.Game
         /// <param name="position">The position.</param>
         /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
         bool IsFreePosition(Gob gob, Vector2 position);
-
-        /// <summary>
-        /// Removes a triangle from a wall that has been registered for collisions.
-        /// </summary>
-        /// <param name="wallTriangleHandle">A handle to the wall triangle to remove.</param>
-        void RemoveWallTriangle(object wallTriangleHandle);
     }
 }

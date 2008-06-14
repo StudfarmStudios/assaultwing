@@ -11,7 +11,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// A player's ship.
     /// </summary>
-    public class Ship : Gob, ISolid, IDamageable
+    public class Ship : Gob
     {
         #region Ship fields related to flying
 
@@ -631,14 +631,6 @@ namespace AW2.Game.Gobs
 
         #endregion Ship public methods
 
-        #region ICollidable Members
-        // Some members are implemented in class Gob.
-
-        #endregion
-
-        #region IDamageable Members
-        // Some members are implemented in class Gob.
-
         /// <summary>
         /// Inflicts damage on the entity.
         /// </summary>
@@ -651,8 +643,5 @@ namespace AW2.Game.Gobs
                 Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage);
         }
-
-        #endregion
-
     }
 }

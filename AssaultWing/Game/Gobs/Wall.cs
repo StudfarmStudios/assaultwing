@@ -14,7 +14,7 @@ namespace AW2.Game.Gobs
     /// Note that a wall has no position or movement like other gobs have. 
     /// Instead, a wall acts like a polygon. For visual purposes, walls have 
     /// also a third dimension.
-    public class Wall : Gob, IThick, IHoleable, IConsistencyCheckable
+    public class Wall : Gob, IConsistencyCheckable
     {
         #region Wall Fields
 
@@ -30,21 +30,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         [RuntimeState]
         protected short[] indexData;
-
-        /// <summary>
-        /// Handles to the 3D model's triangles. For <b>PhysicsEngine</b>.
-        /// </summary>
-        /// Index n corresponds to the triangle that is defined by <b>indexData</b>
-        /// indices 3n, 3n+1 and 3n+2.
-        protected object[] wallTriangleHandles;
-
-        /// <summary>
-        /// Polygon representations of the 3D model's triangles. Any element in the array
-        /// may be <b>null</b>, meaning that the triangle has been removed.
-        /// </summary>
-        /// Index n corresponds to the triangle that is defined by <b>indexData</b>
-        /// indices 3n, 3n+1 and 3n+2.
-        protected Polygon[] wallTrianglePolygons;
 
         /// <summary>
         /// Triangle index map of the wall's 3D model in the X-Y plane.
@@ -86,7 +71,7 @@ namespace AW2.Game.Gobs
         /// The collision polygons of the wall.
         /// </summary>
         [RuntimeState]
-        CollisionArea[] polygons; // TODO: Remove Wall.polygons
+        CollisionArea[] polygons;
 
         /// <summary>
         /// The name of the texture to fill the wall with.
@@ -148,7 +133,8 @@ namespace AW2.Game.Gobs
             polygons = new CollisionArea[] {
                 new CollisionArea("General", new Polygon(new Vector2[] {
                     new Vector2(0,0), new Vector2(100,0), new Vector2(0,100),
-                }), null),
+                }), null, 
+                CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None),
             };
             textureName = "dummytexture";
             vertexDeclaration = null;
@@ -164,14 +150,12 @@ namespace AW2.Game.Gobs
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             this.vertexData = null;
             this.indexData = null;
-            this.wallTriangleHandles = null;
-            this.wallTrianglePolygons = null;
             this.triangleCount = 0;
             this.polygons = null;
             this.effect = new BasicEffect(gfx, null);
             this.vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             this.boundingBox = new BoundingBox();
-            base.physicsApplyMode = PhysicsApplyMode.None;
+            movable = false;
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -263,8 +247,6 @@ namespace AW2.Game.Gobs
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             base.SetRuntimeState(runtimeState);
             triangleCount = indexData.Length / 3;
-            wallTriangleHandles = new object[triangleCount];
-            wallTrianglePolygons = new Polygon[triangleCount];
             texture = data.GetTexture(textureName);
             boundingBox = BoundingBox.CreateFromPoints(
                 Array.ConvertAll<VertexPositionNormalTexture, Vector3>(vertexData,
@@ -273,7 +255,7 @@ namespace AW2.Game.Gobs
             // Gain ownership over our runtime collision areas.
             collisionAreas = polygons;
             for (int i = 0; i < collisionAreas.Length; ++i)
-                collisionAreas[i].Owner = (ICollidable)this;
+                collisionAreas[i].Owner = this;
 
 #if DEBUG
             Helpers.Graphics3D.TriangleWinding wind = Helpers.Graphics3D.GetTriangleWinding(vertexData, indexData);
@@ -289,70 +271,13 @@ namespace AW2.Game.Gobs
                 out wireVertexData, out wireIndexData);
         }
 
-        #region ICollidable Members
-        // Some members are implemented in class Gob.
-
-        #endregion ICollidable Members
-
-        #region IThick Members
-
-        /// <summary>
-        /// Returns the unit normal vector from the thick gob
-        /// pointing towards the given location.
-        /// </summary>
-        /// <param name="pos">The location for the normal to point to.</param>
-        /// <param name="areas">The collision areas where to limit the search for normals.</param>
-        /// <returns>The unit normal pointing to the given location.</returns>
-        public Vector2 GetNormal(Vector2 pos, List<ICollisionArea> areas)
-        {
-            if (areas == null)
-                return Vector2.Zero;
-            Helpers.Point posPoint = new Helpers.Point(pos);
-            List<Polygon> checkTriangles = new List<Polygon>(triangleCount);
-            foreach (ICollisionArea collArea in areas)
-            {
-                if (!(collArea is WallTriangle) || collArea.Owner != this)
-                    throw new ArgumentException("Collision areas are not from this wall");
-                checkTriangles.Add((Polygon)((WallTriangle)collArea).Area);
-            }
-            //foreach (Polygon? triangle in wallTrianglePolygons)
-            //    if (triangle.HasValue)
-            //        checkTriangles.Add(triangle.Value);
-            return Helpers.Geometry.GetNormal(checkTriangles, posPoint);
-        }
-
-        #endregion IThick Members
-
-        #region IHoleable Members
-
-        /// <summary>
-        /// Index data of the entity's 3D model.
-        /// </summary>
-        public short[] IndexData { get { return indexData; } }
-        
-        /// <summary>
-        /// Vertex data of the entity's 3D model.
-        /// </summary>
-        public VertexPositionNormalTexture[] VertexData { get { return vertexData; } }
-
-        /// <summary>
-        /// Handles for all triangles in the entity's 3D model.
-        /// Used internally by <b>PhysicsEngine</b>.
-        /// </summary>
-        public object[] WallTriangleHandles { get { return wallTriangleHandles; } }
-
-        /// <summary>
-        /// Polygons for all triangles in the entity's 3D model. Any element in the array
-        /// may be <b>null</b>, meaning that the triangle has been removed.
-        /// </summary>
-        public Polygon[] WallTrianglePolygons { get { return wallTrianglePolygons; } }
-
         /// <summary>
         /// Removes an area from the gob. 
         /// </summary>
         /// <param name="holePos">Center of the area to remove, in world coordinates.</param>
         public void MakeHole(Vector2 holePos)
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             float holeRadius = 10; // HACK: hole size and shape
             Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
 
@@ -379,9 +304,11 @@ namespace AW2.Game.Gobs
                         indexData[3 * index + 2] = 0;
 
                         // Remove the triangle from physics engine.
-                        physics.RemoveWallTriangle(wallTriangleHandles[index]);
-                        wallTriangleHandles[index] = null;
-                        wallTrianglePolygons[index] = null;
+                        data.CustomOperations += delegate(object obj) 
+                        {
+                            physics.Unregister(collisionAreas[index]); 
+                        };
+
                         --triangleCount;
                     }
                     //indexMap[y, x] = null;
@@ -389,13 +316,8 @@ namespace AW2.Game.Gobs
 
             // Remove the wall gob if all its triangles have been removed.
             if (triangleCount == 0)
-            {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 data.RemoveGob(this);
-            }
         }
-
-        #endregion
 
         #region IConsistencyCheckable Members
 
@@ -406,8 +328,21 @@ namespace AW2.Game.Gobs
         /// <param name="limitationAttribute">Check only fields marked with 
         /// this limitation attribute.</param>
         /// <see cref="Serialization"/>
-        public void MakeConsistent(Type limitationAttribute)
+        public new void MakeConsistent(Type limitationAttribute)
         {
+            // NOTE: This method is meant to re-implement the interface member
+            // IConsistencyCheckable.MakeConsistent(Type) that is already implemented
+            // in the base class Gob. According to the C# Language Specification 1.2
+            // (and not corrected in the specification version 2.0), adding the 'new'
+            // keyword to this re-implementation would make this code
+            // 
+            //      Wall wall;
+            //      ((IConsistencyCheckable)wall).MakeConsistent(type)
+            //
+            // call Gob.MakeConsistent(Type). However, debugging reveals this is not the
+            // case. By leaving out the 'new' keyword, the semantics stays the same, as
+            // seen by debugging, but the compiler produces a warning.
+            base.MakeConsistent(limitationAttribute);
             if (limitationAttribute == typeof(RuntimeStateAttribute))
                 FineTriangles();
         }
@@ -432,11 +367,30 @@ namespace AW2.Game.Gobs
             this.effect = effect;
             FineTriangles();
             triangleCount = this.indexData.Length / 3;
-            wallTriangleHandles = new object[triangleCount];
-            wallTrianglePolygons = new Polygon[triangleCount];
             boundingBox = BoundingBox.CreateFromPoints(
                 Array.ConvertAll<VertexPositionNormalTexture, Vector3>(this.vertexData,
                 delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
+
+            // Create collision areas from 3D model's triangles.
+            collisionAreas = new CollisionArea[this.indexData.Length / 3];
+            for (int i = 0; i + 2 < this.indexData.Length; i += 3)
+            {
+                Vector2 min, max;
+                AWMathHelper.MinAndMax(
+                    this.vertexData[this.indexData[i + 0]].Position,
+                    this.vertexData[this.indexData[i + 1]].Position,
+                    this.vertexData[this.indexData[i + 2]].Position,
+                    out min, out max);
+                Vector3 v1 = this.vertexData[this.indexData[i + 0]].Position;
+                Vector3 v2 = this.vertexData[this.indexData[i + 1]].Position;
+                Vector3 v3 = this.vertexData[this.indexData[i + 2]].Position;
+                IGeomPrimitive triangleArea = new Triangle(
+                    new Vector2(v1.X, v1.Y),
+                    new Vector2(v2.X, v2.Y),
+                    new Vector2(v3.X, v3.Y));
+                collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
+                    CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None);
+            }
         }
 
         #endregion Protected methods

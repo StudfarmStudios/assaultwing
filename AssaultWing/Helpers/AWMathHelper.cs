@@ -62,6 +62,19 @@ namespace AW2.Helpers
             max = new Vector2(Math.Max(v1.X, Math.Max(v2.X, v3.X)),
                               Math.Max(v1.Y, Math.Max(v2.Y, v3.Y)));
         }
+
+        /// <summary>
+        /// Returns the minimum and maximum X, Y and Z coordinates out of
+        /// given three tuples of X and Y coordinates. The Z coordinates
+        /// will all be zero.
+        /// </summary>
+        public static BoundingBox MinAndMax(Vector2 v1, Vector2 v2, Vector2 v3)
+        {
+            return new BoundingBox(new Vector3(Math.Min(v1.X, Math.Min(v2.X, v3.X)),
+                Math.Min(v1.Y, Math.Min(v2.Y, v3.Y)), 0),
+                new Vector3(Math.Max(v1.X, Math.Max(v2.X, v3.X)),
+                Math.Max(v1.Y, Math.Max(v2.Y, v3.Y)), 0));
+        }
         
         /// <summary>
         /// Returns the least power of two that is more than or equal to a value.
@@ -96,6 +109,28 @@ namespace AW2.Helpers
             value |= value >> 16;
 
             return (value >> 1) + 1;
+        }
+
+        /// <summary>
+        /// Returns the floor of the binary logarithm of a positive integer,
+        /// i.e. the position of the most significant 1 bit. The return value
+        /// is undefined for zero and negative values.
+        /// </summary>
+        /// <param name="value">A positive value.</param>
+        /// <returns>The binary logarithm of the value, or undefined for
+        /// non-positive values.</returns>
+        public static int LogTwo(int value)
+        {
+            // Algorithm from Warren Jr., Henry S. (2002), Hacker's Delight,
+            // Addison Wesley, pp. pp. 215, ISBN 978-0201914658,
+            // as presented on Wikipedia on 2008-06-09.
+            int pos = 0;
+            if (value >= 1 << 16) { value >>= 16; pos += 16; }
+            if (value >= 1 << 8) { value >>= 8; pos += 8; }
+            if (value >= 1 << 4) { value >>= 4; pos += 4; }
+            if (value >= 1 << 2) { value >>= 2; pos += 2; }
+            if (value >= 1 << 1) { pos += 1; }
+            return pos;
         }
 
         #region Unit tests
@@ -230,6 +265,27 @@ namespace AW2.Helpers
                 Assert.AreEqual(0x40000000, CeilingPowerTwo(0x3fffffff));
                 Assert.AreEqual(0x20000000, FloorPowerTwo(0x3fffffff));
                 Assert.AreEqual(0x40000000, FloorPowerTwo(0x50fa7e57));
+            }
+
+            /// <summary>
+            /// Tests binary logarithm.
+            /// </summary>
+            [Test]
+            public void TestLogTwo()
+            {
+                Assert.AreEqual(0, LogTwo(1));
+                Assert.AreEqual(1, LogTwo(2));
+                Assert.AreEqual(1, LogTwo(3));
+                Assert.AreEqual(2, LogTwo(4));
+                Assert.AreEqual(30, LogTwo(0x7fffffff));
+                Assert.AreEqual(30, LogTwo(0x40000001));
+                Assert.AreEqual(30, LogTwo(0x40000000));
+                Assert.AreEqual(29, LogTwo(0x3fffffff));
+                for (int i = 1; i < 0x40000000; i += i < 0x1234 ? 1 : 1301)
+                {
+                    Assert.AreEqual(CeilingPowerTwo(i + 1), 1 << (1 + LogTwo(i)));
+                    Assert.AreEqual(FloorPowerTwo(i), 1 << LogTwo(i));
+                }
             }
         }
 #endif

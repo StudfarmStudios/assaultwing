@@ -341,6 +341,7 @@ namespace AW2.Game
                         {
                             area.Owner.Collide(area, area2, false);
                         }, null);
+                        return false;
                     });
             }
         }
@@ -688,24 +689,23 @@ namespace AW2.Game
                 if (((1 << typeBit) & (int)types) == 0) continue;
                 collisionAreas[typeBit].ForEachElement(min, max, delegate(CollisionArea area2)
                 {
-                    if (!Geometry.Intersect(areaArea, area2.Area)) return;
+                    if (!Geometry.Intersect(areaArea, area2.Area)) return false;
                     Gob area2Owner = area2.Owner;
-                    if (areaOwner == area2Owner) return;
-                    if (area2Owner.Disabled) return;
+                    if (areaOwner == area2Owner) return false;
+                    if (area2Owner.Disabled) return false;
                     if ((areaOwnerCold || area2Owner.Cold) &&
                         areaOwnerOwner == area2Owner.Owner &&
                         areaOwnerOwner != null)
-                        return;
+                        return false;
                     // All checks passed.
                     if (overlappers == null)
                         overlappers = new List<CollisionArea>();
                     overlappers.Add(area);
+                    return false;
                 });
             }
             return overlappers;
         }
-
-        private class LoopBreakException : Exception { }
 
         /// <summary>
         /// Performs an action on each collision area of certain types that overlap a collision area,
@@ -729,34 +729,30 @@ namespace AW2.Game
             Gob areaOwner = area.Owner;
             bool areaOwnerCold = areaOwner.Cold;
             Player areaOwnerOwner = areaOwner.Owner;
-            try
+            for (int typeBit = 0; typeBit < collisionAreas.Length; ++typeBit)
             {
-                for (int typeBit = 0; typeBit < collisionAreas.Length; ++typeBit)
+                if (((1 << typeBit) & (int)types) == 0) continue;
+                collisionAreas[typeBit].ForEachElement(min, max, delegate(CollisionArea area2)
                 {
-                    if (((1 << typeBit) & (int)types) == 0) continue;
-                    collisionAreas[typeBit].ForEachElement(min, max, delegate(CollisionArea area2)
-                    {
-                        if (!Geometry.Intersect(areaArea, area2.Area)) return;
-                        Gob area2Owner = area2.Owner;
-                        if (areaOwner == area2Owner) return;
-                        if (area2Owner.Disabled) return;
-                        if ((areaOwnerCold || area2Owner.Cold) &&
-                            areaOwnerOwner != null &&
-                            areaOwnerOwner == area2Owner.Owner)
-                            return;
-                        if (skipAreas != null)
-                            foreach (CollisionArea skipArea in skipAreas)
-                                if (skipArea == area2) return;
-                        // All checks passed.
-                        overlapperFound = true;
-                        if (action != null)
-                            action(area2);
-                        else
-                            throw new LoopBreakException();
-                    });
-                }
+                    if (!Geometry.Intersect(areaArea, area2.Area)) return false;
+                    Gob area2Owner = area2.Owner;
+                    if (areaOwner == area2Owner) return false;
+                    if (area2Owner.Disabled) return false;
+                    if ((areaOwnerCold || area2Owner.Cold) &&
+                        areaOwnerOwner != null &&
+                        areaOwnerOwner == area2Owner.Owner)
+                        return false;
+                    if (skipAreas != null)
+                        foreach (CollisionArea skipArea in skipAreas)
+                            if (skipArea == area2) return false;
+                    // All checks passed.
+                    overlapperFound = true;
+                    if (action == null)
+                        return true; // Breaks out of SpatialGrid<T>.ForEachElement
+                    action(area2);
+                    return false;
+                });
             }
-            catch (LoopBreakException) { }
             return overlapperFound;
         }
 

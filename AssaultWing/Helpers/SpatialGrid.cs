@@ -173,11 +173,13 @@ namespace AW2.Helpers
 
         /// <summary>
         /// Performs an action on each element that intersects a rectangular area.
+        /// If the action returns <c>true</c> then the iteration will break.
         /// </summary>
         /// <param name="min">Minimum coordinates of the rectangular area.</param>
         /// <param name="max">Maximum coordinates of the rectangular area.</param>
-        /// <param name="action">The action to perform.</param>
-        public void ForEachElement(Vector2 min, Vector2 max, Action<T> action)
+        /// <param name="action">The action to perform. If it returns <c>true</c>,
+        /// the iteration will break.</param>
+        public void ForEachElement(Vector2 min, Vector2 max, Predicate<T> action)
         {
             int gridMinX, gridMinY, gridMaxX, gridMaxY;
             bool outOfBounds;
@@ -185,28 +187,30 @@ namespace AW2.Helpers
 
             if (outOfBounds)
                 for (int i = 0; i < outerCell.Count; ++i)
-                    action(outerCell[i].Value);
+                    if (action(outerCell[i].Value)) return;
             for (int y = gridMinY; y < gridMaxY; ++y)
                 for (int x = gridMinX; x < gridMaxX; ++x)
                 {
                     List<SpatialGridElement<T>> cell = cells[y, x];
                     // We come here very often -- avoid foreach created iterator overhead.
                     for (int i = 0; i < cell.Count; ++i)
-                        action(cell[i].Value);
+                        if (action(cell[i].Value)) return;
                 }
         }
 
         /// <summary>
-        /// Performs an action on each element in the grid.
+        /// Performs an action on each element in the grid. If the action returns
+        /// <c>true</c> then the iteration will break.
         /// </summary>
-        /// <param name="action">The action to perform.</param>
-        public void ForEachElement(Action<T> action)
+        /// <param name="action">The action to perform. If it returns <c>true</c>,
+        /// the iteration will break.</param>
+        public void ForEachElement(Predicate<T> action)
         {
             for (int i = 0; i < outerCell.Count; ++i)
-                action(outerCell[i].Value);
+                if (action(outerCell[i].Value)) return;
             foreach (List<SpatialGridElement<T>> cell in cells)
                 for (int i = 0; i < cell.Count; ++i)
-                    action(cell[i].Value);
+                    if (action(cell[i].Value)) return;
         }
 
         #endregion Public methods

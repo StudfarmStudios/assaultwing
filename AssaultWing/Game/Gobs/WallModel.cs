@@ -104,14 +104,6 @@ namespace AW2.Game.Gobs
             if (effect == null)
                 throw new ArgumentException("Wall model mesh's effect isn't a BasicEffect");
             Set3DModel(vertexData, indexData, effect.Texture, effect);
-
-#if false // TODO: remove old code about polygonal collision outlines for walls
-            // Create a collision polygon out of the 3D model.
-            Polygon poly = Graphics3D.GetOutline(model);
-            base.collisionAreas = new CollisionArea[] {
-                new CollisionArea("General", poly, this),
-            };
-#endif
         }
     }
 }

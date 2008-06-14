@@ -131,7 +131,7 @@
     <Compile Include="Game\Gobs\Wall.cs">
       <Name>Wall</Name>
     </Compile>
-    <Compile Include="Game\IGob.cs">
+    <Compile Include="Game\CollisionArea.cs">
       <Name>IGob</Name>
     </Compile>
     <Compile Include="Game\PhysicsEngine.cs">

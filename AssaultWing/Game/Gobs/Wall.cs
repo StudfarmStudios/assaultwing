@@ -256,29 +256,17 @@ namespace AW2.Game.Gobs
             collisionAreas = polygons;
             for (int i = 0; i < collisionAreas.Length; ++i)
                 collisionAreas[i].Owner = this;
-
-#if DEBUG
-            Helpers.Graphics3D.TriangleWinding wind = Helpers.Graphics3D.GetTriangleWinding(vertexData, indexData);
-            if (wind != AW2.Helpers.Graphics3D.TriangleWinding.Clockwise)
-            {
-                Log.Write("Warning: Wall hasn't only clockwise winding -- fixing it now");
-                Helpers.Graphics3D.SetTriangleWinding(vertexData, ref indexData, Helpers.Graphics3D.TriangleWinding.Clockwise);
-            }
-#endif
-
-            // HACK: Create a wireframe model for debugging Graphics3D.RemoveArea
-            Helpers.Graphics3D.GetWireframeModelData(vertexData, indexData, Color.HotPink,
-                out wireVertexData, out wireIndexData);
         }
 
         /// <summary>
-        /// Removes an area from the gob. 
+        /// Removes a round area from the gob, i.e. makes a hole.
         /// </summary>
         /// <param name="holePos">Center of the area to remove, in world coordinates.</param>
-        public void MakeHole(Vector2 holePos)
+        /// <param name="holeRadius">Radius of the hole, in meters.</param>
+        public void MakeHole(Vector2 holePos, float holeRadius)
         {
+            if (holeRadius <= 0) return;
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            float holeRadius = 10; // HACK: hole size and shape
             Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
 
             // Eat a square hole.

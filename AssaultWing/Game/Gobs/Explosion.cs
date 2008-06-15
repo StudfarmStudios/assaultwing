@@ -44,6 +44,12 @@ namespace AW2.Game.Gobs
         TimeSpan flowEndTime;
 
         /// <summary>
+        /// The radius of the hole to make on impact to walls.
+        /// </summary>
+        [TypeParameter]
+        float impactHoleRadius;
+
+        /// <summary>
         /// Names of the particle engines to create.
         /// </summary>
         [TypeParameter]
@@ -77,6 +83,7 @@ namespace AW2.Game.Gobs
             flowSpeed.Keys.Add(new CurveKey(0, 6000, 0, 0, CurveContinuity.Smooth));
             flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
             flowTime = 0.5f;
+            impactHoleRadius = 100;
             particleEngineNames = new string[] { "dummyparticleengine", };
             sound = SoundOptions.Action.Explosion;
         }
@@ -167,19 +174,25 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="myArea">The collision area of this gob.</param>
         /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
-        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
-        /// then up to this gob and the other gob to resolve the overlap.</param>
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
+        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
+        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
+        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
+        /// to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             // We assume we have only two collision areas, both receptors with specific names:
             // "Hit" is assumed to collide only against damageables;
             // "Force" is assumed to collide only against movables.
             if (myArea.Name == "Hit")
             {
-                float distance = theirArea.Area.DistanceTo(this.Pos);
-                float damage = inflictDamage.Evaluate(distance);
-                theirArea.Owner.InflictDamage(damage);
+                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                {
+                    float distance = theirArea.Area.DistanceTo(this.Pos);
+                    float damage = inflictDamage.Evaluate(distance);
+                    theirArea.Owner.InflictDamage(damage);
+                }
+                if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
+                    ((Wall)theirArea.Owner).MakeHole(Pos, impactHoleRadius);
             }
             else if (myArea.Name == "Force")
             {

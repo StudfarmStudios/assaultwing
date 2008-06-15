@@ -982,10 +982,11 @@ namespace AW2.Game
         /// <b>myArea.CannotOverlap</b>.
         /// <param name="myArea">The collision area of this gob.</param>
         /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
-        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
-        /// then up to this gob and the other gob to resolve the overlap.</param>
-        public virtual void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
+        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
+        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
+        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
+        /// to resolve the overlap.</param>
+        public virtual void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
         }
 

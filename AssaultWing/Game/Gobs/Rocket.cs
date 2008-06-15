@@ -22,12 +22,6 @@ namespace AW2.Game.Gobs
         float impactDamage;
 
         /// <summary>
-        /// The hole to make on impact to walls.
-        /// </summary>
-        [TypeParameter]
-        Polygon impactArea;
-
-        /// <summary>
         /// Maximum force of thrust of the rocket, measured in Newtons.
         /// </summary>
         [TypeParameter]
@@ -61,10 +55,6 @@ namespace AW2.Game.Gobs
             : base()
         {
             this.impactDamage = 100;
-            this.impactArea = new Polygon(new Vector2[] { 
-                new Vector2(-5,-5),
-                new Vector2(-5,5),
-                new Vector2(7,0)});
             this.thrustForce = 100;
             this.thrustDuration = 2;
             this.turnSpeed = 5;
@@ -134,15 +124,14 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="myArea">The collision area of this gob.</param>
         /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
-        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
-        /// then up to this gob and the other gob to resolve the overlap.</param>
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
+        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
+        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
+        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
+        /// to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 theirArea.Owner.InflictDamage(impactDamage);
-            if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
-                ((Wall)theirArea.Owner).MakeHole(Pos/* HACK: Where is Bullet.ImpactArea ? */);
             Die();
         }
     }

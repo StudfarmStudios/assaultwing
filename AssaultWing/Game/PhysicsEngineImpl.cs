@@ -303,17 +303,23 @@ namespace AW2.Game
             CollisionArea gobPhysical = gob.PhysicalArea;
             UnregisterPhysical(gob);
 
-            // This list is assumed to short; containing maximum a couple of members,
-            // probably being empty.
-            IEnumerable<CollisionArea> originalCompromisers = gobPhysical == null ? null
-                : GetOverlappers(gobPhysical, gobPhysical.CannotOverlap);
+            // If the gob is stuck, let it resolve the situation.
+            if (gobPhysical != null)
+                ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
+                {
+                    gob.Collide(gobPhysical, area2, true);
+                    area2.Owner.Collide(area2, gobPhysical, true);
+                    // No need for a physical collision -- the gobs are stuck.
+                    return gob.Dead;
+                });
+            if (gob.Dead) return;
 
             float moveLeft = 1; // interpolation coefficient; between 0 and 1
             int moveTries = 0;
             while (moveLeft > movementAccuracy && moveTries < moveTryMaximum)
             {
                 Vector2 oldMove = gob.Move;
-                moveLeft = TryMove(gob, moveLeft, originalCompromisers);
+                moveLeft = TryMove(gob, moveLeft);
                 ++moveTries;
 
                 // If we just have to wait for another gob to move out of the way,
@@ -338,9 +344,10 @@ namespace AW2.Game
                     container.ForEachElement(delegate(CollisionArea area)
                     {
                         ForEachOverlapper(area, area.CollidesAgainst, delegate(CollisionArea area2)
-                        {
+                        { 
                             area.Owner.Collide(area, area2, false);
-                        }, null);
+                            return false;
+                        });
                         return false;
                     });
             }
@@ -465,7 +472,7 @@ namespace AW2.Game
             {
                 tryPos = RandomHelper.GetRandomVector2(preferred.Value, radius);
                 gob.Pos = tryPos;
-                if (ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null, null))
+                if (ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null))
                     break;
             }
             gob.Pos = oldPos;
@@ -482,7 +489,7 @@ namespace AW2.Game
         {
             Vector2 oldPos = gob.Pos;
             CollisionArea gobPhysical = gob.PhysicalArea;
-            bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null, null);
+            bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
             gob.Pos = oldPos;
             return result;
         }
@@ -611,11 +618,9 @@ namespace AW2.Game
         /// <param name="moveLeft">How much of the gob's movement is left this frame.
         /// <b>0</b> means the gob has completed moving;
         /// <b>1</b> means the gob has not moved yet.</param>
-        /// <param name="skipAreas">The collision areas that are not to be considered
-        /// for physical collision. <c>null</c> signifies the empty list.</param>
         /// <returns>How much of the gob's movement is still left,
         /// between <b>0</b> and <b>1</b>.</returns>
-        private float TryMove(Gob gob, float moveLeft, IEnumerable<CollisionArea> skipAreas)
+        private float TryMove(Gob gob, float moveLeft)
         {
             Vector2 oldPos = gob.Pos;
             Vector2 goalPos = gob.Pos + gob.Move * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -623,7 +628,6 @@ namespace AW2.Game
             float moveBad = moveLeft; // last known unsafe position, if 'badFound'
             bool badFound = false;
             CollisionArea gobPhysical = gob.PhysicalArea;
-            bool backtrackFailed = true;
             bool badDueToOverlappers = false;
 
             // Find out last non-collision position and first colliding position, 
@@ -633,11 +637,10 @@ namespace AW2.Game
             {
                 gob.Pos = Vector2.Lerp(oldPos, goalPos, moveTry);
                 bool overlapperFound = gobPhysical == null ? false
-                    : ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null, skipAreas);
+                    : ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
                 if (ArenaBoundaryLegal(gob) && !overlapperFound)
                 {
                     moveGood = moveTry;
-                    backtrackFailed = false;
                 }
                 else
                 {
@@ -647,6 +650,7 @@ namespace AW2.Game
                 }
                 moveTry = MathHelper.Lerp(moveGood, moveBad, 0.5f);
             }
+
             // Perform physical collisions.
             if (badFound)
             {
@@ -654,10 +658,11 @@ namespace AW2.Game
                 if (badDueToOverlappers)
                     ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
                     {
-                        gob.Collide(gobPhysical, area2, backtrackFailed);
-                        area2.Owner.Collide(area2, gobPhysical, backtrackFailed);
+                        gob.Collide(gobPhysical, area2, false);
+                        area2.Owner.Collide(area2, gobPhysical, false);
                         PerformCollision(gobPhysical, area2);
-                    }, skipAreas);
+                        return gob.Dead;
+                    });
                 ArenaBoundaryActions(gob);
             }
 
@@ -697,6 +702,7 @@ namespace AW2.Game
                         areaOwnerOwner == area2Owner.Owner &&
                         areaOwnerOwner != null)
                         return false;
+
                     // All checks passed.
                     if (overlappers == null)
                         overlappers = new List<CollisionArea>();
@@ -714,12 +720,11 @@ namespace AW2.Game
         /// <param name="area">The collision area to check overlap against.</param>
         /// <param name="types">The types of collision areas to consider.</param>
         /// <param name="action">The action to perform on each overlapper, or if <b>null</b>
-        /// then the method will return on first found overlapper.</param>
-        /// <param name="skipAreas">The list of collision areas not to consider as overlappers.
-        /// <c>null</c> signifies the empty list.</param>
+        /// then the method will return on first found overlapper.
+        /// If the action returns <b>true</b>, the iteration will break.</param>
         /// <returns><b>true</b> if an overlapper was found, <b>false</b> otherwise.</returns>
         private bool ForEachOverlapper(CollisionArea area, CollisionAreaType types,
-            Action<CollisionArea> action, IEnumerable<CollisionArea> skipAreas)
+            Predicate<CollisionArea> action)
         {
             IGeomPrimitive areaArea = area.Area;
             BoundingBox box = areaArea.BoundingBox;
@@ -729,6 +734,7 @@ namespace AW2.Game
             Gob areaOwner = area.Owner;
             bool areaOwnerCold = areaOwner.Cold;
             Player areaOwnerOwner = areaOwner.Owner;
+            bool breakOut = false;
             for (int typeBit = 0; typeBit < collisionAreas.Length; ++typeBit)
             {
                 if (((1 << typeBit) & (int)types) == 0) continue;
@@ -742,16 +748,14 @@ namespace AW2.Game
                         areaOwnerOwner != null &&
                         areaOwnerOwner == area2Owner.Owner)
                         return false;
-                    if (skipAreas != null)
-                        foreach (CollisionArea skipArea in skipAreas)
-                            if (skipArea == area2) return false;
+
                     // All checks passed.
                     overlapperFound = true;
-                    if (action == null)
-                        return true; // Breaks out of SpatialGrid<T>.ForEachElement
-                    action(area2);
-                    return false;
+                    if (action == null || action(area2))
+                        breakOut = true;
+                    return breakOut;
                 });
+                if (breakOut) break;
             }
             return overlapperFound;
         }

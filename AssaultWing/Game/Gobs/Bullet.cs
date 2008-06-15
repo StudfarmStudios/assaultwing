@@ -15,13 +15,13 @@ namespace AW2.Game.Gobs
         /// Amount of damage to inflict on impact with a damageable gob.
         /// </summary>
         [TypeParameter]
-        float impactDamage;
+        protected float impactDamage;
 
         /// <summary>
-        /// The hole to make on impact to walls.
+        /// The radius of the hole to make on impact to walls.
         /// </summary>
         [TypeParameter]
-        Polygon impactArea;
+        float impactHoleRadius;
 
         /// <summary>
         /// A list of alternative model names for a bullet.
@@ -50,12 +50,9 @@ namespace AW2.Game.Gobs
         public Bullet()
             : base()
         {
-            this.impactDamage = 10;
-            this.impactArea = new Polygon(new Vector2[] { 
-                new Vector2(-5,-5),
-                new Vector2(-5,5),
-                new Vector2(7,0)});
-            this.bulletModelNames = new string[] { "dummymodel", };
+            impactDamage = 10;
+            impactHoleRadius = 10;
+            bulletModelNames = new string[] { "dummymodel", };
         }
 
         /// <summary>
@@ -110,27 +107,17 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="myArea">The collision area of this gob.</param>
         /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="backtrackFailed">If <b>true</b> then <b>theirArea.Type</b> matches 
-        /// <b>myArea.CannotOverlap</b> and backtracking couldn't resolve this overlap. It is
-        /// then up to this gob and the other gob to resolve the overlap.</param>
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool backtrackFailed)
+        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
+        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
+        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
+        /// to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            if (TypeName == "bouncebomb") // HACK until implemented class BounceBullet : Bullet
-            {
-                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                {
-                    theirArea.Owner.InflictDamage(impactDamage);
-                    Die();
-                }
-            }
-            else
-            {
-                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                    theirArea.Owner.InflictDamage(impactDamage);
-                if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
-                    ((Wall)theirArea.Owner).MakeHole(Pos/* HACK: Where is Bullet.ImpactArea ? */);
-                Die();
-            }
+            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                theirArea.Owner.InflictDamage(impactDamage);
+            if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
+                ((Wall)theirArea.Owner).MakeHole(Pos, impactHoleRadius);
+            Die();
         }
 
         #endregion

@@ -178,9 +178,15 @@
     <Compile Include="Helpers\ExpectedValue.cs" />
     <Compile Include="Helpers\ExpectedValueCurve.cs" />
     <Compile Include="Helpers\FloatFactory.cs" />
-    <Compile Include="Helpers\Geometry.cs">
+    <Compile Include="Helpers\Geometric\Circle.cs" />
+    <Compile Include="Helpers\Geometric\Everything.cs" />
+    <Compile Include="Helpers\Geometric\Geometry.cs">
       <Name>Geometry</Name>
     </Compile>
+    <Compile Include="Helpers\Geometric\IGeomPrimitive.cs" />
+    <Compile Include="Helpers\Geometric\Point.cs" />
+    <Compile Include="Helpers\Geometric\Polygon.cs" />
+    <Compile Include="Helpers\Geometric\Triangle.cs" />
     <Compile Include="Helpers\Log.cs">
       <Name>Log</Name>
     </Compile>

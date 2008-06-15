@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework;
 
 namespace AW2.Helpers
 {
+    delegate void Plot2(int x, int y);
+
     /// <summary>
     /// Provides mathematical helper functions.
     /// </summary>
@@ -131,6 +133,62 @@ namespace AW2.Helpers
             if (value >= 1 << 2) { value >>= 2; pos += 2; }
             if (value >= 1 << 1) { pos += 1; }
             return pos;
+        }
+
+        /// <summary>
+        /// Calls <paramref name="plot"/> once for each integer point in a filled circle.
+        /// </summary>
+        /// <param name="x0">Center X coordinate of the circle.</param>
+        /// <param name="y0">Center Y coordinate of the circle.</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="plot">The plot method to be called at each circle point.</param>
+        public static void FillCircle(int x0, int y0, int radius, Plot2 plot)
+        {
+            // Midpoint circle algorithm, a.k.a. Bresenham's circle algorithm.
+            // Implementation adapted from code in Wikipedia, 
+            // http://en.wikipedia.org/wiki/Midpoint_circle_algorithm
+            // on 2008-06-16.
+            if (radius < 0) return;
+            int f = 1 - radius;
+            int ddF_x = 0;
+            int ddF_y = -2 * radius;
+            int x = 0;
+            int y = radius;
+
+            // Plot the horizontal diameter.
+            for (int i = x0 - radius; i <= x0 + radius; ++i)
+                plot(i, y0);
+
+            while (x < y)
+            {
+                if (f >= 0)
+                {
+                    // Plot horizontal rows starting from top and bottom and
+                    // proceeding symmetrically towards the horizontal diameter
+                    // on each successive entry to this code block.
+                    for (int i = x0 - x; i <= x0 + x; ++i)
+                    {
+                        plot(i, y0 - y);
+                        plot(i, y0 + y);
+                    }
+                    y--;
+                    ddF_y += 2;
+                    f += ddF_y;
+                }
+                x++;
+                if (x > y) break;
+                ddF_x += 2;
+                f += ddF_x + 1;
+
+                // Plot horizontal rows starting immediately above and below
+                // the horizontal diameter and proceeding symmetrically towards
+                // the top and bottom of the circle.
+                for (int i = x0 - y; i <= x0 + y; ++i)
+                {
+                    plot(i, y0 - x);
+                    plot(i, y0 + x);
+                }
+            }
         }
 
         #region Unit tests
@@ -285,6 +343,95 @@ namespace AW2.Helpers
                 {
                     Assert.AreEqual(CeilingPowerTwo(i + 1), 1 << (1 + LogTwo(i)));
                     Assert.AreEqual(FloorPowerTwo(i), 1 << LogTwo(i));
+                }
+            }
+
+            /// <summary>
+            /// Tests circle filling.
+            /// </summary>
+            [Test]
+            public void TestFillCircle()
+            {
+                for (int radius = 0; radius < 15; ++radius)
+                    DoFillCircleTest(radius);
+                DoFillCircleTest(313);
+                DoFillCircleTest(314);
+                DoFillCircleTest(1001);
+            }
+
+            /// <summary>
+            /// Helper for TestFillCircle()
+            /// </summary>
+            private void DoFillCircleTest(int radius)
+            {
+                Console.Out.WriteLine("DoFillCircleTest(" + radius + ")");
+                int x0 = radius;
+                int y0 = radius;
+                int[,] data = new int[2 * radius + 1, 2 * radius + 1]; // indexed as data[y, x]
+                FillCircle(x0, y0, radius, delegate(int x, int y)
+                {
+                    Assert.That(x >= 0 && y >= 0 && x < data.GetLength(1) && y < data.GetLength(0),
+                        "FillCircle plotted outside the containing square at (" + x + ", " + y + ")");
+                    ++data[y, x];
+                });
+                
+                // Draw data.
+                if (radius < 9)
+                    for (int y = 0; y < data.GetLength(0); ++y)
+                    {
+                        for (int x = 0; x < data.GetLength(1); ++x)
+                            Console.Out.Write(data[y, x] > 0 ? (char)('0' + data[y, x]) : 'o');
+                        Console.Out.WriteLine();
+                    }
+
+                // Make sure all data is 0 or 1.
+                for (int y = 0; y < data.GetLength(0); ++y)
+                    for (int x = 0; x < data.GetLength(1); ++x)
+                        Assert.That(data[y, x] <= 1, "FillCircle plotted the same point (" + x + ", " + y + ") " + data[y, x] + " times");
+                
+                // Make sure plotted area is continuous horizontally and vertically.
+                for (int y = 0; y < data.GetLength(0); ++y)
+                {
+                    int phase = 0; // 0=not started; 1=started; 2=finished
+                    for (int x = 0; x < data.GetLength(1); ++x)
+                    {
+                        if (phase == 0)
+                        {
+                            if (data[y, x] == 1) ++phase;
+                        }
+                        else if (phase == 1)
+                        {
+                            if (data[y, x] == 0) ++phase;
+                        }
+                        else
+                            Assert.That(data[y, x] == 0, "Horizontal line is not continuous at (" + x + "," + y + ")");
+                    }
+                }
+                for (int x = 0; x < data.GetLength(1); ++x)
+                {
+                    int phase = 0; // 0=not started; 1=started; 2=finished
+                    for (int y = 0; y < data.GetLength(0); ++y)
+                    {
+                        if (phase == 0)
+                        {
+                            if (data[y, x] == 1) ++phase;
+                        }
+                        else if (phase == 1)
+                        {
+                            if (data[y, x] == 0) ++phase;
+                        }
+                        else
+                            Assert.That(data[y, x] == 0, "Vertical line is not continuous at (" + x + "," + y + ")");
+                    }
+                }
+
+                // Make sure that a diamond shape fits in the filled circle.
+                for (int i = 0; i <= radius; ++i)
+                {
+                    Assert.That(data[y0 + radius - i, x0 + i] == 1, "Diamond shape not contained in circle at (" + (x0 + i) + "," + (y0 + radius - i) + ")");
+                    Assert.That(data[y0 + radius - i, x0 - i] == 1, "Diamond shape not contained in circle at (" + (x0 - i) + "," + (y0 + radius - i) + ")");
+                    Assert.That(data[y0 - radius + i, x0 + i] == 1, "Diamond shape not contained in circle at (" + (x0 + i) + "," + (y0 - radius + i) + ")");
+                    Assert.That(data[y0 - radius + i, x0 - i] == 1, "Diamond shape not contained in circle at (" + (x0 - i) + "," + (y0 - radius + i) + ")");
                 }
             }
         }

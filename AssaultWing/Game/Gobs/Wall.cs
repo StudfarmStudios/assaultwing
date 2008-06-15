@@ -270,38 +270,33 @@ namespace AW2.Game.Gobs
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
 
-            // Eat a square hole.
-            int minX = (int)Math.Round(posInIndexMap.X - holeRadius);
-            int maxX = (int)Math.Round(posInIndexMap.X + holeRadius) + 1;
-            int minY = (int)Math.Round(posInIndexMap.Y - holeRadius);
-            int maxY = (int)Math.Round(posInIndexMap.Y + holeRadius) + 1;
-            minX = Math.Max(minX, 0);
-            maxX = Math.Min(maxX, indexMap.GetLength(1));
-            minY = Math.Max(minY, 0);
-            maxY = Math.Min(maxY, indexMap.GetLength(0));
-            for (int y = minY; y < maxY; ++y)
-                for (int x = minX; x < maxX; ++x)
+            // Eat a round hole.
+            int indexMapWidth = indexMap.GetLength(1);
+            int indexMapHeight = indexMap.GetLength(0);
+            AWMathHelper.FillCircle((int)Math.Round(posInIndexMap.X), (int)Math.Round(posInIndexMap.Y),
+                (int)Math.Round(holeRadius), delegate(int x, int y)
+            {
+                if (x < 0 || y < 0 || x >= indexMapWidth || y >= indexMapHeight) return;
+                if (indexMap[y, x] == null) return;
+                foreach (int index in indexMap[y, x])
                 {
-                    if (indexMap[y, x] == null) continue;
-                    foreach (int index in indexMap[y, x])
+                    if (--triangleCovers[index] != 0) continue;
+
+                    // Replace the triangle in the 3D model with a trivial one.
+                    indexData[3 * index + 0] = 0;
+                    indexData[3 * index + 1] = 0;
+                    indexData[3 * index + 2] = 0;
+
+                    // Remove the triangle from physics engine.
+                    data.CustomOperations += delegate(object obj)
                     {
-                        if (--triangleCovers[index] != 0) continue;
+                        physics.Unregister(collisionAreas[index]);
+                    };
 
-                        // Replace the triangle in the 3D model with a trivial one.
-                        indexData[3 * index + 0] = 0;
-                        indexData[3 * index + 1] = 0;
-                        indexData[3 * index + 2] = 0;
-
-                        // Remove the triangle from physics engine.
-                        data.CustomOperations += delegate(object obj) 
-                        {
-                            physics.Unregister(collisionAreas[index]); 
-                        };
-
-                        --triangleCount;
-                    }
-                    //indexMap[y, x] = null;
+                    --triangleCount;
                 }
+                //indexMap[y, x] = null;
+            });
 
             // Remove the wall gob if all its triangles have been removed.
             if (triangleCount == 0)

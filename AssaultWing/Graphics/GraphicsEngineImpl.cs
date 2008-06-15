@@ -216,12 +216,14 @@ namespace AW2.Graphics
             {
                 foreach (string modelName in gobTemplate.ModelNames)
                 {
+                    if (data.HasModel(modelName)) continue;
                     Model model = LoadModel(modelName);
                     if (model != null)
                         data.AddModel(modelName, model);
                 }
                 foreach (string textureName in gobTemplate.TextureNames)
                 {
+                    if (data.HasTexture(textureName)) continue;
                     Texture2D texture = LoadTexture(textureName);
                     if (texture != null)
                         data.AddTexture(textureName, texture);
@@ -234,12 +236,14 @@ namespace AW2.Graphics
                 foreach (Gob gob in arenaTemplate.Gobs)
                     foreach (string modelName in gob.ModelNames)
                     {
+                        if (data.HasModel(modelName)) continue;
                         Model model = LoadModel(modelName);
                         if (model != null)
                             data.AddModel(modelName, model);
                     }
                 foreach (string textureName in arenaTemplate.ParallaxNames) 
                 {
+                    if (data.HasTexture(textureName)) continue;
                     Texture2D texture = LoadTexture(textureName);
                     if (texture != null)
                         data.AddTexture(textureName, texture);
@@ -251,6 +255,7 @@ namespace AW2.Graphics
             {
                 foreach (string textureName in weapon.TextureNames)
                 {
+                    if (data.HasTexture(textureName)) continue;
                     Texture2D texture = LoadTexture(textureName);
                     if (texture != null)
                         data.AddTexture(textureName, texture);

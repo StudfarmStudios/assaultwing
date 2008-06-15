@@ -131,6 +131,16 @@ namespace AW2.Game
             return model;
         }
 
+        /// <summary>
+        /// Tells if a name corresponds to any 3D model.
+        /// </summary>
+        /// <param name="name">The name of the 3D model.</param>
+        /// <returns><c>true</c> if there is a 3D model with the name, <c>false</c> otherwise.</returns>
+        public bool HasModel(string name)
+        {
+            return models.ContainsKey(name);
+        }
+
         #endregion models
 
         #region textures
@@ -165,6 +175,16 @@ namespace AW2.Game
             return texture;
         }
 
+        /// <summary>
+        /// Tells if a name corresponds to any texture.
+        /// </summary>
+        /// <param name="name">The name of the texture.</param>
+        /// <returns><c>true</c> if there is a texture with the name, <c>false</c> otherwise.</returns>
+        public bool HasTexture(string name)
+        {
+            return textures.ContainsKey(name);
+        }
+
         #endregion textures
 
         #region arenas
@@ -197,6 +217,16 @@ namespace AW2.Game
                     throw new Exception("Missing arenas " + name + " and fallback dummyarena");
             }
             return arena;
+        }
+
+        /// <summary>
+        /// Tells if a name corresponds to any arena.
+        /// </summary>
+        /// <param name="name">The name of the arena.</param>
+        /// <returns><c>true</c> if there is a arena with the name, <c>false</c> otherwise.</returns>
+        public bool HasArena(string name)
+        {
+            return arenas.ContainsKey(name);
         }
 
         /// <summary>
@@ -458,6 +488,17 @@ namespace AW2.Game
                     throw new Exception("Missing templates for user-defined type " + baseClass.Name + "/" + typeName + " and fallback " + fallbackTypeName);
             }
             return template;
+        }
+
+        /// <summary>
+        /// Tells if a name corresponds to any user-defined type template.
+        /// </summary>
+        /// <param name="baseClass">The base class of the user-defined type template, e.g. Gob or Weapon.</param>
+        /// <param name="typeName">The name of the user-defined type template.</param>
+        /// <returns><c>true</c> if there is a user-defined type template with the name, <c>false</c> otherwise.</returns>
+        public bool HasTypeTemplate(Type baseClass, string typeName)
+        {
+            return templates.ContainsKey(new TypeStringPair(baseClass, typeName));
         }
 
         /// <summary>

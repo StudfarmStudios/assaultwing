@@ -51,6 +51,13 @@ namespace AW2.Game
         /// <returns>The 3D model.</returns>
         Model GetModel(string name);
 
+        /// <summary>
+        /// Tells if a name corresponds to any 3D model.
+        /// </summary>
+        /// <param name="name">The name of the 3D model.</param>
+        /// <returns><c>true</c> if there is a 3D model with the name, <c>false</c> otherwise.</returns>
+        bool HasModel(string name);
+
         #endregion
 
         #region textures
@@ -69,6 +76,13 @@ namespace AW2.Game
         /// <returns>The 2D texture.</returns>
         Texture2D GetTexture(string name);
 
+        /// <summary>
+        /// Tells if a name corresponds to any texture.
+        /// </summary>
+        /// <param name="name">The name of the texture.</param>
+        /// <returns><c>true</c> if there is a texture with the name, <c>false</c> otherwise.</returns>
+        bool HasTexture(string name);
+
         #endregion
 
         #region arenas
@@ -86,6 +100,13 @@ namespace AW2.Game
         /// <param name="name">The name of the arena.</param>
         /// <returns>The arena.</returns>
         Arena GetArena(string name);
+
+        /// <summary>
+        /// Tells if a name corresponds to any arena.
+        /// </summary>
+        /// <param name="name">The name of the arena.</param>
+        /// <returns><c>true</c> if there is a arena with the name, <c>false</c> otherwise.</returns>
+        bool HasArena(string name);
 
         /// <summary>
         /// Initialises the data engine with the next arena in the playlist.
@@ -226,6 +247,14 @@ namespace AW2.Game
         /// <param name="typeName">The name of the user-defined type, e.g. "explosion" or "shotgun".</param>
         /// <returns>The template instance that defines the named user-defined type.</returns>
         object GetTypeTemplate(Type baseClass, string typeName);
+
+        /// <summary>
+        /// Tells if a name corresponds to any user-defined type template.
+        /// </summary>
+        /// <param name="baseClass">The base class of the user-defined type template, e.g. Gob or Weapon.</param>
+        /// <param name="typeName">The name of the user-defined type template.</param>
+        /// <returns><c>true</c> if there is a user-defined type template with the name, <c>false</c> otherwise.</returns>
+        bool HasTypeTemplate(Type baseClass, string typeName);
 
         /// <summary>
         /// Performs the specified action on each user-defined type template

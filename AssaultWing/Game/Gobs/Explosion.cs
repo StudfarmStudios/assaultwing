@@ -180,27 +180,27 @@ namespace AW2.Game.Gobs
         /// to resolve the overlap.</param>
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            // We assume we have only two collision areas, both receptors with specific names:
+            // We assume we have only these collision areas, all receptors with specific names:
+            // "Hole" is assumed to collide only against walls;
             // "Hit" is assumed to collide only against damageables;
             // "Force" is assumed to collide only against movables.
-            if (myArea.Name == "Hit")
-            {
-                if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                {
-                    float distance = theirArea.Area.DistanceTo(this.Pos);
-                    float damage = inflictDamage.Evaluate(distance);
-                    theirArea.Owner.InflictDamage(damage);
-                }
-                if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
-                    ((Wall)theirArea.Owner).MakeHole(Pos, impactHoleRadius);
-            }
-            else if (myArea.Name == "Force")
+            if (myArea.Name == "Force")
             {
                 Vector2 difference = theirArea.Owner.Pos - this.Pos;
                 float differenceLength = difference.Length();
                 Vector2 flow = difference / differenceLength *
                     flowSpeed.Evaluate(differenceLength);
                 physics.ApplyDrag(theirArea.Owner, flow, 0.003f);
+            }
+            else if (myArea.Name == "Hole")
+            {
+                ((Wall)theirArea.Owner).MakeHole(Pos, impactHoleRadius);
+            }
+            else if (myArea.Name == "Hit")
+            {
+                float distance = theirArea.Area.DistanceTo(this.Pos);
+                float damage = inflictDamage.Evaluate(distance);
+                theirArea.Owner.InflictDamage(damage);
             }
         }
     }

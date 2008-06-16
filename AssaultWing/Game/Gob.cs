@@ -32,7 +32,7 @@ namespace AW2.Game
     /// are set each frame. The subclass should manage other parameters of the engines.
     /// 
     /// Class Gob also provides methods required by certain interfaces such as
-    /// ICollidable and IDamageable, although Gob itself doesn't inherit the interfaces.
+    /// IDamageable, although Gob itself doesn't inherit the interfaces.
     /// This serves to unify the collision and other code that would otherwise have to be
     /// implemented separately in each subclass that derives from the interfaces.
     /// 

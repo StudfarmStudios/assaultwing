@@ -83,24 +83,6 @@ namespace AW2.Game.Gobs
             }
         }
 
-        #region ICollidable Members
-        // Some members are implemented in class Gob.
-
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
-        public override void Activate()
-        {
-            base.Activate();
-
-            // If we have a physical collision area, i.e. we want to bounce
-            // off walls, but we are born inside a wall, we die immediately
-            // lest we face the treacherous consistency manoeuver of flying
-            // through it, void of even the most minute intention to perish.
-            if (!physics.IsFreePosition(this, this.Pos))
-                Die();
-        }
-
         /// <summary>
         /// Performs collision operations for the case when one of this gob's collision areas
         /// is overlapping one of another gob's collision areas.
@@ -119,7 +101,5 @@ namespace AW2.Game.Gobs
                 ((Wall)theirArea.Owner).MakeHole(Pos, impactHoleRadius);
             Die();
         }
-
-        #endregion
     }
 }

@@ -31,10 +31,9 @@ namespace AW2.Game
     /// All exhaust engines are set on loop and their position and direction
     /// are set each frame. The subclass should manage other parameters of the engines.
     /// 
-    /// Class Gob also provides methods required by certain interfaces such as
-    /// IDamageable, although Gob itself doesn't inherit the interfaces.
-    /// This serves to unify the collision and other code that would otherwise have to be
-    /// implemented separately in each subclass that derives from the interfaces.
+    /// Class Gob also provides methods required by certain Gob subclasses 
+    /// such as those that can be damaged. This serves to keep general code
+    /// in one place only.
     /// 
     /// Class Gob and its subclasses use limited (de)serialisation for
     /// for saving and loading gob types. Therefore those fields

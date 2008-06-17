@@ -268,7 +268,9 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
             for (int i = 0; i < collisionAreas.Length; ++i)
-                if (collisionAreaCellSize[i] >= 0)
+                if (data.Arena == null)
+                    collisionAreas[i] = null;
+                else if (collisionAreaCellSize[i] >= 0)
                     collisionAreas[i] = new SpatialGrid<CollisionArea>(collisionAreaCellSize[i],
                         -areaExcess, data.Arena.Dimensions + areaExcess);
             collisionAreaMayCollide.Initialize();

@@ -130,9 +130,13 @@ namespace AW2.Helpers
             if (element.Owner != this)
                 throw new ArgumentException("Cannot remove an element that is not stored in this container");
             if (element.GridX == -1)
-                outerCell.Remove(element);
+            {
+                if (!outerCell.Remove(element))
+                    throw new ArgumentException("Given element didn't exist");
+            }
             else
-                cells[element.GridY, element.GridX].Remove(element);
+                if (!cells[element.GridY, element.GridX].Remove(element))
+                    throw new ArgumentException("Given element didn't exist");
 
             // We can't update 'boundingBoxMax' effectively to be a tight bound,
             // but it still maintains its invariant.

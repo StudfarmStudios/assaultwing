@@ -63,6 +63,8 @@ namespace AW2.Game.Gobs
 
         ParticleEngine[] particleEngines;
 
+        bool firstCollisionChecked;
+
         #endregion Explosion fields
 
         /// <summary>
@@ -86,6 +88,7 @@ namespace AW2.Game.Gobs
             impactHoleRadius = 100;
             particleEngineNames = new string[] { "dummyparticleengine", };
             sound = SoundOptions.Action.Explosion;
+            firstCollisionChecked = false;
         }
 
         /// <summary>
@@ -97,6 +100,7 @@ namespace AW2.Game.Gobs
         {
             flowEndTime = new TimeSpan(1);
             particleEngines = null;
+            firstCollisionChecked = false;
         }
 
         /// <summary>
@@ -136,17 +140,22 @@ namespace AW2.Game.Gobs
             // Have our collisions checked.
             base.Update();
 
-            // Remove damage-inflicting collision area for future frames.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.CustomOperations += delegate(object obj)
+            if (!firstCollisionChecked)
             {
-                physics.Unregister(this);
-                collisionAreas = Array.FindAll(collisionAreas, delegate(CollisionArea collArea)
+                firstCollisionChecked = true;
+
+                // Remove collision areas that only needed to collide once.
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                data.CustomOperations += delegate(object obj)
                 {
-                    return collArea.Name != "Hit"; 
-                });
-                physics.Register(this);
-            };
+                    physics.Unregister(this);
+                    collisionAreas = Array.FindAll(collisionAreas, delegate(CollisionArea collArea)
+                    {
+                        return collArea.Name == "Force";
+                    });
+                    physics.Register(this);
+                };
+            }
 
             // When the flow ends, there's nothing more to do.
             if (AssaultWing.Instance.GameTime.TotalGameTime >= flowEndTime)

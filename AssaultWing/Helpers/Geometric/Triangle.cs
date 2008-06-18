@@ -1,11 +1,10 @@
+#if !DEBUG
+#define TRUSTED_VISIBILITY_BREACH // makes code faster at the cost of naughty class design
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
-
-#if !DEBUG
-#define TRUSTED_VISIBILITY_BREACH // makes code faster at the cost of naughty class design
-#endif
 
 namespace AW2.Helpers.Geometric
 {

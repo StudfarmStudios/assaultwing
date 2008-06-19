@@ -26,8 +26,7 @@ namespace AW2.Helpers.Geometric
         /// <summary>
         /// A rectangle containing the triangle.
         /// </summary>
-        /// The Z-coordinate is irrelevant.
-        BoundingBox boundingBox;
+        Rectangle boundingBox;
 
 #if !TRUSTED_VISIBILITY_BREACH
         /// <summary>
@@ -73,8 +72,12 @@ namespace AW2.Helpers.Geometric
         /// <param name="p3">The third corner point.</param>
         public Triangle(Vector2 p1, Vector2 p2, Vector2 p3)
         {
-            boundingBox = AWMathHelper.MinAndMax(p1, p2, p3);
-
+            boundingBox = new Geometric.Rectangle(
+                Math.Min(p1.X, Math.Min(p2.X, p3.X)),
+                Math.Min(p1.Y, Math.Min(p2.Y, p3.Y)),
+                Math.Max(p1.X, Math.Max(p2.X, p3.X)),
+                Math.Max(p1.Y, Math.Max(p2.Y, p3.Y)));
+            
             // Assign p1 as given, but possibly swap p2 and p3 to enforce
             // clockwise order of corner points.
             Vector2 e12LeftNormal = new Vector2(p1.Y - p2.Y, p2.X - p1.X);
@@ -115,13 +118,20 @@ namespace AW2.Helpers.Geometric
             n23.Normalize();
         }
 
+        /// <summary>
+        /// Returns a string representation of the triangle.
+        /// </summary>
+        public override string ToString()
+        {
+            return "{" + P1 + ", " + P2 + ", " + P3 + "}";
+        }
+
         #region IGeomPrimitive Members
 
         /// <summary>
         /// A rectangle that contains the geometric primitive.
         /// </summary>
-        /// The Z-coordinates are irrelevant.
-        public BoundingBox BoundingBox { get { return boundingBox; } }
+        public Rectangle BoundingBox { get { return boundingBox; } }
 
         /// <summary>
         /// Transforms the geometric primitive by a transformation matrix.

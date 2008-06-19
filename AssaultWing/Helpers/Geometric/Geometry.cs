@@ -81,16 +81,25 @@ namespace AW2.Helpers.Geometric
                 Point point1 = (Point)prim1;
                 if (prim2 is Point) return point1.Location.Equals(((Point)prim2).Location);
                 if (prim2 is Circle) return Intersect(point1, (Circle)prim2);
+                if (prim2 is Rectangle) return Intersect(point1, (Rectangle)prim2);
             }
             if (prim1 is Circle)
             {
                 Circle circle1 = (Circle)prim1;
                 if (prim2 is Point) return Intersect((Point)prim2, circle1);
                 if (prim2 is Circle) return Intersect(circle1, (Circle)prim2);
+                if (prim2 is Rectangle) return Intersect(circle1, (Rectangle)prim2);
+            }
+            if (prim1 is Rectangle)
+            {
+                Rectangle rectangle1 = (Rectangle)prim1;
+                if (prim2 is Point) return Intersect((Point)prim2, rectangle1);
+                if (prim2 is Circle) return Intersect((Circle)prim2, rectangle1);
+                if (prim2 is Rectangle) return Intersect((Rectangle)prim2, rectangle1);
             }
 
             // Prune further checks by bounding boxes.
-            if (!prim1.BoundingBox.Intersects(prim2.BoundingBox)) return false;
+            if (!Intersect(prim1.BoundingBox, prim2.BoundingBox)) return false;
 
             // Check remaining, slow cases.
             if (prim1 is Point)
@@ -110,6 +119,7 @@ namespace AW2.Helpers.Geometric
                 Triangle triangle1 = (Triangle)prim1;
                 if (prim2 is Point) return Intersect((Point)prim2, triangle1);
                 if (prim2 is Circle) return Intersect((Circle)prim2, triangle1);
+                if (prim2 is Rectangle) return Intersect((Rectangle)prim2, triangle1);
                 if (prim2 is Triangle) return Intersect(triangle1, (Triangle)prim2);
                 if (prim2 is Polygon) return Intersect(triangle1, (Polygon)prim2);
             }
@@ -118,11 +128,12 @@ namespace AW2.Helpers.Geometric
                 Polygon polygon1 = (Polygon)prim1;
                 if (prim2 is Point) return Intersect((Point)prim2, polygon1);
                 if (prim2 is Circle) return Intersect((Circle)prim2, polygon1);
+                if (prim2 is Rectangle) return Intersect((Rectangle)prim2, polygon1);
                 if (prim2 is Triangle) return Intersect((Triangle)prim2, polygon1);
                 if (prim2 is Polygon) return Intersect(polygon1, (Polygon)prim2);
             }
             throw new Exception("Unknown geometric primitives in Geometry.Intersect(): " +
-                      prim1.GetType().Name + " " + prim2.GetType().Name);
+                prim1.GetType().Name + " " + prim2.GetType().Name);
         }
 
         /// <summary>
@@ -150,6 +161,83 @@ namespace AW2.Helpers.Geometric
             // their radii apart. We can just as well compare the squares of the distances.
             float radiiSum = circle1.Radius + circle2.Radius;
             return Vector2.DistanceSquared(circle1.Center, circle2.Center) <= radiiSum * radiiSum;
+        }
+
+        /// <summary>
+        /// Returns if a point and a rectangle intersect.
+        /// </summary>
+        /// The rectangle is considered solid.
+        /// <param name="point">The point.</param>
+        /// <param name="rectangle">The rectangle.</param>
+        /// <returns><c>true</c> if the point and the rectangle intersect,
+        /// <c>false</c> otherwise.</returns>
+        public static bool Intersect(Point point, Rectangle rectangle)
+        {
+            return
+                rectangle.Min.X <= point.Location.X && point.Location.X <= rectangle.Max.X &&
+                rectangle.Min.Y <= point.Location.Y && point.Location.Y <= rectangle.Max.Y;
+        }
+
+        /// <summary>
+        /// Returns if a circle and a rectangle intersect.
+        /// </summary>
+        /// The primitives are considered solid.
+        /// <param name="circle">The circle.</param>
+        /// <param name="rectangle">The rectangle.</param>
+        /// <returns><c>true</c> if the circle and the rectangle intersect,
+        /// <c>false</c> otherwise.</returns>
+        public static bool Intersect(Circle circle, Rectangle rectangle)
+        {
+            // Adapted from the C function
+            // Fast Circle-Rectangle Intersection Checking
+            // by Clifford A. Shaffer
+            // from http://tog.acm.org/GraphicsGems/gems/CircleRect.c
+            // on 2008-06-19, implemented after the article in
+            // "Graphics Gems", Academic Press, 1990.
+
+            // Rectangle corners relative to the circle's center.
+            Vector2 relativeMin = rectangle.Min - circle.Center;
+            Vector2 relativeMax = rectangle.Max - circle.Center;
+
+            float radius2 = circle.Radius * circle.Radius;
+            if (relativeMax.X < 0)          /* R to left of circle center */
+                if (relativeMax.Y < 0)      /* R in lower left corner */
+                    return (relativeMax.X * relativeMax.X + relativeMax.Y * relativeMax.Y) <= radius2;
+                else if (relativeMin.Y > 0) /* R in upper left corner */
+                    return (relativeMax.X * relativeMax.X + relativeMin.Y * relativeMin.Y) <= radius2;
+                else                        /* R due West of circle */
+                    return -relativeMax.X <= circle.Radius;
+            else if (relativeMin.X > 0)     /* R to right of circle center */
+                if (relativeMax.Y < 0)      /* R in lower right corner */
+                    return (relativeMin.X * relativeMin.X + relativeMax.Y * relativeMax.Y) <= radius2;
+                else if (relativeMin.Y > 0) /* R in upper right corner */
+                    return (relativeMin.X * relativeMin.X + relativeMin.Y * relativeMin.Y) <= radius2;
+                else                        /* R due East of circle */
+                    return relativeMin.X <= circle.Radius;
+            else                            /* R on circle vertical centerline */
+                if (relativeMax.Y < 0)      /* R due South of circle */
+                    return -relativeMax.Y <= circle.Radius;
+                else if (relativeMin.Y > 0) /* R due North of circle */
+                    return relativeMin.Y <= circle.Radius;
+                else                        /* R contains circle centerpoint */
+                    return true;
+        }
+
+        /// <summary>
+        /// Returns if two rectangles intersect.
+        /// </summary>
+        /// The rectangles are considered solid.
+        /// <param name="rectangle1">One rectangle.</param>
+        /// <param name="rectangle2">The other rectangle.</param>
+        /// <returns><c>true</c> if the rectangles intersect,
+        /// <c>false</c> otherwise.</returns>
+        public static bool Intersect(Rectangle rectangle1, Rectangle rectangle2)
+        {
+            return !(
+                rectangle1.Max.X < rectangle2.Min.X ||
+                rectangle1.Max.Y < rectangle2.Min.Y ||
+                rectangle2.Max.X < rectangle1.Min.X ||
+                rectangle2.Max.Y < rectangle1.Min.Y);
         }
 
         /// <summary>
@@ -196,6 +284,18 @@ namespace AW2.Helpers.Geometric
         {
             float radius = circle.Radius;
             return DistanceSquared(new Point(circle.Center), triangle) <= radius * radius;
+        }
+
+        /// <summary>
+        /// Returns if a rectangle and a triangle intersect.
+        /// </summary>
+        /// <param name="rectangle">The rectangle.</param>
+        /// <param name="triangle">The triangle.</param>
+        /// <returns><b>true</b>if the rectangle and the triangle intersect, 
+        /// <b>false</b> otherwise.</returns>
+        public static bool Intersect(Rectangle rectangle, Triangle triangle)
+        {
+            throw new Exception("Method not implemented: Intersect(Rectangle, Triangle)");
         }
 
         /// <summary>
@@ -498,6 +598,18 @@ namespace AW2.Helpers.Geometric
         }
 
         /// <summary>
+        /// Returns if a rectangle and a polygon intersect.
+        /// </summary>
+        /// <param name="rectangle">The rectangle.</param>
+        /// <param name="polygon">The polygon.</param>
+        /// <returns><b>true</b>if the rectangle and the polygon intersect, 
+        /// <b>false</b> otherwise.</returns>
+        public static bool Intersect(Rectangle rectangle, Polygon polygon)
+        {
+            throw new Exception("Method not implemented: Intersect(Rectangle, Polygon)");
+        }
+
+        /// <summary>
         /// Returns if a triangle intersects a polygon.
         /// </summary>
         /// <param name="triangle">The triangle.</param>
@@ -759,9 +871,9 @@ namespace AW2.Helpers.Geometric
         /// point that lies in the rectangle. In particular, if the point itself
         /// lies inside the rectangle, zero will be returned.
         /// <param name="point">The point.</param>
-        /// <param name="rectangle">The rectangle. Z-coordinates are not used.</param>
+        /// <param name="rectangle">The rectangle.</param>
         /// <returns>The distance between the point and the rectangle.</returns>
-        public static float Distance(Point point, BoundingBox rectangle)
+        public static float Distance(Point point, Rectangle rectangle)
         {
             bool left = point.Location.X < rectangle.Min.X;
             bool right = rectangle.Max.X < point.Location.X;
@@ -818,9 +930,9 @@ namespace AW2.Helpers.Geometric
         /// point that lies in the rectangle. In particular, if the point itself
         /// lies inside the rectangle, zero will be returned.
         /// <param name="point">The point.</param>
-        /// <param name="rectangle">The rectangle. Z-coordinates are not used.</param>
+        /// <param name="rectangle">The rectangle.</param>
         /// <returns>The squared distance between the point and the rectangle.</returns>
-        public static float DistanceSquared(Point point, BoundingBox rectangle)
+        public static float DistanceSquared(Point point, Rectangle rectangle)
         {
             bool left = point.Location.X < rectangle.Min.X;
             bool right = rectangle.Max.X < point.Location.X;
@@ -924,7 +1036,7 @@ namespace AW2.Helpers.Geometric
                 for (int stripI = 0; stripI < polygon.FaceStrips.Length; ++stripI)
                 {
                     Polygon.FaceStrip strip = polygon.FaceStrips[stripI];
-                    if (strip.boundingBox.Contains(new Vector3(point.Location, 0)) == ContainmentType.Contains)
+                    if (Geometry.Intersect(point, strip.boundingBox))
                     {
                         stripDistancesSquared[stripI] = 0;
                     }
@@ -1052,6 +1164,7 @@ namespace AW2.Helpers.Geometric
                     Vector2 difference = ((Circle)prim2).Center - point1.Location;
                     return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
                 }
+                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Point, Rectangle) not implemented");
                 if (prim2 is Triangle) return -GetNormal((Triangle)prim2, point1);
                 if (prim2 is Polygon) return -GetNormal((Polygon)prim2, point1);
             }
@@ -1068,6 +1181,7 @@ namespace AW2.Helpers.Geometric
                     Vector2 difference = ((Circle)prim2).Center - circle1.Center;
                     return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
                 }
+                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Circle, Rectangle) not implemented");
                 if (prim2 is Triangle) return -GetNormal((Triangle)prim2, new Point(circle1.Center));
                 if (prim2 is Polygon) return -GetNormal((Polygon)prim2, new Point(circle1.Center));
             }
@@ -1076,6 +1190,7 @@ namespace AW2.Helpers.Geometric
                 Triangle triangle1 = (Triangle)prim1;
                 if (prim2 is Point) return GetNormal(triangle1, (Point)prim2);
                 if (prim2 is Circle) return GetNormal(triangle1, new Point(((Circle)prim2).Center));
+                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Rectangle, Triangle) not implemented");
                 if (prim2 is Triangle) throw new Exception("Geometry.GetNormal(Triangle, Triangle) not implemented");
                 if (prim2 is Polygon) throw new Exception("Geometry.GetNormal(Triangle, Polygon) not implemented");
             }
@@ -1084,6 +1199,7 @@ namespace AW2.Helpers.Geometric
                 Polygon polygon1 = (Polygon)prim1;
                 if (prim2 is Point) return GetNormal(polygon1, (Point)prim2);
                 if (prim2 is Circle) return GetNormal(polygon1, new Point(((Circle)prim2).Center));
+                if (prim2 is Rectangle) throw new Exception("Geometry.GetNormal(Rectangle, Polygon) not implemented");
                 if (prim2 is Triangle) throw new Exception("Geometry.GetNormal(Polygon, Triangle) not implemented");
                 if (prim2 is Polygon) throw new Exception("Geometry.GetNormal(Polygon, Polygon) not implemented");
             }
@@ -1461,6 +1577,105 @@ namespace AW2.Helpers.Geometric
                 Assert.IsTrue(Geometry.Intersect(c2_50, c3_10));   // circle interiors intersect only partly
                 Assert.IsTrue(Geometry.Intersect(c2_10, c2_50));   // one circle is strictly inside the other
                 Assert.IsTrue(Geometry.Intersect(c2_20, c2_20));   // the circles are the same
+            }
+
+            /// <summary>
+            /// Tests intersection of circle and rectangle.
+            /// </summary>
+            [Test]
+            public void TestIntersectCircleRectangle()
+            {
+                Rectangle rect = new Rectangle(-20, -20, 20, 20);
+
+                // Circle at rectangle corners
+                Assert.IsTrue(Intersect(new Circle(new Vector2(30, 30), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(30, 30), 14), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(-30, -30), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(-30, -30), 14), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(30, -30), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(30, -30), 14), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(-30, 30), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(-30, 30), 14), rect));
+
+                // Circle inside rectangle
+                Assert.IsTrue(Intersect(new Circle(new Vector2(10, 10), 0), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(10, 10), 5), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(10, 10), 4000), rect));
+
+                // Circle at rectangle face
+                Assert.IsTrue(Intersect(new Circle(new Vector2(0, 30), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(0, 30), 9), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(0, -30), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(0, -30), 9), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(30, 0), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(30, 0), 9), rect));
+                Assert.IsTrue(Intersect(new Circle(new Vector2(-30, 0), 30), rect));
+                Assert.IsFalse(Intersect(new Circle(new Vector2(-30, 0), 9), rect));
+            }
+
+            /// <summary>
+            /// Test intersection of rectangles.
+            /// </summary>
+            [Test]
+            public void TestIntersectRectangleRectangle()
+            {
+                Vector2 p22 = new Vector2(20, 20);
+                Vector2 p44 = new Vector2(40, 40);
+                Vector2 p11 = new Vector2(10, 10);
+                Vector2 p13 = new Vector2(10, 30);
+                Vector2 p15 = new Vector2(10, 50);
+                Vector2 p31 = new Vector2(30, 10);
+                Vector2 p33 = new Vector2(30, 30);
+                Vector2 p35 = new Vector2(30, 50);
+                Vector2 p51 = new Vector2(50, 10);
+                Vector2 p53 = new Vector2(50, 30);
+                Vector2 p55 = new Vector2(50, 50);
+                Rectangle rect = new Rectangle(p22, p44);
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p11, p11)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p11, p13)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p11, p15)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p11, p31)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p11, p33)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p11, p35)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p11, p51)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p11, p53)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p11, p55)));
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p13, p13)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p13, p15)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p13, p33)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p13, p35)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p13, p53)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p13, p55)));
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p15, p15)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p15, p35)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p15, p55)));
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p31, p31)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p31, p33)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p31, p35)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p31, p51)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p31, p53)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p31, p55)));
+
+                Assert.IsTrue(Intersect(rect, new Rectangle(p33, p33)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p33, p35)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p33, p53)));
+                Assert.IsTrue(Intersect(rect, new Rectangle(p33, p55)));
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p35, p35)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p35, p55)));
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p51, p51)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p51, p53)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p51, p55)));
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p53, p53)));
+                Assert.IsFalse(Intersect(rect, new Rectangle(p53, p55)));
+
+                Assert.IsFalse(Intersect(rect, new Rectangle(p35, p55)));
             }
 
             /// <summary>

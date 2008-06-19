@@ -52,31 +52,6 @@ namespace AW2.Helpers
                 ? from + Math.Min(step, difference)
                 : from - Math.Min(step, MathHelper.TwoPi - difference);
         }
-
-        /// <summary>
-        /// Returns the minimum and maximum X and Y coordinates out of
-        /// given three tuples of X, Y and Z coordinates.
-        /// </summary>
-        public static void MinAndMax(Vector3 v1, Vector3 v2, Vector3 v3, out Vector2 min, out Vector2 max)
-        {
-            min = new Vector2(Math.Min(v1.X, Math.Min(v2.X, v3.X)),
-                              Math.Min(v1.Y, Math.Min(v2.Y, v3.Y)));
-            max = new Vector2(Math.Max(v1.X, Math.Max(v2.X, v3.X)),
-                              Math.Max(v1.Y, Math.Max(v2.Y, v3.Y)));
-        }
-
-        /// <summary>
-        /// Returns the minimum and maximum X, Y and Z coordinates out of
-        /// given three tuples of X and Y coordinates. The Z coordinates
-        /// will all be zero.
-        /// </summary>
-        public static BoundingBox MinAndMax(Vector2 v1, Vector2 v2, Vector2 v3)
-        {
-            return new BoundingBox(new Vector3(Math.Min(v1.X, Math.Min(v2.X, v3.X)),
-                Math.Min(v1.Y, Math.Min(v2.Y, v3.Y)), 0),
-                new Vector3(Math.Max(v1.X, Math.Max(v2.X, v3.X)),
-                Math.Max(v1.Y, Math.Max(v2.Y, v3.Y)), 0));
-        }
         
         /// <summary>
         /// Returns the least power of two that is more than or equal to a value.
@@ -269,37 +244,6 @@ namespace AW2.Helpers
                 a = ((a % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
                 b = ((b % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
                 return Math.Abs(a - b) < epsilon;
-            }
-
-            /// <summary>
-            /// Tests obtaining min and max Vector2's from Vector3's.
-            /// </summary>
-            [Test]
-            public void TestMinAndMax()
-            {
-                Vector2 min, max;
-                Vector3 v1 = new Vector3(0, 0, 0);
-                Vector3 v2 = new Vector3(1, 2, 3);
-                Vector3 v3 = new Vector3(2, 3, 4);
-                Vector3 v4 = new Vector3(-10, 10, 100);
-                Vector3 v5 = new Vector3(-20, 0, -100);
-                Vector3 v6 = new Vector3(-5, -5, -5);
-
-                MinAndMax(v1, v2, v3, out min, out max);
-                Assert.AreEqual(new Vector2(0, 0), min);
-                Assert.AreEqual(new Vector2(2, 3), max);
-
-                MinAndMax(v3, v1, v2, out min, out max);
-                Assert.AreEqual(new Vector2(0, 0), min);
-                Assert.AreEqual(new Vector2(2, 3), max);
-
-                MinAndMax(v3, v2, v1, out min, out max);
-                Assert.AreEqual(new Vector2(0, 0), min);
-                Assert.AreEqual(new Vector2(2, 3), max);
-
-                MinAndMax(v4, v5, v6, out min, out max);
-                Assert.AreEqual(new Vector2(-20, -5), min);
-                Assert.AreEqual(new Vector2(-5, 10), max);
             }
 
             /// <summary>

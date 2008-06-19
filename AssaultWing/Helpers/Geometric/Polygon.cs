@@ -36,8 +36,7 @@ namespace AW2.Helpers.Geometric
             /// <summary>
             /// Tight, axis-aligned bounding box for the face strip.
             /// </summary>
-            /// The Z-coordinate is not used.
-            public BoundingBox boundingBox;
+            public Rectangle boundingBox;
 
             /// <summary>
             /// Creates a face strip for a polygon.
@@ -45,7 +44,7 @@ namespace AW2.Helpers.Geometric
             /// <param name="startIndex">Index of the first vertex in the strip.</param>
             /// <param name="endIndex">Index of the first vertex not in the strip, (exclusive end).</param>
             /// <param name="boundingBox">Bounding box for the face strip.</param>
-            public FaceStrip(int startIndex, int endIndex, BoundingBox boundingBox)
+            public FaceStrip(int startIndex, int endIndex, Rectangle boundingBox)
             {
                 this.startIndex = startIndex;
                 this.endIndex = endIndex;
@@ -67,8 +66,7 @@ namespace AW2.Helpers.Geometric
         /// <summary>
         /// A rectangle containing all the vertices.
         /// </summary>
-        /// The Z-coordinate is irrelevant.
-        BoundingBox boundingBox;
+        Rectangle boundingBox;
 
         /// <summary>
         /// The polygon's faces separated into strips, for optimisation purposes.
@@ -113,7 +111,7 @@ namespace AW2.Helpers.Geometric
             // is not needed.
             this.vertices = (Vector2[])vertices.Clone();
 
-            boundingBox = new BoundingBox();
+            boundingBox = new Rectangle();
             faceStrips = null;
             UpdateBoundingBox();
             UpdateFaceStrips();
@@ -190,7 +188,7 @@ namespace AW2.Helpers.Geometric
                 min = Vector2.Min(min, v);
                 max = Vector2.Max(max, v);
             }
-            boundingBox = new BoundingBox(new Vector3(min, 0), new Vector3(max, 0));
+            boundingBox = new Rectangle(min, max);
         }
 
         /// <summary>
@@ -221,7 +219,7 @@ namespace AW2.Helpers.Geometric
                     max = Vector2.Max(max, vertices[realI]);
                 }
                 faceStripList.Add(new FaceStrip(startIndex, endIndex,
-                    new BoundingBox(new Vector3(min, 0), new Vector3(max, 0))));
+                    new Rectangle(min, max)));
                 startIndex = endIndex;
             }
             this.faceStrips = faceStripList.ToArray();
@@ -232,8 +230,7 @@ namespace AW2.Helpers.Geometric
         /// <summary>
         /// A rectangle that contains the geometric primitive.
         /// </summary>
-        /// The Z-coordinates are irrelevant.
-        public BoundingBox BoundingBox { get { return boundingBox; } }
+        public Rectangle BoundingBox { get { return boundingBox; } }
 
         /// <summary>
         /// Transforms the geometric primitive by a transformation matrix.

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Helpers.Geometric;
+using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Helpers
 {
@@ -76,13 +78,12 @@ namespace AW2.Helpers
         /// Adds an element to the spatial grid.
         /// </summary>
         /// <param name="obj">The actual object to add.</param>
-        /// <param name="min">The object's bounding box's minimum coordinates.</param>
-        /// <param name="max">The object's bounding box's maximum coordinates.</param>
+        /// <param name="boundingBox">A bounding box for the object.</param>
         /// <returns>The stored element in the spatial grid.</returns>
-        public SpatialGridElement<T> Add(T obj, Vector2 min, Vector2 max)
+        public SpatialGridElement<T> Add(T obj, Rectangle boundingBox)
         {
-            int gridX = (int)((min.X - gridMin.X) / cellSize);
-            int gridY = (int)((min.Y - gridMin.Y) / cellSize);
+            int gridX = (int)((boundingBox.Min.X - gridMin.X) / cellSize);
+            int gridY = (int)((boundingBox.Min.Y - gridMin.Y) / cellSize);
             bool outOfBounds = gridX < 0 || gridY < 0
                 || gridX >= cells.GetLength(1) || gridY >= cells.GetLength(0);
             if (outOfBounds)
@@ -90,26 +91,27 @@ namespace AW2.Helpers
                 gridX = -1;
                 gridY = -1;
             }
-            SpatialGridElement<T> element = new SpatialGridElement<T>(obj, min, max, this, gridX, gridY);
+            SpatialGridElement<T> element = new SpatialGridElement<T>(obj, boundingBox, this, gridX, gridY);
             if (outOfBounds)
                 outerCell.Add(element);
             else
                 cells[gridY, gridX].Add(element);
-            boundingBoxMax = Vector2.Max(boundingBoxMax, max - min);
+            boundingBoxMax = Vector2.Max(boundingBoxMax, boundingBox.Dimensions);
             return element;
         }
 
         /// <summary>
-        /// Removes from a rectangular area all elements equal to an element.
+        /// Removes elements from the spatial grid.
         /// </summary>
+        /// The all found instances of the given value are removed.
+        /// The search will cover the given area and perhaps some more.
         /// <param name="obj">The actual object to remove.</param>
-        /// <param name="min">Minimum coordinates of the rectangular area.</param>
-        /// <param name="max">Maximum coordinates of the rectangular area.</param>
-        public void Remove(T obj, Vector2 min, Vector2 max)
+        /// <param name="area">The minimal area to search for the instances.</param>
+        public void Remove(T obj, Rectangle area)
         {
             int gridMinX, gridMinY, gridMaxX, gridMaxY;
             bool outOfBounds;
-            ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+            ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
 
             if (outOfBounds)
                 outerCell.RemoveAll(delegate(SpatialGridElement<T> element) { return element.Value.Equals(obj); });
@@ -156,13 +158,12 @@ namespace AW2.Helpers
         /// <summary>
         /// Returns all elements that intersect a rectangular area.
         /// </summary>
-        /// <param name="min">Minimum coordinates of the rectangular area.</param>
-        /// <param name="max">Maximum coordinates of the rectangular area.</param>
-        public IEnumerable<T> GetElements(Vector2 min, Vector2 max)
+        /// <param name="area">The rectangular area.</param>
+        public IEnumerable<T> GetElements(Rectangle area)
         {
             int gridMinX, gridMinY, gridMaxX, gridMaxY;
             bool outOfBounds;
-            ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+            ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
             
             List<T> matches = new List<T>();
             if (outOfBounds)
@@ -171,7 +172,8 @@ namespace AW2.Helpers
             for (int y = gridMinY; y < gridMaxY; ++y)
                 for (int x = gridMinX; x < gridMaxX; ++x)
                     foreach (SpatialGridElement<T> element in cells[y, x])
-                        matches.Add(element.Value);
+                        if (Geometry.Intersect(element.BoundingBox, area))
+                            matches.Add(element.Value);
             return matches;
         }
 
@@ -179,26 +181,33 @@ namespace AW2.Helpers
         /// Performs an action on each element that intersects a rectangular area.
         /// If the action returns <c>true</c> then the iteration will break.
         /// </summary>
-        /// <param name="min">Minimum coordinates of the rectangular area.</param>
-        /// <param name="max">Maximum coordinates of the rectangular area.</param>
+        /// <param name="area">The rectangular area.</param>
         /// <param name="action">The action to perform. If it returns <c>true</c>,
         /// the iteration will break.</param>
-        public void ForEachElement(Vector2 min, Vector2 max, Predicate<T> action)
+        public void ForEachElement(Rectangle area, Predicate<T> action)
         {
             int gridMinX, gridMinY, gridMaxX, gridMaxY;
             bool outOfBounds;
-            ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+            ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
 
             if (outOfBounds)
                 for (int i = 0; i < outerCell.Count; ++i)
-                    if (action(outerCell[i].Value)) return;
+                {
+                    SpatialGridElement<T> cellElement = outerCell[i];
+                    if (!Geometry.Intersect(cellElement.BoundingBox, area)) continue;
+                    if (action(cellElement.Value)) return;
+                }
             for (int y = gridMinY; y < gridMaxY; ++y)
                 for (int x = gridMinX; x < gridMaxX; ++x)
                 {
                     List<SpatialGridElement<T>> cell = cells[y, x];
                     // We come here very often -- avoid foreach created iterator overhead.
                     for (int i = 0; i < cell.Count; ++i)
-                        if (action(cell[i].Value)) return;
+                    {
+                        SpatialGridElement<T> cellElement = cell[i];
+                        if (!Geometry.Intersect(cellElement.BoundingBox, area)) continue;
+                        if (action(cellElement.Value)) return;
+                    }
                 }
         }
 
@@ -228,24 +237,16 @@ namespace AW2.Helpers
         /// The resulting range is given in pairs of minimum and maximum indices 
         /// of which minimum indices are inclusive and maximum indices are exclusive.
         /// </summary>
-        /// <param name="min">Minimum coordinates of the rectangular area.</param>
-        /// <param name="max">Maximum coordinates of the rectangular area.</param>
+        /// <param name="area">The rectangular area.</param>
         /// <param name="gridMinX">Where to store the minimum grid cell X index, inclusive.</param>
         /// <param name="gridMinY">Where to store the minimum grid cell Y index, inclusive.</param>
         /// <param name="gridMaxX">Where to store the maximum grid cell X index, exclusive.</param>
         /// <param name="gridMaxY">Where to store the maximum grid cell Y index, exclusive.</param>
         /// <param name="outOfBounds">Where to store the fact that the outer cell is included in the range.</param>
-        void ConvertArea(Vector2 min, Vector2 max, out int gridMinX, out int gridMinY,
+        void ConvertArea(Rectangle area, out int gridMinX, out int gridMinY,
             out int gridMaxX, out int gridMaxY, out bool outOfBounds)
         {
             outOfBounds = false;
-
-            // The empty area contains no elements.
-            if (min.X > max.X || min.Y > max.Y)
-            {
-                gridMinX = gridMinY = gridMaxX = gridMaxY = 0;
-                return;
-            }
 
             // Minimum grid indices are inclusive, maximum grid indices are exclusive.
             // Lower limits must compensate for the reference point of an object
@@ -254,18 +255,18 @@ namespace AW2.Helpers
             // danger of integer overflow.
             int maxCellX = cells.GetLength(1);
             int maxCellY = cells.GetLength(0);
-            gridMinX = min.X - boundingBoxMax.X < gridMin.X ? -1
-                : min.X - boundingBoxMax.X >= gridMax.X ? maxCellX + 1
-                : (int)((min.X - boundingBoxMax.X - gridMin.X) / cellSize);
-            gridMinY = min.Y - boundingBoxMax.Y < gridMin.Y ? -1
-                : min.Y - boundingBoxMax.Y >= gridMax.Y ? maxCellY + 1
-                : (int)((min.Y - boundingBoxMax.Y - gridMin.Y) / cellSize);
-            gridMaxX = max.X < gridMin.X ? -1
-                : max.X >= gridMax.X ? maxCellX + 1
-                : (int)((max.X - gridMin.X) / cellSize) + 1;
-            gridMaxY = max.Y < gridMin.Y ? -1
-                : max.Y >= gridMax.Y ? maxCellY + 1
-                : (int)((max.Y - gridMin.Y) / cellSize) + 1;
+            gridMinX = area.Min.X - boundingBoxMax.X < gridMin.X ? -1
+                : area.Min.X - boundingBoxMax.X >= gridMax.X ? maxCellX + 1
+                : (int)((area.Min.X - boundingBoxMax.X - gridMin.X) / cellSize);
+            gridMinY = area.Min.Y - boundingBoxMax.Y < gridMin.Y ? -1
+                : area.Min.Y - boundingBoxMax.Y >= gridMax.Y ? maxCellY + 1
+                : (int)((area.Min.Y - boundingBoxMax.Y - gridMin.Y) / cellSize);
+            gridMaxX = area.Max.X < gridMin.X ? -1
+                : area.Max.X >= gridMax.X ? maxCellX + 1
+                : (int)((area.Max.X - gridMin.X) / cellSize) + 1;
+            gridMaxY = area.Max.Y < gridMin.Y ? -1
+                : area.Max.Y >= gridMax.Y ? maxCellY + 1
+                : (int)((area.Max.Y - gridMin.Y) / cellSize) + 1;
             outOfBounds = gridMinX < 0 || gridMinY < 0
                 || gridMaxX > cells.GetLength(1) || gridMaxY > cells.GetLength(0);
             gridMinX = Math.Min(Math.Max(gridMinX, 0), cells.GetLength(1));
@@ -301,56 +302,50 @@ namespace AW2.Helpers
                 int gridMinX, gridMinY, gridMaxX, gridMaxY;
                 bool outOfBounds;
                 SpatialGrid<int> grid1 = new SpatialGrid<int>(10, new Vector2(-50), new Vector2(100));
-                Vector2 min, max;
+                Rectangle area;
 
-                min = new Vector2(1, 1);
-                max = new Vector2(9, 9);
-                grid1.ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+                area = new Rectangle(1, 1, 9, 9);
+                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
                 Assert.AreEqual(5, gridMinX);
                 Assert.AreEqual(5, gridMinY);
                 Assert.AreEqual(6, gridMaxX);
                 Assert.AreEqual(6, gridMaxY);
                 Assert.AreEqual(false, outOfBounds);
 
-                min = new Vector2(0, 0);
-                max = new Vector2(10, 10);
-                grid1.ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+                area = new Rectangle(0, 0, 10, 10);
+                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
                 Assert.AreEqual(5, gridMinX);
                 Assert.AreEqual(5, gridMinY);
                 Assert.AreEqual(7, gridMaxX);
                 Assert.AreEqual(7, gridMaxY);
                 Assert.AreEqual(false, outOfBounds);
 
-                min = new Vector2(-50, -50);
-                max = new Vector2(-50, -50);
-                grid1.ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+                area = new Rectangle(-50, -50, -50, -50);
+                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
                 Assert.AreEqual(0, gridMinX);
                 Assert.AreEqual(0, gridMinY);
                 Assert.AreEqual(1, gridMaxX);
                 Assert.AreEqual(1, gridMaxY);
                 Assert.AreEqual(false, outOfBounds);
 
-                min = new Vector2(99.9999f, 99.9999f);
-                max = new Vector2(99.9999f, 99.9999f);
-                grid1.ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+                area = new Rectangle(99.9999f, 99.9999f, 99.9999f, 99.9999f);
+                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
                 Assert.AreEqual(15, gridMinX);
                 Assert.AreEqual(15, gridMinY);
                 Assert.AreEqual(16, gridMaxX);
                 Assert.AreEqual(16, gridMaxY);
                 Assert.AreEqual(false, outOfBounds);
 
-                min = new Vector2(15, -15);
-                max = new Vector2(float.MaxValue, float.MaxValue);
-                grid1.ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+                area = new Rectangle(15, -15, float.MaxValue, float.MaxValue);
+                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
                 Assert.AreEqual(6, gridMinX);
                 Assert.AreEqual(3, gridMinY);
                 Assert.AreEqual(16, gridMaxX);
                 Assert.AreEqual(16, gridMaxY);
                 Assert.AreEqual(true, outOfBounds);
 
-                min = new Vector2(-float.MaxValue, -float.MaxValue);
-                max = new Vector2(float.MaxValue, 100.1f);
-                grid1.ConvertArea(min, max, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
+                area = new Rectangle(-float.MaxValue, -float.MaxValue, float.MaxValue, 100.1f);
+                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
                 Assert.AreEqual(0, gridMinX);
                 Assert.AreEqual(0, gridMinY);
                 Assert.AreEqual(16, gridMaxX);
@@ -370,8 +365,7 @@ namespace AW2.Helpers
     public class SpatialGridElement<T>
     {
         T value;
-        Vector2 min;
-        Vector2 max;
+        Rectangle boundingBox;
         SpatialGrid<T> owner;
         int x, y;
 
@@ -381,14 +375,9 @@ namespace AW2.Helpers
         public T Value { get { return value; } }
 
         /// <summary>
-        /// The value's bounding box's minimum coordinates.
+        /// The value's bounding box.
         /// </summary>
-        public Vector2 Min { get { return min; } }
-
-        /// <summary>
-        /// The value's bounding box's maximum coordinates.
-        /// </summary>
-        public Vector2 Max { get { return max; } }
+        public Rectangle BoundingBox { get { return boundingBox; } }
 
         /// <summary>
         /// The spatial grid where this element is stored.
@@ -409,17 +398,15 @@ namespace AW2.Helpers
         /// Creates a wrapper for a value to be stored to a spatial grid.
         /// </summary>
         /// <param name="value">The actual value.</param>
-        /// <param name="min">The value's bounding box's minimum coordinates.</param>
-        /// <param name="max">The value's bounding box's maximum coordinates.</param>
+        /// <param name="boundingBox">The value's bounding box.</param>
         /// <param name="owner">The spatial grid where this element will be stored.</param>
         /// <param name="gridX">The X coordinate where this element is stored in the spatial grid.</param>
         /// <param name="gridY">The Y coordinate where this element is stored in the spatial grid.</param>
-        public SpatialGridElement(T value, Vector2 min, Vector2 max,
+        public SpatialGridElement(T value, Rectangle boundingBox,
             SpatialGrid<T> owner, int gridX, int gridY)
         {
             this.value = value;
-            this.min = min;
-            this.max = max;
+            this.boundingBox = boundingBox;
             this.owner = owner;
             this.x = gridX;
             this.y = gridY;

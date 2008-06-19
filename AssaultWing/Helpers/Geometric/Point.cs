@@ -61,18 +61,25 @@ namespace AW2.Helpers.Geometric
                 && MathHelper.Distance(this.Location.Y, point.Location.Y) < delta;
         }
 
+        /// <summary>
+        /// Returns a string representation of the point.
+        /// </summary>
+        public override string ToString()
+        {
+            return Location.ToString();
+        }
+
         #region IGeomPrimitive Members
 
         /// <summary>
         /// A rectangle that contains the geometric primitive.
         /// </summary>
-        /// The Z-coordinates are irrelevant.
-        public BoundingBox BoundingBox
+        public Rectangle BoundingBox
         {
 #if TRUSTED_VISIBILITY_BREACH
-            get { return new BoundingBox(new Vector3(Location, 0), new Vector3(Location, 0)); } 
+            get { return new Rectangle(Location, Location); } 
 #else
-            get { return new BoundingBox(new Vector3(location, 0), new Vector3(location, 0)); }
+            get { return new Rectangle(location, location); }
 #endif
         }
 

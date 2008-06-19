@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Events;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game
 {
@@ -416,11 +417,8 @@ namespace AW2.Game
         {
             foreach (CollisionArea area in gob.CollisionAreas)
             {
-                BoundingBox box = area.Area.BoundingBox;
-                Vector2 min = new Vector2(box.Min.X, box.Min.Y);
-                Vector2 max = new Vector2(box.Max.X, box.Max.Y);
                 int bitIndex = AWMathHelper.LogTwo((int)area.Type);
-                area.CollisionData = collisionAreas[bitIndex].Add(area, min, max);
+                area.CollisionData = collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
                 if (area.CollidesAgainst != CollisionAreaType.None)
                     collisionAreaMayCollide[bitIndex] = true;
             }
@@ -557,10 +555,10 @@ namespace AW2.Game
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return;
-            Vector2 min = new Vector2(holePos.X - holeRadius, holePos.Y - holeRadius);
-            Vector2 max = new Vector2(holePos.X + holeRadius, holePos.Y + holeRadius);
+            Rectangle boundingBox = new Rectangle(holePos.X - holeRadius, holePos.Y - holeRadius,
+                holePos.X + holeRadius, holePos.Y + holeRadius);
             collisionAreas[AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds)].ForEachElement(
-                min, max, delegate(CollisionArea area)
+                boundingBox, delegate(CollisionArea area)
             {
                 ((Gobs.Wall)area.Owner).MakeHole(holePos, holeRadius);
                 return false;
@@ -662,10 +660,8 @@ namespace AW2.Game
         {
             CollisionArea area = gob.PhysicalArea;
             if (area == null) return;
-            BoundingBox box = area.Area.BoundingBox;
-            Vector2 min = new Vector2(box.Min.X, box.Min.Y);
-            Vector2 max = new Vector2(box.Max.X, box.Max.Y);
-            area.CollisionData = collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Add(area, min, max);
+            area.CollisionData = collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Add(
+                area, area.Area.BoundingBox);
         }
 
         /// <summary>
@@ -755,9 +751,7 @@ namespace AW2.Game
         private IEnumerable<CollisionArea> GetOverlappers(CollisionArea area, CollisionAreaType types)
         {
             IGeomPrimitive areaArea = area.Area;
-            BoundingBox box = areaArea.BoundingBox;
-            Vector2 min = new Vector2(box.Min.X, box.Min.Y);
-            Vector2 max = new Vector2(box.Max.X, box.Max.Y);
+            Rectangle boundingBox = areaArea.BoundingBox;
             List<CollisionArea> overlappers = null;
             Gob areaOwner = area.Owner;
             bool areaOwnerCold = areaOwner.Cold;
@@ -765,7 +759,7 @@ namespace AW2.Game
             for (int typeBit = 0; typeBit < collisionAreas.Length; ++typeBit)
             {
                 if (((1 << typeBit) & (int)types) == 0) continue;
-                collisionAreas[typeBit].ForEachElement(min, max, delegate(CollisionArea area2)
+                collisionAreas[typeBit].ForEachElement(boundingBox, delegate(CollisionArea area2)
                 {
                     if (!Geometry.Intersect(areaArea, area2.Area)) return false;
                     Gob area2Owner = area2.Owner;
@@ -800,9 +794,7 @@ namespace AW2.Game
             Predicate<CollisionArea> action)
         {
             IGeomPrimitive areaArea = area.Area;
-            BoundingBox box = areaArea.BoundingBox;
-            Vector2 min = new Vector2(box.Min.X, box.Min.Y);
-            Vector2 max = new Vector2(box.Max.X, box.Max.Y);
+            Rectangle boundingBox = areaArea.BoundingBox;
             bool overlapperFound = false;
             Gob areaOwner = area.Owner;
             bool areaOwnerCold = areaOwner.Cold;
@@ -811,7 +803,7 @@ namespace AW2.Game
             for (int typeBit = 0; typeBit < collisionAreas.Length; ++typeBit)
             {
                 if (((1 << typeBit) & (int)types) == 0) continue;
-                collisionAreas[typeBit].ForEachElement(min, max, delegate(CollisionArea area2)
+                collisionAreas[typeBit].ForEachElement(boundingBox, delegate(CollisionArea area2)
                 {
                     if (!Geometry.Intersect(areaArea, area2.Area)) return false;
                     Gob area2Owner = area2.Owner;

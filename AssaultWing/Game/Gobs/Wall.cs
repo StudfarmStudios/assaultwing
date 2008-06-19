@@ -358,12 +358,6 @@ namespace AW2.Game.Gobs
             for (int i = 0; i + 2 < this.indexData.Length; i += 3)
             {
                 // Create a physical collision area for this triangle.
-                Vector2 min, max;
-                AWMathHelper.MinAndMax(
-                    this.vertexData[this.indexData[i + 0]].Position,
-                    this.vertexData[this.indexData[i + 1]].Position,
-                    this.vertexData[this.indexData[i + 2]].Position,
-                    out min, out max);
                 Vector3 v1 = this.vertexData[this.indexData[i + 0]].Position;
                 Vector3 v2 = this.vertexData[this.indexData[i + 1]].Position;
                 Vector3 v3 = this.vertexData[this.indexData[i + 2]].Position;

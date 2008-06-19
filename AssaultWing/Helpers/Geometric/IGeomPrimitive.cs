@@ -13,8 +13,7 @@ namespace AW2.Helpers.Geometric
         /// <summary>
         /// A rectangle that contains the geometric primitive.
         /// </summary>
-        /// The Z-coordinates are irrelevant.
-        BoundingBox BoundingBox { get; }
+        Rectangle BoundingBox { get; }
 
         /// <summary>
         /// Transforms the geometric primitive by a transformation matrix.

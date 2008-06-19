@@ -15,13 +15,12 @@ namespace AW2.Helpers.Geometric
         /// <summary>
         /// A rectangle that contains the geometric primitive.
         /// </summary>
-        /// The Z-coordinates are irrelevant.
-        public BoundingBox BoundingBox
+        public Rectangle BoundingBox
         {
             get
             {
-                return new BoundingBox(new Vector3(Single.MinValue),
-                                       new Vector3(Single.MaxValue));
+                return new Rectangle(float.MinValue, float.MinValue, 
+                                     float.MaxValue, float.MaxValue);
             }
         }
 

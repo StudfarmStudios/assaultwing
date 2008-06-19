@@ -16,18 +16,17 @@ namespace AW2.Helpers.Geometric
         /// <summary>
         /// A rectangle containing the triangle.
         /// </summary>
-        /// The Z-coordinate is irrelevant.
-        BoundingBox boundingBox;
+        Rectangle boundingBox;
 
         /// <summary>
         /// Gets and sets the center of the circle.
         /// </summary>
-        public Vector2 Center { get { return center; } set { center = value; } }
+        public Vector2 Center { get { return center; } }
 
         /// <summary>
         /// Gets and sets the radius of the circle.
         /// </summary>
-        public float Radius { get { return radius; } set { radius = MathHelper.Max(value, 0f); } }
+        public float Radius { get { return radius; } }
 
         /// <summary>
         /// Creates a zero-radius circle at the origin.
@@ -36,7 +35,7 @@ namespace AW2.Helpers.Geometric
         {
             center = Vector2.Zero;
             radius = 0;
-            boundingBox = new BoundingBox(Vector3.Zero, Vector3.Zero);
+            boundingBox = new Rectangle();
         }
 
         /// <summary>
@@ -48,8 +47,8 @@ namespace AW2.Helpers.Geometric
         {
             this.center = center;
             this.radius = radius;
-            boundingBox = new BoundingBox(new Vector3(center.X - radius, center.Y - radius, 0),
-                                          new Vector3(center.X + radius, center.Y + radius, 0));
+            boundingBox = new Rectangle(center.X - radius, center.Y - radius,
+                                        center.X + radius, center.Y + radius);
         }
 
         #region IGeomPrimitive Members
@@ -58,7 +57,7 @@ namespace AW2.Helpers.Geometric
         /// A rectangle that contains the geometric primitive.
         /// </summary>
         /// The Z-coordinates are irrelevant.
-        public BoundingBox BoundingBox { get { return boundingBox; } }
+        public Rectangle BoundingBox { get { return boundingBox; } }
 
         /// <summary>
         /// Transforms the geometric primitive by a transformation matrix.

@@ -55,7 +55,7 @@ namespace AW2.Game
         /// </summary>
         public void Reset()
         {
-            nextBonus = new TimeSpan(0, 0, 10);
+            nextBonus = AssaultWing.Instance.GameTime.ElapsedGameTime + new TimeSpan(0, 0, 10);
         }
 
         /// <summary>

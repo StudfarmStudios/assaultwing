@@ -129,6 +129,9 @@ namespace AW2.Game.Gobs
             long ticks = (long)(10 * 1000 * 1000 * flowTime);
             flowEndTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
 
+            // Make a hole in the arena walls.
+            physics.MakeHole(Pos, impactHoleRadius);
+
             base.Activate();
         }
 
@@ -190,7 +193,6 @@ namespace AW2.Game.Gobs
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             // We assume we have only these collision areas, all receptors with specific names:
-            // "Hole" is assumed to collide only against walls;
             // "Hit" is assumed to collide only against damageables;
             // "Force" is assumed to collide only against movables.
             if (myArea.Name == "Force")
@@ -200,10 +202,6 @@ namespace AW2.Game.Gobs
                 Vector2 flow = difference / differenceLength *
                     flowSpeed.Evaluate(differenceLength);
                 physics.ApplyDrag(theirArea.Owner, flow, 0.003f);
-            }
-            else if (myArea.Name == "Hole")
-            {
-                ((Wall)theirArea.Owner).MakeHole(Pos, impactHoleRadius);
             }
             else if (myArea.Name == "Hit")
             {

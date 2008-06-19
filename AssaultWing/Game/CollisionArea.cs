@@ -29,6 +29,11 @@ namespace AW2.Game
         Force = 0x0002,
 
         /// <summary>
+        /// A bounding volume for a piece of wall.
+        /// </summary>
+        WallBounds = 0x0004,
+
+        /// <summary>
         /// The physical collision area of a ship.
         /// </summary>
         PhysicalShip = 0x0010,

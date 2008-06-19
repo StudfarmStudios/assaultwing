@@ -260,9 +260,9 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Removes a round area from the gob, i.e. makes a hole.
+        /// Removes a round area from this wall, i.e. makes a hole.
         /// </summary>
-        /// <param name="holePos">Center of the area to remove, in world coordinates.</param>
+        /// <param name="holePos">Center of the hole, in world coordinates.</param>
         /// <param name="holeRadius">Radius of the hole, in meters.</param>
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
@@ -299,7 +299,7 @@ namespace AW2.Game.Gobs
             if (triangleCount == 0)
                 data.RemoveGob(this);
         }
-
+ 
         #region IConsistencyCheckable Members
 
         /// <summary>
@@ -352,10 +352,12 @@ namespace AW2.Game.Gobs
                 Array.ConvertAll<VertexPositionNormalTexture, Vector3>(this.vertexData,
                 delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
 
-            // Create collision areas from 3D model's triangles.
-            collisionAreas = new CollisionArea[this.indexData.Length / 3];
+            // Create collision areas; one for each triangle in the wall's 3D model
+            // and one bounding collision area for making holes in the wall.
+            collisionAreas = new CollisionArea[this.indexData.Length / 3 + 1];
             for (int i = 0; i + 2 < this.indexData.Length; i += 3)
             {
+                // Create a physical collision area for this triangle.
                 Vector2 min, max;
                 AWMathHelper.MinAndMax(
                     this.vertexData[this.indexData[i + 0]].Position,
@@ -372,6 +374,11 @@ namespace AW2.Game.Gobs
                 collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
                     CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None);
             }
+
+            // Create a bounding volume for the whole wall.
+            IGeomPrimitive boundingArea = new Everything(); // TODO: Find a tighter bounding volume.
+            collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
+                CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None);
         }
 
         #endregion Protected methods

@@ -123,5 +123,12 @@ namespace AW2.Game
         /// <param name="position">The position.</param>
         /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
         bool IsFreePosition(Gob gob, Vector2 position);
+
+        /// <summary>
+        /// Removes a round area from walls of the current arena, i.e. makes a hole.
+        /// </summary>
+        /// <param name="holePos">Center of the hole, in world coordinates.</param>
+        /// <param name="holeRadius">Radius of the hole, in meters.</param>
+        void MakeHole(Vector2 holePos, float holeRadius);
     }
 }

@@ -114,6 +114,20 @@ namespace AW2.Game
             OuterBoundary = OuterTop | OuterBottom | OuterLeft | OuterRight,
         }
 
+        /// <summary>
+        /// A piece of index map, containing only indices from one wall gob.
+        /// </summary>
+        private struct IndexMapBlock
+        {
+            public Gobs.Wall wall;
+            public int[,] indexMap;
+            public IndexMapBlock(Gobs.Wall wall, int indexMapBlockSize)
+            {
+                this.wall = wall;
+                indexMap = new int[indexMapBlockSize, indexMapBlockSize];
+            }
+        }
+
         #endregion Type definitions
 
         #region Constants
@@ -193,6 +207,11 @@ namespace AW2.Game
         /// </summary>
         float wallTriangleArenaExcess = 1000;
 
+        /// <summary>
+        /// The width and height of each index map block, in meters.
+        /// </summary>
+        int indexMapBlockSize = 20;
+
         #endregion Constants
 
         #region Fields
@@ -223,6 +242,25 @@ namespace AW2.Game
         /// </summary>
         bool[] collisionAreaMayCollide;
 
+        /// <summary>
+        /// Index map of the current arena's walls' 3D models' triangles.
+        /// </summary>
+        /// The index map consists of square blocks that are pairwise either disjoint or
+        /// cover the exact same area. Each block contains indices from one wall gob only.
+        /// Blocks stored in <c>indexMap[y,x]</c> cover the square area from
+        /// <c>indexMapMin + (x * indexMapBlockSize, y * indexMapBlockSize)</c> through 
+        /// <c>indexMapMin + ((x+1) * indexMapBlockSize - 1, (y+1) * indexMapBlockSize - 1)</c>, 
+        /// inclusive, measured in arena coordinates. If  <c>indexMap[y,x]== null</c> 
+        /// then there is no wall in that area. Each index <c>n</c> in an index map block 
+        /// refers to the triangle that is defined by the corresponding wall's 3D model's 
+        /// index map elements <c>3n</c>, <c>3n + 1</c> and <c>3n + 2</c>.
+        IndexMapBlock[,][] indexMap;
+
+        /// <summary>
+        /// The lower left corner of the index map, in arena coordinates.
+        /// </summary>
+        Vector2 indexMapMin;
+
         #endregion Fields
 
         /// <summary>
@@ -238,6 +276,7 @@ namespace AW2.Game
                 collisionAreaCellSize[i] = -1;
             collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.Receptor)] = float.MaxValue;
             collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.Force)] = float.MaxValue;
+            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds)] = 500;
             collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShip)] = 100;
             collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShot)] = 100;
             collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalWall)] = 20;
@@ -267,12 +306,25 @@ namespace AW2.Game
             gameTime = new GameTime();
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
-            for (int i = 0; i < collisionAreas.Length; ++i)
-                if (data.Arena == null)
+            if (data.Arena == null)
+            {
+                // Release arrays.
+                for (int i = 0; i < collisionAreas.Length; ++i)
                     collisionAreas[i] = null;
-                else if (collisionAreaCellSize[i] >= 0)
-                    collisionAreas[i] = new SpatialGrid<CollisionArea>(collisionAreaCellSize[i],
-                        -areaExcess, data.Arena.Dimensions + areaExcess);
+                indexMap = null;
+            }
+            else 
+            {
+                // Allocate new arrays.
+                Vector2 arrayDimensions = data.Arena.Dimensions + 2 * areaExcess;
+                for (int i = 0; i < collisionAreas.Length; ++i)
+                    if (collisionAreaCellSize[i] >= 0)
+                        collisionAreas[i] = new SpatialGrid<CollisionArea>(collisionAreaCellSize[i],
+                            -areaExcess, arrayDimensions - areaExcess);
+                indexMap = new IndexMapBlock[(int)Math.Ceiling(arrayDimensions.X / indexMapBlockSize),
+                    (int)Math.Ceiling(arrayDimensions.Y / indexMapBlockSize)][];
+                indexMapMin = -areaExcess;
+            }
             collisionAreaMayCollide.Initialize();
         }
 
@@ -495,6 +547,24 @@ namespace AW2.Game
             bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
             gob.Pos = oldPos;
             return result;
+        }
+
+        /// <summary>
+        /// Removes a round area from all walls of the current arena, i.e. makes a hole.
+        /// </summary>
+        /// <param name="holePos">Center of the hole, in world coordinates.</param>
+        /// <param name="holeRadius">Radius of the hole, in meters.</param>
+        public void MakeHole(Vector2 holePos, float holeRadius)
+        {
+            if (holeRadius <= 0) return;
+            Vector2 min = new Vector2(holePos.X - holeRadius, holePos.Y - holeRadius);
+            Vector2 max = new Vector2(holePos.X + holeRadius, holePos.Y + holeRadius);
+            collisionAreas[AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds)].ForEachElement(
+                min, max, delegate(CollisionArea area)
+            {
+                ((Gobs.Wall)area.Owner).MakeHole(holePos, holeRadius);
+                return false;
+            });
         }
 
         #endregion // PhysicsEngine Members

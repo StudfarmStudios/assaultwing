@@ -97,8 +97,7 @@ namespace AW2.Game.Gobs
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 theirArea.Owner.InflictDamage(impactDamage);
-            if ((theirArea.Type & CollisionAreaType.PhysicalWall) != 0)
-                ((Wall)theirArea.Owner).MakeHole(Pos, impactHoleRadius);
+            physics.MakeHole(Pos, impactHoleRadius);
             Die();
         }
     }

@@ -51,10 +51,6 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("typeName:{typeName} pos:{pos} move:{move}")]
     public class Gob : IConsistencyCheckable
     {
-        // HACK
-        VertexPositionColor[] boundVertexData = null;
-        BasicEffect eff = null;
-
         #region Fields for all gobs
 
         /// <summary>
@@ -753,66 +749,6 @@ namespace AW2.Game
                     bleach = 0;
                 }
             }
-
-#if false
-            // Draw polygonal collision area outlines (for hardcore debugging)
-            foreach (CollisionArea collArea in collisionAreas)
-            {
-                if (!(collArea.Area is Polygon)) continue;
-                Graphics3D.GetWireframeModelData((Polygon)collArea.Area, 400f, Color.Azure, ref boundVertexData);
-                Matrix meshTrans = modelPartTransforms[model.Meshes[0].ParentBone.Index] *
-                    Matrix.CreateScale(Scale)
-                    * Matrix.CreateTranslation(new Vector3(Pos, 0));
-                GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-                gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-                if (eff == null)
-                    eff = new BasicEffect(AssaultWing.Instance.GraphicsDevice, null);
-                data.PrepareEffect(eff);
-                eff.World = Matrix.Identity;
-                eff.Projection = projection;
-                eff.View = view;
-                eff.TextureEnabled = false;
-                eff.LightingEnabled = false;
-                eff.VertexColorEnabled = true;
-                eff.Begin();
-                foreach (EffectPass pass in eff.CurrentTechnique.Passes)
-                {
-                    pass.Begin();
-                    gfx.DrawUserPrimitives<VertexPositionColor>(
-                        PrimitiveType.LineStrip, boundVertexData, 0, boundVertexData.Length - 1);
-                    pass.End();
-                }
-                eff.End();
-            }
-#endif
-#if false
-            // Draw first collision area bounding sphere (for hardcore debugging)
-            Matrix meshTrans = modelPartTransforms[model.Meshes[0].ParentBone.Index]
-                * Matrix.CreateScale(Scale)
-                * Matrix.CreateTranslation(new Vector3(Pos, 0));
-            BoundingSphere sph = model.Meshes[0].BoundingSphere.Transform(meshTrans);
-            Graphics3D.GetWireframeModelData(sph, 400f, Color.Azure, out boundVertexData);
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice; 
-            gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-            if (eff == null)
-                eff = new BasicEffect(AssaultWing.Instance.GraphicsDevice, null);
-            data.PrepareEffect(eff);
-            eff.World = Matrix.Identity;
-            eff.Projection = projection;
-            eff.View = view;
-            eff.TextureEnabled = false;
-            eff.LightingEnabled = false;
-            eff.VertexColorEnabled = true;
-            eff.Begin();
-            foreach (EffectPass pass in eff.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-                gfx.DrawUserPrimitives<VertexPositionColor>(
-                    PrimitiveType.LineStrip, boundVertexData, 0, boundVertexData.Length - 1);
-                pass.End();
-            }
-            eff.End();
-#endif
         }
 
         #endregion Methods related to gobs' functionality in the game world

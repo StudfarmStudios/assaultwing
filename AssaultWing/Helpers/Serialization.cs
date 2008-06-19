@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using Microsoft.Xna.Framework.Graphics;
+using TypePair = System.Collections.Generic.KeyValuePair<System.Type, System.Type>;
 
 namespace AW2.Helpers
 {
@@ -135,6 +136,15 @@ namespace AW2.Helpers
     /// <see cref="LimitationSwitchAttribute"/>
     class Serialization
     {
+        /// <summary>
+        /// Cache for field infos. An array of field infos is stored for
+        /// each pair (type1, type2), where type1 is the type whose fields
+        /// we are talking about, and type2 is the limiting attribute that
+        /// the fields must have, or <c>null</c> to list all fields.
+        /// </summary>
+        /// <see cref="GetFields(object, Type)"/>
+        static Dictionary<TypePair, FieldInfo[]> typeFields = new Dictionary<TypePair, FieldInfo[]>();
+
         #region public methods
 
         /// <summary>
@@ -290,7 +300,7 @@ namespace AW2.Helpers
         /// Returns the instance fields of the given object that optionally have the given attribute.
         /// </summary>
         /// The search includes the object's public and non-public fields declared in its 
-        /// type and all base types.
+        /// type and all base types. Do not modify the returned array.
         /// <param name="obj">The object whose fields to scan for.</param>
         /// <param name="limitationAttribute">Return fields with this attribute.
         /// If set to null, returns all fields.</param>
@@ -300,6 +310,15 @@ namespace AW2.Helpers
         /// a null reference or an attribute.</exception>
         public static FieldInfo[] GetFields(object obj, Type limitationAttribute)
         {
+            Type objType = obj.GetType();
+            TypePair key = new TypePair(objType, limitationAttribute);
+
+            // Look up the result from the cache.
+            FieldInfo[] result;
+            if (typeFields.TryGetValue(key, out result))
+                return result;
+
+            // Sanity checks
             if (limitationAttribute != null &&
                 !typeof(Attribute).IsAssignableFrom(limitationAttribute))
                 throw new ArgumentException("Expected an attribute, got " + limitationAttribute.Name);
@@ -308,14 +327,16 @@ namespace AW2.Helpers
             // Therefore, to reach private members of base classes, we need to check
             // each base class in turn.
             List<FieldInfo> fields = new List<FieldInfo>();
-            for (Type type = obj.GetType(); type != null; type = type.BaseType)
+            for (Type type = objType; type != null; type = type.BaseType)
                 fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly |
                                                BindingFlags.Public | BindingFlags.NonPublic));
             Predicate<FieldInfo> fieldChoice = delegate(FieldInfo field)
             {
                 return limitationAttribute == null || field.IsDefined(limitationAttribute, false);
             };
-            return Array.FindAll<FieldInfo>(fields.ToArray(), fieldChoice);
+            result = Array.FindAll<FieldInfo>(fields.ToArray(), fieldChoice);
+            typeFields[key] = result;
+            return result;
         }
 
         /// <summary>

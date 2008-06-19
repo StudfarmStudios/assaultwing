@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game.Gobs
 {
@@ -62,11 +63,6 @@ namespace AW2.Game.Gobs
         /// The number of triangles in the wall's 3D model not yet removed.
         /// </summary>
         int triangleCount;
-
-        // HACK: Extra fields for debugging Graphics3D.RemoveArea
-        VertexPositionColor[] wireVertexData;
-        short[] wireIndexData;
-        VertexPositionColor[] wireVertexData2;
 
         /// <summary>
         /// The collision polygons of the wall.
@@ -200,41 +196,6 @@ namespace AW2.Game.Gobs
                 pass.End();
             }
             effect.End();
-
-#if false
-            // HACK: Draw wireframe model for debugging Graphics3D.RemoveArea
-            gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-            BasicEffect eff = new BasicEffect(gfx, null);
-            data.PrepareEffect(eff);
-            eff.World = Matrix.Identity;
-            eff.Projection = projection;
-            eff.View = view;
-            eff.TextureEnabled = false;
-            eff.LightingEnabled = false;
-            eff.VertexColorEnabled = true;
-            eff.Begin();
-            foreach (EffectPass pass in eff.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-                gfx.DrawUserIndexedPrimitives<VertexPositionColor>(
-                    PrimitiveType.LineList, wireVertexData, 0, wireVertexData.Length,
-                    wireIndexData, 0, wireIndexData.Length / 2);
-                pass.End();
-            }
-            eff.End();
-
-            // HACK: Draw another wireframe debug stuff for Graphics3D.RemoveArea
-            if (wireVertexData2 == null) return;
-            eff.Begin();
-            foreach (EffectPass pass in eff.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-                gfx.DrawUserPrimitives<VertexPositionColor>(
-                    PrimitiveType.LineStrip, wireVertexData2, 0, wireVertexData2.Length - 1);
-                pass.End();
-            }
-            eff.End();
-#endif
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -370,7 +331,15 @@ namespace AW2.Game.Gobs
             }
 
             // Create a bounding volume for the whole wall.
-            IGeomPrimitive boundingArea = new Everything(); // TODO: Find a tighter bounding volume.
+            Vector2 min = new Vector2(float.MaxValue);
+            Vector2 max = new Vector2(float.MinValue);
+            foreach (VertexPositionNormalTexture vertex in this.vertexData)
+            {
+                Vector2 vertexPos = new Vector2(vertex.Position.X, vertex.Position.Y);
+                min = Vector2.Min(min, vertexPos);
+                max = Vector2.Max(max, vertexPos);
+            }
+            Rectangle boundingArea = new Rectangle(min, max);
             collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
                 CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None);
         }

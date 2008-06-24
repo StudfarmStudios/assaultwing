@@ -524,8 +524,7 @@ namespace AW2.Game
             for (float radius = freePosRadiusMin; radius < freePosRadiusMax; radius += freePosRadiusStep)
             {
                 tryPos = RandomHelper.GetRandomVector2(preferred.Value, radius);
-                gob.Pos = tryPos;
-                if (ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null))
+                if (IsFreePosition(gob, tryPos))
                     break;
             }
             gob.Pos = oldPos;
@@ -541,6 +540,7 @@ namespace AW2.Game
         public bool IsFreePosition(Gob gob, Vector2 position)
         {
             Vector2 oldPos = gob.Pos;
+            gob.Pos = position;
             CollisionArea gobPhysical = gob.PhysicalArea;
             bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
             gob.Pos = oldPos;

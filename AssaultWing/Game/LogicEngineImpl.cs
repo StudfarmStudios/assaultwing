@@ -14,11 +14,6 @@ namespace AW2.Game
     /// </summary>
     class LogicEngineImpl : GameComponent, LogicEngine
     {
-        /// <summary>
-        /// Time for creating another bonus.
-        /// </summary>
-        TimeSpan nextBonus;
-
         Control controlPause;
 
         public LogicEngineImpl(Microsoft.Xna.Framework.Game game) : base(game)
@@ -55,7 +50,6 @@ namespace AW2.Game
         /// </summary>
         public void Reset()
         {
-            nextBonus = AssaultWing.Instance.GameTime.ElapsedGameTime + new TimeSpan(0, 0, 10);
         }
 
         /// <summary>
@@ -155,15 +149,6 @@ namespace AW2.Game
                 player.Update();
             };
             data.ForEachPlayer(updatePlayer);
-
-            // Create new bonuses.
-            if (nextBonus <= physics.TimeStep.TotalGameTime)
-            {
-                nextBonus = physics.TimeStep.TotalGameTime + new TimeSpan(0, 0, 10);
-                Gob bonus = Gob.CreateGob("bonus");
-                bonus.Pos = physics.GetFreePosition(bonus, null);
-                data.AddGob(bonus);
-            }
 
             // Check for receptor collisions.
             physics.MovesDone();

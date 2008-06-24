@@ -1345,6 +1345,46 @@ namespace AW2.Helpers.Geometric
 
         #endregion Location and distance query methods
 
+        #region Random location methods
+
+        /// <summary>
+        /// Returns a random location inside an area.
+        /// </summary>
+        /// <param name="prim">The area.</param>
+        /// <returns>A random location inside the area.</returns>
+        public static Vector2 GetRandomLocation(IGeomPrimitive prim)
+        {
+            Type type = prim.GetType();
+            if (type == typeof(Everything))
+                return RandomHelper.GetRandomVector2(float.MinValue, float.MaxValue);
+            if (type == typeof(Point))
+                return ((Point)prim).Location;
+            if (type == typeof(Circle))
+                return GetRandomLocation((Circle)prim);
+            if (type == typeof(Rectangle))
+            {
+                Rectangle rectangle = (Rectangle)prim;
+                return RandomHelper.GetRandomVector2(rectangle.Min, rectangle.Max);
+            }
+            // TODO: GetRandomLocation for Triangle and Polygon
+            throw new Exception("Sorry, GetRandomLocation not defined for " + type.Name);
+        }
+
+        /// <summary>
+        /// Returns a random location inside a circle. Returned locations will be
+        /// uniformly distributed.
+        /// </summary>
+        /// <param name="circle">The circle.</param>
+        /// <returns>A random location inside the circle.</returns>
+        public static Vector2 GetRandomLocation(Circle circle)
+        {
+            float angle = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi);
+            float distance = circle.Radius * (float)Math.Sqrt(RandomHelper.globalRandomGenerator.NextDouble());
+            return circle.Center + distance * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        }
+
+        #endregion Random location methods
+
         #region Other methods
 
         /// <summary>

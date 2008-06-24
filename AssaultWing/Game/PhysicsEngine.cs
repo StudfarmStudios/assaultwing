@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Helpers.Geometric;
 
 namespace AW2.Game
 {
@@ -108,13 +109,13 @@ namespace AW2.Game
         float ApplyChange(float changePerSecond);
 
         /// <summary>
-        /// Returns a position, near a preferred position, in the game world 
+        /// Returns a position in an area of the game world 
         /// where a gob is overlap consistent (e.g. not inside a wall).
         /// </summary>
         /// <param name="gob">The gob to position.</param>
-        /// <param name="preferred">Preferred position, or <b>null</b>.</param>
-        /// <returns>A position for the gob where it is overlap consistent.</returns>
-        Vector2 GetFreePosition(Gob gob, Vector2? preferred);
+        /// <param name="area">The area where to look for a position.</param>
+        /// <returns>A position in the area where the gob is overlap consistent.</returns>
+        Vector2 GetFreePosition(Gob gob, IGeomPrimitive area);
 
         /// <summary>
         /// Is a gob overlap consistent (e.g. not inside a wall) at a position. 

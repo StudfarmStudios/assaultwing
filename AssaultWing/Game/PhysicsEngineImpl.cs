@@ -167,22 +167,9 @@ namespace AW2.Game
         int moveTryMaximum = 2;
 
         /// <summary>
-        /// Radius at which to start looking for a free position in the game world,
-        /// measured in meters.
+        /// The maximum number of attempts to find a free position for a gob.
         /// </summary>
-        float freePosRadiusMin = 50;
-
-        /// <summary>
-        /// Radius at which to stop looking for a free position in the game world,
-        /// measured in meters.
-        /// </summary>
-        float freePosRadiusMax = 500;
-
-        /// <summary>
-        /// How much to increase the free position search radius after each failed
-        /// attempt, measured in meters.
-        /// </summary>
-        float freePosRadiusStep = 10;
+        int freePosMaxAttempts = 50;
 
         /// <summary>
         /// Loud collision sound variable
@@ -502,33 +489,23 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returns a position, near a preferred position, in the game world 
+        /// Returns a position in an area of the game world 
         /// where a gob is overlap consistent (e.g. not inside a wall).
         /// </summary>
         /// <param name="gob">The gob to position.</param>
-        /// <param name="preferred">Preferred position, or <b>null</b>.</param>
-        /// <returns>A position for the gob where it is overlap consistent.</returns>
-        public Vector2 GetFreePosition(Gob gob, Vector2? preferred)
+        /// <param name="area">The area where to look for a position.</param>
+        /// <returns>A position in the area where the gob is overlap consistent.</returns>
+        public Vector2 GetFreePosition(Gob gob, IGeomPrimitive area)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
-            // Randomise a location if none is preferred.
-            if (preferred == null)
-                preferred = RandomHelper.GetRandomVector2(Vector2.Zero, data.Arena.Dimensions);
-
-            // Iterate around the preferred location, steadily loosening the requirements.
-            // Ultimately we give up and return something that we know is bad.
-            Vector2 oldPos = gob.Pos;
-            Vector2 tryPos = preferred.Value;
-            CollisionArea gobPhysical = gob.PhysicalArea;
-            for (float radius = freePosRadiusMin; radius < freePosRadiusMax; radius += freePosRadiusStep)
+            // Iterate in the area for a while, looking for a free position.
+            // Ultimately give up and return something that may be bad.
+            for (int attempt = 1; attempt < freePosMaxAttempts; ++attempt)
             {
-                tryPos = RandomHelper.GetRandomVector2(preferred.Value, radius);
+                Vector2 tryPos = Geometry.GetRandomLocation(area);
                 if (IsFreePosition(gob, tryPos))
-                    break;
+                    return tryPos;
             }
-            gob.Pos = oldPos;
-            return tryPos;
+            return Geometry.GetRandomLocation(area);
         }
 
         /// <summary>

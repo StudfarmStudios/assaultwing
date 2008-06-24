@@ -107,21 +107,6 @@ namespace AW2.Helpers
         } // GetRandomVector2(min, max)
 
         /// <summary>
-        /// Returns a random Vector2 within a distance from another Vector2.
-        /// </summary>
-        /// <param name="center">The other Vector2.</param>
-        /// <param name="radius">Maximum distance from the other Vector2.</param>
-        /// <returns>A random Vector2 within the distance from the other Vector2.</returns>
-        public static Vector2 GetRandomVector2(Vector2 center, float radius)
-        {
-            // Note: With this formula, it is more probable to hit close to 'center' than
-            // nearly 'radius' distance away from it.
-            float angle = GetRandomFloat(0, MathHelper.TwoPi);
-            float distance = GetRandomFloat(0, radius);
-            return center + distance * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-        } // GetRandomVector2(center, radius)
-
-        /// <summary>
         /// Get random Vector3
         /// </summary>
         /// <param name="min">Minimum for each component</param>

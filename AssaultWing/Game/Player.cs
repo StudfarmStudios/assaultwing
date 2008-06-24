@@ -358,7 +358,7 @@ namespace AW2.Game
                 PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
 
                 ship = (Ship)Gob.CreateGob(shipTypeName);
-                ship.Pos = physics.GetFreePosition(ship, null);
+                ship.Pos = physics.GetFreePosition(ship, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
                 ship.Owner = this;
                 ship.Weapon1Name = weapon1Name;
                 ship.Weapon2Name = weapon2Name;

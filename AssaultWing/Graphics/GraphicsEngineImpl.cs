@@ -99,6 +99,16 @@ namespace AW2.Graphics
             /// Player bonus icon for secondary weapon upgrade Bouncegun.
             /// </summary>
             Weapon2Bouncegun,
+
+            /// <summary>
+            /// Player radar background.
+            /// </summary>
+            Radar,
+
+            /// <summary>
+            /// Ship on radar
+            /// </summary>
+            RadarShip,
         }
 
         /// <summary>
@@ -169,6 +179,8 @@ namespace AW2.Graphics
                 "b_icon_rapid_fire_1",
                 "b_icon_berserkers",
                 "b_icon_bouncegun",
+                "gui_radar_bg",
+                "gui_playerinfo_white_ball", // HACK: Ship sprite on radar display
             };
             overlays = new Texture2D[Enum.GetValues(typeof(ViewportOverlay)).Length];
             bonusBoxEntry = new Curve();
@@ -521,6 +533,7 @@ namespace AW2.Graphics
         /// <param name="viewport">The player viewport.</param>
         private void DrawPlayerOverlay(PlayerViewport viewport)
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
             // Status display background
@@ -721,6 +734,33 @@ namespace AW2.Graphics
                     MathHelper.Lerp(bonusPos[i].Y + bonusBoxAreaTopRight.Y, bonusPos[i - 1].Y + bonusBoxAreaTopRight.Y, 0.5f));
                 DrawBonusBox(leftMiddlePoint, bonusBonus[i], viewport.Player);
             }
+
+            // Radar background
+            spriteBatch.Draw(overlays[(int)ViewportOverlay.Radar],
+                Vector2.Zero, Color.White);
+
+            // Ships on radar
+            Vector2 radarDisplayDimensions = new Vector2(162, 150); // TODO: Make this constant configurable
+            Vector2 radarDisplayTopLeft = new Vector2(0, 1); // TODO: Make this constant configurable
+            Vector2 arenaDimensions = data.Arena.Dimensions;
+            float arenaToRadarScale = Math.Min(
+                radarDisplayDimensions.X / arenaDimensions.X,
+                radarDisplayDimensions.Y / arenaDimensions.Y);
+            float arenaHeightOnRadar = arenaDimensions.Y * arenaToRadarScale;
+            Vector2 arenaToRadarScaleAndFlip = new Vector2(arenaToRadarScale, -arenaToRadarScale);
+            Matrix arenaToRadarTransform = 
+                Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
+                Matrix.CreateTranslation(radarDisplayTopLeft.X, radarDisplayTopLeft.Y + arenaHeightOnRadar, 0);
+            Texture2D shipOnRadarTexture = overlays[(int)ViewportOverlay.RadarShip];
+            Vector2 shipOnRadarTextureCenter = new Vector2(shipOnRadarTexture.Width, shipOnRadarTexture.Height) / 2;
+            data.ForEachPlayer(delegate(Player player)
+            {
+                if (player.Ship == null) return;
+                Vector2 posInArena = player.Ship.Pos;
+                Vector2 posOnRadar = Vector2.Transform(posInArena, arenaToRadarTransform);
+                spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, Color.White, 0,
+                    shipOnRadarTextureCenter, 1, SpriteEffects.None, 0);
+            });
 
             spriteBatch.End();
         }

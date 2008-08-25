@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game.Particles;
 using AW2.Graphics;
 using Viewport = AW2.Graphics.AWViewport;
-using AW2.Game.Particles;
 
 namespace AW2.Game
 {
@@ -13,28 +14,6 @@ namespace AW2.Game
     /// </summary>
     interface DataEngine
     {
-        /// <summary>
-        /// The currently active arena.
-        /// </summary>
-        /// You can set this field by calling InitializeFromArena(string).
-        Arena Arena { get; }
-
-        /// <summary>
-        /// Arenas to play in one session.
-        /// </summary>
-        List<string> ArenaPlaylist { get; set; }
-
-        /// <summary>
-        /// Index of current arena in arena playlist,
-        /// or -1 if there is no current arena.
-        /// </summary>
-        int ArenaPlaylistI { get; set; }
-
-        /// <summary>
-        /// The viewport we are currently drawing into.
-        /// </summary>
-        Viewport Viewport { get; }
-
         #region models
 
         /// <summary>
@@ -86,6 +65,39 @@ namespace AW2.Game
         #endregion
 
         #region arenas
+
+        /// <summary>
+        /// The currently active arena.
+        /// </summary>
+        /// You can set this field by calling InitializeFromArena(string).
+        Arena Arena { get; }
+
+        /// <summary>
+        /// The currently active arena's silhouette, scaled and ready to be 
+        /// drawn in a player's viewport's radar display.
+        /// </summary>
+        Texture2D ArenaRadarSilhouette { get; }
+
+        /// <summary>
+        /// The transformation to map coordinates in the current arena 
+        /// into player viewport radar display coordinates.
+        /// </summary>
+        /// Arena origin is the lower left corner, positive X is to the right,
+        /// and positive Y is up. Radar display origin is the top left corner
+        /// of the radar display area, positive X is to the right, and positive
+        /// Y is down.
+        Matrix ArenaToRadarTransform { get; }
+
+        /// <summary>
+        /// Arenas to play in one session.
+        /// </summary>
+        List<string> ArenaPlaylist { get; set; }
+
+        /// <summary>
+        /// Index of current arena in arena playlist,
+        /// or -1 if there is no current arena.
+        /// </summary>
+        int ArenaPlaylistI { get; set; }
 
         /// <summary>
         /// Stores an arena by name, overwriting any arena previously stored by the same name.
@@ -268,6 +280,11 @@ namespace AW2.Game
         #endregion
 
         #region viewports
+
+        /// <summary>
+        /// The viewport we are currently drawing into.
+        /// </summary>
+        Viewport Viewport { get; }
 
         /// <summary>
         /// Adds a viewport.

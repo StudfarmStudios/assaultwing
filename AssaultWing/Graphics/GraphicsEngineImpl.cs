@@ -739,25 +739,19 @@ namespace AW2.Graphics
             spriteBatch.Draw(overlays[(int)ViewportOverlay.Radar],
                 Vector2.Zero, Color.White);
 
-            // Ships on radar
-            Vector2 radarDisplayDimensions = new Vector2(162, 150); // TODO: Make this constant configurable
+            // Arena walls on radar
             Vector2 radarDisplayTopLeft = new Vector2(0, 1); // TODO: Make this constant configurable
-            Vector2 arenaDimensions = data.Arena.Dimensions;
-            float arenaToRadarScale = Math.Min(
-                radarDisplayDimensions.X / arenaDimensions.X,
-                radarDisplayDimensions.Y / arenaDimensions.Y);
-            float arenaHeightOnRadar = arenaDimensions.Y * arenaToRadarScale;
-            Vector2 arenaToRadarScaleAndFlip = new Vector2(arenaToRadarScale, -arenaToRadarScale);
-            Matrix arenaToRadarTransform = 
-                Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
-                Matrix.CreateTranslation(radarDisplayTopLeft.X, radarDisplayTopLeft.Y + arenaHeightOnRadar, 0);
+            spriteBatch.Draw(data.ArenaRadarSilhouette, radarDisplayTopLeft, Color.White);
+
+            // Ships on radar
+            Matrix arenaToRadarTransform = data.ArenaToRadarTransform;
             Texture2D shipOnRadarTexture = overlays[(int)ViewportOverlay.RadarShip];
             Vector2 shipOnRadarTextureCenter = new Vector2(shipOnRadarTexture.Width, shipOnRadarTexture.Height) / 2;
             data.ForEachPlayer(delegate(Player player)
             {
                 if (player.Ship == null) return;
                 Vector2 posInArena = player.Ship.Pos;
-                Vector2 posOnRadar = Vector2.Transform(posInArena, arenaToRadarTransform);
+                Vector2 posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
                 spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, Color.White, 0,
                     shipOnRadarTextureCenter, 1, SpriteEffects.None, 0);
             });

@@ -87,6 +87,11 @@ namespace AW2.Game.Gobs
         /// </summary>
         BasicEffect effect;
 
+        /// <summary>
+        /// The effect for drawing the wall as a silhouette.
+        /// </summary>
+        BasicEffect silhouetteEffect;
+
         VertexDeclaration vertexDeclaration;
 
         /// <summary>
@@ -150,6 +155,7 @@ namespace AW2.Game.Gobs
             this.triangleCount = 0;
             this.polygons = null;
             this.effect = new BasicEffect(gfx, null);
+            this.silhouetteEffect = new BasicEffect(gfx, null);
             this.vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             this.boundingBox = new BoundingBox();
             movable = false;
@@ -196,6 +202,37 @@ namespace AW2.Game.Gobs
                 pass.End();
             }
             effect.End();
+        }
+
+        /// <summary>
+        /// Draws the wall as a silhouette.
+        /// </summary>
+        /// Assumes that the sprite batch has been Begun already and will be
+        /// Ended later by someone else.
+        /// <param name="view">The view matrix.</param>
+        /// <param name="projection">The projection matrix.</param>
+        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
+        public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            gfx.VertexDeclaration = vertexDeclaration;
+            silhouetteEffect.World = Matrix.Identity;
+            silhouetteEffect.Projection = projection;
+            silhouetteEffect.View = view;
+            silhouetteEffect.Texture = texture;
+            silhouetteEffect.VertexColorEnabled = false;
+            silhouetteEffect.LightingEnabled = false;
+            silhouetteEffect.TextureEnabled = false;
+            silhouetteEffect.Begin();
+            foreach (EffectPass pass in silhouetteEffect.CurrentTechnique.Passes)
+            {
+                pass.Begin();
+                gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
+                    PrimitiveType.TriangleList, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length / 3);
+                pass.End();
+            }
+            silhouetteEffect.End();
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -303,10 +340,12 @@ namespace AW2.Game.Gobs
         protected void Set3DModel(VertexPositionNormalTexture[] vertexData, short[] indexData,
             Texture2D texture, BasicEffect effect)
         {
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             this.vertexData = vertexData;
             this.indexData = indexData;
             this.texture = texture;
             this.effect = effect;
+            silhouetteEffect = effect == null ? null : (BasicEffect)effect.Clone(gfx);
             FineTriangles();
             triangleCount = this.indexData.Length / 3;
             boundingBox = BoundingBox.CreateFromPoints(

@@ -9,6 +9,7 @@ using AW2.Helpers;
 using TypeStringPair = System.Collections.Generic.KeyValuePair<System.Type, string>;
 using Microsoft.Xna.Framework;
 using AW2.Game.Particles;
+using AW2.Game.Gobs;
 
 namespace AW2.Game
 {
@@ -31,6 +32,9 @@ namespace AW2.Game
         Dictionary<TypeStringPair, object> templates;
         Dictionary<string, Arena> arenas;
         Arena activeArena;
+        Texture2D arenaRadarSilhouette;
+        Vector2 arenaDimensionsOnRadar;
+        Matrix arenaToRadarTransform;
 
         /// <summary>
         /// Arenas to play in one session.
@@ -47,34 +51,6 @@ namespace AW2.Game
         /// The viewport we are currently drawing into.
         /// </summary>
         Viewport activeViewport;
-
-        /// <summary>
-        /// The currently active arena.
-        /// </summary>
-        /// You can set this field by calling InitializeFromArena(string).
-        public Arena Arena { get { return activeArena; } }
-
-        /// <summary>
-        /// Arenas to play in one session.
-        /// </summary>
-        public List<string> ArenaPlaylist { 
-            get { return arenaPlaylist; } 
-            set { 
-                arenaPlaylist = value;
-                arenaPlaylistI = -1;
-            }
-        }
-
-        /// <summary>
-        /// Index of current arena in arena playlist,
-        /// or -1 if there is no current arena.
-        /// </summary>
-        public int ArenaPlaylistI { get { return arenaPlaylistI; } set { arenaPlaylistI = value; } }
-
-        /// <summary>
-        /// The viewport we are currently drawing into.
-        /// </summary>
-        public Viewport Viewport { get { return activeViewport; } }
 
         /// <summary>
         /// Creates a new data engine.
@@ -190,6 +166,47 @@ namespace AW2.Game
         #region arenas
 
         /// <summary>
+        /// The currently active arena.
+        /// </summary>
+        /// You can set this field by calling InitializeFromArena(string).
+        public Arena Arena { get { return activeArena; } }
+
+        /// <summary>
+        /// The currently active arena's silhouette, scaled and ready to be 
+        /// drawn in a player's viewport's radar display.
+        /// </summary>
+        public Texture2D ArenaRadarSilhouette { get { return arenaRadarSilhouette; } }
+
+        /// <summary>
+        /// The transformation to map coordinates in the current arena 
+        /// into player viewport radar display coordinates.
+        /// </summary>
+        /// Arena origin is the lower left corner, positive X is to the right,
+        /// and positive Y is up. Radar display origin is the top left corner
+        /// of the radar display area, positive X is to the right, and positive
+        /// Y is down.
+        public Matrix ArenaToRadarTransform { get { return arenaToRadarTransform; } }
+
+        /// <summary>
+        /// Arenas to play in one session.
+        /// </summary>
+        public List<string> ArenaPlaylist
+        {
+            get { return arenaPlaylist; }
+            set
+            {
+                arenaPlaylist = value;
+                arenaPlaylistI = -1;
+            }
+        }
+
+        /// <summary>
+        /// Index of current arena in arena playlist,
+        /// or -1 if there is no current arena.
+        /// </summary>
+        public int ArenaPlaylistI { get { return arenaPlaylistI; } set { arenaPlaylistI = value; } }
+
+        /// <summary>
         /// Stores an arena by name, overwriting any arena previously stored by the same name.
         /// </summary>
         /// <param name="name">The name of the arena.</param>
@@ -274,6 +291,11 @@ namespace AW2.Game
             });
 
             activeArena = arena;
+            RefreshArenaToRadarTransform();
+
+            // Create arena silhouette not until the freshly added gobs
+            // have really been added to field 'gobs'.
+            CustomOperations += delegate(object obj) { RefreshArenaRadarSilhouette(); };
         }
 
         /// <summary>
@@ -520,6 +542,11 @@ namespace AW2.Game
         #region viewports
 
         /// <summary>
+        /// The viewport we are currently drawing into.
+        /// </summary>
+        public Viewport Viewport { get { return activeViewport; } }
+
+        /// <summary>
         /// Adds a viewport.
         /// </summary>
         /// <param name="viewport">Viewport to add.</param>
@@ -642,5 +669,92 @@ namespace AW2.Game
 
         #endregion miscellaneous
 
+        #region Private methods
+
+        /// <summary>
+        /// Refreshes <c>arenaToRadarTransform</c> and <c>arenaDimensionsOnRadar</c>
+        /// according to the dimensions of the currently active arena.
+        /// </summary>
+        /// To be called whenever arena (or arena dimensions) change.
+        /// <seealso cref="ArenaToRadarTransform"/>
+        void RefreshArenaToRadarTransform()
+        {
+            if (activeArena == null)
+                throw new InvalidOperationException("No active arena");
+            Vector2 radarDisplayDimensions = new Vector2(162, 150); // TODO: Make this constant configurable
+            Vector2 arenaDimensions = activeArena.Dimensions;
+            float arenaToRadarScale = Math.Min(
+                radarDisplayDimensions.X / arenaDimensions.X,
+                radarDisplayDimensions.Y / arenaDimensions.Y);
+            arenaDimensionsOnRadar = arenaDimensions * arenaToRadarScale;
+            arenaToRadarTransform =
+                Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
+                Matrix.CreateTranslation(0, arenaDimensionsOnRadar.Y, 0);
+        }
+
+        /// <summary>
+        /// Refreshes <c>ArenaRadarSilhouette</c> according to the contents 
+        /// of the currently active arena.
+        /// </summary>
+        /// To be called whenever arena (or arena walls) change,
+        /// after <c>RefreshArenaToRadarTransform</c>.
+        /// <seealso cref="ArenaRadarSilhouette"/>
+        /// <seealso cref="RefreshArenaToRadarTransform"/>
+        void RefreshArenaRadarSilhouette()
+        {
+            if (activeArena == null)
+                throw new InvalidOperationException("No active arena");
+
+            // Draw arena walls in one color in a radar-sized texture.
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
+            int targetWidth = (int)arenaDimensionsOnRadar.X;
+            int targetHeight = (int)arenaDimensionsOnRadar.Y;
+            GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
+            if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
+                TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
+                throw new Exception("Cannot create render target of type SurfaceFormat.Color");
+            RenderTarget2D maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight,
+                1, SurfaceFormat.Color);
+
+            // Set up graphics device.
+            DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+            gfx.DepthStencilBuffer = null;
+
+            // Set up draw matrices.
+            Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0, activeArena.Dimensions.X,
+                0, activeArena.Dimensions.Y, 10, 1000);
+
+            // Set and clear our own render target.
+            gfx.SetRenderTarget(0, maskTarget);
+            gfx.Clear(ClearOptions.Target, Color.TransparentBlack, 0, 0);
+
+            // Draw the arena's walls.
+            SpriteBatch spriteBatch = new SpriteBatch(gfx);
+            spriteBatch.Begin();
+            foreach (Gob gob in gobs)
+            {
+                Wall wall = gob as Wall;
+                if (wall != null)
+                    wall.DrawSilhouette(view, projection, spriteBatch);
+            }
+            spriteBatch.End();
+
+            // Restore render target so what we can extract drawn pixels.
+            // Create a copy of the texture in local memory so that a graphics device
+            // reset (e.g. when changing resolution) doesn't lose the texture.
+            gfx.SetRenderTarget(0, null);
+            Color[] textureData = new Color[targetHeight * targetWidth];
+            maskTarget.GetTexture().GetData(textureData);
+            arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, 1, TextureUsage.None, SurfaceFormat.Color);
+            arenaRadarSilhouette.SetData(textureData);
+
+            // Restore graphics device's old settings.
+            gfx.DepthStencilBuffer = oldDepthStencilBuffer;
+            maskTarget.Dispose();
+        }
+
+        #endregion Private methods
     }
 }

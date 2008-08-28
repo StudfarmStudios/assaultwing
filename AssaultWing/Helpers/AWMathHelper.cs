@@ -22,7 +22,7 @@ namespace AW2.Helpers
         /// </summary>
         /// <param name="from">The start value.</param>
         /// <param name="to">The goal value.</param>
-        /// <param name="step">The maximum value step.</param>
+        /// <param name="step">The maximum value step, a positive value.</param>
         /// <returns>The interpolated value.</returns>
         public static float InterpolateTowards(float from, float to, float step)
         {

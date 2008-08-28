@@ -833,9 +833,10 @@ namespace AW2.Game
             Gob movableGob = movableArea.Owner;
             Gob unmovableGob = unmovableArea.Owner;
 
-            // We perform an elastic collision.
-            float elasticity = 0.1f; // TODO: Add elasticity and friction to Gob.
-            float friction = 1.0f;
+            // Turn the coordinate axes so that both gobs are on the X-axis, unmovable gob on the left;
+            // 'xUnit' and 'yUnit' will be the unit vectors of this system represented in game world coordinates;
+            // 'move1' will be the movement vector of gob1 in this system (and gob2 stays put);
+            // 'move1after' will be the resulting movement vector of gob1 in this system.
             Vector2 xUnit = Geometry.GetNormal(unmovableArea.Area, movableArea.Area);
             Vector2 yUnit = new Vector2(-xUnit.Y, xUnit.X);
             Vector2 move1 = new Vector2(Vector2.Dot(movableGob.Move, xUnit),
@@ -847,11 +848,25 @@ namespace AW2.Game
                 // To work around rounding errors when the movable gob is sliding
                 // almost parallel to the unmovable gob's area surface, 
                 // adjust the movable gob to go a bit more towards the unmovable.
-                move1.X -= 0.05f;
+                if (move1.X < 0.08f)
+                    move1.X -= 0.08f;
             }
             if (move1.X < 0)
             {
-                Vector2 move1after = new Vector2(-move1.X * elasticity, move1.Y * friction);
+                // Elasticity factor is between 0 and 1. It is used for linear interpolation
+                // between the perfectly elastic collision and the perfectly inelastic collision.
+                // Friction factor is from 0 and up. In real life, friction force
+                // is the product of the friction factor and the head-on component
+                // of the force that pushes the colliding movable gob away. Here, we 
+                // imitate that force by the change of the head-on component of
+                // gob movement vector.
+                float elasticity = Math.Min(1, movableGob.Elasticity * unmovableGob.Elasticity);
+                float friction = movableGob.Friction * unmovableGob.Friction;
+                Vector2 move1afterElastic = new Vector2(-move1.X, move1.Y);
+                // move1afterInelastic = Vector2.Zero
+                Vector2 move1after;
+                move1after.X = MathHelper.Lerp(0, move1afterElastic.X, elasticity);
+                move1after.Y = AWMathHelper.InterpolateTowards(move1afterElastic.Y, 0, friction * (move1after.X - move1.X));
                 movableGob.Move = xUnit * move1after.X + yUnit * move1after.Y;
                 Vector2 move1Delta = move1 - move1after;
 
@@ -891,7 +906,6 @@ namespace AW2.Game
             Gob gob1 = movableArea1.Owner;
             Gob gob2 = movableArea2.Owner;
 
-            // We perform a perfectly elastic collision.
             // First make gob2 the point of reference,
             // then turn the coordinate axes so that both gobs are on the X-axis;
             // 'xUnit' and 'yUnit' will be the unit vectors of this system represented in game world coordinates;
@@ -906,8 +920,25 @@ namespace AW2.Game
             // Only perform physical collision if the gobs are actually closing in on each other.
             if (move1.X > 0)
             {
-                Vector2 move1after = new Vector2(move1.X * (gob1.Mass - gob2.Mass) / (gob1.Mass + gob2.Mass), move1.Y);
-                Vector2 move2after = new Vector2(move1.X * 2 * gob1.Mass / (gob1.Mass + gob2.Mass), 0);
+                // Elasticity factor is between 0 and 1. It is used for linear interpolation
+                // between the perfectly elastic collision and the perfectly inelastic collision.
+                // Friction factor is from 0 and up. In real life, friction force
+                // is the product of the friction factor and the head-on component
+                // of the force that pushes the colliding gobs apart. Here, we 
+                // imitate that force by the change of the head-on component of
+                // gob movement vector.
+                float elasticity = Math.Min(1, gob1.Elasticity * gob2.Elasticity);
+                float friction = gob1.Friction * gob2.Friction;
+                Vector2 move1afterElastic = new Vector2(move1.X * (gob1.Mass - gob2.Mass) / (gob1.Mass + gob2.Mass), move1.Y);
+                Vector2 move1afterInelastic = move1 * gob1.Mass / (gob1.Mass + gob2.Mass);
+                Vector2 move1after;
+                move1after.X = MathHelper.Lerp(move1afterInelastic.X, move1afterElastic.X, elasticity);
+                move1after.Y = AWMathHelper.InterpolateTowards(move1afterElastic.Y, move1afterInelastic.Y, friction * (move1.X - move1after.X));
+                Vector2 move2afterElastic = new Vector2(move1.X * 2 * gob1.Mass / (gob1.Mass + gob2.Mass), 0);
+                // move2afterInelastic = move1afterInelastic because the gobs stick together
+                Vector2 move2after;
+                move2after.X = MathHelper.Lerp(move1afterInelastic.X, move2afterElastic.X, elasticity);
+                move2after.Y = AWMathHelper.InterpolateTowards(move2afterElastic.Y, move1afterInelastic.Y, friction *  move2after.X);
                 gob1.Move = xUnit * move1after.X + yUnit * move1after.Y + gob2.Move;
                 gob2.Move = xUnit * move2after.X + yUnit * move2after.Y + gob2.Move;
                 Vector2 move1Delta = move1 - move1after;

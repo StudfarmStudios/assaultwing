@@ -195,6 +195,27 @@ namespace AW2.Game
         #region Fields for collisions
 
         /// <summary>
+        /// Elasticity factor of the gob. Zero means the no bouncing off 
+        /// at a collision for either gob. One means fully elastic collision.
+        /// </summary>
+        /// The elasticity factors of both colliding gobs affect the final elasticity
+        /// of the collision. Avoid using zero; instead, use a very small number.
+        /// Use a number above one to regain fully elastic collisions even
+        /// when countered by inelastic gobs.
+        [TypeParameter]
+        float elasticity;
+
+        /// <summary>
+        /// Friction factor of the gob. Zero means that movement along the
+        /// collision surface is not slowed by friction.
+        /// </summary>
+        /// The friction factors of both colliding gobs affect the final friction
+        /// of the collision. It's a good idea to use values that are closer to
+        /// zero than one.
+        [TypeParameter]
+        float friction;
+
+        /// <summary>
         /// Collision primitives, translated according to the gob's location.
         /// </summary>
         [TypeParameter]
@@ -272,6 +293,25 @@ namespace AW2.Game
         /// Mass of the gob, measured in kilograms.
         /// </summary>
         public float Mass { get { return mass; } }
+
+        /// <summary>
+        /// Elasticity factor of the gob. Zero means the no bouncing off 
+        /// at a collision for either gob. One means fully elastic collision.
+        /// </summary>
+        /// The elasticity factors of both colliding gobs affect the final elasticity
+        /// of the collision. Avoid using zero; instead, use a very small number.
+        /// Use a number above one to regain fully elastic collisions even
+        /// when countered by inelastic gobs.
+        public float Elasticity { get { return elasticity; } }
+
+        /// <summary>
+        /// Friction factor of the gob. Zero means that movement along the
+        /// collision surface is not slowed by friction.
+        /// </summary>
+        /// The friction factors of both colliding gobs affect the final friction
+        /// of the collision. It's a good idea to use values that are closer to
+        /// zero than one. 
+        public float Friction { get { return friction; } }
 
         /// <summary>
         /// Get or set the gob's rotation around the Z-axis.
@@ -402,6 +442,8 @@ namespace AW2.Game
             this.move = Vector2.Zero;
             this.rotation = 0;
             this.mass = 1;
+            this.elasticity = 0.7f;
+            this.friction = 0.7f;
             this.modelName = "dummymodel";
             this.scale = 1f;
             this.birthGobTypes = new string[] {
@@ -982,6 +1024,11 @@ namespace AW2.Game
                     collisionAreas[0] = swap;
                     break;
                 }
+
+            // Make physical attributes sensible.
+            mass = Math.Max(0.001f, mass); // strictly positive mass
+            elasticity = Math.Max(0, elasticity);
+            friction = Math.Max(0, friction);
         }
 
         #endregion

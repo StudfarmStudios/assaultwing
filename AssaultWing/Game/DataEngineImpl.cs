@@ -37,6 +37,16 @@ namespace AW2.Game
         Matrix arenaToRadarTransform;
 
         /// <summary>
+        /// The textures used in static graphics, indexed by <c>TextureName</c>.
+        /// </summary>
+        Texture2D[] overlays;
+
+        /// <summary>
+        /// The fonts used in static graphics, indexed by <c>FontName</c>.
+        /// </summary>
+        SpriteFont[] fonts;
+
+        /// <summary>
         /// Arenas to play in one session.
         /// </summary>
         List<string> arenaPlaylist;
@@ -70,6 +80,8 @@ namespace AW2.Game
             textures = new Dictionary<string, Texture2D>();
             templates = new Dictionary<TypeStringPair, object>();
             arenas = new Dictionary<string, Arena>();
+            overlays = new Texture2D[Enum.GetValues(typeof(TextureName)).Length];
+            fonts = new SpriteFont[Enum.GetValues(typeof(FontName)).Length];
             activeArena = null;
             arenaPlaylist = new List<string>();
             arenaPlaylistI = -1;
@@ -134,6 +146,16 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Stores a static 2D texture by name, overwriting any texture previously stored by the same name.
+        /// </summary>
+        /// <param name="name">The name of the 2D texture.</param>
+        /// <param name="texture">The 2D texture.</param>
+        public void AddTexture(TextureName name, Texture2D texture)
+        {
+            overlays[(int)name] = texture;
+        }
+
+        /// <summary>
         /// Returns a named 2D texture.
         /// </summary>
         /// <param name="name">The name of the 2D texture.</param>
@@ -152,6 +174,16 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Returns a 2D texture used in static graphics.
+        /// </summary>
+        /// <param name="name">The name of the texture.</param>
+        /// <returns>The texture.</returns>
+        public Texture2D GetTexture(TextureName name)
+        {
+            return overlays[(int)name];
+        }
+
+        /// <summary>
         /// Tells if a name corresponds to any texture.
         /// </summary>
         /// <param name="name">The name of the texture.</param>
@@ -162,6 +194,30 @@ namespace AW2.Game
         }
 
         #endregion textures
+
+        #region fonts
+
+        /// <summary>
+        /// Stores a static font by name, overwriting any font previously stored by the same name.
+        /// </summary>
+        /// <param name="name">The name of the font.</param>
+        /// <param name="font">The font.</param>
+        public void AddFont(FontName name, SpriteFont font)
+        {
+            fonts[(int)name] = font;
+        }
+
+        /// <summary>
+        /// Returns a font used in static graphics.
+        /// </summary>
+        /// <param name="name">The name of the font.</param>
+        /// <returns>The font.</returns>
+        public SpriteFont GetFont(FontName name)
+        {
+            return fonts[(int)name];
+        }
+
+        #endregion fonts
 
         #region arenas
 

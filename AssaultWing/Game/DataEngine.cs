@@ -49,11 +49,25 @@ namespace AW2.Game
         void AddTexture(string name, Texture2D texture);
 
         /// <summary>
+        /// Stores a static 2D texture by name, overwriting any texture previously stored by the same name.
+        /// </summary>
+        /// <param name="name">The name of the 2D texture.</param>
+        /// <param name="texture">The 2D texture.</param>
+        void AddTexture(TextureName name, Texture2D texture);
+
+        /// <summary>
         /// Returns a named 2D texture.
         /// </summary>
         /// <param name="name">The name of the 2D texture.</param>
         /// <returns>The 2D texture.</returns>
         Texture2D GetTexture(string name);
+
+        /// <summary>
+        /// Returns a texture used in static graphics.
+        /// </summary>
+        /// <param name="name">The name of the texture.</param>
+        /// <returns>The texture.</returns>
+        Texture2D GetTexture(TextureName name);
 
         /// <summary>
         /// Tells if a name corresponds to any texture.
@@ -63,6 +77,24 @@ namespace AW2.Game
         bool HasTexture(string name);
 
         #endregion
+
+        #region fonts
+
+        /// <summary>
+        /// Stores a static font by name, overwriting any font previously stored by the same name.
+        /// </summary>
+        /// <param name="name">The name of the font.</param>
+        /// <param name="font">The font.</param>
+        void AddFont(FontName name, SpriteFont font);
+
+        /// <summary>
+        /// Returns a font used in static graphics.
+        /// </summary>
+        /// <param name="name">The name of the font.</param>
+        /// <returns>The font.</returns>
+        SpriteFont GetFont(FontName name);
+
+        #endregion fonts
 
         #region arenas
 

@@ -109,6 +109,11 @@ namespace AW2.Graphics
             /// Ship on radar
             /// </summary>
             RadarShip,
+
+            /// <summary>
+            /// Chat box background.
+            /// </summary>
+            ChatBox,
         }
 
         /// <summary>
@@ -181,6 +186,7 @@ namespace AW2.Graphics
                 "b_icon_bouncegun",
                 "gui_radar_bg",
                 "gui_playerinfo_white_ball", // HACK: Ship sprite on radar display
+                "gui_console_bg",
             };
             overlays = new Texture2D[Enum.GetValues(typeof(ViewportOverlay)).Length];
             bonusBoxEntry = new Curve();
@@ -755,6 +761,12 @@ namespace AW2.Graphics
                 spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, Color.White, 0,
                     shipOnRadarTextureCenter, 1, SpriteEffects.None, 0);
             });
+
+            // Chat box
+            Texture2D chatBoxTexture = overlays[(int)ViewportOverlay.ChatBox];
+            Vector2 chatBoxPos = new Vector2(0, viewport.InternalViewport.Height - chatBoxTexture.Height);
+            spriteBatch.Draw(chatBoxTexture, chatBoxPos, Color.White);
+            spriteBatch.DrawString(overlayFont, "Testing, testing...", chatBoxPos + new Vector2(8, 16), Color.White);
 
             spriteBatch.End();
         }

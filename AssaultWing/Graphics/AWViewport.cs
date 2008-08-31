@@ -378,6 +378,7 @@ namespace AW2.Graphics
 
             // 2D graphics
             data.Arena.DrawParallaxes(spriteBatch, this);
+            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
             // Restore renderstate for 3D graphics.
             gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
@@ -386,7 +387,6 @@ namespace AW2.Graphics
             gfx.RenderState.DepthBufferWriteEnable = true;
 
             // 3D graphics
-            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
             data.ForEachGob(delegate(Gob gob)
             {
                 if (!(gob is ParticleEngine)) // HACK: Should implement draw order to Gob

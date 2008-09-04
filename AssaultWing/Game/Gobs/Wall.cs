@@ -224,6 +224,7 @@ namespace AW2.Game.Gobs
             silhouetteEffect.VertexColorEnabled = false;
             silhouetteEffect.LightingEnabled = false;
             silhouetteEffect.TextureEnabled = false;
+            silhouetteEffect.FogEnabled = false;
             silhouetteEffect.Begin();
             foreach (EffectPass pass in silhouetteEffect.CurrentTechnique.Passes)
             {

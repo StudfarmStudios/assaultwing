@@ -154,6 +154,8 @@
     <Compile Include="Game\Weapons\ForwardShot.cs">
       <Name>ForwardShot</Name>
     </Compile>
+    <Compile Include="Graphics\BonusListOverlay.cs" />
+    <Compile Include="Graphics\ChatBoxOverlay.cs" />
     <Compile Include="Graphics\GraphicsEngine.cs">
       <Name>GraphicsEngine</Name>
     </Compile>
@@ -173,7 +175,10 @@
     <Compile Include="Graphics\AWViewport.cs">
       <Name>AWViewport</Name>
     </Compile>
+    <Compile Include="Graphics\OverlayComponent.cs" />
     <Compile Include="Graphics\OverlayDialog.cs" />
+    <Compile Include="Graphics\PlayerStatusOverlay.cs" />
+    <Compile Include="Graphics\RadarOverlay.cs" />
     <Compile Include="Helpers\AWMathHelper.cs" />
     <Compile Include="Helpers\ConstantValue.cs" />
     <Compile Include="Helpers\ExpectedValue.cs" />

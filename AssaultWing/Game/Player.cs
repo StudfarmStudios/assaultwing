@@ -179,6 +179,11 @@ namespace AW2.Game
         PlayerBonusItems<TimeSpan> bonusTimeouts;
 
         /// <summary>
+        /// Messages to display in the player's chat box, oldest first.
+        /// </summary>
+        List<string> messages;
+
+        /// <summary>
         /// The player's controls for moving in menus and controlling his ship.
         /// </summary>
         protected PlayerControls controls;
@@ -312,6 +317,11 @@ namespace AW2.Game
         /// </summary>
         public PlayerBonusItems<TimeSpan> BonusTimeouts { get { return bonusTimeouts; } set { bonusTimeouts = value; } }
 
+        /// <summary>
+        /// Messages to display in the player's chat box, oldest first.
+        /// </summary>
+        public List<string> Messages { get { return messages; } }
+
         #endregion Player properties
 
         /// <summary>
@@ -335,6 +345,7 @@ namespace AW2.Game
             this.bonuses = PlayerBonus.None;
             this.bonusTimeins = new PlayerBonusItems<TimeSpan>();
             this.bonusTimeouts = new PlayerBonusItems<TimeSpan>();
+            this.messages = new List<string>();
             this.lives = 3;
             this.shipSpawnTime = new TimeSpan(1);
             this.relativeShakeDamage = 0;
@@ -385,6 +396,11 @@ namespace AW2.Game
             bonuses = PlayerBonus.None;
             ship = null;
 
+            // Notify the player about his death.
+            TimeSpan deathTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            SendMessage(string.Format("You died {0}:{1:d2} into the game", 
+                (int)deathTime.TotalMinutes, deathTime.Seconds));
+            
             // Schedule the making of a new ship, lives permitting.
             long ticks = (long)(mourningDelay * 10 * 1000 * 1000);
             shipSpawnTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
@@ -404,6 +420,20 @@ namespace AW2.Game
             ship = null;
             shipSpawnTime = new TimeSpan(1);
             relativeShakeDamage = 0;
+        }
+
+        /// <summary>
+        /// Sends a message to the player. The message will be displayed on the
+        /// player's screen.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public void SendMessage(string message)
+        {
+            messages.Add(message);
+
+            // Throw away very old messages.
+            if (messages.Count > 10000)
+                messages.RemoveRange(0, messages.Count - 5000);
         }
 
         #region Methods related to bonuses

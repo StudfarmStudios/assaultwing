@@ -19,22 +19,7 @@ namespace AW2.Graphics
         Texture2D bonusIconWeapon2LoadTimeTexture;
         Texture2D bonusDurationTexture;
         SpriteFont bonusFont;
-        Vector2 bonusListDimensions;
-
-        /// <summary>
-        /// Lists bottom left coordinates of areas reserved for displayed
-        /// bonus boxes relative to this overlay component's top right corner,
-        /// with the exception that the first coordinates are (0,0).
-        /// Bonus boxes are then drawn vertically centered in these areas.
-        /// The last Y coordinate will state the height of the whole reserved bonus box area.
-        /// </summary>
-        List<Vector2> bonusPos;
-
-        /// <summary>
-        /// Lists the types of bonuses whose coordinates are in <c>bonusPos</c>.
-        /// </summary>
-        List<PlayerBonus> bonusBonus;
-
+        
         /// <summary>
         /// Times, in game time, at which the player's bonus boxes started
         /// sliding in to the player's viewport overlay or out of it.
@@ -99,7 +84,13 @@ namespace AW2.Graphics
         /// and the field <c>Point.Y</c> is the height of the component,
         public override Point Dimensions
         {
-            get { return new Point((int)Math.Ceiling(bonusListDimensions.X), (int)Math.Ceiling(bonusListDimensions.Y)); }
+            get
+            {
+                // Our dimensions are changing and most often they involve fractions.
+                // Therefore it's easiest to keep the viewport as it is.
+                GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+                return new Point(gfx.Viewport.Width, gfx.Viewport.Height);
+            }
         }
 
         /// <summary>
@@ -116,9 +107,6 @@ namespace AW2.Graphics
             bonusIconWeapon2LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon2LoadTime);
             bonusDurationTexture = data.GetTexture(TextureName.BonusDuration);
             bonusFont = data.GetFont(FontName.Overlay);
-            bonusListDimensions = Vector2.Zero;
-            bonusPos = new List<Vector2>();
-            bonusBonus = new List<PlayerBonus>();
 
             bonusEntryTimeins = new PlayerBonusItems<TimeSpan>();
             bonusEntryPosAdjustments = new PlayerBonusItems<Vector2>();
@@ -161,22 +149,20 @@ namespace AW2.Graphics
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            // Because it is troublesome to calculate this component's dimensions,
-            // we first draw the bonuses based on last frame's information, 
-            // and then calculate new dimensions using the current frame's information.
-            // These precalculated dimensions are then returned in property 'Dimensions'.
-            float fractionAdjustment = (float)Math.Ceiling(bonusListDimensions.Y) - bonusListDimensions.Y;
-            for (int i = 1; i < bonusBonus.Count; ++i)
-            {
-                Vector2 leftMiddlePoint = new Vector2(bonusBackgroundTexture.Width + bonusPos[i].X,
-                    fractionAdjustment + (bonusPos[i].Y + bonusPos[i - 1].Y) / 2);
-                DrawBonusBox(spriteBatch, leftMiddlePoint, bonusBonus[i]);
-            }
+            // Lists bottom left coordinates of areas reserved for displayed
+            // bonus boxes relative to this overlay component's top right corner,
+            // with the exception that the first coordinates are (0,0).
+            // Bonus boxes are then drawn vertically centered in these areas.
+            // The last Y coordinate will state the height of the whole reserved bonus box area.
+            List<Vector2> bonusPos = new List<Vector2>();
 
-            bonusPos.Clear();
-            bonusBonus.Clear();
+            // Lists the types of bonuses whose coordinates are in 'bonusPos'.
+            List<PlayerBonus> bonusBonus = new List<PlayerBonus>();
+
             bonusPos.Add(Vector2.Zero);
             bonusBonus.Add(PlayerBonus.None);
+
+            // Find out which boxes to draw and where.
             foreach (PlayerBonus bonus in Enum.GetValues(typeof(PlayerBonus)))
             {
                 if (bonus == PlayerBonus.None) continue;
@@ -237,8 +223,17 @@ namespace AW2.Graphics
                     bonusPos.Add(newBonusPos);
                 }
             }
-            bonusListDimensions = new Vector2(bonusBackgroundTexture.Width, 
-                                              bonusPos[bonusPos.Count - 1].Y);
+
+            // Draw the bonus boxes in their places.
+            Point dimensions = Dimensions;
+            Vector2 bonusBoxAreaTopRight = new Vector2(dimensions.X * 2,
+                dimensions.Y - bonusPos[bonusPos.Count - 1].Y) / 2;
+            for (int i = 1; i < bonusBonus.Count; ++i)
+            {
+                Vector2 leftMiddlePoint = new Vector2(bonusPos[i].X + bonusBoxAreaTopRight.X,
+                    bonusBoxAreaTopRight.Y + (bonusPos[i].Y + bonusPos[i - 1].Y) / 2);
+                DrawBonusBox(spriteBatch, leftMiddlePoint, bonusBonus[i]);
+            }
         }
 
         /// <summary>

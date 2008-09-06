@@ -391,7 +391,7 @@ namespace AW2.Game.Particles
                 // Die by our dead leader.
                 if (leader.Dead)
                 {
-                    Die();
+                    Die(new DeathCause());
                     leader = null;
                 }
                 else
@@ -448,7 +448,7 @@ namespace AW2.Game.Particles
             }
 
             if (!loop && createdParticles >= totalNumberParticles)
-                Die();
+                Die(new DeathCause());
 
             // Remove the particle engine if it's created all its particles and
             // the particles have died.
@@ -463,7 +463,8 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Kills the gob, i.e. performs a death ritual and removes the gob from the game world.
         /// </summary>
-        public override void Die()
+        /// <param name="cause">The cause of death.</param>
+        public override void Die(DeathCause cause)
         {
             IsAlive = false;
         }

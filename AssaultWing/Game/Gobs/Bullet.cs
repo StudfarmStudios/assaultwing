@@ -96,9 +96,9 @@ namespace AW2.Game.Gobs
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                theirArea.Owner.InflictDamage(impactDamage);
+                theirArea.Owner.InflictDamage(impactDamage, new DeathCause(DeathCauseType.Damage, this));
             physics.MakeHole(Pos, impactHoleRadius);
-            Die();
+            Die(new DeathCause());
         }
     }
 }

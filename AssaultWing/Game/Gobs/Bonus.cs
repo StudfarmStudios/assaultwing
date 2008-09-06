@@ -143,7 +143,7 @@ namespace AW2.Game.Gobs
             base.Update();
             if (deathTime <= physics.TimeStep.TotalGameTime)
             {
-                Die();
+                Die(new DeathCause());
             }
         }
 
@@ -230,7 +230,7 @@ namespace AW2.Game.Gobs
                     // We found the action, break out of the search.
                     break;
                 }
-                Die();
+                Die(new DeathCause());
             }
         }
 

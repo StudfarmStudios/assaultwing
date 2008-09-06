@@ -204,7 +204,7 @@ namespace AW2.Graphics
                 data.ForEachPlayer(delegate(Player player)
                 {
                     if (player.Ship != null)
-                        player.Ship.Die();
+                        player.Ship.Die(new DeathCause());
                 });
             }
 #endif

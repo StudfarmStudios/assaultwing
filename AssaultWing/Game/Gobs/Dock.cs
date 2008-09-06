@@ -72,7 +72,7 @@ namespace AW2.Game.Gobs
             // Then 'theirArea.Owner' must be damageable.
             if (myArea.Type == CollisionAreaType.Receptor)
             {
-                theirArea.Owner.InflictDamage(physics.ApplyChange(repairSpeed));
+                theirArea.Owner.InflictDamage(physics.ApplyChange(repairSpeed), new DeathCause());
                 Ship ship = theirArea.Owner as Ship;
                 if (ship != null)
                 {

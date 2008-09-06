@@ -874,7 +874,8 @@ namespace AW2.Game
                 if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 {
                     if (move1Delta.Length() > minimumCollisionDelta)
-                        movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta));
+                        movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta),
+                            new DeathCause(DeathCauseType.Collision, unmovableGob));
                 }
                 /* TODO: What if the unmovable gob wants to be damaged, too?
                 if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0)
@@ -949,9 +950,11 @@ namespace AW2.Game
                 if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 {
                     if (move1Delta.Length() > minimumCollisionDelta)
-                        gob1.InflictDamage(CollisionDamage(gob1, move1Delta));
+                        gob1.InflictDamage(CollisionDamage(gob1, move1Delta),
+                            new DeathCause(DeathCauseType.Collision, gob2));
                     if (move2after.Length() > minimumCollisionDelta)
-                        gob2.InflictDamage(CollisionDamage(gob2, move2after));
+                        gob2.InflictDamage(CollisionDamage(gob2, move2after),
+                            new DeathCause(DeathCauseType.Collision, gob1));
                 }
 
                 // Play a sound only if actual collision happened!.

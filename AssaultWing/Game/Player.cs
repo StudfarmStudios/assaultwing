@@ -380,7 +380,8 @@ namespace AW2.Game
         /// <summary>
         /// Performs necessary operations when the player's ship dies.
         /// </summary>
-        public void Die()
+        /// <param name="cause">The cause of death of the player's ship</param>
+        public void Die(DeathCause cause)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
@@ -397,9 +398,7 @@ namespace AW2.Game
             ship = null;
 
             // Notify the player about his death.
-            TimeSpan deathTime = AssaultWing.Instance.GameTime.TotalGameTime;
-            SendMessage(string.Format("You died {0}:{1:d2} into the game", 
-                (int)deathTime.TotalMinutes, deathTime.Seconds));
+            SendMessage("Death by " + cause.ToPersonalizedString(this));
             
             // Schedule the making of a new ship, lives permitting.
             long ticks = (long)(mourningDelay * 10 * 1000 * 1000);
@@ -429,7 +428,8 @@ namespace AW2.Game
         /// <param name="message">The message.</param>
         public void SendMessage(string message)
         {
-            messages.Add(message);
+            TimeSpan time = AssaultWing.Instance.GameTime.TotalGameTime;
+            messages.Add(string.Format("[{0}:{1:d2}] {2}", (int)time.TotalMinutes, time.Seconds, message));
 
             // Throw away very old messages.
             if (messages.Count > 10000)

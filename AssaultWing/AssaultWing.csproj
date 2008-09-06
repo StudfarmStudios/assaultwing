@@ -84,6 +84,7 @@
     <Compile Include="Game\Arena.cs">
       <Name>Arena</Name>
     </Compile>
+    <Compile Include="Game\DeathCause.cs" />
     <Compile Include="Game\Gobs\Bonus.cs" />
     <Compile Include="Game\Gobs\BounceBullet.cs" />
     <Compile Include="Game\Gobs\Dock.cs">

@@ -463,12 +463,13 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Kills the gob, i.e. performs a death ritual and removes the gob from the game world.
         /// </summary>
-        public override void Die()
+        /// <param name="cause">The cause of death.</param>
+        public override void Die(DeathCause cause)
         {
             if (Dead) return;
             if (Owner != null)
-                Owner.Die();
-            base.Die();
+                Owner.Die(cause);
+            base.Die(cause);
         }
 
         /// <summary>
@@ -636,12 +637,13 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="damageAmount">If positive, amount of damage;
         /// if negative, amount of repair.</param>
-        public override void InflictDamage(float damageAmount)
+        /// <param name="cause">The cause of death.</param>
+        public override void InflictDamage(float damageAmount, DeathCause cause)
         {
             float realDamage = armour.Evaluate(damageAmount);
             if (Owner != null)
                 Owner.IncreaseShake(realDamage);
-            base.InflictDamage(realDamage);
+            base.InflictDamage(realDamage, cause);
         }
     }
 }

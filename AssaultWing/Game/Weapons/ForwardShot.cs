@@ -166,7 +166,7 @@ namespace AW2.Game.Weapons
             if (fireAction == FireAction.KillAll && liveShots.Count > 0)
             {
                 foreach (Gob gob in liveShots)
-                    gob.Die();
+                    gob.Die(new DeathCause());
             }
             else
             // Otherwise fire new shots if possible.
@@ -281,7 +281,7 @@ namespace AW2.Game.Weapons
             if (fireAction == FireAction.KillAll && liveShots.Count > 0)
             {
                 foreach (Gob gob in liveShots)
-                    gob.Die();
+                    gob.Die(new DeathCause());
             }
         }
         #region IConsistencyCheckable Members

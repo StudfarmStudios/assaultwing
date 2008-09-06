@@ -163,7 +163,7 @@ namespace AW2.Game.Gobs
             // When the flow ends, there's nothing more to do.
             if (AssaultWing.Instance.GameTime.TotalGameTime >= flowEndTime)
             {
-                Die();
+                Die(new DeathCause());
             }
         }
 
@@ -207,7 +207,7 @@ namespace AW2.Game.Gobs
             {
                 float distance = theirArea.Area.DistanceTo(this.Pos);
                 float damage = inflictDamage.Evaluate(distance);
-                theirArea.Owner.InflictDamage(damage);
+                theirArea.Owner.InflictDamage(damage, new DeathCause(DeathCauseType.Damage, this));
             }
         }
     }

@@ -628,6 +628,7 @@ namespace AW2.Game
                 Gob gob = CreateGob(gobType);
                 gob.Pos = this.Pos;
                 gob.Rotation = this.Rotation;
+                gob.owner = this.owner;
                 if (gob is ParticleEngine)
                     ((ParticleEngine)gob).Leader = this;
                 data.AddGob(gob);
@@ -655,7 +656,8 @@ namespace AW2.Game
         /// remove it from the game data. But this might be a bad idea later on if gobs
         /// refer to each other.
         /// Overriding methods should not do anything if the property <b>Dead</b> is true.
-        public virtual void Die()
+        /// <param name="cause">The cause of death.</param>
+        public virtual void Die(DeathCause cause)
         {
             if (Dead) return;
             dead = true;
@@ -669,6 +671,7 @@ namespace AW2.Game
                 Gob gob = CreateGob(gobType);
                 gob.Pos = this.Pos;
                 gob.Rotation = this.Rotation;
+                gob.owner = this.owner;
                 data.AddGob(gob);
             }
         }
@@ -989,14 +992,15 @@ namespace AW2.Game
         /// </summary>
         /// <param name="damageAmount">If positive, amount of damage;
         /// if negative, amount of repair.</param>
-        public virtual void InflictDamage(float damageAmount)
+        /// <param name="cause">Cause of death if the damage results in death.</param>
+        public virtual void InflictDamage(float damageAmount, DeathCause cause)
         {
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
             if (damageAmount > 0)
                 bleach = MathHelper.Min(bleach + damageAmount / 100, 1);
             if (damage == maxDamage)
-                Die();
+                Die(cause);
         }
 
         #endregion Damage methods

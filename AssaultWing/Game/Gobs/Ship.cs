@@ -165,6 +165,11 @@ namespace AW2.Game.Gobs
         /// </summary>
         bool exhaustAmountUpdated;
 
+        /// <summary>
+        /// Gobs that we have temporarily disabled while we move through them.
+        /// </summary>
+        List<Gob> temporarilyDisabledGobs;
+
         #endregion Ship fields related to other things
 
         #region Ship properties
@@ -320,6 +325,7 @@ namespace AW2.Game.Gobs
             this.birthAlpha.Keys.Add(new CurveKey(2, 1));
             this.birthAlpha.ComputeTangents(CurveTangent.Flat);
             this.coughEngineNames = new string[] { "dummyparticleengine", };
+            this.temporarilyDisabledGobs = new List<Gob>();
         }
 
         /// <summary>
@@ -333,6 +339,7 @@ namespace AW2.Game.Gobs
             this.weapon2 = null;
             this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2Charge = this.weapon2ChargeMax;
+            this.temporarilyDisabledGobs = new List<Gob>();
         }
 
         /// <summary>
@@ -351,6 +358,7 @@ namespace AW2.Game.Gobs
             this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2Charge = this.weapon2ChargeMax;
             this.coughEngines = new ParticleEngine[0];
+            this.temporarilyDisabledGobs = new List<Gob>();
         }
 
         #endregion Ship constructors
@@ -428,6 +436,11 @@ namespace AW2.Game.Gobs
 
             base.Update();
             
+            // Re-enable temporarily disabled gobs.
+            foreach (Gob gob in temporarilyDisabledGobs)
+                gob.Disabled = false;
+            temporarilyDisabledGobs.Clear();
+
             // Manage exhaust engines.
             for (int i = 0; i < exhaustEngines.Length; ++i)
                 if (!exhaustAmountUpdated)
@@ -631,6 +644,29 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Ship public methods
+
+        /// <summary>
+        /// Performs collision operations for the case when one of this gob's collision areas
+        /// is overlapping one of another gob's collision areas.
+        /// </summary>
+        /// Called only when <b>theirArea.Type</b> matches either <b>myArea.CollidesAgainst</b> or
+        /// <b>myArea.CannotOverlap</b>.
+        /// <param name="myArea">The collision area of this gob.</param>
+        /// <param name="theirArea">The collision area of the other gob.</param>
+        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
+        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
+        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
+        /// to resolve the overlap.</param>
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        {
+            if (stuck)
+            {
+                // Set the other gob as disabled while we move, then enable it after we finish moving.
+                // This works with the assumption that there are at least two moving iterations.
+                theirArea.Owner.Disabled = true;
+                temporarilyDisabledGobs.Add(theirArea.Owner);
+            }
+        }
 
         /// <summary>
         /// Inflicts damage on the entity.

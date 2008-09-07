@@ -2,9 +2,6 @@
 #if DEBUG
 using NUnit.Framework;
 #endif
-#if !DEBUG
-  #define TRUSTED_VISIBILITY_BREACH // makes code faster at the cost of naughty class design
-#endif
 using System;
 using System.Collections.Generic;
 using System.Text;

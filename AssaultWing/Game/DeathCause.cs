@@ -76,7 +76,7 @@ namespace AW2.Game
             if (other == null)
                 return type.ToString();
             if (other.Owner == null)
-                return type + " by nature";
+                return type + " by nature (" + other.TypeName + ")";
             if (other.Owner == player)
                 return type + " by you";
             return type + " by " + other.Owner.Name;

@@ -82,6 +82,36 @@ namespace AW2.Helpers
     }
 
     /// <summary>
+    /// Makes a field of a class be (de)serialised by a custom name.
+    /// </summary>
+    /// This attribute is meant for use with Serialization.SerializeXml and 
+    /// Serialization.DeserializeXml as a means to give custom names for XML elements. 
+    /// Without this attribute, the elements are named exactly as their corresponding fields.
+    /// <see cref="Serialization.SerializeXml"/>
+    /// <see cref="Serialization.DeserializeXml"/>
+    [AttributeUsage(AttributeTargets.Field)]
+    public class SerializedNameAttribute : Attribute
+    {
+        string serializedName;
+
+        /// <summary>
+        /// The name of the XML element that stores the field.
+        /// </summary>
+        public string SerializedName { get { return serializedName; } }
+
+        /// <summary>
+        /// Creates a custom (de)serialisation name for a field.
+        /// </summary>
+        /// <param name="serializedName">The name of the XML element that stores the field.</param>
+        public SerializedNameAttribute(string serializedName)
+        {
+            if (string.IsNullOrEmpty(serializedName))
+                throw new ArgumentException("Null or empty XML element name");
+            this.serializedName = serializedName;
+        }
+    }
+
+    /// <summary>
     /// Denotes that a class uses limitation attributes on its fields to define 
     /// (de)serialisable parts of its instances.
     /// </summary>
@@ -455,24 +485,32 @@ namespace AW2.Helpers
             FieldInfo[] fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
                 ? GetFields(obj, limitationAttribute)
                 : GetFields(obj, null);
+
             foreach (FieldInfo field in fields)
             {
-                Type fieldLimitationAttribute = limitationAttribute;
-
-                // React to LimitationSwitchAttribute
-                LimitationSwitchAttribute attr = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
-                if (attr != null)
+                // React to SerializedNameAttribute
+                string elementName = field.Name;
+                SerializedNameAttribute serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
+                if (serializedNameAttribute != null)
                 {
-                    if (attr.From == limitationAttribute)
-                        fieldLimitationAttribute = attr.To;
+                    elementName = serializedNameAttribute.SerializedName;
                 }
 
-                SerializeXml(writer, field.Name, field.GetValue(obj), fieldLimitationAttribute);
+                // React to LimitationSwitchAttribute
+                Type fieldLimitationAttribute = limitationAttribute;
+                LimitationSwitchAttribute limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
+                if (limitationSwitchAttribute != null)
+                {
+                    if (limitationSwitchAttribute.From == limitationAttribute)
+                        fieldLimitationAttribute = limitationSwitchAttribute.To;
+                }
+
+                SerializeXml(writer, elementName, field.GetValue(obj), fieldLimitationAttribute);
             }
         }
 
         /// <summary>
-        /// Reads in fields of an object from an XML writer.
+        /// Reads in fields of an object from an XML reader.
         /// </summary>
         /// You can limit the deserialisation to fields that have the specified limitation attribute.
         /// This limitation is applied only on instances of classes that have 
@@ -502,23 +540,33 @@ namespace AW2.Helpers
             {
                 bool fieldFound = false;
                 foreach (FieldInfo field in fields)
-                    if (reader.Name.Equals(field.Name))
+                {
+                    // React to SerializedNameAttribute
+                    string elementName = field.Name;
+                    SerializedNameAttribute serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
+                    if (serializedNameAttribute != null)
+                    {
+                        elementName = serializedNameAttribute.SerializedName;
+                    }
+
+                    if (reader.Name.Equals(elementName))
                     {
                         Type fieldLimitationAttribute = limitationAttribute;
 
                         // React to LimitationSwitchAttribute
-                        LimitationSwitchAttribute attr = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
-                        if (attr != null)
+                        LimitationSwitchAttribute limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
+                        if (limitationSwitchAttribute != null)
                         {
-                            if (attr.From == limitationAttribute)
-                                fieldLimitationAttribute = attr.To;
+                            if (limitationSwitchAttribute.From == limitationAttribute)
+                                fieldLimitationAttribute = limitationSwitchAttribute.To;
                         }
 
                         fieldFound = true;
-                        object value = DeserializeXml(reader, field.Name, field.FieldType, fieldLimitationAttribute);
+                        object value = DeserializeXml(reader, elementName, field.FieldType, fieldLimitationAttribute);
                         field.SetValue(obj, value);
                         break;
                     }
+                }
                 if (!fieldFound)
                 {
                     Log.Write("Skipping unknown XML element " + reader.Name);

@@ -17,7 +17,12 @@ namespace AW2.Helpers.Geometric
     public class Triangle : IGeomPrimitive
     {
 #if TRUSTED_VISIBILITY_BREACH
-        public Vector2 P1, P2, P3;
+        [SerializedName("p1")]
+        public Vector2 P1;
+        [SerializedName("p2")]
+        public Vector2 P2;
+        [SerializedName("p3")]
+        public Vector2 P3;
 #else
         Vector2 p1, p2, p3;
 #endif

@@ -14,7 +14,10 @@ namespace AW2.Helpers.Geometric
     public class Rectangle : IGeomPrimitive
     {
 #if TRUSTED_VISIBILITY_BREACH
-        public Vector2 Min, Max;
+        [SerializedName("min")]
+        public Vector2 Min;
+        [SerializedName("max")]
+        public Vector2 Max;
 #else
         Vector2 min, max;
 #endif

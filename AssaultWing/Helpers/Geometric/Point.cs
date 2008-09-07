@@ -14,6 +14,7 @@ namespace AW2.Helpers.Geometric
     public class Point : IGeomPrimitive
     {
 #if TRUSTED_VISIBILITY_BREACH
+        [SerializedName("location")]
         public Vector2 Location;
 #else
         Vector2 location;

@@ -68,6 +68,13 @@ namespace AW2.Game.Gobs
         #endregion Explosion fields
 
         /// <summary>
+        /// Is the gob cold.
+        /// </summary>
+        /// Explosions are never cold. They live for a very short time and
+        /// they react with all gobs regardless of their owners.
+        public override bool Cold { get { return false; } }
+
+        /// <summary>
         /// Creates an uninitialised explosion.
         /// </summary>
         /// This constructor is only for serialisation.

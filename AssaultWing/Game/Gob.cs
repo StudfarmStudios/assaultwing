@@ -375,7 +375,7 @@ namespace AW2.Game
         /// All gobs are born <b>cold</b>. If a gob is cold, it won't
         /// collide with other gobs that have the same owner. This works around
         /// the problem of bullets hitting the firing ship immediately at birth.
-        public bool Cold
+        public virtual bool Cold
         {
             get
             {

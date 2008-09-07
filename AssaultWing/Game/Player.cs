@@ -386,10 +386,6 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
 
-            // Disown current ship so that we don't get any more
-            // death reports this frame.
-            ship.Owner = null;
-
             // Dying has some consequences.
             --lives;
             weapon1Upgrades = 0;

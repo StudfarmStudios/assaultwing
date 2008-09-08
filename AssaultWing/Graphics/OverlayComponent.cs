@@ -95,10 +95,10 @@ namespace AW2.Graphics
                 case HorizontalAlignment.Left:
                     break;
                 case HorizontalAlignment.Center:
-                    newViewport.X += (oldViewport.Width - dimensions.X) / 2;
+                    newViewport.X += Math.Max(0, (oldViewport.Width - dimensions.X) / 2);
                     break;
                 case HorizontalAlignment.Right:
-                    newViewport.X += oldViewport.Width - dimensions.X;
+                    newViewport.X += Math.Max(0, oldViewport.Width - dimensions.X);
                     break;
             }
             switch (verticalAlignment)
@@ -106,14 +106,14 @@ namespace AW2.Graphics
                 case VerticalAlignment.Top:
                     break;
                 case VerticalAlignment.Center:
-                    newViewport.Y += (oldViewport.Height - dimensions.Y) / 2;
+                    newViewport.Y += Math.Max(0, (oldViewport.Height - dimensions.Y) / 2);
                     break;
                 case VerticalAlignment.Bottom:
-                    newViewport.Y += oldViewport.Height - dimensions.Y;
+                    newViewport.Y += Math.Max(0, oldViewport.Height - dimensions.Y);
                     break;
             }
-            newViewport.Width = dimensions.X;
-            newViewport.Height = dimensions.Y;
+            newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
+            newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
             gfx.Viewport = newViewport;
             spriteBatch.Begin();
             DrawContent(spriteBatch);

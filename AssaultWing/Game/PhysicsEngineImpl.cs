@@ -814,7 +814,6 @@ namespace AW2.Game
 #if DEBUG_PROFILE
             ++AssaultWing.Instance.collisionCount;
 #endif
-            Vector2 normal = Geometry.GetNormal(area1.Area, area2.Area);
             // At least one area must be from a movable gob, lest there be no collision.
             bool area1Movable = (area1.Type & CollisionAreaType.PhysicalMovable) != 0;
             bool area2Movable = (area2.Type & CollisionAreaType.PhysicalMovable) != 0;

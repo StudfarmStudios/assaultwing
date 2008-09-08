@@ -1,3 +1,6 @@
+#if !DEBUG
+#define OPTIMIZED_CODE // replace some function calls with fast elementary operations
+#endif
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -358,9 +361,19 @@ namespace AW2.Game
         {
             get
             {
+#if OPTIMIZED_CODE
+                float scaledCos = scale * (float)Math.Cos(rotation);
+                float scaledSin = scale * (float)Math.Sin(rotation);
+                return new Matrix(
+                    scaledCos, scaledSin, 0, 0,
+                    -scaledSin, scaledCos, 0, 0,
+                    0, 0, scale, 0,
+                    pos.X, pos.Y, 0, 1);
+#else
                 return Matrix.CreateScale(scale)
                      * Matrix.CreateRotationZ(rotation)
                      * Matrix.CreateTranslation(new Vector3(pos, 0));
+#endif
             }
         }
 

@@ -1,3 +1,6 @@
+#if !DEBUG
+#define OPTIMIZED_CODE // replace some function calls with fast elementary operations
+#endif
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -182,10 +185,24 @@ namespace AW2.Game.Gobs
         {
             get
             {
+#if OPTIMIZED_CODE
+                float scale = Scale;
+                float rotation = Rotation;
+                float scaledCosRoll = scale * (float)Math.Cos(rollAngle);
+                float scaledSinRoll = scale * (float)Math.Sin(rollAngle);
+                float cosRota = (float)Math.Cos(rotation);
+                float sinRota = (float)Math.Sin(rotation);
+                return new Matrix(
+                    scale*cosRota, scale*sinRota, 0, 0,
+                    -scaledCosRoll*sinRota, scaledCosRoll*cosRota, scaledSinRoll, 0,
+                    scaledSinRoll*sinRota, -scaledSinRoll*cosRota, scaledCosRoll, 0,
+                    pos.X, pos.Y, 0, 1);
+#else
                 return Matrix.CreateScale(Scale)
                      * Matrix.CreateRotationX(rollAngle)
                      * Matrix.CreateRotationZ(Rotation)
                      * Matrix.CreateTranslation(new Vector3(Pos, 0));
+#endif
             }
         }
 

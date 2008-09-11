@@ -250,8 +250,8 @@ Right Shift - Fire secondary";
         /// </summary>
         protected override void UnloadContent()
         {
-            menuTexture.Dispose();
-            bigArrow.Dispose();
+            if (menuTexture != null) menuTexture.Dispose();
+            if (bigArrow != null) bigArrow.Dispose();
             base.UnloadContent();
         }
 

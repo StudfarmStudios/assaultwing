@@ -76,6 +76,11 @@ namespace AW2.Game
         /// <returns><c>true</c> if there is a texture with the name, <c>false</c> otherwise.</returns>
         bool HasTexture(string name);
 
+        /// <summary>
+        /// Disposes of all textures.
+        /// </summary>
+        void ClearTextures();
+
         #endregion
 
         #region fonts

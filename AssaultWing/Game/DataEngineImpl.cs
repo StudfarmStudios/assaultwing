@@ -193,6 +193,16 @@ namespace AW2.Game
             return textures.ContainsKey(name);
         }
 
+        /// <summary>
+        /// Disposes of all textures.
+        /// </summary>
+        public void ClearTextures()
+        {
+            foreach (Texture2D texture in textures.Values)
+                texture.Dispose();
+            textures.Clear();
+        }
+
         #endregion textures
 
         #region fonts

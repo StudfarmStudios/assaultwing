@@ -249,69 +249,8 @@ namespace AW2.Graphics
                 spriteBatch.Dispose();
                 spriteBatch = null;
             }
-
-            // Loop through gob types and dispose all the 3D models and textures they need.
-            data.ForEachTypeTemplate<Gob>(delegate(Gob gobTemplate)
-            {
-                foreach (string modelName in gobTemplate.ModelNames)
-                    if (data.HasModel(modelName))
-                    {
-                        // Models need not be disposed (there is no Dispose method).
-                        data.AddModel(modelName, null);
-                    }
-                foreach (string textureName in gobTemplate.TextureNames)
-                    if (data.HasTexture(textureName))
-                    {
-                        data.GetTexture(textureName).Dispose();
-                        data.AddTexture(textureName, null);
-                    }
-            });
-
-            // Loop through arenas and dispose all the 3D models and textures they need.
-            data.ForEachArena(delegate(Arena arenaTemplate)
-            {
-                foreach (Gob gob in arenaTemplate.Gobs)
-                    foreach (string modelName in gob.ModelNames)
-                        if (data.HasModel(modelName))
-                        {
-                            // Models need not be disposed (there is no Dispose method).
-                            data.AddModel(modelName, null);
-                        }
-                foreach (string textureName in arenaTemplate.ParallaxNames)
-                    if (data.HasTexture(textureName))
-                    {
-                        data.GetTexture(textureName).Dispose();
-                        data.AddTexture(textureName, null);
-                    }
-            });
-
-            // Unload all textures that each weapon needs.
-            data.ForEachTypeTemplate<Weapon>(delegate(Weapon weapon)
-            {
-                foreach (string textureName in weapon.TextureNames)
-                    if (data.HasTexture(textureName))
-                    {
-                        data.GetTexture(textureName).Dispose();
-                        data.AddTexture(textureName, null);
-                    }
-            });
-
-            // Unload static graphics.
-            foreach (TextureName overlay in Enum.GetValues(typeof(TextureName)))
-            {
-                Texture2D texture = data.GetTexture(overlay);
-                if (texture != null)
-                    texture.Dispose();
-                data.AddTexture(overlay, null);
-            }
-
-            // Load static fonts.
-            foreach (FontName fontName in Enum.GetValues(typeof(FontName)))
-            {
-                // Fonts need not be disposed (there is no Dispose method).
-                data.AddFont(fontName, null);
-            }
-
+            data.ClearTextures();
+            // TODO: Clear other graphical data, too.
             base.UnloadContent();
         }
 

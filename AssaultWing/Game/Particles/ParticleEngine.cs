@@ -12,7 +12,7 @@ namespace AW2.Game.Particles
     /// Represents a group of particles with a specific behavior
     /// </summary>
     [LimitedSerialization]
-    public class ParticleEngine : Gob
+    public class ParticleEngine : Gob, IConsistencyCheckable
     {
         #region Fields
 
@@ -560,5 +560,27 @@ namespace AW2.Game.Particles
                     new Vector2(tex.Width, tex.Height) / 2, part.Size, SpriteEffects.None, layerDepth);
             }
         }
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public override void MakeConsistent(Type limitationAttribute)
+        {
+            base.MakeConsistent(limitationAttribute);
+
+            if (limitationAttribute == typeof(RuntimeStateAttribute))
+            {
+                // Initialise oldPos
+                Pos = Pos;
+            }
+        }
+
+        #endregion
     }
 }

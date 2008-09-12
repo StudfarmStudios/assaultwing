@@ -1027,7 +1027,7 @@ namespace AW2.Game
         /// <param name="limitationAttribute">Check only fields marked with 
         /// this limitation attribute.</param>
         /// <see cref="Serialization"/>
-        public void MakeConsistent(Type limitationAttribute)
+        public virtual void MakeConsistent(Type limitationAttribute)
         {
             // Rearrange our collision areas to have a physical area be first, 
             // if there is such.

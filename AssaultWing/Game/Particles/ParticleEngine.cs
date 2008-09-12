@@ -17,7 +17,6 @@ namespace AW2.Game.Particles
         #region Fields
 
         //SYSTEM SETTINGS 
-        private int id = -1;
         [RuntimeState]
         private bool isAlive = true;
 
@@ -33,16 +32,10 @@ namespace AW2.Game.Particles
         private TimeSpan nextBirth; // Time of next particle birth, in game time.
         [RuntimeState]
         private Vector2 oldPosition = new Vector2(Single.NaN); //Previous position of the system
-        [RuntimeState]
-        private Vector3 movement = new Vector3(0, 0, 0); //Movement of the system
         [TypeParameter]
         private float depthLayer = 0.5f; // Depth layer for sprite draw order; 0 is front; 1 is back
         [TypeParameter]
-        private Emitter emitter = new DotEmitter(); //Emmiter of the system
-        [TypeParameter]
-        private float dragForce = 1; //Drag force for the particles off the system
-        [TypeParameter]
-        private Vector3 gravity = new Vector3(0, 0, 0); //Gravity for the particles of the system
+        private Emitter emitter = new DotEmitter(); //Emitter of the system
         [TypeParameter]
         private string textureName = "dummytexture"; // Name of texture for particles
 
@@ -77,24 +70,12 @@ namespace AW2.Game.Particles
         [TypeParameter]
         private FloatFactory particleAcceleration = new ExpectedValue(); //Expected acceleration of a particle
 
-        [TypeParameter]
-        private FloatFactory particleMass = new ExpectedValue(); // Expected mass of a particle
-
         [RuntimeState]
         private List<Particle> particles = new List<Particle>();
 
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Identification number.
-        /// </summary>
-        public int ID
-        {
-            get { return id; }
-            internal set { id = value; }
-        }
 
         /// <summary>
         /// IsAlive is set to false when no particles exist in this system.
@@ -156,19 +137,7 @@ namespace AW2.Game.Particles
                 pos = value;
 
                 if (emitter != null)
-                    emitter.Position = new Vector3(value,0);
-            }
-        }
-
-        /// <summary>
-        /// Movement of the particle system.
-        /// </summary>
-        public Vector3 Movement
-        {
-            get { return movement; }
-            set
-            {
-                movement = value;
+                    emitter.Position = value;
             }
         }
 
@@ -181,26 +150,8 @@ namespace AW2.Game.Particles
             set
             {
                 emitter = value;
-                emitter.Position = new Vector3(pos,0);
+                emitter.Position = pos;
             }
-        }
-
-        /// <summary>
-        /// Currently not used. This should be fetched from physics engine.
-        /// </summary>
-        public float DragForce
-        {
-            get { return dragForce; }
-            set { dragForce = value; }
-        }
-
-        /// <summary>
-        /// Currently not used. This should be fetched from physics engine.
-        /// </summary>
-        public Vector3 Gravity
-        {
-            get { return gravity; }
-            set { gravity = value; }
         }
 
         /// <summary>
@@ -313,15 +264,6 @@ namespace AW2.Game.Particles
         }
 
         /// <summary>
-        /// Particles mass when it's created.
-        /// </summary>
-        public FloatFactory ParticleMass
-        {
-            get { return particleMass; }
-            set { particleMass = value; }
-        }
-
-        /// <summary>
         /// Living particles created by this system.
         /// </summary>
         public List<Particle> Particles
@@ -426,7 +368,7 @@ namespace AW2.Game.Particles
                     float birthRateNow = GetFloatFromFactory(ref birthRate);
                     if (birthRateNow != 0)
                     {
-                        long ticks = (long)(10 * 1000 * 1000 / birthRateNow);
+                        long ticks = (long)(TimeSpan.TicksPerSecond / birthRateNow);
                         nextBirth = nextBirth.Add(new TimeSpan(ticks));
                     }
                 }
@@ -442,7 +384,7 @@ namespace AW2.Game.Particles
                     float weight = (i + 1) / (float)createCount;
                     Vector2 iPos = Vector2.Lerp(startPos, endPos, weight);
                     pos = iPos;
-                    emitter.Position = new Vector3(pos, 0);
+                    emitter.Position = pos;
                     CreateParticle();
                 }
             }
@@ -479,7 +421,7 @@ namespace AW2.Game.Particles
         private void CreateParticle()
         {
             Particle particle = new Particle();
-            Vector3 position, direction;
+            Vector2 position, direction;
             float directionAngle;
 
             emitter.EmittPosition(out position, out direction, out directionAngle);
@@ -496,10 +438,9 @@ namespace AW2.Game.Particles
             particle.InitialColor = particleInitialColor;
             particle.FinalColor = particleFinalColor;
 
-            particle.Position = position + new Vector3(this.Pos, 0);
-            particle.Velocity = movement + direction * GetFloatFromFactory(ref particleSpeed);
+            particle.Position = position + this.pos;
+            particle.Velocity = this.move + direction * GetFloatFromFactory(ref particleSpeed);
             particle.Acceleration = direction * GetFloatFromFactory(ref particleAcceleration);
-            particle.Mass = GetFloatFromFactory(ref particleMass);
 
             particle.Parent = this;
 
@@ -543,13 +484,8 @@ namespace AW2.Game.Particles
             {
                 // Transform world coordinates to viewport coordinates that
                 // range from (-1,-1,0) to (1,1,1).
-                Vector3 posCenter = part.Position;
-                Vector3 diagonal = new Vector3(tex.Width * part.Size, -tex.Height * part.Size, 0);
-                Vector3 posTopLeft = posCenter - diagonal / 2;
-                Vector3 posBotRight = posCenter + diagonal / 2;
+                Vector3 posCenter = new Vector3(part.Position, 0);
                 Vector3 screenCenter = Vector3.Transform(posCenter, transform);
-                Vector3 screenTopLeft = Vector3.Transform(posTopLeft, transform);
-                Vector3 screenBotRight = Vector3.Transform(posBotRight, transform);
 
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.

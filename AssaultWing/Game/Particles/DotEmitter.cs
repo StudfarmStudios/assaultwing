@@ -34,12 +34,12 @@ namespace AW2.Game.Particles
 
         # endregion
 
-        public override void EmittPosition(out Microsoft.Xna.Framework.Vector3 position, out Vector3 direction, out float directionAngle)
+        public override void EmittPosition(out Vector2 position, out Vector2 direction, out float directionAngle)
         {
-            position = Vector3.Zero; // dot emitter always creates particles in it's center
+            position = Vector2.Zero; // dot emitter always creates particles in its center
             directionAngle = this.direction + (RandomHelper.GetRandomFloat() - 0.5f) * jitter;
             Matrix rot = Matrix.CreateRotationZ(directionAngle);
-            direction = Vector3.TransformNormal(Vector3.UnitX, rot);
+            direction = Vector2.TransformNormal(Vector2.UnitX, rot);
         }
     }
 }

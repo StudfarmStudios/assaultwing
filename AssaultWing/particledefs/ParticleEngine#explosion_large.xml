@@ -6,8 +6,7 @@
   <birthRate type="AW2.Helpers.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"><value type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">80</value></birthRate>
   <totalNumberParticles type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">45</totalNumberParticles>
   <emitter type="AW2.Game.Particles.ExplodeEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <jitter type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.14159265</jitter>
-    <radius type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">20</radius>
+    <radius type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">14</radius>
   </emitter>
   <dragForce type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</dragForce>
   <gravity type="Microsoft.Xna.Framework.Vector3, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">

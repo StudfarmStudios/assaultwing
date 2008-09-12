@@ -29,12 +29,9 @@ namespace AW2.Game.Particles
         private Color initialColor;
         private Color finalColor;
 
-        private Vector3 position;
-
-        private Vector3 velocity;
-        private Vector3 acceleration;
-
-        private float mass;
+        private Vector2 position;
+        private Vector2 velocity;
+        private Vector2 acceleration;
 
         private ParticleEngine parent;
 
@@ -132,9 +129,9 @@ namespace AW2.Game.Particles
         }
 
         /// <summary>
-        /// Position of the particle. Currently Z is ignored.
+        /// Position of the particle.
         /// </summary>
-        public Vector3 Position
+        public Vector2 Position
         {
             get { return position; }
             set { position = value; }
@@ -143,7 +140,7 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Speed of the particle. Currently Z is ignored.
         /// </summary>
-        public Vector3 Velocity
+        public Vector2 Velocity
         {
             get { return velocity; }
             set { velocity = value; }
@@ -152,19 +149,10 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Acceleration of the particle.
         /// </summary>
-        public Vector3 Acceleration
+        public Vector2 Acceleration
         {
             get { return acceleration; }
             set { acceleration = value; }
-        }
-
-        /// <summary>
-        /// Mass of the particle. TODO: Use with gravitation calculations
-        /// </summary>
-        public float Mass
-        {
-            get { return mass; }
-            set { mass = value; }
         }
 
         /// <summary>
@@ -197,25 +185,16 @@ namespace AW2.Game.Particles
         /// <param name="gameTime"></param>
         public void Update(GameTime gameTime)
         {
-            float time;
-
-            time = gameTime.ElapsedGameTime.Milliseconds * 0.001f;
+            float time = (float)gameTime.ElapsedGameTime.TotalSeconds;
             age -= time;
 
-            position += velocity * time;
-            acceleration += parent.Gravity * mass;
-
             velocity += acceleration * time;
-//            velocity *= (float) Math.Pow(parent.DragForce, time);
+            position += velocity * time;
 
             float ageDone = totalAge - Math.Max(age, 0);
             float ageRatio = ageDone / totalAge;
             size = initialSize + (finalSize - initialSize) * ageRatio;
 
-            if (this.parent.ID == 15)
-            {
-                Log.Write("totalAge: " + totalAge + " agedone: " + ageDone + " ageRatio: " + ageRatio + " size: " + size);
-            }
             rotation += deltaRotation * time;
             currentColor = new Color(
                 (byte)(initialColor.R + (finalColor.R - initialColor.R) * ageRatio),

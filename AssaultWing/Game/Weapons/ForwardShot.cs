@@ -248,7 +248,7 @@ namespace AW2.Game.Weapons
                     DotEmitter emitter = (DotEmitter)engine.Emitter;
                     emitter.Direction = Owner.Rotation;
                     engine.Pos = Owner.GetNamedPosition(boneI);
-                    engine.Movement = new Vector3(owner.Move, 0);
+                    engine.Move = owner.Move;
                 }
 
             // Forget about dead fire engines.

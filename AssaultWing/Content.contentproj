@@ -1063,6 +1063,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="fonts\MenuFontBig.spritefont">
+      <Name>MenuFontBig</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+    <Compile Include="fonts\MenuFontSmall.spritefont">
+      <Name>MenuFontSmall</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <None Include="gobdefs\SpawnGob#bonus_spawn.xml">
       <Name>SpawnGob#bonus_spawn</Name>
       <Importer>XmlImporter</Importer>

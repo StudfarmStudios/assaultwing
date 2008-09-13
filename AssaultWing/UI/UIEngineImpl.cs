@@ -27,7 +27,7 @@ namespace AW2.UI
         /// Controls for general functionality.
         /// </summary>
         // HACK: Remove from release builds: showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl
-        private Control exitControl1, fullscreenControl;
+        private Control fullscreenControl;
         private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 
         /// <summary>
@@ -41,7 +41,6 @@ namespace AW2.UI
         {
             oldState = InputState.GetState();
             eatMouse = false;
-            exitControl1 = new KeyboardKey(Keys.Escape);
             fullscreenControl = new KeyboardKey(Keys.F10);
             showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
             showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
@@ -75,11 +74,6 @@ namespace AW2.UI
             oldState = newState;
 
             // Check general controls.
-            if (exitControl1.Pulse)
-            {
-                Game.Exit();
-            }
-
             if (fullscreenControl.Pulse)
             {
                 AssaultWing.Instance.ToggleFullscreen();

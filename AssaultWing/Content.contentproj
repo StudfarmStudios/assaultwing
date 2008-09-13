@@ -165,21 +165,6 @@
       <Processor>TextureProcessor</Processor>
       <Name>ikkuna</Name>
     </Compile>
-    <Compile Include="textures\mainarrow.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>mainarrow</Name>
-    </Compile>
-    <Compile Include="textures\main_hilite.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>main_hilite</Name>
-    </Compile>
-    <Compile Include="textures\menubg.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>menubg</Name>
-    </Compile>
     <Compile Include="textures\parallax_red_fog.png">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>

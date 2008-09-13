@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Game.Gobs;
 using AW2.Graphics;
+using AW2.Menu;
 using AW2.UI;
 using AW2.Sound;
 using AW2.Events;

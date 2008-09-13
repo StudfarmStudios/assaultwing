@@ -102,6 +102,26 @@ namespace AW2.Graphics
         /// Chat box background.
         /// </summary>
         ChatBox,
+
+        /// <summary>
+        /// Menu system background.
+        /// </summary>
+        MenuBackground,
+
+        /// <summary>
+        /// Main menu component background.
+        /// </summary>
+        MainMenuBackground,
+
+        /// <summary>
+        /// Equip menu component background.
+        /// </summary>
+        EquipMenuBackground,
+
+        /// <summary>
+        /// Arena selection menu component background.
+        /// </summary>
+        ArenaMenuBackground,
     }
 
     /// <summary>
@@ -113,12 +133,22 @@ namespace AW2.Graphics
         /// Font used in overlay graphics.
         /// </summary>
         Overlay,
+
+        /// <summary>
+        /// Big font used in the menu system.
+        /// </summary>
+        MenuFontBig,
+
+        /// <summary>
+        /// Small font used in the menu system.
+        /// </summary>
+        MenuFontSmall,
     }
 
     /// <summary>
     /// Basic graphics engine.
     /// </summary>
-    class GraphicsEngineImpl : DrawableGameComponent, GraphicsEngine
+    class GraphicsEngineImpl : DrawableGameComponent
     {
         SpriteBatch spriteBatch;
 
@@ -157,9 +187,15 @@ namespace AW2.Graphics
                 "gui_radar_bg",
                 "gui_playerinfo_white_ball", // HACK: Ship sprite on radar display
                 "gui_console_bg",
+                "menu_rustywall_bg",
+                "menu_main_bg",
+                "menu_equip_bg",
+                "menu_levels_bg",
             };
             fontNames = new string[] {
                 "ConsoleFont",
+                "MenuFontBig",
+                "MenuFontSmall",
             };
         }
 

@@ -363,7 +363,7 @@ namespace AW2.Game
             ForEachPlayer(delegate(Player player)
             {
                 player.Reset();
-                player.Lives = 1;
+                player.Lives = 3;
             });
 
             activeArena = arena;

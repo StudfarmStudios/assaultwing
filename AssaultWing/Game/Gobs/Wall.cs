@@ -437,6 +437,10 @@ namespace AW2.Game.Gobs
             // 'targetSize', we will have to render the coloured triangles in pieces.
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
+            GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
+            if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
+                TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
+                throw new Exception("Cannot create render target of type SurfaceFormat.Color");
             int targetSize = Math.Min(
                 AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
                 AWMathHelper.CeilingPowerTwo(Math.Max(indexMap.GetLength(1), indexMap.GetLength(0))));
@@ -444,7 +448,7 @@ namespace AW2.Game.Gobs
             while (maskTarget == null)
                 try
                 {
-                    maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, gfx.DisplayMode.Format);
+                    maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, SurfaceFormat.Color);
                 }
                 catch (Exception e)
                 {

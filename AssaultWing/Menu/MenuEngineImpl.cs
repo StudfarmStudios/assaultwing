@@ -48,6 +48,8 @@ namespace AW2.Menu
         Vector2 view; // top left corner of menu view in menu system coordinates
         Vector2 viewFrom, viewTo; // start and goal of current movement of 'view'
         TimeSpan viewMoveStartTime; // time of start of view movement
+        int viewWidth, viewHeight; // how many pixels to show scaled down to the screen
+        int screenWidth, screenHeight; // last known dimensions of client bounds
 
         /// <summary>
         /// Movement curve of 'view' from 'viewFrom' to 'viewTo' as a function of 
@@ -86,7 +88,8 @@ namespace AW2.Menu
             viewMoveCurve.Keys[0].TangentOut = 0;
             viewMoveCurve.Keys[viewMoveCurve.Keys.Count - 1].TangentIn = 0;
 
-            InitializeShadow();
+            screenWidth = AssaultWing.Instance.ClientBounds.Width;
+            screenHeight = AssaultWing.Instance.ClientBounds.Height;
         }
 
         /// <summary>
@@ -132,14 +135,8 @@ namespace AW2.Menu
             components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
 
             WindowResize();
-            base.Initialize();
-
-            // Set initial menu view position and active menu component.
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            viewFrom = viewTo = components[(int)MenuComponentType.Main].Center
-                - new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
-            viewMoveStartTime = AssaultWing.Instance.GameTime.ElapsedRealTime;
             ActivateComponent(MenuComponentType.Main);
+            base.Initialize();
         }
 
         /// <summary>
@@ -154,9 +151,8 @@ namespace AW2.Menu
             MenuComponent newComponent = components[(int)activeComponent];
 
             // Make menu view scroll to the new component's position.
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             viewFrom = view;
-            viewTo = newComponent.Center - new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
+            viewTo = newComponent.Center - new Vector2(viewWidth, viewHeight) / 2;
             viewMoveStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
@@ -194,52 +190,29 @@ namespace AW2.Menu
             Viewport screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
-            screen.Width = AssaultWing.Instance.ClientBounds.Width;
-            screen.Height = AssaultWing.Instance.ClientBounds.Height;
-#if false
+            screen.Width = viewWidth;
+            screen.Height = viewHeight;
+
             // If client bounds are very small, render everything
             // to a separate render target of reasonable size, 
             // then scale the target to the screen.
-            if (screen.Width < 800 || screen.Height < 800)
+            RenderTarget2D renderTarget = null;
+            DepthStencilBuffer oldDepthStencilBuffer = null;
+            if (screenWidth < viewWidth || screenHeight < viewHeight)
             {
-                GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
-                int targetWidth = (int)arenaDimensionsOnRadar.X;
-                int targetHeight = (int)arenaDimensionsOnRadar.Y;
-                GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
-                if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
-                    TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
-                    throw new Exception("Cannot create render target of type SurfaceFormat.Color");
-                RenderTarget2D maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight,
-                    1, SurfaceFormat.Color);
+                renderTarget = new RenderTarget2D(gfx, viewWidth, viewHeight, 1, gfx.DisplayMode.Format);
 
                 // Set up graphics device.
-                DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+                oldDepthStencilBuffer = gfx.DepthStencilBuffer;
                 gfx.DepthStencilBuffer = null;
 
-                // Set and clear our own render target.
-                gfx.SetRenderTarget(0, maskTarget);
-                gfx.Clear(ClearOptions.Target, Color.TransparentBlack, 0, 0);
-
-            // Draw
-
-                // Restore render target so what we can extract drawn pixels.
-                // Create a copy of the texture in local memory so that a graphics device
-                // reset (e.g. when changing resolution) doesn't lose the texture.
-                gfx.SetRenderTarget(0, null);
-                Color[] textureData = new Color[targetHeight * targetWidth];
-                maskTarget.GetTexture().GetData(textureData);
-                arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, 1, TextureUsage.None, SurfaceFormat.Color);
-                arenaRadarSilhouette.SetData(textureData);
-
-                // Restore graphics device's old settings.
-                gfx.DepthStencilBuffer = oldDepthStencilBuffer;
-                maskTarget.Dispose();
-
-                // Draw texture on screen.
+                // Set our own render target.
+                gfx.SetRenderTarget(0, renderTarget);
             }
-#endif
+
+            // Begin drawing.
             gfx.Viewport = screen;
-            gfx.Clear(Color.DimGray);
+            gfx.Clear(ClearOptions.Target, Color.DimGray, 0, 0);
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
             // Draw background looping all over the screen.
@@ -275,6 +248,31 @@ namespace AW2.Menu
                 pass.End();
             }
             effect.End();
+
+            // If we're stretching the view, take the temporary render target
+            // and draw its contents to the screen.
+            if (screenWidth < viewWidth || screenHeight < viewHeight)
+            {
+                // Restore render target so what we can extract drawn pixels.
+                gfx.SetRenderTarget(0, null);
+                Texture2D renderTexture = renderTarget.GetTexture();
+
+                // Restore the graphics device to the real backbuffer.
+                screen.Width = screenWidth;
+                screen.Height = screenHeight;
+                gfx.Viewport = screen;
+                gfx.DepthStencilBuffer = oldDepthStencilBuffer;
+
+                // Draw the texture stretched on the screen.
+                Rectangle destination = new Rectangle(0, 0, screen.Width, screen.Height);
+                spriteBatch.Begin();
+                spriteBatch.Draw(renderTexture, destination, Color.White);
+                spriteBatch.End();
+
+                // Dispose of needless data.
+                renderTexture.Dispose();
+                renderTarget.Dispose();
+            }
         }
 
         /// <summary>
@@ -285,8 +283,36 @@ namespace AW2.Menu
         /// or after switching between windowed and fullscreen mode.
         public void WindowResize()
         {
+            int oldViewWidth = viewWidth;
+            int oldViewHeight = viewHeight;
+
+            // If client bounds are very small, scale the menu view down
+            // to fit more in the screen.
+            viewWidth = screenWidth = AssaultWing.Instance.ClientBounds.Width;
+            viewHeight = screenHeight = AssaultWing.Instance.ClientBounds.Height;
+            int screenWidthMin = 800;
+            int screenHeightMin = 800;
+            if (screenWidth < screenWidthMin)
+            {
+                viewWidth = screenWidthMin;
+                viewHeight = viewWidth * screenHeight / screenWidth;
+            }
+            if (screenHeight < screenHeightMin)
+            {
+                // Follow the stronger scale if there is a limitation both by width and by height.
+                if (viewHeight < screenHeightMin)
+                {
+                    viewHeight = screenHeightMin;
+                    viewWidth = viewHeight * screenWidth / screenHeight;
+                }
+            }
+
             InitializeShadow();
-            // TODO: Make menu view move to a new position suitable for the new client bounds.
+
+            // Make menu view move to a new position suitable for the new client bounds.
+            Vector2 displacement = new Vector2(oldViewWidth - viewWidth, oldViewHeight - viewHeight) / 2;
+            viewFrom += displacement;
+            viewTo += displacement;
         }
 
         /// <summary>
@@ -298,14 +324,12 @@ namespace AW2.Menu
             // The shadow is a rectangle that spans a grid of vertices, each
             // of them black but with different levels of alpha.
             // The origin of the shadow 3D model is at the top center.
-            Vector2 shadowDimensions = new Vector2(
-                AssaultWing.Instance.ClientBounds.Width, 
-                AssaultWing.Instance.ClientBounds.Height);
+            Vector2 shadowDimensions = new Vector2(viewWidth, viewHeight);
             int gridWidth = (int)shadowDimensions.X / 30;
             int gridHeight = (int)shadowDimensions.Y / 30;
             Curve alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
-            alphaCurve.Keys.Add(new CurveKey(   0,   0));
-            alphaCurve.Keys.Add(new CurveKey( 500, 120));
+            alphaCurve.Keys.Add(new CurveKey(0, 0));
+            alphaCurve.Keys.Add(new CurveKey(500, 120));
             alphaCurve.Keys.Add(new CurveKey(1000, 255));
             alphaCurve.PreLoop = CurveLoopType.Constant;
             alphaCurve.PostLoop = CurveLoopType.Constant;
@@ -315,7 +339,7 @@ namespace AW2.Menu
             for (int y = 0; y < gridHeight; ++y)
                 for (int x = 0; x < gridWidth; ++x)
                 {
-                    Vector2 posInShadow = shadowDimensions * 
+                    Vector2 posInShadow = shadowDimensions *
                         new Vector2((float)x / (gridWidth - 1) - 0.5f, (float)-y / (gridHeight - 1));
                     float distance = posInShadow.Length();
                     vertexData.Add(new VertexPositionColor(

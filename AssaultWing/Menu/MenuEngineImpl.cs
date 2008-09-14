@@ -190,14 +190,54 @@ namespace AW2.Menu
         /// </param>
         public override void Draw(GameTime gameTime)
         {
-            // TODO: If client bounds are very big or very small, render everything
-            // TODO: to a separate render target of reasonable size, then scale the target to the screen.
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             Viewport screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
             screen.Width = AssaultWing.Instance.ClientBounds.Width;
             screen.Height = AssaultWing.Instance.ClientBounds.Height;
+#if false
+            // If client bounds are very small, render everything
+            // to a separate render target of reasonable size, 
+            // then scale the target to the screen.
+            if (screen.Width < 800 || screen.Height < 800)
+            {
+                GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
+                int targetWidth = (int)arenaDimensionsOnRadar.X;
+                int targetHeight = (int)arenaDimensionsOnRadar.Y;
+                GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
+                if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
+                    TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
+                    throw new Exception("Cannot create render target of type SurfaceFormat.Color");
+                RenderTarget2D maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight,
+                    1, SurfaceFormat.Color);
+
+                // Set up graphics device.
+                DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+                gfx.DepthStencilBuffer = null;
+
+                // Set and clear our own render target.
+                gfx.SetRenderTarget(0, maskTarget);
+                gfx.Clear(ClearOptions.Target, Color.TransparentBlack, 0, 0);
+
+            // Draw
+
+                // Restore render target so what we can extract drawn pixels.
+                // Create a copy of the texture in local memory so that a graphics device
+                // reset (e.g. when changing resolution) doesn't lose the texture.
+                gfx.SetRenderTarget(0, null);
+                Color[] textureData = new Color[targetHeight * targetWidth];
+                maskTarget.GetTexture().GetData(textureData);
+                arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, 1, TextureUsage.None, SurfaceFormat.Color);
+                arenaRadarSilhouette.SetData(textureData);
+
+                // Restore graphics device's old settings.
+                gfx.DepthStencilBuffer = oldDepthStencilBuffer;
+                maskTarget.Dispose();
+
+                // Draw texture on screen.
+            }
+#endif
             gfx.Viewport = screen;
             gfx.Clear(Color.DimGray);
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
@@ -209,8 +249,8 @@ namespace AW2.Menu
             float xStart = view.X < 0
                 ? -(view.X % backgroundTexture.Width) - backgroundTexture.Width
                 : -(view.X % backgroundTexture.Width);
-            for (float y = yStart; y < view.Y + screen.Height; y += backgroundTexture.Height)
-                for (float x = xStart; x < view.X + screen.Width; x += backgroundTexture.Width)
+            for (float y = yStart; y < screen.Height; y += backgroundTexture.Height)
+                for (float x = xStart; x < screen.Width; x += backgroundTexture.Width)
                     spriteBatch.Draw(backgroundTexture, new Vector2(x, y), Color.White);
 
             // Draw menu components.

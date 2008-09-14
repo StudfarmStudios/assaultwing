@@ -312,6 +312,14 @@ namespace AW2.Game
             return arenas.ContainsKey(name);
         }
 
+        public Arena getNextPlayableArena()
+        {
+            if ((arenaPlaylistI+1) >= arenaPlaylist.Count)
+                return null;
+            else
+                return GetArena(arenaPlaylist[arenaPlaylistI+1]);
+                
+        }
         /// <summary>
         /// Initialises the data engine with the next arena in the playlist.
         /// </summary>
@@ -345,6 +353,8 @@ namespace AW2.Game
             addedGobs.Clear();
             removedGobs.Clear();
 
+
+
             // Create initial objects.
             foreach (Gob gob in arena.Gobs)
                 AddGob(Gob.CreateGob(gob));
@@ -353,7 +363,7 @@ namespace AW2.Game
             ForEachPlayer(delegate(Player player)
             {
                 player.Reset();
-                player.Lives = 3;
+                player.Lives = 1;
             });
 
             activeArena = arena;

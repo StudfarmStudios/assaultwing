@@ -263,6 +263,12 @@ namespace AW2
         /// </summary>
         public void PlayNextArena()
         {
+            Arena arenaTemplate = dataEngine.getNextPlayableArena();
+            if (arenaTemplate != null)
+            {
+                graphicsEngine.LoadAreaGobs(arenaTemplate);
+                graphicsEngine.LoadAreatextures(arenaTemplate);
+            }
             if (dataEngine.NextArena())
                 ShowMenu();
             else

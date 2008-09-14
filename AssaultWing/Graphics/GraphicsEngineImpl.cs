@@ -227,6 +227,8 @@ namespace AW2.Graphics
                 }
             });
             
+            /*
+             * Arenas Are loaded on
             // Loop through arenas and load all the 3D models and textures they need.
             data.ForEachArena(delegate(Arena arenaTemplate)
             {
@@ -246,7 +248,7 @@ namespace AW2.Graphics
                         data.AddTexture(textureName, texture);
                 }
             });
-
+            */
             // Load all textures that each weapon needs.
             data.ForEachTypeTemplate<Weapon>(delegate(Weapon weapon)
             {
@@ -270,6 +272,33 @@ namespace AW2.Graphics
             {
                 data.AddFont(font, LoadFont(fontNames[(int)font]));
             }
+        }
+
+        public void LoadAreaGobs(Arena arenaTemplate)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            foreach (Gob gob in arenaTemplate.Gobs)
+                foreach (string modelName in gob.ModelNames)
+                {
+                    if (data.HasModel(modelName)) continue;
+                    Model model = LoadModel(modelName);
+                    if (model != null)
+                        data.AddModel(modelName, model);
+                }
+
+        }
+
+        public void LoadAreatextures(Arena arenaTemplate)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            foreach (string textureName in arenaTemplate.ParallaxNames)
+            {
+                if (data.HasTexture(textureName)) continue;
+                Texture2D texture = LoadTexture(textureName);
+                if (texture != null)
+                    data.AddTexture(textureName, texture);
+            }
+
         }
 
         /// <summary>

@@ -58,7 +58,7 @@ namespace AW2.Menu
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
         VertexPositionColor[] shadowVertexData;
-        short[] shadowIndexData; // stored as a triangle list
+        int[] shadowIndexData; // stored as a triangle list
         VertexDeclaration vertexDeclaration;
         BasicEffect effect;
 
@@ -285,20 +285,24 @@ namespace AW2.Menu
         /// or after switching between windowed and fullscreen mode.
         public void WindowResize()
         {
+            InitializeShadow();
             // TODO: Make menu view move to a new position suitable for the new client bounds.
         }
 
         /// <summary>
-        /// Initialises fields <c>shadowVertexData</c> and <c>shadowIndexData</c>.
+        /// Initialises fields <c>shadowVertexData</c> and <c>shadowIndexData</c>
+        /// to a shadow 3D model that fills the current client bounds.
         /// </summary>
         void InitializeShadow()
         {
             // The shadow is a rectangle that spans a grid of vertices, each
             // of them black but with different levels of alpha.
             // The origin of the shadow 3D model is at the top center.
-            Vector2 shadowDimensions = new Vector2(5000, 5000);
-            int gridWidth = 25;
-            int gridHeight = 25;
+            Vector2 shadowDimensions = new Vector2(
+                AssaultWing.Instance.ClientBounds.Width, 
+                AssaultWing.Instance.ClientBounds.Height);
+            int gridWidth = (int)shadowDimensions.X / 30;
+            int gridHeight = (int)shadowDimensions.Y / 30;
             Curve alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
             alphaCurve.Keys.Add(new CurveKey(   0,   0));
             alphaCurve.Keys.Add(new CurveKey( 500, 120));
@@ -307,7 +311,7 @@ namespace AW2.Menu
             alphaCurve.PostLoop = CurveLoopType.Constant;
             alphaCurve.ComputeTangents(CurveTangent.Smooth);
             List<VertexPositionColor> vertexData = new List<VertexPositionColor>();
-            List<short> indexData = new List<short>();
+            List<int> indexData = new List<int>();
             for (int y = 0; y < gridHeight; ++y)
                 for (int x = 0; x < gridWidth; ++x)
                 {
@@ -321,15 +325,15 @@ namespace AW2.Menu
                     {
                         if (x > 0)
                         {
-                            indexData.Add((short)(y * gridWidth + x));
-                            indexData.Add((short)(y * gridWidth + x - 1));
-                            indexData.Add((short)((y - 1) * gridWidth + x));
+                            indexData.Add(y * gridWidth + x);
+                            indexData.Add(y * gridWidth + x - 1);
+                            indexData.Add((y - 1) * gridWidth + x);
                         }
                         if (x < gridWidth - 1)
                         {
-                            indexData.Add((short)(y * gridWidth + x));
-                            indexData.Add((short)((y - 1) * gridWidth + x));
-                            indexData.Add((short)((y - 1) * gridWidth + x + 1));
+                            indexData.Add(y * gridWidth + x);
+                            indexData.Add((y - 1) * gridWidth + x);
+                            indexData.Add((y - 1) * gridWidth + x + 1);
                         }
                     }
                 }

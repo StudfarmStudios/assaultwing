@@ -25,7 +25,7 @@ namespace AW2.Menu
         /// </summary>
         /// This is a good place to center the menu view to when the menu component
         /// is to be seen well on the screen.
-        public override Vector2 Center { get { return pos + new Vector2(750, 350); } }
+        public override Vector2 Center { get { return pos + new Vector2(750, 480); } }
 
         /// <summary>
         /// Creates an equip menu component for a menu system.

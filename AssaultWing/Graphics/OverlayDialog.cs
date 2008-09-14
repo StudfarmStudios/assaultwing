@@ -207,6 +207,20 @@ namespace AW2.Graphics
                         player.Ship.Die(new DeathCause());
                 });
             }
+
+            if (keys.IsKeyDown(Keys.L) && keys.IsKeyDown(Keys.E))
+            {
+                string dialogText = "Arena Ended!\nNext arena?";
+                AssaultWing.Instance.ShowDialog(dialogText,
+                    delegate(object obj)
+                    {
+                        AssaultWing.Instance.PlayNextArena();
+                    },
+                    delegate(object obj)
+                    {
+                        AssaultWing.Instance.ShowMenu();
+                    });
+            }
 #endif
 
             base.Update(gameTime);

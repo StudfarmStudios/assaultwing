@@ -54,8 +54,14 @@ namespace AW2.Menu
         /// seconds from start of movement to linear interpolation weight (0..1) of 
         /// 'viewTo' against 'viewFrom'.
         /// </summary>
-        Curve viewMoveCurve; 
-        
+        Curve viewMoveCurve;
+
+        // The menu system draws a shadow on the screen as this transparent 3D object.
+        VertexPositionColor[] shadowVertexData;
+        short[] shadowIndexData; // stored as a triangle list
+        VertexDeclaration vertexDeclaration;
+        BasicEffect effect;
+
         SpriteBatch spriteBatch;
         Texture2D backgroundTexture;
 
@@ -79,6 +85,8 @@ namespace AW2.Menu
             viewMoveCurve.ComputeTangents(CurveTangent.Smooth);
             viewMoveCurve.Keys[0].TangentOut = 0;
             viewMoveCurve.Keys[viewMoveCurve.Keys.Count - 1].TangentIn = 0;
+
+            InitializeShadow();
         }
 
         /// <summary>
@@ -87,6 +95,15 @@ namespace AW2.Menu
         /// </summary>
         protected override void LoadContent()
         {
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
+            effect = new BasicEffect(gfx, null);
+            effect.FogEnabled = false;
+            effect.LightingEnabled = false;
+            effect.View = Matrix.CreateLookAt(100 * Vector3.UnitZ, Vector3.Zero, Vector3.Up);
+            effect.World = Matrix.Identity;
+            effect.VertexColorEnabled = true;
+            effect.TextureEnabled = false;
         }
 
         /// <summary>
@@ -97,6 +114,8 @@ namespace AW2.Menu
         {
             spriteBatch.Dispose();
             spriteBatch = null;
+            effect.Dispose();
+            effect = null;
             base.UnloadContent();
         }
 
@@ -198,10 +217,24 @@ namespace AW2.Menu
             foreach (MenuComponent component in components)
                 component.Draw(view, spriteBatch);
 
-            // Draw menu focus shadow.
-            // TODO in 3D
-
             spriteBatch.End();
+
+            // Draw menu focus shadow.
+            gfx.VertexDeclaration = vertexDeclaration;
+            effect.Projection = Matrix.CreateOrthographicOffCenter(
+                -screen.Width / 2, screen.Width / 2,
+                -screen.Height, 0,
+                1, 500);
+            effect.Begin();
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Begin();
+                gfx.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                    shadowVertexData, 0, shadowVertexData.Length,
+                    shadowIndexData, 0, shadowIndexData.Length / 3);
+                pass.End();
+            }
+            effect.End();
         }
 
         /// <summary>
@@ -213,6 +246,55 @@ namespace AW2.Menu
         public void WindowResize()
         {
             // TODO: Make menu view move to a new position suitable for the new client bounds.
+        }
+
+        /// <summary>
+        /// Initialises fields <c>shadowVertexData</c> and <c>shadowIndexData</c>.
+        /// </summary>
+        void InitializeShadow()
+        {
+            // The shadow is a rectangle that spans a grid of vertices, each
+            // of them black but with different levels of alpha.
+            // The origin of the shadow 3D model is at the top center.
+            Vector2 shadowDimensions = new Vector2(5000, 5000);
+            int gridWidth = 25;
+            int gridHeight = 25;
+            Curve alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
+            alphaCurve.Keys.Add(new CurveKey(   0,   0));
+            alphaCurve.Keys.Add(new CurveKey( 500, 120));
+            alphaCurve.Keys.Add(new CurveKey(1000, 255));
+            alphaCurve.PreLoop = CurveLoopType.Constant;
+            alphaCurve.PostLoop = CurveLoopType.Constant;
+            alphaCurve.ComputeTangents(CurveTangent.Smooth);
+            List<VertexPositionColor> vertexData = new List<VertexPositionColor>();
+            List<short> indexData = new List<short>();
+            for (int y = 0; y < gridHeight; ++y)
+                for (int x = 0; x < gridWidth; ++x)
+                {
+                    Vector2 posInShadow = shadowDimensions * 
+                        new Vector2((float)x / (gridWidth - 1) - 0.5f, (float)-y / (gridHeight - 1));
+                    float distance = posInShadow.Length();
+                    vertexData.Add(new VertexPositionColor(
+                        new Vector3(posInShadow, 0),
+                        new Color(0, 0, 0, (byte)alphaCurve.Evaluate(distance))));
+                    if (y > 0)
+                    {
+                        if (x > 0)
+                        {
+                            indexData.Add((short)(y * gridWidth + x));
+                            indexData.Add((short)(y * gridWidth + x - 1));
+                            indexData.Add((short)((y - 1) * gridWidth + x));
+                        }
+                        if (x < gridWidth - 1)
+                        {
+                            indexData.Add((short)(y * gridWidth + x));
+                            indexData.Add((short)((y - 1) * gridWidth + x));
+                            indexData.Add((short)((y - 1) * gridWidth + x + 1));
+                        }
+                    }
+                }
+            shadowVertexData = vertexData.ToArray();
+            shadowIndexData = indexData.ToArray();
         }
     }
 }

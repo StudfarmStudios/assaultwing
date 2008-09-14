@@ -510,8 +510,12 @@ namespace AW2.Game.Gobs
                         {
                             Color color = maskData[x + y * maskTexture.Width];
                             if (color == Color.White) continue;
+                            int indexMapY = startY + targetSize - 1 - y;
+                            int indexMapX = startX + x;
+                            if (indexMapY >= indexMap.GetLength(0) || indexMapX >= indexMap.GetLength(1))
+                                throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
                             int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
-                            indexMap[startY + targetSize - 1 - y, startX + x] = new int[] { maskValue };
+                            indexMap[indexMapY, indexMapX] = new int[] { maskValue };
                         }
                 }
 

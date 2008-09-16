@@ -283,15 +283,34 @@ namespace AW2.Menu
         /// or after switching between windowed and fullscreen mode.
         public void WindowResize()
         {
+            screenWidth = AssaultWing.Instance.ClientBounds.Width;
+            screenHeight = AssaultWing.Instance.ClientBounds.Height;
+
             int oldViewWidth = viewWidth;
             int oldViewHeight = viewHeight;
+            SetViewDimensions();
+            InitializeShadow();
 
+            // Make menu view move to a new position suitable for the new client bounds.
+            Vector2 displacement = new Vector2(oldViewWidth - viewWidth, oldViewHeight - viewHeight) / 2;
+            viewFrom += displacement;
+            viewTo += displacement;
+        }
+
+        /// <summary>
+        /// Sets view dimensions (<c>viewWidth</c> and <c>viewHeight</c>)
+        /// based on current screen dimensions (<c>screenWidth</c> and <c>screenHeight</c>).
+        /// </summary>
+        /// This method decides if the menu view will be shrunk down to fit
+        /// more information on a small screen.
+        private void SetViewDimensions()
+        {
             // If client bounds are very small, scale the menu view down
             // to fit more in the screen.
-            viewWidth = screenWidth = AssaultWing.Instance.ClientBounds.Width;
-            viewHeight = screenHeight = AssaultWing.Instance.ClientBounds.Height;
-            int screenWidthMin = 800;
-            int screenHeightMin = 800;
+            viewWidth = AssaultWing.Instance.ClientBounds.Width;
+            viewHeight = AssaultWing.Instance.ClientBounds.Height;
+            int screenWidthMin = 1; // least screen width that doesn't require scaling
+            int screenHeightMin = 1; // least screen height that doesn't require scaling
             if (screenWidth < screenWidthMin)
             {
                 viewWidth = screenWidthMin;
@@ -306,13 +325,6 @@ namespace AW2.Menu
                     viewWidth = viewHeight * screenWidth / screenHeight;
                 }
             }
-
-            InitializeShadow();
-
-            // Make menu view move to a new position suitable for the new client bounds.
-            Vector2 displacement = new Vector2(oldViewWidth - viewWidth, oldViewHeight - viewHeight) / 2;
-            viewFrom += displacement;
-            viewTo += displacement;
         }
 
         /// <summary>

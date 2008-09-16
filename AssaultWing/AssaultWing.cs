@@ -68,6 +68,7 @@ namespace AW2
         int framesSinceLastCheck;
         GameState gameState;
         GameTime gameTime;
+        Rectangle clientBoundsMin;
 
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
@@ -120,6 +121,22 @@ namespace AW2
         /// </summary>
         public Rectangle ClientBounds { get { return Window.ClientBounds; } }
 
+        /// <summary>
+        /// The minimum allowed screen dimensions of the game window's client rectangle.
+        /// </summary>
+        public Rectangle ClientBoundsMin
+        {
+            get { return clientBoundsMin; }
+            set
+            {
+                clientBoundsMin = value;
+                // Enforce new minimum bounds.
+                if (Window.ClientBounds.Width < clientBoundsMin.Width ||
+                    Window.ClientBounds.Height < clientBoundsMin.Height)
+                    Window_ClientSizeChanged(null, null);
+            }
+        }
+
         #endregion AssaultWing properties
 
         #region AssaultWing private methods
@@ -142,6 +159,8 @@ namespace AW2
             preferredWindowWidth = 1000;
             preferredWindowHeight = 800;
             preferredWindowFormat = displayMode.Format;
+            clientBoundsMin.Width = 1000;
+            clientBoundsMin.Height = 800;
 
             content = new ContentManager(Services);
             graphics = new GraphicsDeviceManager(this);
@@ -192,6 +211,19 @@ namespace AW2
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
         {
+            // If screen dimensions are below acceptable bounds, make the window bigger.
+            if (ClientBounds.Width < clientBoundsMin.Width ||
+                ClientBounds.Height < clientBoundsMin.Height)
+            {
+                int newClientWidth = Math.Max(ClientBounds.Width, clientBoundsMin.Width);
+                int newClientHeight = Math.Max(ClientBounds.Height, clientBoundsMin.Height);
+                IntPtr ptr = Window.Handle;
+                System.Windows.Forms.Form form = (System.Windows.Forms.Form)System.Windows.Forms.Control.FromHandle(ptr);
+                form.Size = new System.Drawing.Size(newClientWidth, newClientHeight);
+                graphics.PreferredBackBufferWidth = newClientWidth;
+                graphics.PreferredBackBufferHeight = newClientHeight;
+                graphics.ApplyChanges();
+            }
             graphicsEngine.WindowResize();
             menuEngine.WindowResize();
         }

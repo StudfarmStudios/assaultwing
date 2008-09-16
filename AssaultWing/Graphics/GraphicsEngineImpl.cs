@@ -320,6 +320,7 @@ namespace AW2.Graphics
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             foreach (Gob gob in arenaTemplate.Gobs)
+            {
                 foreach (string modelName in gob.ModelNames)
                 {
                     if (data.HasModel(modelName)) continue;
@@ -327,7 +328,14 @@ namespace AW2.Graphics
                     if (model != null)
                         data.AddModel(modelName, model);
                 }
-
+                foreach (string textureName in gob.TextureNames)
+                {
+                    if (data.HasTexture(textureName)) continue;
+                    Texture2D texture = LoadTexture(textureName);
+                    if (texture != null)
+                        data.AddTexture(textureName, texture);
+                }
+            }
         }
 
         public void LoadAreatextures(Arena arenaTemplate)

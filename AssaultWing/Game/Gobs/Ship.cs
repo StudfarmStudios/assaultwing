@@ -164,6 +164,12 @@ namespace AW2.Game.Gobs
         Curve birthAlpha;
 
         /// <summary>
+        /// Name of the ship's icon in the equip menu main display.
+        /// </summary>
+        [TypeParameter]
+        string iconEquipName;
+
+        /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
         /// </summary>
         bool exhaustAmountUpdated;
@@ -298,6 +304,24 @@ namespace AW2.Game.Gobs
         /// </summary>
         public float Weapon2ChargeMax { get { return weapon2ChargeMax; } }
 
+        /// <summary>
+        /// Name of the ship's icon in the equip menu main display.
+        /// </summary>
+        public string IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
+
+        /// <summary>
+        /// Names of all textures that this gob type will ever use.
+        /// </summary>
+        public override List<string> TextureNames
+        {
+            get
+            {
+                List<string> names = base.TextureNames;
+                names.Add(iconEquipName);
+                return names;
+            }
+        }
+
         #endregion Ship properties
 
         #region Ship constructors
@@ -343,6 +367,7 @@ namespace AW2.Game.Gobs
             this.birthAlpha.ComputeTangents(CurveTangent.Flat);
             this.coughEngineNames = new string[] { "dummyparticleengine", };
             this.temporarilyDisabledGobs = new List<Gob>();
+            this.iconEquipName = "dummyicon";
         }
 
         /// <summary>

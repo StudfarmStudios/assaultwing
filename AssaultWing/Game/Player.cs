@@ -272,6 +272,11 @@ namespace AW2.Game
         public string Name { get { return name; } }
 
         /// <summary>
+        /// The name of the type of ship the player has chosen to fly.
+        /// </summary>
+        public string ShipName { get { return shipTypeName; } set { shipTypeName = value; } }
+
+        /// <summary>
         /// The name of the primary weapon, considering all current bonuses.
         /// </summary>
         public string Weapon1Name

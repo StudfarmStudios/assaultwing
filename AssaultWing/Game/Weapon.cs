@@ -64,6 +64,12 @@ namespace AW2.Game
         string iconName;
 
         /// <summary>
+        /// Name of the weapon's icon in the equip menu main display.
+        /// </summary>
+        [TypeParameter]
+        string iconEquipName;
+
+        /// <summary>
         /// The ship this weapon is attached to.
         /// </summary>
         protected Ship owner;
@@ -144,6 +150,11 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Name of the weapon's icon in the equip menu main display.
+        /// </summary>
+        public string IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
+
+        /// <summary>
         /// Names of all textures that this weapon will ever use.
         /// </summary>
         public List<string> TextureNames
@@ -152,6 +163,7 @@ namespace AW2.Game
             {
                 List<string> textureNames = new List<string>();
                 textureNames.Add(iconName);
+                textureNames.Add(iconEquipName);
                 return textureNames;
             }
         }
@@ -218,6 +230,7 @@ namespace AW2.Game
             this.typeName = "dummyweapontype";
             this.upgradeNames = new string[] { "dummyweapontype", };
             this.iconName = "dummyicon";
+            this.iconEquipName = "dummyicon";
             this.owner = null;
             this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };

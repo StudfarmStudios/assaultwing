@@ -121,23 +121,39 @@ namespace AW2.Menu
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
 
+            // Draw player panes.
             Vector2 player1PanePos = new Vector2(334, 164);
             Vector2 playerPaneDeltaPos = new Vector2(203, 0);
             Vector2 playerPaneMainDeltaPos = new Vector2(0, player1PaneTopTexture.Height);
             Vector2 playerPaneCursorDeltaPos = playerPaneMainDeltaPos + new Vector2(22, 3);
             Vector2 playerPaneIconDeltaPos = playerPaneMainDeltaPos + new Vector2(21, 1);
-
-            // Player panes
+            Vector2 playerPaneRowDeltaPos = new Vector2(0, 91);
+            Vector2 playerPaneNamePos = new Vector2(104, 30);
             for (int playerI = 0; ; ++playerI)
             {
                 Player player = data.GetPlayer(playerI);
                 if (player == null) break;
                 Vector2 playerPanePos = pos - view + player1PanePos + playerI * playerPaneDeltaPos;
                 Vector2 playerCursorPos = playerPanePos + playerPaneCursorDeltaPos
-                    + new Vector2(0, currentItems[playerI] * 91);
+                    + currentItems[playerI] * playerPaneRowDeltaPos;
+                Vector2 playerNamePos = playerPanePos
+                    + new Vector2((int)(104 - menuSmallFont.MeasureString(player.Name).X / 2), 30);
                 Texture2D playerPaneTopTexture = playerI == 1 ? player2PaneTopTexture : player1PaneTopTexture;
                 spriteBatch.Draw(playerPaneTopTexture, playerPanePos, Color.White);
                 spriteBatch.Draw(playerPaneTexture, playerPanePos + playerPaneMainDeltaPos, Color.White);
+                spriteBatch.DrawString(menuSmallFont, player.Name, playerNamePos, Color.White);
+
+                // Draw icons of selected equipment.
+                Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(typeof(Gob), player.ShipName);
+                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
+                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
+                Texture2D shipTexture = data.GetTexture(ship.IconEquipName);
+                Texture2D weapon1Texture = data.GetTexture(weapon1.IconEquipName);
+                Texture2D weapon2Texture = data.GetTexture(weapon2.IconEquipName);
+                spriteBatch.Draw(shipTexture, playerPanePos + playerPaneCursorDeltaPos, Color.White);
+                spriteBatch.Draw(weapon1Texture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
+                spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);
+
                 spriteBatch.Draw(highlightMainTexture, playerCursorPos, Color.White);
                 spriteBatch.Draw(cursorMainTexture, playerCursorPos, Color.White);
             }

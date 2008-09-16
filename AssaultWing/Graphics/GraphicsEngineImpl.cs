@@ -114,6 +114,16 @@ namespace AW2.Graphics
         MainMenuBackground,
 
         /// <summary>
+        /// Main menu cursor.
+        /// </summary>
+        MainMenuCursor,
+
+        /// <summary>
+        /// Main menu highlight.
+        /// </summary>
+        MainMenuHighlight,
+
+        /// <summary>
         /// Equip menu component background.
         /// </summary>
         EquipMenuBackground,
@@ -189,6 +199,8 @@ namespace AW2.Graphics
                 "gui_console_bg",
                 "menu_rustywall_bg",
                 "menu_main_bg",
+                "menu_main_cursor",
+                "menu_main_hilite",
                 "menu_equip_bg",
                 "menu_levels_bg",
             };

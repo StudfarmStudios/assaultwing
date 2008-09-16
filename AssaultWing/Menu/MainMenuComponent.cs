@@ -55,7 +55,13 @@ namespace AW2.Menu
         MultiControl controlUp, controlDown, controlSelect;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont;
-        Texture2D backgroundTexture;
+        Texture2D backgroundTexture, cursorTexture, highlightTexture;
+
+        /// <summary>
+        /// Cursor fade curve as a function of time in seconds.
+        /// Values range from 0 (transparent) to 255 (opaque).
+        /// </summary>
+        Curve cursorFade;
 
         /// <summary>
         /// Does the menu component react to input.
@@ -86,7 +92,16 @@ namespace AW2.Menu
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             menuBigFont = data.GetFont(FontName.MenuFontBig);
             backgroundTexture = data.GetTexture(TextureName.MainMenuBackground);
+            cursorTexture = data.GetTexture(TextureName.MainMenuCursor);
+            highlightTexture = data.GetTexture(TextureName.MainMenuHighlight);
             pos = new Vector2(0, 698);
+
+            cursorFade = new Curve();
+            cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
+            cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
+            cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
+            cursorFade.PreLoop = CurveLoopType.Cycle;
+            cursorFade.PostLoop = CurveLoopType.Cycle;
         }
 
         /// <summary>
@@ -99,9 +114,11 @@ namespace AW2.Menu
             {
                 if (controlUp.Pulse)
                 {
+                    if (currentMenu != MainMenuItem._FirstItem) currentMenu -= 3;
                 }
                 if (controlDown.Pulse)
                 {
+                    if (currentMenu != MainMenuItem._LastItem) currentMenu += 3;
                 }
                 if (controlSelect.Pulse)
                 {
@@ -128,39 +145,15 @@ namespace AW2.Menu
         /// method returns.</param>
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
+            float time = (float)AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds;
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
-            spriteBatch.DrawString(menuBigFont, "First Playable Demo 2008-04-27", pos - view + new Vector2(420, 50), Color.LightGray);
-            switch (currentMenu)
-            {
-                case MainMenuItem.PlayLocal:
-                    {
-                        DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                        string arenaNames = "Play arenas:\n" +
-                            String.Join("\n", data.ArenaPlaylist.ToArray());
-                        string keysText1 = @"Player 1 controls:
-W - Thrust
-A - Turn left
-D - Turn right
-Left Ctrl - Fire primary
-Left Shift - Fire secondary";
-                        string keysText2 = @"Player 2 controls:
-Numpad 8 - Thrust
-Numpad 4 - Turn left
-Numpad 6 - Turn right
-Right Ctrl - Fire primary
-Right Shift - Fire secondary";
-                        string keysOther = "Esc closes the whole game.";
-                        spriteBatch.DrawString(menuBigFont, arenaNames, pos - view + new Vector2(550, 150), Color.White);
-                        spriteBatch.DrawString(menuBigFont, keysText1, pos - view + new Vector2(450, 300), Color.White);
-                        spriteBatch.DrawString(menuBigFont, keysText2, pos - view + new Vector2(450, 460), Color.White);
-                        spriteBatch.DrawString(menuBigFont, keysOther, pos - view + new Vector2(450, 620), Color.White);
-                    } break;
-                case MainMenuItem.Quit:
-                    {
-                        string text = "Exit the game";
-                        spriteBatch.DrawString(menuBigFont, text, pos - view + new Vector2(550, 150), Color.White);
-                    } break;
-            }
+            Vector2 cursorPos = pos - view + new Vector2(551, 358 + (int)currentMenu * menuBigFont.LineSpacing);
+            Vector2 highlightPos = cursorPos + new Vector2(cursorTexture.Width, 0);
+            Vector2 textPos = pos - view + new Vector2(585, 355);
+            spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(time)));
+            spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
+            spriteBatch.DrawString(menuBigFont, "Play Local\nPlay at the Battlefront\nSetup\nQuit",
+                textPos, Color.White);
         }
 
 

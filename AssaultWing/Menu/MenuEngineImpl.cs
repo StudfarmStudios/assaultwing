@@ -66,6 +66,7 @@ namespace AW2.Menu
 
         SpriteBatch spriteBatch;
         Texture2D backgroundTexture;
+        SpriteFont smallFont;
 
         /// <summary>
         /// Creates a menu system.
@@ -130,6 +131,7 @@ namespace AW2.Menu
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             backgroundTexture = data.GetTexture(TextureName.MenuBackground);
+            smallFont = data.GetFont(FontName.MenuFontSmall);
             components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
             components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
@@ -248,6 +250,22 @@ namespace AW2.Menu
                 pass.End();
             }
             effect.End();
+
+            // Draw static text.
+            spriteBatch.Begin();
+            spriteBatch.DrawString(smallFont, "First Playable Demo 2008-04-27",
+                new Vector2(10, viewHeight - smallFont.LineSpacing), Color.White);
+            string helpText = "Enter to proceed, Esc to return to previous";
+            Vector2 helpTextPos = new Vector2(
+                ((float)viewWidth-smallFont.MeasureString(helpText).X) / 2,
+                viewHeight - smallFont.LineSpacing);
+            spriteBatch.DrawString(smallFont, helpText, helpTextPos, Color.White);
+            string copyrightText = "Studfarm Studios";
+            Vector2 copyrightTextPos = new Vector2(
+                viewWidth - (int)smallFont.MeasureString(copyrightText).X - 10,
+                viewHeight - smallFont.LineSpacing);
+            spriteBatch.DrawString(smallFont, copyrightText, copyrightTextPos, Color.White);
+            spriteBatch.End();
 
             // If we're stretching the view, take the temporary render target
             // and draw its contents to the screen.

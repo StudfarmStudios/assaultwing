@@ -99,7 +99,9 @@ namespace AW2.Menu
         /// </summary>
         protected override void LoadContent()
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
             effect = new BasicEffect(gfx, null);
             effect.FogEnabled = false;
@@ -108,6 +110,12 @@ namespace AW2.Menu
             effect.World = Matrix.Identity;
             effect.VertexColorEnabled = true;
             effect.TextureEnabled = false;
+            backgroundTexture = data.GetTexture(TextureName.MenuBackground);
+            smallFont = data.GetFont(FontName.MenuFontSmall);
+
+            foreach (MenuComponent component in components)
+                component.LoadContent();
+            base.LoadContent();
         }
 
         /// <summary>
@@ -117,9 +125,11 @@ namespace AW2.Menu
         protected override void UnloadContent()
         {
             spriteBatch.Dispose();
-            spriteBatch = null;
+            vertexDeclaration.Dispose();
             effect.Dispose();
-            effect = null;
+            // The textures and font we reference will be disposed by GraphicsEngine.
+            foreach (MenuComponent component in components)
+                component.UnloadContent();
             base.UnloadContent();
         }
 
@@ -128,10 +138,6 @@ namespace AW2.Menu
         /// </summary>
         public override void Initialize()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
-            backgroundTexture = data.GetTexture(TextureName.MenuBackground);
-            smallFont = data.GetFont(FontName.MenuFontSmall);
             components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
             components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
@@ -327,6 +333,10 @@ namespace AW2.Menu
             // to fit more in the screen.
             viewWidth = AssaultWing.Instance.ClientBounds.Width;
             viewHeight = AssaultWing.Instance.ClientBounds.Height;
+
+            if (screenWidth == 0 || screenHeight == 0)
+                return;
+
             int screenWidthMin = 1; // least screen width that doesn't require scaling
             int screenHeightMin = 1; // least screen height that doesn't require scaling
             if (screenWidth < screenWidthMin)

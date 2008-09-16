@@ -34,13 +34,28 @@ namespace AW2.Menu
         public ArenaMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             controlDone = new KeyboardKey(Keys.Enter);
             controlBack = new KeyboardKey(Keys.Escape);
             pos = new Vector2(1220, 698);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             menuBigFont = data.GetFont(FontName.MenuFontBig);
             menuSmallFont = data.GetFont(FontName.MenuFontSmall);
             backgroundTexture = data.GetTexture(TextureName.ArenaMenuBackground);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // The textures and fonts we reference will be disposed by GraphicsEngine.
         }
 
         /// <summary>

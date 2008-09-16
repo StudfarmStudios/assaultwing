@@ -71,7 +71,8 @@ namespace AW2.Menu
             set
             {
                 base.Active = value;
-                InitializeControls();
+                // Update our controls to players' possibly changed controls.
+                if (value) InitializeControls(); 
             }
         }
 
@@ -89,11 +90,6 @@ namespace AW2.Menu
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            menuBigFont = data.GetFont(FontName.MenuFontBig);
-            backgroundTexture = data.GetTexture(TextureName.MainMenuBackground);
-            cursorTexture = data.GetTexture(TextureName.MainMenuCursor);
-            highlightTexture = data.GetTexture(TextureName.MainMenuHighlight);
             pos = new Vector2(0, 698);
 
             cursorFade = new Curve();
@@ -102,6 +98,26 @@ namespace AW2.Menu
             cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
             cursorFade.PreLoop = CurveLoopType.Cycle;
             cursorFade.PostLoop = CurveLoopType.Cycle;
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            menuBigFont = data.GetFont(FontName.MenuFontBig);
+            backgroundTexture = data.GetTexture(TextureName.MainMenuBackground);
+            cursorTexture = data.GetTexture(TextureName.MainMenuCursor);
+            highlightTexture = data.GetTexture(TextureName.MainMenuHighlight);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // The textures and fonts we reference will be disposed by GraphicsEngine.
         }
 
         /// <summary>

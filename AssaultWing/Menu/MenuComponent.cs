@@ -40,6 +40,16 @@ namespace AW2.Menu
         }
 
         /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public abstract void LoadContent();
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public abstract void UnloadContent();
+
+        /// <summary>
         /// Updates the menu component.
         /// </summary>
         public abstract void Update();

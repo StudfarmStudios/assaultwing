@@ -129,6 +129,31 @@ namespace AW2.Graphics
         EquipMenuBackground,
 
         /// <summary>
+        /// Equip menu background for one player pane.
+        /// </summary>
+        EquipMenuPlayerBackground,
+
+        /// <summary>
+        /// Equip menu player 1 pane top.
+        /// </summary>
+        EquipMenuPlayerTop1,
+
+        /// <summary>
+        /// Equip menu player 2 pane top.
+        /// </summary>
+        EquipMenuPlayerTop2,
+
+        /// <summary>
+        /// Equip menu cursor for player pane main display.
+        /// </summary>
+        EquipMenuCursorMain,
+
+        /// <summary>
+        /// Equip menu highlight for player pane main display.
+        /// </summary>
+        EquipMenuHighlightMain,
+
+        /// <summary>
         /// Arena selection menu component background.
         /// </summary>
         ArenaMenuBackground,
@@ -202,6 +227,11 @@ namespace AW2.Graphics
                 "menu_main_cursor",
                 "menu_main_hilite",
                 "menu_equip_bg",
+                "menu_equip_player_bg",
+                "menu_equip_player_color_green",
+                "menu_equip_player_color_red",
+                "menu_equip_cursor_large",
+                "menu_equip_hilite_large",
                 "menu_levels_bg",
             };
             fontNames = new string[] {

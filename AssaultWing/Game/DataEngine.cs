@@ -271,6 +271,13 @@ namespace AW2.Game
         /// <returns>The player.</returns>
         Player GetPlayer(string playerName);
 
+        /// <summary>
+        /// Returns the player with the given index, or null if none exists.
+        /// </summary>
+        /// <param name="playerIndex">The index of the player, zero-based.</param>
+        /// <returns>The player.</returns>
+        Player GetPlayer(int playerIndex);
+
         #endregion
 
         #region type templates

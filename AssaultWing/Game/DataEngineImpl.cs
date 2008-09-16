@@ -24,7 +24,7 @@ namespace AW2.Game
         List<Gob> addedGobs;
         List<Gob> removedGobs;
         List<ParticleEngine> removedParticleEngines;
-        LinkedList<Player> players;
+        List<Player> players;
         List<Viewport> viewports;
         List<ViewportSeparator> viewportSeparators;
         Dictionary<string, Model> models;
@@ -73,7 +73,7 @@ namespace AW2.Game
             particleEngines = new LinkedList<ParticleEngine>();
             removedParticleEngines = new List<ParticleEngine>();
             weapons = new LinkedList<Weapon>();
-            players = new LinkedList<Player>();
+            players = new List<Player>();
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
             models = new Dictionary<string, Model>();
@@ -525,12 +525,24 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Returns the player with the given index, or null if none exists.
+        /// </summary>
+        /// <param name="playerIndex">The index of the player, zero-based.</param>
+        /// <returns>The player.</returns>
+        public Player GetPlayer(int playerIndex)
+        {
+            if (playerIndex < 0 || playerIndex >= players.Count)
+                return null;
+            return players[playerIndex];
+        }
+
+        /// <summary>
         /// Adds a player to the game.
         /// </summary>
         /// <param name="player">The player to add.</param>
         public void AddPlayer(Player player)
         {
-            players.AddLast(player);
+            players.Add(player);
         }
 
         /// <summary>
@@ -539,7 +551,6 @@ namespace AW2.Game
         /// <param name="player">The player to remove.</param>
         public void RemovePlayer(Player player)
         {
-            // This is O(n)!!! Implement something O(1).
             players.Remove(player);
         }
 

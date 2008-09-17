@@ -508,10 +508,7 @@ namespace AW2.Game.Gobs
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Model model = data.GetModel(ModelName);
             float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
-            float alpha = birthAlpha.Evaluate(age);
-            foreach (ModelMesh mesh in model.Meshes)
-                foreach (BasicEffect be in mesh.Effects)
-                    be.Alpha = alpha;
+            Alpha = birthAlpha.Evaluate(age);
             Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;
         }
 

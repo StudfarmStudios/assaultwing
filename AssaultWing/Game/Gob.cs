@@ -125,6 +125,11 @@ namespace AW2.Game
         float bleach;
 
         /// <summary>
+        /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
+        /// </summary>
+        float alpha;
+
+        /// <summary>
         /// Types of gobs to create on birth.
         /// </summary>
         [TypeParameter]
@@ -354,6 +359,11 @@ namespace AW2.Game
         public float Bleach { get { return bleach; } set { bleach = value; } }
 
         /// <summary>
+        /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
+        /// </summary>
+        public float Alpha { get { return alpha; } set { alpha = value; } }
+
+        /// <summary>
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
@@ -522,6 +532,7 @@ namespace AW2.Game
             this.birthTime = this.physics.TimeStep.TotalGameTime;
             this.modelPartTransforms = null;
             this.exhaustEngines = new ParticleEngine[0];
+            this.alpha = 1;
         }
 
         /// <summary>
@@ -756,6 +767,19 @@ namespace AW2.Game
                     continue;
                 if (!data.Viewport.Intersects(mesh.BoundingSphere.Transform(meshSphereTransform)))
                     continue;
+
+                // Apply alpha.
+                float oldAlpha = 1;
+                if (alpha < 1)
+                {
+                    // For now we assume only one ModelMeshPart. (Laziness.)
+                    if (mesh.Effects.Count > 1)
+                        throw new Exception("Error: Several effects on a gob with alpha effect. Programmer must use arrays for saving BasicEffect state.");
+                    BasicEffect be = (BasicEffect)mesh.Effects[0];
+                    oldAlpha = be.Alpha;
+                    be.Alpha = alpha;
+                }
+
                 foreach (BasicEffect be in mesh.Effects)
                 {
                     data.PrepareEffect(be);
@@ -764,6 +788,14 @@ namespace AW2.Game
                     be.World = modelPartTransforms[mesh.ParentBone.Index] * world;
                 }
                 mesh.Draw();
+
+                // Undo alpha application.
+                if (alpha < 1)
+                {
+                    // For now we assume only one ModelMeshPart. (Laziness.)
+                    BasicEffect be = (BasicEffect)mesh.Effects[0];
+                    be.Alpha = oldAlpha;
+                }
 
                 // Blend towards white if required.
                 if (bleach > 0)
@@ -782,7 +814,7 @@ namespace AW2.Game
                     bool oldTextureEnabled = be.TextureEnabled;
                     bool oldVertexColorEnabled = be.VertexColorEnabled;
                     Vector3 oldDiffuseColor = be.DiffuseColor;
-                    float oldAlpha = be.Alpha;
+                    oldAlpha = be.Alpha;
 
                     // Set effect state to bleach.
                     be.LightingEnabled = false;

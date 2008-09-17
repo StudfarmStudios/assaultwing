@@ -255,19 +255,19 @@ namespace AW2.Graphics
             switch (playerBonus)
             {
                 case PlayerBonus.Weapon1LoadTime:
-                    bonusText = player.Weapon1Name + "\nspeedloader";
+                    bonusText = player.Weapon1RealName + "\nspeedloader";
                     bonusIcon = bonusIconWeapon1LoadTimeTexture;
                     break;
                 case PlayerBonus.Weapon2LoadTime:
-                    bonusText = player.Weapon2Name + "\nspeedloader";
+                    bonusText = player.Weapon2RealName + "\nspeedloader";
                     bonusIcon = bonusIconWeapon2LoadTimeTexture;
                     break;
                 case PlayerBonus.Weapon1Upgrade:
                     {
                         Weapon weapon1 = player.Ship != null
                             ? player.Ship.Weapon1
-                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
-                        bonusText = player.Weapon1Name;
+                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1RealName);
+                        bonusText = player.Weapon1RealName;
                         bonusIcon = data.GetTexture(weapon1.IconName);
                     }
                     break;
@@ -275,8 +275,8 @@ namespace AW2.Graphics
                     {
                         Weapon weapon2 = player.Ship != null
                             ? player.Ship.Weapon2
-                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
-                        bonusText = player.Weapon2Name;
+                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2RealName);
+                        bonusText = player.Weapon2RealName;
                         bonusIcon = data.GetTexture(weapon2.IconName);
                     }
                     break;

@@ -21,6 +21,37 @@ namespace AW2.Menu
     /// in the menu main display is indicated by a cursor and a highlight.
     class EquipMenuComponent : MenuComponent
     {
+        /// <summary>
+        /// An item in a pane main display in the equip menu.
+        /// </summary>
+        enum EquipMenuItem
+        {
+            /// <summary>
+            /// Start a local play session.
+            /// </summary>
+            Ship,
+
+            /// <summary>
+            /// Start a network play session.
+            /// </summary>
+            Weapon1,
+
+            /// <summary>
+            /// Set up Assault Wing's technical thingies.
+            /// </summary>
+            Weapon2,
+
+            /// <summary>
+            /// The first item in the main menu.
+            /// </summary>
+            _FirstItem = Ship,
+
+            /// <summary>
+            /// The last item in the main menu.
+            /// </summary>
+            _LastItem = Weapon2,
+        }
+
         Control controlBack, controlDone;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
@@ -29,9 +60,20 @@ namespace AW2.Menu
         Texture2D playerPaneTexture, player1PaneTopTexture, player2PaneTopTexture;
 
         /// <summary>
-        /// Index of current item each player's pane main display.
+        /// Cursor fade curve as a function of time in seconds.
+        /// Values range from 0 (transparent) to 255 (opaque).
         /// </summary>
-        int[] currentItems;
+        Curve cursorFade;
+
+        /// <summary>
+        /// Time at which the cursor started fading for each player.
+        /// </summary>
+        TimeSpan[] cursorFadeStartTimes;
+
+        /// <summary>
+        /// Index of current item in each player's pane main display.
+        /// </summary>
+        EquipMenuItem[] currentItems;
 
         /// <summary>
         /// The center of the menu component in menu system coordinates.
@@ -50,8 +92,15 @@ namespace AW2.Menu
             controlDone = new KeyboardKey(Keys.Enter);
             controlBack = new KeyboardKey(Keys.Escape);
             pos = new Vector2(0, 0);
-            currentItems = new int[4];
+            currentItems = new EquipMenuItem[4];
+            cursorFadeStartTimes = new TimeSpan[4];
 
+            cursorFade = new Curve();
+            cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
+            cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
+            cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
+            cursorFade.PreLoop = CurveLoopType.Cycle;
+            cursorFade.PostLoop = CurveLoopType.Cycle;
         }
 
         /// <summary>
@@ -99,11 +148,56 @@ namespace AW2.Menu
                     if (player == null) break;
                     if (player.Controls.thrust.Pulse)
                     {
-                        if (currentItems[playerI] > 0) --currentItems[playerI];
+                        cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
+                        if (currentItems[playerI] != EquipMenuItem._FirstItem) --currentItems[playerI];
                     }
                     if (player.Controls.down.Pulse)
                     {
-                        if (currentItems[playerI] < 2) ++currentItems[playerI];
+                        cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
+                        if (currentItems[playerI] != EquipMenuItem._LastItem) ++currentItems[playerI];
+                    }
+                    if (player.Controls.fire1.Pulse)
+                    {
+                        cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
+                        string[] shipNames = { "Hyperion", "Prowler" };
+                        string[] weapon1Names = { "peashooter", "shotgun" };
+                        string[] weapon2Names = { "bazooka", "rockets" };
+                        switch (currentItems[playerI])
+                        {
+                            case EquipMenuItem.Ship: 
+                                {
+                                    int currentI = 0;
+                                    for (int i = 0; i < shipNames.Length; ++i)
+                                        if (shipNames[i] == player.ShipName)
+                                        {
+                                            currentI = i;
+                                            break;
+                                        }
+                                    player.ShipName = shipNames[(currentI + 1) % shipNames.Length];
+                                } break;
+                            case EquipMenuItem.Weapon1:
+                                {
+                                    int currentI = 0;
+                                    for (int i = 0; i < weapon1Names.Length; ++i)
+                                        if (weapon1Names[i] == player.Weapon1RealName)
+                                        {
+                                            currentI = i;
+                                            break;
+                                        }
+                                    player.Weapon1Name = weapon1Names[(currentI + 1) % weapon1Names.Length];
+                                } break;
+                            case EquipMenuItem.Weapon2:
+                                {
+                                    int currentI = 0;
+                                    for (int i = 0; i < weapon2Names.Length; ++i)
+                                        if (weapon2Names[i] == player.Weapon2RealName)
+                                        {
+                                            currentI = i;
+                                            break;
+                                        }
+                                    player.Weapon2Name = weapon2Names[(currentI + 1) % weapon2Names.Length];
+                                } break;
+                        }
                     }
                 }
             }
@@ -133,9 +227,11 @@ namespace AW2.Menu
             {
                 Player player = data.GetPlayer(playerI);
                 if (player == null) break;
+
+                // Draw pane background.
                 Vector2 playerPanePos = pos - view + player1PanePos + playerI * playerPaneDeltaPos;
                 Vector2 playerCursorPos = playerPanePos + playerPaneCursorDeltaPos
-                    + currentItems[playerI] * playerPaneRowDeltaPos;
+                    + (int)currentItems[playerI] * playerPaneRowDeltaPos;
                 Vector2 playerNamePos = playerPanePos
                     + new Vector2((int)(104 - menuSmallFont.MeasureString(player.Name).X / 2), 30);
                 Texture2D playerPaneTopTexture = playerI == 1 ? player2PaneTopTexture : player1PaneTopTexture;
@@ -145,8 +241,8 @@ namespace AW2.Menu
 
                 // Draw icons of selected equipment.
                 Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(typeof(Gob), player.ShipName);
-                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
-                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
+                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1RealName);
+                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2RealName);
                 Texture2D shipTexture = data.GetTexture(ship.IconEquipName);
                 Texture2D weapon1Texture = data.GetTexture(weapon1.IconEquipName);
                 Texture2D weapon2Texture = data.GetTexture(weapon2.IconEquipName);
@@ -154,8 +250,10 @@ namespace AW2.Menu
                 spriteBatch.Draw(weapon1Texture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
                 spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);
 
+                // Draw cursor and highlight.
+                float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTimes[playerI]).TotalSeconds;
                 spriteBatch.Draw(highlightMainTexture, playerCursorPos, Color.White);
-                spriteBatch.Draw(cursorMainTexture, playerCursorPos, Color.White);
+                spriteBatch.Draw(cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
             }
         }
     }

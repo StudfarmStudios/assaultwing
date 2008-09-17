@@ -128,6 +128,7 @@ namespace AW2.Game
         /// his original choice.
         /// </summary>
         /// <seealso cref="Weapon1Name"/>
+        /// <seealso cref="Weapon1RealName"/>
         string weapon1Name;
 
         /// <summary>
@@ -136,6 +137,7 @@ namespace AW2.Game
         /// his original choice.
         /// </summary>
         /// <seealso cref="Weapon2Name"/>
+        /// <seealso cref="Weapon2RealName"/>
         string weapon2Name;
 
         /// <summary>
@@ -277,9 +279,35 @@ namespace AW2.Game
         public string ShipName { get { return shipTypeName; } set { shipTypeName = value; } }
 
         /// <summary>
-        /// The name of the primary weapon, considering all current bonuses.
+        /// The name of the primary weapon as the player has chosen it.
         /// </summary>
         public string Weapon1Name
+        {
+            get { return weapon1Name; }
+            set
+            {
+                weapon1Name = value;
+                weapon1Upgrades = 0;
+            }
+        }
+
+        /// <summary>
+        /// The name of the secondary weapon as the player has chosen it.
+        /// </summary>
+        public string Weapon2Name
+        {
+            get { return weapon2Name; }
+            set
+            {
+                weapon2Name = value;
+                weapon2Upgrades = 0;
+            }
+        }
+
+        /// <summary>
+        /// The name of the primary weapon, considering all current bonuses.
+        /// </summary>
+        public string Weapon1RealName
         {
             get
             {
@@ -294,7 +322,7 @@ namespace AW2.Game
         /// <summary>
         /// The name of the secondary weapon, considering all current bonuses.
         /// </summary>
-        public string Weapon2Name
+        public string Weapon2RealName
         {
             get
             {
@@ -451,7 +479,7 @@ namespace AW2.Game
 
             // Only change our weapon if it's a new one.
             if (oldWeapon1Upgrades != weapon1Upgrades)
-                ship.Weapon1Name = Weapon1Name;
+                ship.Weapon1Name = Weapon1RealName;
 
             bonuses |= PlayerBonus.Weapon1Upgrade;
         }
@@ -468,7 +496,7 @@ namespace AW2.Game
 
             // Only change our weapon if it's a new one.
             if (oldWeapon1Upgrades != weapon1Upgrades)
-                ship.Weapon1Name = Weapon1Name;
+                ship.Weapon1Name = Weapon1RealName;
 
             bonuses &= ~PlayerBonus.Weapon1Upgrade;
         }
@@ -485,7 +513,7 @@ namespace AW2.Game
 
             // Only change our weapon if it's a new one.
             if (oldWeapon2Upgrades != weapon2Upgrades)
-                ship.Weapon2Name = Weapon2Name;
+                ship.Weapon2Name = Weapon2RealName;
 
             bonuses |= PlayerBonus.Weapon2Upgrade;
         }
@@ -502,7 +530,7 @@ namespace AW2.Game
 
             // Only change our weapon if it's a new one.
             if (oldWeapon2Upgrades != weapon2Upgrades)
-                ship.Weapon2Name = Weapon2Name;
+                ship.Weapon2Name = Weapon2RealName;
 
             bonuses &= ~PlayerBonus.Weapon2Upgrade;
         }
@@ -515,7 +543,7 @@ namespace AW2.Game
             bonuses |= PlayerBonus.Weapon1LoadTime;
 
             // Make our ship recreate its weapon.
-            ship.Weapon1Name = Weapon1Name;
+            ship.Weapon1Name = Weapon1RealName;
         }
 
         /// <summary>
@@ -526,7 +554,7 @@ namespace AW2.Game
             bonuses &= ~PlayerBonus.Weapon1LoadTime;
 
             // Make our ship recreate its weapon.
-            ship.Weapon1Name = Weapon1Name;
+            ship.Weapon1Name = Weapon1RealName;
         }
 
         /// <summary>
@@ -537,7 +565,7 @@ namespace AW2.Game
             bonuses |= PlayerBonus.Weapon2LoadTime;
 
             // Make our ship recreate its weapon.
-            ship.Weapon2Name = Weapon2Name;
+            ship.Weapon2Name = Weapon2RealName;
         }
 
         /// <summary>
@@ -548,7 +576,7 @@ namespace AW2.Game
             bonuses &= ~PlayerBonus.Weapon2LoadTime;
 
             // Make our ship recreate its weapon.
-            ship.Weapon2Name = Weapon2Name;
+            ship.Weapon2Name = Weapon2RealName;
         }
 
         #endregion Methods related to bonuses

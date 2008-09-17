@@ -64,6 +64,11 @@ namespace AW2.Menu
         Curve cursorFade;
 
         /// <summary>
+        /// Time at which the cursor started fading.
+        /// </summary>
+        TimeSpan cursorFadeStartTime;
+
+        /// <summary>
         /// Does the menu component react to input.
         /// </summary>
         public override bool Active
@@ -130,14 +135,17 @@ namespace AW2.Menu
             {
                 if (controlUp.Pulse)
                 {
+                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                     if (currentMenu != MainMenuItem._FirstItem) currentMenu -= 3;
                 }
                 if (controlDown.Pulse)
                 {
+                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                     if (currentMenu != MainMenuItem._LastItem) currentMenu += 3;
                 }
                 if (controlSelect.Pulse)
                 {
+                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                     switch (currentMenu)
                     {
                         case MainMenuItem.PlayLocal:
@@ -161,12 +169,12 @@ namespace AW2.Menu
         /// method returns.</param>
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            float time = (float)AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds;
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
             Vector2 cursorPos = pos - view + new Vector2(551, 358 + (int)currentMenu * menuBigFont.LineSpacing);
             Vector2 highlightPos = cursorPos + new Vector2(cursorTexture.Width, 0);
             Vector2 textPos = pos - view + new Vector2(585, 355);
-            spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(time)));
+            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
+            spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
             spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
             spriteBatch.DrawString(menuBigFont, "Play Local\nPlay at the Battlefront\nSetup\nQuit",
                 textPos, Color.White);

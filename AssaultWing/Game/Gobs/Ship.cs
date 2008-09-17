@@ -367,7 +367,7 @@ namespace AW2.Game.Gobs
             this.birthAlpha.ComputeTangents(CurveTangent.Flat);
             this.coughEngineNames = new string[] { "dummyparticleengine", };
             this.temporarilyDisabledGobs = new List<Gob>();
-            this.iconEquipName = "dummyicon";
+            this.iconEquipName = "dummytexture";
         }
 
         /// <summary>

@@ -229,8 +229,8 @@ namespace AW2.Game
         {
             this.typeName = "dummyweapontype";
             this.upgradeNames = new string[] { "dummyweapontype", };
-            this.iconName = "dummyicon";
-            this.iconEquipName = "dummyicon";
+            this.iconName = "dummytexture";
+            this.iconEquipName = "dummytexture";
             this.owner = null;
             this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };

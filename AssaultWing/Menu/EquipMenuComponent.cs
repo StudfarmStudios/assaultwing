@@ -179,7 +179,7 @@ namespace AW2.Menu
                                 {
                                     int currentI = 0;
                                     for (int i = 0; i < weapon1Names.Length; ++i)
-                                        if (weapon1Names[i] == player.Weapon1RealName)
+                                        if (weapon1Names[i] == player.Weapon1Name)
                                         {
                                             currentI = i;
                                             break;
@@ -190,7 +190,7 @@ namespace AW2.Menu
                                 {
                                     int currentI = 0;
                                     for (int i = 0; i < weapon2Names.Length; ++i)
-                                        if (weapon2Names[i] == player.Weapon2RealName)
+                                        if (weapon2Names[i] == player.Weapon2Name)
                                         {
                                             currentI = i;
                                             break;
@@ -241,8 +241,8 @@ namespace AW2.Menu
 
                 // Draw icons of selected equipment.
                 Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(typeof(Gob), player.ShipName);
-                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1RealName);
-                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2RealName);
+                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
+                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
                 Texture2D shipTexture = data.GetTexture(ship.IconEquipName);
                 Texture2D weapon1Texture = data.GetTexture(weapon1.IconEquipName);
                 Texture2D weapon2Texture = data.GetTexture(weapon2.IconEquipName);

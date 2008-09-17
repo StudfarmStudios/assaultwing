@@ -157,6 +157,21 @@ namespace AW2.Graphics
         /// Arena selection menu component background.
         /// </summary>
         ArenaMenuBackground,
+
+        /// <summary>
+        /// Arena selection menu cursor.
+        /// </summary>
+        ArenaMenuCursor,
+
+        /// <summary>
+        /// Arena selection menu highlight.
+        /// </summary>
+        ArenaMenuHighlight,
+
+        /// <summary>
+        /// Arena selection menu checkbox tag.
+        /// </summary>
+        ArenaMenuCheckboxTag,
     }
 
     /// <summary>
@@ -233,6 +248,9 @@ namespace AW2.Graphics
                 "menu_equip_cursor_large",
                 "menu_equip_hilite_large",
                 "menu_levels_bg",
+                "menu_levels_cursor",
+                "menu_levels_hilite",
+                "menu_levels_tag",
             };
             fontNames = new string[] {
                 "ConsoleFont",

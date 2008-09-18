@@ -305,11 +305,13 @@ namespace AW2
             if (dataEngine.NextArena())
                 ShowMenu();
             else
+            {
                 ChangeState(GameState.Gameplay);
+                soundEngine.PlayMusic(dataEngine.getCurrentArena());
+            }
             logicEngine.Reset();
             physicsEngine.Reset();
             graphicsEngine.RearrangeViewports();
-            soundEngine.PlayMusic(dataEngine.getCurrentArena());
         }
 
         /// <summary>

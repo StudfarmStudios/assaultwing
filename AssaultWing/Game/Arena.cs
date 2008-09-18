@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Graphics;
+using AW2.Sound;
 
 namespace AW2.Game
 {
@@ -111,6 +112,9 @@ namespace AW2.Game
         [LimitationSwitch(typeof(TypeParameterAttribute), typeof(RuntimeStateAttribute))]
         List<Gob> gobs;
 
+        [TypeParameter]
+        List<BackgroundMusic> backgroundmusic;
+        
         #endregion // Arena fields
 
         #region Arena properties
@@ -131,6 +135,11 @@ namespace AW2.Game
         /// The gobs the arena contains when it is activated.
         /// </summary>
         public List<Gob> Gobs { get { return gobs; } }
+
+        /// <summary>
+        /// The bgmusics the arena contains when it is activated.
+        /// </summary>
+        public List<BackgroundMusic> BackgroundMusic { get { return backgroundmusic; } }
 
         /// <summary>
         /// The parallax textures (names of the textures) the arena contains.
@@ -155,6 +164,7 @@ namespace AW2.Game
             this.dimensions = new Vector2(4000, 4000);
             this.gobs = new List<Gob>();
             this.gobs.Add(Gob.CreateGob("dummygobtype"));
+            this.backgroundmusic = new List<BackgroundMusic>();
             this.parallaxNames = new string[] { "dummytexture" };
             this.parallaxZ = new float[] { 0.5f };
             this.light0DiffuseColor = Vector3.Zero;

@@ -317,9 +317,16 @@ namespace AW2.Game
             if ((arenaPlaylistI+1) >= arenaPlaylist.Count)
                 return null;
             else
-                return GetArena(arenaPlaylist[arenaPlaylistI+1]);
-                
+                return GetArena(arenaPlaylist[arenaPlaylistI+1]);     
         }
+        public Arena getCurrentArena()
+        {
+            if ((arenaPlaylistI) >= arenaPlaylist.Count)
+                return null;
+            else
+                return GetArena(arenaPlaylist[arenaPlaylistI]);
+        }
+
         /// <summary>
         /// Initialises the data engine with the next arena in the playlist.
         /// </summary>

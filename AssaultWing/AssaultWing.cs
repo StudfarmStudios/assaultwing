@@ -295,6 +295,7 @@ namespace AW2
         /// </summary>
         public void PlayNextArena()
         {
+            soundEngine.StopMusic();
             Arena arenaTemplate = dataEngine.getNextPlayableArena();
             if (arenaTemplate != null)
             {
@@ -308,6 +309,7 @@ namespace AW2
             logicEngine.Reset();
             physicsEngine.Reset();
             graphicsEngine.RearrangeViewports();
+            soundEngine.PlayMusic(dataEngine.getCurrentArena());
         }
 
         /// <summary>

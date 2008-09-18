@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
 using AW2.Events;
 using AW2.Helpers;
+using AW2.Game;
 
 namespace AW2.Sound
 {
@@ -23,6 +24,7 @@ namespace AW2.Sound
         private Dictionary<string, AudioCategory> categories =
             new Dictionary<string, AudioCategory>();
 
+        private Cue backgroundCue;
         #endregion
 
         /// <summary>
@@ -91,6 +93,7 @@ namespace AW2.Sound
         /// <param name="volume">a value between 0 and 1</param>
         public void SetMusicVolume(float volume)
         {
+            Log.Write("volume:" + volume);
             SetVolume("Music", volume);
         }
 
@@ -99,15 +102,44 @@ namespace AW2.Sound
         /// </summary>
         public void PlayMusic()
         {
-            soundBank.PlayCue("Pelimusat");
+            soundBank.PlayCue("BG_Dark");
         }
+
+        /// <summary>
+        /// Starts playing random track from Arena tracklist.
+        /// </summary>
+        public void PlayMusic(Arena arena)
+        {
+            List<BackgroundMusic> musics = arena.BackgroundMusic;
+            BackgroundMusic track = musics[RandomHelper.GetRandomInt(musics.Count)];
+            SetMusicVolume(track.Volume);
+            PlayMusic(track.FileName);
+        }
+        
+
+        /// <summary>
+        /// Starts playing set track from game music playlist
+        /// </summary>
+        public void PlayMusic(String trackName)
+        {
+            backgroundCue = soundBank.GetCue(trackName);
+            backgroundCue.Play();
+        }
+
 
         /// <summary>
         /// Stops music playback.
         /// </summary>
         public void StopMusic()
         {
-            throw new Exception("The method or operation is not implemented.");
+            if (backgroundCue != null)
+            {
+                Log.Write("Stopping Track:" + backgroundCue.Name);
+                backgroundCue.Stop(AudioStopOptions.AsAuthored);
+                backgroundCue = null;
+                
+            }
+            //throw new Exception("The method or operation is not implemented.");
             // soundBank.GetCue("Pelimusat").Stop(AudioStopOptions.AsAuthored); // !!!fixme
         }
 

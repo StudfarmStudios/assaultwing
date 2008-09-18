@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AW2.Game;
 
 namespace AW2.Sound
 {
@@ -19,6 +20,16 @@ namespace AW2.Sound
         /// Starts playing random track from game music playlist
         /// </summary>
         void PlayMusic();
+
+        /// <summary>
+        /// Starts playing set track from game music playlist
+        /// </summary>
+        void PlayMusic(String songName);
+
+        /// <summary>
+        /// Starts playing random track from Arena tracklist.
+        /// </summary>
+        public void PlayMusic(Arena arena);
 
         /// <summary>
         /// Stops music playback.

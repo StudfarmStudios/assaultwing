@@ -223,6 +223,7 @@
     <Compile Include="AssaultWing.cs">
       <Name>AssaultWing</Name>
     </Compile>
+    <Compile Include="Sound\BackgroundMusic.cs" />
     <Compile Include="Sound\SoundEngine.cs">
       <Name>SoundEngine</Name>
     </Compile>

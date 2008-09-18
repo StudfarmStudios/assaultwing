@@ -150,20 +150,10 @@
       <Processor>ModelProcessor</Processor>
       <Name>testship2</Name>
     </Compile>
-    <Compile Include="textures\bg_1.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>bg_1</Name>
-    </Compile>
     <Compile Include="textures\dialog.png">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Name>dialog</Name>
-    </Compile>
-    <Compile Include="textures\ikkuna.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>ikkuna</Name>
     </Compile>
     <Compile Include="textures\parallax_red_fog.png">
       <Importer>TextureImporter</Importer>
@@ -188,18 +178,6 @@
       <Processor>TextureProcessor</Processor>
       <Name>parallax_trunks</Name>
       <ProcessorParameters_TextureFormat>NoChange</ProcessorParameters_TextureFormat>
-    </Compile>
-    <Compile Include="textures\subarrow.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>subarrow</Name>
-    </Compile>
-    <Compile Include="textures\tex_1.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>tex_1</Name>
-      <ProcessorParameters_GenerateMipmaps>True</ProcessorParameters_GenerateMipmaps>
-      <ProcessorParameters_TextureFormat>DxtCompressed</ProcessorParameters_TextureFormat>
     </Compile>
   </ItemGroup>
   <ItemGroup>

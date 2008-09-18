@@ -29,7 +29,7 @@ namespace AW2.Sound
         /// <summary>
         /// Starts playing random track from Arena tracklist.
         /// </summary>
-        public void PlayMusic(Arena arena);
+        void PlayMusic(Arena arena);
 
         /// <summary>
         /// Stops music playback.

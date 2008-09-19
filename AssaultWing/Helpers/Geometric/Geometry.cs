@@ -1462,8 +1462,18 @@ namespace AW2.Helpers.Geometric
                 Rectangle rectangle = (Rectangle)prim;
                 return RandomHelper.GetRandomVector2(rectangle.Min, rectangle.Max);
             }
-            // TODO: GetRandomLocation for Triangle and Polygon
-            throw new Exception("Sorry, GetRandomLocation not defined for " + type.Name);
+
+            // For any other geometric primitive, randomise points in its bounding box
+            // until we hit inside the primitive. This is generic but can be increasingly
+            // inefficient with certain primitives.
+            Rectangle boundingBox = prim.BoundingBox;
+            for (int i = 0; i < 1000000; ++i)
+            {
+                Vector2 pos = RandomHelper.GetRandomVector2(boundingBox.Min, boundingBox.Max);
+                if (Intersect(new Point(pos), prim))
+                    return pos;
+            }
+            throw new NotImplementedException("GetRandomLocation not properly implemented for " + type.Name);
         }
 
         /// <summary>

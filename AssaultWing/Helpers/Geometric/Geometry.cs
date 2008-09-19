@@ -635,6 +635,57 @@ namespace AW2.Helpers.Geometric
         #region Location and distance query methods
 
         /// <summary>
+        /// Returns the distance between two geometric primitives.
+        /// </summary>
+        /// Distance is the length of the shortest line segment that connects
+        /// the geometric primitives.
+        /// <param name="prim1">One primitive.</param>
+        /// <param name="prim2">The other primitive</param>
+        /// <returns>The distance between the two geometric primitives.</returns>
+        public static float Distance(IGeomPrimitive prim1, IGeomPrimitive prim2)
+        {
+            if (prim1 is Everything || prim2 is Everything)
+                return 0;
+            if (prim1 is Point)
+            {
+                Point point1 = (Point)prim1;
+                if (prim2 is Point) return (point1.Location - ((Point)prim2).Location).Length();
+                if (prim2 is Circle) return Distance(point1, (Circle)prim2);
+                if (prim2 is Rectangle) return Distance(point1, (Rectangle)prim2);
+                if (prim2 is Triangle) return Distance(point1, (Triangle)prim2);
+                if (prim2 is Polygon) return Distance(point1, (Polygon)prim2);
+            }
+            if (prim1 is Circle)
+            {
+                Circle circle1 = (Circle)prim1;
+                if (prim2 is Point) return Distance((Point)prim2, circle1);
+                if (prim2 is Circle) return Distance(circle1, (Circle)prim2);
+                if (prim2 is Rectangle) return Distance(circle1, (Rectangle)prim2);
+                if (prim2 is Triangle) return Distance(circle1, (Triangle)prim2);
+            }
+            if (prim1 is Rectangle)
+            {
+                Rectangle rectangle1 = (Rectangle)prim1;
+                if (prim2 is Point) return Distance((Point)prim2, rectangle1);
+                if (prim2 is Circle) return Distance((Circle)prim2, rectangle1);
+            }
+            if (prim1 is Triangle)
+            {
+                Triangle triangle1 = (Triangle)prim1;
+                if (prim2 is Point) return Distance((Point)prim2, triangle1);
+                if (prim2 is Circle) return Distance((Circle)prim2, triangle1);
+            }
+            if (prim1 is Polygon)
+            {
+                Polygon polygon1 = (Polygon)prim1;
+                if (prim2 is Point) return Distance((Point)prim2, polygon1);
+                if (prim2 is Circle) return Distance((Circle)prim2, polygon1);
+            }
+            throw new Exception("Geometry.Distance() not implemented for " +
+                prim1.GetType().Name + " and " + prim2.GetType().Name);
+        }
+
+        /// <summary>
         /// Returns the distance between 'point' and the line segment ab.
         /// </summary>
         /// <param name="point">The point.</param>
@@ -731,6 +782,18 @@ namespace AW2.Helpers.Geometric
 
             distance = (point.Location - closestPoint.Location).Length();
             return closestPoint;
+        }
+
+        /// <summary>
+        /// Returns the distance from a point to a circle.
+        /// If the point is inside the circle, the distance is zero.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="circle">The circle.</param>
+        /// <returns>The distance from the point to the circle.</returns>
+        public static float Distance(Point point, Circle circle)
+        {
+            return Math.Max(0, (point.Location - circle.Center).Length() - circle.Radius);
         }
 
         /// <summary>
@@ -1084,6 +1147,42 @@ namespace AW2.Helpers.Geometric
                 }
                 return bestDistanceSquared;
             }
+        }
+
+        /// <summary>
+        /// Returns the distance between two circles.
+        /// If the circles intersect, the distance is zero.
+        /// </summary>
+        /// <param name="circle1">One circle.</param>
+        /// <param name="circle2">The other circle.</param>
+        /// <returns>The distance between the circles.</returns>
+        public static float Distance(Circle circle1, Circle circle2)
+        {
+            return Math.Max(0, (circle1.Center - circle2.Center).Length() - circle1.Radius - circle2.Radius);
+        }
+
+        /// <summary>
+        /// Returns the distance between a circle and a rectangle.
+        /// If the circle and rectangle intersect, the distance is zero.
+        /// </summary>
+        /// <param name="circle">The circle.</param>
+        /// <param name="rectangle">The rectangle.</param>
+        /// <returns>The distance between the circle and the rectangle.</returns>
+        public static float Distance(Circle circle, Rectangle rectangle)
+        {
+            return Math.Max(0, Distance(new Point(circle.Center), rectangle) - circle.Radius);
+        }
+
+        /// <summary>
+        /// Returns the distance between a circle and a triangle.
+        /// If the circle and triangle intersect, the distance is zero.
+        /// </summary>
+        /// <param name="circle">The circle.</param>
+        /// <param name="triangle">The triangle.</param>
+        /// <returns>The distance between the circle and the triangle.</returns>
+        public static float Distance(Circle circle, Triangle triangle)
+        {
+            return Math.Max(0, Distance(new Point(circle.Center), triangle) - circle.Radius);
         }
 
         /// <summary>
@@ -1951,6 +2050,25 @@ namespace AW2.Helpers.Geometric
             }
 
             /// <summary>
+            /// Tests the general distance interface.
+            /// </summary>
+            [Test]
+            public void TestGeneralDistance()
+            {
+                IGeomPrimitive[] prims = {
+                    new Everything(),
+                    new Point(new Vector2(10, 20)),
+                    new Circle(new Vector2(30, 40), 50),
+                    new Rectangle(60, 70, 80, 90),
+                    new Triangle(new Vector2(10, 60), new Vector2(-90, -10), new Vector2(-30, 20)),
+                    new Polygon(new Vector2[] { new Vector2(15, 25), new Vector2(35, 45), new Vector2(55, 65) }),
+                };
+                foreach (IGeomPrimitive prim1 in prims)
+                    foreach (IGeomPrimitive prim2 in prims)
+                        Assert.LessOrEqual(0, Distance(prim1, prim2));
+            }
+
+            /// <summary>
             /// Tests point to line segment distance.
             /// </summary>
             [Test]
@@ -1996,6 +2114,71 @@ namespace AW2.Helpers.Geometric
 
                 // Horizontal line segment, point out of line segment, projects to line segment
                 Assert.AreEqual(Distance(p7, q2, q4), 20, delta);
+            }
+
+            /// <summary>
+            /// Tests point to circle distance.
+            /// </summary>
+            [Test]
+            public void TestDistancePointCircle()
+            {
+                Point p1 = new Point(new Vector2(-9, 10));
+                Point p2 = new Point(new Vector2(10, 30));
+                Point p3 = new Point(new Vector2(11, 30));
+                Point p4 = new Point(new Vector2(-990, -2990));
+                Circle c1 = new Circle(new Vector2(10, 10), 20);
+                float delta = 0.0001f; // amount of acceptable error
+                Assert.AreEqual(0, Distance(p1, c1), delta); // interior
+                Assert.AreEqual(0, Distance(p2, c1), delta); // edge
+                Assert.AreEqual(Math.Sqrt(1 * 1 + 20 * 20) - 20, Distance(p3, c1), delta); // exterior near
+                Assert.AreEqual(Math.Sqrt(1000 * 1000 + 3000 * 3000) - 20, Distance(p4, c1), delta); // exterior far
+            }
+
+            /// <summary>
+            /// Tests point to rectangle distance.
+            /// </summary>
+            [Test]
+            public void TestDistancePointRectangle()
+            {
+                Point p1 = new Point(new Vector2(0, 0));
+                Point p2 = new Point(new Vector2(-20, 20));
+                Point p3 = new Point(new Vector2(30, -5));
+                Point p4 = new Point(new Vector2(40, 30));
+                Point p5 = new Point(new Vector2(0, -5001));
+                Rectangle r1 = new Rectangle(-20, -10, 30, 20);
+                float delta = 0.0001f; // amount of acceptable error
+                Assert.AreEqual(0, Distance(p1, r1), delta); // interior
+                Assert.AreEqual(0, Distance(p2, r1), delta); // vertex
+                Assert.AreEqual(0, Distance(p3, r1), delta); // edge
+                Assert.AreEqual(10 * Math.Sqrt(2), Distance(p4, r1), delta); // closest to vertex
+                Assert.AreEqual(4991, Distance(p5, r1), delta); // closest to edge
+            }
+
+            /// <summary>
+            /// Tests point to triangle distance.
+            /// </summary>
+            [Test]
+            public void TestDistancePointTriangle()
+            {
+                Vector2 q1 = new Vector2(30, 30);
+                Vector2 q2 = new Vector2(-20, 20);
+                Vector2 q3 = new Vector2(10, -30);
+                Point p1 = new Point(new Vector2(10, 10));
+                Point p2 = new Point(new Vector2(30, 30));
+                Point p3 = new Point(new Vector2(5, 25));
+                Point p4 = new Point(new Vector2(50, 50));
+                Point p5 = new Point(new Vector2(5 - 10, 25 + 50));
+                Triangle t1 = new Triangle(q1, q2, q3);
+                float delta = 0.0001f; // amount of acceptable error
+
+                // Point in triangle
+                Assert.AreEqual(0, Distance(p1, t1), delta); // interior
+                Assert.AreEqual(0, Distance(p2, t1), delta); // vertex
+                Assert.AreEqual(0, Distance(p3, t1), delta); // edge
+
+                // Point outside triangle
+                Assert.AreEqual(20 * Math.Sqrt(2), Distance(p4, t1), delta); // closest to vertex
+                Assert.AreEqual(Math.Sqrt(10 * 10 + 50 * 50), Distance(p5, t1), delta); // closest to edge
             }
 
             /// <summary>
@@ -2093,6 +2276,80 @@ namespace AW2.Helpers.Geometric
                 // Point out of polygon, concave polygon
                 Assert.AreEqual(Distance(p9, poly2), 25 * Math.Sqrt(2), delta); // ambiguous normal from two vertices
                 Assert.AreEqual(Distance(p10, poly2), 5.0 / 2.0 * Math.Sqrt(2), delta); // ambiguous normal from two edges
+            }
+
+            /// <summary>
+            /// Tests distance between two circles.
+            /// </summary>
+            [Test]
+            public void TestDistanceCircleCircle()
+            {
+                Circle c1 = new Circle(new Vector2(10, 10), 20);
+                Circle c2 = new Circle(new Vector2(10, 10), 10);
+                Circle c3 = new Circle(new Vector2(30, 10), 10);
+                Circle c4 = new Circle(new Vector2(40, 10), 10);
+                Circle c5 = new Circle(new Vector2(50, 10), 10);
+                Circle c6 = new Circle(new Vector2(10, 5130), 100);
+                float delta = 0.0001f; // amount of acceptable error
+                Assert.AreEqual(0, Distance(c1, c1), delta); // same circle
+                Assert.AreEqual(0, Distance(c1, c2), delta); // inside
+                Assert.AreEqual(0, Distance(c1, c3), delta); // intersects
+                Assert.AreEqual(0, Distance(c1, c4), delta); // edge intersects
+                Assert.AreEqual(10, Distance(c1, c5), delta); // outside
+                Assert.AreEqual(5000, Distance(c1, c6), delta); // far outside
+            }
+
+            /// <summary>
+            /// Tests circle to rectangle distance.
+            /// </summary>
+            [Test]
+            public void TestDistanceCircleRectangle()
+            {
+                Circle c1 = new Circle(new Vector2(0, 0), 10);
+                Circle c2 = new Circle(new Vector2(-20, 20), 10);
+                Circle c3 = new Circle(new Vector2(30, -5), 10);
+                Circle c4 = new Circle(new Vector2(40, 30), 10);
+                Circle c5 = new Circle(new Vector2(0, -5001), 10);
+                Circle c6 = new Circle(new Vector2(0, 0), 1000);
+                Rectangle r1 = new Rectangle(-20, -10, 30, 20);
+                float delta = 0.0001f; // amount of acceptable error
+                Assert.AreEqual(0, Distance(c1, r1), delta); // interior
+                Assert.AreEqual(0, Distance(c2, r1), delta); // vertex
+                Assert.AreEqual(0, Distance(c3, r1), delta); // edge
+                Assert.AreEqual(10 * Math.Sqrt(2) - 10, Distance(c4, r1), delta); // closest to vertex
+                Assert.AreEqual(4991 - 10, Distance(c5, r1), delta); // closest to edge
+                Assert.AreEqual(0, Distance(c6, r1), delta); // rectangle in circle
+            }
+
+            /// <summary>
+            /// Tests circle to triangle distance.
+            /// </summary>
+            [Test]
+            public void TestDistanceCircleTriangle()
+            {
+                Vector2 q1 = new Vector2(30, 30);
+                Vector2 q2 = new Vector2(-20, 20);
+                Vector2 q3 = new Vector2(10, -30);
+                Circle c1 = new Circle(new Vector2(10, 10), 10);
+                Circle c2 = new Circle(new Vector2(30, 30), 10);
+                Circle c3 = new Circle(new Vector2(5, 25), 10);
+                Circle c4 = new Circle(new Vector2(50, 50), 10);
+                Circle c5 = new Circle(new Vector2(5 - 10, 25 + 50), 10);
+                Circle c6 = new Circle(new Vector2(0, 0), 1000);
+                Circle c7 = new Circle(new Vector2(40, 30), 10);
+                Triangle t1 = new Triangle(q1, q2, q3);
+                float delta = 0.0001f; // amount of acceptable error
+
+                // Center in triangle
+                Assert.AreEqual(0, Distance(c1, t1), delta); // interior
+                Assert.AreEqual(0, Distance(c2, t1), delta); // vertex
+                Assert.AreEqual(0, Distance(c3, t1), delta); // edge
+
+                // Center outside triangle
+                Assert.AreEqual(20 * Math.Sqrt(2) - 10, Distance(c4, t1), delta); // closest to vertex
+                Assert.AreEqual(Math.Sqrt(10 * 10 + 50 * 50) - 10, Distance(c5, t1), delta); // closest to edge
+                Assert.AreEqual(0, Distance(c6, t1), delta); // rectangle in circle
+                Assert.AreEqual(0, Distance(c7, t1), delta); // edge intersect
             }
 
             /// <summary>

@@ -18,6 +18,8 @@ namespace AW2.Graphics
     /// </summary>
     public enum TextureName
     {
+        #region Player viewport graphics
+
         /// <summary>
         /// Vertical viewport separator.
         /// </summary>
@@ -103,10 +105,19 @@ namespace AW2.Graphics
         /// </summary>
         ChatBox,
 
+        #endregion Player viewport graphics
+
+        /// <summary>
+        /// Game overlay dialog background.
+        /// </summary>
+        OverlayDialogBackground,
+
         /// <summary>
         /// Menu system background.
         /// </summary>
         MenuBackground,
+
+        #region Main menu graphics
 
         /// <summary>
         /// Main menu component background.
@@ -122,6 +133,10 @@ namespace AW2.Graphics
         /// Main menu highlight.
         /// </summary>
         MainMenuHighlight,
+
+        #endregion Main menu graphics
+
+        #region Equip menu graphics
 
         /// <summary>
         /// Equip menu component background.
@@ -153,6 +168,10 @@ namespace AW2.Graphics
         /// </summary>
         EquipMenuHighlightMain,
 
+        #endregion Equip menu graphics
+
+        #region Arena menu graphics
+
         /// <summary>
         /// Arena selection menu component background.
         /// </summary>
@@ -172,6 +191,8 @@ namespace AW2.Graphics
         /// Arena selection menu checkbox tag.
         /// </summary>
         ArenaMenuCheckboxTag,
+
+        #endregion Arena menu graphics
     }
 
     /// <summary>
@@ -237,6 +258,7 @@ namespace AW2.Graphics
                 "gui_radar_bg",
                 "gui_playerinfo_white_ball", // HACK: Ship sprite on radar display
                 "gui_console_bg",
+                "ingame_dialog",
                 "menu_rustywall_bg",
                 "menu_main_bg",
                 "menu_main_cursor",

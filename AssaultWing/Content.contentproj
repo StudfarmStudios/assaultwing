@@ -150,11 +150,6 @@
       <Processor>ModelProcessor</Processor>
       <Name>testship2</Name>
     </Compile>
-    <Compile Include="textures\dialog.png">
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Name>dialog</Name>
-    </Compile>
     <Compile Include="textures\parallax_red_fog.png">
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -527,13 +522,6 @@
       <Name>p_dots</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="fonts\DotMatrix.spritefont">
-      <Name>DotMatrix</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1173,6 +1161,13 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="textures\ingame_dialog.png">
+      <Name>ingame_dialog</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

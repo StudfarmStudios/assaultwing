@@ -489,7 +489,7 @@ namespace AW2.Game
                 }
             });
             if (bestSpawn == null)
-                newShip.Pos = physics.GetFreePosition(ship, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
+                newShip.Pos = physics.GetFreePosition(newShip, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
             else
                 bestSpawn.Spawn(newShip);
 

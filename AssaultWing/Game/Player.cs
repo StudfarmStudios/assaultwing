@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
+using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.UI;
-using Ship = AW2.Game.Gobs.Ship;
-using Microsoft.Xna.Framework;
 
 namespace AW2.Game
 {
@@ -398,15 +398,7 @@ namespace AW2.Game
             if (ship == null && lives > 0 &&
                 shipSpawnTime <= AssaultWing.Instance.GameTime.TotalGameTime)
             {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-
-                ship = (Ship)Gob.CreateGob(shipTypeName);
-                ship.Pos = physics.GetFreePosition(ship, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
-                ship.Owner = this;
-                ship.Weapon1Name = weapon1Name;
-                ship.Weapon2Name = weapon2Name;
-                data.AddGob(ship);
+                CreateShip();
             }
         }
 
@@ -463,6 +455,46 @@ namespace AW2.Game
             // Throw away very old messages.
             if (messages.Count > 10000)
                 messages.RemoveRange(0, messages.Count - 5000);
+        }
+
+        /// <summary>
+        /// Creates a ship for the player.
+        /// </summary>
+        private void CreateShip()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
+
+            // Gain ownership over the ship only after its position has been set.
+            // This way the ship won't be affecting its own spawn position.
+            ship = null;
+            Ship newShip = (Ship)Gob.CreateGob(shipTypeName);
+            newShip.Owner = this;
+            newShip.Weapon1Name = weapon1Name;
+            newShip.Weapon2Name = weapon2Name;
+
+            // Find a starting place for the new ship.
+            // Use player spawn areas if there's any. Otherwise just randomise a position.
+            SpawnPlayer bestSpawn = null;
+            float bestSafeness = float.MinValue;
+            data.ForEachGob(delegate(Gob gob)
+            {
+                SpawnPlayer spawn = gob as SpawnPlayer;
+                if (spawn == null) return;
+                float safeness = spawn.GetSafeness();
+                if (safeness >= bestSafeness)
+                {
+                    bestSafeness = safeness;
+                    bestSpawn = spawn;
+                }
+            });
+            if (bestSpawn == null)
+                newShip.Pos = physics.GetFreePosition(ship, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
+            else
+                bestSpawn.Spawn(newShip);
+
+            data.AddGob(newShip);
+            ship = newShip;
         }
 
         #region Methods related to bonuses

@@ -14,11 +14,11 @@ namespace AW2.Game
     /// </summary>
     class LogicEngineImpl : GameComponent, LogicEngine
     {
-        Control controlPause;
+        Control escapeControl;
 
         public LogicEngineImpl(Microsoft.Xna.Framework.Game game) : base(game)
         {
-            controlPause = new KeyboardKey(Keys.Pause);
+            escapeControl = new KeyboardKey(Keys.Escape);
         }
 
         public override void Initialize()
@@ -164,18 +164,7 @@ namespace AW2.Game
             });
             if (playersAlive <= 1)
             {
-                string dialogText = playersAlive == 0
-                    ? "No-one survived!\nNext arena?"
-                    : alive.Name + " survived!\nNext arena?";
-                AssaultWing.Instance.ShowDialog(dialogText,
-                    delegate(object obj)
-                    {
-                        AssaultWing.Instance.PlayNextArena();
-                    },
-                    delegate(object obj)
-                    {
-                        AssaultWing.Instance.ShowMenu();
-                    });
+                AssaultWing.Instance.FinishArena();
             }
         }
 
@@ -188,16 +177,15 @@ namespace AW2.Game
             EventEngine eventEngine = (EventEngine)Game.Services.GetService(typeof(EventEngine));
 
             // Check general game controls.
-            if (controlPause.Pulse)
+            if (escapeControl.Pulse)
             {
-                AssaultWing.Instance.ShowDialog("Paused\nY resumes", delegate(object obj)
-                {
-                    AssaultWing.Instance.ResumePlay();
-                },
-                delegate(object obj)
-                {
-                    AssaultWing.Instance.ResumePlay();
-                });
+                AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                    "Quit to Main Menu? (Yes/No)",
+                    new TriggeredCallback(TriggeredCallback.GetYesControl(),
+                        delegate() { AssaultWing.Instance.ShowMenu(); }),
+                    new TriggeredCallback(TriggeredCallback.GetNoControl(),
+                        delegate() { AssaultWing.Instance.ResumePlay(); }));
+                AssaultWing.Instance.ShowDialog(dialogData);
             }
 
             data.ForEachPlayer(delegate(Player player)

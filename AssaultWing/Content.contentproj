@@ -1155,6 +1155,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="fonts\MenuFontHuge.spritefont">
+      <Name>MenuFontHuge</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
     <None Include="gobdefs\SpawnPlayer#player_spawn.xml">
       <Name>SpawnPlayer#player_spawn</Name>
       <Importer>XmlImporter</Importer>

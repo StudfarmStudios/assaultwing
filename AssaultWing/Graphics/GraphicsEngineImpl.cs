@@ -206,6 +206,11 @@ namespace AW2.Graphics
         Overlay,
 
         /// <summary>
+        /// Huge font used in the menu system.
+        /// </summary>
+        MenuFontHuge,
+
+        /// <summary>
         /// Big font used in the menu system.
         /// </summary>
         MenuFontBig,
@@ -276,6 +281,7 @@ namespace AW2.Graphics
             };
             fontNames = new string[] {
                 "ConsoleFont",
+                "MenuFontHuge",
                 "MenuFontBig",
                 "MenuFontSmall",
             };

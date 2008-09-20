@@ -291,11 +291,21 @@ namespace AW2
         }
 
         /// <summary>
+        /// Finishes playing the current arena.
+        /// </summary>
+        public void FinishArena()
+        {
+            if (dataEngine.getNextPlayableArena() != null)
+                ShowDialog(new ArenaOverOverlayDialogData());
+            else
+                ShowDialog(new GameOverOverlayDialogData());
+        }
+
+        /// <summary>
         /// Resumes playing with the next chosen arena.
         /// </summary>
         public void PlayNextArena()
         {
-            soundEngine.StopMusic();
             Arena arenaTemplate = dataEngine.getNextPlayableArena();
             if (arenaTemplate != null)
             {
@@ -303,7 +313,7 @@ namespace AW2
                 graphicsEngine.LoadAreatextures(arenaTemplate);
             }
             if (dataEngine.NextArena())
-                ShowMenu();
+                AssaultWing.Instance.ShowDialog(new GameOverOverlayDialogData());
             else
             {
                 ChangeState(GameState.Gameplay);
@@ -325,14 +335,10 @@ namespace AW2
         /// <summary>
         /// Displays the dialog on top of the game and stops updating the game logic.
         /// </summary>
-        /// <param name="dialogText">The text to display in the dialog.</param>
-        /// <param name="yesAction">How to react to positive input.</param>
-        /// <param name="noAction">How to react to negative input.</param>
-        public void ShowDialog(string dialogText, Action<object> yesAction, Action<object> noAction)
+        /// <param name="dialogData">The contents and actions for the dialog.</param>
+        public void ShowDialog(OverlayDialogData dialogData)
         {
-            overlayDialog.DialogText = dialogText;
-            overlayDialog.YesAction = yesAction;
-            overlayDialog.NoAction = noAction;
+            overlayDialog.Data = dialogData;
             ChangeState(GameState.OverlayDialog);
         }
 
@@ -341,30 +347,9 @@ namespace AW2
         /// </summary>
         public void ShowMenu()
         {
+            soundEngine.StopMusic();
+            menuEngine.ActivateComponent(MenuComponentType.Main);
             ChangeState(GameState.Menu);
-        }
-
-        /// <summary>
-        /// Switches between displaying the menu and the game view.
-        /// </summary>
-        [Obsolete("Use ShowDialog() instead")]
-        public void ToggleDialog()
-        {
-            if (!overlayDialog.Visible)
-            {
-                graphicsEngine.Enabled = false;
-                logicEngine.Enabled = false;
-                overlayDialog.Enabled = true;
-                overlayDialog.Visible = true;
-            }
-            else
-            {
-                graphicsEngine.Enabled = true;
-                logicEngine.Enabled = true;
-                overlayDialog.Enabled = false;
-                overlayDialog.Visible = false;
-            }
-
         }
 
         /// <summary>

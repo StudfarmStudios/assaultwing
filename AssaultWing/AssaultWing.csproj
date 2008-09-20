@@ -156,8 +156,11 @@
     <Compile Include="Game\Weapons\ForwardShot.cs">
       <Name>ForwardShot</Name>
     </Compile>
+    <Compile Include="Graphics\ArenaOverOverlayDialogData.cs" />
     <Compile Include="Graphics\BonusListOverlay.cs" />
     <Compile Include="Graphics\ChatBoxOverlay.cs" />
+    <Compile Include="Graphics\CustomOverlayDialogData.cs" />
+    <Compile Include="Graphics\GameOverOverlayDialogData.cs" />
     <Compile Include="Graphics\GraphicsEngineImpl.cs">
       <Name>GraphicsEngineImpl</Name>
     </Compile>
@@ -167,6 +170,7 @@
     <Compile Include="Game\LogicEngineImpl.cs">
       <Name>LogicEngineImpl</Name>
     </Compile>
+    <Compile Include="Graphics\OverlayDialogData.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\MainMenuComponent.cs" />
@@ -242,6 +246,7 @@
     </Compile>
     <Compile Include="UI\Mouse.cs" />
     <Compile Include="UI\MultiControl.cs" />
+    <Compile Include="UI\TriggeredCallback.cs" />
     <Compile Include="UI\UIEngine.cs">
       <Name>UIEngine</Name>
     </Compile>

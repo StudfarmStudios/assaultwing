@@ -11,7 +11,8 @@ namespace AW2.UI
     /// </summary>
     /// Useful for grouping several alternative controls into one
     /// bunch that is easier to handle.
-    class MultiControl : Control
+    /// Note: A multicontrol isn't responsible for Release()ing its subcontrols.
+    public class MultiControl : Control
     {
         List<Control> controls;
 
@@ -34,12 +35,12 @@ namespace AW2.UI
         }
 
         /// <summary>
-        /// Removes a previously added subcontrol from the multicontrol.
+        /// Removes all previously added subcontrols from the multicontrol.
         /// </summary>
-        /// <param name="control">The control to remove.</param>
-        public void Remove(Control control)
+        /// Note: This method doesn't Release() the subcontrols.
+        public void Clear()
         {
-            controls.Remove(control);
+            controls.Clear();
         }
 
         /// <summary>

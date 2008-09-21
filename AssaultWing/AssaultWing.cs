@@ -286,6 +286,7 @@ namespace AW2
         /// </summary>
         public void StartPlaying()
         {
+            dataEngine.ForEachPlayer(delegate(Player player) { player.Kills = player.Suicides = 0; });
             dataEngine.ArenaPlaylistI = -1;
             PlayNextArena();
         }

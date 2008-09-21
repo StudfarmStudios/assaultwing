@@ -39,16 +39,35 @@ namespace AW2.Graphics
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            float textLeftEdge = 100; // left edge of left-aligned text
             Vector2 textCenter = new Vector2(gfx.Viewport.Width / 2, 50); // text line top center
             Vector2 textSize = fontHuge.MeasureString("Game Over");
             spriteBatch.DrawString(fontHuge, "Game Over", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
             textCenter += new Vector2(0, 2 * fontHuge.LineSpacing);
-            textSize = fontSmall.MeasureString("Winner");
-            spriteBatch.DrawString(fontSmall, "Winner", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
-            textCenter += new Vector2(0, fontSmall.LineSpacing);
-            textSize = fontBig.MeasureString("Somebody");
-            spriteBatch.DrawString(fontBig, "Somebody", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
-            textCenter += new Vector2(0, 3 * fontBig.LineSpacing);
+
+
+            // List players and their scores sorted decreasing by score.
+            List<int> playerIs = new List<int>();
+            List<int> playerScores = new List<int>();
+            for (int i = 0; ; ++i)
+            {
+                Player player = data.GetPlayer(i);
+                if (player == null) break;
+                playerIs.Add(i);
+                playerScores.Add(player.Kills - player.Suicides);
+            }
+            playerIs.Sort(delegate(int i, int j) { return Math.Sign(playerScores[j] - playerScores[i]); });
+            for (int i = 0; i < playerIs.Count; ++i)
+            {
+                Player player = data.GetPlayer(playerIs[i]);
+                Vector2 textPos = new Vector2(textLeftEdge, textCenter.Y);
+                string scoreText = string.Format("{0} = {1}-{2}", player.Kills - player.Suicides, player.Kills, player.Suicides);
+                spriteBatch.DrawString(fontSmall, (i + 1) + ". " + player.Name, textPos, Color.White);
+                spriteBatch.DrawString(fontSmall, scoreText, textPos + new Vector2(250, 0), Color.White);
+                textCenter += new Vector2(0, fontSmall.LineSpacing);
+            }
+            
+            textCenter += new Vector2(0, 2 * fontSmall.LineSpacing);
             textSize = fontSmall.MeasureString("Press Enter to return to Main Menu");
             spriteBatch.DrawString(fontSmall, "Press Enter to return to Main Menu", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
         }

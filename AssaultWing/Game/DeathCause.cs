@@ -30,16 +30,61 @@ namespace AW2.Game
     /// </summary>
     public struct DeathCause
     {
+        Gob dead;
         DeathCauseType type;
         Gob other;
 
         /// <summary>
+        /// The gob that died.
+        /// </summary>
+        public Gob Dead { get { return dead; } }
+
+        /// <summary>
+        /// The gob that caused the death. May be <c>null</c>.
+        /// </summary>
+        public Gob Killer { get { return other; } }
+
+        /// <summary>
+        /// The type of the cause of death.
+        /// </summary>
+        public DeathCauseType Type { get { return type; } }
+
+        /// <summary>
+        /// Is the death a suicide of a player, i.e. caused by anything but 
+        /// an opposing player.
+        /// </summary>
+        public bool IsSuicide
+        {
+            get
+            {
+                if (dead == null || dead.Owner == null) return false;
+                if (other == null || other.Owner == null) return true;
+                return dead.Owner == other.Owner;
+            }
+        }
+
+        /// <summary>
+        /// Is the death a kill by some player.
+        /// </summary>
+        public bool IsKill
+        {
+            get
+            {
+                if (dead == null || dead.Owner == null) return false;
+                if (other == null || other.Owner == null) return false;
+                return dead.Owner != other.Owner;
+            }
+        }
+
+        /// <summary>
         /// Creates a cause of death with information about the killer gob.
         /// </summary>
+        /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
         /// <param name="other">The gob that caused the death.</param>
-        public DeathCause(DeathCauseType type, Gob other)
+        public DeathCause(Gob dead, DeathCauseType type, Gob other)
         {
+            this.dead = dead;
             this.type = type;
             this.other = other;
         }
@@ -47,9 +92,11 @@ namespace AW2.Game
         /// <summary>
         /// Creates a cause of death.
         /// </summary>
+        /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
-        public DeathCause(DeathCauseType type)
+        public DeathCause(Gob dead, DeathCauseType type)
         {
+            this.dead = dead;
             this.type = type;
             other = null;
         }

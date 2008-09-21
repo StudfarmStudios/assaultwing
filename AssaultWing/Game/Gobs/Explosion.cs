@@ -214,7 +214,7 @@ namespace AW2.Game.Gobs
             {
                 float distance = theirArea.Area.DistanceTo(this.Pos);
                 float damage = inflictDamage.Evaluate(distance);
-                theirArea.Owner.InflictDamage(damage, new DeathCause(DeathCauseType.Damage, this));
+                theirArea.Owner.InflictDamage(damage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
             }
         }
     }

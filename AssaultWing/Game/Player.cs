@@ -110,7 +110,7 @@ namespace AW2.Game
 
         #endregion Player constants
 
-        #region Player fields
+        #region Player fields about general things
 
         /// <summary>
         /// The human-readable name of the player.
@@ -220,7 +220,22 @@ namespace AW2.Game
         /// </summary>
         Curve shake;
 
-        #endregion Player fields
+        #endregion Player fields about general things
+
+        #region Player fields about statistics
+
+        /// <summary>
+        /// Number of opposing players' ships this player has killed.
+        /// </summary>
+        int kills;
+
+        /// <summary>
+        /// Number of times this player has died for some other reason
+        /// than another player killing him.
+        /// </summary>
+        int suicides;
+
+        #endregion Player fields about statistics
 
         #region Player properties
 
@@ -357,6 +372,21 @@ namespace AW2.Game
 
         #endregion Player properties
 
+        #region Player properties about statistics
+
+        /// <summary>
+        /// Number of opposing players' ships this player has killed.
+        /// </summary>
+        public int Kills { get { return kills; } set { kills = value; } }
+
+        /// <summary>
+        /// Number of times this player has died for some other reason
+        /// than another player killing him.
+        /// </summary>
+        public int Suicides { get { return suicides; } set { suicides = value; } }
+
+        #endregion Player properties about statistics
+
         /// <summary>
         /// Creates a new player.
         /// </summary>
@@ -412,17 +442,21 @@ namespace AW2.Game
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
 
             // Dying has some consequences.
+            if (cause.IsSuicide) ++suicides;
+            if (cause.IsKill) ++cause.Killer.Owner.kills;
             --lives;
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
             bonuses = PlayerBonus.None;
             ship = null;
 
-            // Notify the player about his death.
+            // Notify the player about his death and possible killer about his frag.
             SendMessage("Death by " + cause.ToPersonalizedString(this));
+            if (cause.IsKill)
+                cause.Killer.Owner.SendMessage("You nailed " + Name);
             
             // Schedule the making of a new ship, lives permitting.
-            long ticks = (long)(mourningDelay * 10 * 1000 * 1000);
+            long ticks = (long)(mourningDelay * TimeSpan.TicksPerSecond);
             shipSpawnTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
         }
 

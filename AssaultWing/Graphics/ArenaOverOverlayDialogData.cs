@@ -54,11 +54,27 @@ namespace AW2.Graphics
             textPos += new Vector2(0, fontSmall.LineSpacing + fontBig.LineSpacing);
             spriteBatch.DrawString(fontBig, "Current score:", textPos, Color.White);
             textPos += new Vector2(0, fontBig.LineSpacing);
-            data.ForEachPlayer(delegate(Player player)
+
+            // List players and their scores sorted decreasing by score.
+            List<int> playerIs = new List<int>();
+            List<int> playerScores = new List<int>();
+            for (int i = 0; ; ++i)
             {
-                spriteBatch.DrawString(fontSmall, "n. " + player.Name, textPos, Color.White);
+                Player player = data.GetPlayer(i);
+                if (player == null) break;
+                playerIs.Add(i);
+                playerScores.Add(player.Kills - player.Suicides);
+            }
+            playerIs.Sort(delegate(int i, int j) { return Math.Sign(playerScores[j] - playerScores[i]); });
+            for (int i = 0; i < playerIs.Count; ++i)
+            {
+                Player player = data.GetPlayer(playerIs[i]);
+                string scoreText = string.Format("{0} = {1}-{2}", player.Kills - player.Suicides, player.Kills, player.Suicides);
+                spriteBatch.DrawString(fontSmall, (i + 1) + ". " + player.Name, textPos, Color.White);
+                spriteBatch.DrawString(fontSmall, scoreText, textPos + new Vector2(250, 0), Color.White);
                 textPos += new Vector2(0, fontSmall.LineSpacing);
-            });
+            }
+
             textPos += new Vector2(0, fontSmall.LineSpacing);
             spriteBatch.DrawString(fontSmall, "Loading next arena... (when you press Enter)", textPos, Color.White);
         }

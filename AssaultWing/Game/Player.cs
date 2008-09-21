@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.UI;
+using AW2.Game.Particles;
 
 namespace AW2.Game
 {
@@ -238,6 +239,25 @@ namespace AW2.Game
         #endregion Player fields about statistics
 
         #region Player properties
+
+        /// <summary>
+        /// The player's index in <c>DataEngine</c>,
+        /// or -1 if the player is not registered in <c>DataEngine</c>.
+        /// </summary>
+        public int Id
+        {
+            get
+            {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                for (int i = 0; ; ++i)
+                {
+                    Player player = data.GetPlayer(i);
+                    if (player == this) return i;
+                    if (player == null) break;
+                }
+                return -1;
+            }
+        }
 
         /// <summary>
         /// The controls the player uses in menus and in game.
@@ -529,6 +549,16 @@ namespace AW2.Game
 
             data.AddGob(newShip);
             ship = newShip;
+
+            // Create a player marker for the ship.
+            string particleEngineName = Id == 1 ? "playerred" : "playergreen";
+            ParticleEngine particleEngine = (ParticleEngine)Gob.CreateGob(particleEngineName);
+            particleEngine.Pos = ship.Pos;
+            particleEngine.Rotation = ship.Rotation;
+            particleEngine.Owner = this;
+            particleEngine.Leader = ship;
+            data.AddParticleEngine(particleEngine);
+
         }
 
         #region Methods related to bonuses

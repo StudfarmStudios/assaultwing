@@ -111,9 +111,12 @@ namespace AW2.Sound
         public void PlayMusic(Arena arena)
         {
             List<BackgroundMusic> musics = arena.BackgroundMusic;
-            BackgroundMusic track = musics[RandomHelper.GetRandomInt(musics.Count)];
-            SetMusicVolume(track.Volume);
-            PlayMusic(track.FileName);
+            if (musics.Count > 0)
+            {
+                BackgroundMusic track = musics[RandomHelper.GetRandomInt(musics.Count)];
+                SetMusicVolume(track.Volume);
+                PlayMusic(track.FileName);
+            }
         }
         
 

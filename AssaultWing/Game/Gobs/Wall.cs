@@ -430,6 +430,10 @@ namespace AW2.Game.Gobs
                 colouredVertexData[indexI] = new VertexPositionColor(originalVertex.Position, color);
             }
 
+            // This method is run usually in a background thread -- during arena initialisation.
+            // Therefore we have to tell the main draw routines to let us use the device in peace.
+            AssaultWing.Instance.GraphicsDeviceReserved = true;
+
             // Draw the colour-coded triangles on our own render target for
             // index map initialisation. Render target will be a square with
             // size ('targetSize') a power of two to meet the demands of some
@@ -523,6 +527,9 @@ namespace AW2.Game.Gobs
             gfx.VertexDeclaration = oldVertexDeclaration;
             gfx.DepthStencilBuffer = oldDepthStencilBuffer;
             maskTarget.Dispose();
+
+            // We're done using the graphics device. The main draw routines may proceed.
+            AssaultWing.Instance.GraphicsDeviceReserved = false;
 
             // Initialise triangle cover counts.
             triangleCovers = new int[indexData.Length / 3];

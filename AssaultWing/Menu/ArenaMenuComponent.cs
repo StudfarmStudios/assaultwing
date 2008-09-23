@@ -29,6 +29,23 @@ namespace AW2.Menu
             }
         }
 
+        /// <summary>
+        /// Delegate type for asynchronous loading of an arena.
+        /// </summary>
+        /// <returns><c>null</c> on success or any exception 
+        /// if one was thrown during arena loading.</returns>
+        delegate Exception AsyncArenaLoader();
+
+        /// <summary>
+        /// Asynchronous arena loader.
+        /// </summary>
+        AsyncArenaLoader arenaLoader;
+
+        /// <summary>
+        /// Status of the asynchronous arena loader.
+        /// </summary>
+        IAsyncResult arenaLoaderResult;
+
         readonly int menuItemCount = 7; // number of items that fit in the menu at once
         Control controlBack, controlDone;
         MultiControl controlUp, controlDown, controlSelect;
@@ -71,7 +88,12 @@ namespace AW2.Menu
             {
                 base.Active = value;
                 // Update our controls to players' possibly changed controls.
-                if (value) InitializeControls();
+                if (value)
+                {
+                    menuEngine.IsProgressBarVisible = false;
+                    menuEngine.IsHelpTextVisible = true;
+                    InitializeControls();
+                }
             }
         }
 
@@ -91,6 +113,23 @@ namespace AW2.Menu
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             pos = new Vector2(1220, 698);
+            arenaLoaderResult = null;
+            arenaLoader = delegate()
+            {
+#if !DEBUG
+                try
+                {
+#endif
+                    AssaultWing.Instance.StartPlaying();
+                    return null;
+#if !DEBUG
+                }
+                catch (Exception e)
+                {
+                    return e;
+                }
+#endif
+            };
 
             arenaInfos = new List<ArenaInfo>();
             data.ForEachArena(delegate(Arena arena)
@@ -134,6 +173,20 @@ namespace AW2.Menu
         /// </summary>
         public override void Update()
         {
+            if (arenaLoaderResult != null)
+            {
+                if (arenaLoaderResult.IsCompleted)
+                {
+                    Exception exception = arenaLoader.EndInvoke(arenaLoaderResult);
+                    if (exception != null)
+                        throw new Exception("Exception thrown while starting to play", exception);
+                    arenaLoaderResult = null;
+                    menuEngine.IsProgressBarVisible = false;
+                    menuEngine.IsHelpTextVisible = true;
+                    AssaultWing.Instance.StartArena();
+                }
+            }
+
             // Check our controls and react to them.
             if (Active)
             {
@@ -149,7 +202,13 @@ namespace AW2.Menu
                     if (arenaPlaylist.Count > 0)
                     {
                         data.ArenaPlaylist = arenaPlaylist;
-                        AssaultWing.Instance.StartPlaying();
+
+                        menuEngine.IsHelpTextVisible = false;
+                        menuEngine.IsProgressBarVisible = true;
+                        arenaLoaderResult = arenaLoader.BeginInvoke(null, null);
+
+                        // We don't accept input while an arena is loading.
+                        Active = false;
                     }
                 }
 

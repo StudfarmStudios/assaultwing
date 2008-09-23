@@ -77,7 +77,12 @@ namespace AW2.Menu
             {
                 base.Active = value;
                 // Update our controls to players' possibly changed controls.
-                if (value) InitializeControls(); 
+                if (value)
+                {
+                    menuEngine.IsProgressBarVisible = false;
+                    menuEngine.IsHelpTextVisible = true;
+                    InitializeControls();
+                }
             }
         }
 

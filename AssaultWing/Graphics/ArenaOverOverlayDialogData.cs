@@ -22,7 +22,10 @@ namespace AW2.Graphics
         /// Creates contents for an overlay dialog displaying arena over.
         /// </summary>
         public ArenaOverOverlayDialogData()
-            : base(new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() { AssaultWing.Instance.PlayNextArena(); }))
+            : base(new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() { 
+                AssaultWing.Instance.PlayNextArena();
+                AssaultWing.Instance.StartArena();
+            }))
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             fontBig = data.GetFont(FontName.MenuFontBig);

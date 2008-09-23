@@ -76,6 +76,22 @@ namespace AW2.Menu
         EquipMenuItem[] currentItems;
 
         /// <summary>
+        /// Does the menu component react to input.
+        /// </summary>
+        public override bool Active
+        {
+            set
+            {
+                base.Active = value;
+                if (value)
+                {
+                    menuEngine.IsProgressBarVisible = false;
+                    menuEngine.IsHelpTextVisible = true;
+                }
+            }
+        }
+
+        /// <summary>
         /// The center of the menu component in menu system coordinates.
         /// </summary>
         /// This is a good place to center the menu view to when the menu component

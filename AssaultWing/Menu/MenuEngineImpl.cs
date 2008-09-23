@@ -41,10 +41,15 @@ namespace AW2.Menu
     /// at the same time. The menu system maintains a view to the menu space. The view
     /// is defined by the coordinates of the top left coordinates of the viewport
     /// in the menu coordinate system.
+    /// 
+    /// The menu system draws some static text on top of the menu view. This includes
+    /// an optional help text and an optional progress bar.
     public class MenuEngineImpl : DrawableGameComponent
     {
         MenuComponentType activeComponent;
         MenuComponent[] components;
+        bool activeComponentActivatedOnce;
+        bool showHelpText, showProgressBar;
         Vector2 view; // top left corner of menu view in menu system coordinates
         Vector2 viewFrom, viewTo; // start and goal of current movement of 'view'
         TimeSpan viewMoveStartTime; // time of start of view movement
@@ -67,6 +72,17 @@ namespace AW2.Menu
         SpriteBatch spriteBatch;
         Texture2D backgroundTexture;
         SpriteFont smallFont;
+
+        /// <summary>
+        /// Is the help text visible.
+        /// </summary>
+        public bool IsHelpTextVisible { get { return showHelpText; } set { showHelpText = value; } }
+
+        /// <summary>
+        /// Is the progress bar visible.
+        /// </summary>
+        /// <seealso cref="DataEngine.ProgressBar"/>
+        public bool IsProgressBarVisible { get { return showProgressBar; } set { showProgressBar = value; } }
 
         /// <summary>
         /// Creates a menu system.
@@ -164,6 +180,7 @@ namespace AW2.Menu
             viewMoveStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
+            activeComponentActivatedOnce = false;
         }
 
         /// <summary>
@@ -178,8 +195,8 @@ namespace AW2.Menu
             view = Vector2.Lerp(viewFrom, viewTo, moveWeight);
 
             // Activate 'activeComponent' if the view has just come close enough to its center.
-            if (!components[(int)activeComponent].Active && moveWeight > 0.7f)
-                components[(int)activeComponent].Active = true;
+            if (!activeComponentActivatedOnce && moveWeight > 0.7f)
+                activeComponentActivatedOnce = components[(int)activeComponent].Active = true;
 
             // Update menu components.
             foreach (MenuComponent component in components)
@@ -257,15 +274,31 @@ namespace AW2.Menu
             }
             effect.End();
 
+            // Draw progress bar if wanted.
+            if (showProgressBar)
+            {
+                // TODO: The real progress bar.
+                spriteBatch.Begin();
+                string helpText = "[Coming soon: a progress bar!]";
+                Vector2 helpTextPos = new Vector2(
+                    ((float)viewWidth - smallFont.MeasureString(helpText).X) / 2,
+                    viewHeight - smallFont.LineSpacing);
+                spriteBatch.DrawString(smallFont, helpText, helpTextPos, Color.White);
+                spriteBatch.End();
+            }
+
             // Draw static text.
             spriteBatch.Begin();
             spriteBatch.DrawString(smallFont, "First Playable Demo 2008-04-27",
                 new Vector2(10, viewHeight - smallFont.LineSpacing), Color.White);
-            string helpText = "Enter to proceed, Esc to return to previous";
-            Vector2 helpTextPos = new Vector2(
-                ((float)viewWidth-smallFont.MeasureString(helpText).X) / 2,
-                viewHeight - smallFont.LineSpacing);
-            spriteBatch.DrawString(smallFont, helpText, helpTextPos, Color.White);
+            if (showHelpText)
+            {
+                string helpText = "Enter to proceed, Esc to return to previous";
+                Vector2 helpTextPos = new Vector2(
+                    ((float)viewWidth - smallFont.MeasureString(helpText).X) / 2,
+                    viewHeight - smallFont.LineSpacing);
+                spriteBatch.DrawString(smallFont, helpText, helpTextPos, Color.White);
+            }
             string copyrightText = "Studfarm Studios";
             Vector2 copyrightTextPos = new Vector2(
                 viewWidth - (int)smallFont.MeasureString(copyrightText).X - 10,

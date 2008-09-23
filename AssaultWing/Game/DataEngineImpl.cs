@@ -359,8 +359,7 @@ namespace AW2.Game
             weapons.Clear();
             addedGobs.Clear();
             removedGobs.Clear();
-
-
+            CustomOperations = null;
 
             // Create initial objects.
             foreach (Gob gob in arena.Gobs)

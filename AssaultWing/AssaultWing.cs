@@ -70,6 +70,15 @@ namespace AW2
         GameTime gameTime;
         Rectangle clientBoundsMin;
 
+        /// <summary>
+        /// Is the graphics device reserved by a background thread.
+        /// Refer to this field <b>only</b> via property <c>GraphicsDeviceReserved</c>
+        /// in order to maintain thread locks.
+        /// </summary>
+        bool graphicsDeviceReserved;
+
+        object @lock = new object();
+
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
         Control frameRunControl;
@@ -135,6 +144,18 @@ namespace AW2
                     Window.ClientBounds.Height < clientBoundsMin.Height)
                     Window_ClientSizeChanged(null, null);
             }
+        }
+
+        /// <summary>
+        /// Is the graphics device being used by someone else than the main draw routines.
+        /// This property is thread safe.
+        /// </summary>
+        /// Set this to <c>true</c> while using the graphics card in a background thread.
+        /// This will avoid conflicts by skipping the main draw routines.
+        public bool GraphicsDeviceReserved
+        {
+            get { lock (@lock) return graphicsDeviceReserved; }
+            set { lock (@lock) graphicsDeviceReserved = value; }
         }
 
         #endregion AssaultWing properties
@@ -282,13 +303,25 @@ namespace AW2
         #region Methods for game components
 
         /// <summary>
-        /// Starts playing the chosen arenas, starting from the first.
+        /// Prepares a new play session to start from the first chosen arena.
+        /// Call <c>StartArena</c> after this method returns to start
+        /// playing the arena.
         /// </summary>
         public void StartPlaying()
-        {
+        { // TODO: Rename this method to PrepareFirstArena()
             dataEngine.ForEachPlayer(delegate(Player player) { player.Kills = player.Suicides = 0; });
             dataEngine.ArenaPlaylistI = -1;
             PlayNextArena();
+        }
+
+        /// <summary>
+        /// Starts playing a previously prepared arena.
+        /// </summary>
+        public void StartArena()
+        {
+            graphicsEngine.RearrangeViewports();
+            ChangeState(GameState.Gameplay);
+            soundEngine.PlayMusic(dataEngine.Arena);
         }
 
         /// <summary>
@@ -303,10 +336,14 @@ namespace AW2
         }
 
         /// <summary>
-        /// Resumes playing with the next chosen arena.
+        /// Prepares an ongoing play session to move to the next chosen arena.
+        /// Call <c>StartArena</c> after this method returns to start
+        /// playing the arena.
         /// </summary>
+        /// This method usually takes a long time to run. It's therefore a good
+        /// idea to make it run in a background thread.
         public void PlayNextArena()
-        {
+        { // TODO: Rename this method to PrepareNextArena()
             Arena arenaTemplate = dataEngine.getNextPlayableArena();
             if (arenaTemplate != null)
             {
@@ -314,15 +351,9 @@ namespace AW2
                 graphicsEngine.LoadAreatextures(arenaTemplate);
             }
             if (dataEngine.NextArena())
-                AssaultWing.Instance.ShowDialog(new GameOverOverlayDialogData());
-            else
-            {
-                ChangeState(GameState.Gameplay);
-                soundEngine.PlayMusic(dataEngine.getCurrentArena());
-            }
+                throw new InvalidOperationException("There is no next arena to play");
             logicEngine.Reset();
             physicsEngine.Reset();
-            graphicsEngine.RearrangeViewports();
         }
 
         /// <summary>
@@ -619,7 +650,8 @@ namespace AW2
                 this.Exit();
 
             base.Update(this.gameTime);
-            data.CommitPending();
+            if (logicEngine.Enabled)
+                data.CommitPending();
         }
 
         /// <summary>
@@ -644,7 +676,8 @@ namespace AW2
                 framesSinceLastCheck = 1;
                 lastFramerateCheck = gameTime.TotalRealTime;
             }
-            base.Draw(gameTime);
+            if (!GraphicsDeviceReserved)
+                base.Draw(gameTime);
         }
 
         #endregion Overridden Game methods

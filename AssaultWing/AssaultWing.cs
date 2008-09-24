@@ -77,8 +77,6 @@ namespace AW2
         /// </summary>
         bool graphicsDeviceReserved;
 
-        object @lock = new object();
-
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
         Control frameRunControl;
@@ -144,18 +142,6 @@ namespace AW2
                     Window.ClientBounds.Height < clientBoundsMin.Height)
                     Window_ClientSizeChanged(null, null);
             }
-        }
-
-        /// <summary>
-        /// Is the graphics device being used by someone else than the main draw routines.
-        /// This property is thread safe.
-        /// </summary>
-        /// Set this to <c>true</c> while using the graphics card in a background thread.
-        /// This will avoid conflicts by skipping the main draw routines.
-        public bool GraphicsDeviceReserved
-        {
-            get { lock (@lock) return graphicsDeviceReserved; }
-            set { lock (@lock) graphicsDeviceReserved = value; }
         }
 
         #endregion AssaultWing properties
@@ -676,7 +662,7 @@ namespace AW2
                 framesSinceLastCheck = 1;
                 lastFramerateCheck = gameTime.TotalRealTime;
             }
-            if (!GraphicsDeviceReserved)
+            lock (GraphicsDevice)
                 base.Draw(gameTime);
         }
 

@@ -432,104 +432,104 @@ namespace AW2.Game.Gobs
 
             // This method is run usually in a background thread -- during arena initialisation.
             // Therefore we have to tell the main draw routines to let us use the device in peace.
-            AssaultWing.Instance.GraphicsDeviceReserved = true;
+            lock (AssaultWing.Instance.GraphicsDevice)
+            {
 
-            // Draw the colour-coded triangles on our own render target for
-            // index map initialisation. Render target will be a square with
-            // size ('targetSize') a power of two to meet the demands of some
-            // graphics devices. If the model dimensions are larger than 
-            // 'targetSize', we will have to render the coloured triangles in pieces.
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
-            GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
-            if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
-                TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
-                throw new Exception("Cannot create render target of type SurfaceFormat.Color");
-            int targetSize = Math.Min(
-                AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
-                AWMathHelper.CeilingPowerTwo(Math.Max(indexMap.GetLength(1), indexMap.GetLength(0))));
-            RenderTarget2D maskTarget = null;
-            while (maskTarget == null)
-                try
-                {
-                    maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, SurfaceFormat.Color);
-                }
-                catch (Exception e)
-                {
-                    if (e is OutOfVideoMemoryException)
-                        targetSize /= 2;
-                    else
-                        throw new Exception("Cannot create render target for index map creation", e);
-                }
-
-            // Set up graphics device.
-            VertexDeclaration oldVertexDeclaration = gfx.VertexDeclaration;
-            DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
-            gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-            gfx.DepthStencilBuffer = null;
-
-            // Set up an effect.
-            BasicEffect maskEff = new BasicEffect(gfx, null);
-            maskEff.VertexColorEnabled = true;
-            maskEff.LightingEnabled = false;
-            maskEff.TextureEnabled = false;
-            maskEff.View = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
-            maskEff.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1,
-                0, targetSize - 1, 10, 1000);
-            maskEff.World = indexMapTransform;
-
-            // Draw the coloured triangles in as many parts as necessary to cover 
-            // the whole model with one unit in world coordinates corresponding to
-            // one pixel width in the render target.
-            for (int startY = 0; startY < indexMap.GetLength(0); startY += targetSize)
-                for (int startX = 0; startX < indexMap.GetLength(1); startX += targetSize)
-                {
-                    // Move view to current start coordinates.
-                    maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 500), new Vector3(startX, startY, 0), Vector3.Up);
-
-                    // Set and clear our own render target.
-                    gfx.SetRenderTarget(0, maskTarget);
-                    gfx.Clear(ClearOptions.Target, Color.White, 0, 0);
-
-                    // Draw the coloured triangles.
-                    maskEff.Begin();
-                    foreach (EffectPass pass in maskEff.CurrentTechnique.Passes)
+                // Draw the colour-coded triangles on our own render target for
+                // index map initialisation. Render target will be a square with
+                // size ('targetSize') a power of two to meet the demands of some
+                // graphics devices. If the model dimensions are larger than 
+                // 'targetSize', we will have to render the coloured triangles in pieces.
+                GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+                GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
+                GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
+                if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
+                    TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
+                    throw new Exception("Cannot create render target of type SurfaceFormat.Color");
+                int targetSize = Math.Min(
+                    AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
+                    AWMathHelper.CeilingPowerTwo(Math.Max(indexMap.GetLength(1), indexMap.GetLength(0))));
+                RenderTarget2D maskTarget = null;
+                while (maskTarget == null)
+                    try
                     {
-                        pass.Begin();
-                        gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                            colouredVertexData, 0, colouredVertexData.Length / 3);
-                        pass.End();
+                        maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, SurfaceFormat.Color);
                     }
-                    maskEff.End();
+                    catch (Exception e)
+                    {
+                        if (e is OutOfVideoMemoryException)
+                            targetSize /= 2;
+                        else
+                            throw new Exception("Cannot create render target for index map creation", e);
+                    }
 
-                    // Restore render target so what we can extract drawn pixels.
-                    gfx.SetRenderTarget(0, null);
+                // Set up graphics device.
+                VertexDeclaration oldVertexDeclaration = gfx.VertexDeclaration;
+                DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+                gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
+                gfx.DepthStencilBuffer = null;
 
-                    // Figure out mask data from the render target.
-                    Texture2D maskTexture = maskTarget.GetTexture();
-                    Color[] maskData = new Color[targetSize * targetSize];
-                    maskTexture.GetData<Color>(maskData);
-                    for (int y = 0; y < targetSize; ++y)
-                        for (int x = 0; x < targetSize; ++x)
+                // Set up an effect.
+                BasicEffect maskEff = new BasicEffect(gfx, null);
+                maskEff.VertexColorEnabled = true;
+                maskEff.LightingEnabled = false;
+                maskEff.TextureEnabled = false;
+                maskEff.View = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
+                maskEff.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1,
+                    0, targetSize - 1, 10, 1000);
+                maskEff.World = indexMapTransform;
+
+                // Draw the coloured triangles in as many parts as necessary to cover 
+                // the whole model with one unit in world coordinates corresponding to
+                // one pixel width in the render target.
+                for (int startY = 0; startY < indexMap.GetLength(0); startY += targetSize)
+                    for (int startX = 0; startX < indexMap.GetLength(1); startX += targetSize)
+                    {
+                        // Move view to current start coordinates.
+                        maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 500), new Vector3(startX, startY, 0), Vector3.Up);
+
+                        // Set and clear our own render target.
+                        gfx.SetRenderTarget(0, maskTarget);
+                        gfx.Clear(ClearOptions.Target, Color.White, 0, 0);
+
+                        // Draw the coloured triangles.
+                        maskEff.Begin();
+                        foreach (EffectPass pass in maskEff.CurrentTechnique.Passes)
                         {
-                            Color color = maskData[x + y * maskTexture.Width];
-                            if (color == Color.White) continue;
-                            int indexMapY = startY + targetSize - 1 - y;
-                            int indexMapX = startX + x;
-                            if (indexMapY >= indexMap.GetLength(0) || indexMapX >= indexMap.GetLength(1))
-                                throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
-                            int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
-                            indexMap[indexMapY, indexMapX] = new int[] { maskValue };
+                            pass.Begin();
+                            gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                                colouredVertexData, 0, colouredVertexData.Length / 3);
+                            pass.End();
                         }
-                }
+                        maskEff.End();
 
-            // Restore graphics device's old settings.
-            gfx.VertexDeclaration = oldVertexDeclaration;
-            gfx.DepthStencilBuffer = oldDepthStencilBuffer;
-            maskTarget.Dispose();
+                        // Restore render target so what we can extract drawn pixels.
+                        gfx.SetRenderTarget(0, null);
 
-            // We're done using the graphics device. The main draw routines may proceed.
-            AssaultWing.Instance.GraphicsDeviceReserved = false;
+                        // Figure out mask data from the render target.
+                        Texture2D maskTexture = maskTarget.GetTexture();
+                        Color[] maskData = new Color[targetSize * targetSize];
+                        maskTexture.GetData<Color>(maskData);
+                        for (int y = 0; y < targetSize; ++y)
+                            for (int x = 0; x < targetSize; ++x)
+                            {
+                                Color color = maskData[x + y * maskTexture.Width];
+                                if (color == Color.White) continue;
+                                int indexMapY = startY + targetSize - 1 - y;
+                                int indexMapX = startX + x;
+                                if (indexMapY >= indexMap.GetLength(0) || indexMapX >= indexMap.GetLength(1))
+                                    throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
+                                int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
+                                indexMap[indexMapY, indexMapX] = new int[] { maskValue };
+                            }
+                    }
+
+                // Restore graphics device's old settings.
+                gfx.VertexDeclaration = oldVertexDeclaration;
+                gfx.DepthStencilBuffer = oldDepthStencilBuffer;
+                maskTarget.Dispose();
+
+            }
 
             // Initialise triangle cover counts.
             triangleCovers = new int[indexData.Length / 3];

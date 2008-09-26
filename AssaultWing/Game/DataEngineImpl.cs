@@ -31,10 +31,11 @@ namespace AW2.Game
         Dictionary<string, Texture2D> textures;
         Dictionary<TypeStringPair, object> templates;
         Dictionary<string, Arena> arenas;
-        Arena activeArena;
+        Arena activeArena, preparedArena;
         Texture2D arenaRadarSilhouette;
         Vector2 arenaDimensionsOnRadar;
         Matrix arenaToRadarTransform;
+        ProgressBar progressBar;
 
         /// <summary>
         /// The textures used in static graphics, indexed by <c>TextureName</c>.
@@ -82,7 +83,7 @@ namespace AW2.Game
             arenas = new Dictionary<string, Arena>();
             overlays = new Texture2D[Enum.GetValues(typeof(TextureName)).Length];
             fonts = new SpriteFont[Enum.GetValues(typeof(FontName)).Length];
-            activeArena = null;
+            activeArena = preparedArena = null;
             arenaPlaylist = new List<string>();
             arenaPlaylistI = -1;
         }
@@ -127,6 +128,14 @@ namespace AW2.Game
         public bool HasModel(string name)
         {
             return models.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// Disposes of all 3D models.
+        /// </summary>
+        public void ClearModels()
+        {
+            models.Clear();
         }
 
         #endregion models
@@ -225,6 +234,15 @@ namespace AW2.Game
         public SpriteFont GetFont(FontName name)
         {
             return fonts[(int)name];
+        }
+
+        /// <summary>
+        /// Disposes of all fonts.
+        /// </summary>
+        public void ClearFonts()
+        {
+            for (int i = 0; i < fonts.Length; ++i)
+                fonts[i] = null;
         }
 
         #endregion fonts
@@ -328,8 +346,9 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Initialises the data engine with the next arena in the playlist.
+        /// Prepares the next arena in the playlist ready for playing.
         /// </summary>
+        /// When the playing really should start, call <c>StartArena</c>.
         /// <returns><b>false</b> if the initialisation succeeded,
         /// <b>true</b> otherwise.</returns>
         public bool NextArena()
@@ -344,27 +363,11 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Initialises the game data from a previously stored arena.
+        /// Sets a previously prepared arena as the active one.
         /// </summary>
-        /// <param name="name">The name of the arena.</param>
-        public void InitializeFromArena(string name)
+        /// Call this method right before commencing play in the prepared arena.
+        public void StartArena()
         {
-            Arena arena = GetArena(name);
-
-            // Clear old data.
-            // TODO: First make sure nobody else refers to gobs in 'gobs' 
-            // or other objects in other lists.
-            gobs.Clear();
-            particleEngines.Clear();
-            weapons.Clear();
-            addedGobs.Clear();
-            removedGobs.Clear();
-            CustomOperations = null;
-
-            // Create initial objects.
-            foreach (Gob gob in arena.Gobs)
-                AddGob(Gob.CreateGob(gob));
-
             // Reset players.
             ForEachPlayer(delegate(Player player)
             {
@@ -372,12 +375,48 @@ namespace AW2.Game
                 player.Lives = 3;
             });
 
-            activeArena = arena;
+            // Clear remaining data from a possible previous arena.
+            foreach (Gob gob in gobs)
+                gob.UnloadContent();
+            gobs.Clear();
+            foreach (ParticleEngine particleEngine in particleEngines)
+                particleEngine.UnloadContent();
+            particleEngines.Clear();
+            weapons.Clear();
+
+            activeArena = preparedArena;
+            preparedArena = null;
             RefreshArenaToRadarTransform();
 
             // Create arena silhouette not until the freshly added gobs
             // have really been added to field 'gobs'.
             CustomOperations += delegate(object obj) { RefreshArenaRadarSilhouette(); };
+        }
+
+        /// <summary>
+        /// Prepares the game data for playing an arena.
+        /// </summary>
+        /// When the playing really should start, call <c>StartArena</c>.
+        /// <param name="name">The name of the arena.</param>
+        public void InitializeFromArena(string name)
+        {
+            preparedArena = GetArena(name);
+
+            // Clear old data.
+            // We clear visible objects only after most of the initialisation is done.
+            // This way the user can see the old arena until the new arena is ready.
+            addedGobs.Clear();
+            removedGobs.Clear();
+            CustomOperations = null;
+
+            // Create initial objects. This is by far the most time consuming part
+            // in initialising an arena for playing.
+            // Note that the gobs will end up in 'gobs' only after the game starts running again.
+            int wallCount = 0;
+            foreach (Gob gob in preparedArena.Gobs) if (gob is Wall) ++wallCount;
+            progressBar.SetSubtaskCount(wallCount);
+            foreach (Gob gob in preparedArena.Gobs)
+                AddGob(Gob.CreateGob(gob));
         }
 
         /// <summary>
@@ -696,6 +735,20 @@ namespace AW2.Game
         #region miscellaneous
 
         /// <summary>
+        /// The progress bar.
+        /// </summary>
+        /// Anybody can tell the progress bar that their tasks are completed.
+        /// This way the progress bar knows how its running task is progressing.
+        public ProgressBar ProgressBar
+        {
+            get
+            {
+                if (progressBar == null) progressBar = new ProgressBar();
+                return progressBar;
+            }
+        }
+
+        /// <summary>
         /// Custom operations to perform once at the end of a frame.
         /// </summary>
         /// This event is called by the data engine after all updates of a frame.
@@ -760,6 +813,39 @@ namespace AW2.Game
 #endif
         }
 
+        /// <summary>
+        /// Clears all data about the state of the game session that is not
+        /// needed when the game session is over.
+        /// Data that is generated during a game session and is still relevant 
+        /// after the game session is left untouched.
+        /// </summary>
+        /// Call this method after the game session has ended.
+        public void ClearGameState()
+        {
+            activeArena = null;
+        }
+
+        /// <summary>
+        /// Loads content needed by the currently active arena.
+        /// </summary>
+        public void LoadContent()
+        {
+            if (activeArena != null)
+                RefreshArenaRadarSilhouette();
+        }
+
+        /// <summary>
+        /// Unloads content needed by the currently active arena.
+        /// </summary>
+        public void UnloadContent()
+        {
+            if (arenaRadarSilhouette != null)
+            {
+                arenaRadarSilhouette.Dispose();
+                arenaRadarSilhouette = null;
+            }
+        }
+
         #endregion miscellaneous
 
         #region Private methods
@@ -797,6 +883,13 @@ namespace AW2.Game
         {
             if (activeArena == null)
                 throw new InvalidOperationException("No active arena");
+
+            // Dispose of any previous silhouette.
+            if (arenaRadarSilhouette != null)
+            {
+                arenaRadarSilhouette.Dispose();
+                arenaRadarSilhouette = null;
+            }
 
             // Draw arena walls in one color in a radar-sized texture.
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;

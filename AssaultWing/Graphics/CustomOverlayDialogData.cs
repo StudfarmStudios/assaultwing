@@ -26,8 +26,6 @@ namespace AW2.Graphics
             : base(actions)
         {
             this.text = text;
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            font = data.GetFont(FontName.MenuFontBig);
         }
 
         /// <summary>
@@ -43,6 +41,23 @@ namespace AW2.Graphics
             Vector2 textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
             Vector2 textSize = font.MeasureString(text);
             spriteBatch.DrawString(font, text, textCenter - textSize / 2, Color.White);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            font = data.GetFont(FontName.MenuFontBig);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // Our fonts are disposed by the graphics engine.
         }
     }
 }

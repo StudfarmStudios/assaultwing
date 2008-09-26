@@ -75,17 +75,37 @@ namespace AW2.Game.Gobs
             this.wallModelName = "dummymodel";
         }
 
+        #region Methods related to gobs' functionality in the game world
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            // Replace defaults set by Wall.
+            Set3DModel();
+        }
+
+        #endregion Methods related to gobs' functionality in the game world
+
         /// <summary>
         /// Copies the gob's runtime state from another gob.
         /// </summary>
         /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
         protected override void SetRuntimeState(Gob runtimeState)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             base.SetRuntimeState(runtimeState);
+            Set3DModel();
+        }
 
-            // Recover wall data from its 3D model, overwriting what
-            // Wall.SetRuntimeState erroneously set before.
+        /// <summary>
+        /// Sets the wall's 3D model based on 'wallModelName'.
+        /// </summary>
+        void Set3DModel()
+        {
+            // Recover wall data from its 3D model.
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Model model = data.GetModel(wallModelName);
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
@@ -103,7 +123,13 @@ namespace AW2.Game.Gobs
             BasicEffect effect = model.Meshes[0].Effects[0] as BasicEffect;
             if (effect == null)
                 throw new ArgumentException("Wall model mesh's effect isn't a BasicEffect");
-            Set3DModel(vertexData, indexData, effect.Texture, effect);
+
+            // Take a copy of the effect so that we won't mess 
+            // with the wall model template in the future.
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            BasicEffect effectCopy = (BasicEffect)effect.Clone(gfx);
+
+            Set3DModel(vertexData, indexData, effectCopy.Texture, effectCopy);
         }
     }
 }

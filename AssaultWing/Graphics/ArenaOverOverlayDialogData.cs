@@ -15,29 +15,62 @@ namespace AW2.Graphics
     public class ArenaOverOverlayDialogData : OverlayDialogData
     {
         string arenaWinner;
+        string arenaName;
+        bool arenaLoaded;
 
         SpriteFont fontBig, fontSmall;
 
         /// <summary>
         /// Creates contents for an overlay dialog displaying arena over.
         /// </summary>
-        public ArenaOverOverlayDialogData()
-            : base(new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() { 
-                AssaultWing.Instance.PlayNextArena();
-                AssaultWing.Instance.StartArena();
-            }))
+        /// <param name="arenaName">Name of the next arena.</param>
+        public ArenaOverOverlayDialogData(string arenaName)
+            : base()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            fontBig = data.GetFont(FontName.MenuFontBig);
-            fontSmall = data.GetFont(FontName.MenuFontSmall);
+            this.arenaName = arenaName;
 
-            // Find out the winner
+            Actions = new TriggeredCallback[] 
+            {
+                new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() 
+                {
+                    if (arenaLoaded)
+                        AssaultWing.Instance.StartArena();
+                })
+            };
+
+            // Find out the winner.
             arenaWinner = "No-one";
             data.ForEachPlayer(delegate(Player player)
             {
                 if (player.Lives > 0)
                     arenaWinner = player.Name;
             });
+
+            // Start loading the next arena.
+            data.ProgressBar.HorizontalAlignment = HorizontalAlignment.Center;
+            data.ProgressBar.VerticalAlignment = VerticalAlignment.Top;
+            data.ProgressBar.CustomAlignment = new Vector2(0, 270);
+            data.ProgressBar.Task = AssaultWing.Instance.PlayNextArena;
+            data.ProgressBar.SetSubtaskCount(10); // just something until DataEngine sets the real value
+            data.ProgressBar.StartTask();
+        }
+
+        /// <summary>
+        /// Updates the overlay dialog contents and acts on triggered callbacks.
+        /// </summary>
+        public override void Update()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
+            // Update our status based on the progress of arena loading.
+            if (!arenaLoaded && data.ProgressBar.TaskCompleted)
+            {
+                data.ProgressBar.FinishTask();
+                arenaLoaded = true;
+            }
+
+            base.Update();
         }
 
         /// <summary>
@@ -50,6 +83,8 @@ namespace AW2.Graphics
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
+            // Draw static text.
             Vector2 textPos = new Vector2(100, 50);
             spriteBatch.DrawString(fontBig, arenaWinner, textPos, Color.White);
             textPos += new Vector2(0, fontBig.LineSpacing);
@@ -78,8 +113,39 @@ namespace AW2.Graphics
                 textPos += new Vector2(0, fontSmall.LineSpacing);
             }
 
-            textPos += new Vector2(0, fontSmall.LineSpacing);
-            spriteBatch.DrawString(fontSmall, "Loading next arena... (when you press Enter)", textPos, Color.White);
+            // Draw arena loading text and possibly the progress bar.
+            Vector2 loadTextPos = new Vector2(100, 240);
+            if (!arenaLoaded)
+            {
+                spriteBatch.DrawString(fontSmall, "Loading next arena: " + arenaName, loadTextPos, Color.White);
+                spriteBatch.End();
+                data.ProgressBar.Draw(spriteBatch);
+                spriteBatch.Begin();
+            }
+            else
+            {
+                spriteBatch.DrawString(fontSmall, "Arena loaded: " + arenaName, loadTextPos, Color.White);
+                loadTextPos += new Vector2(0, fontSmall.LineSpacing);
+                spriteBatch.DrawString(fontSmall, "Press Enter to begin", loadTextPos, Color.White);
+            }
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            fontBig = data.GetFont(FontName.MenuFontBig);
+            fontSmall = data.GetFont(FontName.MenuFontSmall);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // Our fonts are disposed by the graphics engine.
         }
     }
 }

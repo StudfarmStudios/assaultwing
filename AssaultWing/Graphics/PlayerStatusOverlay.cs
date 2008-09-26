@@ -38,13 +38,6 @@ namespace AW2.Graphics
             : base(HorizontalAlignment.Center, VerticalAlignment.Top)
         {
             this.player = player;
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            statusDisplayTexture = data.GetTexture(TextureName.StatusDisplay);
-            barShipTexture = data.GetTexture(TextureName.BarShip);
-            iconShipTexture = data.GetTexture(TextureName.IconShipsLeft);
-            barMainTexture = data.GetTexture(TextureName.BarMain);
-            iconWeaponLoadTexture = data.GetTexture(TextureName.IconWeaponLoad);
-            barSpecialTexture = data.GetTexture(TextureName.BarSpecial);
         }
 
         /// <summary>
@@ -165,6 +158,28 @@ namespace AW2.Graphics
                         scale, SpriteEffects.None, 0);
                 }
             }
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            statusDisplayTexture = data.GetTexture(TextureName.StatusDisplay);
+            barShipTexture = data.GetTexture(TextureName.BarShip);
+            iconShipTexture = data.GetTexture(TextureName.IconShipsLeft);
+            barMainTexture = data.GetTexture(TextureName.BarMain);
+            iconWeaponLoadTexture = data.GetTexture(TextureName.IconWeaponLoad);
+            barSpecialTexture = data.GetTexture(TextureName.BarSpecial);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // Our textures are disposed by the graphics engine.
         }
     }
 }

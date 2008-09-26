@@ -22,10 +22,6 @@ namespace AW2.Graphics
         public GameOverOverlayDialogData()
             : base(new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() { AssaultWing.Instance.ShowMenu(); }))
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            fontHuge = data.GetFont(FontName.MenuFontHuge);
-            fontBig = data.GetFont(FontName.MenuFontBig);
-            fontSmall = data.GetFont(FontName.MenuFontSmall);
         }
 
         /// <summary>
@@ -70,6 +66,25 @@ namespace AW2.Graphics
             textCenter += new Vector2(0, 2 * fontSmall.LineSpacing);
             textSize = fontSmall.MeasureString("Press Enter to return to Main Menu");
             spriteBatch.DrawString(fontSmall, "Press Enter to return to Main Menu", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            fontHuge = data.GetFont(FontName.MenuFontHuge);
+            fontBig = data.GetFont(FontName.MenuFontBig);
+            fontSmall = data.GetFont(FontName.MenuFontSmall);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // Our textures are disposed by the graphics engine.
         }
     }
 }

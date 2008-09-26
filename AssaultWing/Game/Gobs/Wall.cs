@@ -149,19 +149,41 @@ namespace AW2.Game.Gobs
         public Wall(string typeName)
             : base(typeName)
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             this.vertexData = null;
             this.indexData = null;
             this.triangleCount = 0;
             this.polygons = null;
-            this.effect = new BasicEffect(gfx, null);
-            this.silhouetteEffect = new BasicEffect(gfx, null);
-            this.vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             this.boundingBox = new BoundingBox();
             movable = false;
         }
 
         #region Methods related to gobs' functionality in the game world
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            effect = new BasicEffect(gfx, null);
+            silhouetteEffect = new BasicEffect(gfx, null);
+            vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
+            texture = data.GetTexture(textureName);
+            base.LoadContent();
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            effect.Dispose();
+            silhouetteEffect.Dispose();
+            vertexDeclaration.Dispose();
+            // 'texture' will be disposed by the graphics engine.
+            base.UnloadContent();
+        }
 
         /// <summary>
         /// Activates the gob, i.e. performs an initialisation rite.
@@ -170,6 +192,8 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             InitializeIndexMap();
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            data.ProgressBar.SubtaskCompleted();
         }
 
         /// <summary>
@@ -244,10 +268,8 @@ namespace AW2.Game.Gobs
         /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
         protected override void SetRuntimeState(Gob runtimeState)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             base.SetRuntimeState(runtimeState);
             triangleCount = indexData.Length / 3;
-            texture = data.GetTexture(textureName);
             boundingBox = BoundingBox.CreateFromPoints(
                 Array.ConvertAll<VertexPositionNormalTexture, Vector3>(vertexData,
                 delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));

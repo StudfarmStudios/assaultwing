@@ -37,6 +37,11 @@ namespace AW2.Game
         /// <returns><c>true</c> if there is a 3D model with the name, <c>false</c> otherwise.</returns>
         bool HasModel(string name);
 
+        /// <summary>
+        /// Disposes of all 3D models.
+        /// </summary>
+        void ClearModels();
+
         #endregion
 
         #region textures
@@ -99,6 +104,11 @@ namespace AW2.Game
         /// <returns>The font.</returns>
         SpriteFont GetFont(FontName name);
 
+        /// <summary>
+        /// Disposes of all fonts.
+        /// </summary>
+        void ClearFonts();
+
         #endregion fonts
 
         #region arenas
@@ -158,15 +168,23 @@ namespace AW2.Game
         bool HasArena(string name);
 
         /// <summary>
-        /// Initialises the data engine with the next arena in the playlist.
+        /// Prepares the next arena in the playlist ready for playing.
         /// </summary>
+        /// When the playing really should start, call <c>StartArena</c>.
         /// <returns><b>false</b> if the initialisation succeeded,
         /// <b>true</b> otherwise.</returns>
         bool NextArena();
 
         /// <summary>
-        /// Initialises the game data from a previously stored arena.
+        /// Sets a previously prepared arena as the active one.
         /// </summary>
+        /// Call this method right before commencing play in the prepared arena.
+        void StartArena();
+
+        /// <summary>
+        /// Prepares the game data for playing an arena.
+        /// </summary>
+        /// When the playing really should start, call <c>StartArena</c>.
         /// <param name="name">The name of the arena.</param>
         void InitializeFromArena(string name);
 
@@ -366,6 +384,13 @@ namespace AW2.Game
         #region miscellaneous
 
         /// <summary>
+        /// The progress bar.
+        /// </summary>
+        /// Anybody can tell the progress bar that their tasks are completed.
+        /// This way the progress bar knows how its running task is progressing.
+        ProgressBar ProgressBar { get; }
+
+        /// <summary>
         /// Custom operations to perform once at the end of a frame.
         /// </summary>
         /// This event is called by the data engine after all updates of a frame.
@@ -384,6 +409,22 @@ namespace AW2.Game
         /// Commits pending operations. This method should be called at the end of each frame.
         /// </summary>
         void CommitPending();
+
+        /// <summary>
+        /// Clears all data about the state of the game session.
+        /// </summary>
+        /// Call this method after the game session has ended.
+        void ClearGameState();
+
+        /// <summary>
+        /// Loads content needed by the currently active arena.
+        /// </summary>
+        void LoadContent();
+
+        /// <summary>
+        /// Unloads content needed by the currently active arena.
+        /// </summary>
+        void UnloadContent();
 
         #endregion
     }

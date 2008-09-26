@@ -637,6 +637,20 @@ namespace AW2.Game
         #region Methods related to gobs' functionality in the game world
 
         /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public virtual void LoadContent()
+        {
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public virtual void UnloadContent()
+        {
+        }
+
+        /// <summary>
         /// Activates the gob, i.e. performs an initialisation rite.
         /// </summary>
         /// DataEngine will call this method to make the gob do necessary 
@@ -645,6 +659,7 @@ namespace AW2.Game
         public virtual void Activate()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            LoadContent();
 
             // Create birth gobs.
             foreach (string gobType in birthGobTypes)
@@ -708,6 +723,7 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             foreach (ParticleEngine exhaustEngine in exhaustEngines)
                 data.RemoveParticleEngine(exhaustEngine);
+            UnloadContent();
         }
 
         /// <summary>

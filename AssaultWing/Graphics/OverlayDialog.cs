@@ -67,7 +67,9 @@ namespace AW2.Graphics
 
             if (keys.IsKeyDown(Keys.L) && keys.IsKeyDown(Keys.E))
             {
-                AssaultWing.Instance.FinishArena();
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                if (!data.ProgressBar.TaskRunning)
+                    AssaultWing.Instance.FinishArena();
             }
 #endif
 

@@ -113,6 +113,21 @@ namespace AW2.Graphics
         OverlayDialogBackground,
 
         /// <summary>
+        /// Progress bar background.
+        /// </summary>
+        ProgressBarBackground,
+
+        /// <summary>
+        /// Progress bar filling.
+        /// </summary>
+        ProgressBarFill,
+
+        /// <summary>
+        /// Progress bar flow effect.
+        /// </summary>
+        ProgressBarFlow,
+
+        /// <summary>
         /// Menu system background.
         /// </summary>
         MenuBackground,
@@ -264,6 +279,9 @@ namespace AW2.Graphics
                 "gui_playerinfo_white_ball", // HACK: Ship sprite on radar display
                 "gui_console_bg",
                 "ingame_dialog",
+                "menu_progressbar_bg",
+                "menu_progressbar_fill",
+                "menu_progressbar_advancer",
                 "menu_rustywall_bg",
                 "menu_main_bg",
                 "menu_main_cursor",
@@ -314,29 +332,7 @@ namespace AW2.Graphics
                         data.AddTexture(textureName, texture);
                 }
             });
-            
-            /*
-             * Arenas Are loaded on
-            // Loop through arenas and load all the 3D models and textures they need.
-            data.ForEachArena(delegate(Arena arenaTemplate)
-            {
-                foreach (Gob gob in arenaTemplate.Gobs)
-                    foreach (string modelName in gob.ModelNames)
-                    {
-                        if (data.HasModel(modelName)) continue;
-                        Model model = LoadModel(modelName);
-                        if (model != null)
-                            data.AddModel(modelName, model);
-                    }
-                foreach (string textureName in arenaTemplate.ParallaxNames) 
-                {
-                    if (data.HasTexture(textureName)) continue;
-                    Texture2D texture = LoadTexture(textureName);
-                    if (texture != null)
-                        data.AddTexture(textureName, texture);
-                }
-            });
-            */
+
             // Load all textures that each weapon needs.
             data.ForEachTypeTemplate<Weapon>(delegate(Weapon weapon)
             {
@@ -360,6 +356,19 @@ namespace AW2.Graphics
             {
                 data.AddFont(font, LoadFont(fontNames[(int)font]));
             }
+
+            // Load arena related content if an arena is being played right now.
+            if (data.Arena != null)
+            {
+                LoadAreaGobs(data.Arena);
+                LoadAreatextures(data.Arena);
+            }
+
+            // Propagate LoadContent to other components that are known to
+            // contain references to graphics content.
+            data.ForEachViewport(delegate(AWViewport viewport) { viewport.LoadContent(); });
+            data.ForEachGob(delegate(Gob gob) { gob.LoadContent(); });
+            data.LoadContent();
         }
 
         public void LoadAreaGobs(Arena arenaTemplate)
@@ -411,7 +420,15 @@ namespace AW2.Graphics
                 spriteBatch = null;
             }
             data.ClearTextures();
-            // TODO: Clear other graphical data, too.
+            data.ClearModels();
+            data.ClearFonts();
+
+            // Propagate UnloadContent to other components that are known to
+            // contain references to graphics content.
+            data.ForEachViewport(delegate(AWViewport viewport) { viewport.UnloadContent(); });
+            data.ForEachGob(delegate(Gob gob) { gob.UnloadContent(); });
+            data.UnloadContent();
+
             base.UnloadContent();
         }
 
@@ -595,6 +612,7 @@ namespace AW2.Graphics
                 Rectangle onScreen = new Rectangle(onScreenX1, onScreenY1,
                     onScreenX2 - onScreenX1, onScreenY2 - onScreenY1);
                 AWViewport viewport = new PlayerViewport(player, onScreen);
+                viewport.LoadContent();
                 data.AddViewport(viewport);
                 ++playerI;
             });

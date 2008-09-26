@@ -35,9 +35,6 @@ namespace AW2.Graphics
             : base(HorizontalAlignment.Left, VerticalAlignment.Bottom)
         {
             this.player = player;
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            chatBoxTexture = data.GetTexture(TextureName.ChatBox);
-            chatBoxFont = data.GetFont(FontName.Overlay);
         }
 
         /// <summary>
@@ -58,6 +55,24 @@ namespace AW2.Graphics
             Vector2 messagePos = new Vector2(10, chatBoxTexture.Height - chatBoxFont.LineSpacing);
             for (int i = player.Messages.Count - 1; i >= 0 && messagePos.Y > 16; --i, messagePos.Y -= chatBoxFont.LineSpacing)
                 spriteBatch.DrawString(chatBoxFont, player.Messages[i], messagePos, Color.White);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            chatBoxTexture = data.GetTexture(TextureName.ChatBox);
+            chatBoxFont = data.GetFont(FontName.Overlay);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // Our textures and fonts are disposed by the graphics engine.
         }
     }
 }

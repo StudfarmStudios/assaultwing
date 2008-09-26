@@ -18,9 +18,13 @@ namespace AW2.Graphics
         TriggeredCallback[] actions;
 
         /// <summary>
+        /// The triggered callbacks for the dialog.
+        /// </summary>
+        protected TriggeredCallback[] Actions { set { actions = value; } }
+
+        /// <summary>
         /// Creates content and callbacks for an overlay dialog.
         /// </summary>
-        /// <param name="actions">The triggered callbacks for the dialog.</param>
         public OverlayDialogData(params TriggeredCallback[] actions)
             : base(HorizontalAlignment.Center, VerticalAlignment.Center)
         {
@@ -30,7 +34,7 @@ namespace AW2.Graphics
         /// <summary>
         /// Updates the overlay dialog contents and acts on triggered callbacks.
         /// </summary>
-        public void Update()
+        public virtual void Update()
         {
             foreach (TriggeredCallback action in actions)
                 action.Update();

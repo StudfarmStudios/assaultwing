@@ -28,8 +28,8 @@ namespace AW2.Graphics
         /// </summary>
         public AWViewport()
         {
-            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             overlayComponents = new List<OverlayComponent>();
+            LoadContent();
         }
 
         /// <summary>
@@ -72,6 +72,26 @@ namespace AW2.Graphics
         {
             foreach (OverlayComponent component in overlayComponents)
                 component.Draw(spriteBatch);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            foreach (OverlayComponent component in overlayComponents)
+                component.LoadContent();
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public void UnloadContent()
+        {
+            foreach (OverlayComponent component in overlayComponents)
+                component.UnloadContent();
+            spriteBatch.Dispose();
         }
     }
 

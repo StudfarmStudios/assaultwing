@@ -82,7 +82,21 @@ namespace AW2.Menu
         /// Is the progress bar visible.
         /// </summary>
         /// <seealso cref="DataEngine.ProgressBar"/>
-        public bool IsProgressBarVisible { get { return showProgressBar; } set { showProgressBar = value; } }
+        public bool IsProgressBarVisible
+        {
+            get { return showProgressBar; }
+            set
+            {
+                showProgressBar = value;
+                if (value)
+                {
+                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                    data.ProgressBar.HorizontalAlignment = HorizontalAlignment.Center;
+                    data.ProgressBar.VerticalAlignment = VerticalAlignment.Bottom;
+                    data.ProgressBar.CustomAlignment = new Vector2(0, -2);
+                }
+            }
+        }
 
         /// <summary>
         /// Creates a menu system.
@@ -129,8 +143,12 @@ namespace AW2.Menu
             backgroundTexture = data.GetTexture(TextureName.MenuBackground);
             smallFont = data.GetFont(FontName.MenuFontSmall);
 
+            // Propagate LoadContent to other menu components that are known to
+            // contain references to graphics content.
             foreach (MenuComponent component in components)
                 component.LoadContent();
+            data.ProgressBar.LoadContent();
+
             base.LoadContent();
         }
 
@@ -140,12 +158,18 @@ namespace AW2.Menu
         /// </summary>
         protected override void UnloadContent()
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             spriteBatch.Dispose();
             vertexDeclaration.Dispose();
             effect.Dispose();
             // The textures and font we reference will be disposed by GraphicsEngine.
+
+            // Propagate LoadContent to other menu components that are known to
+            // contain references to graphics content.
             foreach (MenuComponent component in components)
                 component.UnloadContent();
+            data.ProgressBar.UnloadContent();
+
             base.UnloadContent();
         }
 
@@ -277,14 +301,8 @@ namespace AW2.Menu
             // Draw progress bar if wanted.
             if (showProgressBar)
             {
-                // TODO: The real progress bar.
-                spriteBatch.Begin();
-                string helpText = "[Coming soon: a progress bar!]";
-                Vector2 helpTextPos = new Vector2(
-                    ((float)viewWidth - smallFont.MeasureString(helpText).X) / 2,
-                    viewHeight - smallFont.LineSpacing);
-                spriteBatch.DrawString(smallFont, helpText, helpTextPos, Color.White);
-                spriteBatch.End();
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                data.ProgressBar.Draw(spriteBatch);
             }
 
             // Draw static text.

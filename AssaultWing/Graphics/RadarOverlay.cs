@@ -34,9 +34,6 @@ namespace AW2.Graphics
             : base(HorizontalAlignment.Left, VerticalAlignment.Top)
         {
             this.player = player;
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            radarDisplayTexture = data.GetTexture(TextureName.Radar);
-            shipOnRadarTexture = data.GetTexture(TextureName.RadarShip);
         }
 
         /// <summary>
@@ -68,6 +65,24 @@ namespace AW2.Graphics
                 spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, Color.White, 0,
                     shipOnRadarTextureCenter, 1, SpriteEffects.None, 0);
             });
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            radarDisplayTexture = data.GetTexture(TextureName.Radar);
+            shipOnRadarTexture = data.GetTexture(TextureName.RadarShip);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // Our textures and fonts are disposed by the graphics engine.
         }
     }
 }

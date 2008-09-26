@@ -101,12 +101,6 @@ namespace AW2.Graphics
             : base(HorizontalAlignment.Right, VerticalAlignment.Center)
         {
             this.player = player;
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            bonusBackgroundTexture = data.GetTexture(TextureName.BonusBackground);
-            bonusIconWeapon1LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon1LoadTime);
-            bonusIconWeapon2LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon2LoadTime);
-            bonusDurationTexture = data.GetTexture(TextureName.BonusDuration);
-            bonusFont = data.GetFont(FontName.Overlay);
 
             bonusEntryTimeins = new PlayerBonusItems<TimeSpan>();
             bonusEntryPosAdjustments = new PlayerBonusItems<Vector2>();
@@ -316,6 +310,27 @@ namespace AW2.Graphics
             textPos.X = (float)Math.Round(textPos.X);
             textPos.Y = (float)Math.Round(textPos.Y);
             spriteBatch.DrawString(bonusFont, bonusText, textPos, Color.White);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            bonusBackgroundTexture = data.GetTexture(TextureName.BonusBackground);
+            bonusIconWeapon1LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon1LoadTime);
+            bonusIconWeapon2LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon2LoadTime);
+            bonusDurationTexture = data.GetTexture(TextureName.BonusDuration);
+            bonusFont = data.GetFont(FontName.Overlay);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // Our textures and fonts are disposed by the graphics engine.
         }
     }
 }

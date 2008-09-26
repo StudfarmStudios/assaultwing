@@ -70,13 +70,6 @@ namespace AW2
         GameTime gameTime;
         Rectangle clientBoundsMin;
 
-        /// <summary>
-        /// Is the graphics device reserved by a background thread.
-        /// Refer to this field <b>only</b> via property <c>GraphicsDeviceReserved</c>
-        /// in order to maintain thread locks.
-        /// </summary>
-        bool graphicsDeviceReserved;
-
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
         Control frameRunControl;
@@ -305,6 +298,9 @@ namespace AW2
         /// </summary>
         public void StartArena()
         {
+            dataEngine.StartArena();
+            logicEngine.Reset();
+            physicsEngine.Reset();
             graphicsEngine.RearrangeViewports();
             ChangeState(GameState.Gameplay);
             soundEngine.PlayMusic(dataEngine.Arena);
@@ -315,8 +311,9 @@ namespace AW2
         /// </summary>
         public void FinishArena()
         {
-            if (dataEngine.getNextPlayableArena() != null)
-                ShowDialog(new ArenaOverOverlayDialogData());
+            Arena nextArena = dataEngine.getNextPlayableArena();
+            if (nextArena != null)
+                ShowDialog(new ArenaOverOverlayDialogData(nextArena.Name));
             else
                 ShowDialog(new GameOverOverlayDialogData());
         }
@@ -338,8 +335,6 @@ namespace AW2
             }
             if (dataEngine.NextArena())
                 throw new InvalidOperationException("There is no next arena to play");
-            logicEngine.Reset();
-            physicsEngine.Reset();
         }
 
         /// <summary>
@@ -366,6 +361,7 @@ namespace AW2
         public void ShowMenu()
         {
             soundEngine.StopMusic();
+            dataEngine.ClearGameState();
             menuEngine.ActivateComponent(MenuComponentType.Main);
             ChangeState(GameState.Menu);
         }

@@ -59,6 +59,23 @@ namespace AW2.Graphics
     {
         HorizontalAlignment horizontalAlignment;
         VerticalAlignment verticalAlignment;
+        Vector2 customAlignment;
+
+        /// <summary>
+        /// Horizontal alignment of the component in the backbuffer viewport.
+        /// </summary>
+        public HorizontalAlignment HorizontalAlignment { get { return horizontalAlignment; } set { horizontalAlignment = value; } }
+
+        /// <summary>
+        /// Vertical alignment of the component in the backbuffer viewport.
+        /// </summary>
+        public VerticalAlignment VerticalAlignment { get { return verticalAlignment; } set { verticalAlignment = value; } }
+
+        /// <summary>
+        /// Alignment adjustment; added to the coordinates obtained by the chosen alignment.
+        /// </summary>
+        /// Initially set to Vector2.Zero, which gives no adjustment to the chosen alignment.
+        public Vector2 CustomAlignment { get { return customAlignment; } set { customAlignment = value; } }
 
         /// <summary>
         /// The dimensions of the component in pixels.
@@ -76,6 +93,7 @@ namespace AW2.Graphics
         {
             horizontalAlignment = horizontal;
             verticalAlignment = vertical;
+            LoadContent();
         }
 
         /// <summary>
@@ -112,6 +130,8 @@ namespace AW2.Graphics
                     newViewport.Y += Math.Max(0, oldViewport.Height - dimensions.Y);
                     break;
             }
+            newViewport.X += (int)customAlignment.X;
+            newViewport.Y += (int)customAlignment.Y;
             newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
             newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
             gfx.Viewport = newViewport;
@@ -129,5 +149,15 @@ namespace AW2.Graphics
         /// to have been called and <c>End</c> is assumed to be called after this
         /// method returns.</param>
         protected abstract void DrawContent(SpriteBatch spriteBatch);
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public abstract void LoadContent();
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public abstract void UnloadContent();
     }
 }

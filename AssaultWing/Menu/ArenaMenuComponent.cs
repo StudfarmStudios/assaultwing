@@ -99,11 +99,10 @@ namespace AW2.Menu
             pos = new Vector2(1220, 698);
 
             arenaInfos = new List<ArenaInfo>();
-            data.ForEachArena(delegate(Arena arena)
+            foreach (String arenaName in data.ArenaPlaylist)
             {
-                if (arena.Name != "dummyarena")
-                    arenaInfos.Add(new ArenaInfo(arena.Name));
-            });
+                arenaInfos.Add(new ArenaInfo(arenaName));
+            }
 
             cursorFade = new Curve();
             cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));

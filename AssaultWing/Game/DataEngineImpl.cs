@@ -289,7 +289,7 @@ namespace AW2.Game
         /// or -1 if there is no current arena.
         /// </summary>
         public int ArenaPlaylistI { get { return arenaPlaylistI; } set { arenaPlaylistI = value; } }
-
+        /*
         /// <summary>
         /// Stores an arena by name, overwriting any arena previously stored by the same name.
         /// </summary>
@@ -301,7 +301,7 @@ namespace AW2.Game
                 Log.Write("Overwriting arena " + name);
             arenas[name] = arena;
         }
-
+        */
         /// <summary>
         /// Returns a named arena.
         /// </summary>
@@ -309,17 +309,24 @@ namespace AW2.Game
         /// <returns>The arena.</returns>
         public Arena GetArena(string name)
         {
-            Arena arena;
+            if(preparedArena==null || !preparedArena.Name.Equals(name))
+            {
+                
+                TypeLoader arenaLoader = new TypeLoader(typeof(Arena), "arenas");
+                preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes("Arena#" + name + ".xml");
+            }
+            /*TODO: Write error handling*/
+            /*
             if (!arenas.TryGetValue(name, out arena))
             {
                 // Soft error handling; assign some default value and continue with the game.
                 Log.Write("Missing arena " + name);
                 if (!arenas.TryGetValue("dummyarena", out arena))
                     throw new Exception("Missing arenas " + name + " and fallback dummyarena");
-            }
-            return arena;
+            }*/
+            return preparedArena;
         }
-
+        /*
         /// <summary>
         /// Tells if a name corresponds to any arena.
         /// </summary>
@@ -329,22 +336,19 @@ namespace AW2.Game
         {
             return arenas.ContainsKey(name);
         }
-
-        public Arena getNextPlayableArena()
+        */
+        public Arena GetNextPlayableArena()
         {
             if ((arenaPlaylistI+1) >= arenaPlaylist.Count)
                 return null;
             else
                 return GetArena(arenaPlaylist[arenaPlaylistI+1]);     
         }
-        public Arena getCurrentArena()
+        public Arena GetLoadedArena()
         {
-            if ((arenaPlaylistI) >= arenaPlaylist.Count)
-                return null;
-            else
-                return GetArena(arenaPlaylist[arenaPlaylistI]);
+            return preparedArena;
         }
-
+        
         /// <summary>
         /// Prepares the next arena in the playlist ready for playing.
         /// </summary>
@@ -360,6 +364,17 @@ namespace AW2.Game
             }
             InitializeFromArena(arenaPlaylist[arenaPlaylistI]);
             return false;
+        }
+
+        public void ClearArenaData()
+        {
+            gobs.Clear();
+            particleEngines.Clear();
+            weapons.Clear();
+            addedGobs.Clear();
+            removedGobs.Clear();
+            activeArena.Gobs.Clear();
+            preparedArena = null;
         }
 
         /// <summary>
@@ -392,7 +407,7 @@ namespace AW2.Game
             // have really been added to field 'gobs'.
             CustomOperations += delegate(object obj) { RefreshArenaRadarSilhouette(); };
         }
-
+        
         /// <summary>
         /// Prepares the game data for playing an arena.
         /// </summary>
@@ -428,7 +443,7 @@ namespace AW2.Game
             foreach (Arena arena in arenas.Values)
                 action(arena);
         }
-
+        
         #endregion arenas
 
         #region gobs

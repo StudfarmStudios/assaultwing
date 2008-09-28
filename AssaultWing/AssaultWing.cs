@@ -311,7 +311,7 @@ namespace AW2
         /// </summary>
         public void FinishArena()
         {
-            Arena nextArena = dataEngine.getNextPlayableArena();
+            Arena nextArena = dataEngine.GetNextPlayableArena();
             if (nextArena != null)
                 ShowDialog(new ArenaOverOverlayDialogData(nextArena.Name));
             else
@@ -326,8 +326,8 @@ namespace AW2
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
         public void PlayNextArena()
-        { // TODO: Rename this method to PrepareNextArena()
-            Arena arenaTemplate = dataEngine.getNextPlayableArena();
+        {
+            Arena arenaTemplate = dataEngine.GetNextPlayableArena();
             if (arenaTemplate != null)
             {
                 graphicsEngine.LoadAreaGobs(arenaTemplate);
@@ -511,14 +511,6 @@ namespace AW2
             dataEngine.AddPlayer(player2);
             graphicsEngine.RearrangeViewports();
 
-            List<string> arenaNames = new List<string>();
-            dataEngine.ForEachArena(delegate(Arena arena) 
-            {
-                // HACK to avoid playing the crummy default arena.
-                if (arena.Name != "dummyarena")
-                    arenaNames.Add(arena.Name); 
-            });
-            dataEngine.ArenaPlaylist = arenaNames;
             ChangeState(GameState.Menu);
 
             base.BeginRun();

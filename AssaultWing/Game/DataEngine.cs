@@ -145,28 +145,28 @@ namespace AW2.Game
         /// or -1 if there is no current arena.
         /// </summary>
         int ArenaPlaylistI { get; set; }
-
+        /*
         /// <summary>
         /// Stores an arena by name, overwriting any arena previously stored by the same name.
         /// </summary>
         /// <param name="name">The name of the arena.</param>
         /// <param name="arena">The arena.</param>
         void AddArena(string name, Arena arena);
-
+        */
         /// <summary>
         /// Returns a named arena.
         /// </summary>
         /// <param name="name">The name of the arena.</param>
         /// <returns>The arena.</returns>
         Arena GetArena(string name);
-
+        /*
         /// <summary>
         /// Tells if a name corresponds to any arena.
         /// </summary>
         /// <param name="name">The name of the arena.</param>
         /// <returns><c>true</c> if there is a arena with the name, <c>false</c> otherwise.</returns>
         bool HasArena(string name);
-
+        */
         /// <summary>
         /// Prepares the next arena in the playlist ready for playing.
         /// </summary>
@@ -187,13 +187,13 @@ namespace AW2.Game
         /// When the playing really should start, call <c>StartArena</c>.
         /// <param name="name">The name of the arena.</param>
         void InitializeFromArena(string name);
-
+        /*
         /// <summary>
         /// Performs the specified action on each arena.
         /// </summary>
         /// <param name="action">The Action delegate to perform on each arena.</param>
         void ForEachArena(Action<Arena> action);
-
+        */
         #endregion
 
         #region gobs

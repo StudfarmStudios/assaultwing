@@ -43,18 +43,23 @@ namespace AW2.Game
             {
                 // Note: DirectoryInfo.GetFiles("*.xml") also includes suffixes
                 // that extend "xml", for example "blabla.xml~".
-                String name = f. Name;
-                if (!name.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase))
-                    continue;
-                long size = f.Length;
-                DateTime creationTime = f.CreationTime;
-                Log.Write("Found " + baseClass.Name + " definition " + name + " " + size + "B " + creationTime);
-
-                defList.Add(f);
+                
+                if(FindTypeDefinition(f)!=null)
+                    defList.Add(f);
             }
             return defList;
         }
 
+        private FileInfo FindTypeDefinition(FileInfo f)
+        {
+            String name = f.Name;
+            if (!name.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase))
+                return null;
+            long size = f.Length;
+            DateTime creationTime = f.CreationTime;
+            Log.Write("Found " + baseClass.Name + " definition " + name + " " + size + "B " + creationTime);
+            return f;
+        }
         /// <summary>
         /// Returns the name of a subclass of 'baseClass' based on the name of
         /// the type definition file.
@@ -90,6 +95,23 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Loads and returns specified user-defined types.
+        /// </summary>
+        /// <returns>The loaded types.</returns>
+        public object LoadSpecifiedTypes(String fileName)
+        {
+            Log.Write("fileName:" + fileName);
+            FileInfo[] fil =definitionDir.GetFiles(fileName);
+            if (fil.Length == 1)
+            {
+                SaveTemplates();
+                return ParseAndLoadFile(FindTypeDefinition(fil[0]));
+            }
+            else
+                throw new InvalidFilterCriteriaException("File name was incorrect");
+        }
+
+        /// <summary>
         /// Creates type file templates for each subclass of 'baseClass'.
         /// </summary>
         private void SaveTemplates()
@@ -108,24 +130,36 @@ namespace AW2.Game
                 xmlWriter.Close();
             }
         }
+        /// <summary>
+        /// Creates type file templates for each subclass of 'baseClass'.
+        /// </summary>
 
         private object[] ParseAndLoad(List<FileInfo> list)
         {
             Type listType = typeof(List<>).MakeGenericType(baseClass);
             IList types = (IList)Activator.CreateInstance(listType);
             foreach (FileInfo fi in list)
-            {
-                Log.Write("Loading type " + parseType(fi) + " of subclass " + parseSubclass(fi));
-                FileStream fs = new FileStream(fi.FullName, FileMode.Open);
-                System.Xml.XmlReader xmlReader = Serialization.GetXmlReader(fs);
-                Type limitationAttribute = typeof(TypeParameterAttribute);
-                object template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type", 
-                    baseClass, limitationAttribute);
-                xmlReader.Close();
-                types.Add(template);
+            {                
+                types.Add(ParseAndLoadFile(fi));
             }
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
             return (object[])listType.InvokeMember("ToArray", flags, null, types, new Object[] { });
+        }
+        /// <summary>
+        /// Creates type file template for subclass of 'baseClass'.
+        /// </summary>
+
+        private object ParseAndLoadFile(FileInfo fi)
+        {
+            Log.Write("Loading type " + parseType(fi) + " of subclass " + parseSubclass(fi));
+            FileStream fs = new FileStream(fi.FullName, FileMode.Open);
+            System.Xml.XmlReader xmlReader = Serialization.GetXmlReader(fs);
+            Type limitationAttribute = typeof(TypeParameterAttribute);
+            object template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type",
+                baseClass, limitationAttribute);
+            xmlReader.Close();
+            fs.Close();
+            return template;
         }
     }
 }

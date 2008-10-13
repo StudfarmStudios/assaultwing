@@ -147,11 +147,6 @@ namespace AW2.Graphics
         Vector2 lookAt;
 
         /// <summary>
-        /// Last returned projection matrix.
-        /// </summary>
-        protected Matrix projection;
-
-        /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport is viewing.
         /// </summary>
         Vector2 worldAreaMin;
@@ -179,7 +174,6 @@ namespace AW2.Graphics
             viewport.MinDepth = 0f;
             viewport.MaxDepth = 1f;
             lookAt = Vector2.Zero;
-            projection = Matrix.CreateOrthographic(viewport.Width, viewport.Height, 1f, 10000f);
             worldAreaMin = Vector2.Zero;
             worldAreaMax = new Vector2(viewport.Width, viewport.Height);
 
@@ -234,7 +228,7 @@ namespace AW2.Graphics
                     lookAt = ship.Pos;
                 int sign = Helpers.RandomHelper.GetRandomInt(2) * 2 - 1; // -1 or +1
                 float viewShake = sign * player.Shake;
-                return Matrix.CreateLookAt(new Vector3(lookAt, 500f), new Vector3(lookAt, 0f),
+                return Matrix.CreateLookAt(new Vector3(lookAt, 1000), new Vector3(lookAt, 0),
                     new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),
                                 (float)Math.Sin(MathHelper.PiOver2 + viewShake),
                                 0));
@@ -297,33 +291,72 @@ namespace AW2.Graphics
             gfx.Viewport = viewport;
             Matrix view = ViewMatrix;
 
-            // 2D graphics
-            data.Arena.DrawParallaxes(spriteBatch, WorldAreaMin);
-            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-
-            // Restore renderstate for 3D graphics.
-            gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
-            gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
-            gfx.RenderState.DepthBufferEnable = true;
-            gfx.RenderState.DepthBufferWriteEnable = true;
-
-            // 3D graphics
-            data.ForEachGob(delegate(Gob gob)
+            data.ForEachArenaLayer(delegate(ArenaLayer layer)
             {
-                if (!(gob is ParticleEngine)) // HACK: Should implement draw order to Gob
-                    gob.Draw(view, projection, spriteBatch);
-            });
-            spriteBatch.End();
+                gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
+                float layerScale = 1000 / (1000 - layer.Z);
+                Matrix projection = Matrix.CreateOrthographic(
+                    viewport.Width / layerScale, viewport.Height / layerScale,
+                    1f, 11000f);
 
-            // particles
-            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.BackToFront, SaveStateMode.SaveState);
-            data.ForEachParticleEngine(delegate(ParticleEngine pEng)
-            {
-                pEng.Draw(view, projection, spriteBatch);
-            });
-            spriteBatch.End();
+                // Layer parallax
+                if (layer.ParallaxName != null)
+                {
+                    spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                    Vector2 pos = WorldAreaMin * -layerScale;
+                    pos.Y = -pos.Y;
+                    Vector2 fillPos = new Vector2();
+                    Texture2D tex = data.GetTexture(layer.ParallaxName);
+                    int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
+                    pos.X = pos.X - mult * tex.Width;
+                    mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);
+                    pos.Y = pos.Y - mult * tex.Height;
 
-            // overlay components
+                    int loopX = (int)Math.Ceiling((-pos.X + viewport.Width) / tex.Width);
+                    int loopY = (int)Math.Ceiling((-pos.Y + viewport.Height) / tex.Height);
+                    fillPos.Y = pos.Y;
+                    for (int y = 0; y < loopY; y++)
+                    {
+                        fillPos.X = pos.X;
+                        for (int x = 0; x < loopX; x++)
+                        {
+                            spriteBatch.Draw(tex, fillPos, Color.White);
+                            fillPos.X += tex.Width;
+                        }
+                        fillPos.Y += tex.Height;
+                    }
+                    spriteBatch.End();
+                }
+
+                // Modify renderstate for 3D graphics.
+                gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
+                gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
+                gfx.RenderState.DepthBufferEnable = true;
+                gfx.RenderState.DepthBufferWriteEnable = true;
+
+                // 3D graphics
+                // We assume that all gobs but particle engines draw only 3D graphics
+                // and that particle engines don't draw any 3D graphics.
+                // To enforce this, we pass 'null' as the sprite batch.
+                foreach (Gob gob in layer.Gobs)
+                {
+                    if (!(gob is ParticleEngine))
+                        gob.Draw(view, projection, null);
+                }
+
+                // 2D graphics
+                // We assume that particle engines draw only 2D graphics and that
+                // no other gob draws any 2D graphics.
+                spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.BackToFront, SaveStateMode.None);
+                foreach (Gob gob in layer.Gobs)
+                {
+                    if (gob is ParticleEngine)
+                        gob.Draw(view, projection, spriteBatch);
+                }
+                spriteBatch.End();
+            });
+
+            // Overlay components
             base.Draw();
 
             Player.AttenuateShake(); // TODO: Handle this in Player.Update()

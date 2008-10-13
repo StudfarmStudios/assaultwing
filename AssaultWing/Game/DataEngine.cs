@@ -12,6 +12,10 @@ namespace AW2.Game
     /// <summary>
     /// Interface for game data.
     /// </summary>
+    /// Gobs in an arena are kept on several arena layers. One of the layers
+    /// is where the actual gameplay takes place. The rest are just for the looks.
+    /// The gameplay layer is the default for all gob-related actions.
+    /// To deal with some other layer, you need to know its layer index.
     interface DataEngine
     {
         #region models
@@ -196,6 +200,21 @@ namespace AW2.Game
         */
         #endregion
 
+        #region arena layers
+
+        /// <summary>
+        /// The index of the layer of the currently active arena where the gameplay takes place.
+        /// </summary>
+        int GameplayLayer { get; }
+
+        /// <summary>
+        /// Performs an action on each arena layer of the active arena.
+        /// </summary>
+        /// <param name="action">The Action delegate to perform on each arena layer.</param>
+        void ForEachArenaLayer(Action<ArenaLayer> action);
+
+        #endregion arena layers
+
         #region gobs
 
         /// <summary>
@@ -205,13 +224,20 @@ namespace AW2.Game
         void AddGob(Gob gob);
 
         /// <summary>
+        /// Adds a gob to an arena layer of the game.
+        /// </summary>
+        /// <param name="gob">The gob to add.</param>
+        /// <param name="layer">The arena layer index.</param>
+        void AddGob(Gob gob, int layer);
+
+        /// <summary>
         /// Removes a gob from the game.
         /// </summary>
         /// <param name="gob">The gob to remove.</param>
         void RemoveGob(Gob gob);
 
         /// <summary>
-        /// Performs the specified action on each gob.
+        /// Performs the specified action on each gob on the gameplay layer.
         /// </summary>
         /// <param name="action">The Action delegate to perform on each gob.</param>
         void ForEachGob(Action<Gob> action);
@@ -225,6 +251,13 @@ namespace AW2.Game
         /// </summary>
         /// <param name="pEng">Particle generator to add to the update and draw cycle</param>
         void AddParticleEngine(ParticleEngine pEng);
+
+        /// <summary>
+        /// Adds a particle generator to an arena layer of the game.
+        /// </summary>
+        /// <param name="pEng">Particle generator to add to the update and draw cycle</param>
+        /// <param name="layer">The arena layer index.</param>
+        void AddParticleEngine(ParticleEngine pEng, int layer);
 
         /// <summary>
         /// Removes a particle generator from the game.

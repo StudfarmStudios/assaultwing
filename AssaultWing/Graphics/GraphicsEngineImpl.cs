@@ -374,36 +374,38 @@ namespace AW2.Graphics
         public void LoadAreaGobs(Arena arenaTemplate)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            foreach (Gob gob in arenaTemplate.Gobs)
-            {
-                foreach (string modelName in gob.ModelNames)
+            foreach (ArenaLayer layer in arenaTemplate.Layers)
+                foreach (Gob gob in layer.Gobs)
                 {
-                    if (data.HasModel(modelName)) continue;
-                    Model model = LoadModel(modelName);
-                    if (model != null)
-                        data.AddModel(modelName, model);
+                    foreach (string modelName in gob.ModelNames)
+                    {
+                        if (data.HasModel(modelName)) continue;
+                        Model model = LoadModel(modelName);
+                        if (model != null)
+                            data.AddModel(modelName, model);
+                    }
+                    foreach (string textureName in gob.TextureNames)
+                    {
+                        if (data.HasTexture(textureName)) continue;
+                        Texture2D texture = LoadTexture(textureName);
+                        if (texture != null)
+                            data.AddTexture(textureName, texture);
+                    }
                 }
-                foreach (string textureName in gob.TextureNames)
-                {
-                    if (data.HasTexture(textureName)) continue;
-                    Texture2D texture = LoadTexture(textureName);
-                    if (texture != null)
-                        data.AddTexture(textureName, texture);
-                }
-            }
         }
 
         public void LoadAreatextures(Arena arenaTemplate)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            foreach (string textureName in arenaTemplate.ParallaxNames)
+            foreach (ArenaLayer layer in arenaTemplate.Layers)
             {
+                string textureName = layer.ParallaxName;
+                if (textureName == null) continue;
                 if (data.HasTexture(textureName)) continue;
                 Texture2D texture = LoadTexture(textureName);
                 if (texture != null)
                     data.AddTexture(textureName, texture);
             }
-
         }
 
         /// <summary>

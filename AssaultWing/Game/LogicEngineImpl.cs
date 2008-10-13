@@ -138,13 +138,6 @@ namespace AW2.Game
             };
             data.ForEachWeapon(updateWeapon);
 
-            // Update particle engines.
-            Action<ParticleEngine> updateParticleEngine = delegate(ParticleEngine pEng)
-            {
-                pEng.Update();
-            };
-            data.ForEachParticleEngine(updateParticleEngine);
-
             // Update players.
             Action<Player> updatePlayer = delegate(Player player)
             {

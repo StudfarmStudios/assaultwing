@@ -16,10 +16,13 @@ namespace AW2.Game
     /// <summary>
     /// Basic implementation of game data.
     /// </summary>
+    /// Gobs in an arena are kept on several arena layers. One of the layers
+    /// is where the actual gameplay takes place. The rest are just for the looks.
+    /// The gameplay layer is the default for all gob-related actions.
+    /// To deal with some other layer, you need to know its layer index.
     class DataEngineImpl : DataEngine
     {
-        LinkedList<Gob> gobs;
-        LinkedList<ParticleEngine> particleEngines;
+        List<ArenaLayer> arenaLayers;
         LinkedList<Weapon> weapons;
         List<Gob> addedGobs;
         List<Gob> removedGobs;
@@ -36,6 +39,11 @@ namespace AW2.Game
         Vector2 arenaDimensionsOnRadar;
         Matrix arenaToRadarTransform;
         ProgressBar progressBar;
+
+        /// <summary>
+        /// Index of the gameplay arena layer.
+        /// </summary>
+        int gameplayLayer;
 
         /// <summary>
         /// The textures used in static graphics, indexed by <c>TextureName</c>.
@@ -68,10 +76,9 @@ namespace AW2.Game
         /// </summary>
         public DataEngineImpl()
         {
-            gobs = new LinkedList<Gob>();
+            arenaLayers = new List<ArenaLayer>();
             addedGobs = new List<Gob>();
             removedGobs = new List<Gob>();
-            particleEngines = new LinkedList<ParticleEngine>();
             removedParticleEngines = new List<ParticleEngine>();
             weapons = new LinkedList<Weapon>();
             players = new List<Player>();
@@ -368,12 +375,12 @@ namespace AW2.Game
 
         public void ClearArenaData()
         {
-            gobs.Clear();
-            particleEngines.Clear();
+            arenaLayers.Clear();
             weapons.Clear();
             addedGobs.Clear();
             removedGobs.Clear();
-            activeArena.Gobs.Clear();
+            foreach (ArenaLayer layer in activeArena.Layers)
+                layer.Gobs.Clear();
             preparedArena = null;
         }
 
@@ -391,13 +398,26 @@ namespace AW2.Game
             });
 
             // Clear remaining data from a possible previous arena.
-            foreach (Gob gob in gobs)
-                gob.UnloadContent();
-            gobs.Clear();
-            foreach (ParticleEngine particleEngine in particleEngines)
-                particleEngine.UnloadContent();
-            particleEngines.Clear();
+            foreach (ArenaLayer layer in arenaLayers)
+            {
+                foreach (Gob gob in layer.Gobs)
+                    gob.UnloadContent();
+                layer.Gobs.Clear();
+            }
             weapons.Clear();
+
+            // Create layers for the arena.
+            arenaLayers.Clear();
+            gameplayLayer = -1;
+            for (int i = 0; i < preparedArena.Layers.Count; ++i)
+            {
+                ArenaLayer layer = preparedArena.Layers[i];
+                arenaLayers.Add(layer.EmptyCopy());
+                if (layer.IsGameplayLayer)
+                    gameplayLayer = i;
+            }
+            if (gameplayLayer == -1)
+                throw new ArgumentException("Arena doesn't have a gameplay layer");
 
             activeArena = preparedArena;
             preparedArena = null;
@@ -428,10 +448,13 @@ namespace AW2.Game
             // in initialising an arena for playing.
             // Note that the gobs will end up in 'gobs' only after the game starts running again.
             int wallCount = 0;
-            foreach (Gob gob in preparedArena.Gobs) if (gob is Wall) ++wallCount;
+            foreach (ArenaLayer layer in preparedArena.Layers)
+                foreach (Gob gob in layer.Gobs)
+                    if (gob is Wall) ++wallCount;
             progressBar.SetSubtaskCount(wallCount);
-            foreach (Gob gob in preparedArena.Gobs)
-                AddGob(Gob.CreateGob(gob));
+            for (int i = 0; i < preparedArena.Layers.Count; ++i)
+                foreach (Gob gob in preparedArena.Layers[i].Gobs)
+                    AddGob(Gob.CreateGob(gob), i);
         }
 
         /// <summary>
@@ -446,6 +469,25 @@ namespace AW2.Game
         
         #endregion arenas
 
+        #region arena layers
+
+        /// <summary>
+        /// The index of the layer of the currently active arena where the gameplay takes place.
+        /// </summary>
+        public int GameplayLayer { get { return gameplayLayer; } }
+
+        /// <summary>
+        /// Performs an action on each arena layer of the active arena.
+        /// </summary>
+        /// <param name="action">The Action delegate to perform on each arena layer.</param>
+        public void ForEachArenaLayer(Action<ArenaLayer> action)
+        {
+            foreach (ArenaLayer layer in arenaLayers)
+                action(layer);
+        }
+
+        #endregion arena layers
+
         #region gobs
 
         /// <summary>
@@ -454,13 +496,24 @@ namespace AW2.Game
         /// <param name="gob">The gob to add.</param>
         public void AddGob(Gob gob)
         {
+            AddGob(gob, gameplayLayer);
+        }
+
+        /// <summary>
+        /// Adds a gob to an arena layer of the game.
+        /// </summary>
+        /// <param name="gob">The gob to add.</param>
+        /// <param name="layer">The arena layer index.</param>
+        public void AddGob(Gob gob, int layer)
+        {
             // HACK: We treat particle engines specially, although they are gobs.
             if (gob is ParticleEngine)
             {
-                AddParticleEngine((ParticleEngine)gob);
+                AddParticleEngine((ParticleEngine)gob, layer);
                 return;
             }
 
+            gob.Layer = layer;
             addedGobs.Add(gob);
             gob.Activate();
         }
@@ -487,8 +540,9 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each gob.</param>
         public void ForEachGob(Action<Gob> action)
         {
-            foreach (Gob gob in gobs)
-                action(gob);
+            foreach (ArenaLayer layer in arenaLayers)
+                foreach (Gob gob in layer.Gobs)
+                    action(gob);
         }
 
         #endregion gobs
@@ -501,7 +555,19 @@ namespace AW2.Game
         /// <param name="pEng">Particle generator to add to update and draw cycle</param>
         public void AddParticleEngine(ParticleEngine pEng)
         {
-            particleEngines.AddLast(pEng);
+            AddParticleEngine(pEng, gameplayLayer);
+        }
+
+        /// <summary>
+        /// Adds a particle generator to an arena layer of the game.
+        /// </summary>
+        /// <param name="pEng">Particle generator to add to update and draw cycle</param>
+        /// <param name="layer">The arena layer index.</param>
+        public void AddParticleEngine(ParticleEngine pEng, int layer)
+        {
+            pEng.Layer = layer;
+            addedGobs.Add(pEng);
+            //arenaLayers[layer].Gobs.Add(pEng);
             pEng.Activate();
         }
 
@@ -520,8 +586,13 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each particle engine.</param>
         public void ForEachParticleEngine(Action<ParticleEngine> action)
         {
-            foreach (ParticleEngine pEngine in particleEngines)
-                action(pEngine);
+            foreach (ArenaLayer layer in arenaLayers)
+                foreach (Gob gob in layer.Gobs)
+                {
+                    ParticleEngine pEngine = gob as ParticleEngine;
+                    if (pEngine != null)
+                        action(pEngine);
+                }
         }
 
         #endregion particles
@@ -791,8 +862,15 @@ namespace AW2.Game
             // Add gobs to add.
             foreach (Gob gob in addedGobs)
             {
-                physics.Register(gob);
-                gobs.AddLast(gob);
+                if (gob.Layer == gameplayLayer)
+                    physics.Register(gob);
+                else
+                {
+                    // Gobs outside the gameplay layer cannot collide.
+                    // To achieve this, we take away all the gob's collision areas.
+                    gob.ClearCollisionAreas();
+                }
+                arenaLayers[gob.Layer].Gobs.Add(gob);
             }
             addedGobs.Clear();
 
@@ -807,9 +885,10 @@ namespace AW2.Game
             for (int i = 0; i < removedGobs.Count; ++i)
             {
                 Gob gob = removedGobs[i];
-                physics.Unregister(gob);
+                if (gob.Layer == gameplayLayer)
+                    physics.Unregister(gob);
                 gob.Dispose();
-                gobs.Remove(gob);
+                arenaLayers[gob.Layer].Gobs.Remove(gob);
             }
             removedGobs.Clear();
 
@@ -819,12 +898,14 @@ namespace AW2.Game
             for (int i = 0; i < removedParticleEngines.Count; ++i)
             {
                 ParticleEngine pEng = removedParticleEngines[i];
-                particleEngines.Remove(pEng);
+                arenaLayers[pEng.Layer].Gobs.Remove(pEng);
             }
             removedParticleEngines.Clear();
 
 #if DEBUG_PROFILE
-            AssaultWing.Instance.gobCount = gobs.Count;
+            AssaultWing.Instance.gobCount = 0;
+            foreach (ArenaLayer layer in arenaLayers)
+                AssaultWing.Instance.gobCount += layer.Gobs.Count;
 #endif
         }
 
@@ -934,12 +1015,12 @@ namespace AW2.Game
             // Draw the arena's walls.
             SpriteBatch spriteBatch = new SpriteBatch(gfx);
             spriteBatch.Begin();
-            foreach (Gob gob in gobs)
+            ForEachGob(delegate(Gob gob)
             {
                 Wall wall = gob as Wall;
                 if (wall != null)
                     wall.DrawSilhouette(view, projection, spriteBatch);
-            }
+            });
             spriteBatch.End();
 
             // Restore render target so what we can extract drawn pixels.

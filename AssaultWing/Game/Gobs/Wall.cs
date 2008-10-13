@@ -206,9 +206,10 @@ namespace AW2.Game.Gobs
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         public override void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            if (!data.Viewport.Intersects(boundingBox)) return;
+            BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
+            if (!viewVolume.Intersects(boundingBox)) return;
 
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
             effect.World = Matrix.Identity;

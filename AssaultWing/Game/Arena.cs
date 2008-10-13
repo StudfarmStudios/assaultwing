@@ -12,6 +12,106 @@ using AW2.Sound;
 namespace AW2.Game
 {
     /// <summary>
+    /// An arena layer.
+    /// </summary>
+    /// Arena layers are a means to visualise depth in spite of the
+    /// orthogonal projection of 3D graphics.
+    public class ArenaLayer : IConsistencyCheckable
+    {
+        bool isGameplayLayer;
+        float z;
+        string parallaxName;
+
+        // This field will be serialised so that the gobs have their runtime state
+        // (positions, movements, etc.) serialised and not their type parameters.
+        [LimitationSwitch(typeof(TypeParameterAttribute), typeof(RuntimeStateAttribute))]
+        List<Gob> gobs;
+
+        /// <summary>
+        /// Is this the arena layer where gameplay takes place.
+        /// </summary>
+        /// It is assumed that only one layer in each arena is the gameplay layer.
+        /// If several layers claim to be gameplay layers, any one of them can be
+        /// considered as <i>the</i> gameplay layer.
+        public bool IsGameplayLayer { get { return isGameplayLayer; } }
+
+        /// <summary>
+        /// Z coordinate of the layer.
+        /// </summary>
+        /// The Z coordinate of the gameplay layer is 0. Negative coordinates
+        /// are farther away from the camera.
+        public float Z { get { return z; } }
+
+        /// <summary>
+        /// Name of the texture to use as parallax or <c>null</c> for no parallax.
+        /// </summary>
+        /// Note: Deserialising the empty string to <c>ParallaxName</c> will
+        /// result in <c>ParallaxName</c> getting <c>null</c> as its value, i.e.
+        /// there will be no parallax.
+        public string ParallaxName { get { return parallaxName; } }
+
+        /// <summary>
+        /// The gobs the arena layer contains when the playing in the arena is starting.
+        /// </summary>
+        public List<Gob> Gobs { get { return gobs; } }
+
+        /// <summary>
+        /// Creates an uninitialised arena layer.
+        /// </summary>
+        /// This constructor is only for serialisation.
+        public ArenaLayer()
+        {
+            isGameplayLayer = true;
+            z = 0;
+            parallaxName = "dummysprite";
+            gobs = new List<Gob>();
+            gobs.Add(Gob.CreateGob("dummygobtype"));
+        }
+
+        /// <summary>
+        /// Returns a new arena layer with the same specifications but no gobs.
+        /// </summary>
+        /// <returns>A duplicate arena layer without gobs.</returns>
+        public ArenaLayer EmptyCopy()
+        {
+            return new ArenaLayer(this);
+        }
+
+        /// <summary>
+        /// Creates a copy of an arena layer excluding its gobs.
+        /// </summary>
+        ArenaLayer(ArenaLayer other)
+        {
+            isGameplayLayer = other.isGameplayLayer;
+            z = other.z;
+            parallaxName = other.parallaxName;
+            gobs = new List<Gob>();
+        }
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            if (z >= 1000)
+            {
+                Log.Write("Warning: Clamping too big arena layer Z coordinate: " + z);
+                z = 500;
+            }
+            if (parallaxName == "")
+                parallaxName = null;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
     /// A game arena, i.e., a rectangular area where gobs exist and interact.
     /// </summary>
     /// Class Arena uses limited (de)serialisation for saving and loading arenas.
@@ -25,18 +125,10 @@ namespace AW2.Game
         #region Arena fields
 
         /// <summary>
-        /// Names of the textures to use as parallaxes.
+        /// Layers of the arena, containing initial gobs and parallaxes.
         /// </summary>
         [TypeParameter]
-        string[] parallaxNames;
-
-        /// <summary>
-        /// Distance of each parallax level in inverse coordinates.
-        /// </summary>
-        /// Distance 0.0 means the level moves along with the game level.
-        /// Distance 1.0 means the level is infinitely far and doesn't move.
-        [TypeParameter]
-        float[] parallaxZ;
+        List<ArenaLayer> layers;
 
         /// <summary>
         /// Human-readable name of the arena.
@@ -103,15 +195,6 @@ namespace AW2.Game
 
         #endregion
 
-        /// <summary>
-        /// The gobs the arena contains by default.
-        /// </summary>
-        /// This field will be serialised so that the gobs have their runtime state
-        /// (positions, movements, etc.) serialised and not their type parameters.
-        [TypeParameter]
-        [LimitationSwitch(typeof(TypeParameterAttribute), typeof(RuntimeStateAttribute))]
-        List<Gob> gobs;
-
         [TypeParameter]
         List<BackgroundMusic> backgroundmusic;
         
@@ -132,25 +215,14 @@ namespace AW2.Game
         public Vector2 Dimensions { get { return dimensions; } set { dimensions = value; } }
 
         /// <summary>
-        /// The gobs the arena contains when it is activated.
+        /// The layers of the arena.
         /// </summary>
-        public List<Gob> Gobs { get { return gobs; } }
+        public List<ArenaLayer> Layers { get { return layers; } }
 
         /// <summary>
         /// The bgmusics the arena contains when it is activated.
         /// </summary>
         public List<BackgroundMusic> BackgroundMusic { get { return backgroundmusic; } }
-
-        /// <summary>
-        /// The parallax textures (names of the textures) the arena contains.
-        /// </summary>
-        public string[] ParallaxNames { get { return parallaxNames; } }
-
-        /// <summary>
-        /// The parallax distances (the z coordinates) of the texture layers.
-        /// </summary>
-        public float[] ParallaxZ { get { return parallaxZ; } }
-
 
         #endregion // Arena properties
 
@@ -162,11 +234,9 @@ namespace AW2.Game
         {
             this.name = "dummyarena";
             this.dimensions = new Vector2(4000, 4000);
-            this.gobs = new List<Gob>();
-            this.gobs.Add(Gob.CreateGob("dummygobtype"));
+            layers = new List<ArenaLayer>();
+            layers.Add(new ArenaLayer());
             this.backgroundmusic = new List<BackgroundMusic>();
-            this.parallaxNames = new string[] { "dummytexture" };
-            this.parallaxZ = new float[] { 0.5f };
             this.light0DiffuseColor = Vector3.Zero;
             this.light0Direction = -Vector3.UnitZ;
             this.light0Enabled = true;
@@ -219,17 +289,21 @@ namespace AW2.Game
         /// method returns.</param>
         /// <param name="referencePoint">Reference point in game world coordinates for
         /// parallax displacement.</param>
+        [Obsolete]
         public void DrawParallaxes(SpriteBatch spriteBatch, Vector2 referencePoint)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             int viewportWidth = AssaultWing.Instance.GraphicsDevice.Viewport.Width;
             int viewportHeight = AssaultWing.Instance.GraphicsDevice.Viewport.Height;
             spriteBatch.Begin();
-            for (int i = 0; i < parallaxNames.Length; i++)
+            data.ForEachArenaLayer(delegate(ArenaLayer layer)
             {
-                Vector2 pos = new Vector2(-referencePoint.X * (1f - parallaxZ[i]), referencePoint.Y * (1f - parallaxZ[i]));
+                string parallaxName = layer.ParallaxName;
+                float z = layer.Z;
+                if (parallaxName == null) return;
+                Vector2 pos = new Vector2(-referencePoint.X * 1000 / (1000 - z), referencePoint.Y * 1000 / (1000 - z));
                 Vector2 fillPos = new Vector2();
-                Texture2D tex = data.GetTexture(parallaxNames[i]);
+                Texture2D tex = data.GetTexture(parallaxName);
                 int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
                 pos.X = pos.X - mult * tex.Width;
                 mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);
@@ -248,7 +322,7 @@ namespace AW2.Game
                     }
                     fillPos.Y += tex.Height;
                 }
-            }
+            });
 
             spriteBatch.End();
         }
@@ -264,13 +338,6 @@ namespace AW2.Game
         /// <see cref="Serialization"/>
         public void MakeConsistent(Type limitationAttribute)
         {
-            if (parallaxNames.Length != parallaxZ.Length)
-            {
-                Log.Write("Warning: Different amount of parallax names and parallax Z's. Cropping.");
-                int len = Math.Min(parallaxNames.Length, parallaxZ.Length);
-                Array.ConstrainedCopy(parallaxNames, 0, parallaxNames, 0, len);
-                Array.ConstrainedCopy(parallaxZ, 0, parallaxZ, 0, len);
-            }
             dimensions = Vector2.Max(dimensions, new Vector2(500));
             
             light0DiffuseColor = Vector3.Clamp(light0DiffuseColor, Vector3.Zero, Vector3.One);

@@ -79,6 +79,11 @@ namespace AW2.Game
         Player owner;
 
         /// <summary>
+        /// Arena layer index of the gob. Set by DataEngine.
+        /// </summary>
+        int layer;
+
+        /// <summary>
         /// Position of the gob in the game world.
         /// </summary>
         [RuntimeState]
@@ -337,6 +342,14 @@ namespace AW2.Game
         /// Get the owner of the gob.
         /// </summary>
         public Player Owner { get { return owner; } set { owner = value; } }
+
+        /// <summary>
+        /// Arena layer index of the gob. Set by <c>DataEngine</c>.
+        /// </summary>
+        /// Note that if somebody who is not DataEngine sets this value,
+        /// it leads to confusion. This field only reflects the real knowledge
+        /// that DataEngine possesses.
+        public int Layer { get { return layer; } set { layer = value; } }
 
         /// <summary>
         /// Returns the name of the 3D model of the gob.
@@ -771,6 +784,7 @@ namespace AW2.Game
         public virtual void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
             Model model = data.GetModel(modelName);
             Matrix world = WorldMatrix;
             UpdateModelPartTransforms(model);
@@ -781,7 +795,7 @@ namespace AW2.Game
             {
                 if (mesh.Name.StartsWith("mesh_Collision"))
                     continue;
-                if (!data.Viewport.Intersects(mesh.BoundingSphere.Transform(meshSphereTransform)))
+                if (!viewVolume.Intersects(mesh.BoundingSphere.Transform(meshSphereTransform)))
                     continue;
 
                 // Apply alpha.
@@ -925,6 +939,18 @@ namespace AW2.Game
                 if (bone.Name != null && bone.Name.StartsWith(namePrefix))
                     boneIs.Add(new KeyValuePair<string, int>(bone.Name, bone.Index));
             return boneIs.ToArray();
+        }
+
+        /// <summary>
+        /// Makes the gob forget its collision areas. Doesn't unregister the collision
+        /// areas from <c>PhysicsEngine</c>.
+        /// </summary>
+        /// This method is to be called only before the gob has been registered
+        /// to <c>PhysicsEngine</c>. This method is only a hack to allow putting
+        /// any gob in a background arena layer.
+        public void ClearCollisionAreas()
+        {
+            collisionAreas = new CollisionArea[0];
         }
 
         #endregion Gob public methods

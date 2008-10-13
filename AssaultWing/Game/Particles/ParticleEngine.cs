@@ -276,9 +276,14 @@ namespace AW2.Game.Particles
         #region Constructors
 
         /// <summary>
-        /// Creates particle source with default parameters. Should be given an emitter.
+        /// Creates an uninitialised particle engine.
         /// </summary>
-        public ParticleEngine() {
+        /// This constructor is only for serialisation.
+        public ParticleEngine()
+        {
+            // Remove default collision areas set by class Gob so that we don't need to explicitly state
+            // in each particle engine's XML definition that there are no collision areas.
+            collisionAreas = new CollisionArea[0];
         }
 
         /// <summary>

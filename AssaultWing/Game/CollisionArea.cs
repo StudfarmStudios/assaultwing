@@ -187,7 +187,7 @@ namespace AW2.Game
         public CollisionAreaType Type { get { return type; } }
 
         /// <summary>
-        /// The types collision areas this collision area collides against.
+        /// The types of collision areas this collision area collides against.
         /// </summary>
         public CollisionAreaType CollidesAgainst { get { return collidesAgainst; } }
 
@@ -247,26 +247,6 @@ namespace AW2.Game
             oldWorldMatrix = 0 * Matrix.Identity;
             owner = null;
             collisionData = null;
-        }
-
-        /// <summary>
-        /// Creates a new collision area.
-        /// </summary>
-        /// <param name="name">Collision area name.</param>
-        /// <param name="area">The geometric area.</param>
-        /// <param name="owner">The gob whose collision area this is.</param>
-        [Obsolete]
-        public CollisionArea(string name, IGeomPrimitive area, Gob owner)
-        {
-            type = CollisionAreaType.None;
-            collidesAgainst = CollisionAreaType.None;
-            cannotOverlap = CollisionAreaType.None;
-            this.name = name;
-            this.area = area;
-            this.transformedArea = null;
-            this.oldWorldMatrix = 0 * Matrix.Identity;
-            this.owner = owner;
-            this.collisionData = null;
         }
 
         /// <summary>

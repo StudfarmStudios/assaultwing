@@ -1015,12 +1015,12 @@ namespace AW2.Game
             // Draw the arena's walls.
             SpriteBatch spriteBatch = new SpriteBatch(gfx);
             spriteBatch.Begin();
-            ForEachGob(delegate(Gob gob)
+            foreach (Gob gob in arenaLayers[gameplayLayer].Gobs)
             {
                 Wall wall = gob as Wall;
                 if (wall != null)
                     wall.DrawSilhouette(view, projection, spriteBatch);
-            });
+            }
             spriteBatch.End();
 
             // Restore render target so what we can extract drawn pixels.

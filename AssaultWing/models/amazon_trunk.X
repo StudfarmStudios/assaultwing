@@ -107,7 +107,7 @@ template TextureFilename {
 
 KeyValuePair {
  "Date";
- "2008-10-14 21:35:09";
+ "2008-10-16 00:33:11";
 }
 
 KeyValuePair {
@@ -3585,10 +3585,10 @@ Frame Cylinder01 {
    0,
    0;
 
-   Material _01___Default {
+   Material trunk {
     1.000000;1.000000;1.000000;1.000000;;
-    9.999999;
-    0.200000;0.200000;0.200000;;
+    42.999996;
+    0.270000;0.270000;0.270000;;
     0.000000;0.000000;0.000000;;
 
     TextureFilename Diffuse {

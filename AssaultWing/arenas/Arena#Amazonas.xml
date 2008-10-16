@@ -3,7 +3,7 @@
   <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Amazonas</name>
   <dimensions type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
     <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2500</X>
-    <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2500</Y>
+    <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3000</Y>
   </dimensions>
 
   <!-- Lighting begins -->
@@ -450,6 +450,16 @@
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
       <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_leaf_1</wallModelName>
       <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">730</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2840</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.85</rotation>
+    </Item>  
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_leaf_1</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
         <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2350</X>
         <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">850</Y>
       </pos>
@@ -524,7 +534,17 @@
         <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1400</Y>
       </pos>
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1.41</rotation>
-    </Item>		
+    </Item>
+
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_5</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1550</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2400</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-0.41</rotation>
+    </Item>	
 	
     <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
@@ -536,6 +556,26 @@
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1.64</rotation>
     </Item>	
 
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_1</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2200</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1720</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.72</rotation>
+    </Item>	
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_1</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">610</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2340</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1.63</rotation>
+    </Item>
+	
     <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
       <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_1</wallModelName>
@@ -560,6 +600,26 @@
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
       <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_2</wallModelName>
       <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2170</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2630</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1.77</rotation>
+    </Item>	
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_2</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">850</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2690</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-0.47</rotation>
+    </Item>
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_2</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
         <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1870</X>
         <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">820</Y>
       </pos>
@@ -580,8 +640,18 @@
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
       <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_8</wallModelName>
       <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1340</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2950</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.05</rotation>
+    </Item>	
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_8</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
         <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1930</X>
-        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2030</Y>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2180</Y>
       </pos>
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.75</rotation>
     </Item>	
@@ -615,7 +685,17 @@
       </pos>
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</rotation>
     </Item>
-
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_6</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1800</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2965</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.15</rotation>
+    </Item>	
+	
     <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
       <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_6</wallModelName>
@@ -645,6 +725,16 @@
       </pos>
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1.6</rotation>
     </Item>	
+
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_10</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2400</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2050</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.8</rotation>
+    </Item>
 	
     <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
@@ -685,7 +775,17 @@
       </pos>
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1.9</rotation>
     </Item>
-
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_7</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2380</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2440</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</rotation>
+    </Item>
+	
     <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
       <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_7</wallModelName>
@@ -696,6 +796,16 @@
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-2.1</rotation>
     </Item>
 
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_3</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">900</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2990</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1.76</rotation>
+    </Item>
+	
     <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
       <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_3</wallModelName>
@@ -734,6 +844,16 @@
         <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1940</Y>
       </pos>
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.3</rotation>
+    </Item>
+	
+    <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall model</typeName>
+      <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">amazon_wall_9</wallModelName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">730</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1900</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.3</rotation>
     </Item>	
 <!--
     <Item type="AW2.Game.Gobs.Dock, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -761,6 +881,15 @@
         <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">710</Y>
       </pos>
       <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.14</rotation>
+    </Item>	
+
+    <Item type="AW2.Game.Gobs.Dock, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dock</typeName>
+      <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+        <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">880</X>
+        <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2747</Y>
+      </pos>
+      <rotation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-0.08</rotation>
     </Item>	
 	
     <Item type="AW2.Game.Gobs.Gravity, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

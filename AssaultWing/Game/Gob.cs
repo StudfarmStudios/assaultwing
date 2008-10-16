@@ -362,16 +362,6 @@ namespace AW2.Game
         public float Scale { get { return scale; } set { scale = value; } }
 
         /// <summary>
-        /// Amount of bleach to use when drawing the gob's 3D model, between 0 and 1.
-        /// Is reset to zero after each frame.
-        /// </summary>
-        /// A bleach of 0 means the 3D model looks normal. 
-        /// A bleach of 1 means the 3D model is drawn totally white.
-        /// Anything in between states the amount of blend from the
-        /// unbleached 3D model towards the totally white 3D model.
-        public float Bleach { get { return bleach; } set { bleach = value; } }
-
-        /// <summary>
         /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
         /// </summary>
         public float Alpha { get { return alpha; } set { alpha = value; } }
@@ -698,6 +688,9 @@ namespace AW2.Game
         {
             physics.Move(this);
             UpdateExhaustEngines();
+
+            // Reduce bleach.
+            bleach = Math.Max(0, bleach - 0.2f);
         }
 
         /// <summary>
@@ -864,9 +857,6 @@ namespace AW2.Game
 
                     // Restore render state.
                     renderState.DepthBufferEnable = true;
-
-                    // Reset bleach for the next frame.
-                    bleach = 0;
                 }
             }
         }
@@ -1085,7 +1075,7 @@ namespace AW2.Game
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
             if (damageAmount > 0)
-                bleach = MathHelper.Min(bleach + damageAmount / 100, 1);
+                bleach = MathHelper.Min(bleach + damageAmount / 50, 1);
             if (damage == maxDamage)
                 Die(cause);
         }

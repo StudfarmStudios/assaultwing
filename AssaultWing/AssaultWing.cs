@@ -112,6 +112,11 @@ namespace AW2
         }
 
         /// <summary>
+        /// The current state of the game.
+        /// </summary>
+        public GameState GameState { get { return gameState; } }
+
+        /// <summary>
         /// The game time on this frame.
         /// </summary>
         public GameTime GameTime { get { return gameTime; } }

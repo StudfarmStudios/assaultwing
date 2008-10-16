@@ -232,7 +232,12 @@ namespace AW2.Graphics
                 Gob ship = player.Ship;
                 if (ship != null)
                     lookAt = ship.Pos;
-                shakeSign = -shakeSign;
+
+                // Shake only if gameplay is on. Otherwise freeze because
+                // shake won't be attenuated either.
+                if (AssaultWing.Instance.GameState == GameState.Gameplay)
+                    shakeSign = -shakeSign;
+
                 float viewShake = shakeSign * player.Shake;
                 return Matrix.CreateLookAt(new Vector3(lookAt, 1000), new Vector3(lookAt, 0),
                     new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),

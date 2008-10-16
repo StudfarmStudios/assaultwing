@@ -371,20 +371,23 @@ namespace AW2
         /// </summary>
         public void ToggleFullscreen()
         {
-            // Set our window size and format preferences before switching.
-            if (graphics.IsFullScreen)
+            lock (GraphicsDevice)
             {
-                graphics.PreferredBackBufferFormat = preferredWindowFormat;
-                graphics.PreferredBackBufferHeight = preferredWindowHeight;
-                graphics.PreferredBackBufferWidth = preferredWindowWidth;
+                // Set our window size and format preferences before switching.
+                if (graphics.IsFullScreen)
+                {
+                    graphics.PreferredBackBufferFormat = preferredWindowFormat;
+                    graphics.PreferredBackBufferHeight = preferredWindowHeight;
+                    graphics.PreferredBackBufferWidth = preferredWindowWidth;
+                }
+                else
+                {
+                    graphics.PreferredBackBufferFormat = preferredFullscreenFormat;
+                    graphics.PreferredBackBufferHeight = preferredFullscreenHeight;
+                    graphics.PreferredBackBufferWidth = preferredFullscreenWidth;
+                }
+                graphics.ToggleFullScreen();
             }
-            else
-            {
-                graphics.PreferredBackBufferFormat = preferredFullscreenFormat;
-                graphics.PreferredBackBufferHeight = preferredFullscreenHeight;
-                graphics.PreferredBackBufferWidth = preferredFullscreenWidth;
-            }
-            graphics.ToggleFullScreen();
         }
 
         /// <summary>

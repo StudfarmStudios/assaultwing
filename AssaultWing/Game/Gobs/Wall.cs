@@ -455,7 +455,11 @@ namespace AW2.Game.Gobs
 
             // This method is run usually in a background thread -- during arena initialisation.
             // Therefore we have to tell the main draw routines to let us use the device in peace.
-            lock (AssaultWing.Instance.GraphicsDevice)
+            // We break out of the lock regularly to allow others use the device, too.
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            RenderTarget2D maskTarget = null;
+            int targetSize = -1;
+            lock (gfx)
             {
 
                 // Draw the colour-coded triangles on our own render target for
@@ -463,16 +467,14 @@ namespace AW2.Game.Gobs
                 // size ('targetSize') a power of two to meet the demands of some
                 // graphics devices. If the model dimensions are larger than 
                 // 'targetSize', we will have to render the coloured triangles in pieces.
-                GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
                 GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
                 GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
                 if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
                     TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
                     throw new Exception("Cannot create render target of type SurfaceFormat.Color");
-                int targetSize = Math.Min(
+                targetSize = Math.Min(
                     AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
                     AWMathHelper.CeilingPowerTwo(Math.Max(indexMap.GetLength(1), indexMap.GetLength(0))));
-                RenderTarget2D maskTarget = null;
                 while (maskTarget == null)
                     try
                     {
@@ -485,31 +487,34 @@ namespace AW2.Game.Gobs
                         else
                             throw new Exception("Cannot create render target for index map creation", e);
                     }
+            }
 
-                // Set up graphics device.
-                VertexDeclaration oldVertexDeclaration = gfx.VertexDeclaration;
-                DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
-                gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-                gfx.DepthStencilBuffer = null;
+            // Set up an effect.
+            BasicEffect maskEff = new BasicEffect(gfx, null);
+            maskEff.VertexColorEnabled = true;
+            maskEff.LightingEnabled = false;
+            maskEff.TextureEnabled = false;
+            maskEff.View = Matrix.CreateLookAt(new Vector3(0, 0, 1000), Vector3.Zero, Vector3.Up);
+            maskEff.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1,
+                0, targetSize - 1, 10, 1000);
+            maskEff.World = indexMapTransform;
 
-                // Set up an effect.
-                BasicEffect maskEff = new BasicEffect(gfx, null);
-                maskEff.VertexColorEnabled = true;
-                maskEff.LightingEnabled = false;
-                maskEff.TextureEnabled = false;
-                maskEff.View = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
-                maskEff.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1,
-                    0, targetSize - 1, 10, 1000);
-                maskEff.World = indexMapTransform;
-
-                // Draw the coloured triangles in as many parts as necessary to cover 
-                // the whole model with one unit in world coordinates corresponding to
-                // one pixel width in the render target.
-                for (int startY = 0; startY < indexMap.GetLength(0); startY += targetSize)
-                    for (int startX = 0; startX < indexMap.GetLength(1); startX += targetSize)
+            // Draw the coloured triangles in as many parts as necessary to cover 
+            // the whole model with one unit in world coordinates corresponding to
+            // one pixel width in the render target.
+            for (int startY = 0; startY < indexMap.GetLength(0); startY += targetSize)
+                for (int startX = 0; startX < indexMap.GetLength(1); startX += targetSize)
+                {
+                    lock (gfx)
                     {
+                        // Set up graphics device.
+                        VertexDeclaration oldVertexDeclaration = gfx.VertexDeclaration;
+                        DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+                        gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
+                        gfx.DepthStencilBuffer = null;
+
                         // Move view to current start coordinates.
-                        maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 500), new Vector3(startX, startY, 0), Vector3.Up);
+                        maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 1000), new Vector3(startX, startY, 0), Vector3.Up);
 
                         // Set and clear our own render target.
                         gfx.SetRenderTarget(0, maskTarget);
@@ -545,14 +550,14 @@ namespace AW2.Game.Gobs
                                 int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
                                 indexMap[indexMapY, indexMapX] = new int[] { maskValue };
                             }
+
+                        // Restore graphics device's old settings.
+                        gfx.VertexDeclaration = oldVertexDeclaration;
+                        gfx.DepthStencilBuffer = oldDepthStencilBuffer;
+                        maskTarget.Dispose();
                     }
-
-                // Restore graphics device's old settings.
-                gfx.VertexDeclaration = oldVertexDeclaration;
-                gfx.DepthStencilBuffer = oldDepthStencilBuffer;
-                maskTarget.Dispose();
-
-            }
+                    System.Threading.Thread.Sleep(0);
+                }
 
             // Initialise triangle cover counts.
             triangleCovers = new int[indexData.Length / 3];

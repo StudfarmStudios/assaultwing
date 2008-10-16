@@ -196,7 +196,7 @@ namespace AW2.Graphics
             spriteBatch.Draw(barTexture, barPos, barRectangle, Color.White);
 
             // Draw flow pattern.
-            float flowSpeed = 15; // flow speed in pixels per second
+            float flowSpeed = 45; // flow speed in pixels per second
             float flowPassTime = flowTexture.Width / flowSpeed; // how many seconds it takes to flow one texture width
             int flowDisplacement = (int)(flowTexture.Width * (AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds % flowPassTime) / flowPassTime);
             Vector2 flowPos = barPos;

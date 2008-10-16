@@ -408,7 +408,6 @@ namespace AW2.Game
 
             // Create layers for the arena.
             arenaLayers.Clear();
-            gameplayLayer = -1;
             for (int i = 0; i < preparedArena.Layers.Count; ++i)
             {
                 ArenaLayer layer = preparedArena.Layers[i];
@@ -443,6 +442,14 @@ namespace AW2.Game
             addedGobs.Clear();
             removedGobs.Clear();
             CustomOperations = null;
+
+            // Find the gameplay layer.
+            gameplayLayer = -1;
+            for (int i = 0; i < preparedArena.Layers.Count; ++i)
+                if (preparedArena.Layers[i].IsGameplayLayer)
+                    gameplayLayer = i;
+            if (gameplayLayer == -1)
+                throw new ArgumentException("Arena " + preparedArena.Name + " doesn't have a gameplay layer");
 
             // Create initial objects. This is by far the most time consuming part
             // in initialising an arena for playing.

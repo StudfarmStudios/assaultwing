@@ -296,7 +296,7 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Attenuates the amount of shake. Call this method after each draw.
+        /// Attenuates the amount of shake.
         /// </summary>
         public void AttenuateShake()
         {
@@ -450,6 +450,8 @@ namespace AW2.Game
             {
                 CreateShip();
             }
+
+            AttenuateShake();
         }
 
         /// <summary>

@@ -156,6 +156,11 @@ namespace AW2.Graphics
         /// </summary>
         Vector2 worldAreaMax;
 
+        /// <summary>
+        /// Last used sign of player's shake angle. Either 1 or -1.
+        /// </summary>
+        float shakeSign;
+
         #endregion PlayerViewport fields
 
         /// <summary>
@@ -176,6 +181,7 @@ namespace AW2.Graphics
             lookAt = Vector2.Zero;
             worldAreaMin = Vector2.Zero;
             worldAreaMax = new Vector2(viewport.Width, viewport.Height);
+            shakeSign = -1;
 
             // Create overlay graphics components.
             AddOverlayComponent(new ChatBoxOverlay(player));
@@ -226,8 +232,8 @@ namespace AW2.Graphics
                 Gob ship = player.Ship;
                 if (ship != null)
                     lookAt = ship.Pos;
-                int sign = Helpers.RandomHelper.GetRandomInt(2) * 2 - 1; // -1 or +1
-                float viewShake = sign * player.Shake;
+                shakeSign = -shakeSign;
+                float viewShake = shakeSign * player.Shake;
                 return Matrix.CreateLookAt(new Vector3(lookAt, 1000), new Vector3(lookAt, 0),
                     new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),
                                 (float)Math.Sin(MathHelper.PiOver2 + viewShake),
@@ -358,8 +364,6 @@ namespace AW2.Graphics
 
             // Overlay components
             base.Draw();
-
-            Player.AttenuateShake(); // TODO: Handle this in Player.Update()
         }
 
         #endregion AWViewport implementation

@@ -1268,6 +1268,11 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="models\amazon_shovel_1.X">
+      <Name>amazon_shovel_1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <Compile Include="models\amazon_snare_1.X">
       <Name>amazon_snare_1</Name>
       <Importer>XImporter</Importer>

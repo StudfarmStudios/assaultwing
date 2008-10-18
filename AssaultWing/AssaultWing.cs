@@ -90,6 +90,11 @@ namespace AW2
 #endif
 
         /// <summary>
+        /// Time of previously finished call to Draw(), in game time.
+        /// </summary>
+        TimeSpan lastDrawTime;
+
+        /// <summary>
         /// The only existing instance of this class.
         /// </summary>
         static AssaultWing instance;
@@ -120,6 +125,11 @@ namespace AW2
         /// The game time on this frame.
         /// </summary>
         public GameTime GameTime { get { return gameTime; } }
+
+        /// <summary>
+        /// Time of previously finished call to Draw(), in game time.
+        /// </summary>
+        public TimeSpan LastDrawTime { get { return lastDrawTime; } }
 
         /// <summary>
         /// The screen dimensions of the game window's client rectangle.
@@ -186,6 +196,7 @@ namespace AW2
             framesSinceLastCheck = 0;
             gameState = GameState.Gameplay;
             gameTime = new GameTime();
+            lastDrawTime = new TimeSpan(0);
         }
 
         /// <summary>
@@ -659,7 +670,8 @@ namespace AW2
                 lastFramerateCheck = gameTime.TotalRealTime;
             }
             lock (GraphicsDevice)
-                base.Draw(gameTime);
+                base.Draw(this.gameTime);
+            lastDrawTime = this.gameTime.TotalGameTime;
         }
 
         #endregion Overridden Game methods

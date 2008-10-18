@@ -121,15 +121,6 @@ namespace AW2.Game
         float scale;
 
         /// <summary>
-        /// Amount of bleach to use when drawing the gob's 3D model, between 0 and 1.
-        /// </summary>
-        /// A bleach of 0 means the 3D model looks normal. 
-        /// A bleach of 1 means the 3D model is drawn totally white.
-        /// Anything in between states the amount of blend from the
-        /// unbleached 3D model towards the totally white 3D model.
-        float bleach;
-
-        /// <summary>
         /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
         /// </summary>
         float alpha;
@@ -253,6 +244,32 @@ namespace AW2.Game
 
         #endregion Fields for damage
 
+        #region Fields for bleach
+
+        /// <summary>
+        /// Amount of accumulated damage that determines the amount of bleach.
+        /// </summary>
+        float bleachDamage;
+
+        /// <summary>
+        /// Function that maps bleach damage to bleach, i.e. degree of whiteness.
+        /// </summary>
+        static Curve bleachCurve;
+
+        /// <summary>
+        /// Current level of bleach between 0 and 1. Access this field through the property <c>Bleach</c>.
+        /// </summary>
+        float bleach;
+
+        /// <summary>
+        /// Time when bleach will be reset, in game time.
+        /// </summary>
+        /// When bleach is set to nonzero, this time is set to denote how
+        /// long the bleach is supposed to stay on.
+        TimeSpan bleachResetTime;
+
+        #endregion Fields for bleach
+
         #region Gob properties
 
         /// <summary>
@@ -362,6 +379,38 @@ namespace AW2.Game
         public float Scale { get { return scale; } set { scale = value; } }
 
         /// <summary>
+        /// Amount of bleach to use when drawing the gob's 3D model, between 0 and 1.
+        /// </summary>
+        /// A bleach of 0 means the 3D model looks normal. 
+        /// A bleach of 1 means the 3D model is drawn totally white.
+        /// Anything in between states the amount of blend from the
+        /// unbleached 3D model towards the totally white 3D model.
+        public float Bleach
+        {
+            get
+            {
+                // Reset bleach if it's getting old.
+                if (AssaultWing.Instance.GameTime.TotalGameTime >= bleachResetTime)
+                    bleach = 0;
+
+                // Set new bleach based on accumulated damage during this frame.
+                if (bleachDamage > 0)
+                {
+                    float newBleach = bleachCurve.Evaluate(bleachDamage);
+                    if (newBleach > bleach)
+                    {
+                        bleach = newBleach;
+                        long bleachDurationTicks = (long)(TimeSpan.TicksPerSecond * 0.055f);
+                        bleachResetTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(bleachDurationTicks);
+                    }
+                    bleachDamage = 0;
+                }
+
+                return bleach;
+            }
+        }
+
+        /// <summary>
         /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
         /// </summary>
         public float Alpha { get { return alpha; } set { alpha = value; } }
@@ -450,6 +499,20 @@ namespace AW2.Game
                     throw new Exception(message);
                 }
             }
+
+            // Initialise bleach curve.
+            bleachCurve = new Curve();
+            bleachCurve.PreLoop = CurveLoopType.Constant;
+            bleachCurve.PostLoop = CurveLoopType.Constant;
+            bleachCurve.Keys.Add(new CurveKey(0, 0));
+            bleachCurve.Keys.Add(new CurveKey(5, 0.1f));
+            bleachCurve.Keys.Add(new CurveKey(30, 0.3f));
+            bleachCurve.Keys.Add(new CurveKey(100, 0.5f));
+            bleachCurve.Keys.Add(new CurveKey(200, 0.65f));
+            bleachCurve.Keys.Add(new CurveKey(500, 0.8f));
+            bleachCurve.Keys.Add(new CurveKey(1000, 0.9f));
+            bleachCurve.Keys.Add(new CurveKey(5000, 1));
+            bleachCurve.ComputeTangents(CurveTangent.Linear);
         }
 
         /// <summary>
@@ -491,6 +554,7 @@ namespace AW2.Game
             };
             this.damage = 0;
             this.maxDamage = 100;
+            bleachDamage = 0;
             this.birthTime = new TimeSpan(23, 59, 59);
             this.dead = false;
             this.disabled = false;
@@ -536,6 +600,9 @@ namespace AW2.Game
             this.modelPartTransforms = null;
             this.exhaustEngines = new ParticleEngine[0];
             this.alpha = 1;
+            bleachDamage = 0;
+            bleach = -1;
+            bleachResetTime = new TimeSpan(0);
         }
 
         /// <summary>
@@ -688,9 +755,6 @@ namespace AW2.Game
         {
             physics.Move(this);
             UpdateExhaustEngines();
-
-            // Reduce bleach.
-            bleach = Math.Max(0, bleach - 0.2f);
         }
 
         /// <summary>
@@ -784,6 +848,8 @@ namespace AW2.Game
             Matrix meshSphereTransform = // mesh bounding spheres are by default in model coordinates
                 Matrix.CreateScale(Scale) *
                 Matrix.CreateTranslation(new Vector3(Pos, 0));
+
+            // Draw each mesh in the 3D model.
             foreach (ModelMesh mesh in model.Meshes)
             {
                 if (mesh.Name.StartsWith("mesh_Collision"))
@@ -821,7 +887,7 @@ namespace AW2.Game
                 }
 
                 // Blend towards white if required.
-                if (bleach > 0)
+                if (Bleach > 0)
                 {
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     if (mesh.Effects.Count > 1)
@@ -844,7 +910,7 @@ namespace AW2.Game
                     be.TextureEnabled = false;
                     be.VertexColorEnabled = false;
                     be.DiffuseColor = Vector3.One;
-                    be.Alpha = bleach;
+                    be.Alpha = Bleach;
 
                     mesh.Draw();
 
@@ -1075,7 +1141,7 @@ namespace AW2.Game
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
             if (damageAmount > 0)
-                bleach = MathHelper.Min(bleach + damageAmount / 50, 1);
+                bleachDamage += damageAmount;
             if (damage == maxDamage)
                 Die(cause);
         }

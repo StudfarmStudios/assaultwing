@@ -1315,6 +1315,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="models\amazon_temple_1.X">
+      <Name>amazon_temple_1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\ParticleEngine#amazonsteam.xml">
       <Name>ParticleEngine#amazonsteam</Name>
       <Importer>XmlImporter</Importer>

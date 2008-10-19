@@ -1320,6 +1320,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\amazon_rock_1.X">
+      <Name>amazon_rock_1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\ParticleEngine#amazonsteam.xml">
       <Name>ParticleEngine#amazonsteam</Name>
       <Importer>XmlImporter</Importer>

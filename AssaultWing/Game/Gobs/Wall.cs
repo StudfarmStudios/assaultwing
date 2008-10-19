@@ -418,7 +418,7 @@ namespace AW2.Game.Gobs
         {
             VertexPositionNormalTexture[] fineVertexData;
             short[] fineIndexData;
-            Graphics3D.FineTriangles(30, vertexData, indexData, out fineVertexData, out fineIndexData);
+            Graphics3D.FineTriangles(28, vertexData, indexData, out fineVertexData, out fineIndexData);
             indexData = fineIndexData;
             vertexData = fineVertexData;
         }

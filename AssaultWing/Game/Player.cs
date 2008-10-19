@@ -219,7 +219,29 @@ namespace AW2.Game
         /// Function that maps relative shake damage to radians that the player's
         /// viewport will tilt to produce sufficient shake.
         /// </summary>
-        Curve shake;
+        Curve shakeCurve;
+
+        /// <summary>
+        /// Function that maps a parameter to relative shake damage.
+        /// </summary>
+        /// Used in attenuating shake.
+        Curve shakeAttenuationCurve;
+
+        /// <summary>
+        /// Inverse of <c>shakeAttenuationCurve</c>.
+        /// </summary>
+        /// Used in attenuating shake.
+        Curve shakeAttenuationInverseCurve;
+
+        /// <summary>
+        /// Current amount of shake. Access this field through property <c>Shake</c>.
+        /// </summary>
+        float shake;
+
+        /// <summary>
+        /// Time when field <c>shake</c> was calculated, in game time.
+        /// </summary>
+        TimeSpan shakeUpdateTime;
 
         #endregion Player fields about general things
 
@@ -279,7 +301,26 @@ namespace AW2.Game
         /// Shaking affects the player's viewport and is caused by
         /// the player's ship receiving damage.
         /// </summary>
-        public float Shake { get { return shake.Evaluate(relativeShakeDamage); } }
+        public float Shake
+        {
+            get
+            {
+                if (AssaultWing.Instance.GameTime.TotalGameTime > shakeUpdateTime)
+                {
+                    // Attenuate shake damage for any skipped frames.
+                    float skippedTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime - AssaultWing.Instance.GameTime.ElapsedGameTime - shakeUpdateTime).TotalSeconds;
+                    AttenuateShake(skippedTime);
+
+                    // Calculate new shake.
+                    shake = shakeCurve.Evaluate(relativeShakeDamage);
+                    shakeUpdateTime = AssaultWing.Instance.GameTime.TotalGameTime;
+
+                    // Attenuate shake damage for the current frame.
+                    AttenuateShake((float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds);
+                }
+                return shake;
+            }
+        }
 
         /// <summary>
         /// Increases the player's shake according to an amount of damage
@@ -293,14 +334,6 @@ namespace AW2.Game
         {
             if (ship == null) return;
             relativeShakeDamage = Math.Max(0, relativeShakeDamage + damageAmount / ship.MaxDamageLevel);
-        }
-
-        /// <summary>
-        /// Attenuates the amount of shake.
-        /// </summary>
-        public void AttenuateShake()
-        {
-            relativeShakeDamage = Math.Max(relativeShakeDamage - 0.02f, 0);
         }
 
         /// <summary>
@@ -432,11 +465,28 @@ namespace AW2.Game
             this.lives = 3;
             this.shipSpawnTime = new TimeSpan(1);
             this.relativeShakeDamage = 0;
-            this.shake = new Curve();
-            this.shake.PreLoop = CurveLoopType.Constant;
-            this.shake.PostLoop = CurveLoopType.Constant;
-            this.shake.Keys.Add(new CurveKey(0, 0));
-            this.shake.Keys.Add(new CurveKey(1, MathHelper.PiOver4));
+            shakeCurve = new Curve();
+            shakeCurve.PreLoop = CurveLoopType.Constant;
+            shakeCurve.PostLoop = CurveLoopType.Constant;
+            shakeCurve.Keys.Add(new CurveKey(0, 0));
+            shakeCurve.Keys.Add(new CurveKey(0.15f, 0.3f * MathHelper.PiOver4));
+            shakeCurve.Keys.Add(new CurveKey(0.3f, 0.4f * MathHelper.PiOver4));
+            shakeCurve.Keys.Add(new CurveKey(0.6f, 0.6f * MathHelper.PiOver4));
+            shakeCurve.Keys.Add(new CurveKey(1, MathHelper.PiOver4));
+            shakeCurve.ComputeTangents(CurveTangent.Linear);
+            shakeAttenuationCurve = new Curve();
+            shakeAttenuationCurve.PreLoop = CurveLoopType.Constant;
+            shakeAttenuationCurve.PostLoop = CurveLoopType.Linear;
+            shakeAttenuationCurve.Keys.Add(new CurveKey(0, 0));
+            shakeAttenuationCurve.Keys.Add(new CurveKey(0.05f, 0.01f));
+            shakeAttenuationCurve.Keys.Add(new CurveKey(1.0f, 1));
+            shakeAttenuationCurve.ComputeTangents(CurveTangent.Linear);
+            shakeAttenuationInverseCurve = new Curve();
+            shakeAttenuationInverseCurve.PreLoop = CurveLoopType.Constant;
+            shakeAttenuationInverseCurve.PostLoop = CurveLoopType.Linear;
+            foreach (CurveKey key in shakeAttenuationCurve.Keys)
+                shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
+            shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
         }
 
         /// <summary>
@@ -450,8 +500,6 @@ namespace AW2.Game
             {
                 CreateShip();
             }
-
-            AttenuateShake();
         }
 
         /// <summary>
@@ -561,6 +609,24 @@ namespace AW2.Game
             particleEngine.Leader = ship;
             data.AddParticleEngine(particleEngine);
 
+        }
+
+        /// <summary>
+        /// Attenuates the player's viewport shake for passed time.
+        /// </summary>
+        /// This method should be called regularly. It decreases <c>relativeShakeDamage</c>.
+        /// <param name="seconds">Passed time in seconds.</param>
+        void AttenuateShake(float seconds)
+        {
+            // Attenuation is done along a steepening curve;
+            // the higher the shake damage the faster the attenuation.
+            // 'relativeShakeDamage' is thought of as the value of the curve
+            // for some parameter x which represents time to wait for the shake to stop.
+            // In effect, this ensures that it won't take too long for
+            // even very big shakes to stop.
+            float shakeTime = shakeAttenuationInverseCurve.Evaluate(relativeShakeDamage);
+            shakeTime = Math.Max(0, shakeTime - seconds);
+            relativeShakeDamage = shakeAttenuationCurve.Evaluate(shakeTime);
         }
 
         #region Methods related to bonuses

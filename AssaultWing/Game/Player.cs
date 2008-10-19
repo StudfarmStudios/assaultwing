@@ -469,7 +469,7 @@ namespace AW2.Game
             shakeCurve.PreLoop = CurveLoopType.Constant;
             shakeCurve.PostLoop = CurveLoopType.Constant;
             shakeCurve.Keys.Add(new CurveKey(0, 0));
-            shakeCurve.Keys.Add(new CurveKey(0.15f, 0.3f * MathHelper.PiOver4));
+            shakeCurve.Keys.Add(new CurveKey(0.15f, 0.0f * MathHelper.PiOver4));
             shakeCurve.Keys.Add(new CurveKey(0.3f, 0.4f * MathHelper.PiOver4));
             shakeCurve.Keys.Add(new CurveKey(0.6f, 0.6f * MathHelper.PiOver4));
             shakeCurve.Keys.Add(new CurveKey(1, MathHelper.PiOver4));

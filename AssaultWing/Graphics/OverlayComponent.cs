@@ -60,6 +60,7 @@ namespace AW2.Graphics
         HorizontalAlignment horizontalAlignment;
         VerticalAlignment verticalAlignment;
         Vector2 customAlignment;
+        bool visible;
 
         /// <summary>
         /// Horizontal alignment of the component in the backbuffer viewport.
@@ -78,6 +79,11 @@ namespace AW2.Graphics
         public Vector2 CustomAlignment { get { return customAlignment; } set { customAlignment = value; } }
 
         /// <summary>
+        /// Is the component visible.
+        /// </summary>
+        public bool Visible { get { return visible; } set { visible = value; } }
+
+        /// <summary>
         /// The dimensions of the component in pixels.
         /// </summary>
         /// The return value field <c>Point.X</c> is the width of the component,
@@ -93,6 +99,7 @@ namespace AW2.Graphics
         {
             horizontalAlignment = horizontal;
             verticalAlignment = vertical;
+            visible = true;
             LoadContent();
         }
 
@@ -104,6 +111,7 @@ namespace AW2.Graphics
         /// will call <c>Begin</c> and <c>End</c>.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
+            if (!Visible) return;
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             Viewport oldViewport = gfx.Viewport;
             Viewport newViewport = oldViewport;

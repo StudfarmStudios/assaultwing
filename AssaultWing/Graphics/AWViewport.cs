@@ -184,6 +184,7 @@ namespace AW2.Graphics
             shakeSign = -1;
 
             // Create overlay graphics components.
+            AddOverlayComponent(new MiniStatusOverlay(player));
             AddOverlayComponent(new ChatBoxOverlay(player));
             AddOverlayComponent(new RadarOverlay(player));
             AddOverlayComponent(new BonusListOverlay(player));

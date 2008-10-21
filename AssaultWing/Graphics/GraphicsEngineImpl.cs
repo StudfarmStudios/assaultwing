@@ -105,6 +105,16 @@ namespace AW2.Graphics
         /// </summary>
         ChatBox,
 
+        /// <summary>
+        /// Mini status display damage bar background.
+        /// </summary>
+        MiniDamageBackground,
+
+        /// <summary>
+        /// Mini status display damage bar fill.
+        /// </summary>
+        MiniDamageFill,
+
         #endregion Player viewport graphics
 
         /// <summary>
@@ -278,6 +288,8 @@ namespace AW2.Graphics
                 "gui_radar_bg",
                 "gui_playerinfo_white_ball", // HACK: Ship sprite on radar display
                 "gui_console_bg",
+                "mini_hpbar_bg",
+                "mini_hpbar_fill",
                 "ingame_dialog",
                 "menu_progressbar_bg",
                 "menu_progressbar_fill",

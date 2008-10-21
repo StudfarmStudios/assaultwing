@@ -63,6 +63,7 @@ namespace AW2.Graphics
             }
             float alpha = MathHelper.Clamp((float)(fadeoutFinishTime - AssaultWing.Instance.GameTime.TotalGameTime).TotalSeconds / fadeoutDuration, 0, 1);
             Color color = new Color(new Vector4(1, 1, 1, alpha));
+            Color halfColor = new Color(new Vector4(1, 1, 1, alpha * 0.5f));
 
             // Health bar
             Rectangle healthBarRect = new Rectangle(0, 0,
@@ -75,7 +76,7 @@ namespace AW2.Graphics
             string healthText = ((int)Math.Ceiling(relativeHealth * 100)).ToString() + "%";
             Vector2 textSize = healthFont.MeasureString(healthText);
             Vector2 textPos = new Vector2((Dimensions.X - textSize.X) / 2, barBackgroundTexture.Height);
-            spriteBatch.DrawString(healthFont, healthText, textPos, color);
+            spriteBatch.DrawString(healthFont, healthText, textPos, halfColor);
         }
 
         /// <summary>

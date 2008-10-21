@@ -1372,6 +1372,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="models\amazon_golds.X">
+      <Name>amazon_golds</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\ParticleEngine#slugglow.xml">
       <Name>ParticleEngine#slugglow</Name>
       <Importer>XmlImporter</Importer>

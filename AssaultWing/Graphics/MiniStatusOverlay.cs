@@ -75,7 +75,7 @@ namespace AW2.Graphics
             // Health percentage
             string healthText = ((int)Math.Ceiling(relativeHealth * 100)).ToString() + "%";
             Vector2 textSize = healthFont.MeasureString(healthText);
-            Vector2 textPos = new Vector2((Dimensions.X - textSize.X) / 2, barBackgroundTexture.Height);
+            Vector2 textPos = new Vector2((int)((Dimensions.X - textSize.X) / 2), barBackgroundTexture.Height);
             spriteBatch.DrawString(healthFont, healthText, textPos, halfColor);
         }
 

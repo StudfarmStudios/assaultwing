@@ -68,9 +68,8 @@ namespace AW2.Game.Gobs
         public Rocket(string typeName)
             : base(typeName)
         {
-            double endTicks = 10 * 1000 * 1000 *
-                (physics.TimeStep.TotalGameTime.TotalSeconds + this.thrustDuration);
-            this.thrustEndTime = new TimeSpan((long)endTicks);
+            thrustEndTime = AssaultWing.Instance.GameTime.TotalGameTime 
+                + TimeSpan.FromSeconds(thrustDuration);
         }
 
         #region Methods related to gobs' functionality in the game world

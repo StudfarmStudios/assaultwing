@@ -175,14 +175,11 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Draws the gob.
+        /// Draws the gob's 3D graphics.
         /// </summary>
-        /// Assumes that the sprite batch has been Begun already and will be
-        /// Ended later by someone else.
         /// <param name="view">The view matrix.</param>
         /// <param name="projection">The projection matrix.</param>
-        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
-        public override void Draw(Matrix view, Matrix projection, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
+        public override void Draw(Matrix view, Matrix projection)
         {
             // Our particle engines do the visual stuff.
         }

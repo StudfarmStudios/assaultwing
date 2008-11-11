@@ -467,23 +467,29 @@ namespace AW2.Game.Particles
         #endregion
 
         /// <summary>
-        /// Draws the particles managed by the particle engine.
+        /// Draws the gob's 3D graphics.
+        /// </summary>
+        /// <param name="view">The view matrix.</param>
+        /// <param name="projection">The projection matrix.</param>
+        public override void Draw(Matrix view, Matrix projection)
+        {
+            // Peng has no 3D graphics.
+        }
+
+        /// <summary>
+        /// Draws the gob's 2D graphics.
         /// </summary>
         /// Assumes that the sprite batch has been Begun already and will be
         /// Ended later by someone else.
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
-        /// <param name="spriteBatch">The sprite batch to draw particles with.</param>
-        public override void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
+        /// <param name="gameToScreen">Transformation from game coordinates 
+        /// to screen coordinates (pixels).</param>
+        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
+        /// <param name="scale">Scale of graphics.</param>
+        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Texture2D tex = data.GetTexture(textureName);
-            Viewport gfxViewport = AssaultWing.Instance.GraphicsDevice.Viewport;
-            Vector3 viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
-            Matrix transform = view * projection
-                * Matrix.CreateReflection(new Plane(Vector3.UnitY, 0))
-                * Matrix.CreateTranslation(1, 1, 0)
-                * Matrix.CreateScale(viewportSize / 2);
+            Matrix transform = gameToScreen;
             
             foreach (Particle part in particles)
             {
@@ -498,7 +504,7 @@ namespace AW2.Game.Particles
                 float layerDepth = MathHelper.Clamp(depthLayer * 0.99f + 0.0099f * lifepos, 0, 1);
                 spriteBatch.Draw(tex, new Vector2(screenCenter.X, screenCenter.Y), null,
                     part.CurrentColor, part.Rotation,
-                    new Vector2(tex.Width, tex.Height) / 2, part.Size, SpriteEffects.None, layerDepth);
+                    new Vector2(tex.Width, tex.Height) / 2, part.Size * scale, SpriteEffects.None, layerDepth);
             }
         }
 

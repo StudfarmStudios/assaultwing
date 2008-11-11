@@ -109,6 +109,14 @@ namespace AW2.Game
         float ApplyChange(float changePerSecond);
 
         /// <summary>
+        /// Returns the vector that represents how much the given vector change speed
+        /// affects during the current frame.
+        /// </summary>
+        /// <param name="changePerSecond">The vector of change per second.</param>
+        /// <returns>The vector of change during the current frame.</returns>
+        Vector2 ApplyChange(Vector2 changePerSecond);
+
+        /// <summary>
         /// Returns a position in an area of the game world 
         /// where a gob is overlap consistent (e.g. not inside a wall).
         /// </summary>

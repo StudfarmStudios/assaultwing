@@ -346,13 +346,10 @@ namespace AW2.Game
         /// <summary>
         /// Get or set the gob's rotation around the Z-axis.
         /// </summary>
-        public float Rotation
+        public virtual float Rotation
         {
             get { return rotation; }
-            set
-            {
-                rotation = value % MathHelper.TwoPi;
-            }
+            set { rotation = value % MathHelper.TwoPi; }
         }
 
         /// <summary>
@@ -740,6 +737,11 @@ namespace AW2.Game
                 gob.owner = this.owner;
                 if (gob is ParticleEngine)
                     ((ParticleEngine)gob).Leader = this;
+                if (gob is Gobs.Peng)
+                {
+                    ((Gobs.Peng)gob).Leader = this;
+                    // TODO: User named bones for birth gob placement //((Gobs.Peng)gob).LeaderBone = GetNamedPositions("SomeGobPart");
+                }
                 data.AddGob(gob);
             }
 
@@ -831,14 +833,11 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Draws the gob.
+        /// Draws the gob's 3D graphics.
         /// </summary>
-        /// Assumes that the sprite batch has been Begun already and will be
-        /// Ended later by someone else.
         /// <param name="view">The view matrix.</param>
         /// <param name="projection">The projection matrix.</param>
-        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
-        public virtual void Draw(Matrix view, Matrix projection, SpriteBatch spriteBatch)
+        public virtual void Draw(Matrix view, Matrix projection)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
@@ -925,6 +924,20 @@ namespace AW2.Game
                     renderState.DepthBufferEnable = true;
                 }
             }
+        }
+
+        /// <summary>
+        /// Draws the gob's 2D graphics.
+        /// </summary>
+        /// Assumes that the sprite batch has been Begun already and will be
+        /// Ended later by someone else.
+        /// <param name="gameToScreen">Transformation from game coordinates 
+        /// to screen coordinates (pixels).</param>
+        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
+        /// <param name="scale">Scale of graphics.</param>
+        public virtual void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
+        {
+            // No 2D graphics by default.
         }
 
         #endregion Methods related to gobs' functionality in the game world

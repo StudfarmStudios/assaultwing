@@ -33,9 +33,9 @@ namespace AW2.Game
             Weapon[] weapons = (Weapon[])weaponLoader.LoadAllTypes();
             foreach (Weapon weapon in weapons)
                 data.AddTypeTemplate(typeof(Weapon), weapon.TypeName, weapon);
-            TypeLoader particleLoader = new TypeLoader(typeof(ParticleEngine), "particledefs");
-            ParticleEngine[] particleEngines = (ParticleEngine[])particleLoader.LoadAllTypes();
-            foreach (ParticleEngine particleEngine in particleEngines)
+            TypeLoader particleLoader = new TypeLoader(typeof(Gob), "particledefs");
+            Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
+            foreach (Gob particleEngine in particleEngines)
                 data.AddTypeTemplate(typeof(Gob), particleEngine.TypeName, particleEngine);
             TypeLoader arenaLoader = new TypeLoader(typeof(Arena), "arenas");
             Arena[] arenas = (Arena[])arenaLoader.LoadAllTypes();

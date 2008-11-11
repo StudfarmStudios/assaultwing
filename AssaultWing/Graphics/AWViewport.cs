@@ -347,24 +347,17 @@ namespace AW2.Graphics
                 gfx.RenderState.DepthBufferWriteEnable = true;
 
                 // 3D graphics
-                // We assume that all gobs but particle engines draw only 3D graphics
-                // and that particle engines don't draw any 3D graphics.
-                // To enforce this, we pass 'null' as the sprite batch.
                 foreach (Gob gob in layer.Gobs)
-                {
-                    if (!(gob is ParticleEngine))
-                        gob.Draw(view, projection, null);
-                }
+                    gob.Draw(view, projection);
 
                 // 2D graphics
-                // We assume that particle engines draw only 2D graphics and that
-                // no other gob draws any 2D graphics.
+                Matrix gameToScreen = view * projection
+                    * Matrix.CreateReflection(new Plane(Vector3.UnitY, 0))
+                    * Matrix.CreateTranslation(1, 1, 0)
+                    * Matrix.CreateScale(new Vector3(viewport.Width, viewport.Height, viewport.MaxDepth - viewport.MinDepth) / 2);
                 spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.BackToFront, SaveStateMode.None);
                 foreach (Gob gob in layer.Gobs)
-                {
-                    if (gob is ParticleEngine)
-                        gob.Draw(view, projection, spriteBatch);
-                }
+                    gob.Draw2D(gameToScreen, spriteBatch, layerScale);
                 spriteBatch.End();
             });
 

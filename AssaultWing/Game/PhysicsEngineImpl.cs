@@ -489,6 +489,17 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Returns the vector that represents how much the given vector change speed
+        /// affects during the current frame.
+        /// </summary>
+        /// <param name="changePerSecond">The vector of change per second.</param>
+        /// <returns>The vector of change during the current frame.</returns>
+        public Vector2 ApplyChange(Vector2 changePerSecond)
+        {
+            return changePerSecond * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        /// <summary>
         /// Returns a position in an area of the game world 
         /// where a gob is overlap consistent (e.g. not inside a wall).
         /// </summary>

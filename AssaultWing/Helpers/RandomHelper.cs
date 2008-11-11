@@ -1,4 +1,7 @@
-
+// marked in as DEBUG because we don't want NUnit framework to release builds
+#if DEBUG
+using NUnit.Framework;
+#endif
 #region Using directives
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -47,6 +50,45 @@ namespace AW2.Helpers
         {
             return globalRandomGenerator.Next(max);
         } // GetRandomInt(max)
+
+        /// <summary>
+        /// Returns a random int.
+        /// </summary>
+        /// <returns>A random int.</returns>
+        public static int GetRandomInt()
+        {
+            if (globalRandomGenerator.Next(2) == 0)
+                return globalRandomGenerator.Next();
+            return -1 - globalRandomGenerator.Next();
+        } // GetRandomInt()
+
+        /// <summary>
+        /// Returns the n'th integer from a random sequence determined by a seed value.
+        /// </summary>
+        /// This method iterates over n, so use only small values for n.
+        /// <param name="seed">Random seed</param>
+        /// <param name="n">How manieth value to return from the sequence determined by the seed.</param>
+        /// <returns>The n'th integer from the random sequence determined by the seed value.</returns>
+        public static int ShiftRandomInt(int seed, int n)
+        {
+            // The implementation is a linear feedback shift register (with maximal period)
+            // which we iterate n times.
+            int value = seed;
+            for (; n > 0; --n)
+                ShiftRandomInt(seed);
+            return value;
+        }
+
+        /// <summary>
+        /// Returns the next integer from a random sequence determined by a seed value.
+        /// </summary>
+        /// <param name="seed">Random seed</param>
+        /// <returns>The next integer from the random sequence determined by the seed value.</returns>
+        public static int ShiftRandomInt(int seed)
+        {
+            // The implementation is a linear feedback shift register (with maximal period).
+            return (seed >> 1) ^ (-(seed & 1) & -0x50000001);
+        }
 
         /// <summary>
         /// Get random float between min and max
@@ -133,5 +175,75 @@ namespace AW2.Helpers
         } // GetRandomColor()
 
         #endregion
+
+        #region Unit tests
+#if DEBUG
+        /// <summary>
+        /// RandomHelper test class.
+        /// </summary>
+        [TestFixture]
+        public class RandomHelperTest
+        {
+            delegate int IntRandomizer();
+
+            /// <summary>
+            /// Sets up tests.
+            /// </summary>
+            [SetUp]
+            public void SetUp()
+            {
+            }
+
+            /// <summary>
+            /// Tests random ints.
+            /// </summary>
+            [Test]
+            public void TestGetRandomInt()
+            {
+                TestEvenDistributionInt(delegate() { return GetRandomInt(); });
+            }
+
+            /// <summary>
+            /// Tests random int shifting.
+            /// </summary>
+            [Test]
+            public void TestRandomShiftInt()
+            {
+                int seed = GetRandomInt();
+                TestEvenDistributionInt(delegate() { return seed = ShiftRandomInt(seed); });
+            }
+
+            /// <summary>
+            /// Helper method. Tests for even distribution of ints given by an
+            /// int randomising delegate.
+            /// </summary>
+            void TestEvenDistributionInt(IntRandomizer randomizer)
+            {
+                int[] counts = new int[65536]; // counts for 2^16 intervals, each of length 2^16
+                for (int i = 0; i < 65536000; ++i)
+                {
+                    int value = randomizer();
+                    int interval = (int)(((long)value - int.MinValue) / 65536);
+                    ++counts[interval];
+                }
+
+                // Expect a count of 1000 in each interval.
+                int epsilon = 0;
+                int worstInterval = -1;
+                for (int i = 0; i < 65536; ++i)
+                    if (Math.Abs(1000 - counts[i]) > epsilon)
+                    {
+                        epsilon = Math.Abs(1000 - counts[i]);
+                        worstInterval = i;
+                    }
+                Assert.Less(epsilon, 160, "Random distribution doesn't look very even, worst interval " + worstInterval
+                    + "\nsome intervals: 0=" + counts[0] + ", 1=" + counts[1] + ", 2=" + counts[2]
+                    + "\n32766=" + counts[32766] + ", 32767=" + counts[32767] + ", 32768=" + counts[32768]
+                    + "\n65533=" + counts[65533] + ", 65534=" + counts[65534] + ", 65535=" + counts[65535]
+                    + "\n*** Please rerun the test several times and worry only if it fails repeatedly ***");
+            }
+        }
+#endif
+        #endregion Unit tests
     } // class RandomHelper
 } 

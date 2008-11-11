@@ -91,6 +91,7 @@
       <Name>Dock</Name>
     </Compile>
     <Compile Include="Game\Gobs\Explosion.cs" />
+    <Compile Include="Game\Gobs\Peng.cs" />
     <Compile Include="Game\Gobs\PropModel.cs" />
     <Compile Include="Game\Gobs\Rocket.cs" />
     <Compile Include="Game\Gobs\SpawnGob.cs" />
@@ -103,6 +104,10 @@
     <Compile Include="Game\Particles\ExplodeEmitter.cs" />
     <Compile Include="Game\Particles\Particle.cs" />
     <Compile Include="Game\Particles\ParticleEngine.cs" />
+    <Compile Include="Game\Pengs\Particle.cs" />
+    <Compile Include="Game\Pengs\ParticleEmitter.cs" />
+    <Compile Include="Game\Pengs\ParticleUpdater.cs" />
+    <Compile Include="Game\Pengs\PengParameter.cs" />
     <Compile Include="Game\TypeLoader.cs">
       <Name>TypeLoader</Name>
     </Compile>

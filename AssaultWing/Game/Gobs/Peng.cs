@@ -313,7 +313,8 @@ namespace AW2.Game.Gobs
                 Texture2D texture = data.GetTexture(particle.textureName);
                 float drawRotation = coordinateSystem == CoordinateSystem.Game
                     ? particle.rotation
-                    : particle.rotation - Rotation; // minus because screen Y coordinates are reversed
+                    : particle.rotation + Rotation;
+                drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
                 spriteBatch.Draw(texture, screenCenter, null,
                     new Color(new Vector4(1, 1, 1, particle.alpha)), drawRotation,
                     new Vector2(texture.Width, texture.Height) / 2, particle.scale * scale,

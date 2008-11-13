@@ -317,7 +317,7 @@ namespace AW2.Game
         /// <summary>
         /// Get or set the gob's movement vector.
         /// </summary>
-        public Vector2 Move { get { return move; } set { move = value; } }
+        public virtual Vector2 Move { get { return move; } set { move = value; } }
 
         /// <summary>
         /// Mass of the gob, measured in kilograms.

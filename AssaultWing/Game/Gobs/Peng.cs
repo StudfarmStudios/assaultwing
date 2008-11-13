@@ -147,6 +147,18 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
+        /// Movement vector of the peng.
+        /// </summary>
+        public override Vector2 Move
+        {
+            get
+            {
+                if (leader == null) return base.Move;
+                return leader.Move;
+            }
+        }
+
+        /// <summary>
         /// Rotation of the peng around the Z-axis, i.e. the direction of the
         /// peng's coordinate system's X axis in game coordinates.
         /// </summary>

@@ -7,16 +7,32 @@ using AW2.Helpers;
 
 namespace AW2.Sound
 {
+    /// <summary>
+    /// A piece of background music.
+    /// </summary>
     [LimitedSerialization]
     public class BackgroundMusic
     {
+        /// <summary>
+        /// File name of the piece.
+        /// </summary>
         [TypeParameter]
         string fileName;
 
+        /// <summary>
+        /// Playing volume of the piece.
+        /// </summary>
         [TypeParameter]
         float volume;
 
+        /// <summary>
+        /// File name of the piece.
+        /// </summary>
         public string FileName { get { return fileName; } set { fileName = value; } }
+
+        /// <summary>
+        /// Playing volume of the piece.
+        /// </summary>
         public float Volume { get { return volume; } set { volume = value; } }
 
                 /// <summary>

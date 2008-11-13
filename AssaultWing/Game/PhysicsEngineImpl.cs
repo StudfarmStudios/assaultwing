@@ -178,12 +178,6 @@ namespace AW2.Game
         float collisionDamageDownGrade = 0.0006f;
 
         /// <summary>
-        /// Loud collision sound variable
-        /// attempt, measured in meters.
-        /// </summary>
-        float loudCollisionSound = 100f;
-
-        /// <summary>
         /// Minimum move delta
         /// For collision damage, sound effects
         /// </summary>

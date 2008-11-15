@@ -120,6 +120,7 @@ namespace AW2.Game.Pengs
         public override ICollection<Particle> Emit()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
             List<Particle> particles = null;
 
@@ -146,75 +147,93 @@ namespace AW2.Game.Pengs
             Vector2 endPos = peng.Pos;
             for (int i = 0; i < createCount; ++i)
             {
+                // Find out type of emitted thing (which gob or particle) and create it.
+                Particle particle = null;
+                Gob gob = null;
+                int emitType = RandomHelper.GetRandomInt(textureNames.Length + gobTypeNames.Length);
+                if (emitType < textureNames.Length)
+                    particle = new Particle();
+                else
+                    gob = Gob.CreateGob(gobTypeNames[emitType - textureNames.Length]);
+
                 // Find out emission parameters.
-                float pengInput = peng.Input;
-                int random = RandomHelper.GetRandomInt();
-                float directionAngle, distance, rotation;
-                Vector2 directionUnit, pos, move;
-                switch (peng.ParticleCoordinates)
+                // We have to loop because some choices of parameters may not be wanted.
+                int maxAttempts = 20;
+                bool attemptOk = false;
+                for (int attempt = 0; !attemptOk && attempt < maxAttempts; ++attempt)
                 {
-                    case Peng.CoordinateSystem.Peng:
-                        directionAngle = RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
-                        directionUnit = new Vector2((float)Math.Cos(directionAngle), (float)Math.Sin(directionAngle));
-                        distance = radius * (float)Math.Sqrt(RandomHelper.globalRandomGenerator.NextDouble());
-                        pos = distance * directionUnit;
-                        move = initialVelocity.GetValue(0, pengInput, random) * directionUnit;
-                        switch (facingType)
-                        {
-                            case FacingType.Directed: rotation = 0; break;
-                            case FacingType.Forward: rotation = directionAngle; break;
-                            case FacingType.Random: rotation = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi); break;
-                            default: throw new Exception("SprayEmitter: Unhandled particle facing type " + facingType);
-                        }
-                        break;
-                    case Peng.CoordinateSystem.Game:
-                        {
-                            float posWeight = (i + 1) / (float)createCount;
-                            Vector2 iPos = Vector2.Lerp(startPos, endPos, posWeight);
-                            directionAngle = peng.Rotation + RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
+                    bool lastAttempt = attempt == maxAttempts - 1;
+                    attemptOk = true;
+                    float pengInput = peng.Input;
+                    int random = RandomHelper.GetRandomInt();
+                    float directionAngle, distance, rotation;
+                    Vector2 directionUnit, pos, move;
+                    switch (peng.ParticleCoordinates)
+                    {
+                        case Peng.CoordinateSystem.Peng:
+                            directionAngle = RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
                             directionUnit = new Vector2((float)Math.Cos(directionAngle), (float)Math.Sin(directionAngle));
                             distance = radius * (float)Math.Sqrt(RandomHelper.globalRandomGenerator.NextDouble());
-                            pos = iPos + distance * directionUnit;
-                            move = peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                            pos = distance * directionUnit;
+                            move = initialVelocity.GetValue(0, pengInput, random) * directionUnit;
                             switch (facingType)
                             {
-                                case FacingType.Directed: rotation = peng.Rotation; break;
+                                case FacingType.Directed: rotation = 0; break;
                                 case FacingType.Forward: rotation = directionAngle; break;
                                 case FacingType.Random: rotation = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi); break;
                                 default: throw new Exception("SprayEmitter: Unhandled particle facing type " + facingType);
                             }
-                        }
-                        break;
-                    default:
-                        throw new Exception("SprayEmitter: Unhandled peng coordinate system " + peng.ParticleCoordinates);
-                }
+                            break;
+                        case Peng.CoordinateSystem.Game:
+                            {
+                                float posWeight = (i + 1) / (float)createCount;
+                                Vector2 iPos = Vector2.Lerp(startPos, endPos, posWeight);
+                                directionAngle = peng.Rotation + RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
+                                directionUnit = new Vector2((float)Math.Cos(directionAngle), (float)Math.Sin(directionAngle));
+                                distance = radius * (float)Math.Sqrt(RandomHelper.globalRandomGenerator.NextDouble());
+                                pos = iPos + distance * directionUnit;
+                                move = peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                                switch (facingType)
+                                {
+                                    case FacingType.Directed: rotation = peng.Rotation; break;
+                                    case FacingType.Forward: rotation = directionAngle; break;
+                                    case FacingType.Random: rotation = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi); break;
+                                    default: throw new Exception("SprayEmitter: Unhandled particle facing type " + facingType);
+                                }
+                            }
+                            break;
+                        default:
+                            throw new Exception("SprayEmitter: Unhandled peng coordinate system " + peng.ParticleCoordinates);
+                    }
 
-                // Find out type of emitted thing (gob or particle) and create it.
-                int emitType = RandomHelper.GetRandomInt(textureNames.Length + gobTypeNames.Length);
-                if (emitType < textureNames.Length)
-                {
-                    // Emit a particle.
-                    Particle particle = new Particle();
-                    particle.alpha = 1;
-                    particle.birthTime = now;
-                    particle.move = move;
-                    particle.pengInput = pengInput;
-                    particle.pos = pos;
-                    particle.random = random;
-                    particle.rotation = rotation;
-                    particle.scale = 1;
-                    particle.textureName = textureNames[emitType];
-                    particles.Add(particle);
-                }
-                else
-                {
-                    // Emit a gob.
-                    Gob gob = Gob.CreateGob(gobTypeNames[emitType - textureNames.Length]);
-                    gob.Owner = peng.Owner;
-                    gob.Pos = pos;
-                    gob.Move = move;
-                    gob.Rotation = rotation;
-                    data.AddGob(gob);
+                    // Set the thing's parameters.
+                    if (emitType < textureNames.Length)
+                    {
+                        particle.alpha = 1;
+                        particle.birthTime = now;
+                        particle.move = move;
+                        particle.pengInput = pengInput;
+                        particle.pos = pos;
+                        particle.random = random;
+                        particle.rotation = rotation;
+                        particle.scale = 1;
+                        particle.textureName = textureNames[emitType];
+                        particles.Add(particle);
+                    }
+                    else
+                    {
+                        // Bail out if the position is not free for the gob.
+                        if (!lastAttempt && !physics.IsFreePosition(gob, pos))
+                        {
+                            attemptOk = false; 
+                            continue;
+                        }
+                        gob.Owner = peng.Owner;
+                        gob.Pos = pos;
+                        gob.Move = move;
+                        gob.Rotation = rotation;
+                        data.AddGob(gob);
+                    }
                 }
             }
 

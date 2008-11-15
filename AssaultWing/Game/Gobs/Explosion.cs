@@ -61,7 +61,7 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         SoundOptions.Action sound;
 
-        ParticleEngine[] particleEngines;
+        Gob[] particleEngines;
 
         bool firstCollisionChecked;
 
@@ -124,12 +124,12 @@ namespace AW2.Game.Gobs
             eventEngine.SendEvent(soundEvent);
 
             // Create particle engines.
-            particleEngines = new ParticleEngine[particleEngineNames.Length];
+            particleEngines = new Gob[particleEngineNames.Length];
             for (int i = 0; i < particleEngineNames.Length; ++i)
             {
-                particleEngines[i] = new ParticleEngine(particleEngineNames[i]);
+                particleEngines[i] = Gob.CreateGob(particleEngineNames[i]);
                 particleEngines[i].Pos = this.Pos;
-                data.AddParticleEngine(particleEngines[i]);
+                data.AddGob(particleEngines[i]);
             }
 
             // Count end time of gas flow.

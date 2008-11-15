@@ -53,7 +53,7 @@
   </emitter>
   <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <particleAge type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <expected type="&float;">2</expected>
+      <expected type="&float;">1.7</expected>
       <variance type="&float;">0.5</variance>
     </particleAge>
     <acceleration type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

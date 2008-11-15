@@ -12,7 +12,8 @@
     <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bonus blink</Item>
   </birthGobTypes>
   <deathGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-	<Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bonus collection</Item>
+    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bonus collect flash</Item>
+	<Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bonus collect</Item>
   </deathGobTypes>
   <possibilities type="AW2.Game.Gobs.BonusActionPossibility[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Item type="AW2.Game.Gobs.BonusActionPossibility, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

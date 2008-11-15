@@ -144,7 +144,7 @@
               <keys type="&CurveKeyCollection;">
                 <Item type="&CurveKey;">
                   <position type="&float;">0</position>
-                  <internalValue type="&float;">0.01</internalValue>
+                  <internalValue type="&float;">0.08</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

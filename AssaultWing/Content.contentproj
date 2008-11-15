@@ -1405,14 +1405,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#tbonusblink.xml">
-      <Name>Peng#tbonusblink</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\p_bonusblink.png">
       <Name>p_bonusblink</Name>
       <Importer>TextureImporter</Importer>
@@ -1440,6 +1432,14 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="particledefs\Peng#bonusblink.xml">
+      <Name>Peng#bonusblink</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

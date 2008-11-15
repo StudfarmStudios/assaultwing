@@ -1377,12 +1377,6 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <None Include="particledefs\ParticleEngine#slugglow.xml">
-      <Name>ParticleEngine#slugglow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="textures\mini_hpbar_bg.png">
@@ -1444,6 +1438,14 @@
   <ItemGroup>
     <None Include="particledefs\Peng#bulletglow.xml">
       <Name>Peng#bulletglow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="particledefs\Peng#bulletexplo.xml">
+      <Name>Peng#bulletexplo</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

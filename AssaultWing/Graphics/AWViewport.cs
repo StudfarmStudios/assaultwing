@@ -24,6 +24,20 @@ namespace AW2.Graphics
         List<OverlayComponent> overlayComponents;
 
         /// <summary>
+        /// The minimum X and Y coordinates of the game world this viewport shows
+        /// at a depth.
+        /// </summary>
+        /// <param name="z">The depth.</param>
+        public abstract Vector2 WorldAreaMin(float z);
+
+        /// <summary>
+        /// The maximum X and Y coordinates of the game world this viewport shows
+        /// at a depth.
+        /// </summary>
+        /// <param name="z">The depth.</param>
+        public abstract Vector2 WorldAreaMax(float z);
+
+        /// <summary>
         /// Creates a viewport.
         /// </summary>
         public AWViewport()
@@ -53,17 +67,19 @@ namespace AW2.Graphics
         /// Checks if a bounding volume might be visible in the viewport.
         /// </summary>
         /// <param name="volume">The bounding volume.</param>
+        /// <param name="z">The depth at which the volume resides.</param>
         /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
         /// <b>true</b> otherwise.</returns>
-        public abstract bool Intersects(BoundingSphere volume);
+        public abstract bool Intersects(BoundingSphere volume, float z);
 
         /// <summary>
         /// Checks if a bounding volume might be visible in the viewport.
         /// </summary>
         /// <param name="volume">The bounding volume.</param>
+        /// <param name="z">The depth at which the volume resides.</param>
         /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
         /// <b>true</b> otherwise.</returns>
-        public abstract bool Intersects(BoundingBox volume);
+        public abstract bool Intersects(BoundingBox volume, float z);
 
         /// <summary>
         /// Draws the viewport's overlay graphics components.
@@ -194,34 +210,6 @@ namespace AW2.Graphics
         #region PlayerViewport properties
 
         public Player Player { get { return player; } }
-      
-        /// <summary>
-        /// The minimum X and Y coordinates of the game world this viewport is viewing.
-        /// </summary>
-        public Vector2 WorldAreaMin
-        {
-            get
-            {
-                if (player.Ship != null)
-                    worldAreaMin = new Vector2(
-                        player.Ship.Pos.X - viewport.Width / 2,
-                        player.Ship.Pos.Y - viewport.Height / 2);
-                return worldAreaMin;
-            }
-        }
-
-        /// <summary>
-        /// The maximum X and Y coordinates of the game world this viewport is viewing.
-        /// </summary>
-        public Vector2 WorldAreaMax { 
-            get { 
-                if (player.Ship != null)
-                    worldAreaMax = new Vector2(
-                        player.Ship.Pos.X + viewport.Width / 2, 
-                        player.Ship.Pos.Y + viewport.Height / 2);
-                return worldAreaMax;
-            }
-        }
 
         /// <summary>
         /// The view matrix for drawing 3D content into the viewport.
@@ -252,22 +240,51 @@ namespace AW2.Graphics
         #region AWViewport implementation
 
         /// <summary>
+        /// The minimum X and Y coordinates of the game world this viewport shows
+        /// at a depth.
+        /// </summary>
+        /// <param name="z">The depth.</param>
+        public override Vector2 WorldAreaMin(float z)
+        {
+            if (player.Ship != null)
+                worldAreaMin = player.Ship.Pos - GetScale(z) *
+                    new Vector2(viewport.Width, viewport.Height) / 2;
+            return worldAreaMin;
+        }
+
+        /// <summary>
+        /// The maximum X and Y coordinates of the game world this viewport shows
+        /// at a depth.
+        /// </summary>
+        /// <param name="z">The depth.</param>
+        public override Vector2 WorldAreaMax(float z)
+        {
+            if (player.Ship != null)
+                worldAreaMax = player.Ship.Pos + GetScale(z) * 
+                    new Vector2(viewport.Width, viewport.Height) / 2;
+            return worldAreaMax;
+        }
+
+        /// <summary>
         /// Checks if a bounding volume might be visible in the viewport.
         /// </summary>
         /// <param name="volume">The bounding volume.</param>
+        /// <param name="z">The depth at which the volume resides.</param>
         /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
         /// <b>true</b> otherwise.</returns>
-        public override bool Intersects(BoundingSphere volume)
+        public override bool Intersects(BoundingSphere volume, float z)
         {
             // We add one unit to the bounding sphere to account for rounding of floating-point
             // world coordinates to integer-valued screen pixels.
-            if (volume.Center.X + volume.Radius + 1f < WorldAreaMin.X)
+            Vector2 min = WorldAreaMin(z);
+            Vector2 max = WorldAreaMax(z);
+            if (volume.Center.X + volume.Radius + 1f < min.X)
                 return false;
-            if (volume.Center.Y + volume.Radius + 1f < WorldAreaMin.Y)
+            if (volume.Center.Y + volume.Radius + 1f < min.Y)
                 return false;
-            if (WorldAreaMax.X < volume.Center.X - volume.Radius - 1f)
+            if (max.X < volume.Center.X - volume.Radius - 1f)
                 return false;
-            if (WorldAreaMax.Y < volume.Center.Y - volume.Radius - 1f)
+            if (max.Y < volume.Center.Y - volume.Radius - 1f)
                 return false;
             return true;
         }
@@ -276,19 +293,22 @@ namespace AW2.Graphics
         /// Checks if a bounding volume might be visible in the viewport.
         /// </summary>
         /// <param name="volume">The bounding volume.</param>
+        /// <param name="z">The depth at which the volume resides.</param>
         /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
         /// <b>true</b> otherwise.</returns>
-        public override bool Intersects(BoundingBox volume)
+        public override bool Intersects(BoundingBox volume, float z)
         {
             // We add one unit to the bounding box to account for rounding of floating-point
             // world coordinates to integer-valued screen pixels.
-            if (volume.Max.X + 1f < WorldAreaMin.X)
+            Vector2 min = WorldAreaMin(z);
+            Vector2 max = WorldAreaMax(z);
+            if (volume.Max.X + 1f < min.X)
                 return false;
-            if (volume.Max.Y + 1f < WorldAreaMin.Y)
+            if (volume.Max.Y + 1f < min.Y)
                 return false;
-            if (WorldAreaMax.X < volume.Min.X - 1f)
+            if (max.X < volume.Min.X - 1f)
                 return false;
-            if (WorldAreaMax.Y < volume.Min.Y - 1f)
+            if (max.Y < volume.Min.Y - 1f)
                 return false;
             return true;
         }
@@ -306,7 +326,7 @@ namespace AW2.Graphics
             data.ForEachArenaLayer(delegate(ArenaLayer layer)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
-                float layerScale = 1000 / (1000 - layer.Z);
+                float layerScale = GetScale(layer.Z);
                 Matrix projection = Matrix.CreateOrthographic(
                     viewport.Width / layerScale, viewport.Height / layerScale,
                     1f, 11000f);
@@ -315,7 +335,7 @@ namespace AW2.Graphics
                 if (layer.ParallaxName != null)
                 {
                     spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-                    Vector2 pos = WorldAreaMin * -layerScale;
+                    Vector2 pos = WorldAreaMin(0) * -layerScale;
                     pos.Y = -pos.Y;
                     Vector2 fillPos = new Vector2();
                     Texture2D tex = data.GetTexture(layer.ParallaxName);
@@ -366,5 +386,15 @@ namespace AW2.Graphics
         }
 
         #endregion AWViewport implementation
+
+        /// <summary>
+        /// Returns the visual scaling factor at a depth in game coordinates.
+        /// </summary>
+        /// <param name="z">The depth, in game coordinates.</param>
+        /// <returns>The scaling factor at the depth.</returns>
+        float GetScale(float z)
+        {
+            return 1000 / (1000 - z);
+        }
     }
 }

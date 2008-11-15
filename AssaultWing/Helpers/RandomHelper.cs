@@ -214,6 +214,14 @@ namespace AW2.Helpers
             }
 
             /// <summary>
+            /// Tests random ints with Poisson distribution.
+            /// </summary>
+            [Test]
+            public void TestGetRandomIntPoisson()
+            {
+            }
+
+            /// <summary>
             /// Helper method. Tests for even distribution of ints given by an
             /// int randomising delegate.
             /// </summary>
@@ -236,6 +244,39 @@ namespace AW2.Helpers
                         epsilon = Math.Abs(1000 - counts[i]);
                         worstInterval = i;
                     }
+                Assert.Less(epsilon, 160, "Random distribution doesn't look very even, worst interval " + worstInterval
+                    + "\nsome intervals: 0=" + counts[0] + ", 1=" + counts[1] + ", 2=" + counts[2]
+                    + "\n32766=" + counts[32766] + ", 32767=" + counts[32767] + ", 32768=" + counts[32768]
+                    + "\n65533=" + counts[65533] + ", 65534=" + counts[65534] + ", 65535=" + counts[65535]
+                    + "\n*** Please rerun the test several times and worry only if it fails repeatedly ***");
+            }
+
+            /// <summary>
+            /// Helper method. Tests for Poisson distribution of ints given by an
+            /// int randomising delegate.
+            /// </summary>
+            /// <param name="mode">Mode of the Poisson distribution</param>
+            void TestPoissonDistributionInt(IntRandomizer randomizer, int mode)
+            {
+                int[] counts = new int[2 * mode + 1]; // counts for 2*mode first numbers and a count for all the rest
+                int totalCount = 10000000;
+                for (int i = 0; i < totalCount; ++i)
+                {
+                    int value = randomizer();
+                    int interval = value < counts.Length - 1 ? value : counts.Length;
+                    ++counts[interval];
+                }
+
+                float[] weights = new float[counts.Length];
+                int epsilon = 0;
+                int worstInterval = -1;
+                for (int i = 0; i < counts.Length; ++i)
+                    weights[i] = counts[i] / (float)totalCount;
+                    //if (Math.Abs(1000 - counts[i]) > epsilon)
+                    //{
+                    //    epsilon = Math.Abs(1000 - counts[i]);
+                    //    worstInterval = i;
+                    //}
                 Assert.Less(epsilon, 160, "Random distribution doesn't look very even, worst interval " + worstInterval
                     + "\nsome intervals: 0=" + counts[0] + ", 1=" + counts[1] + ", 2=" + counts[2]
                     + "\n32766=" + counts[32766] + ", 32767=" + counts[32767] + ", 32768=" + counts[32768]

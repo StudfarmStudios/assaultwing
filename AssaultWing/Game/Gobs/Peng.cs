@@ -182,7 +182,7 @@ namespace AW2.Game.Gobs
         /// The coordinate system in which to interpret the <c>pos</c> field of
         /// the particles of this peng.
         /// </summary>
-        public CoordinateSystem ParticleCoordinates { get { return coordinateSystem; } }
+        public CoordinateSystem ParticleCoordinates { get { return coordinateSystem; } set { coordinateSystem = value; } }
 
         /// <summary>
         /// <c>null</c> or the gob that determines the origin of the peng's coordinate system.

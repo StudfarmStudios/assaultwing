@@ -1460,6 +1460,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="gobdefs\BounceBullet#cinder.xml">
+      <Name>BounceBullet#cinder</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="textures\p_bonuscollect.png">
       <Name>p_bonuscollect</Name>
       <Importer>TextureImporter</Importer>

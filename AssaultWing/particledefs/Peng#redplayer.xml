@@ -9,7 +9,7 @@
   <!ENTITY CurveLoopType "Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
 ]>
 <GobType type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName type="&string;">playergreen</typeName>
+  <typeName type="&string;">playerred</typeName>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Back</layerPreference>
   <depthLayer type="&float;">0.5</depthLayer>
   <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
@@ -20,7 +20,7 @@
     <sprayAngle type="&float;">0.0</sprayAngle>
     <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Directed</facingType>
     <textureNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="&string;">player_green</Item>
+      <Item type="&string;">player_red</Item>
     </textureNames>
     <gobTypeNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 <!--      <Item type="&string;">hail</Item>-->
@@ -150,7 +150,7 @@
               <keys type="&CurveKeyCollection;">
                 <Item type="&CurveKey;">
                   <position type="&float;">0</position>
-                  <internalValue type="&float;">0.72</internalValue>
+                  <internalValue type="&float;">0.70</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

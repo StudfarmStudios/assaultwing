@@ -141,7 +141,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Particle engines that manage coughing.
         /// </summary>
-        ParticleEngine[] coughEngines;
+        Gob[] coughEngines;
 
         #endregion Ship fields related to coughing
 
@@ -399,7 +399,7 @@ namespace AW2.Game.Gobs
             this.weapon2 = CreateWeapons(weapon2Name, 2);
             this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2Charge = this.weapon2ChargeMax;
-            this.coughEngines = new ParticleEngine[0];
+            coughEngines = new Gob[0];
             this.temporarilyDisabledGobs = new List<Gob>();
         }
 
@@ -439,14 +439,24 @@ namespace AW2.Game.Gobs
         private void CreateCoughEngines()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            coughEngines = new ParticleEngine[coughEngineNames.Length];
+            coughEngines = new Gob[coughEngineNames.Length];
             for (int i = 0; i < coughEngineNames.Length; ++i)
             {
-                coughEngines[i] = new ParticleEngine(coughEngineNames[i]);
-                coughEngines[i].Loop = true;
-                coughEngines[i].IsAlive = false;
-                coughEngines[i].Leader = this;
-                data.AddParticleEngine(coughEngines[i]);
+                coughEngines[i] = Gob.CreateGob(coughEngineNames[i]);
+                if (coughEngines[i] is ParticleEngine)
+                {
+                    ParticleEngine peng = (ParticleEngine)coughEngines[i];
+                    peng.Loop = true;
+                    peng.IsAlive = false;
+                    peng.Leader = this;
+                }
+                else if (coughEngines[i] is Peng)
+                {
+                    Peng peng = (Peng)coughEngines[i];
+                    peng.Paused = true;
+                    peng.Leader = this;
+                }
+                data.AddGob(coughEngines[i]);
             }
         }
 
@@ -490,11 +500,17 @@ namespace AW2.Game.Gobs
             // Manage cough engines.
             float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
             coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
-            foreach (ParticleEngine coughEngine in coughEngines)
-            {
-                coughEngine.Argument = coughArgument;
-                coughEngine.IsAlive = coughArgument > 0;
-            }
+            foreach (Gob coughEngine in coughEngines)
+                if (coughEngine is ParticleEngine)
+                {
+                    ((ParticleEngine)coughEngine).Argument = coughArgument;
+                    ((ParticleEngine)coughEngine).IsAlive = coughArgument > 0;
+                }
+                else if (coughEngine is Peng)
+                {
+                    ((Peng)coughEngine).Input = coughArgument;
+                    ((Peng)coughEngine).Paused = coughArgument == 0;
+                }
 
             // Update weapon charges.
             weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);

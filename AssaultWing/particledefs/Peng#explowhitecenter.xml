@@ -85,7 +85,7 @@
     <rotationSpeed type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <min type="&float;">-1000000</min>
       <max type="&float;">1000000</max>
-      <randomAmplitude type="&float;">4.123</randomAmplitude>
+      <randomAmplitude type="&float;">2.123</randomAmplitude>
       <randomMixer type="&int;">2</randomMixer>
       <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -130,7 +130,7 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.12</position>
-                  <internalValue type="&float;">1.6</internalValue>
+                  <internalValue type="&float;">1.56</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
@@ -170,7 +170,14 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.13</position>
-                  <internalValue type="&float;">0.68</internalValue>
+                  <internalValue type="&float;">0.8</internalValue>
+                  <tangentOut type="&float;">0</tangentOut>
+                  <tangentIn type="&float;">0</tangentIn>
+                  <continuity type="&CurveContinuity;">Smooth</continuity>
+                </Item>
+                <Item type="&CurveKey;">
+                  <position type="&float;">0.23</position>
+                  <internalValue type="&float;">0.6</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

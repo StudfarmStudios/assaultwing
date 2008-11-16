@@ -54,7 +54,7 @@
   </emitter>
   <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <particleAge type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <expected type="&float;">1.8</expected>
+      <expected type="&float;">2</expected>
       <variance type="&float;">0.4</variance>
     </particleAge>
     <acceleration type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -138,7 +138,7 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">1</position>
-                  <internalValue type="&float;">1.6</internalValue>
+                  <internalValue type="&float;">1.7</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
@@ -171,7 +171,7 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.3</position>
-                  <internalValue type="&float;">0.3</internalValue>
+                  <internalValue type="&float;">0.35</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

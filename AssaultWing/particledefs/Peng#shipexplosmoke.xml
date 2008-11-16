@@ -9,17 +9,18 @@
   <!ENTITY CurveLoopType "Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
 ]>
 <GobType type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName type="&string;">ship explo center</typeName>
-  <depthLayer type="&float;">0.18</depthLayer>
-  <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Game</coordinateSystem>
+  <typeName type="&string;">ship explo smoke</typeName>
+  <depthLayer type="&float;">0.6</depthLayer>
+  <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
   <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <emissionFrequency type="&float;">3</emissionFrequency>
-    <numberToCreate type="&int;">1</numberToCreate>
-    <radius type="&float;">0</radius>
-    <sprayAngle type="&float;">0.0</sprayAngle>
-    <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Directed</facingType>
+    <emissionFrequency type="&float;">12</emissionFrequency>
+    <numberToCreate type="&int;">11</numberToCreate>
+    <radius type="&float;">42</radius>
+    <sprayAngle type="&float;">3.142</sprayAngle>
+    <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Random</facingType>
     <textureNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="&string;">p_explo_center</Item>
+      <Item type="&string;">p_smoke</Item>
+	  <Item type="&string;">p_dark_smoke</Item>
     </textureNames>
     <gobTypeNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
 <!--      <Item type="&string;">hail</Item>-->
@@ -53,8 +54,8 @@
   </emitter>
   <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <particleAge type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <expected type="&float;">1.35</expected>
-      <variance type="&float;">0.04</variance>
+      <expected type="&float;">2.1</expected>
+      <variance type="&float;">0.4</variance>
     </particleAge>
     <acceleration type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <min type="&float;">-1000</min>
@@ -85,7 +86,7 @@
     <rotationSpeed type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <min type="&float;">-1000000</min>
       <max type="&float;">1000000</max>
-      <randomAmplitude type="&float;">1.423</randomAmplitude>
+      <randomAmplitude type="&float;">1.254</randomAmplitude>
       <randomMixer type="&int;">2</randomMixer>
       <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -97,7 +98,7 @@
               <keys type="&CurveKeyCollection;">
                 <Item type="&CurveKey;">
                   <position type="&float;">0</position>
-                  <internalValue type="&float;">0</internalValue>
+                  <internalValue type="&float;">-0.04</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
@@ -111,7 +112,7 @@
     <scale type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <min type="&float;">0.001</min>
       <max type="&float;">1000</max>
-      <randomAmplitude type="&float;">0.2</randomAmplitude>
+      <randomAmplitude type="&float;">0.3</randomAmplitude>
       <randomMixer type="&int;">3</randomMixer>
       <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -123,21 +124,21 @@
               <keys type="&CurveKeyCollection;">
                 <Item type="&CurveKey;">
                   <position type="&float;">0</position>
-                  <internalValue type="&float;">0.0</internalValue>
+                  <internalValue type="&float;">0.5</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
                 </Item>
                 <Item type="&CurveKey;">
-                  <position type="&float;">0.12</position>
-                  <internalValue type="&float;">2.1</internalValue>
+                  <position type="&float;">0.53</position>
+                  <internalValue type="&float;">1</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">1</position>
-                  <internalValue type="&float;">0.0</internalValue>
+                  <internalValue type="&float;">2.3</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
@@ -163,28 +164,21 @@
               <keys type="&CurveKeyCollection;">
                 <Item type="&CurveKey;">
                   <position type="&float;">0</position>
+                  <internalValue type="&float;">0.0</internalValue>
+                  <tangentOut type="&float;">0</tangentOut>
+                  <tangentIn type="&float;">0</tangentIn>
+                  <continuity type="&CurveContinuity;">Smooth</continuity>
+                </Item>
+                <Item type="&CurveKey;">
+                  <position type="&float;">0.3</position>
+                  <internalValue type="&float;">0.35</internalValue>
+                  <tangentOut type="&float;">0</tangentOut>
+                  <tangentIn type="&float;">0</tangentIn>
+                  <continuity type="&CurveContinuity;">Smooth</continuity>
+                </Item>
+                <Item type="&CurveKey;">
+                  <position type="&float;">0.7</position>
                   <internalValue type="&float;">0.1</internalValue>
-                  <tangentOut type="&float;">0</tangentOut>
-                  <tangentIn type="&float;">0</tangentIn>
-                  <continuity type="&CurveContinuity;">Smooth</continuity>
-                </Item>
-                <Item type="&CurveKey;">
-                  <position type="&float;">0.13</position>
-                  <internalValue type="&float;">0.8</internalValue>
-                  <tangentOut type="&float;">0</tangentOut>
-                  <tangentIn type="&float;">0</tangentIn>
-                  <continuity type="&CurveContinuity;">Smooth</continuity>
-                </Item>
-                <Item type="&CurveKey;">
-                  <position type="&float;">0.23</position>
-                  <internalValue type="&float;">0.6</internalValue>
-                  <tangentOut type="&float;">0</tangentOut>
-                  <tangentIn type="&float;">0</tangentIn>
-                  <continuity type="&CurveContinuity;">Smooth</continuity>
-                </Item>
-                <Item type="&CurveKey;">
-                  <position type="&float;">0.5</position>
-                  <internalValue type="&float;">0.3</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

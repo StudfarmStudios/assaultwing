@@ -20,6 +20,9 @@ namespace AW2.Game
     /// is where the actual gameplay takes place. The rest are just for the looks.
     /// The gameplay layer is the default for all gob-related actions.
     /// To deal with some other layer, you need to know its layer index.
+    /// There is also another special layer; the gameplay backlayer. It is
+    /// at the same depth as the gameplay layer but is drawn behind it.
+    /// The gameplay backlayer is for 2D graphics that needs to be behind gobs.
     class DataEngineImpl : DataEngine
     {
         List<ArenaLayer> arenaLayers;
@@ -41,7 +44,7 @@ namespace AW2.Game
         ProgressBar progressBar;
 
         /// <summary>
-        /// Index of the gameplay arena layer.
+        /// Index of the gameplay arena layer. Gameplay backlayer is this minus one.
         /// </summary>
         int gameplayLayer;
 
@@ -451,6 +454,15 @@ namespace AW2.Game
             if (gameplayLayer == -1)
                 throw new ArgumentException("Arena " + preparedArena.Name + " doesn't have a gameplay layer");
 
+            // Make sure the gameplay backlayer is located right before the gameplay layer.
+            // We use a suitable layer if one is defined in the arena. 
+            // Otherwise we create a new layer.
+            if (gameplayLayer == 0 || preparedArena.Layers[gameplayLayer - 1].Z != 0)
+            {
+                preparedArena.Layers.Insert(gameplayLayer, new ArenaLayer(false, 0, null));
+                ++gameplayLayer;
+            }
+
             // Create initial objects. This is by far the most time consuming part
             // in initialising an arena for playing.
             // Note that the gobs will end up in 'gobs' only after the game starts running again.
@@ -503,7 +515,10 @@ namespace AW2.Game
         /// <param name="gob">The gob to add.</param>
         public void AddGob(Gob gob)
         {
-            AddGob(gob, gameplayLayer);
+            if (gob.LayerPreference == Gob.LayerPreferenceType.Front)
+                AddGob(gob, gameplayLayer);
+            else
+                AddGob(gob, gameplayLayer - 1);
         }
 
         /// <summary>
@@ -562,7 +577,10 @@ namespace AW2.Game
         /// <param name="pEng">Particle generator to add to update and draw cycle</param>
         public void AddParticleEngine(ParticleEngine pEng)
         {
-            AddParticleEngine(pEng, gameplayLayer);
+            if (pEng.LayerPreference == Gob.LayerPreferenceType.Front)
+                AddParticleEngine(pEng, gameplayLayer);
+            else
+                AddParticleEngine(pEng, gameplayLayer - 1);
         }
 
         /// <summary>

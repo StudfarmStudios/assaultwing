@@ -69,6 +69,20 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Creates an arena layer.
+        /// </summary>
+        /// <param name="isGameplayLayer">Is the layer the gameplay layer.</param>
+        /// <param name="z">Depth of the layer.</param>
+        /// <param name="parallaxName">The name of the layer's parallax, or <c>null</c>.</param>
+        public ArenaLayer(bool isGameplayLayer, float z, string parallaxName)
+        {
+            this.isGameplayLayer = isGameplayLayer;
+            this.z = z;
+            this.parallaxName = parallaxName;
+            gobs = new List<Gob>();
+        }
+
+        /// <summary>
         /// Returns a new arena layer with the same specifications but no gobs.
         /// </summary>
         /// <returns>A duplicate arena layer without gobs.</returns>

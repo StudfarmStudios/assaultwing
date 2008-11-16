@@ -54,6 +54,22 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("typeName:{typeName} pos:{pos} move:{move}")]
     public class Gob : IConsistencyCheckable
     {
+        /// <summary>
+        /// Type of a gob's preferred placement to arena layers.
+        /// </summary>
+        public enum LayerPreferenceType
+        {
+            /// <summary>
+            /// Place gob to the gameplay layer.
+            /// </summary>
+            Front,
+
+            /// <summary>
+            /// Place gob to the gameplay backlayer.
+            /// </summary>
+            Back,
+        }
+
         #region Fields for all gobs
 
         /// <summary>
@@ -77,6 +93,12 @@ namespace AW2.Game
         /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
         Player owner;
+
+        /// <summary>
+        /// Preferred placement of gob to arena layers.
+        /// </summary>
+        [TypeParameter]
+        LayerPreferenceType layerPreference;
 
         /// <summary>
         /// Arena layer index of the gob. Set by DataEngine.
@@ -276,6 +298,11 @@ namespace AW2.Game
         /// Get the gob type name.
         /// </summary>
         public string TypeName { get { return typeName; } }
+
+        /// <summary>
+        /// Preferred placement of gob to arena layers.
+        /// </summary>
+        public LayerPreferenceType LayerPreference { get { return layerPreference; } }
 
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
@@ -523,6 +550,7 @@ namespace AW2.Game
         {
             // We initialise the values so that they work as good examples in the XML template.
             this.typeName = "unknown gob type";
+            layerPreference = LayerPreferenceType.Front;
             this.owner = null;
             this.pos = Vector2.Zero;
             this.move = Vector2.Zero;

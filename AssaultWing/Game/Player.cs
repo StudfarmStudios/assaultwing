@@ -602,12 +602,22 @@ namespace AW2.Game
 
             // Create a player marker for the ship.
             string particleEngineName = Id == 1 ? "playerred" : "playergreen";
-            ParticleEngine particleEngine = (ParticleEngine)Gob.CreateGob(particleEngineName);
-            particleEngine.Pos = ship.Pos;
-            particleEngine.Rotation = ship.Rotation;
-            particleEngine.Owner = this;
-            particleEngine.Leader = ship;
-            data.AddParticleEngine(particleEngine);
+            Gob playerColor = Gob.CreateGob(particleEngineName);
+            if (playerColor is ParticleEngine)
+            {
+                ParticleEngine particleEngine = (ParticleEngine)playerColor;
+                particleEngine.Pos = ship.Pos;
+                particleEngine.Rotation = ship.Rotation;
+                particleEngine.Owner = this;
+                particleEngine.Leader = ship;
+            }
+            else if (playerColor is Peng)
+            {
+                Peng peng = (Peng)playerColor;
+                peng.Owner = this;
+                peng.Leader = ship;
+            }
+            data.AddGob(playerColor);
 
         }
 

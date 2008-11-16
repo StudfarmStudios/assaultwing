@@ -29,6 +29,12 @@ namespace AW2.Game.Pengs
         protected string[] gobTypeNames;
 
         /// <summary>
+        /// If <c>true</c>, the peng won't emit new particles.
+        /// </summary>
+        [RuntimeState]
+        protected bool paused;
+
+        /// <summary>
         /// The peng where this emitter belongs to.
         /// </summary>
         protected Peng peng;
@@ -48,6 +54,11 @@ namespace AW2.Game.Pengs
         public string[] GobTypeNames { get { return gobTypeNames; } }
 
         /// <summary>
+        /// If <c>true</c>, no particles will be emitted.
+        /// </summary>
+        public virtual bool Paused { get { return paused; } set { paused = value; } }
+
+        /// <summary>
         /// The peng where this emitter belongs to.
         /// </summary>
         public Peng Peng { get { return peng; } set { peng = value; } }
@@ -64,6 +75,8 @@ namespace AW2.Game.Pengs
         /// Returns created particles, adds created gobs to <c>DataEngine</c>.
         /// </summary>
         /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
+        /// Base classes should remember to not create anything if
+        /// <c>paused == true</c>.
         public abstract ICollection<Particle> Emit();
 
         /// <summary>
@@ -74,6 +87,7 @@ namespace AW2.Game.Pengs
         {
             textureNames = new string[] { "dummytexture" };
             gobTypeNames = new string[] { "dummygob" };
+            paused = false;
         }
     }
 }

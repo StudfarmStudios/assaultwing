@@ -214,7 +214,7 @@ namespace AW2.Game
         /// <summary>
         /// Particle engines that manage exhaust fumes.
         /// </summary>
-        protected ParticleEngine[] exhaustEngines;
+        protected Gob[] exhaustEngines;
 
         #endregion Fields for gobs with thrusters
 
@@ -623,7 +623,7 @@ namespace AW2.Game
             this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             this.birthTime = this.physics.TimeStep.TotalGameTime;
             this.modelPartTransforms = null;
-            this.exhaustEngines = new ParticleEngine[0];
+            exhaustEngines = new Gob[0];
             this.alpha = 1;
             bleachDamage = 0;
             bleach = -1;
@@ -821,8 +821,9 @@ namespace AW2.Game
         public virtual void Dispose()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            foreach (ParticleEngine exhaustEngine in exhaustEngines)
-                data.RemoveParticleEngine(exhaustEngine);
+            foreach (Gob exhaustEngine in exhaustEngines)
+                if (exhaustEngine is ParticleEngine)
+                    data.RemoveParticleEngine((ParticleEngine)exhaustEngine);
             UnloadContent();
         }
 
@@ -1069,19 +1070,29 @@ namespace AW2.Game
             // Create proper exhaust engines.
             int templates = exhaustEngineNames.Length;
             exhaustBoneIs = new int[boneIs.Length * templates];
-            exhaustEngines = new ParticleEngine[boneIs.Length * templates];
+            exhaustEngines = new Gob[boneIs.Length * templates];
             for (int thrustI = 0; thrustI < boneIs.Length; ++thrustI)
                 for (int tempI = 0; tempI < templates; ++tempI)
                 {
                     int i = thrustI * templates + tempI;
                     exhaustBoneIs[i] = boneIs[thrustI].Value;
-                    exhaustEngines[i] = new ParticleEngine(exhaustEngineNames[tempI]);
-                    exhaustEngines[i].Loop = true;
-                    exhaustEngines[i].IsAlive = true;
-                    DotEmitter exhaustEmitter = exhaustEngines[i].Emitter as DotEmitter;
-                    if (exhaustEmitter != null)
-                        exhaustEmitter.Direction = Rotation + MathHelper.Pi;
-                    data.AddParticleEngine(exhaustEngines[i]);
+                    exhaustEngines[i] = Gob.CreateGob(exhaustEngineNames[tempI]);
+                    if (exhaustEngines[i] is ParticleEngine)
+                    {
+                        ParticleEngine peng = (ParticleEngine)exhaustEngines[i];
+                        peng.Loop = true;
+                        peng.IsAlive = true;
+                        DotEmitter exhaustEmitter = peng.Emitter as DotEmitter;
+                        if (exhaustEmitter != null)
+                            exhaustEmitter.Direction = Rotation + MathHelper.Pi;
+                    }
+                    else if (exhaustEngines[i] is Gobs.Peng)
+                    {
+                        Gobs.Peng peng = (Gobs.Peng)exhaustEngines[i];
+                        peng.Leader = this;
+                        peng.LeaderBone = exhaustBoneIs[i];
+                    }
+                    data.AddGob(exhaustEngines[i]);
                 }
         }
 
@@ -1096,12 +1107,13 @@ namespace AW2.Game
             Model model = data.GetModel(ModelName);
             UpdateModelPartTransforms(model);
             for (int i = 0; i < exhaustEngines.Length; ++i)
-            {
-                exhaustEngines[i].Pos = GetNamedPosition(exhaustBoneIs[i]);
-                DotEmitter dotEmitter = exhaustEngines[i].Emitter as DotEmitter;
-                if (dotEmitter != null)
-                    dotEmitter.Direction = Rotation + MathHelper.Pi;
-            }
+                if (exhaustEngines[i] is ParticleEngine)
+                {
+                    exhaustEngines[i].Pos = GetNamedPosition(exhaustBoneIs[i]);
+                    DotEmitter dotEmitter = ((ParticleEngine)exhaustEngines[i]).Emitter as DotEmitter;
+                    if (dotEmitter != null)
+                        dotEmitter.Direction = Rotation + MathHelper.Pi;
+                }
         }
 
         #endregion Gob methods related to thrusters
@@ -1120,6 +1132,21 @@ namespace AW2.Game
             if (modelPartTransforms == null || modelPartTransforms.Length != model.Bones.Count)
                 modelPartTransforms = new Matrix[model.Bones.Count];
             model.CopyAbsoluteBoneTransformsTo(modelPartTransforms);
+        }
+
+        /// <summary>
+        /// Switches exhaust engines on or off.
+        /// </summary>
+        /// <param name="active">If <c>true</c>, switches exhaust engines on, otherwise off.</param>
+        protected void SwitchExhaustEngines(bool active)
+        {
+            foreach (Gob exhaustEngine in exhaustEngines)
+            {
+                if (exhaustEngine is ParticleEngine)
+                    ((ParticleEngine)exhaustEngine).IsAlive = active;
+                else if (exhaustEngine is Gobs.Peng)
+                    ((Gobs.Peng)exhaustEngine).Paused = !active;
+            }
         }
 
         #endregion Gob miscellaneous protected methods

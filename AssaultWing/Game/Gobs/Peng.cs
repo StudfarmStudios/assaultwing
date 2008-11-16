@@ -179,6 +179,11 @@ namespace AW2.Game.Gobs
         public float Input { get { return input; } set { input = value; } }
 
         /// <summary>
+        /// If <c>true</c>, the peng won't emit new particles.
+        /// </summary>
+        public bool Paused { get { return emitter.Paused; } set { emitter.Paused = value; } }
+
+        /// <summary>
         /// The coordinate system in which to interpret the <c>pos</c> field of
         /// the particles of this peng.
         /// </summary>
@@ -262,7 +267,7 @@ namespace AW2.Game.Gobs
 
             // Create particles.
             ICollection<Particle> newParticles = emitter.Emit();
-            if (newParticles != null) 
+            if (newParticles != null)
                 particles.AddRange(newParticles);
 
             // Update and kill particles.

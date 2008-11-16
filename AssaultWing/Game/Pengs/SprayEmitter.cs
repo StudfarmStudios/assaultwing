@@ -93,6 +93,24 @@ namespace AW2.Game.Pengs
         #endregion SprayEmitter fields
 
         /// <summary>
+        /// If <c>true</c>, no particles will be emitted.
+        /// </summary>
+        public override bool Paused
+        {
+            set
+            {
+                if (Paused && !value)
+                {
+                    // Forget about creating particles whose creation was due 
+                    // while we were paused.
+                    if (nextBirth < AssaultWing.Instance.GameTime.TotalGameTime)
+                        nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
+                }
+                base.Paused = value;
+            }
+        }
+
+        /// <summary>
         /// <c>true</c> if emitting has finished for good
         /// <c>false</c> otherwise.
         /// </summary>
@@ -119,6 +137,7 @@ namespace AW2.Game.Pengs
         /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
         public override ICollection<Particle> Emit()
         {
+            if (paused) return null;
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;

@@ -458,8 +458,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            foreach (ParticleEngine engine in exhaustEngines)
-                engine.IsAlive = false;
+            SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
             CreateCoughEngines();
         }
@@ -484,9 +483,8 @@ namespace AW2.Game.Gobs
             temporarilyDisabledGobs.Clear();
 
             // Manage exhaust engines.
-            for (int i = 0; i < exhaustEngines.Length; ++i)
-                if (!exhaustAmountUpdated)
-                    exhaustEngines[i].IsAlive = false;
+            if (!exhaustAmountUpdated)
+                SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
 
             // Manage cough engines.
@@ -566,8 +564,7 @@ namespace AW2.Game.Gobs
             physics.ApplyLimitedForce(this, forceVector, maxSpeed);
 
             // Manage exhaust engine.
-            foreach (ParticleEngine exhaustEngine in exhaustEngines)
-                exhaustEngine.IsAlive = true;
+            SwitchExhaustEngines(true);
             exhaustAmountUpdated = true;
         }
 

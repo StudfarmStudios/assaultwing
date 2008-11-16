@@ -9,7 +9,7 @@
   <!ENTITY CurveLoopType "Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
 ]>
 <GobType type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName type="&string;">explo shockwave</typeName>
+  <typeName type="&string;">ship explo shockwave</typeName>
   <depthLayer type="&float;">0.13</depthLayer>
   <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Game</coordinateSystem>
   <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -53,7 +53,7 @@
   </emitter>
   <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <particleAge type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <expected type="&float;">0.55</expected>
+      <expected type="&float;">0.65</expected>
       <variance type="&float;">0.1</variance>
     </particleAge>
     <acceleration type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -85,7 +85,7 @@
     <rotationSpeed type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <min type="&float;">-1000000</min>
       <max type="&float;">1000000</max>
-      <randomAmplitude type="&float;">5.654</randomAmplitude>
+      <randomAmplitude type="&float;">4.654</randomAmplitude>
       <randomMixer type="&int;">2</randomMixer>
       <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -130,14 +130,14 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.4</position>
-                  <internalValue type="&float;">0.35</internalValue>
+                  <internalValue type="&float;">0.6</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">1</position>
-                  <internalValue type="&float;">0.55</internalValue>
+                  <internalValue type="&float;">0.84</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
@@ -170,7 +170,7 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.4</position>
-                  <internalValue type="&float;">0.6</internalValue>
+                  <internalValue type="&float;">0.64</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

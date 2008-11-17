@@ -54,7 +54,7 @@ namespace AW2.Game.Weapons
         /// Currently active muzzle fire engines for each barrel.
         /// </summary>
         /// The array is indexed by barrels.
-        List<ParticleEngine>[] muzzleFireEngines;
+        List<Gob>[] muzzleFireEngines;
 
         /// <summary>
         /// How fast the shots leave the weapon barrel,
@@ -150,9 +150,9 @@ namespace AW2.Game.Weapons
         {
             this.shotsLeft = 0;
             this.nextShot = new TimeSpan(0);
-            this.muzzleFireEngines = new List<ParticleEngine>[boneIndices.Length];
+            muzzleFireEngines = new List<Gob>[boneIndices.Length];
             for (int i = 0; i < boneIndices.Length; ++i)
-                this.muzzleFireEngines[i] = new List<ParticleEngine>();
+                muzzleFireEngines[i] = new List<Gob>();
             this.liveShots = new List<Gob>();
         }
 
@@ -216,9 +216,16 @@ namespace AW2.Game.Weapons
                     if (!muzzleFireCreated)
                         foreach (string engineName in muzzleFireEngineNames)
                         {
-                            ParticleEngine fireEngine = new ParticleEngine(engineName);
+                            Gob fireEngine = Gob.CreateGob(engineName);
+                            if (fireEngine is Peng)
+                            {
+                                Peng peng = (Peng)fireEngine;
+                                peng.Owner = owner.Owner;
+                                peng.Leader = owner;
+                                peng.LeaderBone = boneI;
+                            }
                             muzzleFireEngines[barrel].Add(fireEngine);
-                            data.AddParticleEngine(fireEngine);
+                            data.AddGob(fireEngine);
                         }
                 }
                 muzzleFireCreated = true;
@@ -242,23 +249,35 @@ namespace AW2.Game.Weapons
 
             // Update muzzle fire engines.
             for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
-                foreach (ParticleEngine engine in muzzleFireEngines[barrel])
-                {
-                    int boneI = boneIndices[barrel];
-                    DotEmitter emitter = (DotEmitter)engine.Emitter;
-                    emitter.Direction = Owner.Rotation;
-                    engine.Pos = Owner.GetNamedPosition(boneI);
-                    engine.Move = owner.Move;
-                }
+                foreach (Gob engine in muzzleFireEngines[barrel])
+                    if (engine is ParticleEngine)
+                    {
+                        ParticleEngine peng = (ParticleEngine)engine;
+                        int boneI = boneIndices[barrel];
+                        DotEmitter emitter = (DotEmitter)peng.Emitter;
+                        emitter.Direction = Owner.Rotation;
+                        peng.Pos = Owner.GetNamedPosition(boneI);
+                        peng.Move = owner.Move;
+                    }
 
             // Forget about dead fire engines.
             for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
                 for (int i = 0; i < muzzleFireEngines[barrel].Count; )
                 {
-                    if (!muzzleFireEngines[barrel][i].IsAlive)
-                        muzzleFireEngines[barrel].RemoveAt(i);
+                    if (muzzleFireEngines[barrel][i] is ParticleEngine)
+                    {
+                        if (!((ParticleEngine)muzzleFireEngines[barrel][i]).IsAlive)
+                            muzzleFireEngines[barrel].RemoveAt(i);
+                        else
+                            ++i;
+                    }
                     else
-                        ++i;
+                    {
+                        if (muzzleFireEngines[barrel][i].Dead)
+                            muzzleFireEngines[barrel].RemoveAt(i);
+                        else
+                            ++i;
+                    }
                 }
 
             // Forget about dead shots.

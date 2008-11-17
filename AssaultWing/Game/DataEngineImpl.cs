@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2;
+using AW2.Game.Gobs;
 using AW2.Graphics;
-using Viewport = AW2.Graphics.AWViewport;
 using AW2.Helpers;
 using TypeStringPair = System.Collections.Generic.KeyValuePair<System.Type, string>;
-using Microsoft.Xna.Framework;
-using AW2.Game.Particles;
-using AW2.Game.Gobs;
+using Viewport = AW2.Graphics.AWViewport;
 
 namespace AW2.Game
 {
@@ -29,7 +28,6 @@ namespace AW2.Game
         LinkedList<Weapon> weapons;
         List<Gob> addedGobs;
         List<Gob> removedGobs;
-        List<ParticleEngine> removedParticleEngines;
         List<Player> players;
         List<Viewport> viewports;
         List<ViewportSeparator> viewportSeparators;
@@ -82,7 +80,6 @@ namespace AW2.Game
             arenaLayers = new List<ArenaLayer>();
             addedGobs = new List<Gob>();
             removedGobs = new List<Gob>();
-            removedParticleEngines = new List<ParticleEngine>();
             weapons = new LinkedList<Weapon>();
             players = new List<Player>();
             viewports = new List<Viewport>();
@@ -528,13 +525,6 @@ namespace AW2.Game
         /// <param name="layer">The arena layer index.</param>
         public void AddGob(Gob gob, int layer)
         {
-            // HACK: We treat particle engines specially, although they are gobs.
-            if (gob is ParticleEngine)
-            {
-                AddParticleEngine((ParticleEngine)gob, layer);
-                return;
-            }
-
             gob.Layer = layer;
             addedGobs.Add(gob);
             gob.Activate();
@@ -546,13 +536,6 @@ namespace AW2.Game
         /// <param name="gob">The gob to remove.</param>
         public void RemoveGob(Gob gob)
         {
-            // HACK: We treat particle engines specially, although they are gobs.
-            if (gob is ParticleEngine)
-            {
-                RemoveParticleEngine((ParticleEngine)gob);
-                return;
-            }
-
             removedGobs.Add(gob);
         }
 
@@ -568,59 +551,6 @@ namespace AW2.Game
         }
 
         #endregion gobs
-
-        #region particles
-
-        /// <summary>
-        /// Adds a particle generator to the game.
-        /// </summary>
-        /// <param name="pEng">Particle generator to add to update and draw cycle</param>
-        public void AddParticleEngine(ParticleEngine pEng)
-        {
-            if (pEng.LayerPreference == Gob.LayerPreferenceType.Front)
-                AddParticleEngine(pEng, gameplayLayer);
-            else
-                AddParticleEngine(pEng, gameplayLayer - 1);
-        }
-
-        /// <summary>
-        /// Adds a particle generator to an arena layer of the game.
-        /// </summary>
-        /// <param name="pEng">Particle generator to add to update and draw cycle</param>
-        /// <param name="layer">The arena layer index.</param>
-        public void AddParticleEngine(ParticleEngine pEng, int layer)
-        {
-            pEng.Layer = layer;
-            addedGobs.Add(pEng);
-            //arenaLayers[layer].Gobs.Add(pEng);
-            pEng.Activate();
-        }
-
-        /// <summary>
-        /// Removes a particle generator from the game.
-        /// </summary>
-        /// <param name="pEng">Particle generator to add to update and draw cycle</param>
-        public void RemoveParticleEngine(ParticleEngine pEng)
-        {
-            removedParticleEngines.Add(pEng);
-        }
-
-        /// <summary>
-        /// Performs the specified action on each particle engine.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each particle engine.</param>
-        public void ForEachParticleEngine(Action<ParticleEngine> action)
-        {
-            foreach (ArenaLayer layer in arenaLayers)
-                foreach (Gob gob in layer.Gobs)
-                {
-                    ParticleEngine pEngine = gob as ParticleEngine;
-                    if (pEngine != null)
-                        action(pEngine);
-                }
-        }
-
-        #endregion particles
 
         #region weapons
 
@@ -916,16 +846,6 @@ namespace AW2.Game
                 arenaLayers[gob.Layer].Gobs.Remove(gob);
             }
             removedGobs.Clear();
-
-            // Remove particle engines to remove.
-            // Don't use foreach because removed particle engines may still add more items
-            // to 'removedParticleEngines'.
-            for (int i = 0; i < removedParticleEngines.Count; ++i)
-            {
-                ParticleEngine pEng = removedParticleEngines[i];
-                arenaLayers[pEng.Layer].Gobs.Remove(pEng);
-            }
-            removedParticleEngines.Clear();
 
 #if DEBUG_PROFILE
             AssaultWing.Instance.gobCount = 0;

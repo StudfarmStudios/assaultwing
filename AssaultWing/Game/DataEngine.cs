@@ -244,35 +244,6 @@ namespace AW2.Game
 
         #endregion
 
-        #region particles
-
-        /// <summary>
-        /// Adds a particle generator to the game.
-        /// </summary>
-        /// <param name="pEng">Particle generator to add to the update and draw cycle</param>
-        void AddParticleEngine(ParticleEngine pEng);
-
-        /// <summary>
-        /// Adds a particle generator to an arena layer of the game.
-        /// </summary>
-        /// <param name="pEng">Particle generator to add to the update and draw cycle</param>
-        /// <param name="layer">The arena layer index.</param>
-        void AddParticleEngine(ParticleEngine pEng, int layer);
-
-        /// <summary>
-        /// Removes a particle generator from the game.
-        /// </summary>
-        /// <param name="pEng">Particle generator to remove from the update and draw cycle</param>
-        void RemoveParticleEngine(ParticleEngine pEng);
-
-        /// <summary>
-        /// Performs the specified action on each particle engine.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each particle engine.</param>
-        void ForEachParticleEngine(Action<ParticleEngine> action);
-
-        #endregion
-
         #region weapons
 
         /// <summary>

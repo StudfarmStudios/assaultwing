@@ -402,7 +402,7 @@ namespace AW2.Game.Particles
             if (!loop && !isAlive && particles.Count == 0)
             {
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                data.RemoveParticleEngine(this);
+                Die(new DeathCause());
             }
         }
 
@@ -413,6 +413,7 @@ namespace AW2.Game.Particles
         /// <param name="cause">The cause of death.</param>
         public override void Die(DeathCause cause)
         {
+            base.Die(cause);
             IsAlive = false;
         }
 

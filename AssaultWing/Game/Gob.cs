@@ -560,12 +560,10 @@ namespace AW2.Game
             this.friction = 0.7f;
             this.modelName = "dummymodel";
             this.scale = 1f;
-            this.birthGobTypes = new string[] {
-            };
-            this.deathGobTypes = new string[] {
-                "explosion",
-            };
+            this.birthGobTypes = new string[0];
+            this.deathGobTypes = new string[0];
             this.collisionAreas = new CollisionArea[] {
+                /*
                 new CollisionArea("General", new Circle(Vector2.Zero, 10f), null,
                 CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
                 new CollisionArea("General", new Polygon(new Vector2[] {
@@ -576,6 +574,7 @@ namespace AW2.Game
                 CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
                 new CollisionArea("General", new Everything(), null,
                 CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
+                */
             };
             this.damage = 0;
             this.maxDamage = 100;
@@ -586,7 +585,7 @@ namespace AW2.Game
             this.movable = true;
             this.physics = null;
             this.modelPartTransforms = null;
-            this.exhaustEngineNames = new string[] { "dummyparticleengine", };
+            this.exhaustEngineNames = new string[0];
         }
 
         /// <summary>
@@ -820,10 +819,11 @@ namespace AW2.Game
         /// </summary>
         public virtual void Dispose()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            // Remove exhaust engines that are not Pengs.
+            // Pengs will die automatically because we are their Leader.
             foreach (Gob exhaustEngine in exhaustEngines)
-                if (exhaustEngine is ParticleEngine)
-                    data.RemoveParticleEngine((ParticleEngine)exhaustEngine);
+                if (!(exhaustEngine is Gobs.Peng))
+                    exhaustEngine.Die(new DeathCause());
             UnloadContent();
         }
 

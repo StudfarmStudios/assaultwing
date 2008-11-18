@@ -28,8 +28,6 @@ namespace AW2.Game.Pengs
     /// </summary>
     /// Physical updater uses the following:
     /// - Particle.timeout is the time of death of the particle
-    /// - Particle.vector is the unit vector pointing to the initial 
-    ///   emission direction of the particle
     [LimitedSerialization]
     public class PhysicalUpdater : ParticleUpdater
     {
@@ -95,16 +93,7 @@ namespace AW2.Game.Pengs
 
             // Initialise custom particle fields.
             if (particle.timeout == TimeSpan.Zero)
-            {
                 particle.timeout = now + TimeSpan.FromSeconds(particleAge.GetRandomValue());
-                if (particle.move != Vector2.Zero)
-                    particle.vector = Vector2.Normalize(particle.move);
-                else
-                {
-                    float randomDirection = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi);
-                    particle.vector = new Vector2((float)Math.Cos(randomDirection), (float)Math.Sin(randomDirection));
-                }
-            }
 
             // Kill a timed out particle.
             if (particle.timeout <= now) return true;
@@ -112,7 +101,8 @@ namespace AW2.Game.Pengs
             // Update particle fields.
             float lifePos = (now - particle.birthTime).Ticks / (float)(particle.timeout - particle.birthTime).Ticks;
             particle.layerDepth = lifePos;
-            particle.move += particle.vector * physics.ApplyChange(acceleration.GetValue(lifePos, particle.pengInput, particle.random));
+            particle.move += physics.ApplyChange(acceleration.GetValue(lifePos, particle.pengInput, particle.random))
+                * new Vector2((float)Math.Cos(particle.direction), (float)Math.Sin(particle.direction));
             particle.pos += physics.ApplyChange(particle.move);
             particle.rotation += physics.ApplyChange(rotationSpeed.GetValue(lifePos, particle.pengInput, particle.random));
             particle.scale = scale.GetValue(lifePos, particle.pengInput, particle.random);

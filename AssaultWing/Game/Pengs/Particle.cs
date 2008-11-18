@@ -45,10 +45,9 @@ namespace AW2.Game.Pengs
         public Vector2 move;
 
         /// <summary>
-        /// Custom vector.
+        /// Emission direction of the particle.
         /// </summary>
-        /// The meaning of this field is decided by the particle updater.
-        public Vector2 vector;
+        public float direction;
 
         /// <summary>
         /// Rotation angle of the particle, in radians.

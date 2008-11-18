@@ -234,6 +234,7 @@ namespace AW2.Game.Pengs
                         particle.pengInput = pengInput;
                         particle.pos = pos;
                         particle.random = random;
+                        particle.direction = directionAngle;
                         particle.rotation = rotation;
                         particle.scale = 1;
                         particle.textureName = textureNames[emitType];

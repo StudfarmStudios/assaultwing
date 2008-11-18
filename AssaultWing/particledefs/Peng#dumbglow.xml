@@ -10,6 +10,7 @@
 ]>
 <GobType type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName type="&string;">dumb glow</typeName>
+  <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Back</layerPreference>
   <depthLayer type="&float;">0.5</depthLayer>
   <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
   <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

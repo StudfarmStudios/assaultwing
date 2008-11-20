@@ -51,11 +51,6 @@ namespace AW2.Game
         public string ParallaxName { get { return parallaxName; } }
 
         /// <summary>
-        /// The gobs the arena layer contains when the playing in the arena is starting.
-        /// </summary>
-        public List<Gob> Gobs { get { return gobs; } }
-
-        /// <summary>
         /// Creates an uninitialised arena layer.
         /// </summary>
         /// This constructor is only for serialisation.
@@ -101,6 +96,46 @@ namespace AW2.Game
             parallaxName = other.parallaxName;
             gobs = new List<Gob>();
         }
+
+        #region Methods for handling gobs
+
+        /// <summary>
+        /// Adds a gob to the arena layer.
+        /// </summary>
+        /// <param name="gob">The gob to add.</param>
+        public void AddGob(Gob gob)
+        {
+            gobs.Add(gob);
+        }
+
+        /// <summary>
+        /// Removes a gob from the arena layer.
+        /// </summary>
+        /// <param name="gob">The gob to remove.</param>
+        public void RemoveGob(Gob gob)
+        {
+            gobs.Remove(gob);
+        }
+
+        /// <summary>
+        /// Performs the specified action on each gob on the arena layer.
+        /// </summary>
+        /// <param name="action">The Action delegate to perform on each gob.</param>
+        public void ForEachGob(Action<Gob> action)
+        {
+            foreach (Gob gob in gobs)
+                action(gob);
+        }
+
+        /// <summary>
+        /// Removes all gobs from the arena layer.
+        /// </summary>
+        public void ClearGobs()
+        {
+            gobs.Clear();
+        }
+
+        #endregion Methods for handling gobs
 
         #region IConsistencyCheckable Members
 

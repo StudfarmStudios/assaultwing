@@ -380,7 +380,7 @@ namespace AW2.Game
             addedGobs.Clear();
             removedGobs.Clear();
             foreach (ArenaLayer layer in activeArena.Layers)
-                layer.Gobs.Clear();
+                layer.ClearGobs();
             preparedArena = null;
         }
 
@@ -400,9 +400,8 @@ namespace AW2.Game
             // Clear remaining data from a possible previous arena.
             foreach (ArenaLayer layer in arenaLayers)
             {
-                foreach (Gob gob in layer.Gobs)
-                    gob.UnloadContent();
-                layer.Gobs.Clear();
+                layer.ForEachGob(delegate(Gob gob) { gob.UnloadContent(); });
+                layer.ClearGobs();
             }
             weapons.Clear();
 
@@ -465,12 +464,16 @@ namespace AW2.Game
             // Note that the gobs will end up in 'gobs' only after the game starts running again.
             int wallCount = 0;
             foreach (ArenaLayer layer in preparedArena.Layers)
-                foreach (Gob gob in layer.Gobs)
+                layer.ForEachGob(delegate(Gob gob)
+                {
                     if (gob is Wall) ++wallCount;
+                });
             progressBar.SetSubtaskCount(wallCount);
             for (int i = 0; i < preparedArena.Layers.Count; ++i)
-                foreach (Gob gob in preparedArena.Layers[i].Gobs)
+                preparedArena.Layers[i].ForEachGob(delegate(Gob gob)
+                {
                     AddGob(Gob.CreateGob(gob), i);
+                });
         }
 
         /// <summary>
@@ -540,14 +543,13 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Performs the specified action on each gob.
+        /// Performs the specified action on each gob on each arena layer.
         /// </summary>
         /// <param name="action">The Action delegate to perform on each gob.</param>
         public void ForEachGob(Action<Gob> action)
         {
             foreach (ArenaLayer layer in arenaLayers)
-                foreach (Gob gob in layer.Gobs)
-                    action(gob);
+                layer.ForEachGob(delegate(Gob gob) { action(gob); });
         }
 
         #endregion gobs
@@ -825,7 +827,7 @@ namespace AW2.Game
                     // To achieve this, we take away all the gob's collision areas.
                     gob.ClearCollisionAreas();
                 }
-                arenaLayers[gob.Layer].Gobs.Add(gob);
+                arenaLayers[gob.Layer].AddGob(gob);
             }
             addedGobs.Clear();
 
@@ -843,14 +845,14 @@ namespace AW2.Game
                 if (gob.Layer == gameplayLayer)
                     physics.Unregister(gob);
                 gob.Dispose();
-                arenaLayers[gob.Layer].Gobs.Remove(gob);
+                arenaLayers[gob.Layer].RemoveGob(gob);
             }
             removedGobs.Clear();
 
 #if DEBUG_PROFILE
             AssaultWing.Instance.gobCount = 0;
             foreach (ArenaLayer layer in arenaLayers)
-                AssaultWing.Instance.gobCount += layer.Gobs.Count;
+                layer.ForEachGob(delegate(Gob gob) { ++AssaultWing.Instance.gobCount; });
 #endif
         }
 
@@ -960,12 +962,12 @@ namespace AW2.Game
             // Draw the arena's walls.
             SpriteBatch spriteBatch = new SpriteBatch(gfx);
             spriteBatch.Begin();
-            foreach (Gob gob in arenaLayers[gameplayLayer].Gobs)
+            arenaLayers[gameplayLayer].ForEachGob(delegate(Gob gob)
             {
                 Wall wall = gob as Wall;
                 if (wall != null)
                     wall.DrawSilhouette(view, projection, spriteBatch);
-            }
+            });
             spriteBatch.End();
 
             // Restore render target so what we can extract drawn pixels.

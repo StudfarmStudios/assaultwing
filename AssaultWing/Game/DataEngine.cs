@@ -237,7 +237,7 @@ namespace AW2.Game
         void RemoveGob(Gob gob);
 
         /// <summary>
-        /// Performs the specified action on each gob on the gameplay layer.
+        /// Performs the specified action on each gob on each arena layer.
         /// </summary>
         /// <param name="action">The Action delegate to perform on each gob.</param>
         void ForEachGob(Action<Gob> action);

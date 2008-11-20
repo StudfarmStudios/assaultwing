@@ -387,7 +387,7 @@ namespace AW2.Graphics
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             foreach (ArenaLayer layer in arenaTemplate.Layers)
-                foreach (Gob gob in layer.Gobs)
+                layer.ForEachGob(delegate(Gob gob)
                 {
                     foreach (string modelName in gob.ModelNames)
                     {
@@ -403,7 +403,7 @@ namespace AW2.Graphics
                         if (texture != null)
                             data.AddTexture(textureName, texture);
                     }
-                }
+                });
         }
 
         public void LoadAreatextures(Arena arenaTemplate)

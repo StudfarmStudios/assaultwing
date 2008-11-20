@@ -367,8 +367,7 @@ namespace AW2.Graphics
                 gfx.RenderState.DepthBufferWriteEnable = true;
 
                 // 3D graphics
-                foreach (Gob gob in layer.Gobs)
-                    gob.Draw(view, projection);
+                layer.ForEachGob(delegate(Gob gob) { gob.Draw(view, projection); });
 
                 // 2D graphics
                 Matrix gameToScreen = view * projection
@@ -376,8 +375,7 @@ namespace AW2.Graphics
                     * Matrix.CreateTranslation(1, 1, 0)
                     * Matrix.CreateScale(new Vector3(viewport.Width, viewport.Height, viewport.MaxDepth - viewport.MinDepth) / 2);
                 spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.BackToFront, SaveStateMode.None);
-                foreach (Gob gob in layer.Gobs)
-                    gob.Draw2D(gameToScreen, spriteBatch, layerScale);
+                layer.ForEachGob(delegate(Gob gob) { gob.Draw2D(gameToScreen, spriteBatch, layerScale); });
                 spriteBatch.End();
             });
 

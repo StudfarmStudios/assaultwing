@@ -78,7 +78,7 @@ namespace AW2.Game.Particles
         #region Properties
 
         /// <summary>
-        /// IsAlive is set to false when no particles exist in this system.
+        /// IsAlive is <c>true</c> if and only if the particle engine is producing new particles.
         /// </summary>
         public bool IsAlive
         {
@@ -394,12 +394,9 @@ namespace AW2.Game.Particles
                 }
             }
 
-            if (!loop && createdParticles >= totalNumberParticles)
-                Die(new DeathCause());
-
             // Remove the particle engine if it's created all its particles and
             // the particles have died.
-            if (!loop && !isAlive && particles.Count == 0)
+            if (!loop && createdParticles >= totalNumberParticles && particles.Count == 0)
             {
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 Die(new DeathCause());

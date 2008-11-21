@@ -186,6 +186,7 @@
     <Compile Include="Graphics\BonusListOverlay.cs" />
     <Compile Include="Graphics\ChatBoxOverlay.cs" />
     <Compile Include="Graphics\CustomOverlayDialogData.cs" />
+    <Compile Include="Graphics\DrawMode2D.cs" />
     <Compile Include="Graphics\GameOverOverlayDialogData.cs" />
     <Compile Include="Graphics\GraphicsEngineImpl.cs">
       <Name>GraphicsEngineImpl</Name>

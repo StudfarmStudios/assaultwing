@@ -28,6 +28,14 @@ namespace AW2.Game
         List<Gob> gobs;
 
         /// <summary>
+        /// Gobs in this arena layer, sorted in 2D draw order from back to front,
+        /// exclusive of gobs that are not drawn in 2D.
+        /// </summary>
+        /// 2D draw order is alphabetic order primarily by decreasing <c>Gob.LayerDepth2D</c>
+        /// and secondarily by natural order of <c>Gob.DrawMode2D</c>.
+        List<Gob> gobsSort2D;
+
+        /// <summary>
         /// Is this the arena layer where gameplay takes place.
         /// </summary>
         /// It is assumed that only one layer in each arena is the gameplay layer.
@@ -60,7 +68,8 @@ namespace AW2.Game
             z = 0;
             parallaxName = "dummysprite";
             gobs = new List<Gob>();
-            gobs.Add(Gob.CreateGob("dummygobtype"));
+            gobsSort2D = new List<Gob>();
+            AddGob(Gob.CreateGob("dummygobtype"));
         }
 
         /// <summary>
@@ -75,6 +84,7 @@ namespace AW2.Game
             this.z = z;
             this.parallaxName = parallaxName;
             gobs = new List<Gob>();
+            gobsSort2D = new List<Gob>();
         }
 
         /// <summary>
@@ -95,6 +105,7 @@ namespace AW2.Game
             z = other.z;
             parallaxName = other.parallaxName;
             gobs = new List<Gob>();
+            gobsSort2D = new List<Gob>();
         }
 
         #region Methods for handling gobs
@@ -106,6 +117,18 @@ namespace AW2.Game
         public void AddGob(Gob gob)
         {
             gobs.Add(gob);
+
+            // Find the gob's place in 2D draw order.
+            if (gob.DrawMode2D.IsDrawn)
+            {
+                int index = 0;
+                while (index < gobsSort2D.Count
+                       && (gob.DepthLayer2D < gobsSort2D[index].DepthLayer2D
+                           || (gob.DepthLayer2D == gobsSort2D[index].DepthLayer2D &&
+                               gob.DrawMode2D.CompareTo(gobsSort2D[index].DrawMode2D) > 0)))
+                    ++index;
+                gobsSort2D.Insert(index, gob);
+            }
         }
 
         /// <summary>
@@ -115,6 +138,7 @@ namespace AW2.Game
         public void RemoveGob(Gob gob)
         {
             gobs.Remove(gob);
+            gobsSort2D.Remove(gob);
         }
 
         /// <summary>
@@ -128,11 +152,23 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Performs the specified action on each gob on the arena layer,
+        /// enumerating the gobs in their 2D draw order from back to front.
+        /// </summary>
+        /// <param name="action">The Action delegate to perform on each gob.</param>
+        public void ForEachGobSort2D(Action<Gob> action)
+        {
+            foreach (Gob gob in gobsSort2D)
+                action(gob);
+        }
+
+        /// <summary>
         /// Removes all gobs from the arena layer.
         /// </summary>
         public void ClearGobs()
         {
             gobs.Clear();
+            gobsSort2D.Clear();
         }
 
         #endregion Methods for handling gobs

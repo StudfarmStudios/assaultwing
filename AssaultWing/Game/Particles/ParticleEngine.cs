@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Reflection;
+using AW2.Graphics;
+using AW2.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Helpers;
-using System.Reflection;
 
 namespace AW2.Game.Particles
 {
@@ -32,8 +32,6 @@ namespace AW2.Game.Particles
         private TimeSpan nextBirth; // Time of next particle birth, in game time.
         [RuntimeState]
         private Vector2 oldPosition = new Vector2(Single.NaN); //Previous position of the system
-        [TypeParameter]
-        private float depthLayer = 0.5f; // Depth layer for sprite draw order; 0 is front; 1 is back
         [TypeParameter]
         private Emitter emitter = new DotEmitter(); //Emitter of the system
         [TypeParameter]
@@ -281,6 +279,9 @@ namespace AW2.Game.Particles
         /// This constructor is only for serialisation.
         public ParticleEngine()
         {
+            // Set a better default than class Gob does.
+            DrawMode2D = new DrawMode2D(DrawModeType2D.Transparent);
+
             // Remove default collision areas set by class Gob so that we don't need to explicitly state
             // in each particle engine's XML definition that there are no collision areas.
             collisionAreas = new CollisionArea[0];
@@ -499,7 +500,7 @@ namespace AW2.Game.Particles
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
                 float lifepos = MathHelper.Clamp(1 - (part.Age / part.TotalAge), 0, 1); // 0 = born; 1 = dead
-                float layerDepth = MathHelper.Clamp(depthLayer * 0.99f + 0.0099f * lifepos, 0, 1);
+                float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0099f * lifepos, 0, 1);
                 spriteBatch.Draw(tex, new Vector2(screenCenter.X, screenCenter.Y), null,
                     part.CurrentColor, part.Rotation,
                     new Vector2(tex.Width, tex.Height) / 2, part.Size * scale, SpriteEffects.None, layerDepth);

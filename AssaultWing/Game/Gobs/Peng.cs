@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Game.Pengs;
+using AW2.Graphics;
 
 namespace AW2.Game.Gobs
 {
@@ -42,14 +43,6 @@ namespace AW2.Game.Gobs
         ParticleEmitter emitter;
         [TypeParameter]
         ParticleUpdater updater;
-
-        /// <summary>
-        /// Particle draw order relative to other pengs.
-        /// 0 is front, 1 is back.
-        /// Use at most two-decimal precision (e.g. 0.14, 0.50, 1.00).
-        /// </summary>
-        [TypeParameter]
-        float depthLayer;
 
         /// <summary>
         /// The coordinate system in which to interpret our particles' <c>pos</c> field.
@@ -227,9 +220,11 @@ namespace AW2.Game.Gobs
         {
             emitter = new SprayEmitter();
             updater = new PhysicalUpdater();
-            depthLayer = 0.5f;
             coordinateSystem = CoordinateSystem.Game;
             particles = new List<Particle>();
+
+            // Set a better default than class Gob does.
+            DrawMode2D = new DrawMode2D(DrawModeType2D.Transparent);
 
             // Remove default collision areas set by class Gob so that we don't need to explicitly state
             // in each peng's XML definition that there are no collision areas.
@@ -326,7 +321,7 @@ namespace AW2.Game.Gobs
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
                 // TODO: Scale particle as told in 'view' -- transform quad corners by view*projection
-                float layerDepth = MathHelper.Clamp(depthLayer * 0.99f + 0.0098f * particle.layerDepth, 0, 1);
+                float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.layerDepth, 0, 1);
                 Texture2D texture = data.GetTexture(particle.textureName);
                 float drawRotation = coordinateSystem == CoordinateSystem.Game
                     ? particle.rotation

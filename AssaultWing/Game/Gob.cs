@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Particles;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Graphics;
 
 namespace AW2.Game
 {
@@ -93,6 +94,19 @@ namespace AW2.Game
         /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
         Player owner;
+
+        /// <summary>
+        /// Drawing depth of 2D graphics of the gob, between 0 and 1.
+        /// 0 is front, 1 is back.
+        /// </summary>
+        [TypeParameter]
+        float depthLayer2D;
+
+        /// <summary>
+        /// Drawing mode of 2D graphics of the gob.
+        /// </summary>
+        [TypeParameter]
+        DrawMode2D drawMode2D;
 
         /// <summary>
         /// Preferred placement of gob to arena layers.
@@ -298,6 +312,17 @@ namespace AW2.Game
         /// Get the gob type name.
         /// </summary>
         public string TypeName { get { return typeName; } }
+
+        /// <summary>
+        /// Drawing depth of 2D graphics of the gob, between 0 and 1.
+        /// 0 is front, 1 is back.
+        /// </summary>
+        public float DepthLayer2D { get { return depthLayer2D; } set { depthLayer2D = value; } }
+
+        /// <summary>
+        /// Drawing mode of 2D graphics of the gob.
+        /// </summary>
+        public DrawMode2D DrawMode2D { get { return drawMode2D; } set { drawMode2D = value; } }
 
         /// <summary>
         /// Preferred placement of gob to arena layers.
@@ -550,6 +575,8 @@ namespace AW2.Game
         {
             // We initialise the values so that they work as good examples in the XML template.
             this.typeName = "unknown gob type";
+            depthLayer2D = 0.5f;
+            drawMode2D = new DrawMode2D(DrawModeType2D.None);
             layerPreference = LayerPreferenceType.Front;
             this.owner = null;
             this.pos = Vector2.Zero;

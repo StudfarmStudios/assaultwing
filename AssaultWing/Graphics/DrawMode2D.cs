@@ -1,0 +1,100 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace AW2.Graphics
+{
+    /// <summary>
+    /// Type of draw mode of 2D graphics.
+    /// </summary>
+    public enum DrawModeType2D
+    {
+        /// <summary>
+        /// Draw nothing.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Draw transparently based on the alpha channel.
+        /// </summary>
+        Transparent,
+
+        /// <summary>
+        /// Draw additively based on the alpha channel.
+        /// </summary>
+        Additive,
+    }
+
+    /// <summary>
+    /// Draw mode of 2D graphics.
+    /// </summary>
+    public struct DrawMode2D : IComparable<DrawMode2D>
+    {
+        DrawModeType2D type;
+
+        /// <summary>
+        /// Is there any 2D graphics.
+        /// </summary>
+        public bool IsDrawn { get { return type != DrawModeType2D.None; } }
+
+        /// <summary>
+        /// Creates a draw mode for 2D graphics.
+        /// </summary>
+        /// <param name="type">The type of draw mode</param>
+        public DrawMode2D(DrawModeType2D type)
+        {
+            this.type = type;
+        }
+
+        /// <summary>
+        /// Calls <c>Begin</c> on a sprite batch and sets the correct render state.
+        /// </summary>
+        /// <param name="spriteBatch">The sprite batch whose <c>Begin</c> to call.</param>
+        public void BeginDraw(SpriteBatch spriteBatch)
+        {
+            switch (type)
+            {
+                case DrawModeType2D.None:
+                    // We're not going to draw anything, so we don't need to Begin the sprite batch.
+                    break;
+                case DrawModeType2D.Transparent:
+                    spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.BackToFront, SaveStateMode.None);
+                    break;
+                case DrawModeType2D.Additive:
+                    spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.BackToFront, SaveStateMode.None);
+                    break;
+                default:
+                    throw new Exception("DrawMode2D: Unknown type of draw mode, " + type);
+            }
+        }
+
+        /// <summary>
+        /// Calls <c>End</c> on a sprite batch that was previously Begun by this 
+        /// <c>DrawMode2D</c> instance. Doesn't restore render state.
+        /// </summary>
+        /// <param name="spriteBatch">The sprite batch whose <c>End</c> to call.</param>
+        public void EndDraw(SpriteBatch spriteBatch)
+        {
+            if (type != DrawModeType2D.None)
+                spriteBatch.End();
+        }
+
+        #region IComparable<DrawMode2D> Members
+
+        /// <summary>
+        /// Compares this object with another object of the same type.
+        /// </summary>
+        /// <param name="other">An object to compare with this object.</param>
+        /// <returns>Less than zero if this is less than other.
+        /// Zero if this is equal to other.
+        /// Greater than zero if this is greater than other.</returns>
+        public int CompareTo(DrawMode2D other)
+        {
+            return type.CompareTo(other.type);
+        }
+
+        #endregion
+    }
+}

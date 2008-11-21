@@ -374,9 +374,20 @@ namespace AW2.Graphics
                     * Matrix.CreateReflection(new Plane(Vector3.UnitY, 0))
                     * Matrix.CreateTranslation(1, 1, 0)
                     * Matrix.CreateScale(new Vector3(viewport.Width, viewport.Height, viewport.MaxDepth - viewport.MinDepth) / 2);
-                spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.BackToFront, SaveStateMode.None);
-                layer.ForEachGob(delegate(Gob gob) { gob.Draw2D(gameToScreen, spriteBatch, layerScale); });
-                spriteBatch.End();
+                DrawMode2D? drawMode = null;
+                layer.ForEachGobSort2D(delegate(Gob gob)
+                {
+                    if (drawMode == null || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
+                    {
+                        if (drawMode != null)
+                            drawMode.Value.EndDraw(spriteBatch);
+                        drawMode = gob.DrawMode2D;
+                        drawMode.Value.BeginDraw(spriteBatch);
+                    }
+                    gob.Draw2D(gameToScreen, spriteBatch, layerScale);
+                });
+                if (drawMode != null)
+                    drawMode.Value.EndDraw(spriteBatch);
             });
 
             // Overlay components

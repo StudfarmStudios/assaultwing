@@ -922,6 +922,9 @@ namespace AW2.Game
                     BasicEffect be = (BasicEffect)mesh.Effects[0];
                     oldAlpha = be.Alpha;
                     be.Alpha = alpha;
+
+                    // Modify render state.
+                    AssaultWing.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = true;
                 }
 
                 foreach (BasicEffect be in mesh.Effects)
@@ -939,6 +942,9 @@ namespace AW2.Game
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     BasicEffect be = (BasicEffect)mesh.Effects[0];
                     be.Alpha = oldAlpha;
+
+                    // Restore render state.
+                    AssaultWing.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = false;
                 }
 
                 // Blend towards white if required.

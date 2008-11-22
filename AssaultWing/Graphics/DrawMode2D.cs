@@ -63,6 +63,7 @@ namespace AW2.Graphics
         /// <param name="spriteBatch">The sprite batch whose <c>Begin</c> to call.</param>
         public void BeginDraw(SpriteBatch spriteBatch)
         {
+            RenderState renderState = AssaultWing.Instance.GraphicsDevice.RenderState;
             switch (type)
             {
                 case DrawModeType2D.None:
@@ -73,6 +74,14 @@ namespace AW2.Graphics
                     break;
                 case DrawModeType2D.Additive:
                     spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.BackToFront, SaveStateMode.None);
+                    break;
+                case DrawModeType2D.Subtractive:
+                    // Sprite sorting must be disabled in order to get immediate mode
+                    // which in turn is needed so that our changes to RenderState have any effect.
+                    spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                    renderState.BlendFunction = BlendFunction.ReverseSubtract;
+                    renderState.DestinationBlend = Blend.One;
+                    renderState.SourceBlend = Blend.SourceAlpha;
                     break;
                 default:
                     throw new Exception("DrawMode2D: Unknown type of draw mode, " + type);
@@ -86,8 +95,22 @@ namespace AW2.Graphics
         /// <param name="spriteBatch">The sprite batch whose <c>End</c> to call.</param>
         public void EndDraw(SpriteBatch spriteBatch)
         {
-            if (type != DrawModeType2D.None)
-                spriteBatch.End();
+            switch (type)
+            {
+                case DrawModeType2D.None:
+                    // We never called SpriteBatch.Begin, so we won't call SpriteBatch.End.
+                    break;
+                case DrawModeType2D.Transparent:
+                case DrawModeType2D.Additive:
+                    spriteBatch.End();
+                    break;
+                case DrawModeType2D.Subtractive:
+                    spriteBatch.End();
+                    AssaultWing.Instance.GraphicsDevice.RenderState.BlendFunction = BlendFunction.Add;
+                    break;
+                default:
+                    throw new Exception("DrawMode2D: Unknown type of draw mode, " + type);
+            }
         }
 
         #region IComparable<DrawMode2D> Members

@@ -365,6 +365,10 @@ namespace AW2.Graphics
                 gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
                 gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
                 gfx.RenderState.AlphaTestEnable = false;
+                gfx.RenderState.AlphaBlendEnable = true;
+                gfx.RenderState.BlendFunction = BlendFunction.Add;
+                gfx.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
+                gfx.RenderState.SourceBlend = Blend.SourceAlpha;
 
                 // Layer parallax
                 if (layer.ParallaxName != null)
@@ -434,6 +438,7 @@ namespace AW2.Graphics
                 gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
                 gfx.RenderState.DepthBufferEnable = true;
                 gfx.RenderState.AlphaTestEnable = false;
+                gfx.RenderState.AlphaBlendEnable = false;
 #endif
 
                 // 3D graphics
@@ -447,16 +452,16 @@ namespace AW2.Graphics
                 DrawMode2D? drawMode = null;
                 layer.ForEachGobSort2D(delegate(Gob gob)
                 {
-                    if (drawMode == null || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
+                    if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                     {
-                        if (drawMode != null)
+                        if (drawMode.HasValue)
                             drawMode.Value.EndDraw(spriteBatch);
                         drawMode = gob.DrawMode2D;
                         drawMode.Value.BeginDraw(spriteBatch);
                     }
                     gob.Draw2D(gameToScreen, spriteBatch, layerScale);
                 });
-                if (drawMode != null)
+                if (drawMode.HasValue)
                     drawMode.Value.EndDraw(spriteBatch);
             });
 

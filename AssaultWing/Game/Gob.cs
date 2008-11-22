@@ -951,6 +951,7 @@ namespace AW2.Game
 
                     // Modify render state.
                     RenderState renderState = AssaultWing.Instance.GraphicsDevice.RenderState;
+                    renderState.AlphaBlendEnable = true;
                     renderState.DepthBufferEnable = false;
 
                     // Save effect state.
@@ -977,6 +978,7 @@ namespace AW2.Game
                     be.Alpha = oldAlpha;
 
                     // Restore render state.
+                    renderState.AlphaBlendEnable = false;
                     renderState.DepthBufferEnable = true;
                 }
             }

@@ -1,3 +1,4 @@
+//#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -163,20 +164,35 @@ namespace AW2.Graphics
         Vector2 lookAt;
 
         /// <summary>
-        /// The minimum X and Y coordinates of the game world this viewport is viewing.
-        /// </summary>
-        Vector2 worldAreaMin;
-
-        /// <summary>
-        /// The maximum X and Y coordinates of the game world this viewport is viewing.
-        /// </summary>
-        Vector2 worldAreaMax;
-
-        /// <summary>
         /// Last used sign of player's shake angle. Either 1 or -1.
         /// </summary>
         float shakeSign;
 
+#if PARALLAX_IN_3D
+        #region Fields for drawing parallax as 3D primitives
+
+        /// <summary>
+        /// Effect for drawing parallaxes as 3D primitives.
+        /// </summary>
+        BasicEffect effect;
+
+        /// <summary>
+        /// Vertex declaration for drawing parallaxes as 3D primitives.
+        /// </summary>
+        VertexDeclaration vertexDeclaration;
+
+        /// <summary>
+        /// Vertex data scratch buffer for drawing parallaxes as 3D primitives.
+        /// </summary>
+        VertexPositionTexture[] vertexData;
+
+        /// <summary>
+        /// Index data scratch buffer for drawing parallaxes as 3D primitives.
+        /// </summary>
+        short[] indexData; // triangle fan
+
+        #endregion Fields for drawing parallax as 3D primitives
+#endif
         #endregion PlayerViewport fields
 
         /// <summary>
@@ -195,8 +211,6 @@ namespace AW2.Graphics
             viewport.MinDepth = 0f;
             viewport.MaxDepth = 1f;
             lookAt = Vector2.Zero;
-            worldAreaMin = Vector2.Zero;
-            worldAreaMax = new Vector2(viewport.Width, viewport.Height);
             shakeSign = -1;
 
             // Create overlay graphics components.
@@ -246,10 +260,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public override Vector2 WorldAreaMin(float z)
         {
-            if (player.Ship != null)
-                worldAreaMin = player.Ship.Pos - GetScale(z) *
-                    new Vector2(viewport.Width, viewport.Height) / 2;
-            return worldAreaMin;
+            return lookAt - new Vector2(viewport.Width, viewport.Height) / 2 / GetScale(z);
         }
 
         /// <summary>
@@ -259,10 +270,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public override Vector2 WorldAreaMax(float z)
         {
-            if (player.Ship != null)
-                worldAreaMax = player.Ship.Pos + GetScale(z) * 
-                    new Vector2(viewport.Width, viewport.Height) / 2;
-            return worldAreaMax;
+            return lookAt + new Vector2(viewport.Width, viewport.Height) / 2 / GetScale(z);
         }
 
         /// <summary>
@@ -323,6 +331,27 @@ namespace AW2.Graphics
             gfx.Viewport = viewport;
             Matrix view = ViewMatrix;
 
+#if PARALLAX_IN_3D
+            if (effect == null) // HACK: initialise parallax drawing in 3D, move this to LoadContent and UnloadContent
+            {
+                effect = new BasicEffect(gfx, null);
+                effect.World = Matrix.Identity;
+                effect.Projection = Matrix.Identity;
+                effect.View = Matrix.Identity;
+                effect.TextureEnabled = true;
+                effect.LightingEnabled = false;
+                effect.FogEnabled = false;
+                effect.VertexColorEnabled = false;
+                vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
+                vertexData = new VertexPositionTexture[] {
+                    new VertexPositionTexture(new Vector3(-1, -1, 1), new Vector2(0, 1)),
+                    new VertexPositionTexture(new Vector3(-1, 1, 1), new Vector2(0, 0)),
+                    new VertexPositionTexture(new Vector3(1, 1, 1), new Vector2(1, 0)),
+                    new VertexPositionTexture(new Vector3(1, -1, 1), new Vector2(1, 1)),
+                };
+                indexData = new short[] { 0, 1, 2, 3, };
+            }
+#endif
             data.ForEachArenaLayer(delegate(ArenaLayer layer)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
@@ -331,10 +360,50 @@ namespace AW2.Graphics
                     viewport.Width / layerScale, viewport.Height / layerScale,
                     1f, 11000f);
 
+#if PARALLAX_IN_3D // HACK: Alternative implementation, parallax drawing in 3D by two triangles. Perhaps less time lost in RenderState changes.
+                // Modify renderstate for parallax.
+                gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
+                gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
+                gfx.RenderState.AlphaTestEnable = false;
+
+                // Layer parallax
+                if (layer.ParallaxName != null)
+                {
+                    // Render looping parallax as two huge triangles.
+                    gfx.RenderState.DepthBufferEnable = false;
+                    gfx.VertexDeclaration = vertexDeclaration;
+                    effect.Texture = data.GetTexture(layer.ParallaxName);
+
+                    Vector2 texMin = layerScale * new Vector2(
+                        lookAt.X / effect.Texture.Width,
+                        -lookAt.Y / effect.Texture.Height);
+                    Vector2 texMax = texMin + new Vector2(
+                        viewport.Width / (float)effect.Texture.Width,
+                        -viewport.Height / (float)effect.Texture.Height);
+                    vertexData[0].TextureCoordinate = texMin;
+                    vertexData[1].TextureCoordinate = new Vector2(texMin.X, texMax.Y);
+                    vertexData[2].TextureCoordinate = texMax;
+                    vertexData[3].TextureCoordinate = new Vector2(texMax.X, texMin.Y);
+
+                    effect.Begin();
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Begin();
+                        gfx.DrawUserIndexedPrimitives<VertexPositionTexture>(
+                            PrimitiveType.TriangleFan, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length - 2);
+                        pass.End();
+                    }
+                    effect.End();
+                }
+
+                // Modify renderstate for 3D graphics.
+                gfx.RenderState.DepthBufferEnable = true;
+#else // HACK: The old way of drawing parallaxes, with several calls to SpriteBatch.Draw
                 // Layer parallax
                 if (layer.ParallaxName != null)
                 {
                     spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                    gfx.RenderState.AlphaTestEnable = false;
                     Vector2 pos = WorldAreaMin(0) * -layerScale;
                     pos.Y = -pos.Y;
                     Vector2 fillPos = new Vector2();
@@ -364,7 +433,8 @@ namespace AW2.Graphics
                 gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
                 gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
                 gfx.RenderState.DepthBufferEnable = true;
-                gfx.RenderState.DepthBufferWriteEnable = true;
+                gfx.RenderState.AlphaTestEnable = false;
+#endif
 
                 // 3D graphics
                 layer.ForEachGob(delegate(Gob gob) { gob.Draw(view, projection); });

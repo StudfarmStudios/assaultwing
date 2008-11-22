@@ -17,14 +17,23 @@ namespace AW2.Graphics
         None,
 
         /// <summary>
-        /// Draw transparently based on the alpha channel.
+        /// Blend color with the background. Alpha channel measures
+        /// the strength of color, and (1 - Alpha) is the strength
+        /// of the background.
         /// </summary>
         Transparent,
 
         /// <summary>
-        /// Draw additively based on the alpha channel.
+        /// Add color to the background. Alpha channel measures 
+        /// the strength of addition.
         /// </summary>
         Additive,
+
+        /// <summary>
+        /// Subtract color from the background. Alpha channel measures
+        /// the strength of subtraction.
+        /// </summary>
+        Subtractive,
     }
 
     /// <summary>

@@ -782,7 +782,7 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             LoadContent();
 
-            // Create birth gobs.
+            // Create birth gobs as described by gob type.
             foreach (string gobType in birthGobTypes)
             {
                 Gob gob = CreateGob(gobType);
@@ -797,6 +797,26 @@ namespace AW2.Game
                     // TODO: User named bones for birth gob placement //((Gobs.Peng)gob).LeaderBone = GetNamedPositions("SomeGobPart");
                 }
                 data.AddGob(gob);
+            }
+
+            // Create birth gobs as described by 3D model.
+            KeyValuePair<string, int>[] poses = GetNamedPositions("Peng_");
+            foreach (KeyValuePair<string, int> pos in poses)
+            {
+                // We expect 3D model bones named like "Peng_blinker_1", where
+                // "Peng" is a special marker,
+                // "blinker" is the typename of the Peng to create,
+                // "1" is an optional number used only to make such bone names unique.
+                string[] tokens = pos.Key.Split('_');
+                if (tokens.Length < 2 || tokens.Length > 3)
+                {
+                    Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + modelName);
+                    continue;
+                }
+                Gobs.Peng peng = (Gobs.Peng)Gob.CreateGob(tokens[1]);
+                peng.Leader = this;
+                peng.LeaderBone = pos.Value;
+                data.AddGob(peng);
             }
 
             CreateExhaustEngines();

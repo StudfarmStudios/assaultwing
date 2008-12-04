@@ -10,4 +10,14 @@
   </deathGobTypes>
   <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   </collisionAreas>
+  <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</mass>
+  <depthLayer2D type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</depthLayer2D>
+  <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
+  </drawMode2D>
+  <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
+  <birthGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <exhaustEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <maxDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
+  <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</movable>
 </GobType>

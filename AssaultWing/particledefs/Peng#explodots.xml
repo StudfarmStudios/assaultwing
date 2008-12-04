@@ -14,6 +14,7 @@
   <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Transparent</type>
   </drawMode2D>
+  <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
   <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <emissionFrequency type="&float;">15</emissionFrequency>
@@ -218,4 +219,10 @@
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
   <exhaustEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</mass>
+  <modelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummymodel</modelName>
+  <scale type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</scale>
+  <elasticity type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.7</elasticity>
+  <friction type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.7</friction>
+  <maxDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
 </GobType>

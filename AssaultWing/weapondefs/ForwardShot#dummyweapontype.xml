@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WeaponType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <shotSpeed type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">300</shotSpeed>
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummyweapontype</typeName>
+  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
+  <shotSpeed type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">300</shotSpeed>
   <shotTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummygobtype</shotTypeName>
   <loadTime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</loadTime>
+  <iconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</iconName>
+  <iconEquipName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</iconEquipName>
+  <fireSound type="AW2.Sound.SoundOptions+Action, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Pistol</fireSound>
+  <shotCount type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">6</shotCount>
+  <shotSpacing type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</shotSpacing>
+  <shotAngleVariation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.2</shotAngleVariation>
+  <shotSpeedVariation type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</shotSpeedVariation>
+  <fireCharge type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</fireCharge>
+  <recoilMomentum type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</recoilMomentum>
+  <muzzleFireEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </muzzleFireEngineNames>
+  <upgradeNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  </upgradeNames>
 </WeaponType>

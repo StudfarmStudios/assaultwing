@@ -138,6 +138,7 @@ namespace AW2.Game.Pengs
         public override ICollection<Particle> Emit()
         {
             if (paused) return null;
+            if (numberToCreate == 0) return null;
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
@@ -273,12 +274,17 @@ namespace AW2.Game.Pengs
         {
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
+                // Make sure there's no null references.
+                if (initialVelocity == null)
+                    throw new Exception("Serialization error: SprayEmitter initialVelocity not defined");
+
                 if (emissionFrequency <= 0 || emissionFrequency > 100000)
                 {
                     Log.Write("Correcting insane emission frequency " + emissionFrequency);
                     emissionFrequency = MathHelper.Clamp(emissionFrequency, 1, 100000);
                 }
             }
+            nextBirth = new TimeSpan(-1);
         }
 
         #endregion

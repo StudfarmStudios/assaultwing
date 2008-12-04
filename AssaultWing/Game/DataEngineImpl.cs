@@ -461,7 +461,7 @@ namespace AW2.Game
 
             // Create initial objects. This is by far the most time consuming part
             // in initialising an arena for playing.
-            // Note that the gobs will end up in 'gobs' only after the game starts running again.
+            // Note that the gobs will end up in 'arenaLayers' only after the game starts running again.
             int wallCount = 0;
             foreach (ArenaLayer layer in preparedArena.Layers)
                 layer.ForEachGob(delegate(Gob gob)

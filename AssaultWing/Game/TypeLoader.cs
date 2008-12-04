@@ -145,18 +145,27 @@ namespace AW2.Game
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
             return (object[])listType.InvokeMember("ToArray", flags, null, types, new Object[] { });
         }
+
         /// <summary>
         /// Creates type file template for subclass of 'baseClass'.
         /// </summary>
-
         private object ParseAndLoadFile(FileInfo fi)
         {
             Log.Write("Loading type " + parseType(fi) + " of subclass " + parseSubclass(fi));
             FileStream fs = new FileStream(fi.FullName, FileMode.Open);
             System.Xml.XmlReader xmlReader = Serialization.GetXmlReader(fs);
             Type limitationAttribute = typeof(TypeParameterAttribute);
-            object template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type",
-                baseClass, limitationAttribute);
+            object template = null;
+            try
+            {
+                template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type", 
+                    baseClass, limitationAttribute);
+            }
+            catch (MemberSerializationException e)
+            {
+                //throw new ArgumentException("Error in " + fi.Name + ": " + e.Message + ", " + e.MemberName);
+                Log.Write("Error in " + fi.Name + ": " + e.Message + ", " + e.MemberName);
+            }
             xmlReader.Close();
             fs.Close();
             return template;

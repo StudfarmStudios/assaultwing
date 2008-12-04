@@ -312,8 +312,9 @@ namespace AW2.Game.Weapons
         /// <param name="limitationAttribute">Check only fields marked with 
         /// this limitation attribute.</param>
         /// <see cref="Serialization"/>
-        public void MakeConsistent(Type limitationAttribute)
+        public override void MakeConsistent(Type limitationAttribute)
         {
+            base.MakeConsistent(limitationAttribute);
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 shotCount = Math.Max(1, shotCount);

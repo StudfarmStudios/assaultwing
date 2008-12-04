@@ -24,13 +24,10 @@ namespace AW2.Game.Particles
         private bool loop = false; //If the particle system is infinite or not
         [TypeParameter]
         private int totalNumberParticles = 0; //Particles emitted in the total lifetime of the system
-        [RuntimeState]
         private int createdParticles = 0; //Number of emitted particles so far
         [TypeParameter]
         private FloatFactory birthRate = new ExpectedValue(5,0); //Particles emitted per second
-        [RuntimeState]
         private TimeSpan nextBirth; // Time of next particle birth, in game time.
-        [RuntimeState]
         private Vector2 oldPosition = new Vector2(Single.NaN); //Previous position of the system
         [TypeParameter]
         private Emitter emitter = new DotEmitter(); //Emitter of the system
@@ -68,7 +65,6 @@ namespace AW2.Game.Particles
         [TypeParameter]
         private FloatFactory particleAcceleration = new ExpectedValue(); //Expected acceleration of a particle
 
-        [RuntimeState]
         private List<Particle> particles = new List<Particle>();
 
         #endregion
@@ -520,13 +516,39 @@ namespace AW2.Game.Particles
         {
             base.MakeConsistent(limitationAttribute);
 
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                if (birthRate == null)
+                    throw new Exception("Serialization error: ParticleEngine birthRate not defined in " + TypeName);
+                if (emitter == null)
+                    throw new Exception("Serialization error: ParticleEngine emitter not defined in " + TypeName);
+                textureName = textureName ?? "dummytexture";
+                if (particleAge == null)
+                    throw new Exception("Serialization error: ParticleEngine particleAge not defined in " + TypeName);
+                if (particleInitialSize == null)
+                    throw new Exception("Serialization error: ParticleEngine particleInitialSize not defined in " + TypeName);
+                if (particleFinalSize == null)
+                    throw new Exception("Serialization error: ParticleEngine particleFinalSize not defined in " + TypeName);
+                if (particleInitialRotation == null)
+                    throw new Exception("Serialization error: ParticleEngine particleInitialRotation not defined in " + TypeName);
+                if (particleRotationSpeed == null)
+                    throw new Exception("Serialization error: ParticleEngine particleRotationSpeed not defined in " + TypeName);
+                if (particleSpeed == null)
+                    throw new Exception("Serialization error: ParticleEngine particleSpeed not defined in " + TypeName);
+                if (particleAcceleration == null)
+                    throw new Exception("Serialization error: ParticleEngine particleAcceleration not defined in " + TypeName);
+            }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
             {
+                // Make sure there's no null references.
+                particles = particles ?? new List<Particle>();
+
                 // Initialise oldPos
                 Pos = Pos;
             }
         }
 
-        #endregion
+        #endregion IConsistencyCheckable Members
     }
 }

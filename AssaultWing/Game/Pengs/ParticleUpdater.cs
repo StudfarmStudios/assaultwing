@@ -109,5 +109,32 @@ namespace AW2.Game.Pengs
             particle.alpha = alpha.GetValue(lifePos, particle.pengInput, particle.random);
             return false;
         }
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                if (acceleration == null)
+                    throw new Exception("Serialization error: PhysicalUpdater acceleration not defined");
+                if (rotationSpeed == null)
+                    throw new Exception("Serialization error: PhysicalUpdater rotationSpeed not defined");
+                if (scale == null)
+                    throw new Exception("Serialization error: PhysicalUpdater scale not defined");
+                if (alpha == null)
+                    throw new Exception("Serialization error: PhysicalUpdater alpha not defined");
+            }
+        }
+
+        #endregion
     }
 }

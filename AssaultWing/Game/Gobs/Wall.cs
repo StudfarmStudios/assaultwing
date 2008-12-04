@@ -191,6 +191,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            FineTriangles();
             InitializeIndexMap();
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             data.ProgressBar.SubtaskCompleted();
@@ -268,9 +269,10 @@ namespace AW2.Game.Gobs
         {
             base.SetRuntimeState(runtimeState);
             triangleCount = indexData.Length / 3;
-            boundingBox = BoundingBox.CreateFromPoints(
-                Array.ConvertAll<VertexPositionNormalTexture, Vector3>(vertexData,
-                delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
+            if (vertexData.Length > 0)
+                boundingBox = BoundingBox.CreateFromPoints(
+                    Array.ConvertAll<VertexPositionNormalTexture, Vector3>(vertexData,
+                    delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
 
             // Gain ownership over our runtime collision areas.
             collisionAreas = polygons;
@@ -328,26 +330,34 @@ namespace AW2.Game.Gobs
         /// <param name="limitationAttribute">Check only fields marked with 
         /// this limitation attribute.</param>
         /// <see cref="Serialization"/>
-        public new void MakeConsistent(Type limitationAttribute)
+        public override void MakeConsistent(Type limitationAttribute)
         {
-            // NOTE: This method is meant to re-implement the interface member
-            // IConsistencyCheckable.MakeConsistent(Type) that is already implemented
-            // in the base class Gob. According to the C# Language Specification 1.2
-            // (and not corrected in the specification version 2.0), adding the 'new'
-            // keyword to this re-implementation would make this code
-            // 
-            //      Wall wall;
-            //      ((IConsistencyCheckable)wall).MakeConsistent(type)
-            //
-            // call Gob.MakeConsistent(Type). However, debugging reveals this is not the
-            // case. By leaving out the 'new' keyword, the semantics stays the same, as
-            // seen by debugging, but the compiler produces a warning.
             base.MakeConsistent(limitationAttribute);
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                if (textureName == null)
+                    textureName = "dummytexture";
+            }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
-                FineTriangles();
+            {
+                // Make sure there's no null references.
+                if (vertexData == null)
+                    vertexData = new VertexPositionNormalTexture[0];
+                if (indexData == null)
+                    indexData = new short[0];
+                if (polygons == null)
+                    polygons = new CollisionArea[0];
+
+                // 'textureName' is actually a type parameter,
+                // but its value is passed onwards by 'TextureNames' even
+                // if we were only a gob's runtime state.
+                if (textureName == null)
+                    textureName = "dummytexture";
+            }
         }
 
-        #endregion
+        #endregion IConsistencyCheckable Members
 
         #region Protected methods
 

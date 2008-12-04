@@ -1282,23 +1282,52 @@ namespace AW2.Game
         /// <see cref="Serialization"/>
         public virtual void MakeConsistent(Type limitationAttribute)
         {
-            // Rearrange our collision areas to have a physical area be first, 
-            // if there is such.
-            if (collisionAreas.Length == 0) return;
-            if ((collisionAreas[0].Type & CollisionAreaType.Physical) != 0) return;
-            for (int i = 0; i < collisionAreas.Length; ++i)
-                if ((collisionAreas[i].Type & CollisionAreaType.Physical) != 0)
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                if (typeName == null)
+                    typeName = "unknown gob type";
+                if (modelName == null)
+                    modelName = "dummymodel";
+                if (collisionAreas == null)
+                    collisionAreas = new CollisionArea[0];
+                if (birthGobTypes == null)
+                    birthGobTypes = new string[0];
+                if (deathGobTypes == null)
+                    deathGobTypes = new string[0];
+                if (exhaustEngineNames == null)
+                    exhaustEngineNames = new string[0];
+
+                // Rearrange our collision areas to have a physical area be first, 
+                // if there is such.
+                if (collisionAreas.Length > 0)
                 {
-                    CollisionArea swap = collisionAreas[i];
-                    collisionAreas[i] = collisionAreas[0];
-                    collisionAreas[0] = swap;
-                    break;
+                    for (int i = 0; i < collisionAreas.Length; ++i)
+                        if ((collisionAreas[i].Type & CollisionAreaType.Physical) != 0)
+                        {
+                            CollisionArea swap = collisionAreas[i];
+                            collisionAreas[i] = collisionAreas[0];
+                            collisionAreas[0] = swap;
+                            break;
+                        }
                 }
 
-            // Make physical attributes sensible.
-            mass = Math.Max(0.001f, mass); // strictly positive mass
-            elasticity = Math.Max(0, elasticity);
-            friction = Math.Max(0, friction);
+                // Make physical attributes sensible.
+                mass = Math.Max(0.001f, mass); // strictly positive mass
+                elasticity = Math.Max(0, elasticity);
+                friction = Math.Max(0, friction);
+            }
+            if (limitationAttribute == typeof(RuntimeStateAttribute))
+            {
+                // Make sure there's no null references.
+                typeName = typeName ?? "unknown gob type";
+
+                // 'modelName' is actually a type parameter,
+                // but its value is passed onwards by 'ModelNames' even
+                // if we were only a gob's runtime state.
+                if (modelName == null)
+                    modelName = "dummymodel";
+            }
         }
 
         #endregion

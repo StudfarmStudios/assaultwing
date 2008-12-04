@@ -352,5 +352,35 @@ namespace AW2.Game.Gobs
             prevPos = Pos;
             oldPosTimestamp = AssaultWing.Instance.GameTime.TotalGameTime;
         }
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public override void MakeConsistent(Type limitationAttribute)
+        {
+            base.MakeConsistent(limitationAttribute);
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                if (emitter == null)
+                    throw new Exception("Serialization error: Peng emitter not defined in " + TypeName);
+                if (updater == null)
+                    throw new Exception("Serialization error: Peng updater not defined in " + TypeName);
+            }
+            if (limitationAttribute == typeof(RuntimeStateAttribute))
+            {
+                // Make sure there's no null references.
+                if (particles == null)
+                    particles = new List<Particle>();
+            }
+        }
+
+        #endregion IConsistencyCheckable Members
     }
 }

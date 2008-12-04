@@ -142,6 +142,40 @@ namespace AW2.Helpers
     }
 
     /// <summary>
+    /// Exception during (de)serialisation of a member of a type.
+    /// </summary>
+    public class MemberSerializationException : Exception
+    {
+        /// <summary>
+        /// The name of the member on which error occurred.
+        /// </summary>
+        public string MemberName { get; set; }
+
+        /// <summary>
+        /// Creates a new member serialisation exception.
+        /// </summary>
+        /// <param name="message">Description of the error.</param>
+        /// <param name="memberName">Name of the member on which error occurred.</param>
+        public MemberSerializationException(string message, string memberName)
+            : base(message)
+        {
+            MemberName = memberName;
+        }
+
+        /// <summary>
+        /// Creates a new member serialisation exception.
+        /// </summary>
+        /// <param name="message">Description of the error.</param>
+        /// <param name="memberName">Name of the member on which error occurred.</param>
+        /// <param name="innerException">A deeper reason for this exception.</param>
+        public MemberSerializationException(string message, string memberName, Exception innerException)
+            : base(message, innerException)
+        {
+            MemberName = memberName;
+        }
+    }
+
+    /// <summary>
     /// Provides methods that help serialise objects.
     /// </summary>
     /// These serialisation and deserialisation methods work only with each other
@@ -164,7 +198,7 @@ namespace AW2.Helpers
     /// The chosen limitation attribute can be switched to another during (de)serialisation
     /// for any chosen field. To do this, apply LimitationSwitchAttribute.
     /// <see cref="LimitationSwitchAttribute"/>
-    class Serialization
+    public static class Serialization
     {
         /// <summary>
         /// Cache for field infos. An array of field infos is stored for
@@ -228,102 +262,109 @@ namespace AW2.Helpers
         /// <returns>The deserialised object.</returns>
         public static object DeserializeXml(XmlReader reader, string elementName, Type objType, Type limitationAttribute)
         {
-            // Sanity checks
-            if (limitationAttribute != null &&
-                !typeof(Attribute).IsAssignableFrom(limitationAttribute))
-                throw new ArgumentException("Expected an attribute, got " + limitationAttribute.Name);
-
-            // XML consistency checks
-            if (!reader.IsStartElement())
-                throw new XmlException("Deserialisation expected start element");
-            if (!reader.IsStartElement(elementName))
-                throw new XmlException("Deserialisation expected start element " + elementName + " but got " + reader.Name);
-
-            // Find out type of value in XML
-            string writtenTypeName = reader.GetAttribute("type");
-            Type writtenType = Type.GetType(writtenTypeName);
-            if (writtenType == null)
-                throw new XmlException("XML suggests unknown type " + writtenTypeName);
-            if (!objType.IsAssignableFrom(writtenType))
-                throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name);
-
-            // Deserialise
-            if (reader.IsEmptyElement)
+            try
             {
+                // Sanity checks
+                if (limitationAttribute != null &&
+                    !typeof(Attribute).IsAssignableFrom(limitationAttribute))
+                    throw new ArgumentException("Expected an attribute, got " + limitationAttribute.Name);
+
+                // XML consistency checks
+                if (!reader.IsStartElement())
+                    throw new XmlException("Deserialisation expected start element");
+                if (!reader.IsStartElement(elementName))
+                    throw new XmlException("Deserialisation expected start element " + elementName + " but got " + reader.Name);
+
+                // Find out type of value in XML
+                string writtenTypeName = reader.GetAttribute("type");
+                Type writtenType = Type.GetType(writtenTypeName);
+                if (writtenType == null)
+                    throw new XmlException("XML suggests unknown type " + writtenTypeName);
+                if (!objType.IsAssignableFrom(writtenType))
+                    throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name);
+
+                // Deserialise
+                if (reader.IsEmptyElement)
+                {
+                    reader.Read();
+                    return Serialization.CreateInstance(writtenType);
+                }
                 reader.Read();
-                return Serialization.CreateInstance(writtenType);
-            }
-            reader.Read();
-            object returnValue;
-            Type iEnumerableElementType = null;
+                object returnValue;
+                Type iEnumerableElementType = null;
 
-            // Is it a primitive type?
-            if (writtenType.IsPrimitive || writtenType == typeof(string))
-                returnValue = reader.ReadContentAs(writtenType, null);
- 
-            // Is it an enum?
-            else if (writtenType.IsEnum)
-            {
-                string enumStr = reader.ReadContentAsString();
-                returnValue = Enum.Parse(writtenType, enumStr);
-            }
+                // Is it a primitive type?
+                if (writtenType.IsPrimitive || writtenType == typeof(string))
+                    returnValue = reader.ReadContentAs(writtenType, null);
 
-            // Is it a Color?
-            else if (writtenType == typeof(Color))
-            {
-                byte r = (byte)DeserializeXml(reader, "R", typeof(byte), limitationAttribute);
-                byte g = (byte)DeserializeXml(reader, "G", typeof(byte), limitationAttribute);
-                byte b = (byte)DeserializeXml(reader, "B", typeof(byte), limitationAttribute);
-                byte a = (byte)DeserializeXml(reader, "A", typeof(byte), limitationAttribute);
-                returnValue = new Color(r, g, b, a);
-            }
-
-            // Is it an array?
-            else if (writtenType.IsArray)
-            {
-                Type elementType = writtenType.GetElementType();
-                Type listType = typeof(List<>).MakeGenericType(elementType);
-                IList list = (IList)Activator.CreateInstance(listType);
-                while (reader.IsStartElement("Item"))
+                // Is it an enum?
+                else if (writtenType.IsEnum)
                 {
-                    object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
-                    list.Add(item);
+                    string enumStr = reader.ReadContentAsString();
+                    returnValue = Enum.Parse(writtenType, enumStr);
                 }
-                BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
-                returnValue = listType.InvokeMember("ToArray", flags, null, list, new Object[] { });
-            }
 
-            // Is it IEnumerable<T> for some type T?
-            else if (Array.Exists(writtenType.GetInterfaces(), delegate(Type iface)
+                // Is it a Color?
+                else if (writtenType == typeof(Color))
                 {
-                    bool good = iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-                    if (good) iEnumerableElementType = iface.GetGenericArguments()[0];
-                    return good;
-                }))
-            {
-                Type elementType = iEnumerableElementType;
-                Type listType = typeof(List<>).MakeGenericType(elementType);
-                IList array = (IList)Activator.CreateInstance(listType);
-                while (reader.IsStartElement("Item"))
-                {
-                    object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
-                    array.Add(item);
+                    byte r = (byte)DeserializeXml(reader, "R", typeof(byte), limitationAttribute);
+                    byte g = (byte)DeserializeXml(reader, "G", typeof(byte), limitationAttribute);
+                    byte b = (byte)DeserializeXml(reader, "B", typeof(byte), limitationAttribute);
+                    byte a = (byte)DeserializeXml(reader, "A", typeof(byte), limitationAttribute);
+                    returnValue = new Color(r, g, b, a);
                 }
-                returnValue = Serialization.CreateInstance(writtenType, array);
-            }
 
-            // Otherwise the value is an object that is just a collection of fields
-            else
+                // Is it an array?
+                else if (writtenType.IsArray)
+                {
+                    Type elementType = writtenType.GetElementType();
+                    Type listType = typeof(List<>).MakeGenericType(elementType);
+                    IList list = (IList)Activator.CreateInstance(listType);
+                    while (reader.IsStartElement("Item"))
+                    {
+                        object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
+                        list.Add(item);
+                    }
+                    BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
+                    returnValue = listType.InvokeMember("ToArray", flags, null, list, new Object[] { });
+                }
+
+                // Is it IEnumerable<T> for some type T?
+                else if (Array.Exists(writtenType.GetInterfaces(), delegate(Type iface)
+                    {
+                        bool good = iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+                        if (good) iEnumerableElementType = iface.GetGenericArguments()[0];
+                        return good;
+                    }))
+                {
+                    Type elementType = iEnumerableElementType;
+                    Type listType = typeof(List<>).MakeGenericType(elementType);
+                    IList array = (IList)Activator.CreateInstance(listType);
+                    while (reader.IsStartElement("Item"))
+                    {
+                        object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
+                        array.Add(item);
+                    }
+                    returnValue = Serialization.CreateInstance(writtenType, array);
+                }
+
+                // Otherwise the value is an object that is just a collection of fields
+                else
+                {
+                    returnValue = Serialization.CreateInstance(writtenType);
+                    DeserializeFieldsXml(reader, returnValue, limitationAttribute);
+                }
+
+                reader.ReadEndElement();
+
+                if (typeof(IConsistencyCheckable).IsAssignableFrom(writtenType))
+                    ((IConsistencyCheckable)returnValue).MakeConsistent(limitationAttribute);
+                return returnValue;
+            }
+            catch (MemberSerializationException e)
             {
-                returnValue = Serialization.CreateInstance(writtenType);
-                DeserializeFieldsXml(reader, returnValue, limitationAttribute);
+                throw new MemberSerializationException(e.Message, elementName + "." + e.MemberName);
             }
-
-            reader.ReadEndElement();
-
-            if (typeof(IConsistencyCheckable).IsAssignableFrom(writtenType))
-                ((IConsistencyCheckable)returnValue).MakeConsistent(limitationAttribute);
-            return returnValue;
         }
 
         /// <summary>
@@ -454,7 +495,7 @@ namespace AW2.Helpers
             }
 
             // Other class instances are copied field by field.
-            object copy = Serialization.CreateInstance(type);
+            object copy = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
             FieldInfo[] fields = GetFields(obj, null);
             foreach (FieldInfo field in fields)
             {
@@ -520,8 +561,8 @@ namespace AW2.Helpers
         /// the root element of the serialised 'obj' to be read. At successful return, 
         /// the XML reader will be positioned at the end element of the serialised 'obj'.
         /// A log message is produced if an unknown serialised field is encountered.
-        /// No checks are made to see if all fields get a value or if a field is 
-        /// assigned a value more than once.
+        /// It is guaranteed that all fields (marked with <c>limitationAttribute</c>)
+        /// get a value exactly once, lest an exception is thrown.
         /// <param name="reader">Where to read the serialised values.</param>
         /// <param name="obj">The object whose fields to deserialise.</param>
         /// <param name="limitationAttribute">Limit the deserialisation to fields with this attribute,
@@ -533,14 +574,17 @@ namespace AW2.Helpers
             FieldInfo[] fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
                 ? GetFields(obj, limitationAttribute)
                 : GetFields(obj, null);
+            bool[] fieldFounds = new bool[fields.Length];
 
             // Read in serialised fields of the given object.
             // We have no guarantee of the order of the fields.
             while (reader.IsStartElement())
             {
                 bool fieldFound = false;
-                foreach (FieldInfo field in fields)
+                for (int fieldI = 0; fieldI < fields.Length; ++fieldI)
                 {
+                    FieldInfo field = fields[fieldI];
+
                     // React to SerializedNameAttribute
                     string elementName = field.Name;
                     SerializedNameAttribute serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
@@ -551,6 +595,15 @@ namespace AW2.Helpers
 
                     if (reader.Name.Equals(elementName))
                     {
+                        if (fieldFounds[fieldI])
+                        {
+                            int lineNumber = -1;
+                            try { reader.ReadEndElement(); } // This is only to get the XML line number.
+                            catch (XmlException e) { lineNumber = e.LineNumber; }
+                            string errorText = "Field deserialised twice";
+                            if (lineNumber >= 0) errorText += " (line " + lineNumber + ")";
+                            throw new MemberSerializationException(errorText, field.Name);
+                        }
                         Type fieldLimitationAttribute = limitationAttribute;
 
                         // React to LimitationSwitchAttribute
@@ -562,6 +615,7 @@ namespace AW2.Helpers
                         }
 
                         fieldFound = true;
+                        fieldFounds[fieldI] = true;
                         object value = DeserializeXml(reader, elementName, field.FieldType, fieldLimitationAttribute);
                         field.SetValue(obj, value);
                         break;
@@ -569,10 +623,24 @@ namespace AW2.Helpers
                 }
                 if (!fieldFound)
                 {
-                    Log.Write("Skipping unknown XML element " + reader.Name);
-                    reader.Skip();
+                    int lineNumber = -1;
+                    try { reader.ReadEndElement(); } // This is only to get the XML line number.
+                    catch (XmlException e) { lineNumber = e.LineNumber; }
+                    string errorText = "Cannot deserialise unknown field";
+                    if (lineNumber >= 0) errorText += " (line " + lineNumber + ")";
+                    throw new MemberSerializationException(errorText, "???");
                 }
             }
+            for (int fieldI = 0; fieldI < fields.Length; ++fieldI)
+                if (!fieldFounds[fieldI])
+                {
+                    int lineNumber = -1;
+                    try { reader.ReadStartElement(); } // This is only to get the XML line number.
+                    catch (XmlException e) { lineNumber = e.LineNumber; }
+                    string errorText = "Value not found";
+                    if (lineNumber >= 0) errorText += " (line " + lineNumber + ")";
+                    throw new MemberSerializationException(errorText, fields[fieldI].Name);
+                }
         }
 
         /// <summary>

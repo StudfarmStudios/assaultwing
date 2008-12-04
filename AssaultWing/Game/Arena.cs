@@ -16,14 +16,19 @@ namespace AW2.Game
     /// </summary>
     /// Arena layers are a means to visualise depth in spite of the
     /// orthogonal projection of 3D graphics.
+    [LimitedSerialization]
     public class ArenaLayer : IConsistencyCheckable
     {
+        [TypeParameter]
         bool isGameplayLayer;
+        [TypeParameter]
         float z;
+        [TypeParameter]
         string parallaxName;
 
         // This field will be serialised so that the gobs have their runtime state
         // (positions, movements, etc.) serialised and not their type parameters.
+        [TypeParameter]
         [LimitationSwitch(typeof(TypeParameterAttribute), typeof(RuntimeStateAttribute))]
         List<Gob> gobs;
 
@@ -423,20 +428,28 @@ namespace AW2.Game
         /// <see cref="Serialization"/>
         public void MakeConsistent(Type limitationAttribute)
         {
-            dimensions = Vector2.Max(dimensions, new Vector2(500));
-            
-            light0DiffuseColor = Vector3.Clamp(light0DiffuseColor, Vector3.Zero, Vector3.One);
-            light0Direction.Normalize();
-            light0SpecularColor = Vector3.Clamp(light0SpecularColor, Vector3.Zero, Vector3.One);
-            light1DiffuseColor = Vector3.Clamp(light1DiffuseColor, Vector3.Zero, Vector3.One);
-            light1Direction.Normalize();
-            light1SpecularColor = Vector3.Clamp(light1SpecularColor, Vector3.Zero, Vector3.One);
-            light2DiffuseColor = Vector3.Clamp(light2DiffuseColor, Vector3.Zero, Vector3.One);
-            light2Direction.Normalize();
-            light2SpecularColor = Vector3.Clamp(light2SpecularColor, Vector3.Zero, Vector3.One);
-            fogColor = Vector3.Clamp(fogColor, Vector3.Zero, Vector3.One);
-            fogEnd = MathHelper.Max(fogEnd, 0);
-            fogStart = MathHelper.Max(fogStart, 0);
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                layers = layers ?? new List<ArenaLayer>();
+                name = name ?? "unknown arena";
+                backgroundmusic = backgroundmusic ?? new List<BackgroundMusic>();
+
+                dimensions = Vector2.Max(dimensions, new Vector2(500));
+
+                light0DiffuseColor = Vector3.Clamp(light0DiffuseColor, Vector3.Zero, Vector3.One);
+                light0Direction.Normalize();
+                light0SpecularColor = Vector3.Clamp(light0SpecularColor, Vector3.Zero, Vector3.One);
+                light1DiffuseColor = Vector3.Clamp(light1DiffuseColor, Vector3.Zero, Vector3.One);
+                light1Direction.Normalize();
+                light1SpecularColor = Vector3.Clamp(light1SpecularColor, Vector3.Zero, Vector3.One);
+                light2DiffuseColor = Vector3.Clamp(light2DiffuseColor, Vector3.Zero, Vector3.One);
+                light2Direction.Normalize();
+                light2SpecularColor = Vector3.Clamp(light2SpecularColor, Vector3.Zero, Vector3.One);
+                fogColor = Vector3.Clamp(fogColor, Vector3.Zero, Vector3.One);
+                fogEnd = MathHelper.Max(fogEnd, 0);
+                fogStart = MathHelper.Max(fogStart, 0);
+            }
         }
 
         #endregion

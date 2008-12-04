@@ -35,7 +35,6 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Time of next spawn, in game time.
         /// </summary>
-        [RuntimeState]
         TimeSpan nextSpawn;
 
         #endregion SpawnGob fields
@@ -80,8 +79,7 @@ namespace AW2.Game.Gobs
             TimeSpan nowTime = AssaultWing.Instance.GameTime.TotalGameTime;
             while (nextSpawn <= nowTime)
             {
-                long ticks = (long)(10 * 1000 * 1000 * spawnInterval);
-                nextSpawn = nowTime + new TimeSpan(ticks);
+                nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 Gob newGob = Gob.CreateGob(spawnTypeName);
                 Vector2 spawnPos = physics.GetFreePosition(newGob, spawnArea);
@@ -100,5 +98,27 @@ namespace AW2.Game.Gobs
         {
             // We're invisible.
         }
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public override void MakeConsistent(Type limitationAttribute)
+        {
+            base.MakeConsistent(limitationAttribute);
+            if (limitationAttribute == typeof(RuntimeStateAttribute))
+            {
+                // Make sure there's no null references.
+                if (spawnArea == null)
+                    spawnArea = new Everything();
+            }
+        }
+
+        #endregion IConsistencyCheckable Members
     }
 }

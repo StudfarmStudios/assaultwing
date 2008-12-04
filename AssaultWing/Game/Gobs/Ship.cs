@@ -733,5 +733,33 @@ namespace AW2.Game.Gobs
                 Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
         }
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public override void MakeConsistent(Type limitationAttribute)
+        {
+            base.MakeConsistent(limitationAttribute);
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                if (coughEngineNames == null)
+                    coughEngineNames = new string[0];
+                if (armour == null)
+                    throw new Exception("Serialization error: Ship armour not defined in " + TypeName);
+                if (birthAlpha == null)
+                    throw new Exception("Serialization error: Ship birthAlpha not defined in " + TypeName);
+                if (iconEquipName == null)
+                    iconEquipName = "dummytexture";
+            }
+        }
+
+        #endregion IConsistencyCheckable Members
     }
 }

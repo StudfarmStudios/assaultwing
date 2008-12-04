@@ -39,7 +39,7 @@ namespace AW2.Game
     /// of its type parameters to descriptive and exemplary default values.
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     [LimitedSerialization]
-    public abstract class Weapon
+    public abstract class Weapon : IConsistencyCheckable
     {
 
         #region Weapon fields
@@ -227,7 +227,7 @@ namespace AW2.Game
         /// This constructor is only for serialisation.
         public Weapon()
         {
-            this.typeName = "dummyweapontype";
+            this.typeName = "unknown weapon type";
             this.upgradeNames = new string[] { "dummyweapontype", };
             this.iconName = "dummytexture";
             this.iconEquipName = "dummytexture";
@@ -378,5 +378,29 @@ namespace AW2.Game
         }
 
         #endregion Weapon protected methods
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public virtual void MakeConsistent(Type limitationAttribute)
+        {
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                typeName = typeName ?? "unknown weapon type";
+                upgradeNames = upgradeNames ?? new string[0];
+                iconName = iconName ?? "dummytexture";
+                iconEquipName = iconEquipName ?? "dummytexture";
+                shotTypeName = shotTypeName ?? "dummygob";
+            }
+        }
+
+        #endregion IConsistencyCheckable Members
     }
 }

@@ -62,8 +62,11 @@ namespace AW2.Game.Gobs
         public Bullet(string typeName)
             : base(typeName)
         {
-            int modelNameI = RandomHelper.GetRandomInt(bulletModelNames.Length);
-            base.ModelName = bulletModelNames[modelNameI];
+            if (bulletModelNames.Length > 0)
+            {
+                int modelNameI = RandomHelper.GetRandomInt(bulletModelNames.Length);
+                base.ModelName = bulletModelNames[modelNameI];
+            }
         }
 
         /// <summary>
@@ -100,5 +103,27 @@ namespace AW2.Game.Gobs
             physics.MakeHole(Pos, impactHoleRadius);
             Die(new DeathCause());
         }
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        /// <param name="limitationAttribute">Check only fields marked with 
+        /// this limitation attribute.</param>
+        /// <see cref="Serialization"/>
+        public override void MakeConsistent(Type limitationAttribute)
+        {
+            base.MakeConsistent(limitationAttribute);
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                // Make sure there's no null references.
+                if (bulletModelNames == null)
+                    bulletModelNames = new string[0];
+            }
+        }
+
+        #endregion IConsistencyCheckable Members
     }
 }

@@ -20,7 +20,7 @@ namespace AW2.Game.Gobs
         /// Amount of damage to inflict as a function of distance
         /// from the explosion.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         Curve inflictDamage;
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace AW2.Game.Gobs
         /// meters per second as a function of the distance from the explosion's
         /// center. Gas flow affects the movement of gobs.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         Curve flowSpeed;
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Names of the particle engines to create.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         string[] particleEngineNames;
 
         /// <summary>

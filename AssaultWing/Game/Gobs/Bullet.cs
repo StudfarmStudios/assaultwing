@@ -27,7 +27,7 @@ namespace AW2.Game.Gobs
         /// A list of alternative model names for a bullet.
         /// </summary>
         /// The actual model name for a bullet is chosen from these by random.
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         string[] bulletModelNames;
 
         /// <summary>

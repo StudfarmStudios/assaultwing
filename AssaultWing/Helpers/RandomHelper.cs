@@ -219,6 +219,23 @@ namespace AW2.Helpers
             [Test]
             public void TestGetRandomIntPoisson()
             {
+                /*
+                 * Universal generator as described in "Non-Uniform Random Variate Generation"
+                 * by Luc Devroye (McGill University).
+L = mean
+m = mode = Math.Floor(L) (unless mode is integer, in which case mode -= 0.5)
+p(k) = probability of case k = L^k * e^-L / k!
+
+Compute w = 1 + p(m)/2
+repeat
+  Generate U, V, W uniformly on [0, 1], and let S be a random sign.
+  if U <= w/(1+w)
+  then Y = V * w/p(m)
+  else Y = (w - log(V))/p(m)
+  X = S * round(Y)
+until W * min(1, e^(w - p(m) * Y) <= p(m+X)/p(m)
+return m + X
+                 */
             }
 
             /// <summary>

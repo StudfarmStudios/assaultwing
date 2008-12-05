@@ -70,7 +70,7 @@ namespace AW2.Game.Pengs
         /// </summary>
         /// The 'age' argument of this peng parameter will always be set to zero.
         /// The direction of particle velocity will be away from the emission center.
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         PengParameter initialVelocity;
 
         /// <summary>

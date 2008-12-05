@@ -101,7 +101,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The possibile bonus actions that collecting the bonus can activate.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         BonusActionPossibility[] possibilities;
 
         #endregion Bonus fields

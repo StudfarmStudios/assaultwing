@@ -124,6 +124,16 @@ namespace AW2.Helpers
     }
 
     /// <summary>
+    /// Denotes that the value of a field can be shared by reference.
+    /// The absence of this attribute suggests that a deep copy should be taken.
+    /// This field has no effect for value typed fields.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field)]
+    public class ShallowCopyAttribute : Attribute
+    {
+    }
+
+    /// <summary>
     /// A type whose instances are consistent only under certain conditions
     /// that concern some fields of the instance.
     /// </summary>
@@ -201,7 +211,8 @@ namespace AW2.Helpers
     public static class Serialization
     {
         /// <summary>
-        /// Cache for field infos. An array of field infos is stored for
+        /// Cache for field infos of fields that must be copied deeply.
+        /// An array of field infos is stored for
         /// each pair (type1, type2), where type1 is the type whose fields
         /// we are talking about, and type2 is the limiting attribute that
         /// the fields must have, or <c>null</c> to list all fields.
@@ -375,8 +386,6 @@ namespace AW2.Helpers
         /// <param name="obj">The object whose fields to scan for.</param>
         /// <param name="limitationAttribute">Return fields with this attribute.
         /// If set to null, returns all fields.</param>
-        /// <returns>The instance fields of given object that have the given attribute,
-        /// or all of its fields if <i>limitationAttribute</i> is a null reference.</returns>
         /// <exception cref="ArgumentException"><i>limitationAttribute</i> is not 
         /// a null reference or an attribute.</exception>
         public static FieldInfo[] GetFields(object obj, Type limitationAttribute)
@@ -499,8 +508,10 @@ namespace AW2.Helpers
             FieldInfo[] fields = GetFields(obj, null);
             foreach (FieldInfo field in fields)
             {
-                object fieldValue = field.GetValue(obj);
-                field.SetValue(copy, DeepCopy(fieldValue));
+                if (field.IsDefined(typeof(ShallowCopyAttribute), false))
+                    field.SetValue(copy, field.GetValue(obj));
+                else
+                    field.SetValue(copy, DeepCopy(field.GetValue(obj)));
             }
             return copy;
         }

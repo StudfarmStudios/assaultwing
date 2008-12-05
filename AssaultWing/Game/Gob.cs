@@ -164,14 +164,14 @@ namespace AW2.Game
         /// <summary>
         /// Types of gobs to create on birth.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         string[] birthGobTypes;
 
         /// <summary>
         /// Types of gobs to create on death.
         /// </summary>
         /// You might want to put some gob types of subclass Explosion here.
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         string[] deathGobTypes;
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace AW2.Game
         /// <summary>
         /// Names of exhaust engine types.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         string[] exhaustEngineNames;
 
         /// <summary>
@@ -632,7 +632,10 @@ namespace AW2.Game
                 throw new Exception("Silly programmer tries to create a gob (type " +
                     typeName + ") using a wrong Gob subclass (class " + this.GetType().Name + ")");
             foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
-                field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
+                if (field.IsDefined(typeof(ShallowCopyAttribute), false))
+                    field.SetValue(this, field.GetValue(template));
+                else
+                    field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
 
             this.owner = null;
             this.Pos = Vector2.Zero; // also translates collPrimitives

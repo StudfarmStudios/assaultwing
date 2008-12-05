@@ -135,7 +135,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Names of cough engine types.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         string[] coughEngineNames;
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace AW2.Game.Gobs
         /// the amount of damage delivered to the ship
         /// to the amount of damage the ship actually receives.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         Curve armour;
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace AW2.Game.Gobs
         /// ship (in seconds) to the alpha value to draw the ship with.
         /// </summary>
         /// Use this to implement alpha flashing on ship birth.
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         Curve birthAlpha;
 
         /// <summary>

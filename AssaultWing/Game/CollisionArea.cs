@@ -160,7 +160,7 @@ namespace AW2.Game
         /// <summary>
         /// Area in gob coordinates, not world coordinates.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         IGeomPrimitive area;
 
         /// <summary>

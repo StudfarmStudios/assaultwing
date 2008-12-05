@@ -43,25 +43,25 @@ namespace AW2.Game.Pengs
         /// Acceleration of particles in the initial emission direction,
         /// in meters per second squared.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         PengParameter acceleration;
 
         /// <summary>
         /// Particle rotation speed, in radians per second.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         PengParameter rotationSpeed;
 
         /// <summary>
         /// Scale of particles.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         PengParameter scale;
 
         /// <summary>
         /// Alpha of particles. 0 is transparent, 1 is opaque.
         /// </summary>
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         PengParameter alpha;
 
         #endregion PhysicalUpdater fields

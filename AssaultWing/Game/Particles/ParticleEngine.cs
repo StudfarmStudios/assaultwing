@@ -286,21 +286,13 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Creates a particle engine of the specified type.
         /// </summary>
-        /// The particle engine's serialised fields are initialised according to the template 
-        /// instance associated with the named type. This applies also to fields declared
-        /// in subclasses, so a subclass constructor only has to initialise its runtime
-        /// state fields, not the fields that define its type.
         /// <param name="typeName">The type of the particle engine.</param>
         public ParticleEngine(string typeName)
+            : base(typeName)
         {
-            // Initialise fields from the gob type's template.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            ParticleEngine template = (ParticleEngine)data.GetTypeTemplate(typeof(Gob), typeName);
-            if (template.GetType() != this.GetType())
-                throw new Exception("Silly programmer tries to create a particle engine (type " +
-                    typeName + ") using a wrong class (" + this.GetType().Name + ")");
-            foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
-                field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
+            // Gob sets our Pos to the origin.
+            // Here we make sure our starting position is the next call to set_Pos.
+            oldPosition = new Vector2(float.NaN);
         }
 
         #endregion
@@ -379,7 +371,7 @@ namespace AW2.Game.Particles
                     createCount = Math.Min(createCount, totalNumberParticles - createdParticles);
 
                 // Create the particles at even spaces between oldPosition and pos.
-                Vector2 startPos = this.oldPosition;
+                Vector2 startPos = float.IsNaN(this.oldPosition.X) ? this.pos : this.oldPosition;
                 Vector2 endPos = this.pos;
                 for (int i = 0; i < createCount; ++i)
                 {

@@ -7,7 +7,6 @@ using AW2;
 using AW2.Game.Gobs;
 using AW2.Graphics;
 using AW2.Helpers;
-using TypeStringPair = System.Collections.Generic.KeyValuePair<System.Type, string>;
 using Viewport = AW2.Graphics.AWViewport;
 
 namespace AW2.Game
@@ -33,7 +32,14 @@ namespace AW2.Game
         List<ViewportSeparator> viewportSeparators;
         Dictionary<string, Model> models;
         Dictionary<string, Texture2D> textures;
-        Dictionary<TypeStringPair, object> templates;
+
+        /// <summary>
+        /// Type templates, as a list "indexed" by base class (such as 'typeof(Gob)'), 
+        /// yielding a list "indexed" by template type name (such as "rocket"),
+        /// yielding the template.
+        /// </summary>
+        List<Pair<Type, List<Pair<string, object>>>> templates;
+
         Dictionary<string, Arena> arenas;
         Arena activeArena, preparedArena;
         Texture2D arenaRadarSilhouette;
@@ -86,7 +92,7 @@ namespace AW2.Game
             viewportSeparators = new List<ViewportSeparator>();
             models = new Dictionary<string, Model>();
             textures = new Dictionary<string, Texture2D>();
-            templates = new Dictionary<TypeStringPair, object>();
+            templates = new List<Pair<Type, List<Pair<string, object>>>>();
             arenas = new Dictionary<string, Arena>();
             overlays = new Texture2D[Enum.GetValues(typeof(TextureName)).Length];
             fonts = new SpriteFont[Enum.GetValues(typeof(FontName)).Length];
@@ -659,10 +665,23 @@ namespace AW2.Game
         /// <param name="template">The instance to save as a template for the user-defined type.</param>
         public void AddTypeTemplate(Type baseClass, string typeName, object template)
         {
-            TypeStringPair templateKey = new TypeStringPair(baseClass, typeName);
-            if (templates.ContainsKey(templateKey))
-                Log.Write("Overwriting user-defined type " + baseClass.Name + "/" + typeName);
-            templates[templateKey] = template;
+            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
+                if (typePair.First.Equals(baseClass))
+                {
+                    for (int i = 0; i < typePair.Second.Count; ++i)
+                        if (typePair.Second[i].First == typeName)
+                        {
+                            Log.Write("Overwriting user-defined type " + baseClass.Name + "/" + typeName);
+                            typePair.Second[i].Second = template;
+                            goto done;
+                        }
+                    typePair.Second.Add(new Pair<string, object>(typeName, template));
+                    goto done;
+                }
+            List<Pair<string, object>> newList = new List<Pair<string, object>>();
+            newList.Add(new Pair<string, object>(typeName, template));
+            templates.Add(new Pair<Type, List<Pair<string, object>>>(baseClass, newList));
+        done:
             Log.Write("Added user-defined type " + baseClass.Name + "/" + typeName + " of subclass " + template.GetType().Name);
         }
 
@@ -675,16 +694,22 @@ namespace AW2.Game
         /// <returns>The template instance that defines the named user-defined type.</returns>
         public object GetTypeTemplate(Type baseClass, string typeName)
         {
-            object template;
-            if (!templates.TryGetValue(new TypeStringPair(baseClass, typeName), out template))
-            {
-                // Soft error handling; assign some default value and continue with the game.
-                Log.Write("Missing template for user-defined type " + baseClass.Name + "/" + typeName);
-                string fallbackTypeName = "dummy" + baseClass.Name.ToLower() + "type";
-                if (!templates.TryGetValue(new TypeStringPair(baseClass, fallbackTypeName), out template))
+            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
+                if (typePair.First.Equals(baseClass))
+                {
+                    foreach (Pair<string, object> namePair in typePair.Second)
+                        if (namePair.First == typeName)
+                            return namePair.Second;
+
+                    // Proper value not found. Try to find a dummy value.
+                    Log.Write("Missing template for user-defined type " + baseClass.Name + "/" + typeName);
+                    string fallbackTypeName = "dummy" + baseClass.Name.ToLower() + "type";
+                    foreach (Pair<string, object> namePair in typePair.Second)
+                        if (namePair.First == fallbackTypeName)
+                            return namePair.Second;
                     throw new Exception("Missing templates for user-defined type " + baseClass.Name + "/" + typeName + " and fallback " + fallbackTypeName);
-            }
-            return template;
+                }
+            throw new Exception("Missing templates for user-defined type " + baseClass.Name + "/" + typeName + " (no templates for the whole base class)");
         }
 
         /// <summary>
@@ -695,7 +720,12 @@ namespace AW2.Game
         /// <returns><c>true</c> if there is a user-defined type template with the name, <c>false</c> otherwise.</returns>
         public bool HasTypeTemplate(Type baseClass, string typeName)
         {
-            return templates.ContainsKey(new TypeStringPair(baseClass, typeName));
+            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
+                if (typePair.First.Equals(baseClass))
+                    foreach (Pair<string, object> namePair in typePair.Second)
+                        if (namePair.First == typeName)
+                            return true;
+            return false;
         }
 
         /// <summary>
@@ -707,9 +737,10 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each template.</param>
         public void ForEachTypeTemplate<T>(Action<T> action)
         {
-            foreach (KeyValuePair<TypeStringPair, object> pair in templates)
-                if (pair.Key.Key == typeof(T))
-                    action((T)pair.Value);
+            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
+                if (typePair.First.Equals(typeof(T)))
+                    foreach (Pair<string, object> namePair in typePair.Second)
+                        action((T)namePair.Second);
         }
 
         #endregion type templates

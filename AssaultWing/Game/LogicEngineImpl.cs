@@ -150,17 +150,9 @@ namespace AW2.Game
 
             // Check for game end.
             int playersAlive = 0;
-            Player alive = null; // any player who's alive
-            data.ForEachPlayer(delegate(Player player)
-            {
-                if (player.Lives > 0)
-                    ++playersAlive;
-                alive = player;
-            });
+            data.ForEachPlayer(player => { if (player.Lives > 0) ++playersAlive; });
             if (playersAlive <= 1)
-            {
                 AssaultWing.Instance.FinishArena();
-            }
         }
 
         /// <summary>

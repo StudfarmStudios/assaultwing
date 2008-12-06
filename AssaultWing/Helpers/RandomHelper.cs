@@ -272,6 +272,7 @@ return m + X
             /// Helper method. Tests for Poisson distribution of ints given by an
             /// int randomising delegate.
             /// </summary>
+            /// <param name="randomizer">Random number generator to test.</param>
             /// <param name="mode">Mode of the Poisson distribution</param>
             void TestPoissonDistributionInt(IntRandomizer randomizer, int mode)
             {

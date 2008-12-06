@@ -65,12 +65,6 @@ namespace AW2.Game.Gobs
         int triangleCount;
 
         /// <summary>
-        /// The collision polygons of the wall.
-        /// </summary>
-        [RuntimeState]
-        CollisionArea[] polygons;
-
-        /// <summary>
         /// The name of the texture to fill the wall with.
         /// The name indexes the static texture bank in DataEngine.
         /// </summary>
@@ -132,12 +126,6 @@ namespace AW2.Game.Gobs
                 },
                 new short[] { 0, 1, 2 },
                 null, null);
-            polygons = new CollisionArea[] {
-                new CollisionArea("General", new Polygon(new Vector2[] {
-                    new Vector2(0,0), new Vector2(100,0), new Vector2(0,100),
-                }), null, 
-                CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None),
-            };
             textureName = "dummytexture";
             vertexDeclaration = null;
         }
@@ -149,11 +137,10 @@ namespace AW2.Game.Gobs
         public Wall(string typeName)
             : base(typeName)
         {
-            this.vertexData = null;
-            this.indexData = null;
-            this.triangleCount = 0;
-            this.polygons = null;
-            this.boundingBox = new BoundingBox();
+            vertexData = null;
+            indexData = null;
+            triangleCount = 0;
+            boundingBox = new BoundingBox();
             movable = false;
         }
 
@@ -191,6 +178,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            Prepare3DModel();
             FineTriangles();
             InitializeIndexMap();
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
@@ -273,11 +261,6 @@ namespace AW2.Game.Gobs
                 boundingBox = BoundingBox.CreateFromPoints(
                     Array.ConvertAll<VertexPositionNormalTexture, Vector3>(vertexData,
                     delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
-
-            // Gain ownership over our runtime collision areas.
-            collisionAreas = polygons;
-            for (int i = 0; i < collisionAreas.Length; ++i)
-                collisionAreas[i].Owner = this;
         }
 
         /// <summary>
@@ -346,8 +329,6 @@ namespace AW2.Game.Gobs
                     vertexData = new VertexPositionNormalTexture[0];
                 if (indexData == null)
                     indexData = new short[0];
-                if (polygons == null)
-                    polygons = new CollisionArea[0];
 
                 // 'textureName' is actually a type parameter,
                 // but its value is passed onwards by 'TextureNames' even
@@ -371,11 +352,34 @@ namespace AW2.Game.Gobs
         protected void Set3DModel(VertexPositionNormalTexture[] vertexData, short[] indexData,
             Texture2D texture, BasicEffect effect)
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             this.vertexData = vertexData;
             this.indexData = indexData;
             this.texture = texture;
             this.effect = effect;
+        }
+
+
+        #endregion Protected methods
+
+        #region Private methods
+
+        /// <summary>
+        /// Fines the wall's 3D model's triangles.
+        /// </summary>
+        private void FineTriangles()
+        {
+            VertexPositionNormalTexture[] fineVertexData;
+            short[] fineIndexData;
+            Graphics3D.FineTriangles(28, vertexData, indexData, out fineVertexData, out fineIndexData);
+            indexData = fineIndexData;
+            vertexData = fineVertexData;
+        }
+        /// <summary>
+        /// Prepares the wall's 3D model for use in gameplay.
+        /// </summary>
+        private void Prepare3DModel()
+        {
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             silhouetteEffect = effect == null ? null : (BasicEffect)effect.Clone(gfx);
             FineTriangles();
             triangleCount = this.indexData.Length / 3;
@@ -412,22 +416,6 @@ namespace AW2.Game.Gobs
             Rectangle boundingArea = new Rectangle(min, max);
             collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
                 CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None);
-        }
-
-        #endregion Protected methods
-
-        #region Private methods
-
-        /// <summary>
-        /// Fines the wall's 3D model's triangles.
-        /// </summary>
-        private void FineTriangles()
-        {
-            VertexPositionNormalTexture[] fineVertexData;
-            short[] fineIndexData;
-            Graphics3D.FineTriangles(28, vertexData, indexData, out fineVertexData, out fineIndexData);
-            indexData = fineIndexData;
-            vertexData = fineVertexData;
         }
 
         /// <summary>

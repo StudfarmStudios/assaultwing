@@ -51,7 +51,7 @@ namespace AW2.Graphics
             data.ProgressBar.HorizontalAlignment = HorizontalAlignment.Center;
             data.ProgressBar.VerticalAlignment = VerticalAlignment.Top;
             data.ProgressBar.CustomAlignment = new Vector2(0, 270);
-            data.ProgressBar.Task = AssaultWing.Instance.PlayNextArena;
+            data.ProgressBar.Task = AssaultWing.Instance.PrepareNextArena;
             data.ProgressBar.SetSubtaskCount(10); // just something until DataEngine sets the real value
             data.ProgressBar.StartTask();
         }

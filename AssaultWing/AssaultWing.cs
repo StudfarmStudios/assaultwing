@@ -306,7 +306,7 @@ namespace AW2
         { // TODO: Rename this method to PrepareFirstArena()
             dataEngine.ForEachPlayer(delegate(Player player) { player.Kills = player.Suicides = 0; });
             dataEngine.ArenaPlaylistI = -1;
-            PlayNextArena();
+            PrepareNextArena();
         }
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace AW2
         /// </summary>
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
-        public void PlayNextArena()
+        public void PrepareNextArena()
         {
             Arena arenaTemplate = dataEngine.GetNextPlayableArena();
             if (arenaTemplate != null)

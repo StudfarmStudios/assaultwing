@@ -86,6 +86,16 @@ namespace AW2.Game.Gobs
         /// </summary>
         BasicEffect silhouetteEffect;
 
+        /// <summary>
+        /// The default effect for drawing the wall.
+        /// </summary>
+        static BasicEffect defaultEffect;
+
+        /// <summary>
+        /// The default effect for drawing the wall as a silhouette.
+        /// </summary>
+        static BasicEffect defaultSilhouetteEffect;
+
         VertexDeclaration vertexDeclaration;
 
         /// <summary>
@@ -153,8 +163,10 @@ namespace AW2.Game.Gobs
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            effect = new BasicEffect(gfx, null);
-            silhouetteEffect = new BasicEffect(gfx, null);
+            defaultEffect = defaultEffect ?? new BasicEffect(gfx, null);
+            defaultSilhouetteEffect = silhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
+            effect = defaultEffect;
+            silhouetteEffect = defaultSilhouetteEffect;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             texture = data.GetTexture(textureName);
             base.LoadContent();
@@ -165,10 +177,19 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void UnloadContent()
         {
-            effect.Dispose();
-            silhouetteEffect.Dispose();
+            if (defaultEffect != null)
+            {
+                defaultEffect.Dispose();
+                defaultEffect = null;
+            }
+            if (defaultSilhouetteEffect != null)
+            {
+                defaultSilhouetteEffect.Dispose();
+                defaultSilhouetteEffect = null;
+            }
             vertexDeclaration.Dispose();
             // 'texture' will be disposed by the graphics engine.
+            // 'effect' and 'silhouetteEffect' are managed by other objects
             base.UnloadContent();
         }
 

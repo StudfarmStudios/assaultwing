@@ -96,6 +96,11 @@ namespace AW2.Game.Gobs
         /// </summary>
         static BasicEffect defaultSilhouetteEffect;
 
+        /// <summary>
+        /// Effect for drawing data for index maps.
+        /// </summary>
+        static BasicEffect maskEff;
+
         VertexDeclaration vertexDeclaration;
 
         /// <summary>
@@ -165,6 +170,7 @@ namespace AW2.Game.Gobs
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             defaultEffect = defaultEffect ?? new BasicEffect(gfx, null);
             defaultSilhouetteEffect = silhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
+            maskEff = maskEff ?? (BasicEffect)defaultEffect.Clone(gfx);
             effect = defaultEffect;
             silhouetteEffect = defaultSilhouetteEffect;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
@@ -186,6 +192,11 @@ namespace AW2.Game.Gobs
             {
                 defaultSilhouetteEffect.Dispose();
                 defaultSilhouetteEffect = null;
+            }
+            if (maskEff != null)
+            {
+                maskEff.Dispose();
+                maskEff = null;
             }
             vertexDeclaration.Dispose();
             // 'texture' will be disposed by the graphics engine.
@@ -505,8 +516,7 @@ namespace AW2.Game.Gobs
                     }
             }
 
-            // Set up an effect.
-            BasicEffect maskEff = new BasicEffect(gfx, null);
+            // Set up the effect.
             maskEff.VertexColorEnabled = true;
             maskEff.LightingEnabled = false;
             maskEff.TextureEnabled = false;

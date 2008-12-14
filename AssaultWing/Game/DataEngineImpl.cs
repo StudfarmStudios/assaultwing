@@ -758,6 +758,7 @@ namespace AW2.Game
         /// <param name="viewport">Viewport to add.</param>
         public void AddViewport(Viewport viewport)
         {
+            viewport.LoadContent();
             viewports.Add(viewport);
         }
 
@@ -775,6 +776,8 @@ namespace AW2.Game
         /// </summary>
         public void ClearViewports()
         {
+            foreach (AWViewport viewport in viewports)
+                viewport.UnloadContent();
             viewports.Clear();
             viewportSeparators.Clear();
         }

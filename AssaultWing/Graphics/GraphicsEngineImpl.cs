@@ -626,7 +626,6 @@ namespace AW2.Graphics
                 Rectangle onScreen = new Rectangle(onScreenX1, onScreenY1,
                     onScreenX2 - onScreenX1, onScreenY2 - onScreenY1);
                 AWViewport viewport = new PlayerViewport(player, onScreen);
-                viewport.LoadContent();
                 data.AddViewport(viewport);
                 ++playerI;
             });

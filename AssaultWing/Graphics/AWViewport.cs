@@ -12,6 +12,7 @@ namespace AW2.Graphics
     /// <summary>
     /// A view on the display that looks into the game world.
     /// </summary>
+    /// <c>LoadContent</c> must be called before a viewport is used.
     public abstract class AWViewport
     {
         protected RenderTarget2D rTarg;
@@ -50,7 +51,6 @@ namespace AW2.Graphics
         public AWViewport()
         {
             overlayComponents = new List<OverlayComponent>();
-            LoadContent();
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace AW2.Graphics
         /// <summary>
         /// Called when graphics resources need to be unloaded.
         /// </summary>
-        public void UnloadContent()
+        public virtual void UnloadContent()
         {
             foreach (OverlayComponent component in overlayComponents)
                 component.UnloadContent();
@@ -343,23 +343,37 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            defDepthBuffer = AssaultWing.Instance.GraphicsDevice.DepthStencilBuffer;
-            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
-            foreach (OverlayComponent component in overlayComponents)
-                component.LoadContent();
+            base.LoadContent();
+
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            defDepthBuffer = gfx.DepthStencilBuffer;
             if (viewport.Width > 0)
             {
-                rTarg = new RenderTarget2D(AssaultWing.Instance.GraphicsDevice, viewport.Width, viewport.Height,
+                rTarg = new RenderTarget2D(gfx, viewport.Width, viewport.Height,
                     0, SurfaceFormat.Color);
-                sprite = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+                sprite = new SpriteBatch(gfx);
                 depthBuffer =
                     new DepthStencilBuffer(
-                        AssaultWing.Instance.GraphicsDevice,
+                        gfx,
                         viewport.Width,
                         viewport.Height,
-                        AssaultWing.Instance.GraphicsDevice.DepthStencilBuffer.Format);
+                        gfx.DepthStencilBuffer.Format);
             }
             bloomatic = AssaultWing.Instance.Content.Load<Effect>(@"effects/bloom");
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            if (rTarg != null)
+                rTarg.Dispose();
+            if (sprite != null)
+                sprite.Dispose();
+            if (depthBuffer != null)
+                depthBuffer.Dispose();
+            // 'bloomatic' is managed by ContentManager
         }
 
         /// <summary>
@@ -544,7 +558,9 @@ namespace AW2.Graphics
             sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
                 new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
             sprite.End();
+
             // Overlay components
+            gfx.Viewport = viewport;
             base.Draw();
         }
 

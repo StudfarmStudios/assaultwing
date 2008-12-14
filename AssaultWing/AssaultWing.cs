@@ -528,7 +528,6 @@ namespace AW2
             Player player2 = new Player("John Crichton", "Prowler", "shotgun", "bazooka", plr2Controls);
             dataEngine.AddPlayer(player1);
             dataEngine.AddPlayer(player2);
-            graphicsEngine.RearrangeViewports();
 
             ChangeState(GameState.Menu);
 

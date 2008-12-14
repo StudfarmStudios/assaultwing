@@ -16,8 +16,10 @@ namespace AW2.Graphics
     public abstract class AWViewport
     {
         protected RenderTarget2D rTarg;
+        protected RenderTarget2D rTarg2;
         protected SpriteBatch sprite;
         protected DepthStencilBuffer depthBuffer;
+        protected DepthStencilBuffer depthBuffer2;
         protected DepthStencilBuffer defDepthBuffer;
         protected Effect bloomatic;
 
@@ -351,8 +353,16 @@ namespace AW2.Graphics
             {
                 rTarg = new RenderTarget2D(gfx, viewport.Width, viewport.Height,
                     0, SurfaceFormat.Color);
+                rTarg2 = new RenderTarget2D(gfx, viewport.Width, viewport.Height,
+                    0, SurfaceFormat.Color);
                 sprite = new SpriteBatch(gfx);
                 depthBuffer =
+                    new DepthStencilBuffer(
+                        gfx,
+                        viewport.Width,
+                        viewport.Height,
+                        gfx.DepthStencilBuffer.Format);
+                depthBuffer2 =
                     new DepthStencilBuffer(
                         gfx,
                         viewport.Width,
@@ -528,17 +538,20 @@ namespace AW2.Graphics
                     drawMode.Value.EndDraw(spriteBatch);
             });
 
+
+
             // EFFECTS REDRAW
            // gfx.ResolveRenderTarget(0);
 
-            gfx.SetRenderTarget(0, null);
-            gfx.DepthStencilBuffer = defDepthBuffer;
 
-            bloomatic.Parameters["alpha"].SetValue((float)(0.5));
+            bloomatic.Parameters["alpha"].SetValue((float)(0.9));
             bloomatic.Parameters["maxx"].SetValue((float)viewport.Width);
             bloomatic.Parameters["maxy"].SetValue((float)viewport.Height);
 
             bloomatic.Parameters["hirange"].SetValue(false);
+
+            gfx.SetRenderTarget(0, rTarg2);
+            gfx.DepthStencilBuffer = depthBuffer2;
 
             bloomatic.Begin();
             sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
@@ -546,19 +559,38 @@ namespace AW2.Graphics
 
             EffectPass pass = bloomatic.CurrentTechnique.Passes[0];
             pass.Begin();
-
     
-            sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
+            sprite.Draw(rTarg.GetTexture(), new Rectangle(0, 0, viewport.Width, viewport.Height),
                 new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
 
             pass.End();
             sprite.End();
             bloomatic.End();
+
+            gfx.SetRenderTarget(0, null);
+            gfx.DepthStencilBuffer = defDepthBuffer;
+
+            bloomatic.Begin();
+            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
+                SaveStateMode.SaveState);
+
+            pass = bloomatic.CurrentTechnique.Passes[1];
+            pass.Begin();
+
+            sprite.Draw(rTarg2.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
+                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+
+            pass.End();
+            sprite.End();
+            bloomatic.End();
+
+            // actual unblurred image
+            /*
             sprite.Begin(SpriteBlendMode.Additive);
             sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
                 new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
             sprite.End();
-
+            */
             // Overlay components
             gfx.Viewport = viewport;
             base.Draw();

@@ -14,6 +14,11 @@ namespace AW2.Graphics
     /// </summary>
     public abstract class AWViewport
     {
+        protected RenderTarget2D rTarg;
+        protected SpriteBatch sprite;
+        protected DepthStencilBuffer depthBuffer;
+        protected DepthStencilBuffer defDepthBuffer;
+
         /// <summary>
         /// Sprite batch to use for drawing sprites.
         /// </summary>
@@ -22,7 +27,7 @@ namespace AW2.Graphics
         /// <summary>
         /// Overlay graphics components to draw in this viewport.
         /// </summary>
-        List<OverlayComponent> overlayComponents;
+        protected List<OverlayComponent> overlayComponents;
 
         /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport shows
@@ -94,11 +99,22 @@ namespace AW2.Graphics
         /// <summary>
         /// Called when graphics resources need to be loaded.
         /// </summary>
-        public void LoadContent()
+        public virtual void LoadContent()
         {
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             foreach (OverlayComponent component in overlayComponents)
                 component.LoadContent();
+
+/*            rTarg = new RenderTarget2D(AssaultWing.Instance.GraphicsDevice, ((PlayerViewport)this).viewport.Width, ((PlayerViewport)this).viewport.Height,
+                0, SurfaceFormat.Color);
+            sprite = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            depthBuffer =
+                new DepthStencilBuffer(
+                    AssaultWing.Instance.GraphicsDevice,
+                    ((PlayerViewport)this).viewport.Width,
+                    ((PlayerViewport)this).viewport.Height,
+                    AssaultWing.Instance.GraphicsDevice.DepthStencilBuffer.Format);
+            */
         }
 
         /// <summary>
@@ -322,6 +338,29 @@ namespace AW2.Graphics
         }
 
         /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            defDepthBuffer = AssaultWing.Instance.GraphicsDevice.DepthStencilBuffer;
+            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            foreach (OverlayComponent component in overlayComponents)
+                component.LoadContent();
+            if (viewport.Width > 0)
+            {
+                rTarg = new RenderTarget2D(AssaultWing.Instance.GraphicsDevice, viewport.Width, viewport.Height,
+                    0, SurfaceFormat.Color);
+                sprite = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+                depthBuffer =
+                    new DepthStencilBuffer(
+                        AssaultWing.Instance.GraphicsDevice,
+                        viewport.Width,
+                        viewport.Height,
+                        AssaultWing.Instance.GraphicsDevice.DepthStencilBuffer.Format);
+            }
+        }
+
+        /// <summary>
         /// Draws the viewport's contents.
         /// </summary>
         public override void Draw()
@@ -330,6 +369,14 @@ namespace AW2.Graphics
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Viewport = viewport;
             Matrix view = ViewMatrix;
+
+            //---
+            // EFFECTS FOR WHOLE VIEWPORT
+            gfx.SetRenderTarget(0, rTarg);
+            gfx.DepthStencilBuffer = depthBuffer;
+            //gfx.Clear(Color.Black);
+            gfx.Clear(ClearOptions.Target, Color.Black, 0, 0);
+            
 
 #if PARALLAX_IN_3D
             if (effect == null) // HACK: initialise parallax drawing in 3D, move this to LoadContent and UnloadContent
@@ -464,6 +511,18 @@ namespace AW2.Graphics
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(spriteBatch);
             });
+
+            // EFFECTS REDRAW
+           // gfx.ResolveRenderTarget(0);
+
+            gfx.SetRenderTarget(0, null);
+            gfx.DepthStencilBuffer = defDepthBuffer;
+            sprite.Begin();
+            sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
+                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+            sprite.End();
+
+
 
             // Overlay components
             base.Draw();

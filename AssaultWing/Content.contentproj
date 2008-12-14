@@ -1735,6 +1735,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="effects\bloom.fx">
+      <Name>bloom</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng#playerbirthstrokes.xml">
       <Name>Peng#playerbirthstrokes</Name>
       <Importer>XmlImporter</Importer>

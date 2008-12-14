@@ -2,29 +2,26 @@
 // bloomatic.fx
 sampler samplerState; 
 
-//Width to sample from
-float mag;
-
 //Alpha value
 float alpha;
 
+float maxx;
+float maxy;
+
 //Operate on a high range (0.5 - 1.0) or the full range (0.0 - 1.0)
 bool hirange;
-
-const float2 offsets[12] = {
-   -0.326212, -0.405805,
-   -0.840144, -0.073580,
-   -0.695914,  0.457137,
-   -0.203345,  0.620716,
-    0.962340, -0.194983,
-    0.473434, -0.480026,
-    0.519456,  0.767022,
-    0.185461, -0.893124,
-    0.507431,  0.064425,
-    0.896420,  0.412458,
-   -0.321940, -0.932615,
-   -0.791559, -0.597705,
-};
+/*
+static const float gauss[25] = {
+0.0029150245, 0.0130642333, 0.0215392793, 0.0130642333, 0.0029150245,
+0.0130642333, 0.0585498315, 0.0965323526, 0.0585498315, 0.0130642333,
+0.0215392793, 0.0965323526, 0.1591549431, 0.0965323526, 0.0215392793,
+0.0130642333, 0.0585498315, 0.0965323526, 0.0585498315, 0.0130642333,
+0.0029150245, 0.0130642333, 0.0215392793, 0.0130642333, 0.0029150245 };
+*/
+static const float gauss[9] = {
+0.07, 0.13, 0.07,
+0.13, 0.20, 0.13,
+0.07, 0.13, 0.07 };
 
 struct PS_INPUT 
 { 
@@ -32,18 +29,23 @@ struct PS_INPUT
 }; 
 
 float4 bloomEffect(PS_INPUT Input) : COLOR0 { 
-    float4 sum = tex2D(samplerState, Input.TexCoord);
+   // float4 sum = tex2D(samplerState, Input.TexCoord);
+    float4 sum = (0,0,0,0);
     float4 tex;
+
+	float pixelsizeX = 1.0 / maxx;
+    float pixelsizeY = 1.0 / maxy;
     
-    //accumulate the color values from 12 neighboring pixels
-    for(int i = 0; i < 12; i++){
-        tex = tex2D(samplerState, Input.TexCoord + mag * offsets[i]);
+    int i = 0;
+    for (int y = -1; y < 2; y++) {
+		for (int x = -1; x <2; x++) {
+			float2 offset = float2(x * pixelsizeX, y * pixelsizeY);
+			tex = tex2D(samplerState, Input.TexCoord + offset);
+			sum += tex * gauss[i];
+			i++;
+		}
+	}
         
-        sum += tex;
-    }
-    //average the sum
-    sum /= 13;
-    
     //fix alpha
     sum.a = alpha;
     

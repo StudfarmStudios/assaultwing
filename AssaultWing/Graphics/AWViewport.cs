@@ -534,9 +534,9 @@ namespace AW2.Graphics
             gfx.SetRenderTarget(0, null);
             gfx.DepthStencilBuffer = defDepthBuffer;
 
-            bloomatic.Parameters["mag"].SetValue(0.008f);
             bloomatic.Parameters["alpha"].SetValue((float)(0.5));
-
+            bloomatic.Parameters["maxx"].SetValue((float)viewport.Width);
+            bloomatic.Parameters["maxy"].SetValue((float)viewport.Height);
 
             bloomatic.Parameters["hirange"].SetValue(false);
 

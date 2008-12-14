@@ -540,7 +540,10 @@ namespace AW2.Graphics
             pass.End();
             sprite.End();
             bloomatic.End();
-            
+            sprite.Begin(SpriteBlendMode.Additive);
+            sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
+                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+            sprite.End();
             // Overlay components
             base.Draw();
         }

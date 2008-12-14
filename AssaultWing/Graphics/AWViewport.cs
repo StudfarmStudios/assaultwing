@@ -18,6 +18,7 @@ namespace AW2.Graphics
         protected SpriteBatch sprite;
         protected DepthStencilBuffer depthBuffer;
         protected DepthStencilBuffer defDepthBuffer;
+        protected Effect bloomatic;
 
         /// <summary>
         /// Sprite batch to use for drawing sprites.
@@ -358,6 +359,7 @@ namespace AW2.Graphics
                         viewport.Height,
                         AssaultWing.Instance.GraphicsDevice.DepthStencilBuffer.Format);
             }
+            bloomatic = AssaultWing.Instance.Content.Load<Effect>(@"effects/bloom");
         }
 
         /// <summary>
@@ -517,13 +519,28 @@ namespace AW2.Graphics
 
             gfx.SetRenderTarget(0, null);
             gfx.DepthStencilBuffer = defDepthBuffer;
-            sprite.Begin();
+
+            bloomatic.Parameters["mag"].SetValue(0.008f);
+            bloomatic.Parameters["alpha"].SetValue((float)(0.5));
+
+
+            bloomatic.Parameters["hirange"].SetValue(false);
+
+            bloomatic.Begin();
+            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
+                SaveStateMode.SaveState);
+
+            EffectPass pass = bloomatic.CurrentTechnique.Passes[0];
+            pass.Begin();
+
+    
             sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
                 new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+
+            pass.End();
             sprite.End();
-
-
-
+            bloomatic.End();
+            
             // Overlay components
             base.Draw();
         }

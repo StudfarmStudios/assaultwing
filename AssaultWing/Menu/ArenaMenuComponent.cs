@@ -31,6 +31,7 @@ namespace AW2.Menu
 
         bool arenaLoading;
         readonly int menuItemCount = 7; // number of items that fit in the menu at once
+        Control controlServer, controlClient; // HACK controls to activate networking
         Control controlBack, controlDone;
         MultiControl controlUp, controlDown, controlSelect;
         Vector2 pos; // position of the component's background texture in menu system coordinates
@@ -199,6 +200,21 @@ namespace AW2.Menu
                     arenaListStart = currentArena - menuItemCount + 1;
                 if (currentArena < arenaListStart)
                     arenaListStart = currentArena;
+
+                if (controlServer.Pulse) // HACK: Toggle networking if requested
+                    switch (AssaultWing.Instance.NetworkMode)
+                    {
+                        case NetworkMode.Standalone: AssaultWing.Instance.StartServer(); break;
+                        case NetworkMode.Server: AssaultWing.Instance.StopServer(); break;
+                        default: throw new InvalidOperationException("Cannot toggle being server while in mode " + AssaultWing.Instance.NetworkMode);
+                    }
+                if (controlClient.Pulse) // HACK: Toggle networking if requested
+                    switch (AssaultWing.Instance.NetworkMode)
+                    {
+                        case NetworkMode.Standalone: AssaultWing.Instance.StartClient("91.152.162.104"); break;
+                        case NetworkMode.Client: AssaultWing.Instance.StopClient(); break;
+                        default: throw new InvalidOperationException("Cannot toggle being client while in mode " + AssaultWing.Instance.NetworkMode);
+                    }
             }
         }
 
@@ -257,6 +273,8 @@ namespace AW2.Menu
             controlDown.Add(new KeyboardKey(Keys.Down));
             controlSelect = new MultiControl();
             controlSelect.Add(new KeyboardKey(Keys.Space));
+            controlServer = new KeyboardKey(Keys.F5);
+            controlClient = new KeyboardKey(Keys.F6);
 
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             data.ForEachPlayer(delegate(Player player)

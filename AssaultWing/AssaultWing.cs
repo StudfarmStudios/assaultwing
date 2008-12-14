@@ -14,6 +14,7 @@ using AW2.Sound;
 using AW2.Events;
 using AW2.Helpers;
 using AW2.Game.Particles;
+using AW2.Net;
 
 #endregion
 
@@ -41,6 +42,27 @@ namespace AW2
     }
 
     /// <summary>
+    /// Mode of network operation.
+    /// </summary>
+    public enum NetworkMode
+    {
+        /// <summary>
+        /// Acting as a standalone game session, no networking involved.
+        /// </summary>
+        Standalone,
+
+        /// <summary>
+        /// Acting as a client in a game session.
+        /// </summary>
+        Client,
+
+        /// <summary>
+        /// Acting as a server in a game session.
+        /// </summary>
+        Server,
+    }
+
+    /// <summary>
     /// The main class of the Assault Wing game. A singleton class.
     /// </summary>
     /// Game components can be requested from the AssaultWing.Services property.
@@ -52,6 +74,7 @@ namespace AW2
         GraphicsEngineImpl graphicsEngine;
         OverlayDialog overlayDialog;
         MenuEngineImpl menuEngine;
+        NetworkEngine networkEngine;
         LogicEngineImpl logicEngine;
         DataEngineImpl dataEngine;
         PhysicsEngineImpl physicsEngine;
@@ -120,6 +143,11 @@ namespace AW2
         /// The current state of the game.
         /// </summary>
         public GameState GameState { get { return gameState; } }
+
+        /// <summary>
+        /// The current mode of network operation of the game.
+        /// </summary>
+        public NetworkMode NetworkMode { get; set; }
 
         /// <summary>
         /// The game time on this frame.
@@ -195,6 +223,7 @@ namespace AW2
             lastFramerateCheck = new TimeSpan(0);
             framesSinceLastCheck = 0;
             gameState = GameState.Gameplay;
+            NetworkMode = NetworkMode.Standalone;
             gameTime = new GameTime();
             lastDrawTime = new TimeSpan(0);
         }
@@ -420,6 +449,54 @@ namespace AW2
                 graphicsEngine.RearrangeViewports(player);
         }
 
+        /// <summary>
+        /// Turns this game instance into a game server to whom other game instances
+        /// can connect as game clients.
+        /// </summary>
+        public void StartServer()
+        {
+            if (NetworkMode != NetworkMode.Standalone)
+                throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
+            NetworkMode = NetworkMode.Server;
+            networkEngine.StartServer();
+        }
+
+        /// <summary>
+        /// Turns this game server into a standalone game instance and disposes of
+        /// any connections to game clients.
+        /// </summary>
+        public void StopServer()
+        {
+            if (NetworkMode != NetworkMode.Server)
+                throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
+            NetworkMode = NetworkMode.Standalone;
+            networkEngine.StopServer();
+        }
+
+        /// <summary>
+        /// Turns this game instance into a game client by connecting to a game server.
+        /// </summary>
+        /// <param name="serverAddress">Network address of the server.</param>
+        public void StartClient(string serverAddress)
+        {
+            if (NetworkMode != NetworkMode.Standalone)
+                throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
+            NetworkMode = NetworkMode.Client;
+            networkEngine.StartClient(serverAddress);
+        }
+
+        /// <summary>
+        /// Turns this game client into a standalone game instance by disconnecting
+        /// from the game server.
+        /// </summary>
+        public void StopClient()
+        {
+            if (NetworkMode != NetworkMode.Client)
+                throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
+            NetworkMode = NetworkMode.Standalone;
+            networkEngine.StopClient();
+        }
+
         #endregion Methods for game components
 
         #region Overridden Game methods
@@ -439,11 +516,13 @@ namespace AW2
             soundEngine = new SoundEngineImpl(this);
             graphicsEngine = new GraphicsEngineImpl(this);
             menuEngine = new MenuEngineImpl(this);
+            networkEngine = new NetworkEngine(this);
             overlayDialog = new OverlayDialog(this);
             dataEngine = new DataEngineImpl();
             physicsEngine = new PhysicsEngineImpl();
             eventEngine = new EventEngineImpl();
 
+            networkEngine.UpdateOrder = 0;
             uiEngine.UpdateOrder = 1;
             logicEngine.UpdateOrder = 2;
             soundEngine.UpdateOrder = 3;
@@ -457,6 +536,8 @@ namespace AW2
             Components.Add(uiEngine);
             Components.Add(soundEngine);
             Components.Add(menuEngine);
+            Components.Add(networkEngine);
+            Services.AddService(typeof(NetworkEngine), networkEngine);
             Services.AddService(typeof(DataEngine), dataEngine);
             Services.AddService(typeof(EventEngine), eventEngine);
             Services.AddService(typeof(PhysicsEngine), physicsEngine);
@@ -476,7 +557,7 @@ namespace AW2
             eventEngine.SendEvent(eventti);
 #endif
 
-            TargetElapsedTime = new TimeSpan((long)(10000000.0 / 60.0)); // 60 frames per second
+            TargetElapsedTime = TimeSpan.FromSeconds(1 / 60.0); // 60 frames per second
 
             base.Initialize();
         }

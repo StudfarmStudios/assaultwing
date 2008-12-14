@@ -249,6 +249,14 @@
     <Compile Include="Helpers\StringHelper.cs">
       <Name>StringHelper</Name>
     </Compile>
+    <Compile Include="Net\Connection.cs" />
+    <Compile Include="Net\Message.cs" />
+    <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
+    <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
+    <Compile Include="Net\NetworkEngine.cs" />
+    <Compile Include="Net\Result.cs" />
+    <Compile Include="Net\ThreadSafeWrapper.cs" />
+    <Compile Include="Net\TypedQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <Name>AssemblyInfo</Name>
     </Compile>

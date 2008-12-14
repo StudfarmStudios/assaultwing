@@ -50,6 +50,7 @@ namespace AW2.Menu
         MenuComponent[] components;
         bool activeComponentActivatedOnce;
         bool showHelpText, showProgressBar;
+        string helpText;
         Vector2 view; // top left corner of menu view in menu system coordinates
         Vector2 viewFrom, viewTo; // start and goal of current movement of 'view'
         TimeSpan viewMoveStartTime; // time of start of view movement
@@ -76,7 +77,14 @@ namespace AW2.Menu
         /// <summary>
         /// Is the help text visible.
         /// </summary>
+        /// <seealso cref="HelpText"/>
         public bool IsHelpTextVisible { get { return showHelpText; } set { showHelpText = value; } }
+
+        /// <summary>
+        /// The help text. Assigning <c>null</c> will restore the default help text.
+        /// </summary>
+        /// <seealso cref="IsHelpTextVisible"/>
+        public string HelpText { get { return helpText; } set { helpText = value ?? "Enter to proceed, Esc to return to previous"; } }
 
         /// <summary>
         /// Is the progress bar visible.
@@ -121,6 +129,8 @@ namespace AW2.Menu
 
             screenWidth = AssaultWing.Instance.ClientBounds.Width;
             screenHeight = AssaultWing.Instance.ClientBounds.Height;
+
+            HelpText = null; // initialises helpText to default value
         }
 
         /// <summary>
@@ -311,9 +321,8 @@ namespace AW2.Menu
                 new Vector2(10, viewHeight - smallFont.LineSpacing), Color.White);
             if (showHelpText)
             {
-                string helpText = "Enter to proceed, Esc to return to previous";
                 Vector2 helpTextPos = new Vector2(
-                    ((float)viewWidth - smallFont.MeasureString(helpText).X) / 2,
+                    (int)(((float)viewWidth - smallFont.MeasureString(helpText).X) / 2),
                     viewHeight - smallFont.LineSpacing);
                 spriteBatch.DrawString(smallFont, helpText, helpTextPos, Color.White);
             }

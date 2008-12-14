@@ -169,7 +169,7 @@ namespace AW2.Game.Gobs
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             defaultEffect = defaultEffect ?? new BasicEffect(gfx, null);
-            defaultSilhouetteEffect = silhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
+            defaultSilhouetteEffect = defaultSilhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
             maskEff = maskEff ?? (BasicEffect)defaultEffect.Clone(gfx);
             effect = defaultEffect;
             silhouetteEffect = defaultSilhouetteEffect;
@@ -198,6 +198,8 @@ namespace AW2.Game.Gobs
                 maskEff.Dispose();
                 maskEff = null;
             }
+            if (!silhouetteEffect.IsDisposed)
+                silhouetteEffect.Dispose();
             vertexDeclaration.Dispose();
             // 'texture' will be disposed by the graphics engine.
             // 'effect' and 'silhouetteEffect' are managed by other objects

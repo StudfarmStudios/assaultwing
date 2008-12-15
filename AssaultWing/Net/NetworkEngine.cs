@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using System.Net;
+using AW2.Net.Messages;
+using AW2.Game;
 
 namespace AW2.Net
 {
@@ -16,9 +18,28 @@ namespace AW2.Net
     {
         #region Fields
 
+        /// <summary>
+        /// TCP connection port.
+        /// </summary>
         int port = 'A' * 256 + 'W';
+
+        /// <summary>
+        /// Network connection to the management server, 
+        /// or <c>null</c> if no such live connection exists.
+        /// </summary>
         Connection managementServerConnection;
+
+        /// <summary>
+        /// Network connection to the game server of the current game session, 
+        /// or <c>null</c> if no such live connection exists 
+        /// (including the case that we are the game server).
+        /// </summary>
         Connection gameServerConnection;
+
+        /// <summary>
+        /// Network connections to game clients. Nonempty only when 
+        /// we are a game server.
+        /// </summary>
         List<Connection> clientConnections;
 
         #endregion Fields
@@ -40,19 +61,6 @@ namespace AW2.Net
         #region Public interface
 
         /// <summary>
-        /// Network connection to the management server, 
-        /// or <c>null</c> if no such live connection exists.
-        /// </summary>
-        public Connection ManagementServerConnection { get { return managementServerConnection; } set { managementServerConnection = value; } }
-
-        /// <summary>
-        /// Network connection to the game server of the current game session, 
-        /// or <c>null</c> if no such live connection exists 
-        /// (including the case that we are the game server).
-        /// </summary>
-        public Connection GameServerConnection { get { return gameServerConnection; } set { gameServerConnection = value; } }
-
-        /// <summary>
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients.
         /// </summary>
@@ -70,6 +78,9 @@ namespace AW2.Net
         {
             Log.Write("Server stops listening");
             Connection.StopListening();
+            foreach (Connection connection in clientConnections)
+                connection.Dispose();
+            clientConnections.Clear();
         }
 
         /// <summary>
@@ -89,39 +100,11 @@ namespace AW2.Net
         public void StopClient()
         {
             Log.Write("Client closes connection");
-            gameServerConnection.Dispose();
-            gameServerConnection = null;
-        }
-
-
-
-        /// <summary>
-        /// Adds a network connection to a game client.
-        /// </summary>
-        /// <param name="connection">The connection to add.</param>
-        public void AddClientConnection(Connection connection) // TODO: This is not part of the public interface
-        {
-            clientConnections.Add(connection);
-        }
-
-        /// <summary>
-        /// Closes and removes a network connection to a game client.
-        /// </summary>
-        /// <param name="connection">The connection to remove.</param>
-        public void RemoveClientConnection(Connection connection)
-        {
-            connection.Dispose();
-            clientConnections.Remove(connection);
-        }
-
-        /// <summary>
-        /// Performs the specified action on each network connection to a game client.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each connection.</param>
-        public void ForEachClientConnection(Action<Connection> action)
-        {
-            foreach (Connection connection in clientConnections)
-                action(connection);
+            if (gameServerConnection != null)
+            {
+                gameServerConnection.Dispose();
+                gameServerConnection = null;
+            }
         }
 
         #endregion Public interface
@@ -134,6 +117,8 @@ namespace AW2.Net
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
         public override void Update(GameTime gameTime)
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
             // Handle established connections.
             Connection.ConnectionResults.Do(queue =>
             {
@@ -145,12 +130,16 @@ namespace AW2.Net
                         switch (AssaultWing.Instance.NetworkMode)
                         {
                             case NetworkMode.Server:
-                                AddClientConnection(result.Value);
+                                clientConnections.Add(result.Value);
                                 Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
                                 break;
                             case NetworkMode.Client:
-                                GameServerConnection = result.Value;
+                                gameServerConnection = result.Value;
                                 Log.Write("Client connected to " + result.Value.RemoteEndPoint);
+                                JoinGameRequest joinGameRequest = new JoinGameRequest();
+                                joinGameRequest.PlayerInfos = new List<JoinGameRequest.PlayerInfo>();
+                                data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new JoinGameRequest.PlayerInfo(player)));
+                                gameServerConnection.Send(joinGameRequest);
                                 break;
                             default: throw new InvalidOperationException("Cannot handle new network connection in " + AssaultWing.Instance.NetworkMode + " state");
                         }
@@ -170,6 +159,41 @@ namespace AW2.Net
                     }
                 }
             });
+
+            // Manage existing connections.
+            switch (AssaultWing.Instance.NetworkMode)
+            {
+                case NetworkMode.Server:
+                    foreach (Connection connection in clientConnections)
+                    {
+                        // Handle JoinGameRequest from a game client
+                        if (connection.Messages.Count<JoinGameRequest>() > 0)
+                        {
+                            JoinGameRequest message = connection.Messages.Dequeue<JoinGameRequest>();
+                            /// TODOO
+                        }
+                    }
+                    break;
+                case NetworkMode.Client:
+                    // TODO!!!!
+                    break;
+                case NetworkMode.Standalone:
+                    // Do nothing!
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the GameComponent 
+        /// and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            foreach (Connection connection in clientConnections)
+                connection.Dispose();
+            base.Dispose(disposing);
         }
 
         #endregion GameComponent methods

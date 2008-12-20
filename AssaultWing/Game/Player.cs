@@ -114,6 +114,12 @@ namespace AW2.Game
         #region Player fields about general things
 
         /// <summary>
+        /// Handle to the remote game instance this player lives at,
+        /// or <c>null</c> if the player is playing at this game instance.
+        /// </summary>
+        object remoteHandle;
+
+        /// <summary>
         /// The human-readable name of the player.
         /// </summary>
         protected string name;
@@ -188,6 +194,7 @@ namespace AW2.Game
 
         /// <summary>
         /// The player's controls for moving in menus and controlling his ship.
+        /// Uninitialised if the player lives at a remote game instance.
         /// </summary>
         protected PlayerControls controls;
 
@@ -280,6 +287,12 @@ namespace AW2.Game
                 return -1;
             }
         }
+
+        /// <summary>
+        /// If <c>true</c> then the player is playing at a remote game instance.
+        /// If <c>false</c> then the player is playing at this game instance.
+        /// </summary>
+        public bool IsRemote { get { return remoteHandle != null; } }
 
         /// <summary>
         /// The controls the player uses in menus and in game.
@@ -447,12 +460,9 @@ namespace AW2.Game
         /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
         /// <param name="weapon1Name">Name of the type of main weapon.</param>
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
-        /// <param name="controls">Player's in-game controls.</param>
-        public Player(string name, string shipTypeName, string weapon1Name, string weapon2Name,
-            PlayerControls controls)
+        Player(string name, string shipTypeName, string weapon1Name, string weapon2Name)
         {
             this.name = name;
-            this.controls = controls;
             this.shipTypeName = shipTypeName;
             this.weapon1Name = weapon1Name;
             this.weapon2Name = weapon2Name;
@@ -489,16 +499,168 @@ namespace AW2.Game
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
         }
 
+        
+        /// <summary>
+        /// Creates a new player who plays at the local game instance.
+        /// </summary>
+        /// <param name="name">Name of the player.</param>
+        /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
+        /// <param name="weapon1Name">Name of the type of main weapon.</param>
+        /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
+        /// <param name="controls">Player's in-game controls.</param>
+        public Player(string name, string shipTypeName, string weapon1Name, string weapon2Name,
+            PlayerControls controls)
+            : this(name, shipTypeName, weapon1Name, weapon2Name)
+        {
+            remoteHandle = null;
+            this.controls = controls;
+        }
+
+        /// <summary>
+        /// Creates a new player who plays at a remote game instance.
+        /// </summary>
+        /// <param name="name">Name of the player.</param>
+        /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
+        /// <param name="weapon1Name">Name of the type of main weapon.</param>
+        /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
+        /// <param name="remoteHandle">Handle to the remote game instance, meaningful to the network engine.</param>
+        public Player(string name, string shipTypeName, string weapon1Name, string weapon2Name,
+            object remoteHandle)
+            : this(name, shipTypeName, weapon1Name, weapon2Name)
+        {
+            this.remoteHandle = remoteHandle;
+        }
+
         /// <summary>
         /// Updates the player.
         /// </summary>
         public void Update()
         {
-            // Give birth to a new ship if it's time.
-            if (ship == null && lives > 0 &&
-                shipSpawnTime <= AssaultWing.Instance.GameTime.TotalGameTime)
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
-                CreateShip();
+                // Give birth to a new ship if it's time.
+                if (ship == null && lives > 0 &&
+                    shipSpawnTime <= AssaultWing.Instance.GameTime.TotalGameTime)
+                {
+                    CreateShip();
+                }
+
+                // Check player controls.
+                if (!IsRemote)
+                UpdateControlsServerLocal();
+                                
+                if (IsRemote)
+                    UpdateControlsServerRemote();
+            }
+            else // otherwise we are a game client
+            {
+                // As a client, we only care about local player controls.
+                if (!IsRemote)
+                    UpdateControlsClientLocal();
+            }
+        }
+
+        private void UpdateControlsServerLocal()
+        {
+            if (ship != null)
+            {
+                if (controls[PlayerControlType.Thrust].Force > 0)
+                    ship.Thrust(controls[PlayerControlType.Thrust].Force);
+                if (controls[PlayerControlType.Left].Force > 0)
+                    ship.TurnLeft(controls[PlayerControlType.Left].Force);
+                if (controls[PlayerControlType.Right].Force > 0)
+                    ship.TurnRight(controls[PlayerControlType.Right].Force);
+                if (controls[PlayerControlType.Fire1].Pulse)
+                    ship.Fire1();
+                if (controls[PlayerControlType.Fire2].Pulse)
+                    ship.Fire2();
+                if (controls[PlayerControlType.Extra].Pulse)
+                    ship.DoExtra();
+            }
+        }
+
+        private void UpdateControlsClientLocal()
+        {
+            foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
+            {
+                Control control = controls[controlType];
+
+                // TODO: We can skip sending an event if the control is known to be used only
+                // as a pulse control and control.Pulse is false (even if control.Force > 0).
+                if (control.Force > 0 || control.Pulse)
+                {
+                    /* TODO: Player at game client sends controls to network engine
+                                            PlayerControlEvent eve = new PlayerControlEvent(player.Name, controlType, control.Force, control.Pulse);
+                                            eventEngine.SendEvent(eve);
+                     */
+                }
+            }
+        }
+
+        private void UpdateControlsServerRemote()
+        {
+            if (ship != null)
+            {
+#if false // TODO: Remote player at game server receives controls from network engine. Make sure each client sends only his players' controls.
+                    bool doneThrust = false;
+                    bool doneLeft = false;
+                    bool doneRight = false;
+                    bool doneDown = false;
+                    bool doneFire1 = false;
+                    bool doneFire2 = false;
+                    bool doneExtra = false;
+                    for (PlayerControlEvent controlEve = eventer.GetEvent<PlayerControlEvent>(); controlEve != null;
+                        controlEve = eventer.GetEvent<PlayerControlEvent>())
+                    {
+                        Player player = data.GetPlayer(controlEve.PlayerName);
+                        if (player == null) continue;
+                        if (player.Ship == null) continue;
+                        switch (controlEve.ControlType)
+                        {
+                            case PlayerControlType.Thrust:
+                                if (doneThrust) break;
+                                doneThrust = true;
+                                player.Ship.Thrust(controlEve.Force);
+                                break;
+                            case PlayerControlType.Left:
+                                if (doneLeft) break;
+                                doneLeft = true;
+                                player.Ship.TurnLeft(controlEve.Force);
+                                break;
+                            case PlayerControlType.Right:
+                                if (doneRight) break;
+                                doneRight = true;
+                                player.Ship.TurnRight(controlEve.Force);
+                                break;
+                            case PlayerControlType.Down:
+                                if (doneDown) break;
+                                doneDown = true;
+                                // This has no effect during a game.
+                                break;
+                            case PlayerControlType.Fire1:
+                                if (doneFire1) break;
+                                doneFire1 = true;
+                                if (controlEve.Pulse)
+                                    player.Ship.Fire1();
+                                break;
+                            case PlayerControlType.Fire2:
+                                if (doneFire2) break;
+                                doneFire2 = true;
+                                if (controlEve.Pulse)
+                                    player.Ship.Fire2();
+                                break;
+                            case PlayerControlType.Extra:
+                                if (doneExtra) break;
+                                doneExtra = true;
+                                if (controlEve.Pulse)
+                                    player.Ship.DoExtra();
+                                break;
+                            default:
+                                throw new ArgumentException("Unexpected player control type " +
+                                    Enum.GetName(typeof(PlayerControlType), controlEve.ControlType));
+                        }
+                    }
+#endif
             }
         }
 

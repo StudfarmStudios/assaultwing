@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
-using System.Net;
 using AW2.Net.Messages;
 using AW2.Game;
 
@@ -40,7 +40,7 @@ namespace AW2.Net
         /// Network connections to game clients. Nonempty only when 
         /// we are a game server.
         /// </summary>
-        List<Connection> clientConnections;
+        LinkedList<Connection> clientConnections;
 
         #endregion Fields
 
@@ -53,7 +53,7 @@ namespace AW2.Net
         public NetworkEngine(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            clientConnections = new List<Connection>();
+            clientConnections = new LinkedList<Connection>();
         }
 
         #endregion Constructor
@@ -130,7 +130,7 @@ namespace AW2.Net
                         switch (AssaultWing.Instance.NetworkMode)
                         {
                             case NetworkMode.Server:
-                                clientConnections.Add(result.Value);
+                                clientConnections.AddLast(result.Value);
                                 Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
                                 break;
                             case NetworkMode.Client:
@@ -164,13 +164,19 @@ namespace AW2.Net
             switch (AssaultWing.Instance.NetworkMode)
             {
                 case NetworkMode.Server:
-                    foreach (Connection connection in clientConnections)
+                    for (LinkedListNode<Connection> itor = clientConnections.First; itor != null; itor = itor.Next)
                     {
+                        Connection connection = itor.Value;
+
                         // Handle JoinGameRequest from a game client
                         if (connection.Messages.Count<JoinGameRequest>() > 0)
                         {
                             JoinGameRequest message = connection.Messages.Dequeue<JoinGameRequest>();
-                            /// TODOO
+                            foreach (JoinGameRequest.PlayerInfo info in message.PlayerInfos)
+                            {
+                                Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, itor);
+                                data.AddPlayer(player);
+                            }
                         }
                     }
                     break;
@@ -178,7 +184,7 @@ namespace AW2.Net
                     // TODO!!!!
                     break;
                 case NetworkMode.Standalone:
-                    // Do nothing!
+                    // Do nothing
                     break;
             }
         }

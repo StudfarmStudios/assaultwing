@@ -106,6 +106,13 @@ namespace AW2.Net
         public MessageHeaderFlags HeaderFlags { get { return headerFlags; } set { headerFlags = value; } }
 
         /// <summary>
+        /// Identifier of the connection from which this message came,
+        /// or negative if the message was created locally and was not
+        /// received from a connection.
+        /// </summary>
+        public int ConnectionId { get; private set; }
+
+        /// <summary>
         /// Buffer where to write serialised data.
         /// </summary>
         MemoryStream writeBuffer;
@@ -235,7 +242,10 @@ namespace AW2.Net
         /// </summary>
         /// <param name="header">Message header.</param>
         /// <param name="body">Message body.</param>
-        public static Message Deserialize(byte[] header, byte[] body)
+        /// <param name="connectionId">Identifier of the connection 
+        /// from which the serialised data came.</param>
+        /// <see cref="Connection.Id"/>
+        public static Message Deserialize(byte[] header, byte[] body, int connectionId)
         {
             if (!IsValidHeader(header))
                 throw new InvalidDataException("Invalid message header");
@@ -248,6 +258,7 @@ namespace AW2.Net
 
             Message message = (Message)messageTypes[messageType.GetHashCode()].GetConstructor(Type.EmptyTypes).Invoke(null);
             message.Deserialize(body);
+            message.ConnectionId = connectionId;
             return message;
         }
 
@@ -411,6 +422,14 @@ namespace AW2.Net
 
         #region Private deserialisation stuff
 
+        /// <summary>
+        /// Creates an uninitialised message.
+        /// </summary>
+        protected Message()
+        {
+            ConnectionId = -1;
+        }
+        
         /// <summary>
         /// Scans through <c>Message</c> subclasses and registers their message type identifiers
         /// for future deserialisation.

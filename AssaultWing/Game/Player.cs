@@ -114,12 +114,6 @@ namespace AW2.Game
         #region Player fields about general things
 
         /// <summary>
-        /// Handle to the remote game instance this player lives at,
-        /// or <c>null</c> if the player is playing at this game instance.
-        /// </summary>
-        object remoteHandle;
-
-        /// <summary>
         /// The human-readable name of the player.
         /// </summary>
         protected string name;
@@ -289,10 +283,16 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Identifier of the connection behind which this player lives,
+        /// or negative if the player lives at the local game instance.
+        /// </summary>
+        public int ConnectionId { get; private set; }
+
+        /// <summary>
         /// If <c>true</c> then the player is playing at a remote game instance.
         /// If <c>false</c> then the player is playing at this game instance.
         /// </summary>
-        public bool IsRemote { get { return remoteHandle != null; } }
+        public bool IsRemote { get { return ConnectionId >= 0; } }
 
         /// <summary>
         /// The controls the player uses in menus and in game.
@@ -512,7 +512,7 @@ namespace AW2.Game
             PlayerControls controls)
             : this(name, shipTypeName, weapon1Name, weapon2Name)
         {
-            remoteHandle = null;
+            ConnectionId = -1;
             this.controls = controls;
         }
 
@@ -523,12 +523,14 @@ namespace AW2.Game
         /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
         /// <param name="weapon1Name">Name of the type of main weapon.</param>
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
-        /// <param name="remoteHandle">Handle to the remote game instance, meaningful to the network engine.</param>
+        /// <param name="connectionId">Identifier of the connection to the remote game instance
+        /// at which the player lives.</param>
+        /// <see cref="AW2.Net.Connection.Id"/>
         public Player(string name, string shipTypeName, string weapon1Name, string weapon2Name,
-            object remoteHandle)
+            int connectionId)
             : this(name, shipTypeName, weapon1Name, weapon2Name)
         {
-            this.remoteHandle = remoteHandle;
+            ConnectionId = connectionId;
         }
 
         /// <summary>

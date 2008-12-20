@@ -14,6 +14,23 @@ namespace AW2.Net
     /// Network engine. Takes care of communications between several
     /// Assault Wing instances over the Internet.
     /// </summary>
+    /// A game server can communicate with its game clients by sending
+    /// multicast messages via <c>SendToClients</c> and receiving
+    /// messages via <c>ReceiveFromClients</c>. Messages can be
+    /// received by type, so each part of the game logic can poll for 
+    /// messages that are relevant to it without interfering with
+    /// other parts of the game logic. Each received message
+    /// contains an identifier of the connection to the client who
+    /// sent that message.
+    /// 
+    /// A game client can communicate with its game server by sending
+    /// messages via <c>SendToServer</c> and receiving messages via
+    /// <c>ReceiveFromServer</c>.
+    /// 
+    /// All game instances can have a connection to a game management
+    /// server. This hasn't been implemented yet.
+    /// 
+    /// <seealso cref="Message.ConnectionId"/>
     public class NetworkEngine : GameComponent
     {
         #region Fields
@@ -107,6 +124,77 @@ namespace AW2.Net
             }
         }
 
+        /// <summary>
+        /// Sends a message to the game server.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        public void SendToServer(Message message)
+        {
+            if (gameServerConnection == null)
+                throw new InvalidOperationException("Cannot send without connection to server");
+            gameServerConnection.Send(message);
+        }
+
+        /// <summary>
+        /// Receives a message from the game server.
+        /// </summary>
+        /// <typeparam name="T">Type of message to receive.</typeparam>
+        /// <returns>The oldest received message of the type received from the game server,
+        /// or <c>null</c> if no messages of the type were unreceived from the game server.</returns>
+        public T ReceiveFromServer<T>() where T : Message
+        {
+            if (gameServerConnection == null)
+                throw new InvalidOperationException("Cannot receive without connection to server");
+            if (gameServerConnection.Messages.Count<T>() > 0)
+                return gameServerConnection.Messages.Dequeue<T>();
+            return null;
+        }
+
+        /// <summary>
+        /// Sends a message to all connected game clients.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        public void SendToClients(Message message)
+        {
+            foreach (Connection connection in clientConnections)
+                connection.Send(message);
+        }
+
+        /// <summary>
+        /// Receives a message from any game client.
+        /// </summary>
+        /// This method receives messages from all game clients in
+        /// unspecified order.
+        /// <typeparam name="T">Type of message to receive.</typeparam>
+        /// <returns>The oldest received message of the type received from a game client,
+        /// or <c>null</c> if no messages of the type were unreceived from game clients.</returns>
+        public T ReceiveFromClients<T>() where T : Message
+        {
+            foreach (Connection connection in clientConnections)
+                if (connection.Messages.Count<T>() > 0)
+                    return connection.Messages.Dequeue<T>();
+            return null;
+        }
+
+        /// <summary>
+        /// Receives a message from a specific game client.
+        /// </summary>
+        /// <param name="connectionId">Identifier of the connection to the game client to receive from.</param>
+        /// <typeparam name="T">Type of message to receive.</typeparam>
+        /// <returns>The oldest received message of the type received from the game client,
+        /// or <c>null</c> if no messages of the type were unreceived from the game client.</returns>
+        public T ReceiveFromClient<T>(int connectionId) where T : Message
+        {
+            foreach (Connection connection in clientConnections)
+                if (connection.Id == connectionId)
+                {
+                    if (connection.Messages.Count<T>() > 0)
+                        return connection.Messages.Dequeue<T>();
+                    return null;
+                }
+            throw new ArgumentException("Invalid connection ID");
+        }
+
         #endregion Public interface
 
         #region GameComponent methods
@@ -174,7 +262,7 @@ namespace AW2.Net
                             JoinGameRequest message = connection.Messages.Dequeue<JoinGameRequest>();
                             foreach (JoinGameRequest.PlayerInfo info in message.PlayerInfos)
                             {
-                                Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, itor);
+                                Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
                                 data.AddPlayer(player);
                             }
                         }

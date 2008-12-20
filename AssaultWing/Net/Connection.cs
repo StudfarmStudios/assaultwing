@@ -65,6 +65,12 @@ namespace AW2.Net
         #region Fields
 
         /// <summary>
+        /// Least int that is known not to have been used as a connection identifier.
+        /// </summary>
+        /// <see cref="Connection.Id"/>
+        static int leastUnusedId = 0;
+
+        /// <summary>
         /// TCP socket to the connected remote host.
         /// </summary>
         Socket socket;
@@ -108,6 +114,11 @@ namespace AW2.Net
         #endregion Fields
 
         #region Properties
+
+        /// <summary>
+        /// Unique identifier of the connection. Nonnegative.
+        /// </summary>
+        public int Id { get; private set; }
 
         /// <summary>
         /// The local end point of the connection.
@@ -230,6 +241,7 @@ namespace AW2.Net
                 throw new ArgumentNullException("Null socket argument");
             if (!socket.Connected)
                 throw new ArgumentException("Socket not connected");
+            Id = leastUnusedId++;
             Application.ApplicationExit += new EventHandler(delegate(object sender, EventArgs args) { this.Dispose(); });
             socket.Blocking = true;
             socket.ReceiveTimeout = 0; // don't time out
@@ -313,7 +325,7 @@ namespace AW2.Net
                         throw new Exception("Fatal program logic error: Socket.Receive got only " + readBytes + " bytes instead of " + bodyLength);
 
                     // Add received message to the message queue.
-                    Message message = Message.Deserialize(headerReceiveBuffer, bodyReceiveBuffer);
+                    Message message = Message.Deserialize(headerReceiveBuffer, bodyReceiveBuffer, Id);
                     messages.Enqueue(message);
                     lock (messages) if (MessageCallback != null) MessageCallback();
                 }

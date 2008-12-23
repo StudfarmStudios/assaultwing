@@ -253,7 +253,9 @@
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
+    <Compile Include="Net\Messages\JoinGameReply.cs" />
     <Compile Include="Net\Messages\JoinGameRequest.cs" />
+    <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\ThreadSafeWrapper.cs" />
@@ -285,10 +287,8 @@
     </Compile>
     <Compile Include="UI\Mouse.cs" />
     <Compile Include="UI\MultiControl.cs" />
+    <Compile Include="UI\RemoteControl.cs" />
     <Compile Include="UI\TriggeredCallback.cs" />
-    <Compile Include="UI\UIEngine.cs">
-      <Name>UIEngine</Name>
-    </Compile>
     <Compile Include="UI\UIEngineImpl.cs">
       <Name>UIEngineImpl</Name>
     </Compile>

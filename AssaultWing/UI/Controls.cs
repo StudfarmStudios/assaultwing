@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using AW2.Net;
+using AW2.Net.Messages;
+using AW2.Game;
 
 namespace AW2.UI
 {

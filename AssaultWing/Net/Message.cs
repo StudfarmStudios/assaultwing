@@ -292,6 +292,15 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Writes a byte representing a bool to the stream of serialised data.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        protected void WriteBool(bool value)
+        {
+            WriteByte(value ? (byte)0x7f : (byte)0);
+        }
+
+        /// <summary>
         /// Writes an unsigned short to the stream of serialised data.
         /// </summary>
         /// <param name="value">The value.</param>
@@ -307,6 +316,15 @@ namespace AW2.Net
         protected void WriteInt(int value)
         {
             writeBuffer.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value)), 0, 4);
+        }
+
+        /// <summary>
+        /// Writes a float to the stream of serialised data.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        protected void WriteFloat(float value)
+        {
+            WriteInt(BitConverter.ToInt32(BitConverter.GetBytes(value), 0));
         }
 
         /// <summary>
@@ -383,6 +401,17 @@ namespace AW2.Net
         #region Deserialisation interface for subclasses
 
         /// <summary>
+        /// Reads a byte representing a bool from serialised data.
+        /// </summary>
+        /// <param name="buffer">The serialised data.</param>
+        /// <param name="index">The index at which to read.</param>
+        /// <returns>The read value.</returns>
+        protected bool ReadBool(byte[] buffer, int index)
+        {
+            return buffer[index] > 0 ? true : false;
+        }
+
+        /// <summary>
         /// Reads an unsigned short from serialised data.
         /// </summary>
         /// <param name="buffer">The serialised data.</param>
@@ -394,7 +423,7 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Reads an int short from serialised data.
+        /// Reads an int from serialised data.
         /// </summary>
         /// <param name="buffer">The serialised data.</param>
         /// <param name="index">The index at which to read.</param>
@@ -402,6 +431,17 @@ namespace AW2.Net
         protected int ReadInt(byte[] buffer, int index)
         {
             return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer, index));
+        }
+
+        /// <summary>
+        /// Reads a float from serialised data.
+        /// </summary>
+        /// <param name="buffer">The serialised data.</param>
+        /// <param name="index">The index at which to read.</param>
+        /// <returns>The read value.</returns>
+        protected float ReadFloat(byte[] buffer, int index)
+        {
+            return BitConverter.ToSingle(BitConverter.GetBytes(ReadInt(buffer, index)), 0);
         }
 
         /// <summary>

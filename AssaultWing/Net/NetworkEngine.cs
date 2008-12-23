@@ -225,8 +225,8 @@ namespace AW2.Net
                                 gameServerConnection = result.Value;
                                 Log.Write("Client connected to " + result.Value.RemoteEndPoint);
                                 JoinGameRequest joinGameRequest = new JoinGameRequest();
-                                joinGameRequest.PlayerInfos = new List<JoinGameRequest.PlayerInfo>();
-                                data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new JoinGameRequest.PlayerInfo(player)));
+                                joinGameRequest.PlayerInfos = new List<PlayerInfo>();
+                                data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
                                 gameServerConnection.Send(joinGameRequest);
                                 break;
                             default: throw new InvalidOperationException("Cannot handle new network connection in " + AssaultWing.Instance.NetworkMode + " state");
@@ -249,22 +249,21 @@ namespace AW2.Net
             });
 
             // Manage existing connections.
+            // TODO: Move message handling to LogicEngine and other more appropriate places
             switch (AssaultWing.Instance.NetworkMode)
             {
                 case NetworkMode.Server:
-                    for (LinkedListNode<Connection> itor = clientConnections.First; itor != null; itor = itor.Next)
+                    // Handle JoinGameRequests from game clients.
+                    JoinGameRequest message = null;
+                    while ((message = ReceiveFromClients<JoinGameRequest>()) != null)
                     {
-                        Connection connection = itor.Value;
-
-                        // Handle JoinGameRequest from a game client
-                        if (connection.Messages.Count<JoinGameRequest>() > 0)
+                        foreach (PlayerInfo info in message.PlayerInfos)
                         {
-                            JoinGameRequest message = connection.Messages.Dequeue<JoinGameRequest>();
-                            foreach (JoinGameRequest.PlayerInfo info in message.PlayerInfos)
-                            {
-                                Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
-                                data.AddPlayer(player);
-                            }
+                            Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
+                            data.AddPlayer(player);
+                            // TODO: Send reply that contains the players' IDs as they are on the server. 
+                            // TODO: Think of the network game start procedure. What messages when?
+                            // TODO: And can this be reused when connecting via management server?
                         }
                     }
                     break;

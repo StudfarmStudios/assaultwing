@@ -5,13 +5,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Events;
+using AW2.Net;
+using AW2.Net.Messages;
 
 namespace AW2.UI
 {
     /// <summary>
     /// Basic user interface implementation.
     /// </summary>
-    class UIEngineImpl : GameComponent, UIEngine
+    class UIEngineImpl : GameComponent
     {
         /// <summary>
         /// The state of input controls in the previous frame.
@@ -59,25 +61,56 @@ namespace AW2.UI
 
             // Reset mouse cursor to the middle of the game window.
             if (eatMouse)
-            {
-                Mouse.SetPosition(AssaultWing.Instance.ClientBounds.Width / 2,
+                Mouse.SetPosition(
+                    AssaultWing.Instance.ClientBounds.Width / 2,
                     AssaultWing.Instance.ClientBounds.Height / 2);
-            }
 
             // Update controls.
-            Action<Control> updateControl = delegate(Control control)
+            Control.ForEachControl(control => control.SetState(ref oldState, ref newState));
+
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
-                control.SetState(ref oldState, ref newState);
-            };
-            Control.ForEachControl(updateControl);
+                // Fetch control messages from game clients.
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                PlayerControlsMessage message = null;
+                while ((message = net.ReceiveFromClients<PlayerControlsMessage>()) != null)
+                {
+                    Player player = data.GetPlayer(message.PlayerId);
+                    if (player.ConnectionId != message.ConnectionId)
+                    {
+                        // A client sent controls for a player that lives on another game instance.
+                        // We silently ignore the controls.
+                        continue;
+                    }
+                    ((RemoteControl)player.Controls.thrust).SetControlState(
+                        message.GetControlState(PlayerControlType.Thrust).force,
+                        message.GetControlState(PlayerControlType.Thrust).pulse);
+                    ((RemoteControl)player.Controls.left).SetControlState(
+                        message.GetControlState(PlayerControlType.Left).force,
+                        message.GetControlState(PlayerControlType.Left).pulse);
+                    ((RemoteControl)player.Controls.right).SetControlState(
+                        message.GetControlState(PlayerControlType.Right).force,
+                        message.GetControlState(PlayerControlType.Right).pulse);
+                    ((RemoteControl)player.Controls.down).SetControlState(
+                        message.GetControlState(PlayerControlType.Down).force,
+                        message.GetControlState(PlayerControlType.Down).pulse);
+                    ((RemoteControl)player.Controls.fire1).SetControlState(
+                        message.GetControlState(PlayerControlType.Fire1).force,
+                        message.GetControlState(PlayerControlType.Fire1).pulse);
+                    ((RemoteControl)player.Controls.fire2).SetControlState(
+                        message.GetControlState(PlayerControlType.Fire2).force,
+                        message.GetControlState(PlayerControlType.Fire2).pulse);
+                    ((RemoteControl)player.Controls.extra).SetControlState(
+                        message.GetControlState(PlayerControlType.Extra).force,
+                        message.GetControlState(PlayerControlType.Extra).pulse);
+                }
+            }
 
             oldState = newState;
 
             // Check general controls.
             if (fullscreenControl.Pulse)
-            {
                 AssaultWing.Instance.ToggleFullscreen();
-            }
             if (showEverybodyControl.Pulse)
                 AssaultWing.Instance.ShowOnlyPlayer(-1);
             if (showOnlyPlayer1Control.Pulse)

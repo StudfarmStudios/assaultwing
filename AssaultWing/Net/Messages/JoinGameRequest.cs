@@ -6,49 +6,49 @@ using System.Text;
 namespace AW2.Net.Messages
 {
     /// <summary>
+    /// Information about a player who wants to join a game.
+    /// </summary>
+    public struct PlayerInfo
+    {
+        /// <summary>
+        /// The player's name.
+        /// </summary>
+        public string name;
+
+        /// <summary>
+        /// The player's ship type.
+        /// </summary>
+        public string shipTypeName;
+
+        /// <summary>
+        /// The player's primary weapon type.
+        /// </summary>
+        public string weapon1TypeName;
+
+        /// <summary>
+        /// The player's secondary weapon type.
+        /// </summary>
+        public string weapon2TypeName;
+
+        /// <summary>
+        /// Creates a new player info based on a player.
+        /// </summary>
+        /// <param name="player">The player.</param>
+        public PlayerInfo(AW2.Game.Player player)
+        {
+            name = player.Name;
+            shipTypeName = player.ShipName;
+            weapon1TypeName = player.Weapon1Name;
+            weapon2TypeName = player.Weapon2Name;
+        }
+    }
+
+    /// <summary>
     /// A message from a game client to a game server requesting
     /// joining to the game the server is hosting.
     /// </summary>
     public class JoinGameRequest : Message
     {
-        /// <summary>
-        /// Information about a player who wants to join a game.
-        /// </summary>
-        public struct PlayerInfo
-        {
-            /// <summary>
-            /// The player's name.
-            /// </summary>
-            public string name;
-
-            /// <summary>
-            /// The player's ship type.
-            /// </summary>
-            public string shipTypeName;
-
-            /// <summary>
-            /// The player's primary weapon type.
-            /// </summary>
-            public string weapon1TypeName;
-
-            /// <summary>
-            /// The player's secondary weapon type.
-            /// </summary>
-            public string weapon2TypeName;
-
-            /// <summary>
-            /// Creates a new player info based on a player.
-            /// </summary>
-            /// <param name="player">The player.</param>
-            public PlayerInfo(AW2.Game.Player player)
-            {
-                name = player.Name;
-                shipTypeName = player.ShipName;
-                weapon1TypeName = player.Weapon1Name;
-                weapon2TypeName = player.Weapon2Name;
-            }
-        }
-
         /// <summary>
         /// Information about the players that want to join the game.
         /// </summary>

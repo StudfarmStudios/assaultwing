@@ -6,6 +6,7 @@ using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.UI;
 using AW2.Game.Particles;
+using AW2.Net.Messages;
 
 namespace AW2.Game
 {
@@ -112,6 +113,13 @@ namespace AW2.Game
         #endregion Player constants
 
         #region Player fields about general things
+
+        /// <summary>
+        /// Least int that is known not to have been used as a player identifier
+        /// on this game instance.
+        /// </summary>
+        /// <see cref="Player.Id"/>
+        static int leastUnusedId = 0;
 
         /// <summary>
         /// The human-readable name of the player.
@@ -264,23 +272,10 @@ namespace AW2.Game
         #region Player properties
 
         /// <summary>
-        /// The player's index in <c>DataEngine</c>,
-        /// or -1 if the player is not registered in <c>DataEngine</c>.
+        /// The player's unique identifier.
         /// </summary>
-        public int Id
-        {
-            get
-            {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                for (int i = 0; ; ++i)
-                {
-                    Player player = data.GetPlayer(i);
-                    if (player == this) return i;
-                    if (player == null) break;
-                }
-                return -1;
-            }
-        }
+        /// The identifier may change if a remote game server says so.
+        public int Id { get; private set; }
 
         /// <summary>
         /// Identifier of the connection behind which this player lives,
@@ -462,6 +457,7 @@ namespace AW2.Game
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
         Player(string name, string shipTypeName, string weapon1Name, string weapon2Name)
         {
+            Id = leastUnusedId++;
             this.name = name;
             this.shipTypeName = shipTypeName;
             this.weapon1Name = weapon1Name;
@@ -531,6 +527,14 @@ namespace AW2.Game
             : this(name, shipTypeName, weapon1Name, weapon2Name)
         {
             ConnectionId = connectionId;
+            controls = new PlayerControls();
+            controls.thrust = new RemoteControl();
+            controls.left = new RemoteControl();
+            controls.right = new RemoteControl();
+            controls.down = new RemoteControl();
+            controls.fire1 = new RemoteControl();
+            controls.fire2 = new RemoteControl();
+            controls.extra = new RemoteControl();
         }
 
         /// <summary>
@@ -562,6 +566,11 @@ namespace AW2.Game
             }
         }
 
+        /// <summary>
+        /// Updates the players controls, assuming the player
+        /// lives on this game instance and this game instance 
+        /// is the game server.
+        /// </summary>
         private void UpdateControlsServerLocal()
         {
             if (ship != null)
@@ -581,6 +590,11 @@ namespace AW2.Game
             }
         }
 
+        /// <summary>
+        /// Updates the players controls, assuming the player
+        /// lives on this game instance and this game instance 
+        /// is a game client.
+        /// </summary>
         private void UpdateControlsClientLocal()
         {
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
@@ -591,14 +605,20 @@ namespace AW2.Game
                 // as a pulse control and control.Pulse is false (even if control.Force > 0).
                 if (control.Force > 0 || control.Pulse)
                 {
-                    /* TODO: Player at game client sends controls to network engine
-                                            PlayerControlEvent eve = new PlayerControlEvent(player.Name, controlType, control.Force, control.Pulse);
-                                            eventEngine.SendEvent(eve);
-                     */
+                    PlayerControlsMessage.ControlState state = new PlayerControlsMessage.ControlState(
+                        controls[controlType].Force, controls[controlType].Pulse);
+                    PlayerControlsMessage message = new PlayerControlsMessage();
+                    message.PlayerId = Id;
+                    message.SetControlState(PlayerControlType.Fire1, state);
                 }
             }
         }
 
+        /// <summary>
+        /// Updates the players controls, assuming the player
+        /// lives on a remote game instance and this game instance 
+        /// is the game server.
+        /// </summary>
         private void UpdateControlsServerRemote()
         {
             if (ship != null)

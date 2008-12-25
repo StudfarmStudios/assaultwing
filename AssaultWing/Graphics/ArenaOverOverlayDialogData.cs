@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -94,21 +95,21 @@ namespace AW2.Graphics
             textPos += new Vector2(0, fontBig.LineSpacing);
 
             // List players and their scores sorted decreasing by score.
-            List<int> playerIds = new List<int>();
-            List<int> playerScores = new List<int>();
-            data.ForEachPlayer(player =>
+            List<Player> players = new List<Player>();
+            data.ForEachPlayer(player => players.Add(player));
+            var scores =
+                from p in players
+                let Score = p.Kills - p.Suicides
+                orderby Score descending
+                select new { p.Name, Score, p.Kills, p.Suicides };
+            int line = 0;
+            foreach (var entry in scores)
             {
-                playerIds.Add(player.Id);
-                playerScores.Add(player.Kills - player.Suicides);
-            });
-            playerIds.Sort((i, j) => Math.Sign(playerScores[j] - playerScores[i]));
-            for (int i = 0; i < playerIds.Count; ++i)
-            {
-                Player player = data.GetPlayer(playerIds[i]);
-                string scoreText = string.Format("{0} = {1}-{2}", player.Kills - player.Suicides, player.Kills, player.Suicides);
-                spriteBatch.DrawString(fontSmall, (i + 1) + ". " + player.Name, textPos, Color.White);
+                string scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
+                spriteBatch.DrawString(fontSmall, (line + 1) + ". " + entry.Name, textPos, Color.White);
                 spriteBatch.DrawString(fontSmall, scoreText, textPos + new Vector2(250, 0), Color.White);
                 textPos += new Vector2(0, fontSmall.LineSpacing);
+                ++line;
             }
 
             // Draw arena loading text and possibly the progress bar.

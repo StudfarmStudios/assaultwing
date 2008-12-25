@@ -583,7 +583,7 @@ namespace AW2.Graphics
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             data.ClearViewports();
             int players = 0;
-            data.ForEachPlayer(delegate(Player player) { ++players; });
+            data.ForEachPlayer(player => players += player.IsRemote ? 0 : 1);
             if (players == 0) return;
 
             // Find out an optimal arrangement of viewports.
@@ -617,6 +617,7 @@ namespace AW2.Graphics
             int playerI = 0;
             data.ForEachPlayer(delegate(Player player)
             {
+                if (player.IsRemote) return;
                 int viewportX = playerI % bestColumns;
                 int viewportY = playerI / bestColumns;
                 int onScreenX1 = window.Width * viewportX / bestColumns;

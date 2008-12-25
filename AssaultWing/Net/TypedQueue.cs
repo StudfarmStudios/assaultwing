@@ -74,9 +74,10 @@ namespace AW2.Net
             Type elementType = typeof(U);
             lock (queues)
             {
-                if (queues[elementType] == null || queues[elementType].Count == 0)
-                    return 0;
-                return queues[elementType].Count;
+                Queue<T> queue;
+                if (queues.TryGetValue(elementType, out queue))
+                    return queue.Count;
+                return 0;
             }
         }
 

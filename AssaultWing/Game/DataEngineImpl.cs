@@ -619,15 +619,17 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returns the player with the given index, or null if none exists.
+        /// Returns a player by his identifier, or <c>null</c> if no such player exists.
         /// </summary>
-        /// <param name="playerIndex">The index of the player, zero-based.</param>
-        /// <returns>The player.</returns>
-        public Player GetPlayer(int playerIndex)
+        /// <param name="playerId">The identifier of the player.</param>
+        /// <returns>The player, or <c>null</c> if the player couldn't be found.</returns>
+        /// <seealso cref="AW2.Game.Player.Id"/>
+        public Player GetPlayer(int playerId)
         {
-            if (playerIndex < 0 || playerIndex >= players.Count)
-                return null;
-            return players[playerIndex];
+            foreach (Player player in players)
+                if (player.Id == playerId)
+                    return player;
+            return null;
         }
 
         /// <summary>

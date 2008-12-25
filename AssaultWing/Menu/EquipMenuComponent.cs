@@ -157,11 +157,12 @@ namespace AW2.Menu
                     menuEngine.ActivateComponent(MenuComponentType.Arena);
 
                 // React to players' controls.
+                int playerI = -1;
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                for (int playerI = 0; ; ++playerI)
+                data.ForEachPlayer(player =>
                 {
-                    Player player = data.GetPlayer(playerI);
-                    if (player == null) break;
+                    if (player.IsRemote) return;
+                    ++playerI;
                     if (player.Controls.thrust.Pulse)
                     {
                         cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
@@ -180,7 +181,7 @@ namespace AW2.Menu
                         string[] weapon2Names = { "bazooka", "rockets" };
                         switch (currentItems[playerI])
                         {
-                            case EquipMenuItem.Ship: 
+                            case EquipMenuItem.Ship:
                                 {
                                     int currentI = 0;
                                     for (int i = 0; i < shipNames.Length; ++i)
@@ -215,7 +216,7 @@ namespace AW2.Menu
                                 } break;
                         }
                     }
-                }
+                });
             }
         }
 
@@ -239,10 +240,11 @@ namespace AW2.Menu
             Vector2 playerPaneIconDeltaPos = playerPaneMainDeltaPos + new Vector2(21, 1);
             Vector2 playerPaneRowDeltaPos = new Vector2(0, 91);
             Vector2 playerPaneNamePos = new Vector2(104, 30);
-            for (int playerI = 0; ; ++playerI)
+            int playerI = -1;
+            data.ForEachPlayer(player =>
             {
-                Player player = data.GetPlayer(playerI);
-                if (player == null) break;
+                if (player.IsRemote) return;
+                ++playerI;
 
                 // Draw pane background.
                 Vector2 playerPanePos = pos - view + player1PanePos + playerI * playerPaneDeltaPos;
@@ -270,7 +272,7 @@ namespace AW2.Menu
                 float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTimes[playerI]).TotalSeconds;
                 spriteBatch.Draw(highlightMainTexture, playerCursorPos, Color.White);
                 spriteBatch.Draw(cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
-            }
+            });
         }
     }
 }

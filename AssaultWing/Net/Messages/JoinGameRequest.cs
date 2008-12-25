@@ -11,6 +11,11 @@ namespace AW2.Net.Messages
     public struct PlayerInfo
     {
         /// <summary>
+        /// The player's identifier on the game instance he lives on.
+        /// </summary>
+        public int id;
+
+        /// <summary>
         /// The player's name.
         /// </summary>
         public string name;
@@ -36,6 +41,7 @@ namespace AW2.Net.Messages
         /// <param name="player">The player.</param>
         public PlayerInfo(AW2.Game.Player player)
         {
+            id = player.Id;
             name = player.Name;
             shipTypeName = player.ShipName;
             weapon1TypeName = player.Weapon1Name;
@@ -67,6 +73,7 @@ namespace AW2.Net.Messages
             // Join game request message structure:
             // byte number of players N
             // repeat N
+            //   int player ID
             //   32-byte-string player name
             //   32-byte-string player ship type
             //   32-byte-string player weapon1 type
@@ -74,6 +81,7 @@ namespace AW2.Net.Messages
             WriteByte((byte)PlayerInfos.Count);
             foreach (PlayerInfo info in PlayerInfos)
             {
+                WriteInt(info.id);
                 WriteString(info.name, 32, false);
                 WriteString(info.shipTypeName, 32, false);
                 WriteString(info.weapon1TypeName, 32, false);
@@ -92,11 +100,12 @@ namespace AW2.Net.Messages
             for (int i = 0; i < count; ++i)
             {
                 PlayerInfo info;
+                info.id = ReadInt(body, index); index += 4;
                 info.name = ReadString(body, index, 32); index += 32;
                 info.shipTypeName = ReadString(body, index, 32); index += 32;
                 info.weapon1TypeName = ReadString(body, index, 32); index += 32;
                 info.weapon2TypeName = ReadString(body, index, 32); index += 32;
-                PlayerInfos[i] = info;
+                PlayerInfos.Add(info);
             }
         }
     }

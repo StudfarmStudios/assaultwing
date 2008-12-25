@@ -94,19 +94,17 @@ namespace AW2.Graphics
             textPos += new Vector2(0, fontBig.LineSpacing);
 
             // List players and their scores sorted decreasing by score.
-            List<int> playerIs = new List<int>();
+            List<int> playerIds = new List<int>();
             List<int> playerScores = new List<int>();
-            for (int i = 0; ; ++i)
+            data.ForEachPlayer(player =>
             {
-                Player player = data.GetPlayer(i);
-                if (player == null) break;
-                playerIs.Add(i);
+                playerIds.Add(player.Id);
                 playerScores.Add(player.Kills - player.Suicides);
-            }
-            playerIs.Sort(delegate(int i, int j) { return Math.Sign(playerScores[j] - playerScores[i]); });
-            for (int i = 0; i < playerIs.Count; ++i)
+            });
+            playerIds.Sort((i, j) => Math.Sign(playerScores[j] - playerScores[i]));
+            for (int i = 0; i < playerIds.Count; ++i)
             {
-                Player player = data.GetPlayer(playerIs[i]);
+                Player player = data.GetPlayer(playerIds[i]);
                 string scoreText = string.Format("{0} = {1}-{2}", player.Kills - player.Suicides, player.Kills, player.Suicides);
                 spriteBatch.DrawString(fontSmall, (i + 1) + ". " + player.Name, textPos, Color.White);
                 spriteBatch.DrawString(fontSmall, scoreText, textPos + new Vector2(250, 0), Color.White);

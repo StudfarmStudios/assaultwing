@@ -275,7 +275,7 @@ namespace AW2.Game
         /// The player's unique identifier.
         /// </summary>
         /// The identifier may change if a remote game server says so.
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Identifier of the connection behind which this player lives,

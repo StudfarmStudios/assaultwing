@@ -294,11 +294,12 @@ namespace AW2.Game
         Player GetPlayer(string playerName);
 
         /// <summary>
-        /// Returns the player with the given index, or null if none exists.
+        /// Returns a player by his identifier, or <c>null</c> if no such player exists.
         /// </summary>
-        /// <param name="playerIndex">The index of the player, zero-based.</param>
-        /// <returns>The player.</returns>
-        Player GetPlayer(int playerIndex);
+        /// <param name="playerId">The identifier of the player.</param>
+        /// <returns>The player, or <c>null</c> if the player couldn't be found.</returns>
+        /// <seealso cref="AW2.Game.Player.Id"/>
+        Player GetPlayer(int playerId);
 
         #endregion
 

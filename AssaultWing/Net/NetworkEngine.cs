@@ -161,6 +161,22 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Sends a message to a game client.
+        /// </summary>
+        /// <param name="connectionId">Identifier of the connection to the game client.</param>
+        /// <param name="message">The message to send.</param>
+        public void SendToClient(int connectionId, Message message)
+        {
+            foreach (Connection connection in clientConnections)
+                if (connection.Id == connectionId)
+                {
+                    connection.Send(message);
+                    return;
+                }
+            throw new ArgumentException("Cannot send to invalid client connection ID " + connectionId);
+        }
+
+        /// <summary>
         /// Receives a message from any game client.
         /// </summary>
         /// This method receives messages from all game clients in
@@ -250,29 +266,37 @@ namespace AW2.Net
 
             // Manage existing connections.
             // TODO: Move message handling to LogicEngine and other more appropriate places
-            switch (AssaultWing.Instance.NetworkMode)
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
-                case NetworkMode.Server:
-                    // Handle JoinGameRequests from game clients.
-                    JoinGameRequest message = null;
-                    while ((message = ReceiveFromClients<JoinGameRequest>()) != null)
+                // Handle JoinGameRequests from game clients.
+                JoinGameRequest message = null;
+                while ((message = ReceiveFromClients<JoinGameRequest>()) != null)
+                {
+                    JoinGameReply reply = new JoinGameReply();
+                    reply.PlayerIdChanges = new JoinGameReply.IdChange[message.PlayerInfos.Count];
+                    int changeI = 0;
+                    foreach (PlayerInfo info in message.PlayerInfos)
                     {
-                        foreach (PlayerInfo info in message.PlayerInfos)
-                        {
-                            Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
-                            data.AddPlayer(player);
-                            // TODO: Send reply that contains the players' IDs as they are on the server. 
-                            // TODO: Think of the network game start procedure. What messages when?
-                            // TODO: And can this be reused when connecting via management server?
-                        }
+                        Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
+                        data.AddPlayer(player);
+                        reply.PlayerIdChanges[changeI].oldId = info.id;
+                        reply.PlayerIdChanges[changeI].newId = player.Id;
+                        changeI++;
                     }
-                    break;
-                case NetworkMode.Client:
-                    // TODO!!!!
-                    break;
-                case NetworkMode.Standalone:
-                    // Do nothing
-                    break;
+                    SendToClient(message.ConnectionId, reply);
+                }
+            }
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && gameServerConnection != null)
+            {
+                // Handle JoinGameReplies from the game server.
+                JoinGameReply message = null;
+                while ((message = ReceiveFromServer<JoinGameReply>()) != null)
+                {
+                    foreach (JoinGameReply.IdChange change in message.PlayerIdChanges)
+                    {
+                        data.GetPlayer(change.oldId).Id = change.newId;
+                    }
+                }
             }
         }
 

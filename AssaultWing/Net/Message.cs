@@ -119,6 +119,7 @@ namespace AW2.Net
 
         static byte protocolIdentifier = (byte)'A';
         static byte versionIdentifier = 0x00;
+        static char[] nullCharArray = new char[] { '\0' };
 
         enum MessageHeaderIndex
         {
@@ -455,7 +456,7 @@ namespace AW2.Net
         /// <returns>The string.</returns>
         protected string ReadString(byte[] buffer, int index, int byteCount)
         {
-            return Encoding.UTF8.GetString(buffer, index, byteCount);
+            return Encoding.UTF8.GetString(buffer, index, byteCount).TrimEnd(nullCharArray);
         }
 
         #endregion Deserialisation interface for subclasses

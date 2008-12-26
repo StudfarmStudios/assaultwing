@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Net.Messages;
 using AW2.Game;
+using System.Net.Sockets;
 
 namespace AW2.Net
 {
@@ -132,7 +133,14 @@ namespace AW2.Net
         {
             if (gameServerConnection == null)
                 throw new InvalidOperationException("Cannot send without connection to server");
-            gameServerConnection.Send(message);
+            try
+            {
+                gameServerConnection.Send(message);
+            }
+            catch (SocketException e)
+            {
+                gameServerConnection.Errors.Do(queue => queue.Enqueue(e));
+            }
         }
 
         /// <summary>
@@ -297,6 +305,34 @@ namespace AW2.Net
                         data.GetPlayer(change.oldId).Id = change.newId;
                     }
                 }
+            }
+
+            // Handle occurred errors.
+            Action<Connection, string, Action> errorCheck = (connection, name, nuller) =>
+                {
+                    if (connection == null) return;
+                    connection.Errors.Do(queue =>
+                        {
+                            if (queue.Count == 0) return;
+                            while (queue.Count > 0)
+                            {
+                                Exception e = queue.Dequeue();
+                                Log.Write("Error occurred with " + name + " connection: " + e.Message);
+                            }
+                            Log.Write("Closing " + name + " connection due to errors");
+                            connection.Dispose();
+                            nuller();
+                        });
+                };
+            errorCheck(managementServerConnection, "management server", () => managementServerConnection = null); // TODO: Reconnect
+            errorCheck(gameServerConnection, "game server", () => gameServerConnection = null); // TODO: Notify user
+            List<Connection> clientsToRemove = new List<Connection>();
+            foreach (Connection clientConnection in clientConnections)
+                errorCheck(clientConnection, "game client", () => clientsToRemove.Add(clientConnection));
+            foreach (Connection connection in clientsToRemove)
+            {
+                data.RemovePlayers(player => player.ConnectionId == connection.Id);
+                clientConnections.Remove(connection);
             }
         }
 

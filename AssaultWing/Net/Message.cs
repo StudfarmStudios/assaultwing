@@ -242,7 +242,8 @@ namespace AW2.Net
         /// Deserialises a message from raw bytes.
         /// </summary>
         /// <param name="header">Message header.</param>
-        /// <param name="body">Message body.</param>
+        /// <param name="body">Buffer containing the message body, 
+        /// possibly trailed with extra bytes.</param>
         /// <param name="connectionId">Identifier of the connection 
         /// from which the serialised data came.</param>
         /// <see cref="Connection.Id"/>
@@ -254,7 +255,7 @@ namespace AW2.Net
             MessageType messageType = GetMessageType(header);
 
             int bodyLength = GetBodyLength(header);
-            if (bodyLength != body.Length)
+            if (bodyLength > body.Length)
                 throw new InvalidDataException("Body length mismatch (" + bodyLength + " expected, " + body.Length + " got)");
 
             Message message = (Message)messageTypes[messageType.GetHashCode()].GetConstructor(Type.EmptyTypes).Invoke(null);

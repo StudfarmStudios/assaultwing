@@ -281,6 +281,12 @@ namespace AW2.Game
         void RemovePlayer(Player player);
 
         /// <summary>
+        /// Removes certain players from the game.
+        /// </summary>
+        /// <param name="criterion">The criterion which players to remove.</param>
+        void RemovePlayers(Predicate<Player> criterion);
+
+        /// <summary>
         /// Performs the specified action on each player.
         /// </summary>
         /// <param name="action">The Action delegate to perform on each player.</param>

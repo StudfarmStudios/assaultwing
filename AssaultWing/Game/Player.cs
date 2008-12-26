@@ -6,6 +6,7 @@ using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.UI;
 using AW2.Game.Particles;
+using AW2.Net;
 using AW2.Net.Messages;
 
 namespace AW2.Game
@@ -552,11 +553,7 @@ namespace AW2.Game
                 }
 
                 // Check player controls.
-                if (!IsRemote)
-                UpdateControlsServerLocal();
-                                
-                if (IsRemote)
-                    UpdateControlsServerRemote();
+                UpdateControlsServer();
             }
             else // otherwise we are a game client
             {
@@ -567,11 +564,10 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Updates the players controls, assuming the player
-        /// lives on this game instance and this game instance 
+        /// Updates the players controls, assuming this game instance 
         /// is the game server.
         /// </summary>
-        private void UpdateControlsServerLocal()
+        private void UpdateControlsServer()
         {
             if (ship != null)
             {
@@ -597,93 +593,16 @@ namespace AW2.Game
         /// </summary>
         private void UpdateControlsClientLocal()
         {
+            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+            PlayerControlsMessage message = new PlayerControlsMessage();
+            message.PlayerId = Id;
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
             {
                 Control control = controls[controlType];
-
-                // TODO: We can skip sending an event if the control is known to be used only
-                // as a pulse control and control.Pulse is false (even if control.Force > 0).
-                if (control.Force > 0 || control.Pulse)
-                {
-                    PlayerControlsMessage.ControlState state = new PlayerControlsMessage.ControlState(
-                        controls[controlType].Force, controls[controlType].Pulse);
-                    PlayerControlsMessage message = new PlayerControlsMessage();
-                    message.PlayerId = Id;
-                    message.SetControlState(PlayerControlType.Fire1, state);
-                }
+                message.SetControlState(controlType, 
+                    new PlayerControlsMessage.ControlState { force = control.Force, pulse = control.Pulse });
             }
-        }
-
-        /// <summary>
-        /// Updates the players controls, assuming the player
-        /// lives on a remote game instance and this game instance 
-        /// is the game server.
-        /// </summary>
-        private void UpdateControlsServerRemote()
-        {
-            if (ship != null)
-            {
-#if false // TODO: Remote player at game server receives controls from network engine. Make sure each client sends only his players' controls.
-                    bool doneThrust = false;
-                    bool doneLeft = false;
-                    bool doneRight = false;
-                    bool doneDown = false;
-                    bool doneFire1 = false;
-                    bool doneFire2 = false;
-                    bool doneExtra = false;
-                    for (PlayerControlEvent controlEve = eventer.GetEvent<PlayerControlEvent>(); controlEve != null;
-                        controlEve = eventer.GetEvent<PlayerControlEvent>())
-                    {
-                        Player player = data.GetPlayer(controlEve.PlayerName);
-                        if (player == null) continue;
-                        if (player.Ship == null) continue;
-                        switch (controlEve.ControlType)
-                        {
-                            case PlayerControlType.Thrust:
-                                if (doneThrust) break;
-                                doneThrust = true;
-                                player.Ship.Thrust(controlEve.Force);
-                                break;
-                            case PlayerControlType.Left:
-                                if (doneLeft) break;
-                                doneLeft = true;
-                                player.Ship.TurnLeft(controlEve.Force);
-                                break;
-                            case PlayerControlType.Right:
-                                if (doneRight) break;
-                                doneRight = true;
-                                player.Ship.TurnRight(controlEve.Force);
-                                break;
-                            case PlayerControlType.Down:
-                                if (doneDown) break;
-                                doneDown = true;
-                                // This has no effect during a game.
-                                break;
-                            case PlayerControlType.Fire1:
-                                if (doneFire1) break;
-                                doneFire1 = true;
-                                if (controlEve.Pulse)
-                                    player.Ship.Fire1();
-                                break;
-                            case PlayerControlType.Fire2:
-                                if (doneFire2) break;
-                                doneFire2 = true;
-                                if (controlEve.Pulse)
-                                    player.Ship.Fire2();
-                                break;
-                            case PlayerControlType.Extra:
-                                if (doneExtra) break;
-                                doneExtra = true;
-                                if (controlEve.Pulse)
-                                    player.Ship.DoExtra();
-                                break;
-                            default:
-                                throw new ArgumentException("Unexpected player control type " +
-                                    Enum.GetName(typeof(PlayerControlType), controlEve.ControlType));
-                        }
-                    }
-#endif
-            }
+            net.SendToServer(message);
         }
 
         /// <summary>

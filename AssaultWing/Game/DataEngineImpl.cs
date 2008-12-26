@@ -650,6 +650,15 @@ namespace AW2.Game
             players.Remove(player);
         }
 
+        /// <summary>
+        /// Removes certain players from the game.
+        /// </summary>
+        /// <param name="criterion">The criterion which players to remove.</param>
+        public void RemovePlayers(Predicate<Player> criterion)
+        {
+            players.RemoveAll(criterion);
+        }
+
         #endregion players
 
         #region type templates

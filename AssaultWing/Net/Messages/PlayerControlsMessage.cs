@@ -77,9 +77,11 @@ namespace AW2.Net.Messages
         protected override void SerializeBody()
         {
             // Player controls (request) message structure:
+            // int player ID
             // repeat over PlayerControlType
             //   4 bytes = float: force of the control
             //   1 byte  = bool:  pulse of the control
+            WriteInt(PlayerId);
             foreach (ControlState state in controlStates)
             {
                 WriteFloat(state.force);
@@ -93,7 +95,8 @@ namespace AW2.Net.Messages
         protected override void Deserialize(byte[] body)
         {
             int index = 0;
-            for (int i=0;i<controlStates.Length;++i)
+            PlayerId = ReadInt(body, index); index += 4;
+            for (int i = 0; i < controlStates.Length; ++i)
             {
                 float force = ReadFloat(body, index); index += 4;
                 bool pulse = ReadBool(body,index); index++;

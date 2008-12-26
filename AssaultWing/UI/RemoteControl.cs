@@ -18,6 +18,11 @@ namespace AW2.UI
         float force;
 
         /// <summary>
+        /// Time of last control state update, in game time.
+        /// </summary>
+        TimeSpan lastStateUpdate;
+
+        /// <summary>
         /// Creates a remote control.
         /// </summary>
         public RemoteControl()
@@ -25,6 +30,7 @@ namespace AW2.UI
         {
             pulse = false;
             force = 0;
+            lastStateUpdate = new TimeSpan(-1);
         }
 
         /// <summary>
@@ -54,8 +60,20 @@ namespace AW2.UI
         /// <param name="pulse">Did the control give a pulse.</param>
         public void SetControlState(float force, bool pulse)
         {
-            this.pulse = pulse;
-            this.force = MathHelper.Clamp(force, 0, 1);
+            // Take the maximum of all state updates during one frame.
+            // This gives priority to hard action.
+            TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+            if (lastStateUpdate < now)
+            {
+                this.pulse = pulse;
+                this.force = MathHelper.Clamp(force, 0, 1);
+            }
+            else
+            {
+                this.pulse |= pulse;
+                this.force = MathHelper.Clamp(force, this.force, 1);
+            }
+            lastStateUpdate = now;
         }
     }
 }

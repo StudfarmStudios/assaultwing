@@ -8,6 +8,8 @@ using AW2.Game.Gobs;
 using AW2.Graphics;
 using AW2.Helpers;
 using Viewport = AW2.Graphics.AWViewport;
+using AW2.Net.Messages;
+using AW2.Net;
 
 namespace AW2.Game
 {
@@ -46,6 +48,7 @@ namespace AW2.Game
         Vector2 arenaDimensionsOnRadar;
         Matrix arenaToRadarTransform;
         ProgressBar progressBar;
+        bool isPreparingArena;
 
         /// <summary>
         /// Index of the gameplay arena layer. Gameplay backlayer is this minus one.
@@ -439,6 +442,7 @@ namespace AW2.Game
         /// <param name="name">The name of the arena.</param>
         public void InitializeFromArena(string name)
         {
+            isPreparingArena = true;
             preparedArena = GetArena(name);
 
             // Clear old data.
@@ -480,6 +484,8 @@ namespace AW2.Game
                 {
                     AddGob(Gob.CreateGob(gob), i);
                 });
+
+            isPreparingArena = false;
         }
 
         /// <summary>
@@ -537,6 +543,37 @@ namespace AW2.Game
             gob.Layer = layer;
             addedGobs.Add(gob);
             gob.Activate();
+
+            // If we are the game server, notify game clients of the new gob.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server
+                && MustSendCreationToClient(gob))
+            {
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                net.SendToClients(new GobCreationMessage
+                {
+                    Parameters = new GobCreationParameters
+                    {
+                        typeName = gob.TypeName,
+                        pos = gob.Pos,
+                        rotation = gob.Rotation
+                    }
+                });
+            }
+        }
+
+        /// <summary>
+        /// Tells, assuming we are the game server, 
+        /// if a message notifying of the creation of a gob 
+        /// should be sent to game clients.
+        /// </summary>
+        /// <param name="gob">The newly created gob to consider.</param>
+        /// <returns><c>true</c> if and only if a gob creation message should be sent.</returns>
+        bool MustSendCreationToClient(Gob gob)
+        {
+            if (isPreparingArena) return false;
+            if (gob.Layer != gameplayLayer) return false;
+            if (gob is Peng || gob is Particles.ParticleEngine) return false;
+            return true;
         }
 
         /// <summary>
@@ -860,6 +897,20 @@ namespace AW2.Game
         public void CommitPending()
         {
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
+            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+
+            // If we are a game client, create gobs as told by the game server.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            {
+                GobCreationMessage message;
+                while ((message = net.ReceiveFromServer<GobCreationMessage>()) != null)
+                {
+                    Gob gob = Gob.CreateGob(message.Parameters.typeName);
+                    gob.Pos = message.Parameters.pos;
+                    gob.Rotation = message.Parameters.rotation;
+                    AddGob(gob);
+                }
+            }
 
             // Add gobs to add.
             foreach (Gob gob in addedGobs)

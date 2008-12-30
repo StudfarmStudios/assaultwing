@@ -253,6 +253,7 @@
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
+    <Compile Include="Net\Messages\GobCreationMessage.cs" />
     <Compile Include="Net\Messages\JoinGameReply.cs" />
     <Compile Include="Net\Messages\JoinGameRequest.cs" />
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />

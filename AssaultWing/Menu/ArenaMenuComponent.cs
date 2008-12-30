@@ -168,7 +168,7 @@ namespace AW2.Menu
                         // Start loading the first arena and display its progress.
                         menuEngine.IsHelpTextVisible = false;
                         menuEngine.IsProgressBarVisible = true;
-                        data.ProgressBar.Task = AssaultWing.Instance.StartPlaying;
+                        data.ProgressBar.Task = AssaultWing.Instance.PrepareFirstArena;
                         data.ProgressBar.SetSubtaskCount(10); // just something until DataEngine sets the real value
                         data.ProgressBar.StartTask();
                         arenaLoading = true;

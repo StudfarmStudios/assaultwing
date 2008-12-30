@@ -331,8 +331,8 @@ namespace AW2
         /// Call <c>StartArena</c> after this method returns to start
         /// playing the arena.
         /// </summary>
-        public void StartPlaying()
-        { // TODO: Rename this method to PrepareFirstArena()
+        public void PrepareFirstArena()
+        {
             dataEngine.ForEachPlayer(delegate(Player player) { player.Kills = player.Suicides = 0; });
             dataEngine.ArenaPlaylistI = -1;
             PrepareNextArena();

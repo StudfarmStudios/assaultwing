@@ -289,8 +289,17 @@ namespace AW2.Net
         /// <param name="data">The data to send.</param>
         void Send(byte[] data)
         {
-            socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendCallback,
-                new SendAsyncState(socket, data));
+            try
+            {
+                socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendCallback,
+                    new SendAsyncState(socket, data));
+            }
+            catch (SocketException e)
+            {
+                errors.Do(delegate(Queue<Exception> queue) { queue.Enqueue(e); });
+                lock (errors) if (ErrorCallback != null) ErrorCallback();
+                Dispose();
+            }
         }
 
         #endregion Send methods

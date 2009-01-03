@@ -1,4 +1,5 @@
 //#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
+//#define VIEWPORT_BLUR // Defining this will make player viewports blurred
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -15,14 +16,6 @@ namespace AW2.Graphics
     /// <c>LoadContent</c> must be called before a viewport is used.
     public abstract class AWViewport
     {
-        protected RenderTarget2D rTarg;
-        protected RenderTarget2D rTarg2;
-        protected SpriteBatch sprite;
-        protected DepthStencilBuffer depthBuffer;
-        protected DepthStencilBuffer depthBuffer2;
-        protected DepthStencilBuffer defDepthBuffer;
-        protected Effect bloomatic;
-
         /// <summary>
         /// Sprite batch to use for drawing sprites.
         /// </summary>
@@ -107,17 +100,6 @@ namespace AW2.Graphics
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             foreach (OverlayComponent component in overlayComponents)
                 component.LoadContent();
-
-/*            rTarg = new RenderTarget2D(AssaultWing.Instance.GraphicsDevice, ((PlayerViewport)this).viewport.Width, ((PlayerViewport)this).viewport.Height,
-                0, SurfaceFormat.Color);
-            sprite = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
-            depthBuffer =
-                new DepthStencilBuffer(
-                    AssaultWing.Instance.GraphicsDevice,
-                    ((PlayerViewport)this).viewport.Width,
-                    ((PlayerViewport)this).viewport.Height,
-                    AssaultWing.Instance.GraphicsDevice.DepthStencilBuffer.Format);
-            */
         }
 
         /// <summary>
@@ -165,6 +147,15 @@ namespace AW2.Graphics
     /// </summary>
     class PlayerViewport : AWViewport
     {
+#if VIEWPORT_BLUR
+        protected RenderTarget2D rTarg;
+        protected RenderTarget2D rTarg2;
+        protected SpriteBatch sprite;
+        protected DepthStencilBuffer depthBuffer;
+        protected DepthStencilBuffer depthBuffer2;
+        protected DepthStencilBuffer defDepthBuffer;
+        protected Effect bloomatic;
+#endif
         #region PlayerViewport fields
 
         /// <summary>
@@ -347,6 +338,7 @@ namespace AW2.Graphics
         {
             base.LoadContent();
 
+#if VIEWPORT_BLUR
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             defDepthBuffer = gfx.DepthStencilBuffer;
             if (viewport.Width > 0)
@@ -370,6 +362,7 @@ namespace AW2.Graphics
                         gfx.DepthStencilBuffer.Format);
             }
             bloomatic = AssaultWing.Instance.Content.Load<Effect>(@"effects/bloom");
+#endif
         }
 
         /// <summary>
@@ -377,6 +370,7 @@ namespace AW2.Graphics
         /// </summary>
         public override void UnloadContent()
         {
+#if VIEWPORT_BLUR
             if (rTarg != null)
                 rTarg.Dispose();
             if (sprite != null)
@@ -384,6 +378,7 @@ namespace AW2.Graphics
             if (depthBuffer != null)
                 depthBuffer.Dispose();
             // 'bloomatic' is managed by ContentManager
+#endif
         }
 
         /// <summary>
@@ -396,13 +391,14 @@ namespace AW2.Graphics
             gfx.Viewport = viewport;
             Matrix view = ViewMatrix;
 
-            //---
-            // EFFECTS FOR WHOLE VIEWPORT
+#if VIEWPORT_BLUR
             gfx.SetRenderTarget(0, rTarg);
             gfx.DepthStencilBuffer = depthBuffer;
-            //gfx.Clear(Color.Black);
             gfx.Clear(ClearOptions.Target, Color.Black, 0, 0);
-            
+#else
+            gfx.Clear(Color.Black);
+#endif
+
 
 #if PARALLAX_IN_3D
             if (effect == null) // HACK: initialise parallax drawing in 3D, move this to LoadContent and UnloadContent
@@ -539,11 +535,8 @@ namespace AW2.Graphics
             });
 
 
-
+#if VIEWPORT_BLUR
             // EFFECTS REDRAW
-           // gfx.ResolveRenderTarget(0);
-
-
             bloomatic.Parameters["alpha"].SetValue((float)(0.9));
             bloomatic.Parameters["maxx"].SetValue((float)viewport.Width);
             bloomatic.Parameters["maxy"].SetValue((float)viewport.Height);
@@ -591,6 +584,8 @@ namespace AW2.Graphics
                 new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
             sprite.End();
             */
+#endif
+
             // Overlay components
             gfx.Viewport = viewport;
             base.Draw();

@@ -41,33 +41,34 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Writes the body of the message in serialised form.
         /// </summary>
-        protected override void SerializeBody()
+        /// <param name="writer">Writer of serialised data.</param>
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Join game reply message structure:
             // byte number of players N
             // repeat N
             //   int old player ID
             //   int new player ID
-            WriteByte((byte)PlayerIdChanges.Length);
+            writer.Write((byte)PlayerIdChanges.Length);
             foreach (IdChange change in PlayerIdChanges)
             {
-                WriteInt(change.oldId);
-                WriteInt(change.newId);
+                writer.Write((int)change.oldId);
+                writer.Write((int)change.newId);
             }
         }
 
         /// <summary>
         /// Reads the body of the message from serialised form.
         /// </summary>
-        protected override void Deserialize(byte[] body)
+        /// <param name="reader">Reader of serialised data.</param>
+        protected override void Deserialize(NetworkBinaryReader reader)
         {
-            int index = 0;
-            int count = body[index++];
+            int count = reader.ReadByte();
             PlayerIdChanges = new IdChange[count];
             for (int i = 0; i < count; ++i)
             {
-                PlayerIdChanges[i].oldId = ReadInt(body, index); index += 4;
-                PlayerIdChanges[i].newId = ReadInt(body, index); index += 4;
+                PlayerIdChanges[i].oldId = reader.ReadInt32();
+                PlayerIdChanges[i].newId = reader.ReadInt32();
             }
         }
     }

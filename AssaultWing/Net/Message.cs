@@ -112,11 +112,6 @@ namespace AW2.Net
         /// </summary>
         public int ConnectionId { get; private set; }
 
-        /// <summary>
-        /// Buffer where to write serialised data.
-        /// </summary>
-        MemoryStream writeBuffer;
-
         static byte protocolIdentifier = (byte)'A';
         static byte versionIdentifier = 0x00;
         static char[] nullCharArray = new char[] { '\0' };
@@ -199,7 +194,7 @@ namespace AW2.Net
         /// <returns>The serialised message.</returns>
         public byte[] Serialize()
         {
-            writeBuffer = new MemoryStream();
+            NetworkBinaryWriter writer = new NetworkBinaryWriter(new MemoryStream());
 
             // Message header structure:
             // byte protocol_identifier
@@ -208,33 +203,31 @@ namespace AW2.Net
             // byte protocol_version
             // word message_body_length
             // word reserved
-            WriteByte(protocolIdentifier);
+            writer.Write((byte)protocolIdentifier);
             System.Reflection.BindingFlags bindingFlags = 
                 System.Reflection.BindingFlags.GetField |
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.Static;
             MessageType messageType = (MessageType)GetType().GetField("messageType", bindingFlags).GetValue(null);
-            WriteByte(messageType.topicIdentifier);
+            writer.Write((byte)messageType.topicIdentifier);
             if (messageType.isReply) headerFlags |= MessageHeaderFlags.Reply;
-            WriteByte((byte)headerFlags); // flags
-            WriteByte(versionIdentifier);
-            WriteUShort(0); // body length
-            WriteUShort(0); // reserved
-            long headerDataLength = writeBuffer.Length;
+            writer.Write((byte)headerFlags); // flags
+            writer.Write((byte)versionIdentifier);
+            writer.Write((ushort)0); // body length
+            writer.Write((ushort)0); // reserved
+            long headerDataLength = writer.BaseStream.Length;
 
-            SerializeBody();
-            byte[] data = new byte[writeBuffer.Length];
-            Array.Copy(writeBuffer.GetBuffer(), 0, data, 0, writeBuffer.Length);
+            SerializeBody(writer);
+            byte[] data = ((MemoryStream)writer.BaseStream).ToArray();
 
             // Write body length to header.
-            ushort bodyDataLength = checked((ushort)(writeBuffer.Length - headerDataLength));
+            ushort bodyDataLength = checked((ushort)(writer.BaseStream.Length - headerDataLength));
             byte[] lengthBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(unchecked((short)bodyDataLength)));
             data[4] = lengthBytes[0];
             data[5] = lengthBytes[1];
 
-            writeBuffer.Dispose();
-            writeBuffer = null;
+            writer.Close();
             return data;
         }
 
@@ -259,7 +252,7 @@ namespace AW2.Net
                 throw new InvalidDataException("Body length mismatch (" + bodyLength + " expected, " + body.Length + " got)");
 
             Message message = (Message)messageTypes[messageType.GetHashCode()].GetConstructor(Type.EmptyTypes).Invoke(null);
-            message.Deserialize(body);
+            message.Deserialize(new NetworkBinaryReader(new MemoryStream(body)));
             message.ConnectionId = connectionId;
             return message;
         }
@@ -271,196 +264,18 @@ namespace AW2.Net
         /// <summary>
         /// Writes the body of the message in serialised form.
         /// </summary>
-        /// Note to subclasses: Use the <c>WriteXxx</c> methods.
-        protected abstract void SerializeBody();
+        /// Implementors should call the writer's write methods to write the
+        /// serialised form piece by piece.
+        /// <param name="writer">Writer of serialised data.</param>
+        protected abstract void SerializeBody(NetworkBinaryWriter writer);
 
         /// <summary>
         /// Reads the body of the message from serialised form.
         /// </summary>
-        /// Note to subclasses: Use the <c>ReadXxx</c> methods.
-        protected abstract void Deserialize(byte[] body);
+        /// <param name="reader">Reader of serialised data.</param>
+        protected abstract void Deserialize(NetworkBinaryReader reader);
 
         #endregion Abstract methods
-
-        #region Serialisation interface for subclasses
-
-        /// <summary>
-        /// Writes a byte to the stream of serialised data.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        protected void WriteByte(byte value)
-        {
-            writeBuffer.WriteByte(value);
-        }
-
-        /// <summary>
-        /// Writes a byte representing a bool to the stream of serialised data.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        protected void WriteBool(bool value)
-        {
-            WriteByte(value ? (byte)0x7f : (byte)0);
-        }
-
-        /// <summary>
-        /// Writes an unsigned short to the stream of serialised data.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        protected void WriteUShort(ushort value)
-        {
-            writeBuffer.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(unchecked((short)value))), 0, 2);
-        }
-
-        /// <summary>
-        /// Writes an int to the stream of serialised data.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        protected void WriteInt(int value)
-        {
-            writeBuffer.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value)), 0, 4);
-        }
-
-        /// <summary>
-        /// Writes a float to the stream of serialised data.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        protected void WriteFloat(float value)
-        {
-            WriteInt(BitConverter.ToInt32(BitConverter.GetBytes(value), 0));
-        }
-
-        /// <summary>
-        /// Writes to the serialised representation of the message a given number of 
-        /// bytes containing a string and a trailing sequence of one or more zero bytes.
-        /// The string is truncated to fit the byte count, and an optional exception is 
-        /// thrown if this happens. The string will be written in UTF-8 encoding. 
-        /// </summary>
-        /// <param name="value">The string to write.</param>
-        /// <param name="byteCount">The exact number of bytes to write, including the
-        /// trailing zero.</param>
-        /// <param name="throwOnTruncate">If <c>true</c> then an exception will be
-        /// thrown if the string is too long to fit the given number of bytes.</param>
-        protected void WriteString(string value, int byteCount, bool throwOnTruncate)
-        {
-            if (byteCount < 1)
-                throw new ArgumentException("Need at least one byte to write a string with a trailing zero");
-            Encoding encoding = Encoding.UTF8;
-            int bytesNeeded = encoding.GetByteCount(value);
-            if (bytesNeeded + 1 > byteCount)
-            {
-                if (throwOnTruncate)
-                    throw new ArgumentException("String too long (" + (bytesNeeded + 1) + ") to fit given byte count (" + byteCount + ")");
-
-                // Binary search for the maximum number of chars that fit.
-                char[] valueChars = value.ToCharArray();
-                int goodCharCount = 0, badCharCount = valueChars.Length;
-                bytesNeeded = 0;
-                while (badCharCount - goodCharCount > 1)
-                {
-                    int charCount = (goodCharCount + badCharCount) / 2;
-                    int bytesNeededNow = encoding.GetByteCount(valueChars, 0, charCount);
-                    if (bytesNeededNow + 1 > byteCount)
-                        badCharCount = charCount;
-                    else
-                    {
-                        goodCharCount = charCount;
-                        bytesNeeded = bytesNeededNow;
-                    }
-                }
-                writeBuffer.Write(encoding.GetBytes(valueChars, 0, goodCharCount), 0, bytesNeeded);
-            }
-            else 
-                writeBuffer.Write(encoding.GetBytes(value), 0, bytesNeeded);
-
-            // Pad with zero bytes.
-            for (int i = bytesNeeded; i < byteCount; ++i)
-                writeBuffer.WriteByte(0);
-        }
-
-        /// <summary>
-        /// Writes to the serialised representation of the message a string with a 
-        /// trailing zero byte. The string will be written in UTF-8 encoding. 
-        /// </summary>
-        /// <param name="value">The string to write.</param>
-        protected void WriteString(string value)
-        {
-            byte[] encodedValue = Encoding.UTF8.GetBytes(value);
-            writeBuffer.Write(encodedValue, 0, encodedValue.Length);
-            writeBuffer.WriteByte(0);
-        }
-
-        /// <summary>
-        /// Writes to the serialised representation of the message a series of bytes.
-        /// </summary>
-        /// <param name="value">The bytes to write.</param>
-        protected void WriteBytes(byte[] value)
-        {
-            writeBuffer.Write(value, 0, value.Length);
-        }
-
-        #endregion Serialisation interface for subclasses
-
-        #region Deserialisation interface for subclasses
-
-        /// <summary>
-        /// Reads a byte representing a bool from serialised data.
-        /// </summary>
-        /// <param name="buffer">The serialised data.</param>
-        /// <param name="index">The index at which to read.</param>
-        /// <returns>The read value.</returns>
-        protected bool ReadBool(byte[] buffer, int index)
-        {
-            return buffer[index] > 0 ? true : false;
-        }
-
-        /// <summary>
-        /// Reads an unsigned short from serialised data.
-        /// </summary>
-        /// <param name="buffer">The serialised data.</param>
-        /// <param name="index">The index at which to read.</param>
-        /// <returns>The read value.</returns>
-        protected ushort ReadUShort(byte[] buffer, int index)
-        {
-            return unchecked((ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(buffer, index)));
-        }
-
-        /// <summary>
-        /// Reads an int from serialised data.
-        /// </summary>
-        /// <param name="buffer">The serialised data.</param>
-        /// <param name="index">The index at which to read.</param>
-        /// <returns>The read value.</returns>
-        protected int ReadInt(byte[] buffer, int index)
-        {
-            return IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buffer, index));
-        }
-
-        /// <summary>
-        /// Reads a float from serialised data.
-        /// </summary>
-        /// <param name="buffer">The serialised data.</param>
-        /// <param name="index">The index at which to read.</param>
-        /// <returns>The read value.</returns>
-        protected float ReadFloat(byte[] buffer, int index)
-        {
-            return BitConverter.ToSingle(BitConverter.GetBytes(ReadInt(buffer, index)), 0);
-        }
-
-        /// <summary>
-        /// Reads from the serialised representation of the message a given number of 
-        /// bytes containing a zero-terminated string. The string will be read in 
-        /// UTF-8 encoding. 
-        /// </summary>
-        /// <param name="buffer">The serialised data.</param>
-        /// <param name="index">The index at which to start reading.</param>
-        /// <param name="byteCount">The number of bytes to read.</param>
-        /// <returns>The string.</returns>
-        protected string ReadString(byte[] buffer, int index, int byteCount)
-        {
-            return Encoding.UTF8.GetString(buffer, index, byteCount).TrimEnd(nullCharArray);
-        }
-
-        #endregion Deserialisation interface for subclasses
 
         #region Private deserialisation stuff
 

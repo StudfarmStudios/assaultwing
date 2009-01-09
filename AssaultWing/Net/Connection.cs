@@ -194,11 +194,19 @@ namespace AW2.Net
             {
                 if (serverSocket != null)
                     throw new InvalidOperationException("Already listening for incoming connections");
-                serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, port);
-                serverSocket.Bind(serverEndPoint);
-                serverSocket.Listen(64);
-                serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(serverSocket, id));
+                try
+                {
+                    serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, port);
+                    serverSocket.Bind(serverEndPoint);
+                    serverSocket.Listen(64);
+                    serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(serverSocket, id));
+                }
+                catch (SocketException e)
+                {
+                    connectionResults.Do(queue => queue.Enqueue(new Result<Connection>(e, id)));
+                    lock (connectionResults) if (ConnectionResultCallback != null) ConnectionResultCallback();
+                }
             }
         }
 
@@ -294,8 +302,14 @@ namespace AW2.Net
                 socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendCallback,
                     new SendAsyncState(socket, data));
             }
-            catch (SocketException e)
+            catch (Exception e)
             {
+                // We catch only socket related exceptions, i.e.
+                // SocketExceptions and ObjectDisposedExceptions that speak of Sockets.
+                var eDisposed = e as ObjectDisposedException;
+                var eSocket = e as SocketException;
+                if (eSocket == null && (eDisposed == null || eDisposed.ObjectName != typeof(Socket).Name))
+                    throw e;
                 errors.Do(delegate(Queue<Exception> queue) { queue.Enqueue(e); });
                 lock (errors) if (ErrorCallback != null) ErrorCallback();
                 Dispose();

@@ -68,7 +68,8 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Writes the body of the message in serialised form.
         /// </summary>
-        protected override void SerializeBody()
+        /// <param name="writer">Writer of serialised data.</param>
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Join game request message structure:
             // byte number of players N
@@ -78,33 +79,33 @@ namespace AW2.Net.Messages
             //   32-byte-string player ship type
             //   32-byte-string player weapon1 type
             //   32-byte-string player weapon2 type
-            WriteByte((byte)PlayerInfos.Count);
+            writer.Write((byte)PlayerInfos.Count);
             foreach (PlayerInfo info in PlayerInfos)
             {
-                WriteInt(info.id);
-                WriteString(info.name, 32, false);
-                WriteString(info.shipTypeName, 32, false);
-                WriteString(info.weapon1TypeName, 32, false);
-                WriteString(info.weapon2TypeName, 32, false);
+                writer.Write((int)info.id);
+                writer.Write((string)info.name, 32, false);
+                writer.Write((string)info.shipTypeName, 32, false);
+                writer.Write((string)info.weapon1TypeName, 32, false);
+                writer.Write((string)info.weapon2TypeName, 32, false);
             }
         }
 
         /// <summary>
         /// Reads the body of the message from serialised form.
         /// </summary>
-        protected override void Deserialize(byte[] body)
+        /// <param name="reader">Reader of serialised data.</param>
+        protected override void Deserialize(NetworkBinaryReader reader)
         {
-            int index = 0;
-            int count = body[index++];
+            int count = reader.ReadByte();
             PlayerInfos = new List<PlayerInfo>(count);
             for (int i = 0; i < count; ++i)
             {
                 PlayerInfo info;
-                info.id = ReadInt(body, index); index += 4;
-                info.name = ReadString(body, index, 32); index += 32;
-                info.shipTypeName = ReadString(body, index, 32); index += 32;
-                info.weapon1TypeName = ReadString(body, index, 32); index += 32;
-                info.weapon2TypeName = ReadString(body, index, 32); index += 32;
+                info.id = reader.ReadInt32();
+                info.name = reader.ReadString(32);
+                info.shipTypeName = reader.ReadString(32);
+                info.weapon1TypeName = reader.ReadString(32);
+                info.weapon2TypeName = reader.ReadString(32);
                 PlayerInfos.Add(info);
             }
         }

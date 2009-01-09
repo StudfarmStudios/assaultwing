@@ -74,32 +74,33 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Writes the body of the message in serialised form.
         /// </summary>
-        protected override void SerializeBody()
+        /// <param name="writer">Writer of serialised data.</param>
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Player controls (request) message structure:
             // int player ID
             // repeat over PlayerControlType
             //   4 bytes = float: force of the control
             //   1 byte  = bool:  pulse of the control
-            WriteInt(PlayerId);
+            writer.Write((int)PlayerId);
             foreach (ControlState state in controlStates)
             {
-                WriteFloat(state.force);
-                WriteBool(state.pulse);
+                writer.Write((float)state.force);
+                writer.Write((bool)state.pulse);
             }
         }
 
         /// <summary>
         /// Reads the body of the message from serialised form.
         /// </summary>
-        protected override void Deserialize(byte[] body)
+        /// <param name="reader">Reader of serialised data.</param>
+        protected override void Deserialize(NetworkBinaryReader reader)
         {
-            int index = 0;
-            PlayerId = ReadInt(body, index); index += 4;
+            PlayerId = reader.ReadInt32();
             for (int i = 0; i < controlStates.Length; ++i)
             {
-                float force = ReadFloat(body, index); index += 4;
-                bool pulse = ReadBool(body,index); index++;
+                float force = reader.ReadSingle();
+                bool pulse = reader.ReadBoolean();
                 controlStates[i] = new ControlState(force, pulse);
             }
         }

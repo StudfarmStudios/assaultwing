@@ -39,27 +39,34 @@ namespace AW2.Net.Messages
         /// </summary>
         protected static MessageType messageType = new MessageType(0x01, true);
 
-        protected override void SerializeBody()
+        /// <summary>
+        /// Writes the body of the message in serialised form.
+        /// </summary>
+        /// <param name="writer">Writer of serialised data.</param>
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Connection reply message structure:
             // byte flags
             // byte authentication_method
             // byte[challengeFieldLength] challenge
-            WriteByte((byte)flags);
-            WriteByte((byte)authenticationMethod);
+            writer.Write((byte)flags);
+            writer.Write((byte)authenticationMethod);
             if (challenge == null)
                 throw new NullReferenceException("Null challenge field on serialization");
             if (challenge.Length != challengeFieldLength)
                 throw new MessageException("Invalid challenge field length on serialization (" + challenge.Length + ", not " + challengeFieldLength + ")");
-            WriteBytes(challenge);
+            writer.Write(challenge);
         }
 
-        protected override void Deserialize(byte[] body)
+        /// <summary>
+        /// Reads the body of the message from serialised form.
+        /// </summary>
+        /// <param name="reader">Reader of serialised data.</param>
+        protected override void Deserialize(NetworkBinaryReader reader)
         {
-            flags = (ConnectionReplyFlags)body[0];
-            authenticationMethod = (ConnectionRequestAuthenticationMethod)body[1];
-            challenge = new byte[challengeFieldLength];
-            Array.Copy(body, challenge, challengeFieldLength);
+            flags = (ConnectionReplyFlags)reader.ReadByte();
+            authenticationMethod = (ConnectionRequestAuthenticationMethod)reader.ReadByte();
+            challenge = reader.ReadBytes(challengeFieldLength);
         }
     }
 }

@@ -357,14 +357,7 @@ namespace AW2.Game
         /// <summary>
         /// Get or set the gob position in the game world.
         /// </summary>
-        public virtual Vector2 Pos
-        {
-            get { return pos; }
-            set
-            {
-                pos = value;
-            }
-        }
+        public virtual Vector2 Pos { get { return pos; } set { pos = value; } }
 
         /// <summary>
         /// Get or set the gob's movement vector.
@@ -1050,6 +1043,59 @@ namespace AW2.Game
                     field.SetValue(this, cloneableValue.Clone());
                 else
                     field.SetValue(this, value);
+            }
+        }
+
+        /// <summary>
+        /// Serialises the gob to a binary writer.
+        /// </summary>
+        /// Subclasses should call the base implementation
+        /// before performing their own serialisation.
+        /// <param name="writer">The writer where to write the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to serialise.</param>
+        public virtual void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+// TODO!!!                writer.Write((int)Id);
+                if (owner != null)
+                    writer.Write((int)owner.Id);
+                else
+                    writer.Write((int)-1);
+            }
+            if ((mode | AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((float)pos.X);
+                writer.Write((float)pos.Y);
+                writer.Write((float)move.X);
+                writer.Write((float)move.Y);
+                writer.Write((float)rotation);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary writer.
+        /// </summary>
+        /// Subclasses should call the base implementation
+        /// before performing their own deserialisation.
+        /// <param name="reader">The reader where to read the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to deserialise.</param>
+        public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                // TODO!!!                Id = reader.ReadInt32();
+                int ownerId = reader.ReadInt32();
+                owner = data.GetPlayer(ownerId);
+            }
+            if ((mode | AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                Vector2 newPos = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                pos = newPos;
+                Vector2 newMove = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                move = newMove;
+                rotation = reader.ReadSingle();
             }
         }
 

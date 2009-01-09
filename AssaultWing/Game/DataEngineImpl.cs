@@ -549,15 +549,12 @@ namespace AW2.Game
                 && MustSendCreationToClient(gob))
             {
                 NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-                net.SendToClients(new GobCreationMessage
-                {
-                    Parameters = new GobCreationParameters
-                    {
-                        typeName = gob.TypeName,
-                        pos = gob.Pos,
-                        rotation = gob.Rotation
-                    }
-                });
+                var message = new GobCreationMessage();
+                message.GobTypeName = gob.TypeName;
+                NetworkBinaryWriter writer = message.BeginWrite();
+                gob.Serialize(writer, SerializationModeFlags.All);
+                message.EndWrite();
+                net.SendToClients(message);
             }
         }
 
@@ -905,9 +902,10 @@ namespace AW2.Game
                 GobCreationMessage message;
                 while ((message = net.ReceiveFromServer<GobCreationMessage>()) != null)
                 {
-                    Gob gob = Gob.CreateGob(message.Parameters.typeName);
-                    gob.Pos = message.Parameters.pos;
-                    gob.Rotation = message.Parameters.rotation;
+                    Gob gob = Gob.CreateGob(message.GobTypeName);
+                    NetworkBinaryReader reader = message.BeginRead();
+                    gob.Deserialize(reader, SerializationModeFlags.All);
+                    message.EndRead();
                     AddGob(gob);
                 }
             }

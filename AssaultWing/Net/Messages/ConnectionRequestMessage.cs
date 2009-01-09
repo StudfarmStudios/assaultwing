@@ -50,25 +50,33 @@ namespace AW2.Net.Messages
         /// </summary>
         protected static MessageType messageType = new MessageType(0x01, false);
 
-        protected override void SerializeBody()
+        /// <summary>
+        /// Writes the body of the message in serialised form.
+        /// </summary>
+        /// <param name="writer">Writer of serialised data.</param>
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Connection request message structure:
             // byte flags
             // byte authentication_method
             // word server_port
             // char[usernameFieldLength] username
-            WriteByte((byte)flags);
-            WriteByte((byte)authenticationMethod);
-            WriteUShort(serverPort);
-            WriteString(username, usernameFieldLength, true);
+            writer.Write((byte)flags);
+            writer.Write((byte)authenticationMethod);
+            writer.Write((ushort)serverPort);
+            writer.Write((string)username, usernameFieldLength, true);
         }
 
-        protected override void Deserialize(byte[] body)
+        /// <summary>
+        /// Reads the body of the message from serialised form.
+        /// </summary>
+        /// <param name="reader">Reader of serialised data.</param>
+        protected override void Deserialize(NetworkBinaryReader reader)
         {
-            flags = (ConnectionRequestFlags)body[0];
-            authenticationMethod = (ConnectionRequestAuthenticationMethod)body[1];
-            serverPort = ReadUShort(body, 2);
-            username = ReadString(body, 4, usernameFieldLength);
+            flags = (ConnectionRequestFlags)reader.ReadByte();
+            authenticationMethod = (ConnectionRequestAuthenticationMethod)reader.ReadByte();
+            serverPort = reader.ReadUInt16();
+            username = reader.ReadString(usernameFieldLength);
         }
     }
 }

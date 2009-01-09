@@ -211,7 +211,7 @@ namespace AW2.Menu
                 if (controlClient.Pulse) // HACK: Toggle networking if requested
                     switch (AssaultWing.Instance.NetworkMode)
                     {
-                        case NetworkMode.Standalone: AssaultWing.Instance.StartClient("91.152.175.249"); break;
+                        case NetworkMode.Standalone: AssaultWing.Instance.StartClient("91.152.161.218"); break;
                         case NetworkMode.Client: AssaultWing.Instance.StopClient(); break;
                         default: throw new InvalidOperationException("Cannot toggle being client while in mode " + AssaultWing.Instance.NetworkMode);
                     }

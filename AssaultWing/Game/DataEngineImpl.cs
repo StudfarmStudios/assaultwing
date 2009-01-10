@@ -907,6 +907,11 @@ namespace AW2.Game
                     gob.Deserialize(reader, SerializationModeFlags.All);
                     message.EndRead();
                     AddGob(gob);
+
+                    // Ships we set automatically as the ship the ship's owner is controlling.
+                    Ship gobShip = gob as Ship;
+                    if (gobShip != null)
+                        gobShip.Owner.Ship = gobShip;
                 }
             }
 

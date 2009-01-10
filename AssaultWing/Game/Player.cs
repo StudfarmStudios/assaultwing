@@ -857,5 +857,65 @@ namespace AW2.Game
         }
 
         #endregion Methods related to bonuses
+
+        #region Methods related to serialisation
+
+        /// <summary>
+        /// Serialises the gob to a binary writer.
+        /// </summary>
+        /// Subclasses should call the base implementation
+        /// before performing their own serialisation.
+        /// <param name="writer">The writer where to write the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to serialise.</param>
+        public void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((int)Id);
+                writer.Write(name, 32, true);
+                writer.Write(shipTypeName, 32, true);
+                writer.Write(weapon1Name, 32, true);
+                writer.Write(weapon2Name, 32, true);
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((int)weapon1Upgrades);
+                writer.Write((int)weapon2Upgrades);
+                writer.Write((int)bonuses);
+                writer.Write((int)lives);
+                writer.Write((int)kills);
+                writer.Write((int)suicides);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary writer.
+        /// </summary>
+        /// Subclasses should call the base implementation
+        /// before performing their own deserialisation.
+        /// <param name="reader">The reader where to read the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to deserialise.</param>
+        public void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                Id = reader.ReadInt32();
+                name = reader.ReadString(32);
+                shipTypeName = reader.ReadString(32);
+                weapon1Name = reader.ReadString(32);
+                weapon2Name = reader.ReadString(32);
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                weapon1Upgrades = reader.ReadInt32();
+                weapon2Upgrades = reader.ReadInt32();
+                bonuses = (PlayerBonus)reader.ReadInt32();
+                lives = reader.ReadInt32();
+                kills = reader.ReadInt32();
+                suicides = reader.ReadInt32();
+            }
+        }
+
+        #endregion Methods related to serialisation
     }
 }

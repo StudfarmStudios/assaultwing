@@ -153,9 +153,31 @@ namespace AW2.Menu
             // Check our controls and react to them.
             if (Active)
             {
+                // HACK: React to network messages
+                bool serverToldToStart = false; // HACK: Remove this flag and implement netplay menu
+                AW2.Net.NetworkEngine net = (AW2.Net.NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(AW2.Net.NetworkEngine));
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && net.IsConnectedToGameServer)
+                {
+                    var message = net.ReceiveFromServer<AW2.Net.Messages.StartGameMessage>();
+                    if (message != null)
+                    {
+                        serverToldToStart = true;
+                        var reader = message.BeginRead();
+                        for (int i = 0; i < message.PlayerCount; ++i)
+                        {
+                            Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
+                            player.Deserialize(reader, AW2.Net.SerializationModeFlags.All);
+
+                            // Only add the player if it is remote.
+                            if (data.GetPlayer(player.Id) == null)
+                                data.AddPlayer(player);
+                        }
+                    }
+                }
+
                 if (controlBack.Pulse)
                     menuEngine.ActivateComponent(MenuComponentType.Equip);
-                else if (controlDone.Pulse)
+                else if (controlDone.Pulse || serverToldToStart)
                 {
                     List<string> arenaPlaylist = new List<string>();
                     foreach (ArenaInfo info in arenaInfos)

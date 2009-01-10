@@ -3,7 +3,7 @@
 namespace AW2.Net
 {
     /// <summary>
-    /// Specifies which parts of a gob to serialise over a network.
+    /// Specifies which parts of an entity to serialise over a network.
     /// </summary>
     [Flags]
     public enum SerializationModeFlags

@@ -43,7 +43,7 @@ namespace AW2.Net.Messages
         /// Writes the body of the message in serialised form.
         /// </summary>
         /// <param name="writer">Writer of serialised data.</param>
-        protected override void SerializeBody(NetworkBinaryWriter writer)
+        protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Connection reply message structure:
             // byte flags

@@ -79,6 +79,16 @@ namespace AW2.Net
         #region Public interface
 
         /// <summary>
+        /// Are we connected to a game server.
+        /// </summary>
+        public bool IsConnectedToGameServer { get { return gameServerConnection != null; } }
+
+        /// <summary>
+        /// Are we connected to the management server.
+        /// </summary>
+        public bool IsConnectedToManagementServer { get { return managementServerConnection != null; } }
+
+        /// <summary>
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients.
         /// </summary>

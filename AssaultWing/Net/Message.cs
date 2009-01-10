@@ -218,7 +218,7 @@ namespace AW2.Net
             writer.Write((ushort)0); // reserved
             long headerDataLength = writer.BaseStream.Length;
 
-            SerializeBody(writer);
+            Serialize(writer);
             byte[] data = ((MemoryStream)writer.BaseStream).ToArray();
 
             // Write body length to header.
@@ -267,7 +267,7 @@ namespace AW2.Net
         /// Implementors should call the writer's write methods to write the
         /// serialised form piece by piece.
         /// <param name="writer">Writer of serialised data.</param>
-        protected abstract void SerializeBody(NetworkBinaryWriter writer);
+        protected abstract void Serialize(NetworkBinaryWriter writer);
 
         /// <summary>
         /// Reads the body of the message from serialised form.

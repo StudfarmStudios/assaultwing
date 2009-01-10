@@ -15,6 +15,7 @@ using AW2.Events;
 using AW2.Helpers;
 using AW2.Game.Particles;
 using AW2.Net;
+using AW2.Net.Messages;
 
 #endregion
 
@@ -334,6 +335,23 @@ namespace AW2
         public void PrepareFirstArena()
         {
             dataEngine.ForEachPlayer(delegate(Player player) { player.Kills = player.Suicides = 0; });
+
+            // Notify game clients if we are the game server.
+            if (NetworkMode == NetworkMode.Server)
+            {
+                var message = new StartGameMessage();
+                int playerCount = 0;
+                var writer = message.BeginWrite();
+                dataEngine.ForEachPlayer(player =>
+                    {
+                        ++playerCount;
+                        player.Serialize(writer, SerializationModeFlags.All);
+                    });
+                message.EndWrite();
+                message.PlayerCount = playerCount;
+                networkEngine.SendToClients(message);
+            }
+
             dataEngine.ArenaPlaylistI = -1;
             PrepareNextArena();
         }

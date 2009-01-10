@@ -424,9 +424,9 @@ namespace AW2.Game.Gobs
             Weapon weapon = Weapon.CreateWeapon(weaponName, this, ownerHandle, boneIndices);
 
             // Apply appropriate player bonuses.
-            if (ownerHandle == 1 && (Owner.Bonuses & PlayerBonus.Weapon1LoadTime) != 0)
+            if (ownerHandle == 1 && Owner != null && (Owner.Bonuses & PlayerBonus.Weapon1LoadTime) != 0)
                 weapon.LoadTime /= 2;
-            if (ownerHandle == 2 && (Owner.Bonuses & PlayerBonus.Weapon2LoadTime) != 0)
+            if (ownerHandle == 2 && Owner != null && (Owner.Bonuses & PlayerBonus.Weapon2LoadTime) != 0)
                 weapon.LoadTime /= 2;
 
             data.AddWeapon(weapon);
@@ -578,6 +578,11 @@ namespace AW2.Game.Gobs
             }
         }
 
+        /// <summary>
+        /// Deserialises the gob from a binary writer.
+        /// </summary>
+        /// <param name="reader">The reader where to read the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to deserialise.</param>
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
         {
             base.Deserialize(reader, mode);

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using System.IO;
 
@@ -9,17 +7,10 @@ namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client notifying
-    /// of the creation of a gob.
+    /// that the game session starts. The message contains information
+    /// about the player setup of the game session.
     /// </summary>
-    /// To initialise a message for sending, call <c>BeginWrite</c> and
-    /// serialise the gob's state with appropriate calls to the various
-    /// write methods of the returned writer. Then call <c>EndWrite</c>
-    /// and send the message.
-    /// 
-    /// To get the serialised data from a message, call <c>BeginRead</c>
-    /// and deserialise the gob's state with appropriate calls to the various
-    /// read methods of the returned reader. Then call <c>EndRead</c>.
-    public class GobCreationMessage : Message
+    public class StartGameMessage : Message
     {
         byte[] writeBytes;
         NetworkBinaryWriter writer;
@@ -29,16 +20,16 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Identifier of the message type.
         /// </summary>
-        protected static MessageType messageType = new MessageType(0x22, false);
+        protected static MessageType messageType = new MessageType(0x23, false);
 
         /// <summary>
-        /// Type name of the gob to create.
+        /// Number of players in the game session.
         /// </summary>
-        public string GobTypeName { get; set; }
+        public int PlayerCount { get; set; }
 
         /// <summary>
-        /// Begins a write of serialised data of the gob 
-        /// whose creation we are signalling. Call <c>EndWrite</c> when you're finished.
+        /// Begins a write of serialised data of the players in the game session. 
+        /// Call <c>EndWrite</c> when you're finished.
         /// </summary>
         /// <returns>Where the serialised data is to be written.</returns>
         /// <seealso cref="EndWrite"/>
@@ -51,8 +42,7 @@ namespace AW2.Net.Messages
         }
 
         /// <summary>
-        /// Ends a previously begun write of serialised data of the gob
-        /// whose creation we are signalling.
+        /// Ends a previously begun write of serialised data of the players in the game session.
         /// </summary>
         /// <seealso cref="BeginWrite"/>
         public void EndWrite()
@@ -66,8 +56,8 @@ namespace AW2.Net.Messages
         }
 
         /// <summary>
-        /// Begins a read of serialised data of the gob 
-        /// whose creation we are signalling. Call <c>EndRead</c> when you're finished.
+        /// Begins a read of serialised data of the players in the game session.
+        /// Call <c>EndRead</c> when you're finished.
         /// </summary>
         /// <returns>Where the serialised data is to be read.</returns>
         /// <seealso cref="EndRead"/>
@@ -82,8 +72,7 @@ namespace AW2.Net.Messages
         }
 
         /// <summary>
-        /// Ends a previously begun read of serialised data of the gob
-        /// whose creation we are signalling.
+        /// Ends a previously begun read of serialised data of the players in the game session.
         /// </summary>
         /// <seealso cref="BeginRead"/>
         public void EndRead()
@@ -100,13 +89,13 @@ namespace AW2.Net.Messages
         /// <param name="writer">Writer of serialised data.</param>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            // Player controls (request) message structure:
-            // 32 bytes string: gob type name
-            // word: data length N
-            // N bytes: serialised data of the gob (content known only by the Gob subclass in question)
+            // Start game (request) message structure:
+            // int: total number of players in the game, N
+            // word: length of serialised data of all players, L
+            // L bytes: serialised data of N players (content known only by Player)
             if (writeBytes == null || this.writer != null)
                 throw new InvalidOperationException("Previous write hasn't finished or didn't even begin");
-            writer.Write((string)GobTypeName, 32, true);
+            writer.Write((int)PlayerCount);
             writer.Write(checked((ushort)writeBytes.Length));
             writer.Write(writeBytes, 0, writeBytes.Length);
         }
@@ -117,7 +106,7 @@ namespace AW2.Net.Messages
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            GobTypeName = reader.ReadString(32);
+            PlayerCount = reader.ReadInt32();
             int byteCount = reader.ReadUInt16();
             readBuffer = new MemoryStream(reader.ReadBytes(byteCount));
         }

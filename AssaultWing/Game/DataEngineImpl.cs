@@ -592,6 +592,19 @@ namespace AW2.Game
                 layer.ForEachGob(delegate(Gob gob) { action(gob); });
         }
 
+        /// <summary>
+        /// Returns a gob by its identifier, or <c>null</c> if no such gob exists.
+        /// </summary>
+        /// <param name="gobId">The identifier of the gob.</param>
+        /// <returns>The gob, or <c>null</c> if the gob couldn't be found.</returns>
+        /// <seealso cref="AW2.Game.Gob.Id"/>
+        public Gob GetGob(int gobId)
+        {
+            Gob returnGob = null;
+            arenaLayers[gameplayLayer].ForEachGob(gob => returnGob = gob.Id == gobId ? gob : returnGob);
+            return returnGob;
+        }
+
         #endregion gobs
 
         #region weapons
@@ -930,6 +943,19 @@ namespace AW2.Game
             }
             addedGobs.Clear();
 
+            // If we are a game client, update gobs as told by the game server.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            {
+                GobUpdateMessage message;
+                while ((message = net.ReceiveFromServer<GobUpdateMessage>()) != null)
+                {
+                    Gob gob = GetGob(message.GobId);
+                    var reader = message.BeginRead();
+                    gob.Deserialize(reader, SerializationModeFlags.VaryingData);
+                    message.EndRead();
+                }
+            }
+
             // Apply custom operations.
             if (CustomOperations != null)
                 CustomOperations(null);
@@ -947,6 +973,20 @@ namespace AW2.Game
                 arenaLayers[gob.Layer].RemoveGob(gob);
             }
             removedGobs.Clear();
+
+            // Send state updates about gobs to game clients if we are the game server.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                arenaLayers[gameplayLayer].ForEachGob(gob =>
+                {
+                    var message = new GobUpdateMessage();
+                    message.GobId = gob.Id;
+                    var writer = message.BeginWrite();
+                    gob.Serialize(writer, SerializationModeFlags.VaryingData);
+                    message.EndWrite();
+                    net.SendToClients(message);
+                });
+            }
 
 #if DEBUG_PROFILE
             AssaultWing.Instance.gobCount = 0;

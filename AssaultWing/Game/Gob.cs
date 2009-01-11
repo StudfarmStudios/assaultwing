@@ -52,7 +52,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
-    [System.Diagnostics.DebuggerDisplay("typeName:{typeName} pos:{pos} move:{move}")]
+    [System.Diagnostics.DebuggerDisplay("Id:{Id} typeName:{typeName} pos:{pos} move:{move}")]
     public class Gob : IConsistencyCheckable
     {
         /// <summary>
@@ -83,6 +83,13 @@ namespace AW2.Game
         /// </summary>
         /// <see cref="Gob.Cold"/>
         public static readonly float warmUpTime = 0.2f;
+
+        /// <summary>
+        /// Least int that is known not to have been used as a gob identifier
+        /// on this game instance.
+        /// </summary>
+        /// <see cref="Gob.Id"/>
+        static int leastUnusedId = 0;
 
         /// <summary>
         /// Gob type name.
@@ -307,6 +314,11 @@ namespace AW2.Game
         #endregion Fields for bleach
 
         #region Gob properties
+
+        /// <summary>
+        /// The gob's unique identifier.
+        /// </summary>
+        public int Id { get; set; }
 
         /// <summary>
         /// Get the gob type name.
@@ -567,6 +579,7 @@ namespace AW2.Game
         public Gob()
         {
             // We initialise the values so that they work as good examples in the XML template.
+            Id = -1;
             this.typeName = "unknown gob type";
             depthLayer2D = 0.5f;
             drawMode2D = new DrawMode2D(DrawModeType2D.None);
@@ -630,6 +643,7 @@ namespace AW2.Game
                 else
                     field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
 
+            Id = leastUnusedId++;
             this.owner = null;
             this.Pos = Vector2.Zero; // also translates collPrimitives
             this.move = Vector2.Zero;
@@ -667,6 +681,7 @@ namespace AW2.Game
         public Gob(string typeName, Player owner, Vector2 pos, Vector2 move, float rotation)
             : this(typeName)
         {
+            Id = leastUnusedId++;
             this.owner = owner;
             this.Pos = pos; // also translates collPrimitives
             this.move = move;
@@ -1057,7 +1072,7 @@ namespace AW2.Game
         {
             if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-// TODO!!!                writer.Write((int)Id);
+                writer.Write((int)Id);
                 if (owner != null)
                     writer.Write((int)owner.Id);
                 else
@@ -1085,7 +1100,7 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                // TODO!!!                Id = reader.ReadInt32();
+                Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
                 owner = data.GetPlayer(ownerId);
             }

@@ -49,7 +49,7 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Identifier of the message type.
         /// </summary>
-        protected static MessageType messageType = new MessageType(0x21, false);
+        protected static MessageType messageType = new MessageType(0x22, false);
 
         /// <summary>
         /// Returns the state of a control of the player.

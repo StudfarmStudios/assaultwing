@@ -242,6 +242,14 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each gob.</param>
         void ForEachGob(Action<Gob> action);
 
+        /// <summary>
+        /// Returns a gob by its identifier, or <c>null</c> if no such gob exists.
+        /// </summary>
+        /// <param name="gobId">The identifier of the gob.</param>
+        /// <returns>The gob, or <c>null</c> if the gob couldn't be found.</returns>
+        /// <seealso cref="AW2.Game.Gob.Id"/>
+        Gob GetGob(int gobId);
+
         #endregion
 
         #region weapons

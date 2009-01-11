@@ -265,6 +265,7 @@
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
     <Compile Include="Net\Messages\GobCreationMessage.cs" />
+    <Compile Include="Net\Messages\GobUpdateMessage.cs" />
     <Compile Include="Net\Messages\JoinGameReply.cs" />
     <Compile Include="Net\Messages\JoinGameRequest.cs" />
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
@@ -274,6 +275,7 @@
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\SerializationModeFlags.cs" />
+    <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Net\ThreadSafeWrapper.cs" />
     <Compile Include="Net\TypedQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

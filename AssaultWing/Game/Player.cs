@@ -101,6 +101,7 @@ namespace AW2.Game
     /// <summary>
     /// Player of the game. 
     /// </summary>
+    [System.Diagnostics.DebuggerDisplay("Id:{Id} name:{name} shipType:{shipTypeName}")]
     public class Player
     {
         #region Player constants

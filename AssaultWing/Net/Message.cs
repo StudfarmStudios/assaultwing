@@ -294,7 +294,7 @@ namespace AW2.Net
         static Message()
         {
             foreach (Type type in Array.FindAll<Type>(System.Reflection.Assembly.GetExecutingAssembly().GetTypes(),
-                delegate(Type t) { return typeof(Message).IsAssignableFrom(t) && t != typeof(Message); }))
+                delegate(Type t) { return typeof(Message).IsAssignableFrom(t) && !t.IsAbstract; }))
             {
                 try
                 {

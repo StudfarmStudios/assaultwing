@@ -8,8 +8,8 @@ using System.IO;
 namespace AW2.Net.Messages
 {
     /// <summary>
-    /// A message from a game server to a game client notifying
-    /// of the creation of a gob.
+    /// A message from a game server to a game client updating
+    /// the state of a gob.
     /// </summary>
     /// To initialise a message for sending, call <c>BeginWrite</c> and
     /// serialise the gob's state with appropriate calls to the various
@@ -19,17 +19,17 @@ namespace AW2.Net.Messages
     /// To get the serialised data from a message, call <c>BeginRead</c>
     /// and deserialise the gob's state with appropriate calls to the various
     /// read methods of the returned reader. Then call <c>EndRead</c>.
-    public class GobCreationMessage : StreamMessage
+    public class GobUpdateMessage : StreamMessage
     {
         /// <summary>
         /// Identifier of the message type.
         /// </summary>
-        protected static MessageType messageType = new MessageType(0x23, false);
+        protected static MessageType messageType = new MessageType(0x24, false);
 
         /// <summary>
-        /// Type name of the gob to create.
+        /// Identifier of the gob to update.
         /// </summary>
-        public string GobTypeName { get; set; }
+        public int GobId { get; set; }
 
         /// <summary>
         /// Writes the body of the message in serialised form.
@@ -38,11 +38,11 @@ namespace AW2.Net.Messages
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Player controls (request) message structure:
-            // 32 bytes string: gob type name
+            // int: gob identifier
             // word: data length N
             // N bytes: serialised data of the gob (content known only by the Gob subclass in question)
             byte[] writeBytes = StreamedData;
-            writer.Write((string)GobTypeName, 32, true);
+            writer.Write((int)GobId);
             writer.Write(checked((ushort)writeBytes.Length));
             writer.Write(writeBytes, 0, writeBytes.Length);
         }
@@ -53,7 +53,7 @@ namespace AW2.Net.Messages
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            GobTypeName = reader.ReadString(32);
+            GobId = reader.ReadInt32();
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);
         }

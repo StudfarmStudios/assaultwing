@@ -12,7 +12,7 @@
   <typeName type="&string;">large fragment explo</typeName>
   <depthLayer2D type="&float;">0.3</depthLayer2D>
   <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Transparent</type>
+    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Additive</type>
   </drawMode2D>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Game</coordinateSystem>

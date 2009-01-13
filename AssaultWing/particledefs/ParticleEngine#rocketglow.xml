@@ -22,7 +22,7 @@
     <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.05</variance>
   </particleInitialSize>
   <particleFinalSize type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.56</expected>
+    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.46</expected>
     <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
   </particleFinalSize>
   <particleInitialRotation type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -37,13 +37,13 @@
     <R type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</R>
     <G type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</G>
     <B type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</B>
-    <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">60</A>
+    <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">40</A>
   </particleInitialColor>
   <particleFinalColor type="Microsoft.Xna.Framework.Graphics.Color, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
     <R type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</R>
     <G type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</G>
     <B type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</B>
-    <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">42</A>
+    <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">32</A>
   </particleFinalColor>
   <particleSpeed type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</expected>

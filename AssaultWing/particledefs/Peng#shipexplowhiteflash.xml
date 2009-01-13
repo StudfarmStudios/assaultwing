@@ -12,7 +12,7 @@
   <typeName type="&string;">ship explo white flash</typeName>
   <depthLayer2D type="&float;">0.18</depthLayer2D>
   <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Transparent</type>
+    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Additive</type>
   </drawMode2D>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
@@ -134,14 +134,14 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.15</position>
-                  <internalValue type="&float;">0.55</internalValue>
+                  <internalValue type="&float;">0.45</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">1</position>
-                  <internalValue type="&float;">0.3</internalValue>
+                  <internalValue type="&float;">0.25</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
@@ -174,14 +174,14 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.2</position>
-                  <internalValue type="&float;">0.52</internalValue>
+                  <internalValue type="&float;">0.45</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.4</position>
-                  <internalValue type="&float;">0.3</internalValue>
+                  <internalValue type="&float;">0.26</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

@@ -174,14 +174,14 @@
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.13</position>
-                  <internalValue type="&float;">0.55</internalValue>
+                  <internalValue type="&float;">0.6</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>
                 </Item>
                 <Item type="&CurveKey;">
                   <position type="&float;">0.23</position>
-                  <internalValue type="&float;">0.35</internalValue>
+                  <internalValue type="&float;">0.4</internalValue>
                   <tangentOut type="&float;">0</tangentOut>
                   <tangentIn type="&float;">0</tangentIn>
                   <continuity type="&CurveContinuity;">Smooth</continuity>

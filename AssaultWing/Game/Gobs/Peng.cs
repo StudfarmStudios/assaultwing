@@ -320,7 +320,6 @@ namespace AW2.Game.Gobs
 
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
-                // TODO: Scale particle as told in 'view' -- transform quad corners by view*projection
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.layerDepth, 0, 1);
                 Texture2D texture = data.GetTexture(particle.textureName);
                 float drawRotation = coordinateSystem == CoordinateSystem.Game

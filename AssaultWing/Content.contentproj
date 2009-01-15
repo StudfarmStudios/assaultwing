@@ -1745,6 +1745,11 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
+    <Compile Include="models\bugger.X">
+      <Name>bugger</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng#playerbirthstrokes.xml">
       <Name>Peng#playerbirthstrokes</Name>
       <Importer>XmlImporter</Importer>

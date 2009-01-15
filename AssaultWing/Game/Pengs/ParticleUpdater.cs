@@ -64,6 +64,15 @@ namespace AW2.Game.Pengs
         [TypeParameter, ShallowCopy]
         PengParameter alpha;
 
+        /// <summary>
+        /// Amount of drag of particles. Drag is the decrement of velocity in one second
+        /// relative to original velocity (e.g. applying a drag of 0.2 to a velocity of
+        /// 100 for one second will result in a velocity of 80, given that there are no
+        /// other forces affecting the velocity).
+        /// </summary>
+        [TypeParameter]
+        float drag;
+
         #endregion PhysicalUpdater fields
 
         /// <summary>
@@ -77,6 +86,7 @@ namespace AW2.Game.Pengs
             rotationSpeed = new CurveLerp();
             scale = new CurveLerp();
             alpha = new CurveLerp();
+            drag = 0;
         }
 
         /// <summary>
@@ -103,6 +113,7 @@ namespace AW2.Game.Pengs
             particle.layerDepth = lifePos;
             particle.move += physics.ApplyChange(acceleration.GetValue(lifePos, particle.pengInput, particle.random))
                 * new Vector2((float)Math.Cos(particle.direction), (float)Math.Sin(particle.direction));
+            particle.move *= (float)Math.Pow(drag, physics.TimeStep.ElapsedGameTime.TotalSeconds);
             particle.pos += physics.ApplyChange(particle.move);
             particle.rotation += physics.ApplyChange(rotationSpeed.GetValue(lifePos, particle.pengInput, particle.random));
             particle.scale = scale.GetValue(lifePos, particle.pengInput, particle.random);

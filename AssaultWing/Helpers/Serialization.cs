@@ -288,6 +288,8 @@ namespace AW2.Helpers
 
                 // Find out type of value in XML
                 string writtenTypeName = reader.GetAttribute("type");
+                if (writtenTypeName == null)
+                    throw new XmlException("XML type attribute missing from element " + elementName);
                 Type writtenType = Type.GetType(writtenTypeName);
                 if (writtenType == null)
                     throw new XmlException("XML suggests unknown type " + writtenTypeName);

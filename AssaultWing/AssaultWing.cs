@@ -236,7 +236,7 @@ namespace AW2
         /// <param name="e"></param>
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-            e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
+//            e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
 
 //            if (e.GraphicsDeviceInformation.PresentationParameters.IsFullScreen)
 //            {

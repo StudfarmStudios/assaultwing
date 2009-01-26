@@ -36,7 +36,7 @@ namespace AW2.Menu
         MultiControl controlUp, controlDown, controlSelect;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
-        Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture;
+        Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture,arenaPreview;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -125,6 +125,8 @@ namespace AW2.Menu
             cursorTexture = data.GetTexture(TextureName.ArenaMenuCursor);
             highlightTexture = data.GetTexture(TextureName.ArenaMenuHighlight);
             tagTexture = data.GetTexture(TextureName.ArenaMenuCheckboxTag);
+            arenaPreview = data.GetArenaPreview("noPreview");
+
         }
 
         /// <summary>
@@ -223,6 +225,9 @@ namespace AW2.Menu
                 if (currentArena < arenaListStart)
                     arenaListStart = currentArena;
 
+                //change preview image
+                arenaPreview = data.GetArenaPreview(arenaInfos[currentArena].name);
+
                 if (controlServer.Pulse) // HACK: Toggle networking if requested
                     switch (AssaultWing.Instance.NetworkMode)
                     {
@@ -271,9 +276,11 @@ namespace AW2.Menu
             // Draw cursor and highlight.
             Vector2 highlightPos = pos - view + new Vector2(124, 285) + (currentArena - arenaListStart) * lineDeltaPos;
             Vector2 cursorPos = highlightPos + new Vector2(2, 1);
+            Vector2 arenaPreviewPos = pos-view + new Vector2(430, 232);
             float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
             spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
+            spriteBatch.Draw(arenaPreview, arenaPreviewPos, Color.White);
         }
 
         /// <summary>

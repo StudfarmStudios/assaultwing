@@ -34,6 +34,7 @@ namespace AW2.Game
         List<ViewportSeparator> viewportSeparators;
         Dictionary<string, Model> models;
         Dictionary<string, Texture2D> textures;
+        Dictionary<string, Texture2D> arenaPreviews;
 
         /// <summary>
         /// Type templates, as a list "indexed" by base class (such as 'typeof(Gob)'), 
@@ -97,6 +98,7 @@ namespace AW2.Game
             textures = new Dictionary<string, Texture2D>();
             templates = new List<Pair<Type, List<Pair<string, object>>>>();
             arenas = new Dictionary<string, Arena>();
+            arenaPreviews = new Dictionary<string, Texture2D>();
             overlays = new Texture2D[Enum.GetValues(typeof(TextureName)).Length];
             fonts = new SpriteFont[Enum.GetValues(typeof(FontName)).Length];
             activeArena = preparedArena = null;
@@ -180,6 +182,29 @@ namespace AW2.Game
             overlays[(int)name] = texture;
         }
 
+        /// <summary>
+        /// Stores 2D texture by arena name 
+        /// </summary>
+        /// <param name="arenaName">The name of the arena.</param>
+        /// <param name="texture">The 2D texture.</param>
+
+        public void AddArenaPreview(string arenaName, Texture2D texture)
+        {
+            arenaPreviews.Add(arenaName, texture);
+        }
+        /// <summary>
+        /// Returns preview picture from arena (2D texture). If no preview is available, then return's no preview picture   
+        /// </summary>
+        /// <param name="name">The name of the arena.</param>
+        /// <returns>The 2D texture.</returns>
+
+        public Texture2D GetArenaPreview(string arena)
+        {
+            if(arenaPreviews.ContainsKey(arena))
+                return arenaPreviews[arena];
+            else
+                return arenaPreviews["noPreview"];
+        }
         /// <summary>
         /// Returns a named 2D texture.
         /// </summary>

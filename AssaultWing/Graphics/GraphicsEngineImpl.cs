@@ -264,6 +264,12 @@ namespace AW2.Graphics
         string[] fontNames;
 
         /// <summary>
+        /// Names of arena previes.
+        /// </summary>
+        string[] arenaPreviews;
+
+
+        /// <summary>
         /// Creates a new graphics engine.
         /// </summary>
         /// <param name="game">The Game to add the component to.</param>
@@ -315,6 +321,11 @@ namespace AW2.Graphics
                 "MenuFontBig",
                 "MenuFontSmall",
             };
+            arenaPreviews = new string[]
+            {
+                "amazonas_preview"
+            };
+
         }
 
         /// <summary>
@@ -361,6 +372,17 @@ namespace AW2.Graphics
             foreach (TextureName overlay in Enum.GetValues(typeof(TextureName)))
             {
                 data.AddTexture(overlay, LoadTexture(overlayNames[(int)overlay]));
+            }
+
+            {
+                data.AddArenaPreview("noPreview", LoadTexture("no_preview"));            
+            }
+            foreach (string name in data.ArenaPlaylist)
+            {
+                string arenaName = name;
+                Texture2D preview = LoadTexture(arenaName.ToLower() + "_preview");
+                if (preview != null)
+                    data.AddArenaPreview(arenaName, preview);
             }
 
             // Load static fonts.

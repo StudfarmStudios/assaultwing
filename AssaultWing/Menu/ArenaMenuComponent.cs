@@ -164,11 +164,10 @@ namespace AW2.Menu
                     if (message != null)
                     {
                         serverToldToStart = true;
-                        var reader = message.BeginRead();
                         for (int i = 0; i < message.PlayerCount; ++i)
                         {
                             Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
-                            player.Deserialize(reader, AW2.Net.SerializationModeFlags.All);
+                            message.Read(player, AW2.Net.SerializationModeFlags.All);
 
                             // Only add the player if it is remote.
                             if (data.GetPlayer(player.Id) == null)
@@ -238,7 +237,7 @@ namespace AW2.Menu
                 if (controlClient.Pulse) // HACK: Toggle networking if requested
                     switch (AssaultWing.Instance.NetworkMode)
                     {
-                        case NetworkMode.Standalone: AssaultWing.Instance.StartClient("88.113.21.166"); break;
+                        case NetworkMode.Standalone: AssaultWing.Instance.StartClient("91.152.165.223"); break;
                         case NetworkMode.Client: AssaultWing.Instance.StopClient(); break;
                         default: throw new InvalidOperationException("Cannot toggle being client while in mode " + AssaultWing.Instance.NetworkMode);
                     }

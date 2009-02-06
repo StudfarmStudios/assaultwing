@@ -341,13 +341,11 @@ namespace AW2
             {
                 var message = new StartGameMessage();
                 int playerCount = 0;
-                var writer = message.BeginWrite();
                 dataEngine.ForEachPlayer(player =>
-                    {
-                        ++playerCount;
-                        player.Serialize(writer, SerializationModeFlags.All);
-                    });
-                message.EndWrite();
+                {
+                    ++playerCount;
+                    message.Write(player, SerializationModeFlags.All);
+                });
                 message.PlayerCount = playerCount;
                 networkEngine.SendToClients(message);
             }

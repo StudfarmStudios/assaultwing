@@ -576,9 +576,7 @@ namespace AW2.Game
                 NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
                 var message = new GobCreationMessage();
                 message.GobTypeName = gob.TypeName;
-                NetworkBinaryWriter writer = message.BeginWrite();
-                gob.Serialize(writer, SerializationModeFlags.All);
-                message.EndWrite();
+                message.Write(gob, SerializationModeFlags.All);
                 net.SendToClients(message);
             }
         }
@@ -592,9 +590,10 @@ namespace AW2.Game
         /// <returns><c>true</c> if and only if a gob creation message should be sent.</returns>
         bool MustSendCreationToClient(Gob gob)
         {
-            if (isPreparingArena) return false;
+#if false // TODO: Don't send creation on purely visual gobs. Make client understand to create them itself.
             if (gob.Layer != gameplayLayer) return false;
             if (gob is Peng || gob is Particles.ParticleEngine) return false;
+#endif
             return true;
         }
 
@@ -941,9 +940,7 @@ namespace AW2.Game
                 while ((message = net.ReceiveFromServer<GobCreationMessage>()) != null)
                 {
                     Gob gob = Gob.CreateGob(message.GobTypeName);
-                    NetworkBinaryReader reader = message.BeginRead();
-                    gob.Deserialize(reader, SerializationModeFlags.All);
-                    message.EndRead();
+                    message.Read(gob, SerializationModeFlags.All);
                     AddGob(gob);
 
                     // Ships we set automatically as the ship the ship's owner is controlling.
@@ -975,9 +972,7 @@ namespace AW2.Game
                 while ((message = net.ReceiveFromServer<GobUpdateMessage>()) != null)
                 {
                     Gob gob = GetGob(message.GobId);
-                    var reader = message.BeginRead();
-                    gob.Deserialize(reader, SerializationModeFlags.VaryingData);
-                    message.EndRead();
+                    message.Read(gob, SerializationModeFlags.VaryingData);
                 }
             }
 
@@ -1006,9 +1001,7 @@ namespace AW2.Game
                 {
                     var message = new GobUpdateMessage();
                     message.GobId = gob.Id;
-                    var writer = message.BeginWrite();
-                    gob.Serialize(writer, SerializationModeFlags.VaryingData);
-                    message.EndWrite();
+                    message.Write(gob, SerializationModeFlags.VaryingData);
                     net.SendToClients(message);
                 });
             }

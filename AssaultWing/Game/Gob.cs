@@ -53,7 +53,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("Id:{Id} typeName:{typeName} pos:{pos} move:{move}")]
-    public class Gob : IConsistencyCheckable
+    public class Gob : IConsistencyCheckable, Net.INetworkSerializable
     {
         /// <summary>
         /// Type of a gob's preferred placement to arena layers.
@@ -324,6 +324,13 @@ namespace AW2.Game
         /// Get the gob type name.
         /// </summary>
         public string TypeName { get { return typeName; } }
+
+        /// <summary>
+        /// Is the gob relevant to gameplay. Irrelevant gobs won't receive state updates
+        /// from the server when playing over network and they can therefore be created
+        /// independently on a client.
+        /// </summary>
+        public virtual bool IsRelevant { get { return true; } }
 
         /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.

@@ -308,7 +308,7 @@ namespace AW2.Net
                 // SocketExceptions and ObjectDisposedExceptions that speak of Sockets.
                 var eDisposed = e as ObjectDisposedException;
                 var eSocket = e as SocketException;
-                if (eSocket == null && (eDisposed == null || eDisposed.ObjectName != typeof(Socket).Name))
+                if (eSocket == null && (eDisposed == null || eDisposed.ObjectName != typeof(Socket).FullName))
                     throw e;
                 errors.Do(delegate(Queue<Exception> queue) { queue.Enqueue(e); });
                 lock (errors) if (ErrorCallback != null) ErrorCallback();
@@ -317,6 +317,28 @@ namespace AW2.Net
         }
 
         #endregion Send methods
+
+        #region Receive methods
+
+        /// <summary>
+        /// Receives a certain number of bytes to a buffer.
+        /// This method blocks until the required number of bytes have been received.
+        /// </summary>
+        /// <param name="buffer">The buffer to store the bytes in.</param>
+        /// <param name="byteCount">The number of bytes to receive.</param>
+        void Receive(byte[] buffer, int byteCount)
+        {
+            if (buffer == null) throw new ArgumentNullException("Cannot receive to null buffer");
+            if (byteCount < 0) throw new ArgumentException("Cannot receive negative number of bytes");
+            int totalReadBytes = 0;
+            while (totalReadBytes < byteCount)
+            {
+                int readBytes = socket.Receive(buffer, byteCount - totalReadBytes, SocketFlags.None);
+                totalReadBytes += readBytes;
+            }
+        }
+
+        #endregion Receive methods
 
         #region Private callback implementations
 
@@ -333,9 +355,7 @@ namespace AW2.Net
                 while (true)
                 {
                     // Read header.
-                    int readBytes = socket.Receive(headerReceiveBuffer);
-                    if (readBytes != headerReceiveBuffer.Length)
-                        throw new Exception("Fatal program logic error: Socket.Receive got only " + readBytes + " bytes instead of " + headerReceiveBuffer.Length);
+                    Receive(headerReceiveBuffer, headerReceiveBuffer.Length);
                     if (!Message.IsValidHeader(headerReceiveBuffer))
                         throw new InvalidDataException("Connection received an invalid message header");
 
@@ -343,9 +363,7 @@ namespace AW2.Net
                     int bodyLength = Message.GetBodyLength(headerReceiveBuffer);
                     if (bodyReceiveBuffer == null || bodyReceiveBuffer.Length < bodyLength)
                         bodyReceiveBuffer = new byte[bodyLength];
-                    readBytes = socket.Receive(bodyReceiveBuffer, bodyLength, SocketFlags.None);
-                    if (readBytes != bodyLength)
-                        throw new Exception("Fatal program logic error: Socket.Receive got only " + readBytes + " bytes instead of " + bodyLength);
+                    Receive(bodyReceiveBuffer, bodyLength);
 
                     // Add received message to the message queue.
                     Message message = Message.Deserialize(headerReceiveBuffer, bodyReceiveBuffer, Id);

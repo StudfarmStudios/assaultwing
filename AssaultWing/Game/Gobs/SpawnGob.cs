@@ -66,8 +66,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Activate()
         {
-            long ticks = (long)(10 * 1000 * 1000 * spawnInterval);
-            nextSpawn = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
+            nextSpawn = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(spawnInterval);
             base.Activate();
         }
 

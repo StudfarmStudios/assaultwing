@@ -195,7 +195,7 @@ namespace AW2.Game
         /// <summary>
         /// Returns preview picture from arena (2D texture). If no preview is available, then return's no preview picture   
         /// </summary>
-        /// <param name="name">The name of the arena.</param>
+        /// <param name="arena">The name of the arena.</param>
         /// <returns>The 2D texture.</returns>
 
         public Texture2D GetArenaPreview(string arena)

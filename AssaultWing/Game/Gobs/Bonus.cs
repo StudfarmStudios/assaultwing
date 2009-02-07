@@ -129,8 +129,7 @@ namespace AW2.Game.Gobs
         public Bonus(string typeName)
             : base(typeName)
         {
-            long ticks = (long)(10 * 1000 * 1000 * lifetime);
-            deathTime = physics.TimeStep.TotalGameTime.Add(new TimeSpan(ticks));
+            deathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -217,7 +216,7 @@ namespace AW2.Game.Gobs
                     {
                         // Send the timed event for undoing the bonus, if required.
                         TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
-                            + new TimeSpan((long)(poss.duration * 10 * 1000 * 1000));
+                            + TimeSpan.FromSeconds(poss.duration);
                         BonusExpiryEvent bonusEve = new BonusExpiryEvent(ship.Owner.Name,
                             playerBonus, expiryTime);
                         eventer.SendEvent(bonusEve);

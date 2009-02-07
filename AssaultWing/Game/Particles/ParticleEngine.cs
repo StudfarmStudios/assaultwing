@@ -361,10 +361,7 @@ namespace AW2.Game.Particles
                     ++createCount;
                     float birthRateNow = GetFloatFromFactory(ref birthRate);
                     if (birthRateNow != 0)
-                    {
-                        long ticks = (long)(TimeSpan.TicksPerSecond / birthRateNow);
-                        nextBirth = nextBirth.Add(new TimeSpan(ticks));
-                    }
+                        nextBirth += TimeSpan.FromSeconds(1.0 / birthRateNow);
                 }
 
                 if (!loop)

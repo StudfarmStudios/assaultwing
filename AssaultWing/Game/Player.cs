@@ -630,8 +630,7 @@ namespace AW2.Game
                 cause.Killer.Owner.SendMessage("You nailed " + Name);
             
             // Schedule the making of a new ship, lives permitting.
-            long ticks = (long)(mourningDelay * TimeSpan.TicksPerSecond);
-            shipSpawnTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
+            shipSpawnTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(mourningDelay);
         }
 
         /// <summary>

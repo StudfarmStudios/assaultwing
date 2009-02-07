@@ -240,8 +240,7 @@ namespace AW2.Game.Weapons
 
                 // Remember when to shoot again.
                 --shotsLeft;
-                TimeSpan shotSpacingSpan = new TimeSpan((long)(10 * 1000 * 1000 * shotSpacing));
-                nextShot = nextShot.Add(shotSpacingSpan);
+                nextShot += TimeSpan.FromSeconds(shotSpacing);
 
                 if (shotsLeft == 0)
                     DoneFiring();

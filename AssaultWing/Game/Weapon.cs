@@ -373,8 +373,7 @@ namespace AW2.Game
         protected void DoneFiring()
         {
             // Reset the weapon's load time counter.
-            long ticks = (long)(10 * 1000 * 1000 * loadTime);
-            loadedTime = physics.TimeStep.TotalGameTime.Add(new TimeSpan(ticks));
+            loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(loadTime);
         }
 
         #endregion Weapon protected methods

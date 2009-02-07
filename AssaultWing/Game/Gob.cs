@@ -461,8 +461,7 @@ namespace AW2.Game
                     if (newBleach > bleach)
                     {
                         bleach = newBleach;
-                        long bleachDurationTicks = (long)(TimeSpan.TicksPerSecond * 0.055f);
-                        bleachResetTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(bleachDurationTicks);
+                        bleachResetTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(0.055);
                     }
                     bleachDamage = 0;
                 }

@@ -58,7 +58,7 @@ namespace AW2.Graphics
             if (lastRelativeHealth != relativeHealth)
             {
                 fadeoutFinishTime = AssaultWing.Instance.GameTime.TotalGameTime + 
-                    new TimeSpan((long)(TimeSpan.TicksPerSecond * (opaqueDuration + fadeoutDuration)));
+                    TimeSpan.FromSeconds(opaqueDuration + fadeoutDuration);
                 lastRelativeHealth = relativeHealth;
             }
             float alpha = MathHelper.Clamp((float)(fadeoutFinishTime - AssaultWing.Instance.GameTime.TotalGameTime).TotalSeconds / fadeoutDuration, 0, 1);

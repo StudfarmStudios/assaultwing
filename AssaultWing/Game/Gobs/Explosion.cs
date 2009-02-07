@@ -133,8 +133,7 @@ namespace AW2.Game.Gobs
             }
 
             // Count end time of gas flow.
-            long ticks = (long)(10 * 1000 * 1000 * flowTime);
-            flowEndTime = AssaultWing.Instance.GameTime.TotalGameTime + new TimeSpan(ticks);
+            flowEndTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(flowTime);
 
             // Make a hole in the arena walls.
             physics.MakeHole(Pos, impactHoleRadius);

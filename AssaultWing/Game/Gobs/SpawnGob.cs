@@ -80,10 +80,12 @@ namespace AW2.Game.Gobs
             {
                 nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                Gob newGob = Gob.CreateGob(spawnTypeName);
-                Vector2 spawnPos = physics.GetFreePosition(newGob, spawnArea);
-                newGob.Pos = spawnPos;
-                data.AddGob(newGob);
+                Gob.CreateGob(spawnTypeName, newGob =>
+                {
+                    Vector2 spawnPos = physics.GetFreePosition(newGob, spawnArea);
+                    newGob.Pos = spawnPos;
+                    data.AddGob(newGob);
+                });
             }
             base.Update();
         }

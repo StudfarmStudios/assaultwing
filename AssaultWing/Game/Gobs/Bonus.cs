@@ -187,9 +187,11 @@ namespace AW2.Game.Gobs
                     switch (poss.action)
                     {
                         case BonusAction.Explode:
-                            Gob explosion = Gob.CreateGob("bomb explosion");
-                            explosion.Pos = this.Pos;
-                            data.AddGob(explosion);
+                            Gob.CreateGob("bomb explosion", explosion =>
+                            {
+                                explosion.Pos = this.Pos;
+                                data.AddGob(explosion);
+                            });
                             break;
                         case BonusAction.UpgradeWeapon1:
                             ship.Owner.UpgradeWeapon1();

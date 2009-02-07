@@ -223,12 +223,14 @@ namespace AW2.Game.Pengs
                 else
                 {
                     // Emit a gob.
-                    Gob gob = Gob.CreateGob(gobTypeNames[emitType - textureNames.Length]);
-                    gob.Owner = peng.Owner;
-                    gob.Pos = pos;
-                    gob.Move = move;
-                    gob.Rotation = rotation;
-                    data.AddGob(gob);
+                    Gob.CreateGob(gobTypeNames[emitType - textureNames.Length], gob =>
+                    {
+                        gob.Owner = peng.Owner;
+                        gob.Pos = pos;
+                        gob.Move = move;
+                        gob.Rotation = rotation;
+                        data.AddGob(gob);
+                    });
                 }
             }
 

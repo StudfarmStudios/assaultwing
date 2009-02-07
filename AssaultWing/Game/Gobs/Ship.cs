@@ -439,25 +439,29 @@ namespace AW2.Game.Gobs
         private void CreateCoughEngines()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            coughEngines = new Gob[coughEngineNames.Length];
+            List<Gob> coughEngineList = new List<Gob>();
             for (int i = 0; i < coughEngineNames.Length; ++i)
             {
-                coughEngines[i] = Gob.CreateGob(coughEngineNames[i]);
-                if (coughEngines[i] is ParticleEngine)
+                Gob.CreateGob(coughEngineNames[i], gob =>
                 {
-                    ParticleEngine peng = (ParticleEngine)coughEngines[i];
-                    peng.Loop = true;
-                    peng.IsAlive = false;
-                    peng.Leader = this;
-                }
-                else if (coughEngines[i] is Peng)
-                {
-                    Peng peng = (Peng)coughEngines[i];
-                    peng.Paused = true;
-                    peng.Leader = this;
-                }
-                data.AddGob(coughEngines[i]);
+                    if (gob is ParticleEngine)
+                    {
+                        ParticleEngine peng = (ParticleEngine)gob;
+                        peng.Loop = true;
+                        peng.IsAlive = false;
+                        peng.Leader = this;
+                    }
+                    else if (gob is Peng)
+                    {
+                        Peng peng = (Peng)gob;
+                        peng.Paused = true;
+                        peng.Leader = this;
+                    }
+                    data.AddGob(gob);
+                    coughEngineList.Add(gob);
+                });
             }
+            coughEngines = coughEngineList.ToArray();
         }
 
         #region Methods related to gobs' functionality in the game world

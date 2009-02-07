@@ -204,28 +204,32 @@ namespace AW2.Game.Weapons
                         shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
                     Vector2 kick = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction))
                         * kickSpeed;
-                    Gob shot = Gob.CreateGob(shotTypeName);
-                    shot.Owner = owner.Owner;
-                    shot.Pos = owner.GetNamedPosition(boneI);
-                    shot.Move = owner.Move + kick;
-                    shot.Rotation = owner.Rotation; // could also be 'direction'
-                    data.AddGob(shot);
-                    liveShots.Add(shot);
+                    Gob.CreateGob(shotTypeName, shot =>
+                    {
+                        shot.Owner = owner.Owner;
+                        shot.Pos = owner.GetNamedPosition(boneI);
+                        shot.Move = owner.Move + kick;
+                        shot.Rotation = owner.Rotation; // could also be 'direction'
+                        data.AddGob(shot);
+                        liveShots.Add(shot);
+                    });
 
                     // Create muzzle fire engines, but only once in a frame.
                     if (!muzzleFireCreated)
                         foreach (string engineName in muzzleFireEngineNames)
                         {
-                            Gob fireEngine = Gob.CreateGob(engineName);
-                            if (fireEngine is Peng)
+                            Gob.CreateGob(engineName, fireEngine =>
                             {
-                                Peng peng = (Peng)fireEngine;
-                                peng.Owner = owner.Owner;
-                                peng.Leader = owner;
-                                peng.LeaderBone = boneI;
-                            }
-                            muzzleFireEngines[barrel].Add(fireEngine);
-                            data.AddGob(fireEngine);
+                                if (fireEngine is Peng)
+                                {
+                                    Peng peng = (Peng)fireEngine;
+                                    peng.Owner = owner.Owner;
+                                    peng.Leader = owner;
+                                    peng.LeaderBone = boneI;
+                                }
+                                muzzleFireEngines[barrel].Add(fireEngine);
+                                data.AddGob(fireEngine);
+                            });
                         }
                 }
                 muzzleFireCreated = true;

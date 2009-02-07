@@ -675,53 +675,59 @@ namespace AW2.Game
             // Gain ownership over the ship only after its position has been set.
             // This way the ship won't be affecting its own spawn position.
             ship = null;
-            Ship newShip = (Ship)Gob.CreateGob(shipTypeName);
-            newShip.Owner = this;
-            newShip.Weapon1Name = weapon1Name;
-            newShip.Weapon2Name = weapon2Name;
-
-            // Find a starting place for the new ship.
-            // Use player spawn areas if there's any. Otherwise just randomise a position.
-            SpawnPlayer bestSpawn = null;
-            float bestSafeness = float.MinValue;
-            data.ForEachGob(delegate(Gob gob)
+            Gob.CreateGob(shipTypeName, gob =>
             {
-                SpawnPlayer spawn = gob as SpawnPlayer;
-                if (spawn == null) return;
-                float safeness = spawn.GetSafeness();
-                if (safeness >= bestSafeness)
-                {
-                    bestSafeness = safeness;
-                    bestSpawn = spawn;
-                }
-            });
-            if (bestSpawn == null)
-                newShip.Pos = physics.GetFreePosition(newShip, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
-            else
-                bestSpawn.Spawn(newShip);
+                if (!(gob is Ship))
+                    throw new Exception("Cannot create non-ship ship for player (" + gob.GetType().Name + ")");
+                Ship newShip = (Ship)gob;
+                newShip.Owner = this;
+                newShip.Weapon1Name = weapon1Name;
+                newShip.Weapon2Name = weapon2Name;
 
-            data.AddGob(newShip);
-            ship = newShip;
+                // Find a starting place for the new ship.
+                // Use player spawn areas if there's any. Otherwise just randomise a position.
+                SpawnPlayer bestSpawn = null;
+                float bestSafeness = float.MinValue;
+                data.ForEachGob(delegate(Gob otherGob)
+                {
+                    SpawnPlayer spawn = otherGob as SpawnPlayer;
+                    if (spawn == null) return;
+                    float safeness = spawn.GetSafeness();
+                    if (safeness >= bestSafeness)
+                    {
+                        bestSafeness = safeness;
+                        bestSpawn = spawn;
+                    }
+                });
+                if (bestSpawn == null)
+                    newShip.Pos = physics.GetFreePosition(newShip, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
+                else
+                    bestSpawn.Spawn(newShip);
+
+                data.AddGob(newShip);
+                ship = newShip;
+            });
 
             // Create a player marker for the ship.
             string particleEngineName = Id == 1 ? "playerred" : "playergreen";
-            Gob playerColor = Gob.CreateGob(particleEngineName);
-            if (playerColor is ParticleEngine)
+            Gob.CreateGob(particleEngineName, playerColor =>
             {
-                ParticleEngine particleEngine = (ParticleEngine)playerColor;
-                particleEngine.Pos = ship.Pos;
-                particleEngine.Rotation = ship.Rotation;
-                particleEngine.Owner = this;
-                particleEngine.Leader = ship;
-            }
-            else if (playerColor is Peng)
-            {
-                Peng peng = (Peng)playerColor;
-                peng.Owner = this;
-                peng.Leader = ship;
-            }
-            data.AddGob(playerColor);
-
+                if (playerColor is ParticleEngine)
+                {
+                    ParticleEngine particleEngine = (ParticleEngine)playerColor;
+                    particleEngine.Pos = ship.Pos;
+                    particleEngine.Rotation = ship.Rotation;
+                    particleEngine.Owner = this;
+                    particleEngine.Leader = ship;
+                }
+                else if (playerColor is Peng)
+                {
+                    Peng peng = (Peng)playerColor;
+                    peng.Owner = this;
+                    peng.Leader = ship;
+                }
+                data.AddGob(playerColor);
+            });
         }
 
         /// <summary>

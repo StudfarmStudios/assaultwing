@@ -124,13 +124,17 @@ namespace AW2.Game.Gobs
             eventEngine.SendEvent(soundEvent);
 
             // Create particle engines.
-            particleEngines = new Gob[particleEngineNames.Length];
+            List<Gob> particleEngineList = new List<Gob>();
             for (int i = 0; i < particleEngineNames.Length; ++i)
             {
-                particleEngines[i] = Gob.CreateGob(particleEngineNames[i]);
-                particleEngines[i].Pos = this.Pos;
-                data.AddGob(particleEngines[i]);
+                Gob.CreateGob(particleEngineNames[i], gob =>
+                {
+                    gob.Pos = this.Pos;
+                    data.AddGob(gob);
+                    particleEngineList.Add(gob);
+                });
             }
+            particleEngines = particleEngineList.ToArray();
 
             // Count end time of gas flow.
             flowEndTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(flowTime);

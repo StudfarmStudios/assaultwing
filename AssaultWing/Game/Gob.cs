@@ -695,23 +695,41 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Creates a gob of the given type.
+        /// Creates unconditionally a gob of a given type. Don't call this method from 
+        /// common game logic. Call <c>CreateGob(string, Action&lt;Gob&gt;)</c> instead.
         /// </summary>
         /// Note that you cannot call new Gob(typeName) because then the created object
         /// won't have the fields of the subclass that 'typeName' requires. This static method
         /// takes care of finding the correct subclass.
         /// <param name="typeName">The type of the gob.</param>
-        /// <param name="args">Any other arguments to pass to the subclass' constructor.</param>
         /// <returns>The newly created gob.</returns>
-        public static Gob CreateGob(string typeName, params object[] args)
+        /// <seealso cref="CreateGob(string, Action&lt;Gob&gt;)"/>
+        public static Gob CreateGob(string typeName)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Gob template = (Gob)data.GetTypeTemplate(typeof(Gob), typeName);
             Type type = template.GetType();
-            object[] newArgs = new object[args.Length + 1];
-            newArgs[0] = typeName;
-            Array.Copy(args, 0, newArgs, 1, args.Length);
-            return (Gob)Activator.CreateInstance(type, newArgs);
+            return (Gob)Activator.CreateInstance(type, typeName);
+        }
+
+        /// <summary>
+        /// Creates a gob of a given type and performs a given initialisation on it.
+        /// This method is for game logic; gob init is skipped appropriately on clients.
+        /// </summary>
+        /// Note that you cannot call new Gob(typeName) because then the created object
+        /// won't have the fields of the subclass that 'typeName' requires. This static method
+        /// takes care of finding the correct subclass.
+        /// 
+        /// In order for a call to this method to be meaningful, <c>init</c>
+        /// should contain a call to <c>DataEngine.AddGob</c> or similar method.
+        /// <param name="typeName">The type of the gob.</param>
+        /// <param name="init">Initialisation to perform on the gob.</param>
+        /// <seealso cref="CreateGob(string)"/>
+        public static void CreateGob(string typeName, Action<Gob> init)
+        {
+            Gob gob = CreateGob(typeName);
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
+                init(gob);
         }
 
         /// <summary>
@@ -802,18 +820,17 @@ namespace AW2.Game
             // Create birth gobs as described by gob type.
             foreach (string gobType in birthGobTypes)
             {
-                Gob gob = CreateGob(gobType);
-                gob.Pos = this.Pos;
-                gob.Rotation = this.Rotation;
-                gob.owner = this.owner;
-                if (gob is ParticleEngine)
-                    ((ParticleEngine)gob).Leader = this;
-                if (gob is Gobs.Peng)
+                CreateGob(gobType, gob =>
                 {
-                    ((Gobs.Peng)gob).Leader = this;
-                    // TODO: User named bones for birth gob placement //((Gobs.Peng)gob).LeaderBone = GetNamedPositions("SomeGobPart");
-                }
-                data.AddGob(gob);
+                    gob.Pos = this.Pos;
+                    gob.Rotation = this.Rotation;
+                    gob.owner = this.owner;
+                    if (gob is ParticleEngine)
+                        ((ParticleEngine)gob).Leader = this;
+                    if (gob is Gobs.Peng)
+                        ((Gobs.Peng)gob).Leader = this;
+                    data.AddGob(gob);
+                });
             }
 
             // Create birth gobs as described by 3D model.
@@ -830,10 +847,19 @@ namespace AW2.Game
                     Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + modelName);
                     continue;
                 }
-                Gobs.Peng peng = (Gobs.Peng)Gob.CreateGob(tokens[1]);
-                peng.Leader = this;
-                peng.LeaderBone = pos.Value;
-                data.AddGob(peng);
+                Gob.CreateGob(tokens[1], gob =>
+                {
+                    Gobs.Peng peng = gob as Gobs.Peng;
+                    if (peng != null)
+                    {
+                        peng.Leader = this;
+                        peng.LeaderBone = pos.Value;
+                    }
+                    ParticleEngine particleEngine = gob as ParticleEngine;
+                    if (particleEngine != null)
+                        particleEngine.Leader = this;
+                    data.AddGob(gob);
+                });
             }
 
             CreateExhaustEngines();
@@ -1194,31 +1220,35 @@ namespace AW2.Game
 
             // Create proper exhaust engines.
             int templates = exhaustEngineNames.Length;
-            exhaustBoneIs = new int[boneIs.Length * templates];
-            exhaustEngines = new Gob[boneIs.Length * templates];
+            List<int> exhaustBoneIList = new List<int>();
+            List<Gob> exhaustEngineList = new List<Gob>();
             for (int thrustI = 0; thrustI < boneIs.Length; ++thrustI)
                 for (int tempI = 0; tempI < templates; ++tempI)
                 {
-                    int i = thrustI * templates + tempI;
-                    exhaustBoneIs[i] = boneIs[thrustI].Value;
-                    exhaustEngines[i] = Gob.CreateGob(exhaustEngineNames[tempI]);
-                    if (exhaustEngines[i] is ParticleEngine)
+                    Gob.CreateGob(exhaustEngineNames[tempI], gob =>
                     {
-                        ParticleEngine peng = (ParticleEngine)exhaustEngines[i];
-                        peng.Loop = true;
-                        peng.IsAlive = true;
-                        DotEmitter exhaustEmitter = peng.Emitter as DotEmitter;
-                        if (exhaustEmitter != null)
-                            exhaustEmitter.Direction = Rotation + MathHelper.Pi;
-                    }
-                    else if (exhaustEngines[i] is Gobs.Peng)
-                    {
-                        Gobs.Peng peng = (Gobs.Peng)exhaustEngines[i];
-                        peng.Leader = this;
-                        peng.LeaderBone = exhaustBoneIs[i];
-                    }
-                    data.AddGob(exhaustEngines[i]);
+                        if (gob is ParticleEngine)
+                        {
+                            ParticleEngine peng = (ParticleEngine)gob;
+                            peng.Loop = true;
+                            peng.IsAlive = true;
+                            DotEmitter exhaustEmitter = peng.Emitter as DotEmitter;
+                            if (exhaustEmitter != null)
+                                exhaustEmitter.Direction = Rotation + MathHelper.Pi;
+                        }
+                        else if (gob is Gobs.Peng)
+                        {
+                            Gobs.Peng peng = (Gobs.Peng)gob;
+                            peng.Leader = this;
+                            peng.LeaderBone = boneIs[thrustI].Value;
+                        }
+                        data.AddGob(gob);
+                        exhaustBoneIList.Add(boneIs[thrustI].Value);
+                        exhaustEngineList.Add(gob);
+                    });
                 }
+            exhaustBoneIs = exhaustBoneIList.ToArray();
+            exhaustEngines = exhaustEngineList.ToArray();
         }
 
         /// <summary>

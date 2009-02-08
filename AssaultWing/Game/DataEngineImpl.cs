@@ -49,7 +49,6 @@ namespace AW2.Game
         Vector2 arenaDimensionsOnRadar;
         Matrix arenaToRadarTransform;
         ProgressBar progressBar;
-        bool isPreparingArena;
 
         /// <summary>
         /// Index of the gameplay arena layer. Gameplay backlayer is this minus one.
@@ -467,7 +466,6 @@ namespace AW2.Game
         /// <param name="name">The name of the arena.</param>
         public void InitializeFromArena(string name)
         {
-            isPreparingArena = true;
             preparedArena = GetArena(name);
 
             // Clear old data.
@@ -509,8 +507,6 @@ namespace AW2.Game
                 {
                     AddGob(Gob.CreateGob(gob), i);
                 });
-
-            isPreparingArena = false;
         }
 
         /// <summary>

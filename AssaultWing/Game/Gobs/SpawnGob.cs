@@ -100,6 +100,42 @@ namespace AW2.Game.Gobs
             // We're invisible.
         }
 
+        #region Methods related to serialisation
+
+        /// <summary>
+        /// Serialises the gob for to a binary writer.
+        /// </summary>
+        /// <param name="writer">The writer where to write the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to serialise.</param>
+        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                // TODO: Serialise 'spawnArea'
+                writer.Write((float)spawnInterval);
+                writer.Write((string)spawnTypeName, 32, true);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary writer.
+        /// </summary>
+        /// <param name="reader">The reader where to read the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to deserialise.</param>
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        {
+            base.Deserialize(reader, mode);
+            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                // TODO: Deserialise 'spawnArea'
+                spawnInterval = reader.ReadSingle();
+                spawnTypeName = reader.ReadString(32);
+            }
+        }
+
+        #endregion Methods related to serialisation
+
         #region IConsistencyCheckable Members
 
         /// <summary>

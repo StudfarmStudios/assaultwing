@@ -88,8 +88,24 @@ namespace AW2.Game
         /// Least int that is known not to have been used as a gob identifier
         /// on this game instance.
         /// </summary>
-        /// <see cref="Gob.Id"/>
-        static int leastUnusedId = 0;
+        /// This field is used in obtaining identifiers for gobs that can be
+        /// shared among all participating game instances (this means
+        /// relevant gobs but this field may be used for irrelevant gobs, too).
+        /// Such identifiers are positive.
+        /// <seealso cref="Gob.Id"/>
+        /// <seealso cref="Gob.leastUnusedIrrelevantId"/>
+        static int leastUnusedId = 1;
+
+        /// <summary>
+        /// Greatest int that is known not to have been used as a gob identifier
+        /// on this game instance.
+        /// </summary>
+        /// This field is used in obtaining identifiers for gobs that are 
+        /// local to one game instance (irrelevant gobs). Such identifiers
+        /// are negative.
+        /// <seealso cref="Gob.Id"/>
+        /// <seealso cref="Gob.leastUnusedId"/>
+        static int leastUnusedIrrelevantId = -1;
 
         /// <summary>
         /// Gob type name.
@@ -649,7 +665,9 @@ namespace AW2.Game
                 else
                     field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
 
-            Id = leastUnusedId++;
+            Id = AssaultWing.Instance.NetworkMode == NetworkMode.Client 
+                ? leastUnusedIrrelevantId--
+                : leastUnusedId++;
             this.owner = null;
             this.Pos = Vector2.Zero; // also translates collPrimitives
             this.move = Vector2.Zero;
@@ -687,7 +705,9 @@ namespace AW2.Game
         public Gob(string typeName, Player owner, Vector2 pos, Vector2 move, float rotation)
             : this(typeName)
         {
-            Id = leastUnusedId++;
+            Id = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+                ? leastUnusedIrrelevantId--
+                : leastUnusedId++;
             this.owner = owner;
             this.Pos = pos; // also translates collPrimitives
             this.move = move;

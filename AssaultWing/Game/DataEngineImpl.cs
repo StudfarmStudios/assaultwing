@@ -937,7 +937,7 @@ namespace AW2.Game
                 {
                     Gob gob = Gob.CreateGob(message.GobTypeName);
                     message.Read(gob, SerializationModeFlags.All);
-                    AddGob(gob);
+                    AddGob(gob, gob.Layer);
 
                     // Ships we set automatically as the ship the ship's owner is controlling.
                     Ship gobShip = gob as Ship;
@@ -968,7 +968,8 @@ namespace AW2.Game
                 while ((message = net.ReceiveFromServer<GobUpdateMessage>()) != null)
                 {
                     Gob gob = GetGob(message.GobId);
-                    message.Read(gob, SerializationModeFlags.VaryingData);
+                    if (gob != null)
+                        message.Read(gob, SerializationModeFlags.VaryingData);
                 }
             }
 

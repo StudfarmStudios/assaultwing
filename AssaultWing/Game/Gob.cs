@@ -1129,6 +1129,7 @@ namespace AW2.Game
                     writer.Write((int)owner.Id);
                 else
                     writer.Write((int)-1);
+                writer.Write((int)layer);
             }
             if ((mode | AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1155,6 +1156,7 @@ namespace AW2.Game
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
                 owner = data.GetPlayer(ownerId);
+                layer = reader.ReadInt32();
             }
             if ((mode | AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {

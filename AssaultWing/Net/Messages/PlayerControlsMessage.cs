@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using AW2.UI;
 
 namespace AW2.Net.Messages
@@ -10,7 +7,7 @@ namespace AW2.Net.Messages
     /// A message from a game client to a game server containing
     /// the state of the controls of a player at the client.
     /// </summary>
-    public class PlayerControlsMessage : Message
+    public class PlayerControlsMessage : GameplayMessage
     {
         /// <summary>
         /// State of a control.

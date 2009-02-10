@@ -261,6 +261,7 @@
       <Name>StringHelper</Name>
     </Compile>
     <Compile Include="Net\Connection.cs" />
+    <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />

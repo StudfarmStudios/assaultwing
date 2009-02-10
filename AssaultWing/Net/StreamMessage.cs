@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using System.IO;
 
-namespace AW2.Net.Messages
+namespace AW2.Net
 {
     /// <summary>
     /// A message containing a data sequence consisting of serialised 
@@ -13,9 +13,9 @@ namespace AW2.Net.Messages
     /// structured data built from primitive types.
     /// </summary>
     /// To initialise the streamed data of a message for sending, 
-    /// call <c>Write</c> as many times as you likeand make appropriate calls to the various
-    /// write methods of the returned writer. Then call <c>EndWrite</c>
-    /// before sending the message.
+    /// call <c>Write</c> as many times as you like and make appropriate 
+    /// calls to the various write methods of the returned writer. Then 
+    /// call <c>EndWrite</c> before sending the message.
     /// 
     /// To get the streamed data from a message, call <c>BeginRead</c>
     /// and make appropriate calls to the various

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using System.IO;
-
-namespace AW2.Net.Messages
+﻿namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client updating
@@ -19,7 +12,7 @@ namespace AW2.Net.Messages
     /// To get the serialised data from a message, call <c>BeginRead</c>
     /// and deserialise the gob's state with appropriate calls to the various
     /// read methods of the returned reader. Then call <c>EndRead</c>.
-    public class GobUpdateMessage : StreamMessage
+    public class GobUpdateMessage : GameplayMessage
     {
         /// <summary>
         /// Identifier of the message type.

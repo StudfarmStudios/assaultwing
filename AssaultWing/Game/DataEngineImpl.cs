@@ -964,12 +964,19 @@ namespace AW2.Game
             // If we are a game client, update gobs as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
+                TimeSpan updateMessageTimeout = AssaultWing.Instance.GameTime.TotalGameTime - TimeSpan.FromSeconds(0.5);
                 GobUpdateMessage message;
                 while ((message = net.ReceiveFromServer<GobUpdateMessage>()) != null)
                 {
+                    // Skip old update messages.
+                    if (message.TotalGameTime <= updateMessageTimeout) continue;
+
                     Gob gob = GetGob(message.GobId);
-                    if (gob != null)
-                        message.Read(gob, SerializationModeFlags.VaryingData);
+
+                    // Skip updates for gobs we haven't yet created.
+                    if (gob == null) continue;
+
+                    message.Read(gob, SerializationModeFlags.VaryingData);
                 }
             }
 

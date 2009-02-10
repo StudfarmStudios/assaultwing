@@ -27,5 +27,23 @@ namespace AW2.Net
         {
             TotalGameTime = AssaultWing.Instance.GameTime.TotalGameTime;
         }
+
+        /// <summary>
+        /// Writes the body of the message in serialised form.
+        /// </summary>
+        /// <param name="writer">Writer of serialised data.</param>
+        protected override void Serialize(NetworkBinaryWriter writer)
+        {
+            writer.Write((long)TotalGameTime.Ticks);
+        }
+
+        /// <summary>
+        /// Reads the body of the message from serialised form.
+        /// </summary>
+        /// <param name="reader">Reader of serialised data.</param>
+        protected override void Deserialize(NetworkBinaryReader reader)
+        {
+            TotalGameTime = new TimeSpan(reader.ReadInt64());
+        }
     }
 }

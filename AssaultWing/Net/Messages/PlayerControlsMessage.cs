@@ -74,6 +74,7 @@ namespace AW2.Net.Messages
         /// <param name="writer">Writer of serialised data.</param>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
+            base.Serialize(writer);
             // Player controls (request) message structure:
             // int player ID
             // repeat over PlayerControlType
@@ -93,6 +94,7 @@ namespace AW2.Net.Messages
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
+            base.Deserialize(reader);
             PlayerId = reader.ReadInt32();
             for (int i = 0; i < controlStates.Length; ++i)
             {

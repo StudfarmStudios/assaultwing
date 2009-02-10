@@ -30,6 +30,7 @@
         /// <param name="writer">Writer of serialised data.</param>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
+            base.Serialize(writer);
             // Player controls (request) message structure:
             // 32 bytes string: gob type name
             // word: data length N
@@ -46,6 +47,7 @@
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
+            base.Deserialize(reader);
             GobTypeName = reader.ReadString(32);
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);

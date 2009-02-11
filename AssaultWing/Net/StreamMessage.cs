@@ -160,6 +160,7 @@ namespace AW2.Net
                 default:
                     throw new InvalidOperationException("Cannot Read() streamed data in mode " + DataMode);
             }
+            DataMode = DataModeType.ReadingSetData;
             serializable.Deserialize(reader, mode);
 
             // The reader will be closed when the message goes to garbage collection.

@@ -88,7 +88,7 @@ namespace AW2.Game.Gobs
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((float)force.X);
                 writer.Write((float)force.Y);
@@ -103,7 +103,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
         {
             base.Deserialize(reader, mode);
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 Vector2 newForce = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
                 force = newForce;

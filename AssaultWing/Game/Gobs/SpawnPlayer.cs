@@ -124,7 +124,7 @@ namespace AW2.Game.Gobs
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 // TODO: Serialise 'spawnArea'
             }
@@ -138,7 +138,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
         {
             base.Deserialize(reader, mode);
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 // TODO: Deserialise 'spawnArea'
             }

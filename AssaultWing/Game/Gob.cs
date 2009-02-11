@@ -1122,7 +1122,7 @@ namespace AW2.Game
         /// <param name="mode">Which parts of the gob to serialise.</param>
         public virtual void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)Id);
                 if (owner != null)
@@ -1131,7 +1131,7 @@ namespace AW2.Game
                     writer.Write((int)-1);
                 writer.Write((int)layer);
             }
-            if ((mode | AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((float)pos.X);
                 writer.Write((float)pos.Y);
@@ -1151,14 +1151,14 @@ namespace AW2.Game
         public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
                 owner = data.GetPlayer(ownerId);
                 layer = reader.ReadInt32();
             }
-            if ((mode | AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
                 Vector2 newPos = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
                 pos = newPos;

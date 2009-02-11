@@ -70,7 +70,7 @@ namespace AW2.Game.Gobs
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((string)propModelName, 32, true);
             }
@@ -84,7 +84,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
         {
             base.Deserialize(reader, mode);
-            if ((mode | AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 propModelName = reader.ReadString(32);
                 base.ModelName = propModelName;

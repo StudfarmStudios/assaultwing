@@ -4,14 +4,6 @@
     /// A message from a game server to a game client updating
     /// the state of a gob.
     /// </summary>
-    /// To initialise a message for sending, call <c>BeginWrite</c> and
-    /// serialise the gob's state with appropriate calls to the various
-    /// write methods of the returned writer. Then call <c>EndWrite</c>
-    /// and send the message.
-    /// 
-    /// To get the serialised data from a message, call <c>BeginRead</c>
-    /// and deserialise the gob's state with appropriate calls to the various
-    /// read methods of the returned reader. Then call <c>EndRead</c>.
     public class GobUpdateMessage : GameplayMessage
     {
         /// <summary>
@@ -31,7 +23,7 @@
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             base.Serialize(writer);
-            // Player controls (request) message structure:
+            // Gob update (request) message structure:
             // int: gob identifier
             // word: data length N
             // N bytes: serialised data of the gob (content known only by the Gob subclass in question)

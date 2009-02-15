@@ -60,29 +60,6 @@ namespace AW2.Game
             Log.Write("Found " + baseClass.Name + " definition " + name + " " + size + "B " + creationTime);
             return f;
         }
-        /// <summary>
-        /// Returns the name of a subclass of 'baseClass' based on the name of
-        /// the type definition file.
-        /// </summary>
-        /// <param name="fi">The type definition file.</param>
-        /// <returns>The name of the subclass of 'baseClass'.</returns>
-        private string parseSubclass(FileInfo fi)
-        {
-            string className = fi.Name.Split('#','.')[0];
-            return className;
-        }
-
-        /// <summary>
-        /// Returns the name of a user-defined type based on the name of 
-        /// the type definition file.
-        /// </summary>
-        /// <param name="fi">The type definition file.</param>
-        /// <returns>The name of the user-defined type.</returns>
-        private string parseType(FileInfo fi)
-        {
-            string typeName = fi.Name.Split('#', '.')[1];
-            return typeName;
-        }
 
         /// <summary>
         /// Loads and returns all user-defined types.
@@ -117,11 +94,11 @@ namespace AW2.Game
         private void SaveTemplates()
         {
             foreach (Type type in Array.FindAll<Type>(Assembly.GetExecutingAssembly().GetTypes(),
-                delegate(Type t) { return !t.IsAbstract && baseClass.IsAssignableFrom(t); }))
+                t => !t.IsAbstract && baseClass.IsAssignableFrom(t)))
             {
                 Console.WriteLine("Saving template for " + type.Name);
                 string filename = System.IO.Path.Combine(definitionDir.Name,
-                    type.Name + "#example_" + type.Name + "_template.xml");
+                    type.Name + "_template.xml");
                 TextWriter writer = new StreamWriter(filename);
                 System.Xml.XmlWriter xmlWriter = Serialization.GetXmlWriter(writer);
                 object instance = Activator.CreateInstance(type);
@@ -130,10 +107,10 @@ namespace AW2.Game
                 xmlWriter.Close();
             }
         }
+
         /// <summary>
         /// Creates type file templates for each subclass of 'baseClass'.
         /// </summary>
-
         private object[] ParseAndLoad(List<FileInfo> list)
         {
             Type listType = typeof(List<>).MakeGenericType(baseClass);
@@ -147,11 +124,13 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Creates type file template for subclass of 'baseClass'.
+        /// Loads a type template from a file.
         /// </summary>
+        /// <param name="fi">The file to load from.</param>
+        /// <returns>The loaded type template.</returns>
         private object ParseAndLoadFile(FileInfo fi)
         {
-            Log.Write("Loading type " + parseType(fi) + " of subclass " + parseSubclass(fi));
+            Log.Write("Loading " + baseClass.Name + " template from " + fi);
             FileStream fs = new FileStream(fi.FullName, FileMode.Open);
             System.Xml.XmlReader xmlReader = Serialization.GetXmlReader(fs);
             Type limitationAttribute = typeof(TypeParameterAttribute);

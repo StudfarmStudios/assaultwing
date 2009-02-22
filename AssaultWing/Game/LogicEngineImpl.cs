@@ -37,13 +37,19 @@ namespace AW2.Game
             Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
             foreach (Gob particleEngine in particleEngines)
                 data.AddTypeTemplate(typeof(Gob), particleEngine.TypeName, particleEngine);
-            TypeLoader arenaLoader = new TypeLoader(typeof(Arena), "arenas");
+            ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), "arenas");
             Arena[] arenas = (Arena[])arenaLoader.LoadAllTypes();
             List<string> arenaNames = new List<string>();
+            Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();
+
             foreach (Arena arena in arenas)
                 if (arena.Name != "dummyarena")
+                {
                     arenaNames.Add(arena.Name);
+                    arenaFileNames.Add(arena.Name, arena.FileName);
+                }
             data.ArenaPlaylist = arenaNames;
+            data.ArenaFileNameList = arenaFileNames;
             base.Initialize();
         }
 

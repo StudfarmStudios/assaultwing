@@ -35,6 +35,7 @@ namespace AW2.Game
         Dictionary<string, Model> models;
         Dictionary<string, Texture2D> textures;
         Dictionary<string, Texture2D> arenaPreviews;
+        Dictionary<string, string> arenaFileNameList;
 
         /// <summary>
         /// Type templates, as a list "indexed" by base class (such as 'typeof(Gob)'), 
@@ -325,6 +326,18 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// ArenaFileNames.
+        /// </summary>
+        public Dictionary<string,string> ArenaFileNameList
+        {
+            get { return arenaFileNameList; }
+            set
+            {
+                arenaFileNameList = value;
+            }
+        }
+
+        /// <summary>
         /// Index of current arena in arena playlist,
         /// or -1 if there is no current arena.
         /// </summary>
@@ -353,7 +366,7 @@ namespace AW2.Game
             {
                 
                 TypeLoader arenaLoader = new TypeLoader(typeof(Arena), "arenas");
-                preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes("Arena#" + name + ".xml");
+                preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes(arenaFileNameList[name]);
             }
             /*TODO: Write error handling*/
             /*

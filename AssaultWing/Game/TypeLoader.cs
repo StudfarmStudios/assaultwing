@@ -116,7 +116,7 @@ namespace AW2.Game
             Type listType = typeof(List<>).MakeGenericType(baseClass);
             IList types = (IList)Activator.CreateInstance(listType);
             foreach (FileInfo fi in list)
-            {                
+            {
                 types.Add(ParseAndLoadFile(fi));
             }
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
@@ -124,11 +124,27 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// returns fileNames in typeLoaders folder
+        /// </summary>
+
+        public List<string> ListFiles()
+        {
+            List<FileInfo> list = FindTypeDefinitions();
+            List<String> fileNames = new List<string>();
+            foreach (FileInfo fi in list)
+            {
+                fileNames.Add(fi.Name);
+            }
+            return fileNames;
+
+        }
+
+        /// <summary>
         /// Loads a type template from a file.
         /// </summary>
         /// <param name="fi">The file to load from.</param>
         /// <returns>The loaded type template.</returns>
-        private object ParseAndLoadFile(FileInfo fi)
+        protected virtual object ParseAndLoadFile(FileInfo fi)
         {
             Log.Write("Loading " + baseClass.Name + " template from " + fi);
             FileStream fs = new FileStream(fi.FullName, FileMode.Open);

@@ -159,6 +159,11 @@ namespace AW2.Game
         List<string> ArenaPlaylist { get; set; }
 
         /// <summary>
+        /// ArenaFileNames needed for arena loading
+        /// </summary>
+        Dictionary<string,string> ArenaFileNameList { get; set; }
+
+        /// <summary>
         /// Index of current arena in arena playlist,
         /// or -1 if there is no current arena.
         /// </summary>

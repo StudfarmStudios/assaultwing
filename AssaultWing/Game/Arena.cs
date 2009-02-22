@@ -19,6 +19,7 @@ namespace AW2.Game
     [LimitedSerialization]
     public class ArenaLayer : IConsistencyCheckable
     {
+
         [TypeParameter]
         bool isGameplayLayer;
         [TypeParameter]
@@ -54,6 +55,7 @@ namespace AW2.Game
         /// The Z coordinate of the gameplay layer is 0. Negative coordinates
         /// are farther away from the camera.
         public float Z { get { return z; } }
+
 
         /// <summary>
         /// Name of the texture to use as parallax or <c>null</c> for no parallax.
@@ -214,6 +216,12 @@ namespace AW2.Game
     {
         #region Arena fields
 
+
+        /// <summary>
+        /// Arena File name is needed for arena loading.
+        /// </summary>
+        string fileName;
+
         /// <summary>
         /// Layers of the arena, containing initial gobs and parallaxes.
         /// </summary>
@@ -296,6 +304,11 @@ namespace AW2.Game
         /// The name of the arena.
         /// </summary>
         public string Name { get { return name; } set { name = value; } }
+
+        /// <summary>
+        /// The file name of the arena.
+        /// </summary>
+        public string FileName { get { return fileName; } set { fileName = value; } }
 
         /// <summary>
         /// The width and height of the arena.

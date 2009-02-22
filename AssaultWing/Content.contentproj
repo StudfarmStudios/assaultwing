@@ -206,105 +206,105 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="arenas\Arena#Blood Bowl.xml">
+    <None Include="arenas\Arena_Blood Bowl.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Arena#Blood Bowl</Name>
+      <Name>Arena_Blood Bowl</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot#bazooka.xml">
+    <None Include="weapondefs\ForwardShot_bazooka.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ForwardShot#bazooka</Name>
+      <Name>ForwardShot_bazooka</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot#dummyweapontype.xml">
+    <None Include="weapondefs\ForwardShot_dummyweapontype.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ForwardShot#dummyweapontype</Name>
+      <Name>ForwardShot_dummyweapontype</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot#peashooter.xml">
+    <None Include="weapondefs\ForwardShot_peashooter.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ForwardShot#peashooter</Name>
+      <Name>ForwardShot_peashooter</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet#bomb.xml">
+    <None Include="gobdefs\Bullet_bomb.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Bullet#bomb</Name>
+      <Name>Bullet_bomb</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet#dummygobtype.xml">
+    <None Include="gobdefs\Bullet_dummygobtype.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Bullet#dummygobtype</Name>
+      <Name>Bullet_dummygobtype</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet#slug.xml">
+    <None Include="gobdefs\Bullet_slug.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Bullet#slug</Name>
+      <Name>Bullet_slug</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Dock#dock.xml">
+    <None Include="gobdefs\Dock_dock.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Dock#dock</Name>
+      <Name>Dock_dock</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Gravity#uniform_gravity.xml">
+    <None Include="gobdefs\Gravity_uniform gravity.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Gravity#uniform_gravity</Name>
+      <Name>Gravity_uniform gravity</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Ship#Hyperion.xml">
+    <None Include="gobdefs\Ship_Hyperion.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Ship#Hyperion</Name>
+      <Name>Ship_Hyperion</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Ship#Prowler.xml">
+    <None Include="gobdefs\Ship_Prowler.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Ship#Prowler</Name>
+      <Name>Ship_Prowler</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Wall#soil.xml">
+    <None Include="gobdefs\Wall_soil.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Wall#soil</Name>
+      <Name>Wall_soil</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\WallModel#wall_model.xml">
+    <None Include="gobdefs\WallModel_wall model.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>WallModel#wall_model</Name>
+      <Name>WallModel_wall model</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
@@ -390,16 +390,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Rocket#rocket.xml">
-      <Name>Rocket#rocket</Name>
+    <None Include="gobdefs\Rocket_rocket.xml">
+      <Name>Rocket_rocket</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot#rockets.xml">
-      <Name>ForwardShot#rockets</Name>
+    <None Include="weapondefs\ForwardShot_rockets.xml">
+      <Name>ForwardShot_rockets</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -443,16 +443,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot#shotgun.xml">
-      <Name>ForwardShot#shotgun</Name>
+    <None Include="weapondefs\ForwardShot_shotgun.xml">
+      <Name>ForwardShot_shotgun</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bonus#bonus.xml">
-      <Name>Bonus#bonus</Name>
+    <None Include="gobdefs\Bonus_bonus.xml">
+      <Name>Bonus_bonus</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -464,24 +464,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#dummyparticleenginetype.xml">
-      <Name>ParticleEngine#dummyparticleenginetype</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#smoke.xml">
-      <Name>ParticleEngine#smoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#explosion.xml">
-      <Name>ParticleEngine#explosion</Name>
+    <None Include="particledefs\ParticleEngine_dummyparticleengine.xml">
+      <Name>ParticleEngine_dummyparticleengine</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -496,16 +480,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#fusionengine.xml">
-      <Name>ParticleEngine#fusionengine</Name>
+    <None Include="particledefs\ParticleEngine_fusionengine.xml">
+      <Name>ParticleEngine_fusionengine</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#fusionengine2.xml">
-      <Name>ParticleEngine#fusionengine2</Name>
+    <None Include="particledefs\ParticleEngine_fusionengine2.xml">
+      <Name>ParticleEngine_fusionengine2</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -519,8 +503,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#fusionengine3.xml">
-      <Name>ParticleEngine#fusionengine3</Name>
+    <None Include="particledefs\ParticleEngine_fusionengine3.xml">
+      <Name>ParticleEngine_fusionengine3</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -539,44 +523,20 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <None Include="particledefs\ParticleEngine#beamer.xml">
-      <Name>ParticleEngine#beamer</Name>
+    <None Include="particledefs\ParticleEngine_beamer.xml">
+      <Name>ParticleEngine_beamer</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\ParticleEngine#beamer2.xml">
-      <Name>ParticleEngine#beamer2</Name>
+    <None Include="particledefs\ParticleEngine_beamer2.xml">
+      <Name>ParticleEngine_beamer2</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="particledefs\ParticleEngine#enginesmoke.xml">
-      <Name>ParticleEngine#enginesmoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\ParticleEngine#explocenter.xml">
-      <Name>ParticleEngine#explocenter</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\ParticleEngine#explodots.xml">
-      <Name>ParticleEngine#explodots</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\ParticleEngine#explosmoke.xml">
-      <Name>ParticleEngine#explosmoke</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="particledefs\ParticleEngine#explowhite.xml">
-      <Name>ParticleEngine#explowhite</Name>
+    <None Include="particledefs\ParticleEngine_enginesmoke.xml">
+      <Name>ParticleEngine_enginesmoke</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -615,8 +575,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Explosion#bomb_explosion.xml">
-      <Name>Explosion#bomb_explosion</Name>
+    <None Include="gobdefs\Explosion_bomb explosion.xml">
+      <Name>Explosion_bomb explosion</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -652,40 +612,32 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot#berserkers.xml">
-      <Name>ForwardShot#berserkers</Name>
+    <None Include="weapondefs\ForwardShot_berserkers.xml">
+      <Name>ForwardShot_berserkers</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot#bouncegun.xml">
-      <Name>ForwardShot#bouncegun</Name>
+    <None Include="weapondefs\ForwardShot_bouncegun.xml">
+      <Name>ForwardShot_bouncegun</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet#bouncebomb.xml">
-      <Name>Bullet#bouncebomb</Name>
+    <None Include="gobdefs\BounceBullet_bouncebomb.xml">
+      <Name>BounceBullet_bouncebomb</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#slugfire.xml">
-      <Name>ParticleEngine#slugfire</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#bombfire.xml">
-      <Name>ParticleEngine#bombfire</Name>
+    <None Include="particledefs\ParticleEngine_slugfire.xml">
+      <Name>ParticleEngine_slugfire</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -704,48 +656,48 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <None Include="particledefs\ParticleEngine#shotgunfire.xml">
-      <Name>ParticleEngine#shotgunfire</Name>
+    <None Include="particledefs\ParticleEngine_shotgunfire.xml">
+      <Name>ParticleEngine_shotgunfire</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#rocketfire.xml">
-      <Name>ParticleEngine#rocketfire</Name>
+    <None Include="particledefs\ParticleEngine_rocketfire.xml">
+      <Name>ParticleEngine_rocketfire</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#rocketfire2.xml">
-      <Name>ParticleEngine#rocketfire2</Name>
+    <None Include="particledefs\ParticleEngine_rocketfire2.xml">
+      <Name>ParticleEngine_rocketfire2</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#rocketthrust1.xml">
-      <Name>ParticleEngine#rocketthrust1</Name>
+    <None Include="particledefs\ParticleEngine_rocketthrust1.xml">
+      <Name>ParticleEngine_rocketthrust1</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#rocketthrust2.xml">
-      <Name>ParticleEngine#rocketthrust2</Name>
+    <None Include="particledefs\ParticleEngine_rocketthrust2.xml">
+      <Name>ParticleEngine_rocketthrust2</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#rocketthrust3.xml">
-      <Name>ParticleEngine#rocketthrust3</Name>
+    <None Include="particledefs\ParticleEngine_rocketthrust3.xml">
+      <Name>ParticleEngine_rocketthrust3</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -759,64 +711,48 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#shockwave.xml">
-      <Name>ParticleEngine#shockwave</Name>
+    <None Include="particledefs\ParticleEngine_shockwave.xml">
+      <Name>ParticleEngine_shockwave</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Explosion#ship_explosion.xml">
-      <Name>Explosion#ship_explosion</Name>
+    <None Include="gobdefs\Explosion_ship explosion.xml">
+      <Name>Explosion_ship explosion</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#shockwave_large.xml">
-      <Name>ParticleEngine#shockwave_large</Name>
+    <None Include="particledefs\ParticleEngine_shockwave_large.xml">
+      <Name>ParticleEngine_shockwave_large</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#explosion_large.xml">
-      <Name>ParticleEngine#explosion_large</Name>
+    <None Include="gobdefs\Rocket_berserker.xml">
+      <Name>Rocket_berserker</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#explocenter_large.xml">
-      <Name>ParticleEngine#explocenter_large</Name>
+    <None Include="gobdefs\Explosion_bonus collection.xml">
+      <Name>Explosion_bonus collection</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Rocket#berserkers.xml">
-      <Name>Rocket#berserkers</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gobdefs\Explosion#bonus_collection.xml">
-      <Name>Explosion#bonus_collection</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#bonus.xml">
-      <Name>ParticleEngine#bonus</Name>
+    <None Include="particledefs\ParticleEngine_bonusengine.xml">
+      <Name>ParticleEngine_bonusengine</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -830,8 +766,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet#Hail.xml">
-      <Name>Bullet#Hail</Name>
+    <None Include="gobdefs\Bullet_hail.xml">
+      <Name>Bullet_hail</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -867,30 +803,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#playergreen.xml">
-      <Name>ParticleEngine#playergreen</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#playerred.xml">
-      <Name>ParticleEngine#playerred</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#playerbirth.xml">
-      <Name>ParticleEngine#playerbirth</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\viewport_border_vertical.png">
       <Name>viewport_border_vertical</Name>
       <Importer>TextureImporter</Importer>
@@ -898,8 +810,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#shipsmoke.xml">
-      <Name>ParticleEngine#shipsmoke</Name>
+    <None Include="particledefs\ParticleEngine_shipsmoke.xml">
+      <Name>ParticleEngine_shipsmoke</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -913,8 +825,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="arenas\Arena#Anna Lunta.xml">
-      <Name>Arena#Anna Lunta</Name>
+    <None Include="arenas\Arena_Anna Lunta.xml">
+      <Name>Arena_Anna Lunta</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1002,8 +914,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#dumbfirethrust1.xml">
-      <Name>ParticleEngine#dumbfirethrust1</Name>
+    <None Include="particledefs\ParticleEngine_dumbfirethrust1.xml">
+      <Name>ParticleEngine_dumbfirethrust1</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1015,12 +927,6 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <None Include="particledefs\ParticleEngine#bonusidle.xml">
-      <Name>ParticleEngine#bonusidle</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="fonts\MenuFontBig.spritefont">
@@ -1033,8 +939,8 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <None Include="gobdefs\SpawnGob#bonus_spawn.xml">
-      <Name>SpawnGob#bonus_spawn</Name>
+    <None Include="gobdefs\SpawnGob_bonus spawn.xml">
+      <Name>SpawnGob_bonus spawn</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1169,8 +1075,8 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <None Include="gobdefs\SpawnPlayer#player_spawn.xml">
-      <Name>SpawnPlayer#player_spawn</Name>
+    <None Include="gobdefs\SpawnPlayer_player spawn.xml">
+      <Name>SpawnPlayer_player spawn</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1184,8 +1090,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="arenas\Arena#Amazonas.xml">
-      <Name>Arena#Amazonas</Name>
+    <None Include="arenas\Arena_Amazonas.xml">
+      <Name>Arena_Amazonas</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1271,8 +1177,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\PropModel#prop_model.xml">
-      <Name>PropModel#prop_model</Name>
+    <None Include="gobdefs\PropModel_prop model.xml">
+      <Name>PropModel_prop model</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1316,8 +1222,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#amazonrain.xml">
-      <Name>ParticleEngine#amazonrain</Name>
+    <None Include="particledefs\ParticleEngine_amazon rain.xml">
+      <Name>ParticleEngine_amazon rain</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1334,8 +1240,8 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <None Include="particledefs\ParticleEngine#amazonsteam.xml">
-      <Name>ParticleEngine#amazonsteam</Name>
+    <None Include="particledefs\ParticleEngine_amazon steam.xml">
+      <Name>ParticleEngine_amazon steam</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1349,32 +1255,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#dockeffect.xml">
-      <Name>ParticleEngine#dockeffect</Name>
+    <None Include="particledefs\ParticleEngine_dock effect.xml">
+      <Name>ParticleEngine_dock effect</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine#rocketglow.xml">
-      <Name>ParticleEngine#rocketglow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#fusionglow.xml">
-      <Name>ParticleEngine#fusionglow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine#bulletdeath.xml">
-      <Name>ParticleEngine#bulletdeath</Name>
+    <None Include="particledefs\ParticleEngine_rocket glow.xml">
+      <Name>ParticleEngine_rocket glow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1400,14 +1290,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#testpeng.xml">
-      <Name>Peng#testpeng</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\p_bonusblink.png">
       <Name>p_bonusblink</Name>
       <Importer>TextureImporter</Importer>
@@ -1422,8 +1304,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#dumbglow.xml">
-      <Name>Peng#dumbglow</Name>
+    <None Include="particledefs\Peng_dumb glow.xml">
+      <Name>Peng_dumb glow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1437,40 +1319,40 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#bonusblink.xml">
-      <Name>Peng#bonusblink</Name>
+    <None Include="particledefs\Peng_bonus blink.xml">
+      <Name>Peng_bonus blink</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#bulletglow.xml">
-      <Name>Peng#bulletglow</Name>
+    <None Include="particledefs\Peng_bullet glow.xml">
+      <Name>Peng_bullet glow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#bulletexplo.xml">
-      <Name>Peng#bulletexplo</Name>
+    <None Include="particledefs\Peng_bullet explo.xml">
+      <Name>Peng_bullet explo</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#bulletfragments.xml">
-      <Name>Peng#bulletfragments</Name>
+    <None Include="particledefs\Peng_bullet fragments.xml">
+      <Name>Peng_bullet fragments</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\BounceBullet#cinder.xml">
-      <Name>BounceBullet#cinder</Name>
+    <None Include="gobdefs\BounceBullet_cinder.xml">
+      <Name>BounceBullet_cinder</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1484,16 +1366,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#bonuscollect.xml">
-      <Name>Peng#bonuscollect</Name>
+    <None Include="particledefs\Peng_bonus collect.xml">
+      <Name>Peng_bonus collect</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#bonuscollectflash.xml">
-      <Name>Peng#bonuscollectflash</Name>
+    <None Include="particledefs\Peng_bonus collect flash.xml">
+      <Name>Peng_bonus collect flash</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1505,8 +1387,8 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <None Include="particledefs\Peng#bonusbirth.xml">
-      <Name>Peng#bonusbirth</Name>
+    <None Include="particledefs\Peng_bonus birth.xml">
+      <Name>Peng_bonus birth</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1520,32 +1402,32 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#fragments.xml">
-      <Name>Peng#fragments</Name>
+    <None Include="particledefs\Peng_fragments.xml">
+      <Name>Peng_fragments</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#fragmentglow.xml">
-      <Name>Peng#fragmentglow</Name>
+    <None Include="particledefs\Peng_fragment glow.xml">
+      <Name>Peng_fragment glow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#fragmentsmoke.xml">
-      <Name>Peng#fragmentsmoke</Name>
+    <None Include="particledefs\Peng_fragment smoke.xml">
+      <Name>Peng_fragment smoke</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet#explodingfragment.xml">
-      <Name>Bullet#explodingfragment</Name>
+    <None Include="gobdefs\Bullet_exploding fragment.xml">
+      <Name>Bullet_exploding fragment</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1559,24 +1441,24 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#fragmentexplo.xml">
-      <Name>Peng#fragmentexplo</Name>
+    <None Include="particledefs\Peng_fragment explo.xml">
+      <Name>Peng_fragment explo</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#dustfragments.xml">
-      <Name>Peng#dustfragments</Name>
+    <None Include="particledefs\Peng_dust fragments.xml">
+      <Name>Peng_dust fragments</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet#dustfragment.xml">
-      <Name>Bullet#dustfragment</Name>
+    <None Include="gobdefs\Bullet_dust fragment.xml">
+      <Name>Bullet_dust fragment</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1598,128 +1480,128 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#exploshockwave.xml">
-      <Name>Peng#exploshockwave</Name>
+    <None Include="particledefs\Peng_explo shockwave.xml">
+      <Name>Peng_explo shockwave</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#shipexploshockwave.xml">
-      <Name>Peng#shipexploshockwave</Name>
+    <None Include="particledefs\Peng_ship explo shockwave.xml">
+      <Name>Peng_ship explo shockwave</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#explowhiteflash.xml">
-      <Name>Peng#explowhiteflash</Name>
+    <None Include="particledefs\Peng_explo white flash.xml">
+      <Name>Peng_explo white flash</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#shipexplowhiteflash.xml">
-      <Name>Peng#shipexplowhiteflash</Name>
+    <None Include="particledefs\Peng_ship explo white flash.xml">
+      <Name>Peng_ship explo white flash</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#explowhitecenter.xml">
-      <Name>Peng#explowhitecenter</Name>
+    <None Include="particledefs\Peng_explo center.xml">
+      <Name>Peng_explo center</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#shipexplocenter.xml">
-      <Name>Peng#shipexplocenter</Name>
+    <None Include="particledefs\Peng_ship explo center.xml">
+      <Name>Peng_ship explo center</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#largefragments.xml">
-      <Name>Peng#largefragments</Name>
+    <None Include="particledefs\Peng_large fragments.xml">
+      <Name>Peng_large fragments</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\BounceBullet#largefragment.xml">
-      <Name>BounceBullet#largefragment</Name>
+    <None Include="gobdefs\BounceBullet_large fragment.xml">
+      <Name>BounceBullet_large fragment</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#largefragmentexplo.xml">
-      <Name>Peng#largefragmentexplo</Name>
+    <None Include="particledefs\Peng_large fragment explo.xml">
+      <Name>Peng_large fragment explo</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#largefragmentglow.xml">
-      <Name>Peng#largefragmentglow</Name>
+    <None Include="particledefs\Peng_large fragment glow.xml">
+      <Name>Peng_large fragment glow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#greenplayer.xml">
-      <Name>Peng#greenplayer</Name>
+    <None Include="particledefs\Peng_playergreen.xml">
+      <Name>Peng_playergreen</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#explosmoke.xml">
-      <Name>Peng#explosmoke</Name>
+    <None Include="particledefs\Peng_explo smoke.xml">
+      <Name>Peng_explo smoke</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#shipexplosmoke.xml">
-      <Name>Peng#shipexplosmoke</Name>
+    <None Include="particledefs\Peng_ship explo smoke.xml">
+      <Name>Peng_ship explo smoke</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#explodots.xml">
-      <Name>Peng#explodots</Name>
+    <None Include="particledefs\Peng_explo dots.xml">
+      <Name>Peng_explo dots</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#redplayer.xml">
-      <Name>Peng#redplayer</Name>
+    <None Include="particledefs\Peng_playerred.xml">
+      <Name>Peng_playerred</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#playerbirthstars.xml">
-      <Name>Peng#playerbirthstars</Name>
+    <None Include="particledefs\Peng_player birth stars.xml">
+      <Name>Peng_player birth stars</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1750,24 +1632,30 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <None Include="particledefs\Peng#playerbirthstrokes.xml">
-      <Name>Peng#playerbirthstrokes</Name>
+    <None Include="particledefs\Peng_player birth strokes.xml">
+      <Name>Peng_player birth strokes</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#buggerlights.xml">
-      <Name>Peng#buggerlights</Name>
+    <None Include="particledefs\Peng_buggerlights.xml">
+      <Name>Peng_buggerlights</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng#airstreaks.xml">
-      <Name>Peng#airstreaks</Name>
+    <None Include="particledefs\ParticleEngine_bombfire.xml">
+      <Name>ParticleEngine_bombfire</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="particledefs\Peng_airstreaks.xml">
+      <Name>Peng_airstreaks</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

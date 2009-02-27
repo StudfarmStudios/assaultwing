@@ -24,6 +24,7 @@ namespace AW2.Game
         /// </summary>
         /// <param name="baseClass">Base class of the class hierarchy in which the user-defined types reside.</param>
         /// <param name="definitionDir">Name of the directory where the XML-form type definitions are.</param>
+        /// <seealso cref="AW2.Helpers.Paths"/>
         public TypeLoader(Type baseClass, string definitionDir)
         {
             this.baseClass = baseClass;
@@ -97,7 +98,7 @@ namespace AW2.Game
                 t => !t.IsAbstract && baseClass.IsAssignableFrom(t)))
             {
                 Console.WriteLine("Saving template for " + type.Name);
-                string filename = System.IO.Path.Combine(definitionDir.Name,
+                string filename = System.IO.Path.Combine(definitionDir.FullName,
                     type.Name + "_template.xml");
                 TextWriter writer = new StreamWriter(filename);
                 System.Xml.XmlWriter xmlWriter = Serialization.GetXmlWriter(writer);

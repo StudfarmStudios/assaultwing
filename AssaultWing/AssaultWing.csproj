@@ -11,11 +11,11 @@
     <XnaFrameworkVersion>v3.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <ApplicationIcon>Game.ico</ApplicationIcon>
-    <ManifestCertificateThumbprint>1E0AA55F62C90CF38F2BB72B706D393E150ECBB0</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>7E0078CD3D959F197223004F7BE2C3CD313A050B</ManifestCertificateThumbprint>
     <ManifestKeyFile>AssaultWing_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>false</SignManifests>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <Thumbnail>GameThumbnail.png</Thumbnail>
     <XnaCrossPlatformGroupID>{15153d80-6b81-4a3d-b3f9-536b30b7a7d0}</XnaCrossPlatformGroupID>
     <XnaUpgrade>
@@ -29,17 +29,26 @@
     <TargetZone>LocalIntranet</TargetZone>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <TargetFrameworkSubset>Full</TargetFrameworkSubset>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <ExcludedPermissions>
+    </ExcludedPermissions>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>4</ApplicationRevision>
+    <InstallUrl>http://www.cs.helsinki.fi/u/vvnurmi/qwerty/aw2/install/</InstallUrl>
+    <ProductName>Assault Wing - Galactic Battlefront</ProductName>
+    <PublisherName>Studfarm Studios</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -60,7 +69,7 @@
     <DocumentationFile>bin\x86\Debug\AssaultWing.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
     <DefineConstants>WINDOWS</DefineConstants>
@@ -70,6 +79,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>True</XnaCompressContent>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug2|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -217,6 +227,7 @@
     <Compile Include="Graphics\OverlayDialogData.cs" />
     <Compile Include="Graphics\ProgressBar.cs" />
     <Compile Include="Helpers\Pair.cs" />
+    <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\MainMenuComponent.cs" />
@@ -335,7 +346,7 @@
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
       <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>true</Install>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
       <Visible>False</Visible>
@@ -350,7 +361,12 @@
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Xna.Framework.3.0">
       <Visible>False</Visible>

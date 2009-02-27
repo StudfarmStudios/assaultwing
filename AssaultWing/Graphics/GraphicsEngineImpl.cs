@@ -477,7 +477,7 @@ namespace AW2.Graphics
         {
             try
             {
-                string textureNamePath = System.IO.Path.Combine("textures", name);
+                string textureNamePath = System.IO.Path.Combine(Paths.Textures, name);
                 Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(textureNamePath);
                 return texture;
             }
@@ -497,7 +497,7 @@ namespace AW2.Graphics
         {
             try
             {
-                string fontNamePath = System.IO.Path.Combine("fonts", name);
+                string fontNamePath = System.IO.Path.Combine(Paths.Fonts, name);
                 SpriteFont font = AssaultWing.Instance.Content.Load<SpriteFont>(fontNamePath);
                 return font;
             }
@@ -517,7 +517,7 @@ namespace AW2.Graphics
         {
             try
             {
-                string modelNamePath = System.IO.Path.Combine("models", name);
+                string modelNamePath = System.IO.Path.Combine(Paths.Models, name);
                 Model model = AssaultWing.Instance.Content.Load<Model>(modelNamePath);
                 return model;
             }

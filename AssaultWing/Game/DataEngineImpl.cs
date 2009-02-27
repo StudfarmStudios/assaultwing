@@ -365,7 +365,7 @@ namespace AW2.Game
             if(preparedArena==null || !preparedArena.Name.Equals(name))
             {
                 
-                TypeLoader arenaLoader = new TypeLoader(typeof(Arena), "arenas");
+                TypeLoader arenaLoader = new TypeLoader(typeof(Arena), Paths.Arenas);
                 preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes(arenaFileNameList[name]);
             }
             /*TODO: Write error handling*/

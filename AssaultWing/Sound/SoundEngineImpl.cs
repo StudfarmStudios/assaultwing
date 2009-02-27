@@ -40,9 +40,9 @@ namespace AW2.Sound
         /// </summary>
         public override void Initialize()
         {
-            audioEngine = new AudioEngine("assaultwingsounds.xgs");
-            waveBank = new WaveBank(audioEngine, "Wave Bank.xwb");
-            soundBank = new SoundBank(audioEngine, "Sound Bank.xsb");
+            audioEngine = new AudioEngine(System.IO.Path.Combine(Paths.Sounds, "assaultwingsounds.xgs"));
+            waveBank = new WaveBank(audioEngine, System.IO.Path.Combine(Paths.Sounds, "Wave Bank.xwb"));
+            soundBank = new SoundBank(audioEngine, System.IO.Path.Combine(Paths.Sounds, "Sound Bank.xsb"));
             Log.Write("Sound engine initialized.");
 
             //PlayMusic(); // for testing, remove when not needed

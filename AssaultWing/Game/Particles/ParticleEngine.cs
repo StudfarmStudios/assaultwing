@@ -119,6 +119,13 @@ namespace AW2.Game.Particles
         }
 
         /// <summary>
+        /// Is the gob relevant to gameplay. Irrelevant gobs won't receive state updates
+        /// from the server when playing over network and they can therefore be created
+        /// independently on a client.
+        /// </summary>
+        public override bool IsRelevant { get { return false; } }
+
+        /// <summary>
         /// Center of the particle system. This is where the emitter will be centered.
         /// </summary>
         public override Vector2 Pos

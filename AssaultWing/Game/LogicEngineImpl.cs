@@ -25,19 +25,19 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             Helpers.Log.Write("Loading user-defined types");
-            TypeLoader gobLoader = new TypeLoader(typeof(Gob), "gobdefs");
+            TypeLoader gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Gobs);
             Gob[] gobs = (Gob[])gobLoader.LoadAllTypes();
             foreach (Gob gob in gobs)
                 data.AddTypeTemplate(typeof(Gob), gob.TypeName, gob);
-            TypeLoader weaponLoader = new TypeLoader(typeof(Weapon), "weapondefs");
+            TypeLoader weaponLoader = new TypeLoader(typeof(Weapon), Helpers.Paths.Weapons);
             Weapon[] weapons = (Weapon[])weaponLoader.LoadAllTypes();
             foreach (Weapon weapon in weapons)
                 data.AddTypeTemplate(typeof(Weapon), weapon.TypeName, weapon);
-            TypeLoader particleLoader = new TypeLoader(typeof(Gob), "particledefs");
+            TypeLoader particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
             Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
             foreach (Gob particleEngine in particleEngines)
                 data.AddTypeTemplate(typeof(Gob), particleEngine.TypeName, particleEngine);
-            ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), "arenas");
+            ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
             Arena[] arenas = (Arena[])arenaLoader.LoadAllTypes();
             List<string> arenaNames = new List<string>();
             Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();

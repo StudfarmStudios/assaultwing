@@ -753,14 +753,15 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Creates a new gob from the given runtime state.
+        /// Creates unconditionally a new gob from the given runtime state.
         /// </summary>
         /// Use this method to revive gobs whose runtime state you have deserialised.
         /// This method will create the gob properly, initialising all fields and then
         /// copying the runtime state fields to the new instance.
         /// <param name="runtimeState">The runtime state from where to initialise the new gob.</param>
         /// <returns>The newly created gob.</returns>
-        public static Gob CreateGob(Gob runtimeState)
+        /// <seealso cref="CreateGob(Gob, Action&lt;Gob&gt;)"/>
+        private static Gob CreateGob(Gob runtimeState)
         {
             Gob gob = CreateGob(runtimeState.TypeName);
             if (runtimeState.GetType() != gob.GetType())
@@ -769,6 +770,7 @@ namespace AW2.Game
             gob.SetRuntimeState(runtimeState);
 
             // Do special things with meshes named like collision areas.
+            // TODO: This feature seems unused. Remove if so.
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Model model = data.GetModel(gob.modelName);
             List<CollisionArea> meshAreas = new List<CollisionArea>();
@@ -806,6 +808,27 @@ namespace AW2.Game
             }
 
             return gob;
+        }
+
+        /// <summary>
+        /// Creates a new gob from the given runtime state and performs a given initialisation on it.
+        /// This method is for game logic; gob init is skipped appropriately on clients.
+        /// </summary>
+        /// Use this method to revive gobs whose runtime state you have deserialised.
+        /// This method will create the gob properly, initialising all fields and then
+        /// copying the runtime state fields to the new instance.
+        /// 
+        /// In order for a call to this method to be meaningful, <c>init</c>
+        /// should contain a call to <c>DataEngine.AddGob</c> or similar method.
+        /// <param name="runtimeState">The runtime state from where to initialise the new gob.</param>
+        /// <returns>The newly created gob.</returns>
+        /// <param name="init">Initialisation to perform on the gob.</param>
+        /// <seealso cref="CreateGob(Gob)"/>
+        public static void CreateGob(Gob runtimeState, Action<Gob> init)
+        {
+            Gob gob = CreateGob(runtimeState);
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
+                init(gob);
         }
 
         #endregion Gob constructors and static constructor-like methods

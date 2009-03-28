@@ -516,10 +516,7 @@ namespace AW2.Game
                 });
             progressBar.SetSubtaskCount(wallCount);
             for (int i = 0; i < preparedArena.Layers.Count; ++i)
-                preparedArena.Layers[i].ForEachGob(delegate(Gob gob)
-                {
-                    AddGob(Gob.CreateGob(gob), i);
-                });
+                preparedArena.Layers[i].ForEachGob(gob => Gob.CreateGob(gob, newGob => AddGob(newGob, i)));
         }
 
         /// <summary>
@@ -579,8 +576,7 @@ namespace AW2.Game
             gob.Activate();
 
             // If we are the game server, notify game clients of the new gob.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server
-                && MustSendCreationToClient(gob))
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
             {
                 NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
                 var message = new GobCreationMessage();
@@ -591,28 +587,23 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Tells, assuming we are the game server, 
-        /// if a message notifying of the creation of a gob 
-        /// should be sent to game clients.
-        /// </summary>
-        /// <param name="gob">The newly created gob to consider.</param>
-        /// <returns><c>true</c> if and only if a gob creation message should be sent.</returns>
-        bool MustSendCreationToClient(Gob gob)
-        {
-#if false // TODO: Don't send creation on purely visual gobs. Make client understand to create them itself.
-            if (gob.Layer != gameplayLayer) return false;
-            if (gob is Peng || gob is Particles.ParticleEngine) return false;
-#endif
-            return true;
-        }
-
-        /// <summary>
         /// Removes a gob from the game.
         /// </summary>
         /// <param name="gob">The gob to remove.</param>
         public void RemoveGob(Gob gob)
         {
-            removedGobs.Add(gob);
+            // If we are a game client, we remove relevant gobs only when the server tells us to.
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
+                removedGobs.Add(gob);
+
+            // If we are the game server, notify game clients of the removal of relevant gobs.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+            {
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                var message = new GobDeletionMessage();
+                message.GobId = gob.Id;
+                net.SendToClients(message);
+            }
         }
 
         /// <summary>
@@ -997,6 +988,19 @@ namespace AW2.Game
             if (CustomOperations != null)
                 CustomOperations(null);
             CustomOperations = null;
+
+            // If we are a game client, remove gobs as told by the game server.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            {
+                GobDeletionMessage message;
+                while ((message = net.ReceiveFromServer<GobDeletionMessage>()) != null)
+                {
+                    Gob gob = GetGob(message.GobId);
+                    if (gob == null) throw new Exception("Program logic error: Server told to remove an unknown gob (ID " + message.GobId + ")");
+                    gob.Die(new DeathCause()); // TODO: Pass death cause in gob deletion message.
+                    removedGobs.Add(gob); // TODO: Replace this with something more clever.
+                }
+            }
 
             // Remove gobs to remove.
             // Don't use foreach because removed gobs may still add more items

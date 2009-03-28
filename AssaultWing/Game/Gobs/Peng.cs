@@ -99,6 +99,13 @@ namespace AW2.Game.Gobs
         #region Peng properties
 
         /// <summary>
+        /// Is the gob relevant to gameplay. Irrelevant gobs won't receive state updates
+        /// from the server when playing over network and they can therefore be created
+        /// independently on a client.
+        /// </summary>
+        public override bool IsRelevant { get { return false; } }
+
+        /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
         public override List<string> TextureNames

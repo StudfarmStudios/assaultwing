@@ -565,7 +565,7 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Updates the players controls, assuming this game instance 
+        /// Updates the player's controls, assuming this game instance 
         /// is the game server.
         /// </summary>
         private void UpdateControlsServer()
@@ -588,7 +588,7 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Updates the players controls, assuming the player
+        /// Updates the player's controls, assuming the player
         /// lives on this game instance and this game instance 
         /// is a game client.
         /// </summary>

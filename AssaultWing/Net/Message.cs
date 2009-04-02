@@ -56,10 +56,59 @@ namespace AW2.Net
         public bool isReply;
 
         /// <summary>
+        /// A mapping of message type identifier hash codes to message types.
+        /// </summary>
+        /// <c>GetMessageTypeIndex</c> produces valid indices for this array.
+        /// <seealso cref="GetMessageTypeIndex"/>
+        static Type[] messageTypes = new Type[256 * 2];
+
+        /// <summary>
+        /// The subclass of Message that this message type identifier represents,
+        /// or <c>null</c> if no such subclass exists.
+        /// </summary>
+        public Type MessageSubclass
+        {
+            get
+            {
+                int hashCode = GetHashCode();
+                if (hashCode < 0 || hashCode >= messageTypes.Length)
+                    return null;
+                return messageTypes[hashCode];
+            }
+        }
+
+        /// <summary>
+        /// Registers a message type identifier to refer to a type.
+        /// </summary>
+        /// <param name="messageType">The message type identifier</param>
+        /// <param name="type">The type</param>
+        public static void Register(MessageType messageType, Type type)
+        {
+            int hashCode = messageType.GetHashCode();
+            if (messageTypes[hashCode] != null)
+                throw new Exception("Two message types have the same identifier: " + type.Name + " and " + messageTypes[hashCode].Name);
+            messageTypes[hashCode] = type;
+        }
+
+        /// <summary>
+        /// Returns the message type (i.e. a nonabstract subclass of Message)
+        /// corresponding to a topic and reply status.
+        /// </summary>
+        public static Type GetMessageSubclass(byte topicIdentifier, bool isReply)
+        {
+            return messageTypes[GetMessageTypeIndex(topicIdentifier, isReply)];
+        }
+
+        /// <summary>
         /// Returns the hash code for this object.
         /// </summary>
         /// <returns>This object's hash code.</returns>
         public override int GetHashCode()
+        {
+            return GetMessageTypeIndex(topicIdentifier, isReply);
+        }
+
+        private static int GetMessageTypeIndex(byte topicIdentifier, bool isReply)
         {
             return isReply ? byte.MaxValue + 1 + topicIdentifier : topicIdentifier;
         }
@@ -70,7 +119,9 @@ namespace AW2.Net
         /// <returns>A textural, human readable description of this object.</returns>
         public override string ToString()
         {
-            return topicIdentifier.ToString() + (isReply ? "-reply" : "-request");
+            Type messageSubclass = MessageSubclass;
+            return (messageSubclass == null ? "unknown" : messageSubclass.Name)
+                + (isReply ? "-reply" : "-request");
         }
 
         /// <summary>
@@ -99,6 +150,11 @@ namespace AW2.Net
     public abstract class Message
     {
         MessageHeaderFlags headerFlags;
+
+        /// <summary>
+        /// The type identifier of the message.
+        /// </summary>
+        public MessageType Type { get { return GetMessageType(this.GetType()); } }
 
         /// <summary>
         /// Message's header flags.
@@ -152,10 +208,7 @@ namespace AW2.Net
             if (header.Length != HeaderLength) return false;
             byte protocolIdentifier = header[(int)MessageHeaderIndex.ProtocolIdentifier];
             if (protocolIdentifier != Message.protocolIdentifier) return false;
-            byte topicIdentifier = header[(int)MessageHeaderIndex.MessageTopic];
-            MessageHeaderFlags flags = (MessageHeaderFlags)header[(int)MessageHeaderIndex.MessageFlags];
-            MessageType messageType = new MessageType(topicIdentifier, (flags & MessageHeaderFlags.Reply) != 0);
-            if (messageTypes[messageType.GetHashCode()] == null) return false;
+            if (GetMessageSubclass(header) == null) return false;
             byte versionIdentifier = header[(int)MessageHeaderIndex.ProtocolVersion];
             if (versionIdentifier != Message.versionIdentifier) return false;
             // These can be anything:
@@ -175,17 +228,13 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Returns the type of a message.
+        /// Returns the message subclass referred to in a deserialised message header.
         /// </summary>
-        /// <param name="header">The header of the message.</param>
-        /// <returns>The type of the message.</returns>
-        public static MessageType GetMessageType(byte[] header)
+        public static Type GetMessageSubclass(byte[] header)
         {
-            if (!IsValidHeader(header))
-                throw new InvalidDataException("Invalid message header");
             byte topicIdentifier = header[(int)MessageHeaderIndex.MessageTopic];
             MessageHeaderFlags flags = (MessageHeaderFlags)header[(int)MessageHeaderIndex.MessageFlags];
-            return new MessageType(topicIdentifier, (flags & MessageHeaderFlags.Reply) != 0);
+            return MessageType.GetMessageSubclass(topicIdentifier, (flags & MessageHeaderFlags.Reply) != 0);
         }
 
         /// <summary>
@@ -245,13 +294,11 @@ namespace AW2.Net
             if (!IsValidHeader(header))
                 throw new InvalidDataException("Invalid message header");
 
-            MessageType messageType = GetMessageType(header);
-
             int bodyLength = GetBodyLength(header);
             if (bodyLength > body.Length)
                 throw new InvalidDataException("Body length mismatch (" + bodyLength + " expected, " + body.Length + " got)");
 
-            Message message = (Message)messageTypes[messageType.GetHashCode()].GetConstructor(Type.EmptyTypes).Invoke(null);
+            Message message = (Message)GetMessageSubclass(header).GetConstructor(System.Type.EmptyTypes).Invoke(null);
             message.Deserialize(new NetworkBinaryReader(new MemoryStream(body)));
             message.ConnectionId = connectionId;
             return message;
@@ -298,16 +345,7 @@ namespace AW2.Net
             {
                 try
                 {
-                    System.Reflection.BindingFlags flags =
-                        System.Reflection.BindingFlags.GetField |
-                        System.Reflection.BindingFlags.NonPublic |
-                        System.Reflection.BindingFlags.Public |
-                        System.Reflection.BindingFlags.Static;
-                    MessageType messageType = (MessageType)type.GetField("messageType", flags).GetValue(null);
-                    int hashCode = messageType.GetHashCode();
-                    if (messageTypes[hashCode] != null)
-                        throw new Exception("Two message types have the same identifier: " + type.Name + " and " + messageTypes[hashCode].Name);
-                    messageTypes[hashCode] = type;
+                    MessageType.Register(GetMessageType(type), type);
                 }
                 catch (Exception e)
                 {
@@ -317,9 +355,21 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// A mapping of message type identifier hash codes to message types.
+        /// Returns the message type identifier of a message type.
         /// </summary>
-        static Type[] messageTypes = new Type[256 * 2];
+        /// <param name="type">A message type, i.e. a nonabstract subclass of Message.</param>
+        /// <returns>The message type identifier of the message type.</returns>
+        private static MessageType GetMessageType(Type type)
+        {
+            if (!typeof(Message).IsAssignableFrom(type) || type.IsAbstract)
+                throw new ArgumentException("Only nonabstract subclasses of Message have a message type");
+            System.Reflection.BindingFlags flags =
+                System.Reflection.BindingFlags.GetField |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.Static;
+            return (MessageType)type.GetField("messageType", flags).GetValue(null);
+        }
 
         #endregion Private deserialisation stuff
     }

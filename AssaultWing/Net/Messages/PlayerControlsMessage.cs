@@ -103,5 +103,13 @@ namespace AW2.Net.Messages
                 controlStates[i] = new ControlState(force, pulse);
             }
         }
+
+        /// <summary>
+        /// Returns a String that represents the current Object. 
+        /// </summary>
+        public override string ToString()
+        {
+            return base.ToString() + "[PlayerId " + PlayerId + "]";
+        }
     }
 }

@@ -44,5 +44,13 @@
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);
         }
+
+        /// <summary>
+        /// Returns a String that represents the current Object. 
+        /// </summary>
+        public override string ToString()
+        {
+            return base.ToString() + "[GobId " + GobId + "]";
+        }
     }
 }

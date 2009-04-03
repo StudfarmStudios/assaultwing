@@ -37,5 +37,13 @@
             base.Deserialize(reader);
             GobId = reader.ReadInt32();
         }
+
+        /// <summary>
+        /// Returns a String that represents the current Object. 
+        /// </summary>
+        public override string ToString()
+        {
+            return base.ToString() + "[GobId " + GobId + "]";
+        }
     }
 }

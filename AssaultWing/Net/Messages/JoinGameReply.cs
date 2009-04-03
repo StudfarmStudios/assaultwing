@@ -71,5 +71,13 @@ namespace AW2.Net.Messages
                 PlayerIdChanges[i].newId = reader.ReadInt32();
             }
         }
+
+        /// <summary>
+        /// Returns a String that represents the current Object. 
+        /// </summary>
+        public override string ToString()
+        {
+            return base.ToString() + PlayerIdChanges.Length + " players";
+        }
     }
 }

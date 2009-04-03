@@ -109,5 +109,15 @@ namespace AW2.Net.Messages
                 PlayerInfos.Add(info);
             }
         }
+
+        /// <summary>
+        /// Returns a String that represents the current Object. 
+        /// </summary>
+        public override string ToString()
+        {
+            string[] playerNames = (string[])from info in PlayerInfos select info.name;
+            return base.ToString() + PlayerInfos.Count + " players ["
+                + string.Join(", ", playerNames) + "]";
+        }
     }
 }

@@ -304,6 +304,14 @@ namespace AW2.Net
             return message;
         }
 
+        /// <summary>
+        /// Returns a String that represents the current Object. 
+        /// </summary>
+        public override string ToString()
+        {
+            return Type.ToString();
+        }
+
         #endregion Public interface
 
         #region Abstract methods

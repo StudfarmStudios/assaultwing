@@ -109,7 +109,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + "[PlayerId " + PlayerId + "]";
+            return base.ToString() + " [PlayerId " + PlayerId + "]";
         }
     }
 }

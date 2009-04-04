@@ -115,9 +115,9 @@ namespace AW2.Net.Messages
         /// </summary>
         public override string ToString()
         {
-            string[] playerNames = (string[])from info in PlayerInfos select info.name;
-            return base.ToString() + PlayerInfos.Count + " players ["
-                + string.Join(", ", playerNames) + "]";
+            var playerNames = from info in PlayerInfos select info.name;
+            return base.ToString() + " " + PlayerInfos.Count + " players ["
+                + string.Join(", ", playerNames.ToArray<string>()) + "]";
         }
     }
 }

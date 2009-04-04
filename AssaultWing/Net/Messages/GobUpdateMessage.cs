@@ -50,7 +50,7 @@
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + "[GobId " + GobId + "]";
+            return base.ToString() + " [GobId " + GobId + "]";
         }
     }
 }

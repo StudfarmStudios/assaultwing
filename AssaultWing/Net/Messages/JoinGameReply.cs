@@ -77,7 +77,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + PlayerIdChanges.Length + " players";
+            return base.ToString() + " " + PlayerIdChanges.Length + " players";
         }
     }
 }

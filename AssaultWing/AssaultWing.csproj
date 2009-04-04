@@ -43,12 +43,12 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://koti.welho.fi/vvnurmi/aw2/install/</InstallUrl>
+    <InstallUrl>http://koti.welho.com/vvnurmi/aw2/install/</InstallUrl>
     <ProductName>Assault Wing - Galactic Battlefront</ProductName>
     <PublisherName>Studfarm Studios</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>9</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

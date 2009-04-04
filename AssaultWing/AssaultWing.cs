@@ -573,7 +573,11 @@ namespace AW2
             eventEngine.SendEvent(eventti);
 #endif
 
+#if NETWORK_DEBUG
+            TargetElapsedTime = TimeSpan.FromSeconds(1 / 10.0);
+#else
             TargetElapsedTime = TimeSpan.FromSeconds(1 / 60.0); // 60 frames per second
+#endif
 
             base.Initialize();
         }

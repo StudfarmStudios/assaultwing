@@ -145,6 +145,9 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot send without connection to server");
             try
             {
+#if NETWORK_DEBUG
+                Log.Write("!!! DEBUG: sending to server: " + message);
+#endif
                 gameServerConnection.Send(message);
             }
             catch (SocketException e)
@@ -174,6 +177,9 @@ namespace AW2.Net
         /// <param name="message">The message to send.</param>
         public void SendToClients(Message message)
         {
+#if NETWORK_DEBUG
+            Log.Write("!!! DEBUG: sending to clients: " + message);
+#endif
             foreach (Connection connection in clientConnections)
                 connection.Send(message);
         }
@@ -188,6 +194,9 @@ namespace AW2.Net
             foreach (Connection connection in clientConnections)
                 if (connection.Id == connectionId)
                 {
+#if NETWORK_DEBUG
+                    Log.Write("!!! DEBUG: sending to client " + connectionId + ": " + message);
+#endif
                     connection.Send(message);
                     return;
                 }
@@ -261,6 +270,9 @@ namespace AW2.Net
                                 JoinGameRequest joinGameRequest = new JoinGameRequest();
                                 joinGameRequest.PlayerInfos = new List<PlayerInfo>();
                                 data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
+#if NETWORK_DEBUG
+                                Log.Write("!!! DEBUG: sending to server: " + joinGameRequest);
+#endif
                                 gameServerConnection.Send(joinGameRequest);
                                 break;
                             default: throw new InvalidOperationException("Cannot handle new network connection in " + AssaultWing.Instance.NetworkMode + " state");

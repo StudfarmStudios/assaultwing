@@ -43,7 +43,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://www.cs.helsinki.fi/u/vvnurmi/qwerty/aw2/install/</InstallUrl>
+    <InstallUrl>http://koti.welho.fi/vvnurmi/aw2/install/</InstallUrl>
     <ProductName>Assault Wing - Galactic Battlefront</ProductName>
     <PublisherName>Studfarm Studios</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
@@ -86,6 +86,18 @@
     <OutputPath>bin\x86\Debug2\</OutputPath>
     <DefineConstants>TRACE;DEBUG;DEBUG_PROFILE NO_GEOMETRY_APPROXIMATE;WINDOWS</DefineConstants>
     <DocumentationFile>bin\x86\Debug\AssaultWing.XML</DocumentationFile>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'NetworkDebug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\NetworkDebug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETWORK_DEBUG DEBUG_PROFILE NO_GEOMETRY_APPROXIMATE;WINDOWS</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
     <NoStdLib>true</NoStdLib>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>

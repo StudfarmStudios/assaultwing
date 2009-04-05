@@ -4,23 +4,23 @@ using System.IO;
 namespace AW2.Helpers
 {
     /// <summary>
-    /// Log will create automatically a log file and write
-    /// log/error/debug info for simple runtime error checking, very useful
-    /// for minor errors, such as not finding files.
+    /// Log of error, debug and informational messages.
+    /// This class is thread safe.
     /// </summary>
-    public class Log
+    public static class Log
     {
-        #region Variables
-        private static StreamWriter writer = null;
-        private const string LogFilenameBase = "Log";
-        private const string LogFilenameExtension = ".txt";
-        private const int rotateCount = 5;
+        #region Private fields
+        static object @lock = new object();
+        static StreamWriter writer = null;
+        static const string LogFilenameBase = "Log";
+        static const string LogFilenameExtension = ".txt";
+        static const int rotateCount = 5;
         #endregion
 
         /// <summary>
         /// Opens a new log file, rotating old ones.
         /// </summary>
-        static Log()
+        private static Log()
         {
             try
             {
@@ -52,29 +52,32 @@ namespace AW2.Helpers
         /// <summary>
         /// Writes a LogType and info/error message string to the Log file
         /// </summary>
-        static public void Write(string message)
+        public static void Write(string message)
         {
-            // Can't continue without valid writer
-            if (writer == null)
-                return;
-
-            try
+            lock (@lock)
             {
+                // Can't continue without valid writer
+                if (writer == null)
+                    return;
+
+                try
+                {
 #if DEBUG
-                string s = DateTime.Now.ToString("'['HH':'mm':'ss'.'fff'] '") + message;
+                    string s = DateTime.Now.ToString("'['HH':'mm':'ss'.'fff'] '") + message;
 #else
                 string s = DateTime.Now.ToString("'['HH':'mm':'ss'] '") + message;
 #endif
-                writer.WriteLine(s);
+                    writer.WriteLine(s);
 #if DEBUG
-                // In debug mode write that message to the console as well!
-                System.Console.WriteLine(s);
+                    // In debug mode write that message to the console as well!
+                    System.Console.WriteLine(s);
 #endif
-            }
-            catch
-            {
-                // Ignore any file exceptions, if file is not
-                // writable (e.g. on a CD-Rom) it doesn't matter
+                }
+                catch
+                {
+                    // Ignore any file exceptions, if file is not
+                    // writable (e.g. on a CD-Rom) it doesn't matter
+                }
             }
         }
 

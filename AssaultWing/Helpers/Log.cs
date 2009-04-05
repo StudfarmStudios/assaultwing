@@ -1,10 +1,5 @@
-#region Using directives
 using System;
 using System.IO;
-using System.Collections;
-using System.ComponentModel;
-using System.Threading;
-#endregion
 
 namespace AW2.Helpers
 {
@@ -16,67 +11,44 @@ namespace AW2.Helpers
     public class Log
     {
         #region Variables
-        /// <summary>
-        /// Writer
-        /// </summary>
         private static StreamWriter writer = null;
-
-        /// <summary>
-        /// Log filename
-        /// </summary>
-        private const string LogFilename = "Log.txt";
+        private const string LogFilenameBase = "Log";
+        private const string LogFilenameExtension = ".txt";
+        private const int rotateCount = 5;
         #endregion
 
-        #region Static constructor to create log file
         /// <summary>
-        /// Static constructor
+        /// Opens a new log file, rotating old ones.
         /// </summary>
         static Log()
         {
             try
             {
-                // Open file
-                FileStream file = new FileStream(LogFilename, FileMode.OpenOrCreate,
+                // Rotate old logs.
+                if (File.Exists(GetLogFilename(rotateCount)))
+                    File.Delete(GetLogFilename(rotateCount));
+                for (int rotation = rotateCount - 1; rotation >= 0; --rotation)
+                    if (File.Exists(GetLogFilename(rotation)))
+                        File.Move(GetLogFilename(rotation), GetLogFilename(rotation + 1));
+
+                // Open a new log file.
+                FileStream file = new FileStream(GetLogFilename(0), FileMode.OpenOrCreate,
                     FileAccess.Write, FileShare.ReadWrite);
-
-                // Check if file is too big (more than 2 MB),
-                // in this case we just kill it and create a new one :)
-                if (file.Length > 2 * 1024 * 1024)
-                {
-                    file.Close();
-                    file = new FileStream(LogFilename, FileMode.Create,
-                        FileAccess.Write, FileShare.ReadWrite );
-                }
-                // Associate writer with that, when writing to a new file,
-                // make sure UTF-8 sign is written, else don't write it again!
-                if (file.Length == 0)
-                    writer = new StreamWriter(file,
-                        System.Text.Encoding.UTF8);
-                else
-                    writer = new StreamWriter(file);
-
-                // Go to end of file
-                writer.BaseStream.Seek(0, SeekOrigin.End);
+                writer = new StreamWriter(file, System.Text.Encoding.UTF8);
 
                 // Enable auto flush (always be up to date when reading!)
                 writer.AutoFlush = true;
-
-                // Add some info about this session
-                writer.WriteLine("");
-                writer.WriteLine("/// Session started at: " +
-                    StringHelper.WriteIsoDateAndTime(DateTime.Now));
-                writer.WriteLine("///");
-                writer.WriteLine("");
-            } // try
+            }
             catch
             {
                 // Ignore any file exceptions, if file is not
                 // createable (e.g. on a CD-Rom) it doesn't matter.
-            } // catch
-        } // Log()
-        #endregion
+            }
 
-        #region Write log entry
+            // Add some info about this session.
+            Write("Log opened. The date and time is " + DateTime.Now.ToString("o"));
+        }
+
         /// <summary>
         /// Writes a LogType and info/error message string to the Log file
         /// </summary>
@@ -88,24 +60,33 @@ namespace AW2.Helpers
 
             try
             {
-                DateTime ct = DateTime.Now;
-                string s = "[" + ct.Hour.ToString("00") + ":" +
-                    ct.Minute.ToString("00") + ":" +
-                    ct.Second.ToString("00") + "] " +
-                    message;
+#if DEBUG
+                string s = DateTime.Now.ToString("'['HH':'mm':'ss'.'fff'] '") + message;
+#else
+                string s = DateTime.Now.ToString("'['HH':'mm':'ss'] '") + message;
+#endif
                 writer.WriteLine(s);
-
 #if DEBUG
                 // In debug mode write that message to the console as well!
                 System.Console.WriteLine(s);
 #endif
-            } // try
+            }
             catch
             {
                 // Ignore any file exceptions, if file is not
                 // writable (e.g. on a CD-Rom) it doesn't matter
-            } // catch
-        } // Write(message)
-        #endregion
-    } // class Log
-} // namespace AW2.Helpers
+            }
+        }
+
+        /// <summary>
+        /// Returns the filename of the log that has been rotated a number of times.
+        /// </summary>
+        private static string GetLogFilename(int rotation)
+        {
+            if (rotation == 0)
+                return string.Format("{0}{1}", LogFilenameBase, LogFilenameExtension);
+            else
+                return string.Format("{0}.{1}{2}", LogFilenameBase, rotation, LogFilenameExtension);
+        }
+    }
+}

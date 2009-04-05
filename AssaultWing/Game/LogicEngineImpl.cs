@@ -25,23 +25,31 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             Helpers.Log.Write("Loading user-defined types");
+
             TypeLoader gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Gobs);
             Gob[] gobs = (Gob[])gobLoader.LoadAllTypes();
             foreach (Gob gob in gobs)
                 data.AddTypeTemplate(typeof(Gob), gob.TypeName, gob);
+            gobLoader.SaveTemplates();
+
             TypeLoader weaponLoader = new TypeLoader(typeof(Weapon), Helpers.Paths.Weapons);
             Weapon[] weapons = (Weapon[])weaponLoader.LoadAllTypes();
             foreach (Weapon weapon in weapons)
                 data.AddTypeTemplate(typeof(Weapon), weapon.TypeName, weapon);
+            weaponLoader.SaveTemplates();
+
             TypeLoader particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
             Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
             foreach (Gob particleEngine in particleEngines)
                 data.AddTypeTemplate(typeof(Gob), particleEngine.TypeName, particleEngine);
+            particleLoader.SaveTemplates();
+
             ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
             Arena[] arenas = (Arena[])arenaLoader.LoadAllTypes();
+            arenaLoader.SaveTemplates();
             List<string> arenaNames = new List<string>();
-            Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();
 
+            Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();
             foreach (Arena arena in arenas)
                 if (arena.Name != "dummyarena")
                 {

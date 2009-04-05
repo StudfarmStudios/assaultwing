@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2;
 using AW2.Game.Gobs;
 using AW2.Graphics;
 using AW2.Helpers;
-using Viewport = AW2.Graphics.AWViewport;
-using AW2.Net.Messages;
 using AW2.Net;
+using AW2.Net.Messages;
+using Viewport = AW2.Graphics.AWViewport;
 
 namespace AW2.Game
 {
@@ -200,7 +198,7 @@ namespace AW2.Game
 
         public Texture2D GetArenaPreview(string arena)
         {
-            if(arenaPreviews.ContainsKey(arena))
+            if (arenaPreviews.ContainsKey(arena))
                 return arenaPreviews[arena];
             else
                 return arenaPreviews["noPreview"];
@@ -328,7 +326,7 @@ namespace AW2.Game
         /// <summary>
         /// ArenaFileNames.
         /// </summary>
-        public Dictionary<string,string> ArenaFileNameList
+        public Dictionary<string, string> ArenaFileNameList
         {
             get { return arenaFileNameList; }
             set
@@ -362,9 +360,9 @@ namespace AW2.Game
         /// <returns>The arena.</returns>
         public Arena GetArena(string name)
         {
-            if(preparedArena==null || !preparedArena.Name.Equals(name))
+            if (preparedArena == null || !preparedArena.Name.Equals(name))
             {
-                
+
                 TypeLoader arenaLoader = new TypeLoader(typeof(Arena), Paths.Arenas);
                 preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes(arenaFileNameList[name]);
             }
@@ -392,16 +390,16 @@ namespace AW2.Game
         */
         public Arena GetNextPlayableArena()
         {
-            if ((arenaPlaylistI+1) >= arenaPlaylist.Count)
+            if ((arenaPlaylistI + 1) >= arenaPlaylist.Count)
                 return null;
             else
-                return GetArena(arenaPlaylist[arenaPlaylistI+1]);     
+                return GetArena(arenaPlaylist[arenaPlaylistI + 1]);
         }
         public Arena GetLoadedArena()
         {
             return preparedArena;
         }
-        
+
         /// <summary>
         /// Prepares the next arena in the playlist ready for playing.
         /// </summary>
@@ -471,7 +469,7 @@ namespace AW2.Game
             // have really been added to field 'gobs'.
             CustomOperations += delegate(object obj) { RefreshArenaRadarSilhouette(); };
         }
-        
+
         /// <summary>
         /// Prepares the game data for playing an arena.
         /// </summary>
@@ -528,7 +526,7 @@ namespace AW2.Game
             foreach (Arena arena in arenas.Values)
                 action(arena);
         }
-        
+
         #endregion arenas
 
         #region arena layers
@@ -747,24 +745,26 @@ namespace AW2.Game
         /// <param name="template">The instance to save as a template for the user-defined type.</param>
         public void AddTypeTemplate(Type baseClass, string typeName, object template)
         {
-            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
-                if (typePair.First.Equals(baseClass))
+            var baseClassKey = templates.Find(x => x.First.Equals(baseClass));
+            if (baseClassKey != null)
+            {
+                var typeNameKey = baseClassKey.Second.Find(x => x.First == typeName);
+                if (typeNameKey != null)
                 {
-                    for (int i = 0; i < typePair.Second.Count; ++i)
-                        if (typePair.Second[i].First == typeName)
-                        {
-                            Log.Write("Overwriting user-defined type " + baseClass.Name + "/" + typeName);
-                            typePair.Second[i].Second = template;
-                            goto done;
-                        }
-                    typePair.Second.Add(new Pair<string, object>(typeName, template));
-                    goto done;
+                    Log.Write("WARNING: Overwriting user-defined type " + baseClass.Name + "/" + typeName);
+                    typeNameKey.Second = template;
                 }
-            List<Pair<string, object>> newList = new List<Pair<string, object>>();
-            newList.Add(new Pair<string, object>(typeName, template));
-            templates.Add(new Pair<Type, List<Pair<string, object>>>(baseClass, newList));
-        done:
-            Log.Write("Added user-defined type " + baseClass.Name + "/" + typeName + " of subclass " + template.GetType().Name);
+                else
+                {
+                    baseClassKey.Second.Add(new Pair<string, object>(typeName, template));
+                }
+            }
+            else
+            {
+                List<Pair<string, object>> newList = new List<Pair<string, object>>();
+                newList.Add(new Pair<string, object>(typeName, template));
+                templates.Add(new Pair<Type, List<Pair<string, object>>>(baseClass, newList));
+            }
         }
 
         /// <summary>

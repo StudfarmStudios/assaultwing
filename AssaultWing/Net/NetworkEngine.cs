@@ -146,7 +146,7 @@ namespace AW2.Net
             try
             {
 #if NETWORK_DEBUG
-                Log.Write("!!! DEBUG: sending to server: " + message);
+                Log.Write("DEBUG: sending to server: " + message);
 #endif
                 gameServerConnection.Send(message);
             }
@@ -167,7 +167,13 @@ namespace AW2.Net
             if (gameServerConnection == null)
                 throw new InvalidOperationException("Cannot receive without connection to server");
             if (gameServerConnection.Messages.Count<T>() > 0)
-                return gameServerConnection.Messages.Dequeue<T>();
+            {
+                T message = gameServerConnection.Messages.Dequeue<T>();
+#if NETWORK_DEBUG
+                Log.Write("DEBUG: received from server: " + message);
+#endif
+                return message;
+            }
             return null;
         }
 
@@ -178,7 +184,7 @@ namespace AW2.Net
         public void SendToClients(Message message)
         {
 #if NETWORK_DEBUG
-            Log.Write("!!! DEBUG: sending to clients: " + message);
+            Log.Write("DEBUG: sending to clients: " + message);
 #endif
             foreach (Connection connection in clientConnections)
                 connection.Send(message);
@@ -195,7 +201,7 @@ namespace AW2.Net
                 if (connection.Id == connectionId)
                 {
 #if NETWORK_DEBUG
-                    Log.Write("!!! DEBUG: sending to client " + connectionId + ": " + message);
+                    Log.Write("DEBUG: sending to client " + connectionId + ": " + message);
 #endif
                     connection.Send(message);
                     return;
@@ -215,7 +221,13 @@ namespace AW2.Net
         {
             foreach (Connection connection in clientConnections)
                 if (connection.Messages.Count<T>() > 0)
-                    return connection.Messages.Dequeue<T>();
+                {
+                    T message = connection.Messages.Dequeue<T>();
+#if NETWORK_DEBUG
+                    Log.Write("DEBUG: received from client connection " + connection.Id + ": " + message);
+#endif
+                    return message;
+                }
             return null;
         }
 
@@ -232,7 +244,13 @@ namespace AW2.Net
                 if (connection.Id == connectionId)
                 {
                     if (connection.Messages.Count<T>() > 0)
-                        return connection.Messages.Dequeue<T>();
+                    {
+                        T message = connection.Messages.Dequeue<T>();
+#if NETWORK_DEBUG
+                        Log.Write("DEBUG: received from client connection " + connection.Id + ": " + message);
+#endif
+                        return message;
+                    }
                     return null;
                 }
             throw new ArgumentException("Invalid connection ID");
@@ -271,7 +289,7 @@ namespace AW2.Net
                                 joinGameRequest.PlayerInfos = new List<PlayerInfo>();
                                 data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
 #if NETWORK_DEBUG
-                                Log.Write("!!! DEBUG: sending to server: " + joinGameRequest);
+                                Log.Write("DEBUG: sending to server: " + joinGameRequest);
 #endif
                                 gameServerConnection.Send(joinGameRequest);
                                 break;

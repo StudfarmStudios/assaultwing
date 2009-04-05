@@ -12,15 +12,15 @@ namespace AW2.Helpers
         #region Private fields
         static object @lock = new object();
         static StreamWriter writer = null;
-        static const string LogFilenameBase = "Log";
-        static const string LogFilenameExtension = ".txt";
-        static const int rotateCount = 5;
+        const string LogFilenameBase = "Log";
+        const string LogFilenameExtension = ".txt";
+        const int rotateCount = 5;
         #endregion
 
         /// <summary>
         /// Opens a new log file, rotating old ones.
         /// </summary>
-        private static Log()
+        static Log()
         {
             try
             {

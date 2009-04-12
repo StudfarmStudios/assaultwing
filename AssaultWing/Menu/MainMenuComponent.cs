@@ -5,8 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Graphics;
-using AW2.UI;
 using AW2.Helpers;
+using AW2.Net;
+using AW2.Net.Messages;
+using AW2.UI;
 
 namespace AW2.Menu
 {
@@ -124,9 +126,36 @@ namespace AW2.Menu
 
             networkContents = new MainMenuContents("Battlefront Menu", 2);
             networkContents[0].Name = "Play as Server";
-            networkContents[0].Action = () => AssaultWing.Instance.StartServer();
+            networkContents[0].Action = () => AssaultWing.Instance.StartServer(result =>
+            {
+                if (!result.Successful)
+                {
+                    Log.Write("Some client failed to connect: " + result.Error);
+                    return;
+                }
+                Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
+            });
             networkContents[1].Name = connectItemPrefix + connectAddress;
-            networkContents[1].Action = () => AssaultWing.Instance.StartClient(connectAddress);
+            networkContents[1].Action = () => AssaultWing.Instance.StartClient(connectAddress, result =>
+            {
+                if (!result.Successful)
+                {
+                    Log.Write("Failed to connect to server: " + result.Error);
+                    AssaultWing.Instance.NetworkMode = NetworkMode.Standalone;
+                    return;
+                }
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                Log.Write("Client connected to " + result.Value.RemoteEndPoint);
+
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                JoinGameRequest joinGameRequest = new JoinGameRequest();
+                joinGameRequest.PlayerInfos = new List<PlayerInfo>();
+                data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
+#if NETWORK_DEBUG
+                Log.Write("DEBUG: sending to server: " + joinGameRequest);
+#endif
+                net.SendToServer(joinGameRequest);
+            });
 
             // Set initial menu contents
             currentContents = startContents;

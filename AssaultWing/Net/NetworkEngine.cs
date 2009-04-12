@@ -60,6 +60,16 @@ namespace AW2.Net
         /// </summary>
         LinkedList<Connection> clientConnections;
 
+        /// <summary>
+        /// Handler of connection results for client that is connecting to a game server.
+        /// </summary>
+        Action<Result<Connection>> startClientConnectionHandler;
+
+        /// <summary>
+        /// Handler of connection results for server that is listening for game client connections.
+        /// </summary>
+        Action<Result<Connection>> startServerConnectionHandler;
+
         #endregion Fields
 
         #region Constructor
@@ -92,9 +102,11 @@ namespace AW2.Net
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients.
         /// </summary>
-        public void StartServer()
+        /// <param name="connectionHandler">Handler of connection result.</param>
+        public void StartServer(Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Server starts listening");
+            startServerConnectionHandler = connectionHandler;
             Connection.StartListening(port, "I listen");
         }
 
@@ -114,10 +126,14 @@ namespace AW2.Net
         /// <summary>
         /// Turns this game instance into a game client by connecting to a game server.
         /// </summary>
+        /// Poll <c>Connection.ConnectionResults</c> to find out when and if
+        /// the connection was successfully estblished.
         /// <param name="serverAddress">Network address of the server.</param>
-        public void StartClient(string serverAddress)
+        /// <param name="connectionHandler">Handler of connection result.</param>
+        public void StartClient(string serverAddress, Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Client starts connecting");
+            startClientConnectionHandler = connectionHandler;
             Connection.Connect(IPAddress.Parse(serverAddress), port, "I connect");
         }
 
@@ -274,40 +290,17 @@ namespace AW2.Net
                 while (queue.Count > 0)
                 {
                     Result<Connection> result = queue.Dequeue();
-                    if (result.Successful)
+                    if (result.Id == "I connect")
                     {
-                        switch (AssaultWing.Instance.NetworkMode)
-                        {
-                            case NetworkMode.Server:
-                                clientConnections.AddLast(result.Value);
-                                Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
-                                break;
-                            case NetworkMode.Client:
-                                gameServerConnection = result.Value;
-                                Log.Write("Client connected to " + result.Value.RemoteEndPoint);
-                                JoinGameRequest joinGameRequest = new JoinGameRequest();
-                                joinGameRequest.PlayerInfos = new List<PlayerInfo>();
-                                data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
-#if NETWORK_DEBUG
-                                Log.Write("DEBUG: sending to server: " + joinGameRequest);
-#endif
-                                gameServerConnection.Send(joinGameRequest);
-                                break;
-                            default: throw new InvalidOperationException("Cannot handle new network connection in " + AssaultWing.Instance.NetworkMode + " state");
-                        }
+                        startClientConnectionHandler(result);
+                        if (result.Successful)
+                            gameServerConnection = result.Value;
                     }
-                    else
+                    if (result.Id == "I listen")
                     {
-                        switch (AssaultWing.Instance.NetworkMode)
-                        {
-                            case NetworkMode.Server:
-                                Log.Write("Server saw a client fail to connect: " + result.Error);
-                                break;
-                            case NetworkMode.Client:
-                                Log.Write("Client failed to connect: " + result.Error);
-                                break;
-                            default: throw new InvalidOperationException("Cannot handle failed network connection in " + AssaultWing.Instance.NetworkMode + " state");
-                        }
+                        startServerConnectionHandler(result);
+                        if (result.Successful)
+                            clientConnections.AddLast(result.Value);
                     }
                 }
             });

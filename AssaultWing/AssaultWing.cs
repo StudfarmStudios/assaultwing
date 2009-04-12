@@ -469,14 +469,15 @@ namespace AW2
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients.
         /// </summary>
-        public void StartServer()
+        /// <param name="connectionHandler">Handler of connection result.</param>
+        public void StartServer(Action<Result<Connection>> connectionHandler)
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
             try
             {
-                networkEngine.StartServer();
+                networkEngine.StartServer(connectionHandler);
             }
             catch (Exception e)
             {
@@ -501,14 +502,15 @@ namespace AW2
         /// Turns this game instance into a game client by connecting to a game server.
         /// </summary>
         /// <param name="serverAddress">Network address of the server.</param>
-        public void StartClient(string serverAddress)
+        /// <param name="connectionHandler">Handler of connection result.</param>
+        public void StartClient(string serverAddress, Action<Result<Connection>> connectionHandler)
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Client;
             try
             {
-                networkEngine.StartClient(serverAddress);
+                networkEngine.StartClient(serverAddress, connectionHandler);
             }
             catch (Exception e)
             {

@@ -30,7 +30,29 @@ namespace AW2.Menu
         /// </summary>
         MainMenuContents currentContents;
 
+        /// <summary>
+        /// Index of the currently active menu item.
+        /// </summary>
         int currentItem = 0;
+
+        /// <summary>
+        /// Position of caret in a text edit field, as a zero-based index from
+        /// the beginning of the editable text.
+        /// </summary>
+        int caretPosition = 0;
+
+        /// <summary>
+        /// Last key pressed in text edit field, or <c>null</c> if
+        /// no key pressed yet, or the pressed key has been released.
+        /// </summary>
+        Keys? lastPressedKey;
+
+        /// <summary>
+        /// IP address of server to connect.
+        /// </summary>
+        string connectAddress = "192.168.11.2";
+
+        string connectItemPrefix = "Connect to ";
         MultiControl controlUp, controlDown, controlSelect;
         Control controlBack;
         Vector2 pos; // position of the component's background texture in menu system coordinates
@@ -101,10 +123,10 @@ namespace AW2.Menu
             startContents[3].Action = () => AssaultWing.Instance.Exit();
 
             networkContents = new MainMenuContents("Battlefront Menu", 2);
-            networkContents[0].Name = "Start a Server";
+            networkContents[0].Name = "Play as Server";
             networkContents[0].Action = () => AssaultWing.Instance.StartServer();
-            networkContents[1].Name = "Connect to xxx.xxx.xxx.xxx";
-            networkContents[1].Action = () => AssaultWing.Instance.StartClient("192.168.11.4");
+            networkContents[1].Name = connectItemPrefix + connectAddress;
+            networkContents[1].Action = () => AssaultWing.Instance.StartClient(connectAddress);
 
             // Set initial menu contents
             currentContents = startContents;
@@ -154,7 +176,63 @@ namespace AW2.Menu
                     currentContents[currentItem].Action();
                 }
                 if (controlBack.Pulse)
+                {
+                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                     currentContents = startContents;
+                }
+
+                // Text field editing, a HACK for now
+                if (currentContents == networkContents && currentItem == 1)
+                {
+                    KeyboardState state = Keyboard.GetState();
+
+                    // If a key has been pressed, do nothing until it is released.
+                    if (lastPressedKey.HasValue)
+                    {
+                        if (state.IsKeyUp(lastPressedKey.Value))
+                            lastPressedKey = null;
+                    }
+                    if (!lastPressedKey.HasValue)
+                    {
+                        foreach (Keys key in state.GetPressedKeys())
+                        {
+                            switch (key)
+                            {
+                                case Keys.Left: --caretPosition; break;
+                                case Keys.Right: ++caretPosition; break;
+                                case Keys.Back: 
+                                    if (caretPosition > 0)
+                                    {
+                                        --caretPosition;
+                                        connectAddress = connectAddress.Remove(caretPosition, 1);
+                                    }
+                                    break;
+                                case Keys.Delete:
+                                    if (caretPosition < connectAddress.Length)
+                                        connectAddress = connectAddress.Remove(caretPosition, 1);
+                                    break;
+                                default:
+                                    // React to text input
+                                    char? chr = null;
+                                    if (key >= Keys.D0 && key <= Keys.D9)
+                                        chr = (char)('0' + key - Keys.D0);
+                                    if (key == Keys.OemPeriod)
+                                        chr = '.';
+                                    if (chr.HasValue && connectAddress.Length < 15)
+                                    {
+                                        connectAddress = connectAddress.Insert(caretPosition, chr.Value.ToString());
+                                        ++caretPosition;
+                                    }
+                                    break;
+                            }
+                            caretPosition = Math.Min(caretPosition, connectAddress.Length);
+                            caretPosition = Math.Max(caretPosition, 0);
+                            lastPressedKey = key;
+                            cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                        }
+                        networkContents[1].Name = connectItemPrefix + connectAddress;
+                    }
+                }
             }
         }
 
@@ -168,11 +246,19 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
+            Vector2 textPos = pos - view + new Vector2(585, 355);
             Vector2 cursorPos = pos - view + new Vector2(551, 358 + (int)currentItem * menuBigFont.LineSpacing);
             Vector2 highlightPos = cursorPos + new Vector2(cursorTexture.Width, 0);
-            Vector2 textPos = pos - view + new Vector2(585, 355);
             float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
+
+            // HACK: Draw cursor as text field editing caret in a special case
+            if (currentContents == networkContents && currentItem == 1)
+            {
+                Vector2 partialTextSize = menuBigFont.MeasureString(connectItemPrefix + connectAddress.Substring(0, caretPosition));
+                cursorPos.X = textPos.X + partialTextSize.X;
+            }
             spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
+
             spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
             for (int i = 0; i < currentContents.Count; ++i)
             {
@@ -216,10 +302,28 @@ namespace AW2.Menu
     {
         List<MainMenuItem> menuItems;
 
+        /// <summary>
+        /// Name of the menu contents.
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Number of menu items.
+        /// </summary>
         public int Count { get { return menuItems.Count; } }
+
+        /// <summary>
+        /// The menu items.
+        /// </summary>
+        /// <param name="i">Zero-based index of the menu item.</param>
+        /// <returns>The <c>i</c>'th menu item.</returns>
         public MainMenuItem this[int i] { get { return menuItems[i]; } }
 
+        /// <summary>
+        /// Creates new menu contents with a number of dummy menu items.
+        /// </summary>
+        /// <param name="name">Name of the menu contents.</param>
+        /// <param name="menuItemCount">Number of menu items.</param>
         public MainMenuContents(string name, int menuItemCount)
         {
             if (name == null || name == "") throw new ArgumentNullException("Null or empty menu mode name");
@@ -241,7 +345,14 @@ namespace AW2.Menu
     /// </summary>
     public class MainMenuItem
     {
+        /// <summary>
+        /// Visible name of the menu item.
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Action to perform on triggering the menu item.
+        /// </summary>
         public Action Action { get; set; }
     }
 }

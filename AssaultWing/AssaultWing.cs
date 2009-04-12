@@ -474,7 +474,15 @@ namespace AW2
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Server;
-            networkEngine.StartServer();
+            try
+            {
+                networkEngine.StartServer();
+            }
+            catch (Exception e)
+            {
+                Log.Write("Could not start server: " + e);
+                NetworkMode = NetworkMode.Standalone;
+            }
         }
 
         /// <summary>
@@ -498,7 +506,15 @@ namespace AW2
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Client;
-            networkEngine.StartClient(serverAddress);
+            try
+            {
+                networkEngine.StartClient(serverAddress);
+            }
+            catch (Exception e)
+            {
+                Log.Write("Could not start client: " + e);
+                NetworkMode = NetworkMode.Standalone;
+            }
         }
 
         /// <summary>

@@ -456,6 +456,7 @@ namespace AW2.Graphics
                 spriteBatch = null;
             }
             data.ClearTextures();
+            data.ClearArenaPreviews();
             data.ClearModels();
             data.ClearFonts();
 

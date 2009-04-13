@@ -181,29 +181,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Stores 2D texture by arena name 
-        /// </summary>
-        /// <param name="arenaName">The name of the arena.</param>
-        /// <param name="texture">The 2D texture.</param>
-
-        public void AddArenaPreview(string arenaName, Texture2D texture)
-        {
-            arenaPreviews.Add(arenaName, texture);
-        }
-        /// <summary>
-        /// Returns preview picture from arena (2D texture). If no preview is available, then return's no preview picture   
-        /// </summary>
-        /// <param name="arena">The name of the arena.</param>
-        /// <returns>The 2D texture.</returns>
-
-        public Texture2D GetArenaPreview(string arena)
-        {
-            if (arenaPreviews.ContainsKey(arena))
-                return arenaPreviews[arena];
-            else
-                return arenaPreviews["noPreview"];
-        }
-        /// <summary>
         /// Returns a named 2D texture.
         /// </summary>
         /// <param name="name">The name of the 2D texture.</param>
@@ -252,6 +229,44 @@ namespace AW2.Game
         }
 
         #endregion textures
+
+        #region arena previews
+
+        /// <summary>
+        /// Stores a preview texture for a named arena.
+        /// </summary>
+        /// <param name="arenaName">The name of the arena.</param>
+        /// <param name="texture">The arena preview texture.</param>
+        public void AddArenaPreview(string arenaName, Texture2D texture)
+        {
+            arenaPreviews.Add(arenaName, texture);
+        }
+
+        /// <summary>
+        /// Returns preview picture from arena (2D texture). 
+        /// If no preview is available, then returns "no preview" picture.
+        /// </summary>
+        /// <param name="arena">The name of the arena.</param>
+        /// <returns>The arena preview.</returns>
+        public Texture2D GetArenaPreview(string arena)
+        {
+            if (arenaPreviews.ContainsKey(arena))
+                return arenaPreviews[arena];
+            else
+                return arenaPreviews["noPreview"];
+        }
+
+        /// <summary>
+        /// Disposes of all arena previews.
+        /// </summary>
+        public void ClearArenaPreviews()
+        {
+            foreach (Texture2D preview in arenaPreviews.Values)
+                preview.Dispose();
+            arenaPreviews.Clear();
+        }
+
+        #endregion arena previews
 
         #region fonts
 
@@ -438,7 +453,9 @@ namespace AW2.Game
             ForEachPlayer(delegate(Player player)
             {
                 player.Reset();
-                player.Lives = 3;
+                player.Lives = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
+                    ? 3 // HACK: standalone games have three lives
+                    : -1; // HACK: network games have infinite lives
             });
 
             // Clear remaining data from a possible previous arena.

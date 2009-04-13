@@ -92,6 +92,29 @@ namespace AW2.Game
 
         #endregion
 
+        #region arena previews
+
+        /// <summary>
+        /// Stores 2D texture by arena name 
+        /// </summary>
+        /// <param name="arenaName">The name of the arena.</param>
+        /// <param name="texture">The 2D texture.</param>
+        void AddArenaPreview(string arenaName, Texture2D texture);
+
+        /// <summary>
+        /// Returns preview picture from arena (2D texture). If no preview is available, then return's no preview picture   
+        /// </summary>
+        /// <param name="arena">The name of the arena.</param>
+        /// <returns>The 2D texture.</returns>
+        Texture2D GetArenaPreview(string arena);
+
+        /// <summary>
+        /// Disposes of all arena previews.
+        /// </summary>
+        void ClearArenaPreviews();
+
+        #endregion
+
         #region fonts
 
         /// <summary>
@@ -138,20 +161,6 @@ namespace AW2.Game
         /// of the radar display area, positive X is to the right, and positive
         /// Y is down.
         Matrix ArenaToRadarTransform { get; }
-
-        /// <summary>
-        /// Stores 2D texture by arena name 
-        /// </summary>
-        /// <param name="arenaName">The name of the arena.</param>
-        /// <param name="texture">The 2D texture.</param>
-        void AddArenaPreview(string arenaName, Texture2D texture);
-        
-        /// <summary>
-        /// Returns preview picture from arena (2D texture). If no preview is available, then return's no preview picture   
-        /// </summary>
-        /// <param name="arena">The name of the arena.</param>
-        /// <returns>The 2D texture.</returns>
-        Texture2D GetArenaPreview(string arena);
 
         /// <summary>
         /// Arenas to play in one session.

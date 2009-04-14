@@ -292,15 +292,15 @@ namespace AW2.Net
                     Result<Connection> result = queue.Dequeue();
                     if (result.Id == "I connect")
                     {
-                        startClientConnectionHandler(result);
                         if (result.Successful)
                             gameServerConnection = result.Value;
+                        startClientConnectionHandler(result);
                     }
                     if (result.Id == "I listen")
                     {
-                        startServerConnectionHandler(result);
                         if (result.Successful)
                             clientConnections.AddLast(result.Value);
+                        startServerConnectionHandler(result);
                     }
                 }
             });

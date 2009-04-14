@@ -51,6 +51,7 @@ namespace AW2.Menu
         bool activeComponentActivatedOnce;
         bool showHelpText, showProgressBar;
         string helpText;
+        Action finishAction; // what to do when progress bar finishes
         Vector2 view; // top left corner of menu view in menu system coordinates
         Vector2 viewFrom, viewTo; // start and goal of current movement of 'view'
         TimeSpan viewMoveStartTime; // time of start of view movement
@@ -218,11 +219,40 @@ namespace AW2.Menu
         }
 
         /// <summary>
+        /// Performs an action asynchronously, visualising progress with the progress bar.
+        /// After calling this method, call <c>ProgressBar.SetSubtaskCount(int)</c> with 
+        /// a suitable value.
+        /// </summary>
+        /// This method is provided as a helpful service for menu components.
+        /// <param name="asyncAction">The action to perform asynchronously.</param>
+        /// <param name="finishAction">Action to perform synchronously
+        /// when the asynchronous action completes.</param>
+        public void ProgressBarAction(Action asyncAction, Action finishAction)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            this.finishAction = finishAction;
+            IsHelpTextVisible = false;
+            IsProgressBarVisible = true;
+            data.ProgressBar.Task = asyncAction;
+            data.ProgressBar.SetSubtaskCount(10); // just something until someone else sets the real value
+            data.ProgressBar.StartTask();
+        }
+
+        /// <summary>
         /// Updates the menu system.
         /// </summary>
         /// <param name="gameTime">Time elapsed since the last call to Microsoft.Xna.Framework.GameComponent.Update(Microsoft.Xna.Framework.GameTime)</param>
         public override void Update(GameTime gameTime)
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            if (IsProgressBarVisible && data.ProgressBar.TaskCompleted)
+            {
+                data.ProgressBar.FinishTask();
+                IsProgressBarVisible = false;
+                IsHelpTextVisible = true;
+                finishAction();
+            }
+
             // Update menu view position.
             float moveTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - viewMoveStartTime).TotalSeconds;
             float moveWeight = viewMoveCurve.Evaluate(moveTime);
@@ -230,7 +260,12 @@ namespace AW2.Menu
 
             // Activate 'activeComponent' if the view has just come close enough to its center.
             if (!activeComponentActivatedOnce && moveWeight > 0.7f)
-                activeComponentActivatedOnce = components[(int)activeComponent].Active = true;
+            {
+                activeComponentActivatedOnce = true;
+                components[(int)activeComponent].Active = true;
+                IsProgressBarVisible = false;
+                IsHelpTextVisible = true;
+            }
 
             // Update menu components.
             foreach (MenuComponent component in components)

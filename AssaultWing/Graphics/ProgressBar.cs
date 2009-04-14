@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
@@ -33,11 +31,6 @@ namespace AW2.Graphics
         /// if one was thrown during the task.</returns>
         delegate Exception CatchingAsyncCallback();
 
-        /// <summary>
-        /// Delegate type for a long-running task to be run in a separate thread.
-        /// </summary>
-        public delegate void AsyncCallback();
-
         Texture2D backgroundTexture, barTexture, flowTexture;
 
         object @lock;
@@ -56,7 +49,7 @@ namespace AW2.Graphics
         /// <summary>
         /// The task to run and whose progress to measure.
         /// </summary>
-        public AsyncCallback Task
+        public Action Task
         {
             set
             {

@@ -42,10 +42,15 @@ namespace AW2.Graphics
 
             // Find out the winner.
             arenaWinner = "No-one";
-            data.ForEachPlayer(delegate(Player player)
+            int mostPoints = int.MinValue;
+            data.ForEachPlayer(player =>
             {
-                if (player.Lives > 0)
+                int playerPoints = player.Kills - player.Suicides;
+                if (playerPoints > mostPoints)
+                {
+                    mostPoints = playerPoints;
                     arenaWinner = player.Name;
+                }
             });
 
             // Start loading the next arena.

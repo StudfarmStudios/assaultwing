@@ -29,7 +29,6 @@ namespace AW2.Menu
             }
         }
 
-        bool arenaLoading;
         readonly int menuItemCount = 7; // number of items that fit in the menu at once
         Control controlBack, controlDone;
         MultiControl controlUp, controlDown, controlSelect;
@@ -71,12 +70,11 @@ namespace AW2.Menu
             set
             {
                 base.Active = value;
-                // Update our controls to players' possibly changed controls.
                 if (value)
                 {
-                    menuEngine.IsProgressBarVisible = false;
-                    menuEngine.IsHelpTextVisible = true;
                     InitializeControls();
+                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                    arenaInfos = data.ArenaPlaylist.ConvertAll(arenaName => new ArenaInfo(arenaName));
                 }
             }
         }
@@ -95,14 +93,9 @@ namespace AW2.Menu
         public ArenaMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             pos = new Vector2(1220, 698);
 
             arenaInfos = new List<ArenaInfo>();
-            foreach (String arenaName in data.ArenaPlaylist)
-            {
-                arenaInfos.Add(new ArenaInfo(arenaName));
-            }
 
             cursorFade = new Curve();
             cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
@@ -125,7 +118,6 @@ namespace AW2.Menu
             highlightTexture = data.GetTexture(TextureName.ArenaMenuHighlight);
             tagTexture = data.GetTexture(TextureName.ArenaMenuCheckboxTag);
             arenaPreview = data.GetArenaPreview("noPreview");
-
         }
 
         /// <summary>
@@ -142,14 +134,6 @@ namespace AW2.Menu
         public override void Update()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            if (arenaLoading && data.ProgressBar.TaskCompleted)
-            {
-                arenaLoading = false;
-                data.ProgressBar.FinishTask();
-                menuEngine.IsProgressBarVisible = false;
-                menuEngine.IsHelpTextVisible = true;
-                AssaultWing.Instance.StartArena();
-            }
 
             // Check our controls and react to them.
             if (Active)
@@ -186,14 +170,9 @@ namespace AW2.Menu
                     if (arenaPlaylist.Count > 0)
                     {
                         data.ArenaPlaylist = arenaPlaylist;
-
-                        // Start loading the first arena and display its progress.
-                        menuEngine.IsHelpTextVisible = false;
-                        menuEngine.IsProgressBarVisible = true;
-                        data.ProgressBar.Task = AssaultWing.Instance.PrepareFirstArena;
-                        data.ProgressBar.SetSubtaskCount(10); // just something until DataEngine sets the real value
-                        data.ProgressBar.StartTask();
-                        arenaLoading = true;
+                        menuEngine.ProgressBarAction(
+                            AssaultWing.Instance.PrepareFirstArena,
+                            AssaultWing.Instance.StartArena);
 
                         // We don't accept input while an arena is loading.
                         Active = false;
@@ -203,12 +182,12 @@ namespace AW2.Menu
                 if (controlUp.Pulse)
                 {
                     cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    if (currentArena > 0) --currentArena;
+                    --currentArena;
                 }
                 if (controlDown.Pulse)
                 {
                     cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    if (currentArena < arenaInfos.Count - 1) ++currentArena;
+                    ++currentArena;
                 }
                 if (controlSelect.Pulse)
                 {
@@ -217,7 +196,9 @@ namespace AW2.Menu
                         arenaInfos[currentArena].selected = !arenaInfos[currentArena].selected;
                 }
 
-                // Scroll currently highlighted arena into view.
+                // Limit cursor to sensible limits and scroll currently highlighted arena into view.
+                currentArena = Math.Min(currentArena, arenaInfos.Count - 1);
+                currentArena = Math.Max(currentArena, 0);
                 if (currentArena >= arenaListStart + menuItemCount)
                     arenaListStart = currentArena - menuItemCount + 1;
                 if (currentArena < arenaListStart)

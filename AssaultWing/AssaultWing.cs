@@ -148,7 +148,7 @@ namespace AW2
         /// <summary>
         /// The current mode of network operation of the game.
         /// </summary>
-        public NetworkMode NetworkMode { get; set; }
+        public NetworkMode NetworkMode { get; private set; }
 
         /// <summary>
         /// The game time on this frame.

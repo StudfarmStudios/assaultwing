@@ -82,11 +82,7 @@ namespace AW2.Menu
                 base.Active = value;
                 // Update our controls to players' possibly changed controls.
                 if (value)
-                {
-                    menuEngine.IsProgressBarVisible = false;
-                    menuEngine.IsHelpTextVisible = true;
                     InitializeControls();
-                }
             }
         }
 
@@ -104,6 +100,7 @@ namespace AW2.Menu
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             pos = new Vector2(0, 698);
 
             cursorFade = new Curve();
@@ -126,25 +123,31 @@ namespace AW2.Menu
 
             networkContents = new MainMenuContents("Battlefront Menu", 2);
             networkContents[0].Name = "Play as Server";
-            networkContents[0].Action = () => AssaultWing.Instance.StartServer(result =>
+            networkContents[0].Action = () =>
             {
-                if (!result.Successful)
+                AssaultWing.Instance.StartServer(result =>
                 {
-                    Log.Write("Some client failed to connect: " + result.Error);
-                    return;
-                }
-                Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
-            });
+                    if (!result.Successful)
+                        Log.Write("Some client failed to connect: " + result.Error);
+                    else
+                        Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
+                });
+                menuEngine.ActivateComponent(MenuComponentType.Equip);
+
+                // HACK: Force one local player and Amazonas as the only arena.
+                int count = 0;
+                data.RemovePlayers(player => count++ > 0);
+                data.ArenaPlaylist = new List<string> { "Amazonas" };
+            };
             networkContents[1].Name = connectItemPrefix + connectAddress;
             networkContents[1].Action = () => AssaultWing.Instance.StartClient(connectAddress, result =>
             {
                 if (!result.Successful)
                 {
                     Log.Write("Failed to connect to server: " + result.Error);
-                    AssaultWing.Instance.NetworkMode = NetworkMode.Standalone;
+                    AssaultWing.Instance.StopClient();
                     return;
                 }
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 Log.Write("Client connected to " + result.Value.RemoteEndPoint);
 
                 NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));

@@ -151,14 +151,31 @@ namespace AW2.Menu
             // Check our controls and react to them.
             if (Active)
             {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
                 if (controlBack.Pulse)
                     menuEngine.ActivateComponent(MenuComponentType.Main);
                 else if (controlDone.Pulse)
-                    menuEngine.ActivateComponent(MenuComponentType.Arena);
+                {
+                    // HACK: Server has a fixed arena playlist
+                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                    {
+                        // Start loading the first arena and display its progress.
+                        menuEngine.ProgressBarAction(
+                            AssaultWing.Instance.PrepareFirstArena,
+                            AssaultWing.Instance.StartArena);
+
+                        // We don't accept input while an arena is loading.
+                        Active = false;
+                    }
+                    else
+                    {
+                        menuEngine.ActivateComponent(MenuComponentType.Arena);
+                    }
+                }
 
                 // React to players' controls.
                 int playerI = -1;
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 data.ForEachPlayer(player =>
                 {
                     if (player.IsRemote) return;

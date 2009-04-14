@@ -138,35 +138,22 @@ namespace AW2.Game
                         }
             });
 
-            // Update gobs.
-            Action<Gob> updateGob = delegate(Gob gob)
-            {
-                gob.Update();
-            };
-            data.ForEachGob(updateGob);
-
-            // Update weapons.
-            Action<Weapon> updateWeapon = delegate(Weapon weapon)
-            {
-                weapon.Update();
-            };
-            data.ForEachWeapon(updateWeapon);
-
-            // Update players.
-            Action<Player> updatePlayer = delegate(Player player)
-            {
-                player.Update();
-            };
-            data.ForEachPlayer(updatePlayer);
+            // Update gobs, weapons and players.
+            data.ForEachGob(gob => gob.Update());
+            data.ForEachWeapon(weapon => weapon.Update());
+            data.ForEachPlayer(player => player.Update());
 
             // Check for receptor collisions.
             physics.MovesDone();
 
-            // Check for game end.
-            int playersAlive = 0;
-            data.ForEachPlayer(player => { if (player.Lives > 0) ++playersAlive; });
-            if (playersAlive <= 1)
-                AssaultWing.Instance.FinishArena();
+            // Check for game end. Network games end only when players quit.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
+            {
+                int playersAlive = 0;
+                data.ForEachPlayer(player => { if (player.Lives != 0) ++playersAlive; });
+                if (playersAlive <= 1)
+                    AssaultWing.Instance.FinishArena();
+            }
         }
 
         /// <summary>

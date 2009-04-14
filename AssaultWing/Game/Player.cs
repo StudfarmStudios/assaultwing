@@ -302,7 +302,9 @@ namespace AW2.Game
         public Ship Ship { get { return ship; } set { ship = value; } }
 
         /// <summary>
-        /// How many reincarnations the player has left.
+        /// If positive, how many reincarnations the player has left.
+        /// If negative, the player has infinite lives.
+        /// If zero, the player cannot play.
         /// </summary>
         public int Lives { get { return lives; } set { lives = value; } }
 
@@ -547,7 +549,7 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
                 // Give birth to a new ship if it's time.
-                if (ship == null && lives > 0 &&
+                if (ship == null && lives != 0 &&
                     shipSpawnTime <= AssaultWing.Instance.GameTime.TotalGameTime)
                 {
                     CreateShip();

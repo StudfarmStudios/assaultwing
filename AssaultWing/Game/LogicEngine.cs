@@ -51,7 +51,7 @@ namespace AW2.Game
 
             Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();
             foreach (Arena arena in arenas)
-                if (arena.Name != "dummyarena")
+                if (arena.Name != "dummyarena") // HACK: avoiding the automatically generated arena template
                 {
                     arenaNames.Add(arena.Name);
                     arenaFileNames.Add(arena.Name, arena.FileName);

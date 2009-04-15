@@ -339,15 +339,13 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// ArenaFileNames.
+        /// Mapping of all available arenas to the names of the files 
+        /// where the arenas are defined.
         /// </summary>
         public Dictionary<string, string> ArenaFileNameList
         {
             get { return arenaFileNameList; }
-            set
-            {
-                arenaFileNameList = value;
-            }
+            set { arenaFileNameList = value; }
         }
 
         /// <summary>

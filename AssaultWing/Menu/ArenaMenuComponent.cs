@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -74,7 +75,9 @@ namespace AW2.Menu
                 {
                     InitializeControls();
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    arenaInfos = data.ArenaPlaylist.ConvertAll(arenaName => new ArenaInfo(arenaName));
+                    arenaInfos = new List<ArenaInfo>(
+                        from namePair in data.ArenaFileNameList
+                        select new ArenaInfo(namePair.Key));
                 }
             }
         }

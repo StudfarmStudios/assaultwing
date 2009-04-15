@@ -78,7 +78,7 @@ namespace AW2
         NetworkEngine networkEngine;
         LogicEngine logicEngine;
         DataEngine dataEngine;
-        PhysicsEngineImpl physicsEngine;
+        PhysicsEngine physicsEngine;
         SoundEngineImpl soundEngine;
         EventEngineImpl eventEngine;
         ContentManager content;
@@ -553,7 +553,7 @@ namespace AW2
             networkEngine = new NetworkEngine(this);
             overlayDialog = new OverlayDialog(this);
             dataEngine = new DataEngine();
-            physicsEngine = new PhysicsEngineImpl();
+            physicsEngine = new PhysicsEngine();
             eventEngine = new EventEngineImpl();
 
             networkEngine.UpdateOrder = 0;

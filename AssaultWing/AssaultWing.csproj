@@ -200,9 +200,6 @@
       <Name>IGob</Name>
     </Compile>
     <Compile Include="Game\PhysicsEngine.cs">
-      <Name>PhysicsEngine</Name>
-    </Compile>
-    <Compile Include="Game\PhysicsEngineImpl.cs">
       <Name>PhysicsEngineImpl</Name>
     </Compile>
     <Compile Include="Game\Player.cs">

@@ -173,9 +173,6 @@
       <Name>Bullet</Name>
     </Compile>
     <Compile Include="Game\DataEngine.cs">
-      <Name>DataEngine</Name>
-    </Compile>
-    <Compile Include="Game\DataEngineImpl.cs">
       <Name>DataEngineImpl</Name>
     </Compile>
     <Compile Include="Events\Event.cs">

@@ -21,7 +21,7 @@ namespace AW2.Graphics
     /// 
     /// This class is thread safe enough to be safely operated from both 
     /// the main thread and the running background task.
-    class ProgressBar : OverlayComponent
+    public class ProgressBar : OverlayComponent
     {
         /// <summary>
         /// Delegate type for a long-running task that returns exceptions

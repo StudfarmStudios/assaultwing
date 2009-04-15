@@ -77,7 +77,7 @@ namespace AW2
         MenuEngineImpl menuEngine;
         NetworkEngine networkEngine;
         LogicEngineImpl logicEngine;
-        DataEngineImpl dataEngine;
+        DataEngine dataEngine;
         PhysicsEngineImpl physicsEngine;
         SoundEngineImpl soundEngine;
         EventEngineImpl eventEngine;
@@ -552,7 +552,7 @@ namespace AW2
             menuEngine = new MenuEngineImpl(this);
             networkEngine = new NetworkEngine(this);
             overlayDialog = new OverlayDialog(this);
-            dataEngine = new DataEngineImpl();
+            dataEngine = new DataEngine();
             physicsEngine = new PhysicsEngineImpl();
             eventEngine = new EventEngineImpl();
 

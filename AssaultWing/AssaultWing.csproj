@@ -227,9 +227,6 @@
       <Name>GraphicsEngineImpl</Name>
     </Compile>
     <Compile Include="Game\LogicEngine.cs">
-      <Name>LogicEngine</Name>
-    </Compile>
-    <Compile Include="Game\LogicEngineImpl.cs">
       <Name>LogicEngineImpl</Name>
     </Compile>
     <Compile Include="Graphics\MiniStatusOverlay.cs" />

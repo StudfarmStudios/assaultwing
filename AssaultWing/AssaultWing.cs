@@ -76,7 +76,7 @@ namespace AW2
         OverlayDialog overlayDialog;
         MenuEngineImpl menuEngine;
         NetworkEngine networkEngine;
-        LogicEngineImpl logicEngine;
+        LogicEngine logicEngine;
         DataEngine dataEngine;
         PhysicsEngineImpl physicsEngine;
         SoundEngineImpl soundEngine;
@@ -546,7 +546,7 @@ namespace AW2
             Log.Write("Assault Wing initializing");
 
             uiEngine = new UIEngineImpl(this);
-            logicEngine = new LogicEngineImpl(this);
+            logicEngine = new LogicEngine(this);
             soundEngine = new SoundEngineImpl(this);
             graphicsEngine = new GraphicsEngineImpl(this);
             menuEngine = new MenuEngineImpl(this);

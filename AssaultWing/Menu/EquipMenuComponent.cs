@@ -157,22 +157,28 @@ namespace AW2.Menu
                     menuEngine.ActivateComponent(MenuComponentType.Main);
                 else if (controlDone.Pulse)
                 {
-                    // HACK: Server has a fixed arena playlist
-                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                    switch (AssaultWing.Instance.NetworkMode)
                     {
-                        // Start loading the first arena and display its progress.
-                        menuEngine.ProgressBarAction(
-                            AssaultWing.Instance.PrepareFirstArena,
-                            AssaultWing.Instance.StartArena);
+                        case NetworkMode.Server:
+                            // HACK: Server has a fixed arena playlist
+                            // Start loading the first arena and display its progress.
+                            menuEngine.ProgressBarAction(
+                                AssaultWing.Instance.PrepareFirstArena,
+                                AssaultWing.Instance.StartArena);
 
-                        // We don't accept input while an arena is loading.
-                        Active = false;
-                    }
-                    else
-                    {
-                        menuEngine.ActivateComponent(MenuComponentType.Arena);
+                            // We don't accept input while an arena is loading.
+                            Active = false;
+                            break;
+                        case NetworkMode.Client:
+                            // Client advances only when the server says so.
+                            break;
+                        case NetworkMode.Standalone:
+                            menuEngine.ActivateComponent(MenuComponentType.Arena);
+                            break;
+                        default: throw new Exception("Unexpected network mode " + AssaultWing.Instance.NetworkMode);
                     }
                 }
+
 
                 // React to players' controls.
                 int playerI = -1;
@@ -234,6 +240,26 @@ namespace AW2.Menu
                         }
                     }
                 });
+
+                // React to network messages.
+                AW2.Net.NetworkEngine net = (AW2.Net.NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(AW2.Net.NetworkEngine));
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                {
+                    var message = net.ReceiveFromServer<AW2.Net.Messages.StartGameMessage>();
+                    if (message != null)
+                    {
+                        // TODO: !!! PROPER GAME START STUFF. Active = false, arenas to "Amazon", etc.
+                        for (int i = 0; i < message.PlayerCount; ++i)
+                        {
+                            Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
+                            message.Read(player, AW2.Net.SerializationModeFlags.All);
+
+                            // Only add the player if it is remote.
+                            if (data.GetPlayer(player.Id) == null)
+                                data.AddPlayer(player);
+                        }
+                    }
+                }
             }
         }
 

@@ -80,9 +80,21 @@ namespace AW2.Menu
             set
             {
                 base.Active = value;
-                // Update our controls to players' possibly changed controls.
                 if (value)
+                {
+                    // Update our controls to players' possibly changed controls.
                     InitializeControls();
+
+                    // Fall back to start menu.
+                    currentContents = startContents;
+                    currentItem = 0;
+
+                    // Cut network connections.
+                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                        AssaultWing.Instance.StopClient();
+                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                        AssaultWing.Instance.StopServer();
+                }
             }
         }
 
@@ -140,25 +152,34 @@ namespace AW2.Menu
                 data.ArenaPlaylist = new List<string> { "Amazonas" };
             };
             networkContents[1].Name = connectItemPrefix + connectAddress;
-            networkContents[1].Action = () => AssaultWing.Instance.StartClient(connectAddress, result =>
+            networkContents[1].Action = () =>
             {
-                if (!result.Successful)
+                AssaultWing.Instance.StartClient(connectAddress, result =>
                 {
-                    Log.Write("Failed to connect to server: " + result.Error);
-                    AssaultWing.Instance.StopClient();
-                    return;
-                }
-                Log.Write("Client connected to " + result.Value.RemoteEndPoint);
+                    if (!result.Successful)
+                    {
+                        Log.Write("Failed to connect to server: " + result.Error);
+                        AssaultWing.Instance.StopClient();
+                        return;
+                    }
+                    Log.Write("Client connected to " + result.Value.RemoteEndPoint);
+                    menuEngine.ActivateComponent(MenuComponentType.Equip);
 
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-                JoinGameRequest joinGameRequest = new JoinGameRequest();
-                joinGameRequest.PlayerInfos = new List<PlayerInfo>();
-                data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
+                    // HACK: Force one local player.
+                    int count = 0;
+                    data.RemovePlayers(player => count++ > 0);
+
+                    // Send a game join request to the game server.
+                    NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                    JoinGameRequest joinGameRequest = new JoinGameRequest();
+                    joinGameRequest.PlayerInfos = new List<PlayerInfo>();
+                    data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
 #if NETWORK_DEBUG
-                Log.Write("DEBUG: sending to server: " + joinGameRequest);
+                     Log.Write("DEBUG: sending to server: " + joinGameRequest);
 #endif
-                net.SendToServer(joinGameRequest);
-            });
+                    net.SendToServer(joinGameRequest);
+                });
+            };
 
             // Set initial menu contents
             currentContents = startContents;

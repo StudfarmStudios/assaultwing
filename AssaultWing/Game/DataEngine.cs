@@ -697,6 +697,10 @@ namespace AW2.Game
         /// <param name="player">The player to remove.</param>
         public void RemovePlayer(Player player)
         {
+            // Kill the player's ship.
+            if (player.Ship != null)
+                player.Ship.Die(new DeathCause());
+
             players.Remove(player);
         }
 
@@ -706,7 +710,17 @@ namespace AW2.Game
         /// <param name="criterion">The criterion which players to remove.</param>
         public void RemovePlayers(Predicate<Player> criterion)
         {
-            players.RemoveAll(criterion);
+            for (int i = 0; i < players.Count; )
+                if (criterion(players[i]))
+                {
+                    // Kill the player's ship.
+                    if (players[i].Ship != null)
+                        players[i].Ship.Die(new DeathCause());
+
+                    players.RemoveAt(i);
+                }
+                else
+                    ++i;
         }
 
         #endregion players

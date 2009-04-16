@@ -179,7 +179,6 @@ namespace AW2.Menu
                     }
                 }
 
-
                 // React to players' controls.
                 int playerI = -1;
                 data.ForEachPlayer(player =>
@@ -248,7 +247,6 @@ namespace AW2.Menu
                     var message = net.ReceiveFromServer<AW2.Net.Messages.StartGameMessage>();
                     if (message != null)
                     {
-                        // TODO: !!! PROPER GAME START STUFF. Active = false, arenas to "Amazon", etc.
                         for (int i = 0; i < message.PlayerCount; ++i)
                         {
                             Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
@@ -258,6 +256,16 @@ namespace AW2.Menu
                             if (data.GetPlayer(player.Id) == null)
                                 data.AddPlayer(player);
                         }
+
+                        data.ArenaPlaylist = message.ArenaPlaylist;
+
+                        // Prepare and start playing the game.
+                        menuEngine.ProgressBarAction(
+                            AssaultWing.Instance.PrepareFirstArena,
+                            AssaultWing.Instance.StartArena);
+
+                        // We don't accept input while an arena is loading.
+                        Active = false;
                     }
                 }
             }

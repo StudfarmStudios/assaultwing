@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
+using System.Net.Sockets;
 using Microsoft.Xna.Framework;
+using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Messages;
-using AW2.Game;
-using System.Net.Sockets;
 
 namespace AW2.Net
 {
@@ -342,28 +340,48 @@ namespace AW2.Net
 
             // Handle occurred errors.
             Action<Connection, string, Action> errorCheck = (connection, name, nuller) =>
+            {
+                if (connection == null) return;
+                connection.Errors.Do(queue =>
                 {
-                    if (connection == null) return;
-                    connection.Errors.Do(queue =>
-                        {
-                            if (queue.Count == 0) return;
-                            while (queue.Count > 0)
-                            {
-                                Exception e = queue.Dequeue();
-                                Log.Write("Error occurred with " + name + " connection: " + e.Message);
-                            }
-                            Log.Write("Closing " + name + " connection due to errors");
-                            connection.Dispose();
-                            nuller();
-                        });
-                };
+                    if (queue.Count == 0) return;
+                    while (queue.Count > 0)
+                    {
+                        Exception e = queue.Dequeue();
+                        Log.Write("Error occurred with " + name + " connection: " + e.Message);
+                    }
+                    Log.Write("Closing " + name + " connection due to errors");
+                    connection.Dispose();
+                    nuller();
+                });
+            };
             errorCheck(managementServerConnection, "management server", () => managementServerConnection = null); // TODO: Reconnect
-            errorCheck(gameServerConnection, "game server", () => gameServerConnection = null); // TODO: Notify user
+            errorCheck(gameServerConnection, "game server", () =>
+            {
+                AssaultWing.Instance.StopClient();
+                AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                    "Connection to server lost!\nPress Enter to return to Main Menu",
+                    new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
+                        AssaultWing.Instance.ShowMenu));
+                AssaultWing.Instance.ShowDialog(dialogData);
+            });
             List<Connection> clientsToRemove = new List<Connection>();
             foreach (Connection clientConnection in clientConnections)
                 errorCheck(clientConnection, "game client", () => clientsToRemove.Add(clientConnection));
             foreach (Connection connection in clientsToRemove)
             {
+                data.ForEachPlayer(player =>
+                {
+                    List<string> droppedPlayerNames = new List<string>();
+                    data.ForEachPlayer(plr =>
+                    {
+                        if (plr.ConnectionId == connection.Id)
+                            droppedPlayerNames.Add(plr.Name);
+                    });
+                    string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
+                    if (!player.IsRemote)
+                        player.SendMessage(message);
+                });
                 data.RemovePlayers(player => player.ConnectionId == connection.Id);
                 clientConnections.Remove(connection);
             }

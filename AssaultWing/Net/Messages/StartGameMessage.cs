@@ -31,6 +31,19 @@ namespace AW2.Net.Messages
         public int PlayerCount { get; set; }
 
         /// <summary>
+        /// Names of arenas to play in the game session.
+        /// </summary>
+        public List<string> ArenaPlaylist { get; set; }
+
+        /// <summary>
+        /// Creates an uninitialised start game message.
+        /// </summary>
+        public StartGameMessage()
+        {
+            ArenaPlaylist = new List<string>();
+        }
+
+        /// <summary>
         /// Writes the body of the message in serialised form.
         /// </summary>
         /// <param name="writer">Writer of serialised data.</param>
@@ -38,12 +51,17 @@ namespace AW2.Net.Messages
         {
             // Start game (request) message structure:
             // int: total number of players in the game, N
+            // int: total number of arenas in the game, M
             // word: length of serialised data of all players, L
             // L bytes: serialised data of N players (content known only by Player)
+            // 32 * M bytes: names of M arenas
             byte[] writeBytes = StreamedData;
             writer.Write((int)PlayerCount);
+            writer.Write((int)ArenaPlaylist.Count);
             writer.Write(checked((ushort)writeBytes.Length));
             writer.Write(writeBytes, 0, writeBytes.Length);
+            foreach (string name in ArenaPlaylist)
+                writer.Write((string)name, 32, true);
         }
 
         /// <summary>
@@ -53,8 +71,12 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             PlayerCount = reader.ReadInt32();
+            int arenaCount = reader.ReadInt32();
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);
+            ArenaPlaylist.Clear();
+            for (int i = 0; i < arenaCount; ++i)
+                ArenaPlaylist.Add(reader.ReadString(32));
         }
 
         /// <summary>

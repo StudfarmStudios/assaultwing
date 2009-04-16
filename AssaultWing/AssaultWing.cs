@@ -347,6 +347,7 @@ namespace AW2
                     message.Write(player, SerializationModeFlags.All);
                 });
                 message.PlayerCount = playerCount;
+                message.ArenaPlaylist = dataEngine.ArenaPlaylist;
                 networkEngine.SendToClients(message);
             }
 

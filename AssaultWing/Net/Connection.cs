@@ -290,6 +290,7 @@ namespace AW2.Net
         {
             if (IsDisposed) return;
             IsDisposed = true;
+            Application.ApplicationExit -= ApplicationExitCallback;
 
             if (readThread != null && readThread.IsAlive)
             {
@@ -334,6 +335,11 @@ namespace AW2.Net
 
         #region Non-public methods
 
+        private void ApplicationExitCallback(object caller, EventArgs args)
+        {
+            Dispose();
+        }
+
         /// <summary>
         /// Creates a new connection to a remote host.
         /// </summary>
@@ -350,7 +356,7 @@ namespace AW2.Net
                 throw new ArgumentException("Socket not connected");
             Id = leastUnusedId++;
             Name = "Connection " + Id;
-            Application.ApplicationExit += new EventHandler((sender, args) => this.Dispose());
+            Application.ApplicationExit += ApplicationExitCallback;
             socket.Blocking = true;
             socket.ReceiveTimeout = 0; // don't time out
             this.socket = socket;

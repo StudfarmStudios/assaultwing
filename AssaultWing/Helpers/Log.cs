@@ -30,7 +30,15 @@ namespace AW2.Helpers
                 for (int rotation = rotateCount - 1; rotation >= 0; --rotation)
                     if (File.Exists(GetLogFilename(rotation)))
                         File.Move(GetLogFilename(rotation), GetLogFilename(rotation + 1));
+            }
+            catch
+            {
+                // Ignore any file exceptions, if file is not
+                // createable (e.g. on a CD-Rom) it doesn't matter.
+            }
 
+            try
+            {
                 // Open a new log file.
                 FileStream file = new FileStream(GetLogFilename(0), FileMode.OpenOrCreate,
                     FileAccess.Write, FileShare.ReadWrite);

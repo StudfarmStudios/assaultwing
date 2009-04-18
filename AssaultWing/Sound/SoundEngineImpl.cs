@@ -44,8 +44,6 @@ namespace AW2.Sound
             waveBank = new WaveBank(audioEngine, System.IO.Path.Combine(Paths.Sounds, "Wave Bank.xwb"));
             soundBank = new SoundBank(audioEngine, System.IO.Path.Combine(Paths.Sounds, "Sound Bank.xsb"));
             Log.Write("Sound engine initialized.");
-
-            //PlayMusic(); // for testing, remove when not needed
         }
 
         /// <summary>
@@ -93,7 +91,6 @@ namespace AW2.Sound
         /// <param name="volume">a value between 0 and 1</param>
         public void SetMusicVolume(float volume)
         {
-            Log.Write("volume:" + volume);
             SetVolume("Music", volume);
         }
 
@@ -137,13 +134,9 @@ namespace AW2.Sound
         {
             if (backgroundCue != null)
             {
-                Log.Write("Stopping Track:" + backgroundCue.Name);
                 backgroundCue.Stop(AudioStopOptions.AsAuthored);
                 backgroundCue = null;
-                
             }
-            //throw new Exception("The method or operation is not implemented.");
-            // soundBank.GetCue("Pelimusat").Stop(AudioStopOptions.AsAuthored); // !!!fixme
         }
 
         /// <summary>

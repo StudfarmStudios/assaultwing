@@ -124,13 +124,41 @@ namespace AW2.Net
         /// The local end point of the connection.
         /// </summary>
         /// <see cref="System.Net.Sockets.Socket.LocalEndPoint"/>
-        public IPEndPoint LocalEndPoint { get { return (IPEndPoint)socket.LocalEndPoint; } }
+        public IPEndPoint LocalEndPoint
+        {
+            get
+            {
+                try
+                {
+                    return (IPEndPoint)socket.LocalEndPoint;
+                }
+                catch (Exception e)
+                {
+                    errors.Do(queue => queue.Enqueue(e));
+                }
+                return new IPEndPoint(IPAddress.None, 0);
+            }
+        }
 
         /// <summary>
         /// The remote end point of the connection.
         /// </summary>
         /// <see cref="System.Net.Sockets.Socket.RemoteEndPoint"/>
-        public IPEndPoint RemoteEndPoint { get { return (IPEndPoint)socket.RemoteEndPoint; } }
+        public IPEndPoint RemoteEndPoint
+        {
+            get
+            {
+                try
+                {
+                    return (IPEndPoint)socket.RemoteEndPoint;
+                }
+                catch (Exception e)
+                {
+                    errors.Do(queue => queue.Enqueue(e));
+                }
+                return new IPEndPoint(IPAddress.None, 0);
+            }
+        }
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
@@ -153,7 +181,7 @@ namespace AW2.Net
         public static event Action ConnectionResultCallback;
 
         /// <summary>
-        /// Information on general error situations.
+        /// Information about general error situations.
         /// </summary>
         public ThreadSafeWrapper<Queue<Exception>> Errors { get { return errors; } }
 
@@ -204,8 +232,11 @@ namespace AW2.Net
                 }
                 catch (SocketException e)
                 {
-                    connectionResults.Do(queue => queue.Enqueue(new Result<Connection>(e, id)));
-                    lock (connectionResults) if (ConnectionResultCallback != null) ConnectionResultCallback();
+                    connectionResults.Do(queue =>
+                    {
+                        queue.Enqueue(new Result<Connection>(e, id));
+                        if (ConnectionResultCallback != null) ConnectionResultCallback();
+                    });
                 }
             }
         }
@@ -299,8 +330,9 @@ namespace AW2.Net
         {
             try
             {
-                socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendCallback,
-                    new SendAsyncState(socket, data));
+                if (socket.Connected)
+                    socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendCallback,
+                        new SendAsyncState(socket, data));
             }
             catch (Exception e)
             {
@@ -310,8 +342,11 @@ namespace AW2.Net
                 var eSocket = e as SocketException;
                 if (eSocket == null && (eDisposed == null || eDisposed.ObjectName != typeof(Socket).FullName))
                     throw e;
-                errors.Do(delegate(Queue<Exception> queue) { queue.Enqueue(e); });
-                lock (errors) if (ErrorCallback != null) ErrorCallback();
+                errors.Do(queue =>
+                {
+                    queue.Enqueue(e);
+                    if (ErrorCallback != null) ErrorCallback();
+                });
                 Dispose();
             }
         }
@@ -371,13 +406,17 @@ namespace AW2.Net
                     lock (messages) if (MessageCallback != null) MessageCallback();
                 }
             }
+            catch (ThreadAbortException)
+            {
+                // Someone else terminated us, so he is handling the possible error condition.
+            }
             catch (Exception e)
             {
-                errors.Do(delegate(Queue<Exception> queue) { queue.Enqueue(e); });
-                lock (errors) if (ErrorCallback != null) ErrorCallback();
-            }
-            finally
-            {
+                errors.Do(queue =>
+                {
+                    queue.Enqueue(e);
+                    if (ErrorCallback != null) ErrorCallback();
+                });
                 Dispose();
             }
         }
@@ -402,8 +441,11 @@ namespace AW2.Net
             }
             catch (Exception e)
             {
-                errors.Do(delegate(Queue<Exception> queue) { queue.Enqueue(e); });
-                lock (errors) if (ErrorCallback != null) ErrorCallback();
+                errors.Do(queue =>
+                {
+                    queue.Enqueue(e);
+                    if (ErrorCallback != null) ErrorCallback();
+                });
                 Dispose();
             }
         }
@@ -422,11 +464,11 @@ namespace AW2.Net
                     Socket socketToNewHost = state.socket.EndAccept(asyncResult);
                     socketToNewHost.NoDelay = true;
                     Connection newConnection = new Connection(socketToNewHost);
-                    connectionResults.Do(delegate(Queue<Result<Connection>> queue)
+                    connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(newConnection, state.id));
+                        if (ConnectionResultCallback != null) ConnectionResultCallback();
                     });
-                    lock (connectionResults) if (ConnectionResultCallback != null) ConnectionResultCallback();
 
                     // Resume listening for connections.
                     if (serverSocket != null)
@@ -440,11 +482,11 @@ namespace AW2.Net
                     }
                     else
                     {
-                        connectionResults.Do(delegate(Queue<Result<Connection>> queue)
+                        connectionResults.Do(queue =>
                         {
                             queue.Enqueue(new Result<Connection>(e, state.id));
+                            if (ConnectionResultCallback != null) ConnectionResultCallback();
                         });
-                        lock (connectionResults) if (ConnectionResultCallback != null) ConnectionResultCallback();
                     }
                 }
             }
@@ -464,19 +506,19 @@ namespace AW2.Net
                     state.socket.EndConnect(asyncResult);
                     state.socket.NoDelay = true;
                     Connection newConnection = new Connection(state.socket);
-                    connectionResults.Do(delegate(Queue<Result<Connection>> queue)
+                    connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(newConnection, state.id));
+                        if (ConnectionResultCallback != null) ConnectionResultCallback();
                     });
-                    lock (connectionResults) if (ConnectionResultCallback != null) ConnectionResultCallback();
                 }
                 catch (Exception e)
                 {
-                    connectionResults.Do(delegate(Queue<Result<Connection>> queue)
+                    connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(e, state.id));
+                        if (ConnectionResultCallback != null) ConnectionResultCallback();
                     });
-                    lock (connectionResults) if (ConnectionResultCallback != null) ConnectionResultCallback();
                 }
             }
         }

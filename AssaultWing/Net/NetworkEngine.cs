@@ -54,20 +54,25 @@ namespace AW2.Net
         /// Network connection to the management server, 
         /// or <c>null</c> if no such live connection exists.
         /// </summary>
-        Connection managementServerConnection;
+        ManagementServerConnection managementServerConnection;
 
         /// <summary>
         /// Network connection to the game server of the current game session, 
         /// or <c>null</c> if no such live connection exists 
         /// (including the case that we are the game server).
         /// </summary>
-        Connection gameServerConnection;
+        GameServerConnection gameServerConnection;
 
         /// <summary>
         /// Network connections to game clients. Nonempty only when 
         /// we are a game server.
         /// </summary>
-        LinkedList<Connection> clientConnections;
+        LinkedList<GameClientConnection> clientConnections;
+
+        /// <summary>
+        /// Clients to be removed from <c>clientConnections</c>.
+        /// </summary>
+        List<GameClientConnection> removedClientConnections;
 
         /// <summary>
         /// Handler of connection results for client that is connecting to a game server.
@@ -90,7 +95,8 @@ namespace AW2.Net
         public NetworkEngine(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            clientConnections = new LinkedList<Connection>();
+            clientConnections = new LinkedList<GameClientConnection>();
+            removedClientConnections = new List<GameClientConnection>();
         }
 
         #endregion Constructor
@@ -161,6 +167,33 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Drops the connection to a game client. To be called only
+        /// as the game server.
+        /// </summary>
+        public void DropClient(int connectionId)
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
+            GameClientConnection connection = GetClientConnection(connectionId);
+            removedClientConnections.Add(connection);
+
+            // Remove the client's players.
+            data.ForEachPlayer(player =>
+            {
+                List<string> droppedPlayerNames = new List<string>();
+                data.ForEachPlayer(plr =>
+                {
+                    if (plr.ConnectionId == connection.Id)
+                        droppedPlayerNames.Add(plr.Name);
+                });
+                string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
+                if (!player.IsRemote)
+                    player.SendMessage(message);
+            });
+            data.RemovePlayers(player => player.ConnectionId == connection.Id);
+        }
+
+        /// <summary>
         /// Sends a message to the game server.
         /// </summary>
         /// <param name="message">The message to send.</param>
@@ -222,16 +255,11 @@ namespace AW2.Net
         /// <param name="message">The message to send.</param>
         public void SendToClient(int connectionId, Message message)
         {
-            foreach (Connection connection in clientConnections)
-                if (connection.Id == connectionId)
-                {
+            Connection connection = GetClientConnection(connectionId);
 #if NETWORK_DEBUG
-                    Log.Write("DEBUG: sending to client " + connectionId + ": " + message);
+            Log.Write("DEBUG: sending to client " + connectionId + ": " + message);
 #endif
-                    connection.Send(message);
-                    return;
-                }
-            throw new ArgumentException("Cannot send to invalid client connection ID " + connectionId);
+            connection.Send(message);
         }
 
         /// <summary>
@@ -298,17 +326,17 @@ namespace AW2.Net
             {
                 while (queue.Count > 0)
                 {
-                    Result<Connection> result = queue.Dequeue();
+                    var result = queue.Dequeue();
                     if (result.Id == "I connect")
                     {
                         if (result.Successful)
-                            gameServerConnection = result.Value;
+                            gameServerConnection = (GameServerConnection)result.Value;
                         startClientConnectionHandler(result);
                     }
                     if (result.Id == "I listen")
                     {
                         if (result.Successful)
-                            clientConnections.AddLast(result.Value);
+                            clientConnections.AddLast((GameClientConnection)result.Value);
                         startServerConnectionHandler(result);
                     }
                 }
@@ -350,66 +378,11 @@ namespace AW2.Net
             }
 
             // Handle occurred errors.
-            List<Connection> clientsToRemove = new List<Connection>();
-            ForEachConnection((connection, type) =>
-            {
-                string connectionName;
-                Action nuller;
-                switch (type)
-                {
-                    case ConnectionType.ManagementServer:
-                        connectionName = "management server";
-                        nuller = () => managementServerConnection = null;
-                        break;
-                    case ConnectionType.GameServer:
-                        connectionName = "game server";
-                        nuller = () =>
-                        {
-                            AssaultWing.Instance.StopClient();
-                            AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
-                                "Connection to server lost!\nPress Enter to return to Main Menu",
-                                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
-                                    AssaultWing.Instance.ShowMenu));
-                            AssaultWing.Instance.ShowDialog(dialogData);
-                        };
-                        break;
-                    case ConnectionType.GameClient:
-                        connectionName = "game client";
-                        nuller = () => clientsToRemove.Add(connection);
-                        break;
-                    default:
-                        throw new Exception("Unexpected connection type " + type);
-                }
-                connection.Errors.Do(queue =>
-                {
-                    if (queue.Count == 0) return;
-                    while (queue.Count > 0)
-                    {
-                        Exception e = queue.Dequeue();
-                        Log.Write("Error occurred with " + connectionName + " connection: " + e.Message);
-                    }
-                    Log.Write("Closing " + connectionName + " connection due to errors");
-                    connection.Dispose();
-                    nuller();
-                });
-            });
-            foreach (Connection connection in clientsToRemove)
-            {
-                data.ForEachPlayer(player =>
-                {
-                    List<string> droppedPlayerNames = new List<string>();
-                    data.ForEachPlayer(plr =>
-                    {
-                        if (plr.ConnectionId == connection.Id)
-                            droppedPlayerNames.Add(plr.Name);
-                    });
-                    string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
-                    if (!player.IsRemote)
-                        player.SendMessage(message);
-                });
-                data.RemovePlayers(player => player.ConnectionId == connection.Id);
+            ForEachConnection(connection => connection.HandleErrors());
+
+            // Finish removing dropped client connections.
+            foreach (GameClientConnection connection in removedClientConnections)
                 clientConnections.Remove(connection);
-            }
         }
 
         /// <summary>
@@ -430,17 +403,30 @@ namespace AW2.Net
         #region Private methods
 
         /// <summary>
+        /// Returns a client connection by its connection identifier.
+        /// </summary>
+        /// <param name="connectionId">The identifier of the client connection.</param>
+        /// <returns>The client connection.</returns>
+        GameClientConnection GetClientConnection(int connectionId)
+        {
+            foreach (GameClientConnection connection in clientConnections)
+                if (connection.Id == connectionId)
+                    return connection;
+            throw new ArgumentException("No client connection with ID " + connectionId);
+        }
+
+        /// <summary>
         /// Performs an operation on each established connection.
         /// </summary>
         /// <param name="action">The action to perform.</param>
-        void ForEachConnection(Action<Connection, ConnectionType> action)
+        void ForEachConnection(Action<Connection> action)
         {
             if (managementServerConnection != null)
-                action(managementServerConnection, ConnectionType.ManagementServer);
+                action(managementServerConnection);
             if (gameServerConnection != null)
-                action(gameServerConnection, ConnectionType.GameServer);
+                action(gameServerConnection);
             foreach (Connection clientConnection in clientConnections)
-                action(clientConnection, ConnectionType.GameClient);
+                action(clientConnection);
         }
 
         #endregion Private methods

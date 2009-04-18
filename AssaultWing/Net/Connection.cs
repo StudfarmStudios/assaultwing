@@ -114,6 +114,16 @@ namespace AW2.Net
         public int Id { get; private set; }
 
         /// <summary>
+        /// Short, human-readable name of the connection.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Is the connection disposed and thus no longer usable.
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// The local end point of the connection.
         /// </summary>
         /// <see cref="System.Net.Sockets.Socket.LocalEndPoint"/>
@@ -164,6 +174,23 @@ namespace AW2.Net
         public event Action MessageCallback;
 
         /// <summary>
+        /// The port at which we are listening for connection attempts from remote hosts.
+        /// </summary>
+        public static int ListeningPort
+        {
+            get
+            {
+                if (!IsListening) throw new InvalidOperationException("Not listening for connections, therefore no listening port exists");
+                lock (connectionResults) return ((IPEndPoint)serverSocket.LocalEndPoint).Port;
+            }
+        }
+
+        /// <summary>
+        /// Are we listening for connection attempts from remote hosts.
+        /// </summary>
+        public static bool IsListening { get { lock (connectionResults) return serverSocket != null; } }
+
+        /// <summary>
         /// Results of connection attempts.
         /// </summary>
         public static ThreadSafeWrapper<Queue<Result<Connection>>> ConnectionResults { get { return connectionResults; } }
@@ -185,24 +212,7 @@ namespace AW2.Net
 
         #endregion Properties
 
-        #region Kind-of constructors and destructor
-
-        /// <summary>
-        /// Are we listening for connection attempts from remote hosts.
-        /// </summary>
-        public static bool IsListening { get { lock (connectionResults) return serverSocket != null; } }
-
-        /// <summary>
-        /// The port at which we are listening for connection attempts from remote hosts.
-        /// </summary>
-        public static int ListeningPort
-        {
-            get
-            {
-                if (!IsListening) throw new InvalidOperationException("Not listening for connections, therefore no listening port exists");
-                lock (connectionResults) return ((IPEndPoint)serverSocket.LocalEndPoint).Port;
-            }
-        }
+        #region Public interface
 
         /// <summary>
         /// Starts listening for connection attempts from remote hosts.
@@ -261,20 +271,86 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Sends a message to the remote host. The message is sent asynchronously,
+        /// so there is no guarantee when the transmission will be finished.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        public void Send(Message message)
+        {
+            byte[] data = message.Serialize();
+            Send(data);
+        }
+
+        /// <summary>
+        /// Closes the connection and frees resources it has allocated.
+        /// </summary>
+        /// Overriding methods should first check <see cref="IsDisposed"/>
+        /// and not do anything if it is <c>true</c>.
+        public virtual void Dispose()
+        {
+            if (IsDisposed) return;
+            IsDisposed = true;
+
+            if (readThread != null && readThread.IsAlive)
+            {
+                readThread.Abort();
+                readThread.Join();
+                readThread = null;
+            }
+            if (sendThread != null && sendThread.IsAlive)
+            {
+                sendThread.Abort();
+                sendThread.Join();
+                sendThread = null;
+            }
+            //socket.Shutdown();
+            socket.Close();
+        }
+
+        /// <summary>
+        /// Reacts to errors that may have occurred during the connection's
+        /// operation in background threads.
+        /// </summary>
+        public void HandleErrors()
+        {
+            bool errorsFound = false;
+            Errors.Do(queue =>
+            {
+                while (queue.Count > 0)
+                {
+                    errorsFound = true;
+                    Exception e = queue.Dequeue();
+                    AW2.Helpers.Log.Write("Error occurred with " + Name + ": " + e.Message);
+                }
+            });
+            if (errorsFound)
+            {
+                AW2.Helpers.Log.Write("Closing " + Name + " due to errors");
+                Dispose();
+            }
+        }
+
+        #endregion Public interface
+
+        #region Non-public methods
+
+        /// <summary>
         /// Creates a new connection to a remote host.
         /// </summary>
         /// <param name="socket">An opened socket to the remote host. The
         /// created connection owns the socket and will dispose of it.</param>
-        /// The client program can create <c>Connection</c>s via the static methods
-        /// <c>Listen()</c> and <c>Connect()</c>.
-        Connection(Socket socket)
+        /// The client program can create <see cref="Connection">Connections</see>
+        /// via the static methods <see cref="StartListening(int, string)"/> and 
+        /// <see cref="Connect(IPAddress, int, string)"/>.
+        protected Connection(Socket socket)
         {
             if (socket == null)
                 throw new ArgumentNullException("Null socket argument");
             if (!socket.Connected)
                 throw new ArgumentException("Socket not connected");
             Id = leastUnusedId++;
-            Application.ApplicationExit += new EventHandler(delegate(object sender, EventArgs args) { this.Dispose(); });
+            Name = "Connection " + Id;
+            Application.ApplicationExit += new EventHandler((sender, args) => this.Dispose());
             socket.Blocking = true;
             socket.ReceiveTimeout = 0; // don't time out
             this.socket = socket;
@@ -291,42 +367,6 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Closes the connection and frees resources it has allocated.
-        /// </summary>
-        public void Dispose()
-        {
-            //socket.Shutdown();
-            socket.Close();
-            if (readThread != null && readThread.IsAlive)
-            {
-                readThread.Abort();
-                readThread.Join();
-                readThread = null;
-            }
-            if (sendThread != null && sendThread.IsAlive)
-            {
-                sendThread.Abort();
-                sendThread.Join();
-                sendThread = null;
-            }
-        }
-
-        #endregion Kind-of constructors and destructor
-
-        #region Send methods
-
-        /// <summary>
-        /// Sends a message to the remote host. The message is sent asynchronously,
-        /// so there is no guarantee when the transmission will be finished.
-        /// </summary>
-        /// <param name="message">The message to send.</param>
-        public void Send(Message message)
-        {
-            byte[] data = message.Serialize();
-            Send(data);
-        }
-
-        /// <summary>
         /// Sends raw byte data to the remote host. The data is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
@@ -335,10 +375,6 @@ namespace AW2.Net
         {
             sendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
         }
-
-        #endregion Send methods
-
-        #region Receive methods
 
         /// <summary>
         /// Receives a certain number of bytes to a buffer.
@@ -358,7 +394,7 @@ namespace AW2.Net
             }
         }
 
-        #endregion Receive methods
+        #endregion Private methods
 
         #region Private callback implementations
 
@@ -402,7 +438,6 @@ namespace AW2.Net
                     queue.Enqueue(e);
                     if (ErrorCallback != null) ErrorCallback();
                 });
-                Dispose();
             }
         }
 
@@ -445,7 +480,6 @@ namespace AW2.Net
                     queue.Enqueue(e);
                     if (ErrorCallback != null) ErrorCallback();
                 });
-                Dispose();
             }
         }
 
@@ -462,7 +496,7 @@ namespace AW2.Net
                 {
                     Socket socketToNewHost = state.socket.EndAccept(asyncResult);
                     socketToNewHost.NoDelay = true;
-                    Connection newConnection = new Connection(socketToNewHost);
+                    var newConnection = new GameClientConnection(socketToNewHost);
                     connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(newConnection, state.id));
@@ -504,7 +538,7 @@ namespace AW2.Net
                 {
                     state.socket.EndConnect(asyncResult);
                     state.socket.NoDelay = true;
-                    Connection newConnection = new Connection(state.socket);
+                    var newConnection = new GameServerConnection(state.socket);
                     connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(newConnection, state.id));

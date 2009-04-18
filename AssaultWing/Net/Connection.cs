@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Net.Sockets;
-using System.Threading;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace AW2.Net
@@ -29,22 +28,6 @@ namespace AW2.Net
     public class Connection
     {
         #region Type definitions
-
-        /// <summary>
-        /// State information for an asynchronous data send attempt.
-        /// </summary>
-        class SendAsyncState
-        {
-            public Socket socket;
-            public byte[] data;
-            public int startIndex;
-            public SendAsyncState(Socket socket, byte[] data)
-            {
-                this.socket = socket;
-                this.data = data;
-                startIndex = 0;
-            }
-        }
 
         /// <summary>
         /// State information for an asynchronous connection attempt.
@@ -92,9 +75,19 @@ namespace AW2.Net
         byte[] bodyReceiveBuffer;
 
         /// <summary>
+        /// Buffer of serialised messages waiting to be sent to the remote host.
+        /// </summary>
+        ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers;
+
+        /// <summary>
         /// The thread that is continuously reading incoming data from the remote host.
         /// </summary>
         Thread readThread;
+
+        /// <summary>
+        /// The thread that is continuously sending outgoing data to the remote host.
+        /// </summary>
+        Thread sendThread;
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
@@ -286,10 +279,15 @@ namespace AW2.Net
             socket.ReceiveTimeout = 0; // don't time out
             this.socket = socket;
             headerReceiveBuffer = new byte[Message.HeaderLength];
-            readThread = new Thread(ReadLoop);
-            readThread.Start();
             messages = new TypedQueue<Message>();
+            sendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
             errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
+            readThread = new Thread(ReadLoop);
+            readThread.Name = "Read Loop";
+            readThread.Start();
+            sendThread = new Thread(SendLoop);
+            sendThread.Name = "Send Loop";
+            sendThread.Start();
         }
 
         /// <summary>
@@ -303,6 +301,13 @@ namespace AW2.Net
             {
                 readThread.Abort();
                 readThread.Join();
+                readThread = null;
+            }
+            if (sendThread != null && sendThread.IsAlive)
+            {
+                sendThread.Abort();
+                sendThread.Join();
+                sendThread = null;
             }
         }
 
@@ -328,27 +333,7 @@ namespace AW2.Net
         /// <param name="data">The data to send.</param>
         void Send(byte[] data)
         {
-            try
-            {
-                if (socket.Connected)
-                    socket.BeginSend(data, 0, data.Length, SocketFlags.None, SendCallback,
-                        new SendAsyncState(socket, data));
-            }
-            catch (Exception e)
-            {
-                // We catch only socket related exceptions, i.e.
-                // SocketExceptions and ObjectDisposedExceptions that speak of Sockets.
-                var eDisposed = e as ObjectDisposedException;
-                var eSocket = e as SocketException;
-                if (eSocket == null && (eDisposed == null || eDisposed.ObjectName != typeof(Socket).FullName))
-                    throw e;
-                errors.Do(queue =>
-                {
-                    queue.Enqueue(e);
-                    if (ErrorCallback != null) ErrorCallback();
-                });
-                Dispose();
-            }
+            sendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
         }
 
         #endregion Send methods
@@ -382,7 +367,7 @@ namespace AW2.Net
         /// is closed or there is some other error condition. 
         /// To be run in a separate thread.
         /// </summary>
-        /// <see cref="System.Threading.ThreadStart"/>
+        /// <seealso cref="System.Threading.ThreadStart"/>
         void ReadLoop()
         {
             try
@@ -422,22 +407,36 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Callback implementation for finishing a data send to the remote host.
+        /// Sends data to the remote host endlessly or until the socket
+        /// is closed or there is some other error condition. 
+        /// To be run in a separate thread.
         /// </summary>
-        /// <param name="asyncResult">The result of the asynchronous operation.</param>
-        void SendCallback(IAsyncResult asyncResult)
+        /// <seealso cref="System.Threading.ThreadStart"/>
+        void SendLoop()
         {
-            SendAsyncState state = (SendAsyncState)asyncResult.AsyncState;
             try
             {
-                int bytesSent = state.socket.EndSend(asyncResult);
-                state.startIndex += bytesSent;
-                if (state.startIndex < state.data.Length)
+                while (true)
                 {
-                    // Not all data was sent this time; continue sending the remaining data.
-                    state.socket.BeginSend(state.data, state.startIndex, state.data.Length - state.startIndex, 
-                        SocketFlags.None, SendCallback, state);
+                    ArraySegment<byte> buffer = new ArraySegment<byte>();
+                    sendBuffers.Do(queue =>
+                    {
+                        if (queue.Count > 0)
+                            buffer = queue.Dequeue();
+                    });
+                    if (buffer.Array != null)
+                    {
+                        int bytesSent = socket.Send(buffer.Array, buffer.Offset, buffer.Count, SocketFlags.None);
+                        if (bytesSent != buffer.Count)
+                            throw new Exception("Not all data was sent (" + bytesSent + " out of " + buffer.Count + " bytes)");
+                    }
+                    else
+                        Thread.Sleep(0);
                 }
+            }
+            catch (ThreadAbortException)
+            {
+                // Someone else terminated us, so he is handling the possible error condition.
             }
             catch (Exception e)
             {

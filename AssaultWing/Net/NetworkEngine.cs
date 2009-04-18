@@ -32,6 +32,17 @@ namespace AW2.Net
     /// <seealso cref="Message.ConnectionId"/>
     public class NetworkEngine : GameComponent
     {
+        #region Type definitions
+
+        enum ConnectionType
+        {
+            ManagementServer,
+            GameServer,
+            GameClient
+        }
+
+        #endregion Type definitions
+
         #region Fields
 
         /// <summary>
@@ -339,35 +350,49 @@ namespace AW2.Net
             }
 
             // Handle occurred errors.
-            Action<Connection, string, Action> errorCheck = (connection, name, nuller) =>
+            List<Connection> clientsToRemove = new List<Connection>();
+            ForEachConnection((connection, type) =>
             {
-                if (connection == null) return;
+                string connectionName;
+                Action nuller;
+                switch (type)
+                {
+                    case ConnectionType.ManagementServer:
+                        connectionName = "management server";
+                        nuller = () => managementServerConnection = null;
+                        break;
+                    case ConnectionType.GameServer:
+                        connectionName = "game server";
+                        nuller = () =>
+                        {
+                            AssaultWing.Instance.StopClient();
+                            AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                                "Connection to server lost!\nPress Enter to return to Main Menu",
+                                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
+                                    AssaultWing.Instance.ShowMenu));
+                            AssaultWing.Instance.ShowDialog(dialogData);
+                        };
+                        break;
+                    case ConnectionType.GameClient:
+                        connectionName = "game client";
+                        nuller = () => clientsToRemove.Add(connection);
+                        break;
+                    default:
+                        throw new Exception("Unexpected connection type " + type);
+                }
                 connection.Errors.Do(queue =>
                 {
                     if (queue.Count == 0) return;
                     while (queue.Count > 0)
                     {
                         Exception e = queue.Dequeue();
-                        Log.Write("Error occurred with " + name + " connection: " + e.Message);
+                        Log.Write("Error occurred with " + connectionName + " connection: " + e.Message);
                     }
-                    Log.Write("Closing " + name + " connection due to errors");
+                    Log.Write("Closing " + connectionName + " connection due to errors");
                     connection.Dispose();
                     nuller();
                 });
-            };
-            errorCheck(managementServerConnection, "management server", () => managementServerConnection = null); // TODO: Reconnect
-            errorCheck(gameServerConnection, "game server", () =>
-            {
-                AssaultWing.Instance.StopClient();
-                AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
-                    "Connection to server lost!\nPress Enter to return to Main Menu",
-                    new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
-                        AssaultWing.Instance.ShowMenu));
-                AssaultWing.Instance.ShowDialog(dialogData);
             });
-            List<Connection> clientsToRemove = new List<Connection>();
-            foreach (Connection clientConnection in clientConnections)
-                errorCheck(clientConnection, "game client", () => clientsToRemove.Add(clientConnection));
             foreach (Connection connection in clientsToRemove)
             {
                 data.ForEachPlayer(player =>
@@ -401,5 +426,23 @@ namespace AW2.Net
         }
 
         #endregion GameComponent methods
+
+        #region Private methods
+
+        /// <summary>
+        /// Performs an operation on each established connection.
+        /// </summary>
+        /// <param name="action">The action to perform.</param>
+        void ForEachConnection(Action<Connection, ConnectionType> action)
+        {
+            if (managementServerConnection != null)
+                action(managementServerConnection, ConnectionType.ManagementServer);
+            if (gameServerConnection != null)
+                action(gameServerConnection, ConnectionType.GameServer);
+            foreach (Connection clientConnection in clientConnections)
+                action(clientConnection, ConnectionType.GameClient);
+        }
+
+        #endregion Private methods
     }
 }

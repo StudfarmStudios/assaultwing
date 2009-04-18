@@ -967,9 +967,6 @@ namespace AW2.Game
                 GobUpdateMessage message;
                 while ((message = net.ReceiveFromServer<GobUpdateMessage>()) != null)
                 {
-                    // Skip old update messages.
-                    if (message.TotalGameTime <= updateMessageTimeout) continue;
-
                     Gob gob = GetGob(message.GobId);
 
                     // Skip updates for gobs we haven't yet created.

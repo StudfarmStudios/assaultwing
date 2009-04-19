@@ -253,6 +253,8 @@ namespace AW2.Menu
                             {
                                 case Keys.Left: --caretPosition; break;
                                 case Keys.Right: ++caretPosition; break;
+                                case Keys.Home: caretPosition = 0; break;
+                                case Keys.End: caretPosition = connectAddress.Length; break;
                                 case Keys.Back: 
                                     if (caretPosition > 0)
                                     {

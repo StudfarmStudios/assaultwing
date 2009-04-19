@@ -930,6 +930,7 @@ namespace AW2.Game
         /// <param name="cause">The cause of death.</param>
         public virtual void Die(DeathCause cause)
         {
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && IsRelevant) return;
             if (Dead) return;
             dead = true;
 

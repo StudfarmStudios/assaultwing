@@ -328,13 +328,15 @@ namespace AW2.Net
             if (readThread != null && readThread.IsAlive)
             {
                 readThread.Abort();
-                readThread.Join();
+                if (!readThread.Join(1000))
+                    AW2.Helpers.Log.Write("WARNING: Unable to kill read loop of " + Name);
                 readThread = null;
             }
             if (sendThread != null && sendThread.IsAlive)
             {
                 sendThread.Abort();
-                sendThread.Join();
+                if (!sendThread.Join(1000))
+                    AW2.Helpers.Log.Write("WARNING: Unable to kill write loop of " + Name);
                 sendThread = null;
             }
             //socket.Shutdown();
@@ -396,8 +398,13 @@ namespace AW2.Net
             int totalReadBytes = 0;
             while (totalReadBytes < byteCount)
             {
-                int readBytes = socket.Receive(buffer, byteCount - totalReadBytes, SocketFlags.None);
-                totalReadBytes += readBytes;
+                if (socket.Available == 0)
+                    Thread.Sleep(0);
+                else
+                {
+                    int readBytes = socket.Receive(buffer, byteCount - totalReadBytes, SocketFlags.None);
+                    totalReadBytes += readBytes;
+                }
             }
         }
 

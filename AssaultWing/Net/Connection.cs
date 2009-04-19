@@ -54,6 +54,11 @@ namespace AW2.Net
         static int leastUnusedId = 0;
 
         /// <summary>
+        /// If greater than zero, then the connection disposed and thus no longer usable.
+        /// </summary>
+        int isDisposed;
+
+        /// <summary>
         /// TCP socket to the connected remote host.
         /// </summary>
         Socket socket;
@@ -117,11 +122,6 @@ namespace AW2.Net
         /// Short, human-readable name of the connection.
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Is the connection disposed and thus no longer usable.
-        /// </summary>
-        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// The local end point of the connection.
@@ -284,28 +284,10 @@ namespace AW2.Net
         /// <summary>
         /// Closes the connection and frees resources it has allocated.
         /// </summary>
-        /// Overriding methods should first check <see cref="IsDisposed"/>
-        /// and not do anything if it is <c>true</c>.
-        public virtual void Dispose()
+        public void Dispose()
         {
-            if (IsDisposed) return;
-            IsDisposed = true;
-            Application.ApplicationExit -= ApplicationExitCallback;
-
-            if (readThread != null && readThread.IsAlive)
-            {
-                readThread.Abort();
-                readThread.Join();
-                readThread = null;
-            }
-            if (sendThread != null && sendThread.IsAlive)
-            {
-                sendThread.Abort();
-                sendThread.Join();
-                sendThread = null;
-            }
-            //socket.Shutdown();
-            socket.Close();
+            if (Interlocked.Exchange(ref isDisposed, 1) > 0) return;
+            DisposeImpl();
         }
 
         /// <summary>
@@ -335,9 +317,28 @@ namespace AW2.Net
 
         #region Non-public methods
 
-        private void ApplicationExitCallback(object caller, EventArgs args)
+        /// <summary>
+        /// Performs the actual diposing.
+        /// </summary>
+        /// <seealso cref="Dispose()"/>
+        protected virtual void DisposeImpl()
         {
-            Dispose();
+            Application.ApplicationExit -= ApplicationExitCallback;
+
+            if (readThread != null && readThread.IsAlive)
+            {
+                readThread.Abort();
+                readThread.Join();
+                readThread = null;
+            }
+            if (sendThread != null && sendThread.IsAlive)
+            {
+                sendThread.Abort();
+                sendThread.Join();
+                sendThread = null;
+            }
+            //socket.Shutdown();
+            socket.Close();
         }
 
         /// <summary>
@@ -398,6 +399,11 @@ namespace AW2.Net
                 int readBytes = socket.Receive(buffer, byteCount - totalReadBytes, SocketFlags.None);
                 totalReadBytes += readBytes;
             }
+        }
+
+        void ApplicationExitCallback(object caller, EventArgs args)
+        {
+            Dispose();
         }
 
         #endregion Private methods

@@ -19,18 +19,17 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Closes the connection and frees resources it has allocated.
+        /// Performs the actual diposing.
         /// </summary>
-        public override void Dispose()
+        protected override void DisposeImpl()
         {
-            if (IsDisposed) return;
             AssaultWing.Instance.StopClient();
             AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
                 "Connection to server lost!\nPress Enter to return to Main Menu",
                 new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
                     AssaultWing.Instance.ShowMenu));
             AssaultWing.Instance.ShowDialog(dialogData);
-            base.Dispose();
+            base.DisposeImpl();
         }
     }
 }

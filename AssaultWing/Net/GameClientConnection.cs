@@ -19,14 +19,13 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Closes the connection and frees resources it has allocated.
+        /// Performs the actual diposing.
         /// </summary>
-        public override void Dispose()
+        protected override void DisposeImpl()
         {
-            if (IsDisposed) return;
             NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
             net.DropClient(Id);
-            base.Dispose();
+            base.DisposeImpl();
         }
     }
 }

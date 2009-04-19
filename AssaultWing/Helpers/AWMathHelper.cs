@@ -3,18 +3,15 @@
 using NUnit.Framework;
 #endif
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Helpers
 {
-    delegate void Plot2(int x, int y);
-
     /// <summary>
     /// Provides mathematical helper functions.
     /// </summary>
-    class AWMathHelper
+    public static class AWMathHelper
     {
         /// <summary>
         /// Linearly interpolates between two values by stepping at most a constant
@@ -117,7 +114,7 @@ namespace AW2.Helpers
         /// <param name="y0">Center Y coordinate of the circle.</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="plot">The plot method to be called at each circle point.</param>
-        public static void FillCircle(int x0, int y0, int radius, Plot2 plot)
+        public static void FillCircle(int x0, int y0, int radius, Action<int, int> plot)
         {
             // Midpoint circle algorithm, a.k.a. Bresenham's circle algorithm.
             // Implementation adapted from code in Wikipedia, 
@@ -166,16 +163,34 @@ namespace AW2.Helpers
             }
         }
 
+        /// <summary>
+        /// Adds a sprite string to the batch of sprites to be rendered, 
+        /// specifying the font, output text, screen position, and color tint.
+        /// The position on screen is rounded to integer coordinates
+        /// to avoid anti-aliasing on the text.
+        /// </summary>
+        /// <seealso cref="Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont, string, Vector2, Color)"/>
+        /// <param name="spriteBatch">The sprite batch to draw with.</param>
+        /// <param name="font">The sprite font.</param>
+        /// <param name="text">The string to draw.</param>
+        /// <param name="pos">The location, in screen coordinates, where the text will be drawn
+        /// after rounding to integers.</param>
+        /// <param name="color">The desired color of the text.</param>
+        public static void DrawStringRounded(this SpriteBatch spriteBatch,
+            SpriteFont font, string text, Vector2 pos, Color color)
+        {
+            pos = new Vector2((int)pos.X, (int)pos.Y);
+            spriteBatch.DrawString(font, text, pos, color);
+        }
+
         #region Unit tests
 #if DEBUG
+        /// <summary>
+        /// Tests for AWMathHelper.
+        /// </summary>
         [TestFixture]
         public class AWMathHelperTest
         {
-            [SetUp]
-            public void SetUp()
-            {
-            }
-
             /// <summary>
             /// Tests interpolating angles.
             /// </summary>

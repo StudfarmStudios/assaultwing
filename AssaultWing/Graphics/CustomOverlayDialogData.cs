@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
+using AW2.Helpers;
 using AW2.UI;
 
 namespace AW2.Graphics
@@ -40,7 +38,7 @@ namespace AW2.Graphics
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             Vector2 textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
             Vector2 textSize = font.MeasureString(text);
-            spriteBatch.DrawString(font, text, textCenter - textSize / 2, Color.White);
+            spriteBatch.DrawStringRounded(font, text, textCenter - textSize / 2, Color.White);
         }
 
         /// <summary>

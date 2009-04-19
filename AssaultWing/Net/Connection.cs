@@ -286,8 +286,7 @@ namespace AW2.Net
         /// </summary>
         public void Dispose()
         {
-            if (Interlocked.Exchange(ref isDisposed, 1) > 0) return;
-            DisposeImpl();
+            Dispose(false);
         }
 
         /// <summary>
@@ -318,10 +317,23 @@ namespace AW2.Net
         #region Non-public methods
 
         /// <summary>
+        /// Closes the connection and frees resources it has allocated.
+        /// </summary>
+        /// <param name="error">If <c>true</c> then an internal error
+        /// has occurred.</param>
+        protected void Dispose(bool error)
+        {
+            if (Interlocked.Exchange(ref isDisposed, 1) > 0) return;
+            DisposeImpl(error);
+        }
+
+        /// <summary>
         /// Performs the actual diposing.
         /// </summary>
+        /// <param name="error">If <c>true</c> then an internal error
+        /// has occurred.</param>
         /// <seealso cref="Dispose()"/>
-        protected virtual void DisposeImpl()
+        protected virtual void DisposeImpl(bool error)
         {
             Application.ApplicationExit -= ApplicationExitCallback;
 
@@ -339,7 +351,8 @@ namespace AW2.Net
                     AW2.Helpers.Log.Write("WARNING: Unable to kill write loop of " + Name);
                 sendThread = null;
             }
-            //socket.Shutdown();
+            if (!error)
+                socket.Shutdown(SocketShutdown.Both);
             socket.Close();
         }
 
@@ -361,7 +374,8 @@ namespace AW2.Net
             Name = "Connection " + Id;
             Application.ApplicationExit += ApplicationExitCallback;
             socket.Blocking = true;
-            socket.ReceiveTimeout = 0; // don't time out
+            socket.ReceiveTimeout = 0; // don't time out on receiving
+            socket.SendTimeout = 1000;
             this.socket = socket;
             headerReceiveBuffer = new byte[Message.HeaderLength];
             messages = new TypedQueue<Message>();

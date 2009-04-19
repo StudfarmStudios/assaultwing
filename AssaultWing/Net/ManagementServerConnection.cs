@@ -21,9 +21,11 @@ namespace AW2.Net
         /// <summary>
         /// Performs the actual diposing.
         /// </summary>
-        protected override void DisposeImpl()
+        /// <param name="error">If <c>true</c> then an internal error
+        /// has occurred.</param>
+        protected override void DisposeImpl(bool error)
         {
-            base.DisposeImpl();
+            base.DisposeImpl(error);
             throw new System.NotImplementedException("ManagementServerConnection.Dispose() not implemented");
         }
     }

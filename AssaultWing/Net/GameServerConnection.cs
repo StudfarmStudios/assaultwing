@@ -21,15 +21,20 @@ namespace AW2.Net
         /// <summary>
         /// Performs the actual diposing.
         /// </summary>
-        protected override void DisposeImpl()
+        /// <param name="error">If <c>true</c> then an internal error
+        /// has occurred.</param>
+        protected override void DisposeImpl(bool error)
         {
-            AssaultWing.Instance.StopClient();
-            AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
-                "Connection to server lost!\nPress Enter to return to Main Menu",
-                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
-                    AssaultWing.Instance.ShowMenu));
-            AssaultWing.Instance.ShowDialog(dialogData);
-            base.DisposeImpl();
+            if (error)
+            {
+                AssaultWing.Instance.StopClient();
+                AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                    "Connection to server lost!\nPress Enter to return to Main Menu",
+                    new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
+                        AssaultWing.Instance.ShowMenu));
+                AssaultWing.Instance.ShowDialog(dialogData);
+            }
+            base.DisposeImpl(error);
         }
     }
 }

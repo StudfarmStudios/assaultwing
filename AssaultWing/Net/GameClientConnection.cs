@@ -21,11 +21,17 @@ namespace AW2.Net
         /// <summary>
         /// Performs the actual diposing.
         /// </summary>
-        protected override void DisposeImpl()
+        /// <param name="error">If <c>true</c> then an internal error
+        /// has occurred.</param>
+        protected override void DisposeImpl(bool error)
         {
-            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-            net.DropClient(Id);
-            base.DisposeImpl();
+            // On internal error, notify the game instance.
+            if (error)
+            {
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                net.DropClient(Id);
+            }
+            base.DisposeImpl(error);
         }
     }
 }

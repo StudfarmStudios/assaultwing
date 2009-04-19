@@ -383,6 +383,21 @@ namespace AW2.Net
             // Finish removing dropped client connections.
             foreach (GameClientConnection connection in removedClientConnections)
                 clientConnections.Remove(connection);
+
+#if DEBUG
+            // Look for unhandled messages.
+            Type lastMessageType = null; // to avoid flooding log messages
+            Connection lastConnection = null;
+            ForEachConnection(connection => connection.Messages.Prune(TimeSpan.FromSeconds(10), message =>
+            {
+                if (lastMessageType != message.GetType() || lastConnection != connection)
+                {
+                    lastMessageType = message.GetType();
+                    lastConnection = connection;
+                    Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
+                }
+            }));
+#endif
         }
 
         /// <summary>

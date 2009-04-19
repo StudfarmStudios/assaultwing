@@ -1,7 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using AW2.Helpers;
 
 namespace AW2.Net
 {
@@ -20,14 +21,18 @@ namespace AW2.Net
     /// <typeparam name="T">Base type of the elements in the queue.</typeparam>
     public class TypedQueue<T>
     {
-        Dictionary<Type, Queue<T>> queues;
+        /// <summary>
+        /// Mapping of element type to a queue holding 
+        /// the elements with their enqueuing timestamps.
+        /// </summary>
+        Dictionary<Type, Queue<Pair<T, TimeSpan>>> queues;
 
         /// <summary>
         /// Creates an empty typed queue.
         /// </summary>
         public TypedQueue()
         {
-            queues = new Dictionary<Type, Queue<T>>();
+            queues = new Dictionary<Type, Queue<Pair<T, TimeSpan>>>();
         }
 
         /// <summary>
@@ -39,12 +44,12 @@ namespace AW2.Net
             Type elementType = element.GetType();
             lock (queues)
             {
-                Queue<T> subqueue;
+                Queue<Pair<T, TimeSpan>> subqueue;
                 if (!queues.TryGetValue(elementType, out subqueue))
-                    subqueue = queues[elementType] = new Queue<T>();
-                subqueue.Enqueue(element);
+                    subqueue = queues[elementType] = new Queue<Pair<T, TimeSpan>>();
+                TimeSpan now = AssaultWing.Instance.GameTime.TotalRealTime;
+                subqueue.Enqueue(new Pair<T, TimeSpan>(element, now));
             }
-            Prune();
         }
 
         /// <summary>
@@ -57,10 +62,10 @@ namespace AW2.Net
             Type elementType = typeof(U);
             lock (queues)
             {
-                Queue<T> subqueue;
+                Queue<Pair<T, TimeSpan>> subqueue;
                 if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
                     throw new InvalidOperationException("Cannot dequeue empty queue");
-                return (U)subqueue.Dequeue();
+                return (U)subqueue.Dequeue().First;
             }
         }
 
@@ -74,7 +79,7 @@ namespace AW2.Net
             Type elementType = typeof(U);
             lock (queues)
             {
-                Queue<T> queue;
+                Queue<Pair<T, TimeSpan>> queue;
                 if (queues.TryGetValue(elementType, out queue))
                     return queue.Count;
                 return 0;
@@ -83,14 +88,39 @@ namespace AW2.Net
 
         /// <summary>
         /// Prunes old elements off the queue.
+        /// Elements older than <paramref name="timeout"/> are removed from the queue
+        /// and passed to <paramref name="action"/> if it is not <c>null</c>.
         /// </summary>
-        void Prune()
+        /// <param name="action">Action to perform on purged elements, or <c>null</c>.</param>
+        /// <param name="timeout">Elements older than this are purged.</param>
+        public void Prune(TimeSpan timeout, Action<T> action)
         {
-            // TODO: pruning of old elements.
-            // - add timestamps to queue elements
-            // - dequeue old elements from beginnings of each subqueue
-            // - consider not pruning unless some time has passed
-            // - consider announcing removal of elements to client program (event?)
+            TimeSpan now = AssaultWing.Instance.GameTime.TotalRealTime;
+            lock (queues)
+            {
+                foreach (var type in queues.Keys.ToArray())
+                {
+                    var queue = queues[type];
+                    if (queue.Any(pair => now - pair.Second > timeout))
+                    {
+                        // The queue contains old elements.
+                        // Dequeue the other elements to form a new queue.
+                        var newQueue = new Queue<Pair<T, TimeSpan>>();
+                        while (queue.Any())
+                        {
+                            var pair = queue.Dequeue();
+                            if (now - pair.Second > timeout)
+                            {
+                                if (action != null)
+                                    action(pair.First);
+                            }
+                            else
+                                newQueue.Enqueue(pair);
+                        }
+                        queues[type] = newQueue;
+                    }
+                }
+            }
         }
     }
 }

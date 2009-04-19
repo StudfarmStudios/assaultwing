@@ -308,7 +308,7 @@ namespace AW2.Net
             if (errorsFound)
             {
                 AW2.Helpers.Log.Write("Closing " + Name + " due to errors");
-                Dispose();
+                Dispose(true);
             }
         }
 
@@ -424,7 +424,7 @@ namespace AW2.Net
 
         void ApplicationExitCallback(object caller, EventArgs args)
         {
-            Dispose();
+            Dispose(false);
         }
 
         #endregion Private methods

@@ -70,6 +70,29 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Adds an element to the front of the queue.
+        /// </summary>
+        /// Use this method to undo a previous call to <see cref="Dequeue&lt;U&gt;()"/>,
+        /// putting an element back to where it was. This method may have far
+        /// worse performance than <see cref="Enqueue(T)"/>.
+        /// <param name="element">The element to add.</param>
+        public void Requeue(T element)
+        {
+            Type elementType = element.GetType();
+            lock (queues)
+            {
+                // NOTE: The element's timestamp is refreshed.
+                TimeSpan now = AssaultWing.Instance.GameTime.TotalRealTime;
+                Queue<Pair<T, TimeSpan>> oldQueue;
+                var newQueue = new Queue<Pair<T, TimeSpan>>();
+                newQueue.Enqueue(new Pair<T, TimeSpan>(element, now));
+                if (queues.TryGetValue(elementType, out oldQueue))
+                    foreach (var pair in oldQueue) newQueue.Enqueue(pair);
+                queues[elementType] = newQueue;
+            }
+        }
+
+        /// <summary>
         /// Returns the number of elements of a type in the queue.
         /// </summary>
         /// <typeparam name="U">The type of elements to count.</typeparam>

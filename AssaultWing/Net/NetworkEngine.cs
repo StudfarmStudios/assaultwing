@@ -236,6 +236,34 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Receives messages from the game server while a condition holds.
+        /// </summary>
+        /// <typeparam name="T">Type of message to receive.</typeparam>
+        /// <param name="handler">Handler of received messages. If the handler returns
+        /// <c>true</c> then another message is received, if there is any.
+        /// If the handler returns <c>false</c>, then the currently handled message is returned
+        /// back to the front of the queue and no more messages will be received.
+        /// The requeued message will be the first one to receive next time.</param>
+        public void ReceiveFromServerWhile<T>(Predicate<T> handler) where T : Message
+        {
+            if (gameServerConnection == null)
+                throw new InvalidOperationException("Cannot receive without connection to server");
+            while (gameServerConnection.Messages.Count<T>() > 0)
+            {
+                T message = gameServerConnection.Messages.Dequeue<T>();
+                if (!handler(message))
+                {
+                    gameServerConnection.Messages.Requeue(message);
+                    break;
+                }
+#if NETWORK_DEBUG
+                else
+                    Log.Write("DEBUG: received from server: " + message);
+#endif
+            }
+        }
+
+        /// <summary>
         /// Sends a message to all connected game clients.
         /// </summary>
         /// <param name="message">The message to send.</param>

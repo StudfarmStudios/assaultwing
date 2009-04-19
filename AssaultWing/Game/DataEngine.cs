@@ -984,14 +984,21 @@ namespace AW2.Game
             // If we are a game client, remove gobs as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                GobDeletionMessage message;
-                while ((message = net.ReceiveFromServer<GobDeletionMessage>()) != null)
+                net.ReceiveFromServerWhile<GobDeletionMessage>(message =>
                 {
                     Gob gob = GetGob(message.GobId);
-                    if (gob == null) throw new Exception("Program logic error: Server told to remove an unknown gob (ID " + message.GobId + ")");
-                    gob.Die(new DeathCause()); // TODO: Pass death cause in gob deletion message.
-                    removedGobs.Add(gob); // TODO: Replace this with something more clever.
-                }
+                    if (gob == null)
+                    {
+                        // The gob hasn't been created yet. This happens when the server
+                        // has created a gob and deleted it on the same frame, and
+                        // the creation and deletion messages arrived just after we 
+                        // finished receiving creation messages but right before we 
+                        // started receiving deletion messages for this frame.
+                        return false;
+                    }
+                    removedGobs.Add(gob);
+                    return true;
+                });
             }
 
             // Remove gobs to remove.

@@ -152,7 +152,7 @@ namespace AW2.Game
 #if TYPELOADER_DEBUG
             Log.Write("Loading " + baseClass.Name + " template from " + fi);
 #endif
-            FileStream fs = new FileStream(fi.FullName, FileMode.Open);
+            FileStream fs = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read);
             System.Xml.XmlReader xmlReader = Serialization.GetXmlReader(fs);
             Type limitationAttribute = typeof(TypeParameterAttribute);
             object template = null;

@@ -964,16 +964,20 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
                 TimeSpan updateMessageTimeout = AssaultWing.Instance.GameTime.TotalGameTime - TimeSpan.FromSeconds(0.5);
-                GobUpdateMessage message;
-                while ((message = net.ReceiveFromServer<GobUpdateMessage>()) != null)
+                net.ReceiveFromServerWhile<GobUpdateMessage>(message =>
                 {
                     Gob gob = GetGob(message.GobId);
-
-                    // Skip updates for gobs we haven't yet created.
-                    if (gob == null) continue;
-
+                    if (gob == null) return true; // Skip updates for gobs we haven't yet created.
                     message.Read(gob, SerializationModeFlags.VaryingData);
-                }
+                    return true;
+                });
+                net.ReceiveFromServerWhile<GobDamageMessage>(message =>
+                {
+                    Gob gob = GetGob(message.GobId);
+                    if (gob == null) return true; // Skip updates for gobs we haven't yet created.
+                    gob.DamageLevel = message.DamageLevel;
+                    return true;
+                });
             }
 
             // Apply custom operations.

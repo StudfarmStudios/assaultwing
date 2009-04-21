@@ -1391,7 +1391,7 @@ namespace AW2.Game
         /// 0 means the entity is in perfect condition;
         /// <b>MaxDamageLevel</b> means the entity is totally destroyed.
         /// </summary>
-        public float DamageLevel { get { return damage; } }
+        public float DamageLevel { get { return damage; } set { damage = value; } }
 
         /// <summary>
         /// The maximum amount of damage the entity can sustain.
@@ -1407,15 +1407,19 @@ namespace AW2.Game
         public virtual void InflictDamage(float damageAmount, DeathCause cause)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-            {
-                /* TODO
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-                var message = new GobDamageMessage(this.Id, damageAmount);
-                net.SendToClients(message); */
-            }
+
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
+
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                var message = new AW2.Net.Messages.GobDamageMessage();
+                message.GobId = this.Id;
+                message.DamageLevel = damage;
+                net.SendToClients(message);
+            }
+
             if (damageAmount > 0)
                 bleachDamage += damageAmount;
             if (damage == maxDamage)

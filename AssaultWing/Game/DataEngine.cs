@@ -996,6 +996,7 @@ namespace AW2.Game
                         // started receiving deletion messages for this frame.
                         return false;
                     }
+                    gob.DieOnClient();
                     removedGobs.Add(gob);
                     return true;
                 });

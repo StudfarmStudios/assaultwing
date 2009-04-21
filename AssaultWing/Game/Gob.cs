@@ -12,6 +12,7 @@ using AW2.Game.Particles;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Graphics;
+using AW2.Net;
 
 namespace AW2.Game
 {
@@ -931,21 +932,19 @@ namespace AW2.Game
         public virtual void Die(DeathCause cause)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && IsRelevant) return;
-            if (Dead) return;
-            dead = true;
+            DieImpl(cause);
+        }
 
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.RemoveGob(this);
-
-            // Create death gobs.
-            foreach (string gobType in deathGobTypes)
-            {
-                Gob gob = CreateGob(gobType);
-                gob.Pos = this.Pos;
-                gob.Rotation = this.Rotation;
-                gob.owner = this.owner;
-                data.AddGob(gob);
-            }
+        /// <summary>
+        /// Kills the gob, i.e. performs a death ritual and removes the gob from the game world.
+        /// Compared to <see cref="Die(DeathCause)"/>, this method forces death on game clients.
+        /// Therefore this method is to be called only when interpreting the game server's kill
+        /// messages.
+        /// </summary>
+        /// <seealso cref="Die(DeathCause)"/>
+        public void DieOnClient()
+        {
+            DieImpl(new DeathCause());
         }
 
         /// <summary>
@@ -1407,6 +1406,14 @@ namespace AW2.Game
         /// <param name="cause">Cause of death if the damage results in death.</param>
         public virtual void InflictDamage(float damageAmount, DeathCause cause)
         {
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                /* TODO
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                var message = new GobDamageMessage(this.Id, damageAmount);
+                net.SendToClients(message); */
+            }
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
             if (damageAmount > 0)
@@ -1416,6 +1423,36 @@ namespace AW2.Game
         }
 
         #endregion Damage methods
+
+        #region Private methods
+
+        /// <summary>
+        /// The core implementation of the public methods <see cref="Die(DeathCause)"/>
+        /// and <see cref="DieOnClient()"/>.
+        /// </summary>
+        /// <param name="cause">The cause of death.</param>
+        void DieImpl(DeathCause cause)
+        {
+            if (Dead) return;
+            dead = true;
+
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            data.RemoveGob(this);
+
+            // Create death gobs.
+            foreach (string gobType in deathGobTypes)
+            {
+                CreateGob(gobType, gob =>
+                {
+                    gob.Pos = this.Pos;
+                    gob.Rotation = this.Rotation;
+                    gob.owner = this.owner;
+                    data.AddGob(gob);
+                });
+            }
+        }
+
+        #endregion
 
         #region IConsistencyCheckable Members
 

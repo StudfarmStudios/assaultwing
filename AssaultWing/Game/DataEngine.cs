@@ -1020,10 +1020,13 @@ namespace AW2.Game
             {
                 arenaLayers[gameplayLayer].ForEachGob(gob =>
                 {
-                    var message = new GobUpdateMessage();
-                    message.GobId = gob.Id;
-                    message.Write(gob, SerializationModeFlags.VaryingData);
-                    net.SendToClients(message);
+                    if (gob.Movable)
+                    {
+                        var message = new GobUpdateMessage();
+                        message.GobId = gob.Id;
+                        message.Write(gob, SerializationModeFlags.VaryingData);
+                        net.SendToClients(message);
+                    }
                 });
             }
 

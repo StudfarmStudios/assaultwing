@@ -378,6 +378,11 @@ namespace AW2
                 ShowDialog(new ArenaOverOverlayDialogData(nextArena.Name));
             else
                 ShowDialog(new GameOverOverlayDialogData());
+            if (NetworkMode == NetworkMode.Server)
+            {
+                var message = new ArenaFinishMessage();
+                networkEngine.SendToClients(message);
+            }
         }
 
         /// <summary>

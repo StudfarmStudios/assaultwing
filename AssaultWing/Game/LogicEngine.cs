@@ -6,6 +6,8 @@ using AW2.Events;
 using AW2.UI;
 using AW2.Game.Particles;
 using Microsoft.Xna.Framework.Input;
+using AW2.Net;
+using AW2.Net.Messages;
 
 namespace AW2.Game
 {
@@ -146,13 +148,22 @@ namespace AW2.Game
             // Check for receptor collisions.
             physics.MovesDone();
 
-            // Check for game end. Network games end only when players quit.
+            // Check for game end. Network games end when the game server presses Esc.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
             {
                 int playersAlive = 0;
                 data.ForEachPlayer(player => { if (player.Lives != 0) ++playersAlive; });
                 if (playersAlive <= 1)
                     AssaultWing.Instance.FinishArena();
+            }
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            {
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                ArenaFinishMessage message = null;
+                if ((message = net.ReceiveFromServer<ArenaFinishMessage>()) != null)
+                {
+                    AssaultWing.Instance.FinishArena();
+                }
             }
         }
 
@@ -167,12 +178,18 @@ namespace AW2.Game
             // Check general game controls.
             if (escapeControl.Pulse)
             {
-                AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
-                    "Quit to Main Menu? (Yes/No)",
-                    new TriggeredCallback(TriggeredCallback.GetYesControl(),
-                        delegate() { AssaultWing.Instance.ShowMenu(); }),
-                    new TriggeredCallback(TriggeredCallback.GetNoControl(),
-                        delegate() { AssaultWing.Instance.ResumePlay(); }));
+                AW2.Graphics.CustomOverlayDialogData dialogData;
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                    dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                        "Finish Arena? (Yes/No)",
+                        new TriggeredCallback(TriggeredCallback.GetYesControl(), AssaultWing.Instance.FinishArena),
+                        new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWing.Instance.ResumePlay));
+                else
+                    dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                        "Quit to Main Menu? (Yes/No)",
+                        new TriggeredCallback(TriggeredCallback.GetYesControl(), AssaultWing.Instance.ShowMenu),
+                        new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWing.Instance.ResumePlay));
+
                 AssaultWing.Instance.ShowDialog(dialogData);
             }
         }

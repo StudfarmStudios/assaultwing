@@ -58,6 +58,7 @@ namespace AW2.Menu
         Texture2D backgroundTexture;
         Texture2D cursorMainTexture, highlightMainTexture;
         Texture2D playerPaneTexture, player1PaneTopTexture, player2PaneTopTexture;
+        Texture2D statusPaneTexture;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -133,6 +134,7 @@ namespace AW2.Menu
             playerPaneTexture = data.GetTexture(TextureName.EquipMenuPlayerBackground);
             player1PaneTopTexture = data.GetTexture(TextureName.EquipMenuPlayerTop1);
             player2PaneTopTexture = data.GetTexture(TextureName.EquipMenuPlayerTop2);
+            statusPaneTexture = data.GetTexture(TextureName.EquipMenuStatusDisplay);
         }
 
         /// <summary>
@@ -324,6 +326,25 @@ namespace AW2.Menu
                 spriteBatch.Draw(highlightMainTexture, playerCursorPos, Color.White);
                 spriteBatch.Draw(cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
             });
+
+            // Draw network game status pane.
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
+            {
+                // Draw pane background.
+                Vector2 statusPanePos = pos - view + new Vector2(537, 160);
+                spriteBatch.Draw(statusPaneTexture, statusPanePos, Color.White);
+
+                // Draw pane content text.
+                int playerCount = 0;
+                data.ForEachPlayer(player => ++playerCount);
+                Vector2 textPos = statusPanePos + new Vector2(60, 60);
+                string textContent = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+                    ? "Connected to game server"
+                    : "Hosting a game as server";
+                textContent += "\n\n" + playerCount + (playerCount == 1 ? " player" : " players");
+                textContent += "\n\nArena: " + data.ArenaPlaylist[0];
+                spriteBatch.DrawString(menuBigFont, textContent, textPos, Color.White);
+            }
         }
     }
 }

@@ -3,13 +3,10 @@
 using NUnit.Framework;
 #endif
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 using AW2.Helpers;
-using AW2.Game.Particles;
 
 namespace AW2.Graphics
 {
@@ -169,6 +166,11 @@ namespace AW2.Graphics
         EquipMenuBackground,
 
         /// <summary>
+        /// Equip menu background for network game status display.
+        /// </summary>
+        EquipMenuStatusDisplay,
+
+        /// <summary>
         /// Equip menu background for one player pane.
         /// </summary>
         EquipMenuPlayerBackground,
@@ -277,6 +279,7 @@ namespace AW2.Graphics
             : base(game)
         {
             overlayNames = new string[] {
+                // Player viewport
                 "viewport_border_vertical",
                 "gui_playerinfo_bg",
                 "gui_playerinfo_bar_ship",
@@ -296,20 +299,25 @@ namespace AW2.Graphics
                 "gui_console_bg",
                 "mini_hpbar_bg",
                 "mini_hpbar_fill",
+                // General
                 "ingame_dialog",
                 "menu_progressbar_bg",
                 "menu_progressbar_fill",
                 "menu_progressbar_advancer",
                 "menu_rustywall_bg",
+                // Main menu
                 "menu_main_bg",
                 "menu_main_cursor",
                 "menu_main_hilite",
+                // Equip menu
                 "menu_equip_bg",
+                "menu_equip_status_display",
                 "menu_equip_player_bg",
                 "menu_equip_player_color_green",
                 "menu_equip_player_color_red",
                 "menu_equip_cursor_large",
                 "menu_equip_hilite_large",
+                // Arena menu
                 "menu_levels_bg",
                 "menu_levels_cursor",
                 "menu_levels_hilite",

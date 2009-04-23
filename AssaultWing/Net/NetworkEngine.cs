@@ -172,6 +172,8 @@ namespace AW2.Net
         /// </summary>
         public void DropClient(int connectionId)
         {
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Server)
+                throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
 
             GameClientConnection connection = GetClientConnection(connectionId);

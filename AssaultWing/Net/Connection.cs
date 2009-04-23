@@ -388,15 +388,7 @@ namespace AW2.Net
             sendThread.Name = "Send Loop";
             sendThread.Start();
         }
-#if false // !!! DEBUG
-        FileStream debugOut = new FileStream("sentbytes.dat", FileMode.Create); // !!! DEBUG
-        FileStream debugOut2 = new FileStream("receivedbytes.dat", FileMode.Create); // !!! DEBUG
-        ~Connection() // DEBUG !!!
-        {
-            try { if (debugOut != null) { debugOut.Flush(); debugOut.Close(); debugOut = null; } } catch { }
-            try { if (debugOut2 != null) { debugOut2.Flush(); debugOut2.Close(); debugOut2 = null; } } catch { }
-        }
-#endif
+
         /// <summary>
         /// Sends raw byte data to the remote host. The data is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
@@ -409,7 +401,8 @@ namespace AW2.Net
 
         /// <summary>
         /// Receives a certain number of bytes to a buffer.
-        /// This method blocks until the required number of bytes have been received.
+        /// This method blocks until the required number of bytes have been received,
+        /// or until the socket is closed or there is some error condition.
         /// </summary>
         /// <param name="buffer">The buffer to store the bytes in.</param>
         /// <param name="byteCount">The number of bytes to receive.</param>
@@ -421,17 +414,25 @@ namespace AW2.Net
             while (totalReadBytes < byteCount)
             {
                 if (socket.Available == 0)
+                {
+                    // See if the socket is still connected. If Poll() shows that there
+                    // is data to read but Available is still zero, the socket must have
+                    // been closed at the remote host.
+                    if (socket.Poll(100, SelectMode.SelectRead) && socket.Available == 0)
+                        throw new SocketException((int)SocketError.NotConnected);
+
+                    // We are still connected but there's no data.
+                    // Let other threads do their stuff while we wait.
                     Thread.Sleep(0);
+                }
                 else
                 {
                     int readBytes = socket.Receive(buffer, totalReadBytes, byteCount - totalReadBytes, SocketFlags.None);
                     totalReadBytes += readBytes;
                 }
             }
-#if false // !!! DEBUG
-            if (totalReadBytes > byteCount) AW2.Helpers.Log.Write("!!! DEBUG WARNING NOTE: Read " + totalReadBytes + " bytes when only " + byteCount + " was requested");
-            debugOut2.Write(buffer, 0, totalReadBytes); // !!! DEBUG
-#endif
+            if (totalReadBytes > byteCount) 
+                AW2.Helpers.Log.Write("WARNING: Read " + totalReadBytes + " bytes when only " + byteCount + " was requested");
         }
 
         void ApplicationExitCallback(object caller, EventArgs args)
@@ -458,10 +459,11 @@ namespace AW2.Net
                     // Read header.
                     Receive(headerReceiveBuffer, headerReceiveBuffer.Length);
                     if (!Message.IsValidHeader(headerReceiveBuffer))
-                    { 
-                        string txt = "Connection received an invalid message header [length=" + 
-                            headerReceiveBuffer.Length + " data=" + // !!! DEBUG EXTRA
-                            string.Join(",", Array.ConvertAll<byte, string>(headerReceiveBuffer, a => ((byte)a).ToString("X2"))); // !!! DEBUG EXTRA
+                    {
+                        string txt = "Connection received an invalid message header [length:" + 
+                            headerReceiveBuffer.Length + " data:" +
+                            string.Join(",", Array.ConvertAll<byte, string>(headerReceiveBuffer, 
+                            a => ((byte)a).ToString("X2"))) + "]";
                         throw new InvalidDataException(txt);
                     }
 
@@ -511,9 +513,6 @@ namespace AW2.Net
                     });
                     if (buffer.Array != null)
                     {
-#if false // !!! DEBUG
-                        debugOut.Write(buffer.Array, buffer.Offset, buffer.Count); // !!! DEBUG
-#endif
                         int bytesSent = socket.Send(buffer.Array, buffer.Offset, buffer.Count, SocketFlags.None);
                         if (bytesSent != buffer.Count)
                             throw new Exception("Not all data was sent (" + bytesSent + " out of " + buffer.Count + " bytes)");

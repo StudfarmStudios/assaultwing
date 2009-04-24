@@ -137,6 +137,7 @@ namespace AW2.Menu
             networkContents[0].Name = "Play as Server";
             networkContents[0].Action = () =>
             {
+                if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
                 AssaultWing.Instance.StartServer(result =>
                 {
                     if (!result.Successful)
@@ -154,6 +155,7 @@ namespace AW2.Menu
             networkContents[1].Name = connectItemPrefix + connectAddress;
             networkContents[1].Action = () =>
             {
+                if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
                 AssaultWing.Instance.StartClient(connectAddress, result =>
                 {
                     if (!result.Successful)

@@ -6,16 +6,15 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
-using AW2.Game.Gobs;
 using AW2.Graphics;
 using AW2.Menu;
 using AW2.UI;
 using AW2.Sound;
 using AW2.Events;
 using AW2.Helpers;
-using AW2.Game.Particles;
 using AW2.Net;
 using AW2.Net.Messages;
+using Form = System.Windows.Forms.Form;
 
 #endregion
 
@@ -93,6 +92,7 @@ namespace AW2
         GameState gameState;
         GameTime gameTime;
         Rectangle clientBoundsMin;
+        Form windowForm;
 
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
@@ -236,13 +236,12 @@ namespace AW2
         /// <param name="e"></param>
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
-//            e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
-
-//            if (e.GraphicsDeviceInformation.PresentationParameters.IsFullScreen)
-//            {
-//                e.GraphicsDeviceInformation.PresentationParameters.FullScreenRefreshRateInHz = 60;
-//            }
-
+#if false
+            e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
+            if (e.GraphicsDeviceInformation.PresentationParameters.IsFullScreen)
+                e.GraphicsDeviceInformation.PresentationParameters.FullScreenRefreshRateInHz = 60;
+#endif
+#if DEBUG
             foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
             {
                 if (adapter.Description.Equals("NVIDIA PerfHUD"))
@@ -253,6 +252,7 @@ namespace AW2
                     break;
                 }
             }
+#endif
         }
 
         void Window_ClientSizeChanged(object sender, EventArgs e)
@@ -394,13 +394,30 @@ namespace AW2
         /// idea to make it run in a background thread.
         public void PrepareNextArena()
         {
-            Arena arenaTemplate = dataEngine.GetNextPlayableArena();
-            if (arenaTemplate != null)
+            // Disallow window resizing during arena loading.
+            // A window resize event may reset the graphics card, fatally
+            // screwing up initialisation of walls' index maps.
+            bool oldAllowUserResizing = Window.AllowUserResizing;
+            bool fail = true;
+            if (oldAllowUserResizing)
             {
-                graphicsEngine.LoadAreaGobs(arenaTemplate);
-                graphicsEngine.LoadAreatextures(arenaTemplate);
+                // We cannot set Window.AllowUserResizing = false; if we are
+                // not in the main thread. Therefore, use Invoke() of the underlying Form.
+                windowForm.Invoke(new Action(() => { Window.AllowUserResizing = false; }));
             }
-            if (dataEngine.NextArena())
+            try
+            {
+                Arena arenaTemplate = dataEngine.GetNextPlayableArena();
+                if (arenaTemplate != null)
+                    graphicsEngine.LoadArenaContent(arenaTemplate);
+                fail = dataEngine.NextArena();
+            }
+            finally
+            {
+                if (oldAllowUserResizing)
+                    windowForm.Invoke(new Action(() => { Window.AllowUserResizing = true; }));
+            }
+            if (fail)
                 throw new InvalidOperationException("There is no next arena to play");
         }
 
@@ -550,6 +567,7 @@ namespace AW2
         protected override void Initialize()
         {
             Log.Write("Assault Wing initializing");
+            windowForm = (Form)Form.FromHandle(Window.Handle);
 
             uiEngine = new UIEngineImpl(this);
             logicEngine = new LogicEngine(this);
@@ -705,26 +723,6 @@ namespace AW2
 #endif
 
             base.EndRun();
-        }
-        
-        /// <summary>
-        /// Load your graphics content.  If loadAllContent is true, you should
-        /// load content from both ResourceManagementMode pools.  Otherwise, just
-        /// load ResourceManagementMode.Manual content.
-        /// </summary>
-        protected override void LoadContent()
-        {
-            // TODO: Load any ResourceManagementMode.Automatic content
-            // TODO: Load any ResourceManagementMode.Manual content
-        }
-
-        /// <summary>
-        /// Unload your (graphics) content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-                // TODO: Unload any ResourceManagementMode.Automatic content
-//                content.Unload();
         }
 
         /// <summary>

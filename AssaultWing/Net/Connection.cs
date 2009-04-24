@@ -312,6 +312,20 @@ namespace AW2.Net
             }
         }
 
+        /// <summary>
+        /// Returns the number of bytes waiting to be sent through this connection.
+        /// </summary>
+        public int GetSendQueueSize()
+        {
+            int count = 0;
+            sendBuffers.Do(queue =>
+            {
+                foreach (ArraySegment<byte> segment in queue)
+                    count += segment.Count;
+            });
+            return count;
+        }
+
         #endregion Public interface
 
         #region Non-public methods
@@ -507,7 +521,7 @@ namespace AW2.Net
                 while (true)
                 {
                     // Gather several messages together to reach a supposedly optimal
-                    // TCP packet size of 1500 bytes minuts some space for headers.
+                    // TCP packet size of 1500 bytes minus some space for headers.
                     sendSegments.Clear();
                     int totalLength = 0;
                     sendBuffers.Do(queue =>

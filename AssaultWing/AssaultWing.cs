@@ -790,6 +790,9 @@ namespace AW2
                 Window.Title = "Assault Wing [~" + framesSinceLastCheck + " fps]";
                 framesSinceLastCheck = 1;
                 lastFramerateCheck = gameTime.TotalRealTime;
+
+                if (NetworkMode != NetworkMode.Standalone)
+                    Window.Title += " [" + networkEngine.GetSendQueueSize() + " B send queue]";
             }
             lock (GraphicsDevice)
                 base.Draw(this.gameTime);

@@ -342,6 +342,19 @@ namespace AW2.Net
             throw new ArgumentException("Invalid connection ID");
         }
 
+        /// <summary>
+        /// Returns the number of bytes waiting to be sent through the network.
+        /// </summary>
+        public int GetSendQueueSize()
+        {
+            int count = 0;
+            ForEachConnection(connection =>
+            {
+                count += connection.GetSendQueueSize();
+            });
+            return count;
+        }
+
         #endregion Public interface
 
         #region GameComponent methods

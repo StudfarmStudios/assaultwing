@@ -401,10 +401,7 @@ namespace AW2.Graphics
 
             // Load arena related content if an arena is being played right now.
             if (data.Arena != null)
-            {
-                LoadAreaGobs(data.Arena);
-                LoadAreatextures(data.Arena);
-            }
+                LoadArenaContent(data.Arena);
 
             // Propagate LoadContent to other components that are known to
             // contain references to graphics content.
@@ -413,12 +410,18 @@ namespace AW2.Graphics
             data.LoadContent();
         }
 
-        public void LoadAreaGobs(Arena arenaTemplate)
+        /// <summary>
+        /// Loads the graphical content required by an arena.
+        /// </summary>
+        /// <param name="arenaTemplate">The arena whose graphical content to load.</param>
+        public void LoadArenaContent(Arena arenaTemplate)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             foreach (ArenaLayer layer in arenaTemplate.Layers)
-                layer.ForEachGob(delegate(Gob gob)
+            {
+                layer.ForEachGob(gob =>
                 {
+                    // Load the layer's gob types.
                     foreach (string modelName in gob.ModelNames)
                     {
                         if (data.HasModel(modelName)) continue;
@@ -426,6 +429,8 @@ namespace AW2.Graphics
                         if (model != null)
                             data.AddModel(modelName, model);
                     }
+
+                    // Load the layer's gobs' textures.
                     foreach (string textureName in gob.TextureNames)
                     {
                         if (data.HasTexture(textureName)) continue;
@@ -434,19 +439,15 @@ namespace AW2.Graphics
                             data.AddTexture(textureName, texture);
                     }
                 });
-        }
 
-        public void LoadAreatextures(Arena arenaTemplate)
-        {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            foreach (ArenaLayer layer in arenaTemplate.Layers)
-            {
-                string textureName = layer.ParallaxName;
-                if (textureName == null) continue;
-                if (data.HasTexture(textureName)) continue;
-                Texture2D texture = LoadTexture(textureName);
-                if (texture != null)
-                    data.AddTexture(textureName, texture);
+                // Load the layer's parallax texture.
+                string parallaxName = layer.ParallaxName;
+                if (parallaxName != null && !data.HasTexture(parallaxName))
+                {
+                    Texture2D parallaxTexture = LoadTexture(parallaxName);
+                    if (parallaxTexture != null)
+                        data.AddTexture(parallaxName, parallaxTexture);
+                }
             }
         }
 

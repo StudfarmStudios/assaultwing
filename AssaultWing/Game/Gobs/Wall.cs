@@ -531,61 +531,18 @@ namespace AW2.Game.Gobs
             // the whole model with one unit in world coordinates corresponding to
             // one pixel width in the render target.
             for (int startY = 0; startY < indexMap.GetLength(0); startY += targetSize)
-                for (int startX = 0; startX < indexMap.GetLength(1); startX += targetSize)
-                {
-                    lock (gfx)
+                for (int startX = 0; startX < indexMap.GetLength(1); )
+                    try
                     {
-                        // Set up graphics device.
-                        VertexDeclaration oldVertexDeclaration = gfx.VertexDeclaration;
-                        DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
-                        gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-                        gfx.DepthStencilBuffer = null;
-
-                        // Move view to current start coordinates.
-                        maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 1000), new Vector3(startX, startY, 0), Vector3.Up);
-
-                        // Set and clear our own render target.
-                        gfx.SetRenderTarget(0, maskTarget);
-                        gfx.Clear(ClearOptions.Target, Color.White, 0, 0);
-
-                        // Draw the coloured triangles.
-                        maskEff.Begin();
-                        foreach (EffectPass pass in maskEff.CurrentTechnique.Passes)
-                        {
-                            pass.Begin();
-                            gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                                colouredVertexData, 0, colouredVertexData.Length / 3);
-                            pass.End();
-                        }
-                        maskEff.End();
-
-                        // Restore render target so what we can extract drawn pixels.
-                        gfx.SetRenderTarget(0, null);
-
-                        // Figure out mask data from the render target.
-                        Texture2D maskTexture = maskTarget.GetTexture();
-                        Color[] maskData = new Color[targetSize * targetSize];
-                        maskTexture.GetData<Color>(maskData);
-                        for (int y = 0; y < targetSize; ++y)
-                            for (int x = 0; x < targetSize; ++x)
-                            {
-                                Color color = maskData[x + y * maskTexture.Width];
-                                if (color == Color.White) continue;
-                                int indexMapY = startY + targetSize - 1 - y;
-                                int indexMapX = startX + x;
-                                if (indexMapY >= indexMap.GetLength(0) || indexMapX >= indexMap.GetLength(1))
-                                    throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
-                                int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
-                                indexMap[indexMapY, indexMapX] = new int[] { maskValue };
-                            }
-
-                        // Restore graphics device's old settings.
-                        gfx.VertexDeclaration = oldVertexDeclaration;
-                        gfx.DepthStencilBuffer = oldDepthStencilBuffer;
-                        maskTarget.Dispose();
+                        lock (gfx)
+                            ComputeIndexMapFragment(colouredVertexData, maskTarget, targetSize, startY, startX);
+                        startX += targetSize;
+                        System.Threading.Thread.Sleep(0);
                     }
-                    System.Threading.Thread.Sleep(0);
-                }
+                    // Some exceptions may be thrown if the graphics card is reset e.g.
+                    // by a window resize. Just retry.
+                    catch (NullReferenceException) { }
+                    catch (InvalidOperationException) { }
 
             // Initialise triangle cover counts.
             triangleCovers = new int[indexData.Length / 3];
@@ -618,6 +575,61 @@ namespace AW2.Game.Gobs
                     indexMap[centerInIndexMapY, centerInIndexMapX] = newIndices;
                     ++triangleCovers[i];
                 }
+        }
+
+        private void ComputeIndexMapFragment(VertexPositionColor[] colouredVertexData, 
+            RenderTarget2D maskTarget, int targetSize, int startY, int startX)
+        {
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+
+            // Set up graphics device.
+            VertexDeclaration oldVertexDeclaration = gfx.VertexDeclaration;
+            DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+            gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
+            gfx.DepthStencilBuffer = null;
+
+            // Move view to current start coordinates.
+            maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 1000), new Vector3(startX, startY, 0), Vector3.Up);
+
+            // Set and clear our own render target.
+            gfx.SetRenderTarget(0, maskTarget);
+            gfx.Clear(ClearOptions.Target, Color.White, 0, 0);
+
+            // Draw the coloured triangles.
+            maskEff.Begin();
+            foreach (EffectPass pass in maskEff.CurrentTechnique.Passes)
+            {
+                pass.Begin();
+                gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
+                    colouredVertexData, 0, colouredVertexData.Length / 3);
+                pass.End();
+            }
+            maskEff.End();
+
+            // Restore render target so what we can extract drawn pixels.
+            gfx.SetRenderTarget(0, null);
+
+            // Figure out mask data from the render target.
+            Texture2D maskTexture = maskTarget.GetTexture();
+            Color[] maskData = new Color[targetSize * targetSize];
+            maskTexture.GetData<Color>(maskData);
+            for (int y = 0; y < targetSize; ++y)
+                for (int x = 0; x < targetSize; ++x)
+                {
+                    Color color = maskData[x + y * maskTexture.Width];
+                    if (color == Color.White) continue;
+                    int indexMapY = startY + targetSize - 1 - y;
+                    int indexMapX = startX + x;
+                    if (indexMapY >= indexMap.GetLength(0) || indexMapX >= indexMap.GetLength(1))
+                        throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
+                    int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
+                    indexMap[indexMapY, indexMapX] = new int[] { maskValue };
+                }
+
+            // Restore graphics device's old settings.
+            gfx.VertexDeclaration = oldVertexDeclaration;
+            gfx.DepthStencilBuffer = oldDepthStencilBuffer;
+            maskTarget.Dispose();
         }
 
         #endregion Private methods

@@ -149,7 +149,10 @@ namespace AW2.Net
         {
             Log.Write("Client starts connecting");
             startClientConnectionHandler = connectionHandler;
-            Connection.Connect(IPAddress.Parse(serverAddress), port, "I connect");
+            IPAddress serverIp;
+            if (!System.Net.IPAddress.TryParse(serverAddress, out serverIp))
+                throw new ArgumentException("Not a valid IP address: " + serverAddress);
+            Connection.Connect(serverIp, port, "I connect");
         }
 
         /// <summary>

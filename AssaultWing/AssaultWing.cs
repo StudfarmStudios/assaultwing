@@ -537,7 +537,7 @@ namespace AW2
             }
             catch (Exception e)
             {
-                Log.Write("Could not start client: " + e);
+                Log.Write("Could not start client: " + e.Message);
                 NetworkMode = NetworkMode.Standalone;
             }
         }

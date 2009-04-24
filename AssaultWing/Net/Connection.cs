@@ -503,19 +503,30 @@ namespace AW2.Net
         {
             try
             {
+                List<ArraySegment<byte>> sendSegments = new List<ArraySegment<byte>>();
                 while (true)
                 {
-                    ArraySegment<byte> buffer = new ArraySegment<byte>();
+                    // Gather several messages together to reach a supposedly optimal
+                    // TCP packet size of 1500 bytes minuts some space for headers.
+                    sendSegments.Clear();
+                    int totalLength = 0;
                     sendBuffers.Do(queue =>
                     {
-                        if (queue.Count > 0)
-                            buffer = queue.Dequeue();
+                        while (queue.Count > 0)
+                        {
+                            ArraySegment<byte> segment = queue.Peek();
+                            if (sendSegments.Count > 0 && totalLength + segment.Count > 1400)
+                                break;
+                            totalLength += segment.Count;
+                            sendSegments.Add(segment);
+                            queue.Dequeue();
+                        }
                     });
-                    if (buffer.Array != null)
+                    if (sendSegments.Count > 0)
                     {
-                        int bytesSent = socket.Send(buffer.Array, buffer.Offset, buffer.Count, SocketFlags.None);
-                        if (bytesSent != buffer.Count)
-                            throw new Exception("Not all data was sent (" + bytesSent + " out of " + buffer.Count + " bytes)");
+                        int bytesSent = socket.Send(sendSegments);
+                        if (bytesSent != totalLength)
+                            throw new Exception("Not all data was sent (" + bytesSent + " out of " + totalLength + " bytes)");
                     }
                     else
                         Thread.Sleep(0);

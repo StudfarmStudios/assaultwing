@@ -1158,9 +1158,9 @@ namespace AW2.Game
             {
                 writer.Write((float)pos.X);
                 writer.Write((float)pos.Y);
-                writer.Write((float)move.X);
-                writer.Write((float)move.Y);
-                writer.Write((float)rotation);
+                writer.WriteHalf(move.X);
+                writer.WriteHalf(move.Y);
+                writer.WriteHalf(rotation);
             }
         }
 
@@ -1185,9 +1185,9 @@ namespace AW2.Game
             {
                 Vector2 newPos = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
                 pos = newPos;
-                Vector2 newMove = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                Vector2 newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
                 move = newMove;
-                rotation = reader.ReadSingle();
+                rotation = reader.ReadHalf();
             }
         }
 

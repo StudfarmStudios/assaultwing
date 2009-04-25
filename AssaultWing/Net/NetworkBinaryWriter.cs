@@ -56,6 +56,54 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Writes a 16-bit floating point value.
+        /// </summary>
+        /// <param name="value">The value to write. The value will be converted to 
+        /// a 16-bit floating point representation.</param>
+        public void WriteHalf(float value)
+        {
+            ushort half = 0;
+            if (float.IsPositiveInfinity(value) || value > 65504)
+                half = 0x7c00; // positive infinity and positive overflow
+            else if (float.IsNegativeInfinity(value) || value < -65504)
+                half = 0xfc00; // negative infinity and negative overflow
+            else if (float.IsNaN(value))
+                half = 0x7e00; // not a number
+            else if (value == 0f ||
+                (value > 0f && value < 0.000061035156f) ||
+                (value < 0f && value > -0.000061035156f))
+                half = 0x0000; // negative zero, positive zero, negative underflow and positive underflow
+            else // a regular number
+            {
+                // Get the float's bit representation in native byte order.
+                int single = BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+
+                // Decode bit representations of the components of the 32-bit float.
+                // Bits as stated in IEEE 754: 1 + 8 + 23 (sign + exponent + significand)
+                int sign = (single >> 31) & 0x1;
+                int exponent = (single >> 23) & 0xff;
+                int significand = single & 0x7fffff; // without the implicit bit
+
+                // Find out bit representations of the components of the 16-bit float.
+                // Bits as stated in IEEE 754r: 1 + 5 + 10 (sign + exponent + significand)
+                int halfExponent = 0;
+                if (exponent - 127 > 15) // should always be false; caught above as infinity
+                    halfExponent = 30;
+                else if (exponent - 127 < -14) // should always be false; caught above as underflow
+                    halfExponent = 1;
+                else
+                    halfExponent = exponent - 127 + 15;
+                int halfSignificand = significand >> (23 - 10);
+
+                // Construct the 16-bit representation in native byte order.
+                half = (ushort)((sign << 15) | (halfExponent << 10) | halfSignificand);
+            }
+
+            // Write the result.
+            Write((ushort)half);
+        }
+
+        /// <summary>
         /// Writes a length-prefixed string.
         /// </summary>
         /// <param name="value">The string to write.</param>

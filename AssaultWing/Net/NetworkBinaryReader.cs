@@ -58,6 +58,35 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Reads a 16-bit floating point value.
+        /// </summary>
+        /// <returns>The read value as a 32-bit float.</returns>
+        public float ReadHalf()
+        {
+            // Get the 16-bit float's bit representation in native byte order.
+            ushort half = ReadUInt16();
+
+            if (half == 0x7c00) return float.PositiveInfinity;
+            if (half == 0xfc00) return float.NegativeInfinity;
+            if (half == 0x7e00) return float.NaN;
+            if (half == 0) return 0;
+
+            // Decode bit representations of the components of the 16-bit float.
+            // Bits as stated in IEEE 754r: 1 + 5 + 10 (sign + exponent + significand)
+            int sign = (half >> 15) & 0x1;
+            int exponent = (half >> 10) & 0x1f;
+            int significand = half & 0x3ff; // without the implicit bit
+
+            // Construct the 32-bit representation in native byte order.
+            // Bits as stated in IEEE 754: 1 + 8 + 23 (sign + exponent + significand)
+            int singleExponent = exponent - 15 + 127;
+            int singleSignificand = significand << (23 - 10);
+            int single = (sign << 31) | (singleExponent << 23) | singleSignificand;
+
+            return BitConverter.ToSingle(BitConverter.GetBytes(single), 0);
+        }
+
+        /// <summary>
         /// Reads a length-prefixed string.
         /// </summary>
         public override string ReadString()
@@ -133,6 +162,31 @@ namespace AW2.Net
                         Array.Reverse(data);
                     Assert.AreEqual(BitConverter.ToUInt16(data, 0), value);
                 }
+            }
+
+            /// <summary>
+            /// Tests correctness of half precision float writing and reading.
+            /// </summary>
+            [Test]
+            public void TestHalf()
+            {
+                float[] data = {
+                    0f, -0f, 1f, -1f, 65504f, -65504f, 0.000061035156f, -0.000061035156f, 12.3359375f, -12.3359375f,
+                    float.NaN, float.PositiveInfinity, float.NegativeInfinity,
+                };
+                var stream = new MemoryStream();
+                var writer = new NetworkBinaryWriter(stream);
+                foreach (float value in data)
+                    writer.WriteHalf(value);
+                writer.Flush();
+                byte[] bytes = stream.GetBuffer();
+                Assert.That(bytes.Any(x => x != 0), "Something wrong with memory stream usage?");
+                stream = new MemoryStream(bytes);
+                var reader = new NetworkBinaryReader(stream);
+                float[] result = new float[data.Length];
+                for (int i = 0; i < data.Length; ++i)
+                    result[i] = reader.ReadHalf();
+                Assert.AreEqual(data, result);
             }
         }
 

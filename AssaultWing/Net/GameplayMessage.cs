@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AW2.Net
 {
@@ -34,7 +31,8 @@ namespace AW2.Net
         /// <param name="writer">Writer of serialised data.</param>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            writer.Write((long)TotalGameTime.Ticks);
+            // UNDONE: game time not used in networking at the moment
+            //writer.Write((long)TotalGameTime.Ticks);
         }
 
         /// <summary>
@@ -43,7 +41,8 @@ namespace AW2.Net
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            TotalGameTime = new TimeSpan(reader.ReadInt64());
+            // UNDONE: game time not used in networking at the moment
+            //TotalGameTime = new TimeSpan(reader.ReadInt64());
         }
     }
 }

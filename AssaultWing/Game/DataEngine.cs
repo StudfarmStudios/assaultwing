@@ -960,10 +960,9 @@ namespace AW2.Game
             }
             addedGobs.Clear();
 
-            // If we are a game client, update gobs as told by the game server.
+            // If we are a game client, update gobs and players as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                TimeSpan updateMessageTimeout = AssaultWing.Instance.GameTime.TotalGameTime - TimeSpan.FromSeconds(0.5);
                 net.ReceiveFromServerWhile<GobUpdateMessage>(message =>
                 {
                     Gob gob = GetGob(message.GobId);
@@ -976,6 +975,13 @@ namespace AW2.Game
                     Gob gob = GetGob(message.GobId);
                     if (gob == null) return true; // Skip updates for gobs we haven't yet created.
                     gob.DamageLevel = message.DamageLevel;
+                    return true;
+                });
+                net.ReceiveFromServerWhile<PlayerUpdateMessage>(message =>
+                {
+                    Player player = GetPlayer(message.PlayerId);
+                    if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
+                    message.Read(player, SerializationModeFlags.VaryingData);
                     return true;
                 });
             }
@@ -1031,6 +1037,19 @@ namespace AW2.Game
                         message.Write(gob, SerializationModeFlags.VaryingData);
                         net.SendToClients(message);
                     }
+                });
+            }
+
+            // Send state updates about players to their own game clients if we are the game server.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                ForEachPlayer(player =>
+                {
+                    if (!player.IsRemote) return;
+                    var message = new PlayerUpdateMessage();
+                    message.PlayerId = player.Id;
+                    message.Write(player, SerializationModeFlags.VaryingData);
+                    net.SendToClient(player.ConnectionId, message);
                 });
             }
 

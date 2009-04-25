@@ -208,9 +208,6 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot send without connection to server");
             try
             {
-#if NETWORK_DEBUG
-                Log.Write("DEBUG: sending to server: " + message);
-#endif
                 gameServerConnection.Send(message);
             }
             catch (SocketException e)
@@ -232,9 +229,6 @@ namespace AW2.Net
             if (gameServerConnection.Messages.Count<T>() > 0)
             {
                 T message = gameServerConnection.Messages.Dequeue<T>();
-#if NETWORK_DEBUG
-                Log.Write("DEBUG: received from server: " + message);
-#endif
                 return message;
             }
             return null;
@@ -261,10 +255,6 @@ namespace AW2.Net
                     gameServerConnection.Messages.Requeue(message);
                     break;
                 }
-#if NETWORK_DEBUG
-                else
-                    Log.Write("DEBUG: received from server: " + message);
-#endif
             }
         }
 
@@ -274,9 +264,6 @@ namespace AW2.Net
         /// <param name="message">The message to send.</param>
         public void SendToClients(Message message)
         {
-#if NETWORK_DEBUG
-            Log.Write("DEBUG: sending to clients: " + message);
-#endif
             foreach (Connection connection in clientConnections)
                 connection.Send(message);
         }
@@ -289,9 +276,6 @@ namespace AW2.Net
         public void SendToClient(int connectionId, Message message)
         {
             Connection connection = GetClientConnection(connectionId);
-#if NETWORK_DEBUG
-            Log.Write("DEBUG: sending to client " + connectionId + ": " + message);
-#endif
             connection.Send(message);
         }
 
@@ -309,9 +293,6 @@ namespace AW2.Net
                 if (connection.Messages.Count<T>() > 0)
                 {
                     T message = connection.Messages.Dequeue<T>();
-#if NETWORK_DEBUG
-                    Log.Write("DEBUG: received from client connection " + connection.Id + ": " + message);
-#endif
                     return message;
                 }
             return null;
@@ -332,9 +313,6 @@ namespace AW2.Net
                     if (connection.Messages.Count<T>() > 0)
                     {
                         T message = connection.Messages.Dequeue<T>();
-#if NETWORK_DEBUG
-                        Log.Write("DEBUG: received from client connection " + connection.Id + ": " + message);
-#endif
                         return message;
                     }
                     return null;

@@ -11,9 +11,6 @@ Global
 		Debug2|Any CPU = Debug2|Any CPU
 		Debug2|Mixed Platforms = Debug2|Mixed Platforms
 		Debug2|x86 = Debug2|x86
-		NetworkDebug|Any CPU = NetworkDebug|Any CPU
-		NetworkDebug|Mixed Platforms = NetworkDebug|Mixed Platforms
-		NetworkDebug|x86 = NetworkDebug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
@@ -29,11 +26,6 @@ Global
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|Mixed Platforms.Build.0 = Debug2|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|x86.ActiveCfg = Debug2|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|x86.Build.0 = Debug2|x86
-		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.NetworkDebug|Any CPU.ActiveCfg = NetworkDebug|x86
-		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.NetworkDebug|Mixed Platforms.ActiveCfg = NetworkDebug|x86
-		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.NetworkDebug|Mixed Platforms.Build.0 = NetworkDebug|x86
-		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.NetworkDebug|x86.ActiveCfg = NetworkDebug|x86
-		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.NetworkDebug|x86.Build.0 = NetworkDebug|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|Any CPU.ActiveCfg = Release|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|Mixed Platforms.Build.0 = Release|x86
@@ -45,9 +37,6 @@ Global
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Debug2|Any CPU.ActiveCfg = Debug2|x86
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Debug2|Mixed Platforms.ActiveCfg = Debug2|x86
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Debug2|x86.ActiveCfg = Debug2|x86
-		{37327719-5D88-4EAD-9B6C-A97611027858}.NetworkDebug|Any CPU.ActiveCfg = NetworkDebug|x86
-		{37327719-5D88-4EAD-9B6C-A97611027858}.NetworkDebug|Mixed Platforms.ActiveCfg = NetworkDebug|x86
-		{37327719-5D88-4EAD-9B6C-A97611027858}.NetworkDebug|x86.ActiveCfg = NetworkDebug|x86
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Release|Any CPU.ActiveCfg = Release|x86
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Release|x86.ActiveCfg = Release|x86

@@ -176,9 +176,6 @@ namespace AW2.Menu
                     JoinGameRequest joinGameRequest = new JoinGameRequest();
                     joinGameRequest.PlayerInfos = new List<PlayerInfo>();
                     data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
-#if NETWORK_DEBUG
-                     Log.Write("DEBUG: sending to server: " + joinGameRequest);
-#endif
                     net.SendToServer(joinGameRequest);
                 });
             };

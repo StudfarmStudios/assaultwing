@@ -17,16 +17,19 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug|Any CPU.Build.0 = Debug|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug|x86.ActiveCfg = Debug|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug|x86.Build.0 = Debug|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|Any CPU.ActiveCfg = Debug2|x86
+		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|Any CPU.Build.0 = Debug2|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|Mixed Platforms.ActiveCfg = Debug2|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|Mixed Platforms.Build.0 = Debug2|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|x86.ActiveCfg = Debug2|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Debug2|x86.Build.0 = Debug2|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|Any CPU.ActiveCfg = Release|x86
+		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|Any CPU.Build.0 = Release|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|Mixed Platforms.Build.0 = Release|x86
 		{E8EFC5DB-1665-4079-9F4E-BD60AB104630}.Release|x86.ActiveCfg = Release|x86

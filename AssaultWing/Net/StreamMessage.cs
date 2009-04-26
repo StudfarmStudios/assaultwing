@@ -125,7 +125,8 @@ namespace AW2.Net
         /// </summary>
         /// <param name="serializable">The object to serialise.</param>
         /// <param name="mode">What to serialise of the serialisable object.</param>
-        public void Write(INetworkSerializable serializable, SerializationModeFlags mode)
+        /// <returns>The number of serialised bytes.</returns>
+        public int Write(INetworkSerializable serializable, SerializationModeFlags mode)
         {
             switch (DataMode)
             {
@@ -138,7 +139,10 @@ namespace AW2.Net
                     throw new InvalidOperationException("Cannot Write() streamed data in mode " + DataMode);
             }
             DataMode = DataModeType.SettingDataByWrite;
+            long oldPos = writer.Seek(0, SeekOrigin.Current);
             serializable.Serialize(writer, mode);
+            long newPos = writer.Seek(0, SeekOrigin.Current);
+            return (int)(newPos - oldPos);
         }
 
         /// <summary>
@@ -150,6 +154,26 @@ namespace AW2.Net
         /// the mode the data was written in.</param>
         public void Read(INetworkSerializable serializable, SerializationModeFlags mode)
         {
+            SetDataModeToRead();
+            serializable.Deserialize(reader, mode);
+
+            // The reader will be closed when the message goes to garbage collection.
+            // For now, we leave it open for successive calls to Read().
+            //reader.Close();
+        }
+
+        /// <summary>
+        /// Skips a number of bytes, as if they were read.
+        /// </summary>
+        /// <param name="byteCount">The number of bytes to skip.</param>
+        public void Skip(int byteCount)
+        {
+            SetDataModeToRead();
+            reader.ReadBytes(byteCount);
+        }
+
+        private void SetDataModeToRead()
+        {
             switch (DataMode)
             {
                 case DataModeType.DataSetForRead:
@@ -158,14 +182,9 @@ namespace AW2.Net
                 case DataModeType.ReadingSetData:
                     break;
                 default:
-                    throw new InvalidOperationException("Cannot Read() streamed data in mode " + DataMode);
+                    throw new InvalidOperationException("Cannot read streamed data in mode " + DataMode);
             }
             DataMode = DataModeType.ReadingSetData;
-            serializable.Deserialize(reader, mode);
-
-            // The reader will be closed when the message goes to garbage collection.
-            // For now, we leave it open for successive calls to Read().
-            //reader.Close();
         }
     }
 }

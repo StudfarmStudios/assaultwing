@@ -1,4 +1,7 @@
-﻿namespace AW2.Net.Messages
+﻿using System;
+using System.Collections.Generic;
+
+namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client updating
@@ -6,15 +9,45 @@
     /// </summary>
     public class GobUpdateMessage : GameplayMessage
     {
+        List<int> gobIds = new List<int>();
+        List<ushort> byteCounts = new List<ushort>();
+
         /// <summary>
         /// Identifier of the message type.
         /// </summary>
         protected static MessageType messageType = new MessageType(0x24, false);
 
         /// <summary>
-        /// Identifier of the gob to update.
+        /// Adds a gob to the update message.
         /// </summary>
-        public int GobId { get; set; }
+        /// <param name="gobId">Identifier of the gob.</param>
+        /// <param name="gob">The gob.</param>
+        /// <param name="mode">What to serialise of the gob.</param>
+        public void AddGob(int gobId, INetworkSerializable gob, SerializationModeFlags mode)
+        {
+            gobIds.Add(gobId);
+            ushort byteCount = checked((ushort)Write(gob, mode));
+            byteCounts.Add(byteCount);
+        }
+
+        /// <summary>
+        /// Reads gob contents from the update message.
+        /// </summary>
+        /// <param name="gobFinder">A method returning a gob for its identifier.
+        /// If it returns <c>null</c>, the corresponding serialised data is
+        /// skipped.</param>
+        /// <param name="mode">What to deserialise of the gobs.</param>
+        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, SerializationModeFlags mode)
+        {
+            for (int i = 0; i < gobIds.Count; ++i)
+            {
+                INetworkSerializable gob = gobFinder(gobIds[i]);
+                if (gob != null)
+                    Read(gob, mode);
+                else
+                    Skip(byteCounts[i]);
+            }
+        }
 
         /// <summary>
         /// Writes the body of the message in serialised form.
@@ -24,12 +57,17 @@
         {
             base.Serialize(writer);
             // Gob update (request) message structure:
-            // int: gob identifier
-            // word: data length N
-            // N bytes: serialised data of the gob (content known only by the Gob subclass in question)
+            // int: number of gobs to update, K
+            // K ints: identifiers of the gobs
+            // K ushorts: byte count of gob data, M(k)
+            // repeat K times:
+            //   M(k) bytes: serialised data of a gob (content known only by the Gob subclass in question)
             byte[] writeBytes = StreamedData;
-            writer.Write((int)GobId);
-            writer.Write(checked((ushort)writeBytes.Length));
+            writer.Write((int)gobIds.Count);
+            foreach (int gobId in gobIds)
+                writer.Write((int)gobId);
+            foreach (ushort byteCount in byteCounts)
+                writer.Write((ushort)byteCount);
             writer.Write(writeBytes, 0, writeBytes.Length);
         }
 
@@ -40,9 +78,19 @@
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            GobId = reader.ReadInt32();
-            int byteCount = reader.ReadUInt16();
-            StreamedData = reader.ReadBytes(byteCount);
+            int gobCount = reader.ReadInt32();
+            gobIds.Clear();
+            byteCounts.Clear();
+            for (int i = 0; i < gobCount; ++i)
+                gobIds.Add(reader.ReadInt32());
+            int totalByteCount = 0;
+            for (int i = 0; i < gobCount; ++i)
+            {
+                ushort byteCount = reader.ReadUInt16();
+                byteCounts.Add(byteCount);
+                totalByteCount += byteCount;
+            }
+            StreamedData = reader.ReadBytes(totalByteCount);
         }
 
         /// <summary>
@@ -50,7 +98,7 @@
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + " [GobId " + GobId + "]";
+            return base.ToString() + " [" + gobIds.Count + " gobs]";
         }
     }
 }

@@ -965,9 +965,7 @@ namespace AW2.Game
             {
                 net.ReceiveFromServerWhile<GobUpdateMessage>(message =>
                 {
-                    Gob gob = GetGob(message.GobId);
-                    if (gob == null) return true; // Skip updates for gobs we haven't yet created.
-                    message.Read(gob, SerializationModeFlags.VaryingData);
+                    message.ReadGobs(gobId => GetGob(gobId), SerializationModeFlags.VaryingData);
                     return true;
                 });
                 net.ReceiveFromServerWhile<GobDamageMessage>(message =>
@@ -1028,16 +1026,13 @@ namespace AW2.Game
             // Send state updates about gobs to game clients if we are the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
+                var message = new GobUpdateMessage();
                 arenaLayers[gameplayLayer].ForEachGob(gob =>
                 {
-                    if (gob.Movable)
-                    {
-                        var message = new GobUpdateMessage();
-                        message.GobId = gob.Id;
-                        message.Write(gob, SerializationModeFlags.VaryingData);
-                        net.SendToClients(message);
-                    }
+                    if (gob.IsRelevant && gob.Movable)
+                        message.AddGob(gob.Id, gob, SerializationModeFlags.VaryingData);
                 });
+                net.SendToClients(message);
             }
 
             // Send state updates about players to their own game clients if we are the game server.

@@ -219,11 +219,9 @@ namespace AW2.Game.Gobs
 
             if (playerBonus != PlayerBonus.None)
             {
-                player.AddBonus(playerBonus);
                 TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
                     + TimeSpan.FromSeconds(poss.duration);
-                player.BonusTimeins[playerBonus] = AssaultWing.Instance.GameTime.TotalGameTime;
-                player.BonusTimeouts[playerBonus] = expiryTime;
+                player.AddBonus(playerBonus, expiryTime);
                 if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                     player.MustUpdateToClients = true;
             }

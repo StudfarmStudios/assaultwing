@@ -648,22 +648,35 @@ namespace AW2.Game
         #region Methods related to bonuses
 
         /// <summary>
-        /// Adds a bonus to the player.
+        /// Adds a bonus or bonuses to the player.
         /// </summary>
-        /// <param name="bonus">The bonus.</param>
-        public void AddBonus(PlayerBonus bonus)
+        /// <param name="bonus">The bonus or bonuses.</param>
+        /// <param name="expiryTime">Time of expiry of the bonus or bonuses in game time.</param>
+        public void AddBonus(PlayerBonus bonus, TimeSpan expiryTime)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 MustUpdateToClients = true;
             bonuses |= bonus;
             if ((bonus & PlayerBonus.Weapon1LoadTime) != 0)
+            {
+                SetBonusTimes(PlayerBonus.Weapon1LoadTime, expiryTime);
                 UpgradeWeapon1LoadTime();
+            }
             if ((bonus & PlayerBonus.Weapon2LoadTime) != 0)
+            {
+                SetBonusTimes(PlayerBonus.Weapon2LoadTime, expiryTime);
                 UpgradeWeapon2LoadTime();
+            }
             if ((bonus & PlayerBonus.Weapon1Upgrade) != 0)
+            {
+                SetBonusTimes(PlayerBonus.Weapon1Upgrade, expiryTime);
                 UpgradeWeapon1();
+            }
             if ((bonus & PlayerBonus.Weapon2Upgrade) != 0)
+            {
+                SetBonusTimes(PlayerBonus.Weapon2Upgrade, expiryTime);
                 UpgradeWeapon2();
+            }
         }
 
         /// <summary>
@@ -824,10 +837,14 @@ namespace AW2.Game
             {
                 weapon1Upgrades = reader.ReadSByte();
                 weapon2Upgrades = reader.ReadSByte();
-                bonuses = (PlayerBonus)reader.ReadUInt16();
-                lives = reader.ReadUInt16();
-                kills = reader.ReadUInt16();
-                suicides = reader.ReadUInt16();
+                PlayerBonus oldBonuses = bonuses;
+                PlayerBonus newBonuses = (PlayerBonus)reader.ReadUInt16();
+                RemoveBonus(oldBonuses & (oldBonuses ^ newBonuses));
+                AddBonus(newBonuses & (oldBonuses ^ newBonuses), 
+                    AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(999)); // HACK: bonus expiryTime
+                lives = reader.ReadInt16();
+                kills = reader.ReadInt16();
+                suicides = reader.ReadInt16();
             }
         }
 
@@ -971,6 +988,12 @@ namespace AW2.Game
             float shakeTime = shakeAttenuationInverseCurve.Evaluate(relativeShakeDamage);
             shakeTime = Math.Max(0, shakeTime - seconds);
             relativeShakeDamage = shakeAttenuationCurve.Evaluate(shakeTime);
+        }
+
+        void SetBonusTimes(PlayerBonus bonus, TimeSpan expiryTime)
+        {
+            BonusTimeins[bonus] = AssaultWing.Instance.GameTime.TotalGameTime;
+            BonusTimeouts[bonus] = expiryTime;
         }
 
         #endregion Private methods

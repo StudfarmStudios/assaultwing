@@ -1041,6 +1041,8 @@ namespace AW2.Game
                 ForEachPlayer(player =>
                 {
                     if (!player.IsRemote) return;
+                    if (!player.MustUpdateToClients) return;
+                    player.MustUpdateToClients = false;
                     var message = new PlayerUpdateMessage();
                     message.PlayerId = player.Id;
                     message.Write(player, SerializationModeFlags.VaryingData);

@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
-using AW2.Events;
+using System.Linq;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs
@@ -164,74 +161,71 @@ namespace AW2.Game.Gobs
             // bonus collection. That means that the other gob is a ship.
             if (myArea.Type == CollisionAreaType.Receptor)
             {
-                Ship ship = (Ship)theirArea.Owner;
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                EventEngine eventer = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-
-                // Calculate probability mass total.
-                float massTotal = 0;
-                foreach (BonusActionPossibility poss in possibilities)
-                    massTotal += poss.weight;
-
-                // Pick our choice from the combined probability mass 
-                // and then find out which possibility we hit.
-                float choice = RandomHelper.GetRandomFloat(0, massTotal);
-                massTotal = 0;
-                foreach (BonusActionPossibility poss in possibilities)
-                {
-                    massTotal += poss.weight;
-                    if (choice > massTotal) continue;
-
-                    // Perform the bonus action.
-                    PlayerBonus playerBonus = PlayerBonus.None; // which bonus to undo later, or None
-                    switch (poss.action)
-                    {
-                        case BonusAction.Explode:
-                            Gob.CreateGob("bomb explosion", explosion =>
-                            {
-                                explosion.Pos = this.Pos;
-                                data.AddGob(explosion);
-                            });
-                            break;
-                        case BonusAction.UpgradeWeapon1:
-                            ship.Owner.UpgradeWeapon1();
-                            playerBonus = PlayerBonus.Weapon1Upgrade;
-                            break;
-                        case BonusAction.UpgradeWeapon2:
-                            ship.Owner.UpgradeWeapon2();
-                            playerBonus = PlayerBonus.Weapon2Upgrade;
-                            break;
-                        case BonusAction.UpgradeWeapon1LoadTime:
-                            ship.Owner.UpgradeWeapon1LoadTime();
-                            playerBonus = PlayerBonus.Weapon1LoadTime;
-                            break;
-                        case BonusAction.UpgradeWeapon2LoadTime:
-                            ship.Owner.UpgradeWeapon2LoadTime();
-                            playerBonus = PlayerBonus.Weapon2LoadTime;
-                            break;
-                        default:
-                            Log.Write("Bonus didn't do anything, programmer's mistake");
-                            break;
-                    }
-
-                    if (playerBonus != PlayerBonus.None)
-                    {
-                        // Send the timed event for undoing the bonus, if required.
-                        TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
-                            + TimeSpan.FromSeconds(poss.duration);
-                        BonusExpiryEvent bonusEve = new BonusExpiryEvent(ship.Owner.Name,
-                            playerBonus, expiryTime);
-                        eventer.SendEvent(bonusEve);
-
-                        // Set the player's bonus timing.
-                        ship.Owner.BonusTimeins[playerBonus] = AssaultWing.Instance.GameTime.TotalGameTime;
-                        ship.Owner.BonusTimeouts[playerBonus] = expiryTime;
-                    }
-
-                    // We found the action, break out of the search.
-                    break;
-                }
+                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+                    DoBonusAction(theirArea.Owner.Owner);
                 Die(new DeathCause());
+            }
+        }
+
+        /// <summary>
+        /// Perform a bonus action on a player.
+        /// </summary>
+        /// <param name="player">The player to receive the bonus action.</param>
+        void DoBonusAction(Player player)
+        {
+            if (possibilities.Length == 0) 
+                throw new InvalidOperationException("Bonus has no possible bonus actions");
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+
+            // Pick our choice from the combined probability mass 
+            // and then find out which possibility we hit.
+            float massTotal = possibilities.Sum(possibility => possibility.weight);
+            float choice = RandomHelper.GetRandomFloat(0, massTotal);
+            massTotal = 0;
+            BonusActionPossibility poss = new BonusActionPossibility();
+            for (int i = 0; i < possibilities.Length && choice >= massTotal; ++i)
+            {
+                poss = possibilities[i];
+                massTotal += poss.weight;
+            }
+
+            // Perform the bonus action.
+            PlayerBonus playerBonus = PlayerBonus.None; // bonus to add to the player, or None
+            switch (poss.action)
+            {
+                case BonusAction.Explode:
+                    Gob.CreateGob("bomb explosion", explosion =>
+                    {
+                        explosion.Pos = this.Pos;
+                        data.AddGob(explosion);
+                    });
+                    break;
+                case BonusAction.UpgradeWeapon1:
+                    playerBonus = PlayerBonus.Weapon1Upgrade;
+                    break;
+                case BonusAction.UpgradeWeapon2:
+                    playerBonus = PlayerBonus.Weapon2Upgrade;
+                    break;
+                case BonusAction.UpgradeWeapon1LoadTime:
+                    playerBonus = PlayerBonus.Weapon1LoadTime;
+                    break;
+                case BonusAction.UpgradeWeapon2LoadTime:
+                    playerBonus = PlayerBonus.Weapon2LoadTime;
+                    break;
+                default:
+                    Log.Write("WARNING: Bonus didn't do anything, programmer's mistake");
+                    break;
+            }
+
+            if (playerBonus != PlayerBonus.None)
+            {
+                player.AddBonus(playerBonus);
+                TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
+                    + TimeSpan.FromSeconds(poss.duration);
+                player.BonusTimeins[playerBonus] = AssaultWing.Instance.GameTime.TotalGameTime;
+                player.BonusTimeouts[playerBonus] = expiryTime;
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                    player.MustUpdateToClients = true;
             }
         }
 

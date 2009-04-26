@@ -119,25 +119,9 @@ namespace AW2.Game
                     if (playerBonus != PlayerBonus.None &&
                         (player.Bonuses & playerBonus) != 0 &&
                         player.BonusTimeouts[playerBonus] <= AssaultWing.Instance.GameTime.TotalGameTime)
-                        switch (playerBonus)
-                        {
-                            case PlayerBonus.Weapon1LoadTime:
-                                player.DeupgradeWeapon1LoadTime();
-                                break;
-                            case PlayerBonus.Weapon2LoadTime:
-                                player.DeupgradeWeapon2LoadTime();
-                                break;
-                            case PlayerBonus.Weapon1Upgrade:
-                                player.DeupgradeWeapon1();
-                                break;
-                            case PlayerBonus.Weapon2Upgrade:
-                                player.DeupgradeWeapon2();
-                                break;
-                            default:
-                                Helpers.Log.Write("Warning: Don't know how to handle expiration of player bonus " +
-                                    playerBonus);
-                                break;
-                        }
+                    {
+                        player.RemoveBonus(playerBonus);
+                    }
             });
 
             // Update gobs, weapons and players.

@@ -18,7 +18,7 @@ namespace AW2.Game
     /// what can happen when a bonus is activated.
     /// <seealso cref="AW2.Game.Gobs.BonusAction"/>
     [Flags]
-    public enum PlayerBonus
+    public enum PlayerBonus : ushort
     {
         /// <summary>
         /// No bonuses
@@ -292,6 +292,12 @@ namespace AW2.Game
         public bool IsRemote { get { return ConnectionId >= 0; } }
 
         /// <summary>
+        /// Does the player state need to be updated to the clients.
+        /// For use by game server only.
+        /// </summary>
+        public bool MustUpdateToClients { get; set; }
+
+        /// <summary>
         /// The controls the player uses in menus and in game.
         /// </summary>
         public PlayerControls Controls { get { return controls; } }
@@ -452,6 +458,8 @@ namespace AW2.Game
 
         #endregion Player properties about statistics
 
+        #region Constructors
+
         /// <summary>
         /// Creates a new player.
         /// </summary>
@@ -499,7 +507,6 @@ namespace AW2.Game
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
         }
 
-        
         /// <summary>
         /// Creates a new player who plays at the local game instance.
         /// </summary>
@@ -541,6 +548,10 @@ namespace AW2.Game
             controls.extra = new RemoteControl();
         }
 
+        #endregion Constructors
+
+        #region General public methods
+
         /// <summary>
         /// Updates the player.
         /// </summary>
@@ -564,48 +575,6 @@ namespace AW2.Game
                 if (!IsRemote)
                     UpdateControlsClientLocal();
             }
-        }
-
-        /// <summary>
-        /// Updates the player's controls, assuming this game instance 
-        /// is the game server.
-        /// </summary>
-        private void UpdateControlsServer()
-        {
-            if (ship != null)
-            {
-                if (controls[PlayerControlType.Thrust].Force > 0)
-                    ship.Thrust(controls[PlayerControlType.Thrust].Force);
-                if (controls[PlayerControlType.Left].Force > 0)
-                    ship.TurnLeft(controls[PlayerControlType.Left].Force);
-                if (controls[PlayerControlType.Right].Force > 0)
-                    ship.TurnRight(controls[PlayerControlType.Right].Force);
-                if (controls[PlayerControlType.Fire1].Pulse)
-                    ship.Fire1();
-                if (controls[PlayerControlType.Fire2].Pulse)
-                    ship.Fire2();
-                if (controls[PlayerControlType.Extra].Pulse)
-                    ship.DoExtra();
-            }
-        }
-
-        /// <summary>
-        /// Updates the player's controls, assuming the player
-        /// lives on this game instance and this game instance 
-        /// is a game client.
-        /// </summary>
-        private void UpdateControlsClientLocal()
-        {
-            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-            PlayerControlsMessage message = new PlayerControlsMessage();
-            message.PlayerId = Id;
-            foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
-            {
-                Control control = controls[controlType];
-                message.SetControlState(controlType, 
-                    new PlayerControlsMessage.ControlState { force = control.Force, pulse = control.Pulse });
-            }
-            net.SendToServer(message);
         }
 
         /// <summary>
@@ -666,10 +635,250 @@ namespace AW2.Game
                 messages.RemoveRange(0, messages.Count - 5000);
         }
 
+        #endregion General public methods
+
+        #region Methods related to bonuses
+
+        /// <summary>
+        /// Adds a bonus to the player.
+        /// </summary>
+        /// <param name="bonus">The bonus.</param>
+        public void AddBonus(PlayerBonus bonus)
+        {
+            bonuses |= bonus;
+            if ((bonus & PlayerBonus.Weapon1LoadTime) != 0)
+                UpgradeWeapon1LoadTime();
+            if ((bonus & PlayerBonus.Weapon2LoadTime) != 0)
+                UpgradeWeapon2LoadTime();
+            if ((bonus & PlayerBonus.Weapon1Upgrade) != 0)
+                UpgradeWeapon1();
+            if ((bonus & PlayerBonus.Weapon2Upgrade) != 0)
+                UpgradeWeapon2();
+        }
+
+        /// <summary>
+        /// Removes a bonus from the player.
+        /// </summary>
+        /// <param name="bonus">The bonus.</param>
+        public void RemoveBonus(PlayerBonus bonus)
+        {
+            bonuses &= ~bonus;
+            if ((bonus & PlayerBonus.Weapon1LoadTime) != 0)
+                DeupgradeWeapon1LoadTime();
+            if ((bonus & PlayerBonus.Weapon2LoadTime) != 0)
+                DeupgradeWeapon2LoadTime();
+            if ((bonus & PlayerBonus.Weapon1Upgrade) != 0)
+                DeupgradeWeapon1();
+            if ((bonus & PlayerBonus.Weapon2Upgrade) != 0)
+                DeupgradeWeapon2();
+        }
+
+        /// <summary>
+        /// Adds an incremental upgrade on the player's primary weapon.
+        /// </summary>
+        void UpgradeWeapon1()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            int oldWeapon1Upgrades = weapon1Upgrades;
+            weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon1Upgrades != weapon1Upgrades)
+                ship.Weapon1Name = Weapon1RealName;
+        }
+
+        /// <summary>
+        /// Removes all incremental upgrades from the player's primary weapon.
+        /// </summary>
+        void DeupgradeWeapon1()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            int oldWeapon1Upgrades = weapon1Upgrades;
+            weapon1Upgrades = 0;
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon1Upgrades != weapon1Upgrades)
+                ship.Weapon1Name = Weapon1RealName;
+        }
+
+        /// <summary>
+        /// Adds an incremental upgrade on the player's secondary weapon.
+        /// </summary>
+        void UpgradeWeapon2()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
+            int oldWeapon2Upgrades = weapon2Upgrades;
+            weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon2Upgrades != weapon2Upgrades)
+                ship.Weapon2Name = Weapon2RealName;
+        }
+
+        /// <summary>
+        /// Removes all incremental upgrades from the player's secondary weapon.
+        /// </summary>
+        void DeupgradeWeapon2()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            int oldWeapon2Upgrades = weapon2Upgrades;
+            weapon2Upgrades = 0;
+
+            // Only change our weapon if it's a new one.
+            if (oldWeapon2Upgrades != weapon2Upgrades)
+                ship.Weapon2Name = Weapon2RealName;
+        }
+
+        /// <summary>
+        /// Upgrades primary weapon's load time.
+        /// </summary>
+        void UpgradeWeapon1LoadTime()
+        {
+            // Make our ship recreate its weapon.
+            ship.Weapon1Name = Weapon1RealName;
+        }
+
+        /// <summary>
+        /// Cancels a previous upgrade of primary weapon's load time.
+        /// </summary>
+        void DeupgradeWeapon1LoadTime()
+        {
+            // Make our ship recreate its weapon.
+            ship.Weapon1Name = Weapon1RealName;
+        }
+
+        /// <summary>
+        /// Upgrades secondary weapon's load time.
+        /// </summary>
+        void UpgradeWeapon2LoadTime()
+        {
+            // Make our ship recreate its weapon.
+            ship.Weapon2Name = Weapon2RealName;
+        }
+
+        /// <summary>
+        /// Cancels a previous upgrade of secondary weapon's load time.
+        /// </summary>
+        void DeupgradeWeapon2LoadTime()
+        {
+            // Make our ship recreate its weapon.
+            ship.Weapon2Name = Weapon2RealName;
+        }
+
+        #endregion Methods related to bonuses
+
+        #region Methods related to serialisation
+
+        /// <summary>
+        /// Serialises the gob to a binary writer.
+        /// </summary>
+        /// Subclasses should call the base implementation
+        /// before performing their own serialisation.
+        /// <param name="writer">The writer where to write the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to serialise.</param>
+        public void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((int)Id);
+                writer.Write(name, 32, true);
+                writer.Write(shipTypeName, 32, true);
+                writer.Write(weapon1Name, 32, true);
+                writer.Write(weapon2Name, 32, true);
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((sbyte)weapon1Upgrades);
+                writer.Write((sbyte)weapon2Upgrades);
+                writer.Write((ushort)bonuses);
+                writer.Write((short)lives);
+                writer.Write((short)kills);
+                writer.Write((short)suicides);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary writer.
+        /// </summary>
+        /// Subclasses should call the base implementation
+        /// before performing their own deserialisation.
+        /// <param name="reader">The reader where to read the serialised data.</param>
+        /// <param name="mode">Which parts of the gob to deserialise.</param>
+        public void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                Id = reader.ReadInt32();
+                name = reader.ReadString(32);
+                shipTypeName = reader.ReadString(32);
+                weapon1Name = reader.ReadString(32);
+                weapon2Name = reader.ReadString(32);
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                weapon1Upgrades = reader.ReadSByte();
+                weapon2Upgrades = reader.ReadSByte();
+                bonuses = (PlayerBonus)reader.ReadUInt16();
+                lives = reader.ReadUInt16();
+                kills = reader.ReadUInt16();
+                suicides = reader.ReadUInt16();
+            }
+        }
+
+        #endregion Methods related to serialisation
+
+        #region Private methods
+
+        /// <summary>
+        /// Updates the player's controls, assuming this game instance 
+        /// is the game server.
+        /// </summary>
+        void UpdateControlsServer()
+        {
+            if (ship != null)
+            {
+                if (controls[PlayerControlType.Thrust].Force > 0)
+                    ship.Thrust(controls[PlayerControlType.Thrust].Force);
+                if (controls[PlayerControlType.Left].Force > 0)
+                    ship.TurnLeft(controls[PlayerControlType.Left].Force);
+                if (controls[PlayerControlType.Right].Force > 0)
+                    ship.TurnRight(controls[PlayerControlType.Right].Force);
+                if (controls[PlayerControlType.Fire1].Pulse)
+                    ship.Fire1();
+                if (controls[PlayerControlType.Fire2].Pulse)
+                    ship.Fire2();
+                if (controls[PlayerControlType.Extra].Pulse)
+                    ship.DoExtra();
+            }
+        }
+
+        /// <summary>
+        /// Updates the player's controls, assuming the player
+        /// lives on this game instance and this game instance 
+        /// is a game client.
+        /// </summary>
+        void UpdateControlsClientLocal()
+        {
+            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+            PlayerControlsMessage message = new PlayerControlsMessage();
+            message.PlayerId = Id;
+            foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
+            {
+                Control control = controls[controlType];
+                message.SetControlState(controlType,
+                    new PlayerControlsMessage.ControlState { force = control.Force, pulse = control.Pulse });
+            }
+            net.SendToServer(message);
+        }
+
         /// <summary>
         /// Creates a ship for the player.
         /// </summary>
-        private void CreateShip()
+        void CreateShip()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
@@ -750,180 +959,6 @@ namespace AW2.Game
             relativeShakeDamage = shakeAttenuationCurve.Evaluate(shakeTime);
         }
 
-        #region Methods related to bonuses
-
-        /// <summary>
-        /// Adds an incremental upgrade on the player's primary weapon.
-        /// </summary>
-        public void UpgradeWeapon1()
-        {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            int oldWeapon1Upgrades = weapon1Upgrades;
-            weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon1Upgrades != weapon1Upgrades)
-                ship.Weapon1Name = Weapon1RealName;
-
-            bonuses |= PlayerBonus.Weapon1Upgrade;
-        }
-
-        /// <summary>
-        /// Removes all incremental upgrades from the player's primary weapon.
-        /// </summary>
-        public void DeupgradeWeapon1()
-        {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            int oldWeapon1Upgrades = weapon1Upgrades;
-            weapon1Upgrades = 0;
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon1Upgrades != weapon1Upgrades)
-                ship.Weapon1Name = Weapon1RealName;
-
-            bonuses &= ~PlayerBonus.Weapon1Upgrade;
-        }
-
-        /// <summary>
-        /// Adds an incremental upgrade on the player's secondary weapon.
-        /// </summary>
-        public void UpgradeWeapon2()
-        {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
-            int oldWeapon2Upgrades = weapon2Upgrades;
-            weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon2Upgrades != weapon2Upgrades)
-                ship.Weapon2Name = Weapon2RealName;
-
-            bonuses |= PlayerBonus.Weapon2Upgrade;
-        }
-
-        /// <summary>
-        /// Removes all incremental upgrades from the player's secondary weapon.
-        /// </summary>
-        public void DeupgradeWeapon2()
-        {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            int oldWeapon2Upgrades = weapon2Upgrades;
-            weapon2Upgrades = 0;
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon2Upgrades != weapon2Upgrades)
-                ship.Weapon2Name = Weapon2RealName;
-
-            bonuses &= ~PlayerBonus.Weapon2Upgrade;
-        }
-
-        /// <summary>
-        /// Upgrades primary weapon's load time.
-        /// </summary>
-        public void UpgradeWeapon1LoadTime()
-        {
-            bonuses |= PlayerBonus.Weapon1LoadTime;
-
-            // Make our ship recreate its weapon.
-            ship.Weapon1Name = Weapon1RealName;
-        }
-
-        /// <summary>
-        /// Cancels a previous upgrade of primary weapon's load time.
-        /// </summary>
-        public void DeupgradeWeapon1LoadTime()
-        {
-            bonuses &= ~PlayerBonus.Weapon1LoadTime;
-
-            // Make our ship recreate its weapon.
-            ship.Weapon1Name = Weapon1RealName;
-        }
-
-        /// <summary>
-        /// Upgrades secondary weapon's load time.
-        /// </summary>
-        public void UpgradeWeapon2LoadTime()
-        {
-            bonuses |= PlayerBonus.Weapon2LoadTime;
-
-            // Make our ship recreate its weapon.
-            ship.Weapon2Name = Weapon2RealName;
-        }
-
-        /// <summary>
-        /// Cancels a previous upgrade of secondary weapon's load time.
-        /// </summary>
-        public void DeupgradeWeapon2LoadTime()
-        {
-            bonuses &= ~PlayerBonus.Weapon2LoadTime;
-
-            // Make our ship recreate its weapon.
-            ship.Weapon2Name = Weapon2RealName;
-        }
-
-        #endregion Methods related to bonuses
-
-        #region Methods related to serialisation
-
-        /// <summary>
-        /// Serialises the gob to a binary writer.
-        /// </summary>
-        /// Subclasses should call the base implementation
-        /// before performing their own serialisation.
-        /// <param name="writer">The writer where to write the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to serialise.</param>
-        public void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
-        {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
-            {
-                writer.Write((int)Id);
-                writer.Write(name, 32, true);
-                writer.Write(shipTypeName, 32, true);
-                writer.Write(weapon1Name, 32, true);
-                writer.Write(weapon2Name, 32, true);
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                writer.Write((int)weapon1Upgrades);
-                writer.Write((int)weapon2Upgrades);
-                writer.Write((int)bonuses);
-                writer.Write((int)lives);
-                writer.Write((int)kills);
-                writer.Write((int)suicides);
-            }
-        }
-
-        /// <summary>
-        /// Deserialises the gob from a binary writer.
-        /// </summary>
-        /// Subclasses should call the base implementation
-        /// before performing their own deserialisation.
-        /// <param name="reader">The reader where to read the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
-        {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
-            {
-                Id = reader.ReadInt32();
-                name = reader.ReadString(32);
-                shipTypeName = reader.ReadString(32);
-                weapon1Name = reader.ReadString(32);
-                weapon2Name = reader.ReadString(32);
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                weapon1Upgrades = reader.ReadInt32();
-                weapon2Upgrades = reader.ReadInt32();
-                bonuses = (PlayerBonus)reader.ReadInt32();
-                lives = reader.ReadInt32();
-                kills = reader.ReadInt32();
-                suicides = reader.ReadInt32();
-            }
-        }
-
-        #endregion Methods related to serialisation
+        #endregion Private methods
     }
 }

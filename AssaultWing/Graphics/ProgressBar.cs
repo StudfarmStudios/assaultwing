@@ -2,10 +2,10 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
+using AW2.Helpers;
 
 namespace AW2.Graphics
 {
-   
     /// <summary>
     /// Progress bar, visualising the progress of a long-running thread.
     /// </summary>
@@ -24,12 +24,20 @@ namespace AW2.Graphics
     public class ProgressBar : OverlayComponent
     {
         /// <summary>
-        /// Delegate type for a long-running task that returns exceptions
-        /// instead of throwing them.
+        /// Status of a task run in a background thread.
         /// </summary>
-        /// <returns><c>null</c> on success or any exception 
-        /// if one was thrown during the task.</returns>
-        delegate Exception CatchingAsyncCallback();
+        class TaskStatus
+        {
+            /// <summary>
+            /// The exception that was thrown in the task, or <c>null</c> if none thrown.
+            /// </summary>
+            public Exception Exception { get; set; }
+
+            /// <summary>
+            /// Has the task completed.
+            /// </summary>
+            public bool IsCompleted { get; set; }
+        }
 
         Texture2D backgroundTexture, barTexture, flowTexture;
 
@@ -39,12 +47,12 @@ namespace AW2.Graphics
         /// <summary>
         /// The task to run.
         /// </summary>
-        CatchingAsyncCallback task;
+        Action task;
 
         /// <summary>
-        /// Status of the task.
+        /// Info about the running task or <c>null</c> if the task is not running.
         /// </summary>
-        IAsyncResult taskResult;
+        WorkItem taskWorkItem;
 
         /// <summary>
         /// The task to run and whose progress to measure.
@@ -53,45 +61,41 @@ namespace AW2.Graphics
         {
             set
             {
-                if (taskResult != null)
+                if (taskWorkItem != null)
                     throw new InvalidOperationException("Cannot change background task while it's running");
-                task = delegate()
-                {
-#if !DEBUG
-                    try
-                    {
-#endif
-                        value();
-                        return null;
-#if !DEBUG
-                    }
-                    catch (Exception e)
-                    {
-                        return e;
-                    }
-#endif
-                };
+                task = value;
             }
         }
 
         /// <summary>
         /// Is the background task set and running.
         /// </summary>
-        public bool TaskRunning { get { return taskResult != null; } }
+        public bool TaskRunning { get { return taskWorkItem != null; } }
 
         /// <summary>
         /// Has the task finished running.
         /// </summary>
-        /// This will turn <c>true</c> only after <c>StartTask</c> has been called.
-        /// When this is <c>true</c>, call <c>FinishTask</c>.
-        public bool TaskCompleted { get { lock (@lock) return taskResult != null && taskResult.IsCompleted; } }
+        /// This will turn <c>true</c> only after <see cref="StartTask"/> has been called.
+        /// When this is <c>true</c>, call <see cref="FinishTask"/>.
+        public bool TaskCompleted
+        {
+            get
+            {
+                lock (@lock)
+                {
+                    if (taskWorkItem == null) return false;
+                    TaskStatus status = (TaskStatus)taskWorkItem.State;
+                    return status.IsCompleted;
+                }
+            }
+        }
 
         /// <summary>
         /// An estimated state of progress of the task; 0 is freshly started; 1 is finished.
         /// </summary>
         /// The state of progress is based on other components' reports on completed subtasks,
         /// thus this measure may be quite inaccurate. If you only need to know whether the task 
-        /// has finished or not, use <c>TaskCompleted</c>.
+        /// has finished or not, use <see cref="TaskCompleted"/>.
         public float TaskProgress
         {
             get
@@ -134,31 +138,44 @@ namespace AW2.Graphics
         /// <summary>
         /// Starts running the task.
         /// </summary>
-        /// After calling this method, poll regularly for <c>TaskCompleted</c>.
-        /// When it turns <c>true</c>, call <c>FinishTask</c>.
+        /// After calling this method, poll regularly for <see cref="TaskCompleted"/>.
+        /// When it turns <c>true</c>, call <see cref="FinishTask"/>.
         public void StartTask()
         {
-            if (taskResult != null)
-                throw new InvalidOperationException("Cannot start background task that is already running");
+            if (taskWorkItem != null)
+                throw new InvalidOperationException("Cannot start a background task when it is already running");
             subtaskCompletedCount = 0;
-            taskResult = task.BeginInvoke(null, null);
+            taskWorkItem = AbortableThreadPool.QueueUserWorkItem(RunTask, new TaskStatus());
         }
 
         /// <summary>
         /// Blocks until the task finishes, ties up loose ends and then
         /// forgets all about the task.
         /// </summary>
-        /// There will be no blocking if <c>TaskCompleted == true</c>.
+        /// There will be no blocking if <see cref="TaskCompleted"/> is <c>true</c>.
         public void FinishTask()
         {
-            if (taskResult == null)
+            if (taskWorkItem == null)
                 throw new InvalidOperationException("There is no background task to finish");
-            Exception exception = task.EndInvoke(taskResult);
-            if (exception != null)
-                throw new Exception("Exception thrown during background task", exception);
-            taskResult = null;
-            task = null;
-            subtaskCount = subtaskCompletedCount = 0;
+            TaskStatus status = (TaskStatus)taskWorkItem.State;
+
+            // Block until the task completes.
+            while (!status.IsCompleted) System.Threading.Thread.Sleep(0);
+
+            if (status.Exception != null)
+                throw new Exception("Exception thrown during background task", status.Exception);
+            ResetTask();
+        }
+
+        /// <summary>
+        /// Aborts the task.
+        /// </summary>
+        public void AbortTask()
+        {
+            if (taskWorkItem == null)
+                throw new InvalidOperationException("There is no background task to abort");
+            AbortableThreadPool.Abort(taskWorkItem, true);
+            ResetTask();
         }
 
         /// <summary>
@@ -227,6 +244,37 @@ namespace AW2.Graphics
         public override void UnloadContent()
         {
             // Our textures are disposed by the graphics engine.
+        }
+
+        void ResetTask()
+        {
+            taskWorkItem = null;
+            task = null;
+            subtaskCount = subtaskCompletedCount = 0;
+        }
+
+        /// <summary>
+        /// Runs the task, handling exceptions. This method is to be run in a background thread.
+        /// </summary>
+        /// <param name="state">A <see cref="TaskStatus"/> instance.</param>
+        void RunTask(object state)
+        {
+            TaskStatus status = (TaskStatus)state;
+            try
+            {
+                task();
+            }
+#if !DEBUG
+            catch (Exception e)
+            {
+                status.Exception = e;
+            }
+#endif
+            catch (System.Threading.ThreadAbortException) { }
+            finally
+            {
+                status.IsCompleted = true;
+            }
         }
     }
 }

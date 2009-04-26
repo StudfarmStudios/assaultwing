@@ -217,6 +217,7 @@
     <Compile Include="Graphics\MiniStatusOverlay.cs" />
     <Compile Include="Graphics\OverlayDialogData.cs" />
     <Compile Include="Graphics\ProgressBar.cs" />
+    <Compile Include="Helpers\AbortableThreadPool.cs" />
     <Compile Include="Helpers\Pair.cs" />
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />

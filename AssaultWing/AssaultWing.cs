@@ -405,18 +405,12 @@ namespace AW2
                 // not in the main thread. Therefore, use Invoke() of the underlying Form.
                 windowForm.Invoke(new Action(() => { Window.AllowUserResizing = false; }));
             }
-            try
-            {
-                Arena arenaTemplate = dataEngine.GetNextPlayableArena();
-                if (arenaTemplate != null)
-                    graphicsEngine.LoadArenaContent(arenaTemplate);
-                fail = dataEngine.NextArena();
-            }
-            finally
-            {
-                if (oldAllowUserResizing)
-                    windowForm.Invoke(new Action(() => { Window.AllowUserResizing = true; }));
-            }
+            Arena arenaTemplate = dataEngine.GetNextPlayableArena();
+            if (arenaTemplate != null)
+                graphicsEngine.LoadArenaContent(arenaTemplate);
+            fail = dataEngine.NextArena();
+            if (oldAllowUserResizing)
+                windowForm.Invoke(new Action(() => { Window.AllowUserResizing = true; }));
             if (fail)
                 throw new InvalidOperationException("There is no next arena to play");
         }
@@ -792,6 +786,21 @@ namespace AW2
             lock (GraphicsDevice)
                 base.Draw(this.gameTime);
             lastDrawTime = this.gameTime.TotalGameTime;
+        }
+
+        /// <summary>
+        /// Raises an <see cref="Microsoft.Xna.Framework.Game.Exiting"/> event.
+        /// </summary>
+        /// <param name="sender">The Game.</param>
+        /// <param name="args">Arguments for the 
+        /// <see cref="Microsoft.Xna.Framework.Game.Exiting"/> event.</param>
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            // If progress bar is running, kill its thread.
+            if (dataEngine.ProgressBar.TaskRunning)
+                dataEngine.ProgressBar.AbortTask();
+
+            base.OnExiting(sender, args);
         }
 
         #endregion Overridden Game methods

@@ -588,7 +588,12 @@ namespace AW2.Game
 
             // Dying has some consequences.
             if (cause.IsSuicide) ++suicides;
-            if (cause.IsKill) ++cause.Killer.Owner.kills;
+            if (cause.IsKill)
+            {
+                ++cause.Killer.Owner.kills;
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                    cause.Killer.Owner.MustUpdateToClients = true;
+            }
             --lives;
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
@@ -602,6 +607,9 @@ namespace AW2.Game
             
             // Schedule the making of a new ship, lives permitting.
             shipSpawnTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(mourningDelay);
+
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                MustUpdateToClients = true;
         }
 
         /// <summary>
@@ -645,6 +653,8 @@ namespace AW2.Game
         /// <param name="bonus">The bonus.</param>
         public void AddBonus(PlayerBonus bonus)
         {
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                MustUpdateToClients = true;
             bonuses |= bonus;
             if ((bonus & PlayerBonus.Weapon1LoadTime) != 0)
                 UpgradeWeapon1LoadTime();
@@ -662,6 +672,8 @@ namespace AW2.Game
         /// <param name="bonus">The bonus.</param>
         public void RemoveBonus(PlayerBonus bonus)
         {
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                MustUpdateToClients = true;
             bonuses &= ~bonus;
             if ((bonus & PlayerBonus.Weapon1LoadTime) != 0)
                 DeupgradeWeapon1LoadTime();

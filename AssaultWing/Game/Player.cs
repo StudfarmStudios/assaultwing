@@ -674,6 +674,16 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Does the player have a bonus.
+        /// </summary>
+        /// <param name="bonus">The bonus to query.</param>
+        /// <returns><c>true</c> if the player has the bonus, <c>false</c> otherwise.</returns>
+        public bool HasBonus(PlayerBonus bonus)
+        {
+            return (bonuses & bonus) != 0;
+        }
+
+        /// <summary>
         /// Adds an incremental upgrade on the player's primary weapon.
         /// </summary>
         void UpgradeWeapon1()
@@ -682,10 +692,7 @@ namespace AW2.Game
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
             int oldWeapon1Upgrades = weapon1Upgrades;
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon1Upgrades != weapon1Upgrades)
-                ship.Weapon1Name = Weapon1RealName;
+            UpdateShipWeapons();
         }
 
         /// <summary>
@@ -697,10 +704,7 @@ namespace AW2.Game
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
             int oldWeapon1Upgrades = weapon1Upgrades;
             weapon1Upgrades = 0;
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon1Upgrades != weapon1Upgrades)
-                ship.Weapon1Name = Weapon1RealName;
+            UpdateShipWeapons();
         }
 
         /// <summary>
@@ -712,10 +716,7 @@ namespace AW2.Game
             Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
             int oldWeapon2Upgrades = weapon2Upgrades;
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon2Upgrades != weapon2Upgrades)
-                ship.Weapon2Name = Weapon2RealName;
+            UpdateShipWeapons();
         }
 
         /// <summary>
@@ -727,10 +728,7 @@ namespace AW2.Game
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
             int oldWeapon2Upgrades = weapon2Upgrades;
             weapon2Upgrades = 0;
-
-            // Only change our weapon if it's a new one.
-            if (oldWeapon2Upgrades != weapon2Upgrades)
-                ship.Weapon2Name = Weapon2RealName;
+            UpdateShipWeapons();
         }
 
         /// <summary>
@@ -738,8 +736,6 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon1LoadTime()
         {
-            // Make our ship recreate its weapon.
-            ship.Weapon1Name = Weapon1RealName;
         }
 
         /// <summary>
@@ -747,8 +743,6 @@ namespace AW2.Game
         /// </summary>
         void DeupgradeWeapon1LoadTime()
         {
-            // Make our ship recreate its weapon.
-            ship.Weapon1Name = Weapon1RealName;
         }
 
         /// <summary>
@@ -756,8 +750,6 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon2LoadTime()
         {
-            // Make our ship recreate its weapon.
-            ship.Weapon2Name = Weapon2RealName;
         }
 
         /// <summary>
@@ -765,8 +757,6 @@ namespace AW2.Game
         /// </summary>
         void DeupgradeWeapon2LoadTime()
         {
-            // Make our ship recreate its weapon.
-            ship.Weapon2Name = Weapon2RealName;
         }
 
         #endregion Methods related to bonuses
@@ -939,6 +929,18 @@ namespace AW2.Game
                 }
                 data.AddGob(playerColor);
             });
+        }
+
+        /// <summary>
+        /// Makes the player's ship update its weapons according to
+        /// the player's current weapon choice and active bonuses.
+        /// </summary>
+        void UpdateShipWeapons()
+        {
+            if (ship.Weapon1Name != Weapon1RealName)
+                ship.Weapon1Name = Weapon1RealName;
+            if (ship.Weapon2Name != Weapon2RealName)
+                ship.Weapon2Name = Weapon2RealName;
         }
 
         /// <summary>

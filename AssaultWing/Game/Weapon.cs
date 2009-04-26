@@ -97,6 +97,8 @@ namespace AW2.Game
         
         /// <summary>
         /// The time in seconds that it takes for the weapon to fire again after being fired once.
+        /// Use the property <see cref="LoadTime"/> to see the current load time
+        /// with applied bonuses.
         /// </summary>
         [TypeParameter]
         protected float loadTime;
@@ -179,10 +181,28 @@ namespace AW2.Game
         public int OwnerHandle { get { return ownerHandle; } set { ownerHandle = value; } }
 
         /// <summary>
+        /// The player who owns the ship who owns the weapon, or <c>null</c> if none exists.
+        /// </summary>
+        Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
+
+        /// <summary>
         /// The time in seconds that it takes for the weapon to fire again 
         /// after being fired once.
         /// </summary>
-        public float LoadTime { get { return loadTime; } set { loadTime = value; } }
+        public float LoadTime
+        {
+            get
+            {
+                if (PlayerOwner != null)
+                {
+                    if (ownerHandle == 1 && PlayerOwner.HasBonus(PlayerBonus.Weapon1LoadTime))
+                        return loadTime / 2;
+                    if (ownerHandle == 2 && PlayerOwner.HasBonus(PlayerBonus.Weapon2LoadTime))
+                        return loadTime / 2;
+                }
+                return loadTime;
+            }
+        }
 
         /// <summary>
         /// Time from which on the weapon is loaded, in game time.
@@ -373,7 +393,7 @@ namespace AW2.Game
         protected void DoneFiring()
         {
             // Reset the weapon's load time counter.
-            loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(loadTime);
+            loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime);
         }
 
         #endregion Weapon protected methods

@@ -227,6 +227,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public string Weapon1Name
         {
+            get { return weapon1 == null ? "no weapon" : weapon1.TypeName; }
             set
             {
                 if (weapon1 != null)
@@ -243,6 +244,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public string Weapon2Name
         {
+            get { return weapon2 == null ? "no weapon" : weapon2.TypeName; }
             set
             {
                 if (weapon2 != null)
@@ -422,13 +424,6 @@ namespace AW2.Game.Gobs
             int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs,
                 delegate(KeyValuePair<string, int> pair) { return pair.Value; });
             Weapon weapon = Weapon.CreateWeapon(weaponName, this, ownerHandle, boneIndices);
-
-            // Apply appropriate player bonuses.
-            if (ownerHandle == 1 && Owner != null && (Owner.Bonuses & PlayerBonus.Weapon1LoadTime) != 0)
-                weapon.LoadTime /= 2;
-            if (ownerHandle == 2 && Owner != null && (Owner.Bonuses & PlayerBonus.Weapon2LoadTime) != 0)
-                weapon.LoadTime /= 2;
-
             data.AddWeapon(weapon);
             return weapon;
         }

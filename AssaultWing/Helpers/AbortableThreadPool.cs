@@ -133,26 +133,34 @@ namespace AW2.Helpers
         {
             if (item == null) throw new ArgumentNullException("item");
 
+            Thread joiningThread = null;
+            WorkItemStatus returnValue;
             lock (_callbacks)
             {
                 LinkedListNode<WorkItem> node = _callbacks.Find(item);
                 if (node != null)
                 {
                     _callbacks.Remove(node);
-                    return WorkItemStatus.Queued;
+                    returnValue = WorkItemStatus.Queued;
                 }
                 else if (_threads.ContainsKey(item))
                 {
                     if (unconditionalAbort)
                     {
                         _threads[item].Abort();
+                        joiningThread = _threads[item];
                         _threads.Remove(item);
-                        return WorkItemStatus.Aborted;
+                        returnValue = WorkItemStatus.Aborted;
                     }
-                    else return WorkItemStatus.Executing;
+                    else 
+                        returnValue = WorkItemStatus.Executing;
                 }
-                else return WorkItemStatus.Completed;
+                else 
+                    returnValue = WorkItemStatus.Completed;
             }
+            if (joiningThread != null)
+                joiningThread.Join(1000);
+            return returnValue;
         }
     }
 }

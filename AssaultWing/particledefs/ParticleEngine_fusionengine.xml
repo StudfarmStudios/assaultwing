@@ -1,67 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Particles.ParticleEngine, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">fusionengine</typeName>
+   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <_ticks type="System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000000</_ticks>
+   </networkUpdatePeriod>
   <textureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">p_blueball</textureName>
   <depthLayer2D type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.41</depthLayer2D>
   <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Additive</type>
+      <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Additive</type>
   </drawMode2D>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <loop type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</loop>
-  <birthRate type="AW2.Helpers.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"><value type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">55</value></birthRate>
+  <birthRate type="AW2.Helpers.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">55</value>
+   </birthRate>
   <totalNumberParticles type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</totalNumberParticles>
   <emitter type="AW2.Game.Particles.DotEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <jitter type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.2</jitter>
+      <jitter type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.2</jitter>
   </emitter>
   <particleAge type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.22</expected>
-    <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
+      <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.22</expected>
+      <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
   </particleAge>
   <particleInitialSize type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.5</expected>
-    <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
+      <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.5</expected>
+      <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
   </particleInitialSize>
   <particleFinalSize type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2.5</expected>
-    <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
+      <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2.5</expected>
+      <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
   </particleFinalSize>
   <particleInitialRotation type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.0</expected>
-    <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.14159265</variance>
+      <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.0</expected>
+      <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.14159265</variance>
   </particleInitialRotation>
   <particleRotationSpeed type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</expected>
-    <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
+      <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</expected>
+      <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
   </particleRotationSpeed>
   <particleInitialColor type="Microsoft.Xna.Framework.Graphics.Color, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-    <R type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</R>
-    <G type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</G>
-    <B type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</B>
-    <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">50</A>
+      <R type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</R>
+      <G type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</G>
+      <B type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</B>
+      <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">50</A>
   </particleInitialColor>
   <particleFinalColor type="Microsoft.Xna.Framework.Graphics.Color, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-    <R type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</R>
-    <G type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</G>
-    <B type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</B>
-    <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</A>
+      <R type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</R>
+      <G type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</G>
+      <B type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">255</B>
+      <A type="System.Byte, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</A>
   </particleFinalColor>
   <particleSpeed type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">90</expected>
-    <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
+      <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">90</expected>
+      <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
   </particleSpeed>
   <particleAcceleration type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</expected>
-    <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
+      <expected type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</expected>
+      <variance type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</variance>
   </particleAcceleration>
   <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</mass>
   <modelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummymodel</modelName>
   <scale type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</scale>
-  <birthGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <deathGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <birthGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+  <deathGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
-  <exhaustEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <exhaustEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
   <elasticity type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.7</elasticity>
   <friction type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.7</friction>
-  <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
   <maxDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
 </GobType>

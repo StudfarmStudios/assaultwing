@@ -224,6 +224,13 @@ namespace AW2.Game
         protected bool movable;
 
         /// <summary>
+        /// Preferred maximum time between the gob's state updates
+        /// from the game server to game clients, in real time.
+        /// </summary>
+        [TypeParameter]
+        TimeSpan networkUpdatePeriod;
+
+        /// <summary>
         /// The physics engine of the game instance this gob belongs to.
         /// </summary>
         protected PhysicsEngine physics;
@@ -554,6 +561,21 @@ namespace AW2.Game
 
         #endregion Gob Properties
 
+        #region Network properties
+
+        /// <summary>
+        /// Preferred maximum time between the gob's state updates
+        /// from the game server to game clients, in real time.
+        /// </summary>
+        public TimeSpan NetworkUpdatePeriod { get { return networkUpdatePeriod; } set { networkUpdatePeriod = value; } }
+
+        /// <summary>
+        /// Time of last network update, in real time. Used only on the game server.
+        /// </summary>
+        public TimeSpan LastNetworkUpdate { get; set; }
+
+        #endregion Network properties
+
         #region Gob static and instance constructors, and static constructor-like methods
 
         static Gob()
@@ -689,6 +711,7 @@ namespace AW2.Game
             bleachDamage = 0;
             bleach = -1;
             bleachResetTime = new TimeSpan(0);
+            LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalGameTime;
         }
 
         /// <summary>

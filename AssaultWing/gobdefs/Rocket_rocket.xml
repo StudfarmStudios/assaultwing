@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Rocket, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <impactDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</impactDamage>
   <thrustForce type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">24000</thrustForce>
   <thrustDuration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.5</thrustDuration>
   <turnSpeed type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</turnSpeed>
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocket</typeName>
+   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <_ticks type="System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000000</_ticks>
+   </networkUpdatePeriod>
   <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">80</mass>
   <elasticity type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.9</elasticity>
   <friction type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</friction>
@@ -12,34 +15,34 @@
   <scale type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.0387</scale>
   <depthLayer2D type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</depthLayer2D>
   <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
+      <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
   </drawMode2D>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
   <maxDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
   <birthGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocket glow</Item>
+      <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocket glow</Item>
   </birthGobTypes>
   <deathGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bomb explosion</Item>
+      <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bomb explosion</Item>
   </deathGobTypes>
   <exhaustEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocketthrust3</Item>
-    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocketthrust2</Item>
-    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocketthrust1</Item>
+      <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocketthrust3</Item>
+      <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocketthrust2</Item>
+      <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocketthrust1</Item>
   </exhaustEngineNames>
   <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalShot</type>
-      <collidesAgainst type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</collidesAgainst>
-	  <cannotOverlap type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalConsistencyCompromisable</cannotOverlap>
-      <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Hit</name>
-      <area type="AW2.Helpers.Geometric.Point, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <location type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
-          <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
-          <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
-        </location>
-      </area>
-    </Item>
+      <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalShot</type>
+         <collidesAgainst type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</collidesAgainst>
+	        <cannotOverlap type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalConsistencyCompromisable</cannotOverlap>
+         <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Hit</name>
+         <area type="AW2.Helpers.Geometric.Point, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <location type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+               <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
+               <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
+            </location>
+         </area>
+      </Item>
   </collisionAreas>
 </GobType>

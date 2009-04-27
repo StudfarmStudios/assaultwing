@@ -567,13 +567,16 @@ namespace AW2.Game
                 }
 
                 // Check player controls.
-                UpdateControlsServer();
+                ApplyControlsToShip();
             }
             else // otherwise we are a game client
             {
                 // As a client, we only care about local player controls.
                 if (!IsRemote)
-                    UpdateControlsClientLocal();
+                {
+                    SendControlsToServer();
+                    ApplyControlsToShip();
+                }
             }
         }
 
@@ -853,10 +856,9 @@ namespace AW2.Game
         #region Private methods
 
         /// <summary>
-        /// Updates the player's controls, assuming this game instance 
-        /// is the game server.
+        /// Applies the player's controls to his ship, if there is any.
         /// </summary>
-        void UpdateControlsServer()
+        void ApplyControlsToShip()
         {
             if (ship != null)
             {
@@ -866,21 +868,25 @@ namespace AW2.Game
                     ship.TurnLeft(controls[PlayerControlType.Left].Force);
                 if (controls[PlayerControlType.Right].Force > 0)
                     ship.TurnRight(controls[PlayerControlType.Right].Force);
-                if (controls[PlayerControlType.Fire1].Pulse)
-                    ship.Fire1();
-                if (controls[PlayerControlType.Fire2].Pulse)
-                    ship.Fire2();
-                if (controls[PlayerControlType.Extra].Pulse)
-                    ship.DoExtra();
+
+                // Game clients can only move their ships directly;
+                // shooting happens only when the server says so.
+                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+                {
+                    if (controls[PlayerControlType.Fire1].Pulse)
+                        ship.Fire1();
+                    if (controls[PlayerControlType.Fire2].Pulse)
+                        ship.Fire2();
+                    if (controls[PlayerControlType.Extra].Pulse)
+                        ship.DoExtra();
+                }
             }
         }
 
         /// <summary>
-        /// Updates the player's controls, assuming the player
-        /// lives on this game instance and this game instance 
-        /// is a game client.
+        /// Sends the player's controls to the game server.
         /// </summary>
-        void UpdateControlsClientLocal()
+        void SendControlsToServer()
         {
             NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
             PlayerControlsMessage message = new PlayerControlsMessage();

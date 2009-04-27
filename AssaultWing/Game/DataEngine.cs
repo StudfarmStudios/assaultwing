@@ -1026,16 +1026,20 @@ namespace AW2.Game
             // Send state updates about gobs to game clients if we are the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
+                TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
                 var message = new GobUpdateMessage();
                 arenaLayers[gameplayLayer].ForEachGob(gob =>
                 {
-                    if (gob.IsRelevant && gob.Movable)
-                        message.AddGob(gob.Id, gob, SerializationModeFlags.VaryingData);
+                    if (!gob.IsRelevant) return;
+                    if (!gob.Movable) return;
+                    if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) return;
+                    gob.LastNetworkUpdate = now;
+                    message.AddGob(gob.Id, gob, SerializationModeFlags.VaryingData);
                 });
                 net.SendToClients(message);
             }
 
-            // Send state updates about players to their own game clients if we are the game server.
+            // Send state updates about players to game clients if we are the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
                 ForEachPlayer(player =>
@@ -1046,7 +1050,7 @@ namespace AW2.Game
                     var message = new PlayerUpdateMessage();
                     message.PlayerId = player.Id;
                     message.Write(player, SerializationModeFlags.VaryingData);
-                    net.SendToClient(player.ConnectionId, message);
+                    net.SendToClients(message);
                 });
             }
 

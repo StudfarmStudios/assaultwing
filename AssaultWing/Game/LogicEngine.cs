@@ -83,35 +83,6 @@ namespace AW2.Game
             
             UpdateControls();
 
-            /* UNDONE: Bonuses are more practical to handle straight by player's bonus time counters.
-            // Process bonus events.
-            for (BonusExpiryEvent eve = eventer.GetEvent<BonusExpiryEvent>(); eve != null;
-                eve = eventer.GetEvent<BonusExpiryEvent>())
-            {
-                Player player = data.GetPlayer(eve.PlayerName);
-                if (player == null) continue;
-                switch (eve.Bonus)
-                {
-                    case PlayerBonus.Weapon1LoadTime:
-                        player.DeupgradeWeapon1LoadTime();
-                        break;
-                    case PlayerBonus.Weapon2LoadTime:
-                        player.DeupgradeWeapon2LoadTime();
-                        break;
-                    case PlayerBonus.Weapon1Upgrade:
-                        player.DeupgradeWeapon1();
-                        break;
-                    case PlayerBonus.Weapon2Upgrade:
-                        player.DeupgradeWeapon2();
-                        break;
-                    default:
-                        Helpers.Log.Write("Warning: Don't know how to handle BonusExpiryEvent for bonus " +
-                            eve.Bonus);
-                        break;
-                }
-            }
-            */
-
             // Player bonus expirations.
             data.ForEachPlayer(delegate(Player player)
             {

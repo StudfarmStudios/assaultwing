@@ -161,15 +161,11 @@ namespace AW2.Game
                 template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type",
                     baseClass, limitationAttribute);
             }
-#if TYPELOADER_DEBUG
             catch (MemberSerializationException e)
             {
                 //throw new ArgumentException("Error in " + fi.Name + ": " + e.Message + ", " + e.MemberName);
                 Log.Write("Error in " + fi.Name + ": " + e.Message + ", " + e.MemberName);
             }
-#else
-            catch (MemberSerializationException) { }
-#endif
             xmlReader.Close();
             fs.Close();
             return template;

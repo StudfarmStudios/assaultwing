@@ -55,7 +55,7 @@ namespace AW2.Net
         /// <returns>The read value.</returns>
         public override float ReadSingle()
         {
-            return BitConverter.ToSingle(BitConverter.GetBytes(ReadInt32()), 0);
+            return Converter.IntToFloat(ReadInt32());
         }
 
         /// <summary>

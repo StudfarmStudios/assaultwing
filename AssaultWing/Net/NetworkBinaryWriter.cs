@@ -35,7 +35,7 @@ namespace AW2.Net
         /// <param name="value">The value to write.</param>
         public override void Write(ushort value)
         {
-            base.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(unchecked((short)value))), 0, 2);
+            base.Write(IPAddress.HostToNetworkOrder(unchecked((short)value)));
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace AW2.Net
         /// <param name="value">The value to write.</param>
         public override void Write(int value)
         {
-            base.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value)), 0, 4);
+            base.Write(IPAddress.HostToNetworkOrder(value));
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace AW2.Net
         /// <param name="value">The value to write.</param>
         public override void Write(float value)
         {
-            Write((int)BitConverter.ToInt32(BitConverter.GetBytes(value), 0));
+            Write(Converter.FloatToInt(value));
         }
 
         /// <summary>

@@ -272,9 +272,17 @@ namespace AW2.Net
 
             // Write body length to header.
             ushort bodyDataLength = checked((ushort)(writer.BaseStream.Length - headerDataLength));
-            byte[] lengthBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(unchecked((short)bodyDataLength)));
-            data[4] = lengthBytes[0];
-            data[5] = lengthBytes[1];
+            short lengthBits = IPAddress.HostToNetworkOrder(unchecked((short)bodyDataLength));
+            if (BitConverter.IsLittleEndian)
+            {
+                data[4] = (byte)(lengthBits & 0x00ff);
+                data[5] = (byte)((lengthBits >> 8) & 0x00ff);
+            }
+            else
+            {
+                data[4] = (byte)((lengthBits >> 8) & 0x00ff);
+                data[5] = (byte)(lengthBits & 0x00ff);
+            }
 
             writer.Close();
             return data;

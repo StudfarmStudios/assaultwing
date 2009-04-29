@@ -1181,9 +1181,9 @@ namespace AW2.Game
             {
                 writer.Write((float)pos.X);
                 writer.Write((float)pos.Y);
-                writer.WriteHalf(move.X);
-                writer.WriteHalf(move.Y);
-                writer.WriteHalf(rotation);
+                writer.Write((Half)move.X);
+                writer.Write((Half)move.Y);
+                writer.Write((Half)rotation);
             }
         }
 

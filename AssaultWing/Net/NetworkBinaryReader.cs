@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
+using AW2.Helpers;
 
 namespace AW2.Net
 {
@@ -60,30 +61,11 @@ namespace AW2.Net
         /// <summary>
         /// Reads a 16-bit floating point value.
         /// </summary>
-        /// <returns>The read value as a 32-bit float.</returns>
-        public float ReadHalf()
+        /// <returns>The read value.</returns>
+        public Half ReadHalf()
         {
-            // Get the 16-bit float's bit representation in native byte order.
-            ushort half = ReadUInt16();
-
-            if (half == 0x7c00) return float.PositiveInfinity;
-            if (half == 0xfc00) return float.NegativeInfinity;
-            if (half == 0x7e00) return float.NaN;
-            if (half == 0) return 0;
-
-            // Decode bit representations of the components of the 16-bit float.
-            // Bits as stated in IEEE 754r: 1 + 5 + 10 (sign + exponent + significand)
-            int sign = (half >> 15) & 0x1;
-            int exponent = (half >> 10) & 0x1f;
-            int significand = half & 0x3ff; // without the implicit bit
-
-            // Construct the 32-bit representation in native byte order.
-            // Bits as stated in IEEE 754: 1 + 8 + 23 (sign + exponent + significand)
-            int singleExponent = exponent - 15 + 127;
-            int singleSignificand = significand << (23 - 10);
-            int single = (sign << 31) | (singleExponent << 23) | singleSignificand;
-
-            return BitConverter.ToSingle(BitConverter.GetBytes(single), 0);
+            short bits = ReadInt16();
+            return Converter.ShortToHalf(bits);
         }
 
         /// <summary>
@@ -177,7 +159,7 @@ namespace AW2.Net
                 var stream = new MemoryStream();
                 var writer = new NetworkBinaryWriter(stream);
                 foreach (float value in data)
-                    writer.WriteHalf(value);
+                    writer.Write((Half)value);
                 writer.Flush();
                 byte[] bytes = stream.GetBuffer();
                 Assert.That(bytes.Any(x => x != 0), "Something wrong with memory stream usage?");

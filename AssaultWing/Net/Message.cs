@@ -299,6 +299,8 @@ namespace AW2.Net
         /// <see cref="Connection.Id"/>
         public static Message Deserialize(byte[] header, byte[] body, int connectionId)
         {
+            if (header == null || body == null)
+                throw new NullReferenceException("Null message header or body");
             if (!IsValidHeader(header))
                 throw new InvalidDataException("Invalid message header");
 

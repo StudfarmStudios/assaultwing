@@ -575,6 +575,11 @@ namespace AW2.Game.Gobs
                 writer.Write((string)weapon1.TypeName, 32, true);
                 writer.Write((string)weapon2.TypeName, 32, true);
             }
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((Half)weapon1Charge);
+                writer.Write((Half)weapon2Charge);
+            }
         }
 
         /// <summary>
@@ -589,6 +594,11 @@ namespace AW2.Game.Gobs
             {
                 Weapon1Name = reader.ReadString(32);
                 Weapon2Name = reader.ReadString(32);
+            }
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                weapon1Charge = reader.ReadHalf();
+                weapon2Charge = reader.ReadHalf();
             }
         }
 

@@ -656,6 +656,19 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Returns a player that satisfies a condition, or <c>null</c>
+        /// if no player satisfies the condition.
+        /// </summary>
+        /// <param name="condition">The condition to satisfy.</param>
+        public Player TryGetPlayer(Predicate<Player> condition)
+        {
+            foreach (Player player in players)
+                if (condition(player))
+                    return player;
+            return null;
+        }
+
+        /// <summary>
         /// Returns the player with the given name, or null if none exists.
         /// </summary>
         /// <param name="playerName">The name of the player.</param>

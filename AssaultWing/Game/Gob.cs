@@ -236,9 +236,14 @@ namespace AW2.Game
         protected PhysicsEngine physics;
 
         /// <summary>
-        /// Table for holding 3D model part transform matrices.
+        /// Access only through <see cref="ModelPartTransforms"/>.
         /// </summary>
-        protected Matrix[] modelPartTransforms;
+        Matrix[] modelPartTransforms;
+
+        /// <summary>
+        /// Last time of update of <see cref="modelPartTransforms"/>, in game time.
+        /// </summary>
+        TimeSpan modelPartTransformsUpdated;
 
         #endregion Fields for all gobs
 
@@ -520,6 +525,30 @@ namespace AW2.Game
                      * Matrix.CreateRotationZ(rotation)
                      * Matrix.CreateTranslation(new Vector3(pos, 0));
 #endif
+            }
+        }
+
+        /// <summary>
+        /// The transform matrices of the gob's 3D model parts.
+        /// </summary>
+        Matrix[] ModelPartTransforms
+        {
+            get
+            {
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                Model model = data.GetModel(modelName);
+                if (modelPartTransforms == null || modelPartTransforms.Length != model.Bones.Count)
+                {
+                    modelPartTransforms = new Matrix[model.Bones.Count];
+                    modelPartTransformsUpdated = new TimeSpan(-1);
+                }
+                TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+                if (modelPartTransformsUpdated < now)
+                {
+                    modelPartTransformsUpdated = now;
+                    model.CopyAbsoluteBoneTransformsTo(modelPartTransforms);
+                }
+                return modelPartTransforms;
             }
         }
 
@@ -984,40 +1013,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// A rectangular area in the X-Y-plane that contains the gob 
-        /// as it is seen in its current location in the game world.
-        /// </summary>
-        /// Subclasses who override the <b>Draw</b> method should also 
-        /// override this property.
-        [Obsolete("Overridden Draw methods should do their own bounding volume clipping")]
-        public virtual BoundingBox DrawBoundingBox
-        {
-            get
-            {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                Model model = data.GetModel(modelName);
-                UpdateModelPartTransforms(model);
-                BoundingSphere modelSphere = new BoundingSphere();
-                bool firstDone = false;
-                foreach (ModelMesh mesh in model.Meshes)
-                {
-                    Matrix meshTransform = modelPartTransforms[mesh.ParentBone.Index];
-                    BoundingSphere meshSphere = mesh.BoundingSphere.Transform(meshTransform);
-                    if (!firstDone)
-                    {
-                        firstDone = true;
-                        modelSphere = meshSphere;
-                    }
-                    else
-                        modelSphere = BoundingSphere.CreateMerged(modelSphere, meshSphere);
-                }
-                modelSphere = modelSphere.Transform(Matrix.CreateTranslation(new Vector3(Pos, 0)));
-                BoundingBox modelBox = BoundingBox.CreateFromSphere(modelSphere);
-                return modelBox;
-            }
-        }
-
-        /// <summary>
         /// Draws the gob's 3D graphics.
         /// </summary>
         /// <param name="view">The view matrix.</param>
@@ -1028,7 +1023,6 @@ namespace AW2.Game
             BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
             Model model = data.GetModel(modelName);
             Matrix world = WorldMatrix;
-            UpdateModelPartTransforms(model);
             Matrix meshSphereTransform = // mesh bounding spheres are by default in model coordinates
                 Matrix.CreateScale(Scale) *
                 Matrix.CreateTranslation(new Vector3(Pos, 0));
@@ -1061,7 +1055,7 @@ namespace AW2.Game
                     data.PrepareEffect(be);
                     be.Projection = projection;
                     be.View = view;
-                    be.World = modelPartTransforms[mesh.ParentBone.Index] * world;
+                    be.World = ModelPartTransforms[mesh.ParentBone.Index] * world;
                 }
                 mesh.Draw();
 
@@ -1231,13 +1225,7 @@ namespace AW2.Game
         /// <returns>The game world location of the named position.</returns>
         public Vector2 GetNamedPosition(int boneIndex)
         {
-            // Note: We assume that UpdateModelPartTransforms() has been called recently.
-            if (modelPartTransforms == null) // HACK to avoid crash when shooting on the very first frame
-            {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                UpdateModelPartTransforms(data.GetModel(modelName));
-            }
-            return Vector2.Transform(Vector2.Zero, modelPartTransforms[boneIndex] * WorldMatrix);
+            return Vector2.Transform(Vector2.Zero, ModelPartTransforms[boneIndex] * WorldMatrix);
         }
 
         /// <summary>
@@ -1326,9 +1314,6 @@ namespace AW2.Game
         /// have been updated so that the exhaust engines have an up-to-date location.
         private void UpdateExhaustEngines()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.GetModel(ModelName);
-            UpdateModelPartTransforms(model);
             for (int i = 0; i < exhaustEngines.Length; ++i)
                 if (exhaustEngines[i] is ParticleEngine)
                 {
@@ -1342,20 +1327,6 @@ namespace AW2.Game
         #endregion Gob methods related to thrusters
 
         #region Gob miscellaneous protected methods
-
-        /// <summary>
-        /// Updates <b>modelPartTransforms</b> to contain the absolute transforms
-        /// of each mesh of the gob's 3D model relative to the root bone of the 3D model.
-        /// </summary>
-        /// <param name="model">The model of the gob.</param>
-        /// You should only pass as argument the model you get from
-        /// <b>DataEngine.GetModel(this.modelName)</b>.
-        protected void UpdateModelPartTransforms(Model model)
-        {
-            if (modelPartTransforms == null || modelPartTransforms.Length != model.Bones.Count)
-                modelPartTransforms = new Matrix[model.Bones.Count];
-            model.CopyAbsoluteBoneTransformsTo(modelPartTransforms);
-        }
 
         /// <summary>
         /// Switches exhaust engines on or off.

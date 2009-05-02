@@ -189,15 +189,13 @@ namespace AW2.Game.Pengs
                         attemptOk = true;
                         float pengInput = peng.Input;
                         int random = RandomHelper.GetRandomInt();
-                        float directionAngle, distance, rotation;
+                        float directionAngle, rotation;
                         Vector2 directionUnit, pos, move;
                         switch (peng.ParticleCoordinates)
                         {
                             case Peng.CoordinateSystem.Peng:
-                                directionAngle = RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
-                                directionUnit = new Vector2((float)Math.Cos(directionAngle), (float)Math.Sin(directionAngle));
-                                distance = radius * (float)Math.Sqrt(RandomHelper.globalRandomGenerator.NextDouble());
-                                pos = distance * directionUnit;
+                                RandomHelper.GetRandomCirclePoint(radius, -sprayAngle, sprayAngle,
+                                    out pos, out directionUnit, out directionAngle);
                                 move = initialVelocity.GetValue(0, pengInput, random) * directionUnit;
                                 switch (facingType)
                                 {
@@ -211,10 +209,9 @@ namespace AW2.Game.Pengs
                                 {
                                     float posWeight = (i + 1) / (float)createCount;
                                     Vector2 iPos = Vector2.Lerp(startPos, endPos, posWeight);
-                                    directionAngle = peng.Rotation + RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
-                                    directionUnit = new Vector2((float)Math.Cos(directionAngle), (float)Math.Sin(directionAngle));
-                                    distance = radius * (float)Math.Sqrt(RandomHelper.globalRandomGenerator.NextDouble());
-                                    pos = iPos + distance * directionUnit;
+                                    RandomHelper.GetRandomCirclePoint(radius, -sprayAngle, sprayAngle,
+                                        out pos, out directionUnit, out directionAngle);
+                                    pos += iPos;
                                     move = peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
                                     switch (facingType)
                                     {

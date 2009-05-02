@@ -4,7 +4,6 @@ using NUnit.Framework;
 #endif
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace AW2.Helpers.Geometric
@@ -1484,9 +1483,10 @@ namespace AW2.Helpers.Geometric
         /// <returns>A random location inside the circle.</returns>
         public static Vector2 GetRandomLocation(Circle circle)
         {
-            float angle = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi);
-            float distance = circle.Radius * (float)Math.Sqrt(RandomHelper.globalRandomGenerator.NextDouble());
-            return circle.Center + distance * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+            Vector2 pos, dirUnit;
+            float dirAngle;
+            RandomHelper.GetRandomCirclePoint(circle.Radius, out pos, out dirUnit, out dirAngle);
+            return pos + circle.Center;
         }
 
         #endregion Random location methods

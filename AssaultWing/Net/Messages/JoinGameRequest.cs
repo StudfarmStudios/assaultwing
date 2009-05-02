@@ -51,7 +51,8 @@ namespace AW2.Net.Messages
 
     /// <summary>
     /// A message from a game client to a game server requesting
-    /// joining to the game the server is hosting.
+    /// to update the players' chosen equipment, and additionally
+    /// requesting the players to join the game.
     /// </summary>
     public class JoinGameRequest : Message
     {

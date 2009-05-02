@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Graphics;
+using AW2.Net;
+using AW2.Net.Messages;
 using AW2.UI;
 
 namespace AW2.Menu
@@ -154,6 +155,7 @@ namespace AW2.Menu
             if (Active)
             {
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
 
                 if (controlBack.Pulse)
                     menuEngine.ActivateComponent(MenuComponentType.Main);
@@ -239,20 +241,58 @@ namespace AW2.Menu
                                     player.Weapon2Name = weapon2Names[(currentI + 1) % weapon2Names.Length];
                                 } break;
                         }
+
+                        // Send new equipment choices to the game server.
+                        var equipUpdateRequest = new JoinGameRequest();
+                        equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
+                        net.SendToServer(equipUpdateRequest);
                     }
                 });
 
                 // React to network messages.
-                AW2.Net.NetworkEngine net = (AW2.Net.NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(AW2.Net.NetworkEngine));
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                {
+                    // Handle JoinGameRequests from game clients.
+                    JoinGameRequest message = null;
+                    while ((message = net.ReceiveFromClients<JoinGameRequest>()) != null)
+                    {
+                        // Send player ID changes for new players, if any. A join game request
+                        // may also update the chosen equipment of a previously added player.
+                        JoinGameReply reply = new JoinGameReply();
+                        var playerIdChanges = new List<JoinGameReply.IdChange>();
+                        foreach (PlayerInfo info in message.PlayerInfos)
+                        {
+                            var oldPlayer = data.TryGetPlayer(plr => plr.ConnectionId == message.ConnectionId && plr.Id == info.id);
+                            if (oldPlayer != null)
+                            {
+                                oldPlayer.Name = info.name;
+                                oldPlayer.ShipName = info.shipTypeName;
+                                oldPlayer.Weapon1Name = info.weapon1TypeName;
+                                oldPlayer.Weapon2Name = info.weapon2TypeName;
+                            }
+                            else
+                            {
+                                Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
+                                data.AddPlayer(player);
+                                playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
+                            }
+                        }
+                        if (playerIdChanges.Count > 0)
+                        {
+                            reply.PlayerIdChanges = playerIdChanges.ToArray();
+                            net.SendToClient(message.ConnectionId, reply);
+                        }
+                    }
+                }
                 if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
                 {
-                    var message = net.ReceiveFromServer<AW2.Net.Messages.StartGameMessage>();
+                    var message = net.ReceiveFromServer<StartGameMessage>();
                     if (message != null)
                     {
                         for (int i = 0; i < message.PlayerCount; ++i)
                         {
                             Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
-                            message.Read(player, AW2.Net.SerializationModeFlags.All);
+                            message.Read(player, SerializationModeFlags.All);
 
                             // Only add the player if it is remote.
                             if (data.GetPlayer(player.Id) == null)

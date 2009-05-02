@@ -368,26 +368,6 @@ namespace AW2.Net
 
             // Manage existing connections.
             // TODO: Move message handling to LogicEngine and other more appropriate places
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-            {
-                // Handle JoinGameRequests from game clients.
-                JoinGameRequest message = null;
-                while ((message = ReceiveFromClients<JoinGameRequest>()) != null)
-                {
-                    JoinGameReply reply = new JoinGameReply();
-                    reply.PlayerIdChanges = new JoinGameReply.IdChange[message.PlayerInfos.Count];
-                    int changeI = 0;
-                    foreach (PlayerInfo info in message.PlayerInfos)
-                    {
-                        Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
-                        data.AddPlayer(player);
-                        reply.PlayerIdChanges[changeI].oldId = info.id;
-                        reply.PlayerIdChanges[changeI].newId = player.Id;
-                        changeI++;
-                    }
-                    SendToClient(message.ConnectionId, reply);
-                }
-            }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && gameServerConnection != null)
             {
                 // Handle JoinGameReplies from the game server.

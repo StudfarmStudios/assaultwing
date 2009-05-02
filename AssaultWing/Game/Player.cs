@@ -124,11 +124,6 @@ namespace AW2.Game
         static int leastUnusedId = 0;
 
         /// <summary>
-        /// The human-readable name of the player.
-        /// </summary>
-        protected string name;
-
-        /// <summary>
         /// Type of ship the player has chosen to fly.
         /// </summary>
         string shipTypeName;
@@ -350,9 +345,9 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// The name of the player.
+        /// The human-readable name of the player.
         /// </summary>
-        public string Name { get { return name; } }
+        public string Name { get; set; }
 
         /// <summary>
         /// The name of the type of ship the player has chosen to fly.
@@ -465,7 +460,7 @@ namespace AW2.Game
         Player(string name, string shipTypeName, string weapon1Name, string weapon2Name)
         {
             Id = leastUnusedId++;
-            this.name = name;
+            this.Name = name;
             this.shipTypeName = shipTypeName;
             this.weapon1Name = weapon1Name;
             this.weapon2Name = weapon2Name;
@@ -790,7 +785,7 @@ namespace AW2.Game
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)Id);
-                writer.Write(name, 32, true);
+                writer.Write(Name, 32, true);
                 writer.Write(shipTypeName, 32, true);
                 writer.Write(weapon1Name, 32, true);
                 writer.Write(weapon2Name, 32, true);
@@ -818,7 +813,7 @@ namespace AW2.Game
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 Id = reader.ReadInt32();
-                name = reader.ReadString(32);
+                Name = reader.ReadString(32);
                 shipTypeName = reader.ReadString(32);
                 weapon1Name = reader.ReadString(32);
                 weapon2Name = reader.ReadString(32);

@@ -437,7 +437,7 @@ namespace AW2.Net
 
                     // We are still connected but there's no data.
                     // Let other threads do their stuff while we wait.
-                    Thread.Sleep(0);
+                    Thread.Sleep(2);
                 }
                 else
                 {
@@ -543,7 +543,7 @@ namespace AW2.Net
                             throw new Exception("Not all data was sent (" + bytesSent + " out of " + totalLength + " bytes)");
                     }
                     else
-                        Thread.Sleep(0);
+                        Thread.Sleep(2);
                 }
             }
             catch (ThreadAbortException)

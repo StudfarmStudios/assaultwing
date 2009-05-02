@@ -127,7 +127,7 @@ namespace AW2.Game.Pengs
             }
 
             // Add random and clamp to limits.
-            int ourRandom = RandomHelper.ShiftRandomInt(random, randomMixer);
+            int ourRandom = RandomHelper.MixRandomInt(random, randomMixer);
             return MathHelper.Clamp(value + randomAmplitude * (ourRandom / (float)int.MaxValue), min, max);
         }
     }

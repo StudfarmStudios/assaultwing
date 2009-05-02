@@ -23,7 +23,16 @@ namespace AW2.Helpers
         /// </summary>
         static Random globalRandomGenerator = new Random(unchecked((int)(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond)));
 
+        static int[] mixers;
+
         #endregion
+
+        static RandomHelper()
+        {
+            mixers = new int[256];
+            for (int i = 0; i < mixers.Length; ++i)
+                mixers[i] = GetRandomInt();
+        }
 
         #region Public interface
 
@@ -76,7 +85,9 @@ namespace AW2.Helpers
         {
             // Produce a predictable random number from the mixer and
             // use it to modify seed.
-            return seed ^ ShiftRandomInt(mixer);
+            int mixerIndex = (mixer & 0xff) ^ ((mixer >> 8) & 0xff)
+                ^ ((mixer >> 16) & 0xff) ^ ((mixer >> 24) & 0xff);
+            return seed ^ mixers[mixerIndex];
         }
 
         /// <summary>
@@ -275,8 +286,12 @@ namespace AW2.Helpers
             {
                 int seed = GetRandomInt();
                 int n = 0;
-                TestEvenDistributionInt(65536, 1000, () => MixRandomInt(seed, n++));
                 TestPredictability(seed, 1000, (x, k) => MixRandomInt(seed, k));
+                // Note: Even distribution is not absolutely necessary.
+                // It is enough if, given a seed, the numbers given by MixRandomInt
+                // for consequtive mixers don't look related. However, that is
+                // difficult to test.
+                TestEvenDistributionInt(65536, 1000, () => MixRandomInt(seed, n++));
             }
 
 #if POISSON_DISTRIBUTION_IMPLEMENTED

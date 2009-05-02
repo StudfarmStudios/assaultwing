@@ -203,11 +203,6 @@ namespace AW2.Game
         protected PlayerControls controls;
 
         /// <summary>
-        /// The ship the player is controlling.
-        /// </summary>
-        protected Ship ship;
-
-        /// <summary>
         /// How many reincarnations the player has left.
         /// </summary>
         protected int lives;
@@ -305,7 +300,7 @@ namespace AW2.Game
         /// <summary>
         /// The ship the player is controlling in the game arena.
         /// </summary>
-        public Ship Ship { get { return ship; } set { ship = value; } }
+        public Ship Ship { get; set; }
 
         /// <summary>
         /// If positive, how many reincarnations the player has left.
@@ -350,8 +345,8 @@ namespace AW2.Game
         /// <param name="damageAmount">The amount of damage.</param>
         public void IncreaseShake(float damageAmount)
         {
-            if (ship == null) return;
-            relativeShakeDamage = Math.Max(0, relativeShakeDamage + damageAmount / ship.MaxDamageLevel);
+            if (Ship == null) return;
+            relativeShakeDamage = Math.Max(0, relativeShakeDamage + damageAmount / Ship.MaxDamageLevel);
         }
 
         /// <summary>
@@ -560,7 +555,7 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
                 // Give birth to a new ship if it's time.
-                if (ship == null && lives != 0 &&
+                if (Ship == null && lives != 0 &&
                     shipSpawnTime <= AssaultWing.Instance.GameTime.TotalGameTime)
                 {
                     CreateShip();
@@ -601,7 +596,7 @@ namespace AW2.Game
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
             bonuses = PlayerBonus.None;
-            ship = null;
+            Ship = null;
 
             // Notify the player about his death and possible killer about his frag.
             SendMessage("Death by " + cause.ToPersonalizedString(this));
@@ -626,7 +621,7 @@ namespace AW2.Game
             bonuses = PlayerBonus.None;
             bonusTimeins = new PlayerBonusItems<TimeSpan>();
             bonusTimeouts = new PlayerBonusItems<TimeSpan>();
-            ship = null;
+            Ship = null;
             shipSpawnTime = new TimeSpan(1);
             relativeShakeDamage = 0;
         }
@@ -718,7 +713,6 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            int oldWeapon1Upgrades = weapon1Upgrades;
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
             UpdateShipWeapons();
         }
@@ -728,9 +722,6 @@ namespace AW2.Game
         /// </summary>
         void DeupgradeWeapon1()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            int oldWeapon1Upgrades = weapon1Upgrades;
             weapon1Upgrades = 0;
             UpdateShipWeapons();
         }
@@ -742,7 +733,6 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
-            int oldWeapon2Upgrades = weapon2Upgrades;
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
             UpdateShipWeapons();
         }
@@ -752,9 +742,6 @@ namespace AW2.Game
         /// </summary>
         void DeupgradeWeapon2()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
-            int oldWeapon2Upgrades = weapon2Upgrades;
             weapon2Upgrades = 0;
             UpdateShipWeapons();
         }
@@ -860,25 +847,25 @@ namespace AW2.Game
         /// </summary>
         void ApplyControlsToShip()
         {
-            if (ship != null)
+            if (Ship != null)
             {
                 if (controls[PlayerControlType.Thrust].Force > 0)
-                    ship.Thrust(controls[PlayerControlType.Thrust].Force);
+                    Ship.Thrust(controls[PlayerControlType.Thrust].Force);
                 if (controls[PlayerControlType.Left].Force > 0)
-                    ship.TurnLeft(controls[PlayerControlType.Left].Force);
+                    Ship.TurnLeft(controls[PlayerControlType.Left].Force);
                 if (controls[PlayerControlType.Right].Force > 0)
-                    ship.TurnRight(controls[PlayerControlType.Right].Force);
+                    Ship.TurnRight(controls[PlayerControlType.Right].Force);
 
                 // Game clients can only move their ships directly;
                 // shooting happens only when the server says so.
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
                 {
                     if (controls[PlayerControlType.Fire1].Pulse)
-                        ship.Fire1();
+                        Ship.Fire1();
                     if (controls[PlayerControlType.Fire2].Pulse)
-                        ship.Fire2();
+                        Ship.Fire2();
                     if (controls[PlayerControlType.Extra].Pulse)
-                        ship.DoExtra();
+                        Ship.DoExtra();
                 }
             }
         }
@@ -910,7 +897,7 @@ namespace AW2.Game
 
             // Gain ownership over the ship only after its position has been set.
             // This way the ship won't be affecting its own spawn position.
-            ship = null;
+            Ship = null;
             Gob.CreateGob(shipTypeName, gob =>
             {
                 if (!(gob is Ship))
@@ -941,7 +928,7 @@ namespace AW2.Game
                     bestSpawn.Spawn(newShip);
 
                 data.AddGob(newShip);
-                ship = newShip;
+                Ship = newShip;
             });
 
             // Create a player marker for the ship.
@@ -951,16 +938,16 @@ namespace AW2.Game
                 if (playerColor is ParticleEngine)
                 {
                     ParticleEngine particleEngine = (ParticleEngine)playerColor;
-                    particleEngine.Pos = ship.Pos;
-                    particleEngine.Rotation = ship.Rotation;
+                    particleEngine.Pos = Ship.Pos;
+                    particleEngine.Rotation = Ship.Rotation;
                     particleEngine.Owner = this;
-                    particleEngine.Leader = ship;
+                    particleEngine.Leader = Ship;
                 }
                 else if (playerColor is Peng)
                 {
                     Peng peng = (Peng)playerColor;
                     peng.Owner = this;
-                    peng.Leader = ship;
+                    peng.Leader = Ship;
                 }
                 data.AddGob(playerColor);
             });
@@ -972,10 +959,11 @@ namespace AW2.Game
         /// </summary>
         void UpdateShipWeapons()
         {
-            if (ship.Weapon1Name != Weapon1RealName)
-                ship.Weapon1Name = Weapon1RealName;
-            if (ship.Weapon2Name != Weapon2RealName)
-                ship.Weapon2Name = Weapon2RealName;
+            if (Ship == null) return;
+            if (Ship.Weapon1Name != Weapon1RealName)
+                Ship.Weapon1Name = Weapon1RealName;
+            if (Ship.Weapon2Name != Weapon2RealName)
+                Ship.Weapon2Name = Weapon2RealName;
         }
 
         /// <summary>

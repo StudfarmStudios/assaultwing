@@ -850,18 +850,12 @@ namespace AW2.Game
                     Ship.TurnLeft(controls[PlayerControlType.Left].Force);
                 if (controls[PlayerControlType.Right].Force > 0)
                     Ship.TurnRight(controls[PlayerControlType.Right].Force);
-
-                // Game clients can only move their ships directly;
-                // shooting happens only when the server says so.
-                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
-                {
-                    if (controls[PlayerControlType.Fire1].Pulse)
-                        Ship.Fire1();
-                    if (controls[PlayerControlType.Fire2].Pulse)
-                        Ship.Fire2();
-                    if (controls[PlayerControlType.Extra].Pulse)
-                        Ship.DoExtra();
-                }
+                if (controls[PlayerControlType.Fire1].Pulse)
+                    Ship.Fire1();
+                if (controls[PlayerControlType.Fire2].Pulse)
+                    Ship.Fire2();
+                if (controls[PlayerControlType.Extra].Pulse)
+                    Ship.DoExtra();
             }
         }
 

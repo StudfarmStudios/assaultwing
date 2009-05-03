@@ -210,9 +210,17 @@ namespace AW2.Game
         public TimeSpan LoadedTime { get { return loadedTime; } }
 
         /// <summary>
-        /// Is the weapon loaded.
+        /// Is the weapon loaded. The setter is for game clients only.
         /// </summary>
-        public bool Loaded { get { return loadedTime <= physics.TimeStep.TotalGameTime; } }
+        public bool Loaded
+        {
+            get { return loadedTime <= physics.TimeStep.TotalGameTime; }
+            set
+            {
+                if (value && !Loaded) loadedTime = physics.TimeStep.TotalGameTime;
+                if (!value && Loaded) loadedTime = physics.TimeStep.TotalGameTime + TimeSpan.FromSeconds(1);
+            }
+        }
 
         /// <summary>
         /// Amount of charge required to fire the weapon.

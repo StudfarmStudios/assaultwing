@@ -579,6 +579,10 @@ namespace AW2.Game.Gobs
             {
                 writer.Write((Half)weapon1Charge);
                 writer.Write((Half)weapon2Charge);
+                byte flags = (byte)(
+                    (Weapon1Loaded ? 0x01 : 0x00) |
+                    (Weapon2Loaded ? 0x02 : 0x00));
+                writer.Write((byte)flags);
             }
         }
 
@@ -599,6 +603,9 @@ namespace AW2.Game.Gobs
             {
                 weapon1Charge = reader.ReadHalf();
                 weapon2Charge = reader.ReadHalf();
+                byte flags = reader.ReadByte();
+                Weapon1.Loaded = (flags & 0x01) != 0;
+                Weapon2.Loaded = (flags & 0x02) != 0;
             }
         }
 

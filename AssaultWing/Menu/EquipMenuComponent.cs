@@ -243,9 +243,12 @@ namespace AW2.Menu
                         }
 
                         // Send new equipment choices to the game server.
-                        var equipUpdateRequest = new JoinGameRequest();
-                        equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
-                        net.SendToServer(equipUpdateRequest);
+                        if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                        {
+                            var equipUpdateRequest = new JoinGameRequest();
+                            equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
+                            net.SendToServer(equipUpdateRequest);
+                        }
                     }
                 });
 

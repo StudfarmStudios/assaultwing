@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AW2.Net;
-using AW2.Net.Messages;
 using Microsoft.Xna.Framework;
 
 namespace AW2.UI
@@ -18,9 +13,42 @@ namespace AW2.UI
         float force;
 
         /// <summary>
-        /// Time of last control state update, in game time.
+        /// Access only through <see cref="LastStateUpdate"/>.
         /// </summary>
         TimeSpan lastStateUpdate;
+
+        /// <summary>
+        /// Access only through <see cref="LastPulseRead"/>.
+        /// </summary>
+        TimeSpan lastPulseRead;
+
+        /// <summary>
+        /// Time of last control state update, in game time.
+        /// </summary>
+        TimeSpan LastStateUpdate
+        {
+            get { return lastStateUpdate; }
+            set
+            {
+                lastStateUpdate = value;
+                // Keep LastStateUpdate and LastPulseRead strictly ordered.
+                if (value == lastPulseRead) lastStateUpdate += new TimeSpan(1);
+            }
+        }
+
+        /// <summary>
+        /// Time of last pulse value read time, in game time.
+        /// </summary>
+        TimeSpan LastPulseRead
+        {
+            get { return lastPulseRead; }
+            set
+            {
+                lastPulseRead = value;
+                // Keep LastStateUpdate and LastPulseRead strictly ordered.
+                if (value == lastStateUpdate) lastPulseRead += new TimeSpan(1);
+            }
+        }
 
         /// <summary>
         /// Creates a remote control.
@@ -30,7 +58,8 @@ namespace AW2.UI
         {
             pulse = false;
             force = 0;
-            lastStateUpdate = new TimeSpan(-1);
+            LastStateUpdate = new TimeSpan(-1);
+            LastPulseRead = new TimeSpan(-1);
         }
 
         /// <summary>
@@ -46,7 +75,18 @@ namespace AW2.UI
         /// <summary>
         /// Did the control give a pulse.
         /// </summary>
-        public override bool Pulse { get { return pulse; } }
+        public override bool Pulse
+        {
+            get
+            {
+                // Give one pulse only on one frame.
+                TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+                if (LastStateUpdate < LastPulseRead && LastPulseRead < now)
+                    pulse = false;
+                LastPulseRead = now;
+                return pulse;
+            }
+        }
 
         /// <summary>
         /// The amount of control force; a float between 0 and 1.
@@ -63,7 +103,7 @@ namespace AW2.UI
             // Take the maximum of all state updates during one frame.
             // This gives priority to hard action.
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
-            if (lastStateUpdate < now)
+            if (LastStateUpdate < now)
             {
                 this.pulse = pulse;
                 this.force = MathHelper.Clamp(force, 0, 1);
@@ -73,7 +113,7 @@ namespace AW2.UI
                 this.pulse |= pulse;
                 this.force = MathHelper.Clamp(force, this.force, 1);
             }
-            lastStateUpdate = now;
+            LastStateUpdate = now;
         }
     }
 }

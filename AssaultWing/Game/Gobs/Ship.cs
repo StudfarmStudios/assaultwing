@@ -181,6 +181,14 @@ namespace AW2.Game.Gobs
 
         #endregion Ship fields related to other things
 
+        #region Ship fields for signalling visual things over the network
+
+        float visualThrustForce;
+        bool visualWeapon1Fired;
+        bool visualWeapon2Fired;
+
+        #endregion Ship fields for signalling visual things over the network
+
         #region Ship properties
 
         /// <summary>
@@ -579,10 +587,17 @@ namespace AW2.Game.Gobs
             {
                 writer.Write((Half)weapon1Charge);
                 writer.Write((Half)weapon2Charge);
+                writer.Write((Half)visualThrustForce);
                 byte flags = (byte)(
                     (Weapon1Loaded ? 0x01 : 0x00) |
-                    (Weapon2Loaded ? 0x02 : 0x00));
+                    (Weapon2Loaded ? 0x02 : 0x00) |
+                    (visualWeapon1Fired ? 0x04 : 0x00) |
+                    (visualWeapon2Fired ? 0x08 : 0x00));
                 writer.Write((byte)flags);
+
+                visualThrustForce = 0;
+                visualWeapon1Fired = false;
+                visualWeapon2Fired = false;
             }
         }
 
@@ -603,9 +618,22 @@ namespace AW2.Game.Gobs
             {
                 weapon1Charge = reader.ReadHalf();
                 weapon2Charge = reader.ReadHalf();
+                float thrustForce = reader.ReadHalf();
                 byte flags = reader.ReadByte();
                 Weapon1.Loaded = (flags & 0x01) != 0;
                 Weapon2.Loaded = (flags & 0x02) != 0;
+                bool weapon1Fired = (flags & 0x04) != 0;
+                bool weapon2Fired = (flags & 0x08) != 0;
+
+                if (thrustForce > 0)
+                    Thrust(thrustForce);
+                // TODO: Fire1() and Fire2() are intended to create muzzle pengs
+                // but they don't. Fix this by inheriting Weapon from Gob and serialising
+                // muzzleFireEngine state over the network.
+                if (weapon1Fired)
+                    Fire1();
+                if (weapon2Fired)
+                    Fire2();
             }
         }
 
@@ -624,8 +652,9 @@ namespace AW2.Game.Gobs
             Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
                 * force * thrustForce;
             physics.ApplyLimitedForce(this, forceVector, maxSpeed);
+            visualThrustForce = force;
 
-            // Manage exhaust engine.
+            // Manage exhaust engines.
             SwitchExhaustEngines(true);
             exhaustAmountUpdated = true;
         }
@@ -679,6 +708,7 @@ namespace AW2.Game.Gobs
         {
             if (Disabled) return;
             weapon1.Fire();
+            visualWeapon1Fired = true;
         }
 
         /// <summary>
@@ -688,6 +718,7 @@ namespace AW2.Game.Gobs
         {
             if (Disabled) return;
             weapon2.Fire();
+            visualWeapon2Fired = true;
         }
 
         /// <summary>

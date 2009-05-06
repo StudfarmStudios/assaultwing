@@ -1106,31 +1106,6 @@ namespace AW2.Game
             }
         }
 
-        #endregion miscellaneous
-
-        #region Private methods
-
-        /// <summary>
-        /// Refreshes <c>arenaToRadarTransform</c> and <c>arenaDimensionsOnRadar</c>
-        /// according to the dimensions of the currently active arena.
-        /// </summary>
-        /// To be called whenever arena (or arena dimensions) change.
-        /// <seealso cref="ArenaToRadarTransform"/>
-        void RefreshArenaToRadarTransform()
-        {
-            if (activeArena == null)
-                throw new InvalidOperationException("No active arena");
-            Vector2 radarDisplayDimensions = new Vector2(162, 150); // TODO: Make this constant configurable
-            Vector2 arenaDimensions = activeArena.Dimensions;
-            float arenaToRadarScale = Math.Min(
-                radarDisplayDimensions.X / arenaDimensions.X,
-                radarDisplayDimensions.Y / arenaDimensions.Y);
-            arenaDimensionsOnRadar = arenaDimensions * arenaToRadarScale;
-            arenaToRadarTransform =
-                Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
-                Matrix.CreateTranslation(0, arenaDimensionsOnRadar.Y, 0);
-        }
-
         /// <summary>
         /// Refreshes <c>ArenaRadarSilhouette</c> according to the contents 
         /// of the currently active arena.
@@ -1139,7 +1114,7 @@ namespace AW2.Game
         /// after <c>RefreshArenaToRadarTransform</c>.
         /// <seealso cref="ArenaRadarSilhouette"/>
         /// <seealso cref="RefreshArenaToRadarTransform"/>
-        void RefreshArenaRadarSilhouette()
+        public void RefreshArenaRadarSilhouette()
         {
             if (activeArena == null)
                 throw new InvalidOperationException("No active arena");
@@ -1199,6 +1174,31 @@ namespace AW2.Game
             // Restore graphics device's old settings.
             gfx.DepthStencilBuffer = oldDepthStencilBuffer;
             maskTarget.Dispose();
+        }
+
+        #endregion miscellaneous
+
+        #region Private methods
+
+        /// <summary>
+        /// Refreshes <c>arenaToRadarTransform</c> and <c>arenaDimensionsOnRadar</c>
+        /// according to the dimensions of the currently active arena.
+        /// </summary>
+        /// To be called whenever arena (or arena dimensions) change.
+        /// <seealso cref="ArenaToRadarTransform"/>
+        void RefreshArenaToRadarTransform()
+        {
+            if (activeArena == null)
+                throw new InvalidOperationException("No active arena");
+            Vector2 radarDisplayDimensions = new Vector2(162, 150); // TODO: Make this constant configurable
+            Vector2 arenaDimensions = activeArena.Dimensions;
+            float arenaToRadarScale = Math.Min(
+                radarDisplayDimensions.X / arenaDimensions.X,
+                radarDisplayDimensions.Y / arenaDimensions.Y);
+            arenaDimensionsOnRadar = arenaDimensions * arenaToRadarScale;
+            arenaToRadarTransform =
+                Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
+                Matrix.CreateTranslation(0, arenaDimensionsOnRadar.Y, 0);
         }
 
         #endregion Private methods

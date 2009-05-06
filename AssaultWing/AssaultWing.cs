@@ -361,6 +361,8 @@ namespace AW2
         public void StartArena()
         {
             dataEngine.StartArena();
+            if (NetworkMode == NetworkMode.Server)
+                networkEngine.SendToClients(new ArenaStartMessage());
             logicEngine.Reset();
             physicsEngine.Reset();
             graphicsEngine.RearrangeViewports();

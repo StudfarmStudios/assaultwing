@@ -77,7 +77,7 @@ namespace AW2.Game
         public override void Update(GameTime gameTime)
         {
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
-            EventEngine eventer = (EventEngine)Game.Services.GetService(typeof(EventEngine));
+            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
             PhysicsEngine physics = (PhysicsEngine)Game.Services.GetService(typeof(PhysicsEngine));
             physics.TimeStep = gameTime;
             
@@ -103,7 +103,15 @@ namespace AW2.Game
             // Check for receptor collisions.
             physics.MovesDone();
 
-            // Check for game end. Network games end when the game server presses Esc.
+            // Check for arena gameplay start if we are a game client.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                net.ReceiveFromServerWhile<ArenaStartMessage>(message =>
+                {
+                    data.RefreshArenaRadarSilhouette();
+                    return true;
+                });
+
+            // Check for arena end. Network games end when the game server presses Esc.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
             {
                 int playersAlive = 0;
@@ -112,14 +120,11 @@ namespace AW2.Game
                     AssaultWing.Instance.FinishArena();
             }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-            {
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-                ArenaFinishMessage message = null;
-                if ((message = net.ReceiveFromServer<ArenaFinishMessage>()) != null)
+                net.ReceiveFromServerWhile<ArenaFinishMessage>(message =>
                 {
                     AssaultWing.Instance.FinishArena();
-                }
-            }
+                    return false;
+                });
         }
 
         /// <summary>

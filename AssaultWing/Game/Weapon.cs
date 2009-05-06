@@ -386,10 +386,7 @@ namespace AW2.Game
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 momentum = new Vector2((float)Math.Cos(Owner.Rotation), (float)Math.Sin(Owner.Rotation))
                 * -recoilMomentum;
-            data.CustomOperations += delegate(object obj)
-            {
-                physics.ApplyMomentum(Owner, momentum);
-            };
+            data.CustomOperations += () => { physics.ApplyMomentum(Owner, momentum); };
         }
 
         /// <summary>

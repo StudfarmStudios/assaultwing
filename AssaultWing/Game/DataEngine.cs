@@ -448,7 +448,7 @@ namespace AW2.Game
 
             // Create arena silhouette not until the freshly added gobs
             // have really been added to field 'gobs'.
-            CustomOperations += delegate(object obj) { RefreshArenaRadarSilhouette(); };
+            CustomOperations += RefreshArenaRadarSilhouette;
         }
 
         /// <summary>
@@ -922,7 +922,7 @@ namespace AW2.Game
         /// You can add your own delegate to this event to postpone it after 
         /// everything else is calculated in the frame.
         /// The parameter to the Action delegate is undefined.
-        public event Action<object> CustomOperations;
+        public event Action CustomOperations;
 
         /// <summary>
         /// Sets lighting for the effect.
@@ -999,7 +999,7 @@ namespace AW2.Game
 
             // Apply custom operations.
             if (CustomOperations != null)
-                CustomOperations(null);
+                CustomOperations();
             CustomOperations = null;
 
             // If we are a game client, remove gobs as told by the game server.

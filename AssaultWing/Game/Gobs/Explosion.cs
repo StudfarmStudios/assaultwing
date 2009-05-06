@@ -159,13 +159,10 @@ namespace AW2.Game.Gobs
 
                 // Remove collision areas that only needed to collide once.
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                data.CustomOperations += delegate(object obj)
+                data.CustomOperations += () =>
                 {
                     physics.Unregister(this);
-                    collisionAreas = Array.FindAll(collisionAreas, delegate(CollisionArea collArea)
-                    {
-                        return collArea.Name == "Force";
-                    });
+                    collisionAreas = Array.FindAll(collisionAreas, (collArea) => collArea.Name == "Force");
                     physics.Register(this);
                 };
             }

@@ -1083,6 +1083,8 @@ namespace AW2.Game
         public void ClearGameState()
         {
             activeArena = null;
+            ForEachArenaLayer(layer => layer.ClearGobs());
+            ClearViewports();
         }
 
         /// <summary>

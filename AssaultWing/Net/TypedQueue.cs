@@ -54,9 +54,11 @@ namespace AW2.Net
 
         /// <summary>
         /// Removes and returns the first element in the queue that is of a type.
+        /// Throws <see cref="InvalidOperationException"/> if there are no elements.
         /// </summary>
         /// <typeparam name="U">The type of element to dequeue.</typeparam>
         /// <returns>The first element in the queue of the type.</returns>
+        /// <seealso cref="TryDequeue"/>
         public U Dequeue<U>() where U : T
         {
             Type elementType = typeof(U);
@@ -65,6 +67,26 @@ namespace AW2.Net
                 Queue<Pair<T, TimeSpan>> subqueue;
                 if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
                     throw new InvalidOperationException("Cannot dequeue empty queue");
+                return (U)subqueue.Dequeue().First;
+            }
+        }
+
+        /// <summary>
+        /// Removes and returns the first element in the queue that is of a type.
+        /// Returns the default value of <typeparamref name="U"/> if there are no elements.
+        /// </summary>
+        /// <typeparam name="U">The type of element to dequeue.</typeparam>
+        /// <returns>The first element in the queue of the type, or the
+        /// default value of <typeparamref name="U"/> if there are no elements.</returns>
+        /// <seealso cref="Dequeue"/>
+        public U TryDequeue<U>() where U : T
+        {
+            Type elementType = typeof(U);
+            lock (queues)
+            {
+                Queue<Pair<T, TimeSpan>> subqueue;
+                if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
+                    return default(U);
                 return (U)subqueue.Dequeue().First;
             }
         }

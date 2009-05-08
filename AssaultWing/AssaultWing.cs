@@ -784,6 +784,9 @@ namespace AW2
 
                 if (NetworkMode != NetworkMode.Standalone)
                     Window.Title += " [" + networkEngine.GetSendQueueSize() + " B send queue]";
+
+                if (NetworkMode == NetworkMode.Client && networkEngine.IsConnectedToGameServer)
+                    Window.Title += " [" + (int)networkEngine.ServerPingTime.TotalMilliseconds + " ms lag]";
             }
             lock (GraphicsDevice)
                 base.Draw(this.gameTime);

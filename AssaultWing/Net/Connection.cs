@@ -1,4 +1,4 @@
-//#define DEBUG_SEND_QUEUE_SIZE // dumps to log an itemised send queue size every second
+//#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -110,7 +110,7 @@ namespace AW2.Net
         /// </summary>
         ThreadSafeWrapper<Queue<Exception>> errors;
 
-#if DEBUG_SEND_QUEUE_SIZE
+#if DEBUG_SENT_BYTE_COUNT
         static TimeSpan lastPrintTime = new TimeSpan(-1);
         static Dictionary<Type, int> messageSizes = new Dictionary<Type, int>();
 #endif
@@ -285,11 +285,11 @@ namespace AW2.Net
         {
             byte[] data = message.Serialize();
             Send(data);
-#if DEBUG_SEND_QUEUE_SIZE
+#if DEBUG_SENT_BYTE_COUNT
             if (lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
             {
                 lastPrintTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                AW2.Helpers.Log.Write("------ SEND_QUEUE_SIZE dump");
+                AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
                 foreach (var pair in messageSizes)
                     AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");
                 messageSizes.Clear();

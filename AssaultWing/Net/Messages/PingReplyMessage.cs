@@ -19,8 +19,8 @@ namespace AW2.Net.Messages
 
         /// <summary>
         /// Timestamp received in the message. Valid only for messages received 
-        /// from the network. This is the time of sending the original ping request,
-        /// in real time from start of game instance.
+        /// from the network. This is the timestamp that was first sent in the 
+        /// original ping request.
         /// </summary>
         public TimeSpan Timestamp { get; private set; }
 

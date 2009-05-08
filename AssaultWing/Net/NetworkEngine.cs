@@ -226,12 +226,7 @@ namespace AW2.Net
         {
             if (gameServerConnection == null)
                 throw new InvalidOperationException("Cannot receive without connection to server");
-            if (gameServerConnection.Messages.Count<T>() > 0)
-            {
-                T message = gameServerConnection.Messages.Dequeue<T>();
-                return message;
-            }
-            return null;
+            return gameServerConnection.Messages.TryDequeue<T>();
         }
 
         /// <summary>
@@ -247,15 +242,13 @@ namespace AW2.Net
         {
             if (gameServerConnection == null)
                 throw new InvalidOperationException("Cannot receive without connection to server");
-            while (gameServerConnection.Messages.Count<T>() > 0)
-            {
-                T message = gameServerConnection.Messages.Dequeue<T>();
+            T message;
+            while ((message = gameServerConnection.Messages.TryDequeue<T>()) != null)
                 if (!handler(message))
                 {
                     gameServerConnection.Messages.Requeue(message);
                     break;
                 }
-            }
         }
 
         /// <summary>
@@ -290,11 +283,10 @@ namespace AW2.Net
         public T ReceiveFromClients<T>() where T : Message
         {
             foreach (Connection connection in clientConnections)
-                if (connection.Messages.Count<T>() > 0)
-                {
-                    T message = connection.Messages.Dequeue<T>();
-                    return message;
-                }
+            {
+                T message = connection.Messages.TryDequeue<T>();
+                if (message != null) return message;
+            }
             return null;
         }
 
@@ -309,14 +301,7 @@ namespace AW2.Net
         {
             foreach (Connection connection in clientConnections)
                 if (connection.Id == connectionId)
-                {
-                    if (connection.Messages.Count<T>() > 0)
-                    {
-                        T message = connection.Messages.Dequeue<T>();
-                        return message;
-                    }
-                    return null;
-                }
+                    return connection.Messages.TryDequeue<T>();
             throw new ArgumentException("Invalid connection ID");
         }
 
@@ -366,7 +351,15 @@ namespace AW2.Net
                 }
             });
 
-            // Manage existing connections.
+            // Manage ping requests.
+            ForEachConnection(connection => 
+            {
+                var ping = connection.Messages.TryDequeue<PingRequestMessage>();
+                if (ping == null) return;
+                var pong = ping.GetPingReplyMessage();
+                connection.Send(pong);
+            });
+
             // TODO: Move message handling to LogicEngine and other more appropriate places
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && gameServerConnection != null)
             {

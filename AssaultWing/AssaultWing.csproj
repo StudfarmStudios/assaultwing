@@ -295,6 +295,7 @@
     <Compile Include="Net\NetworkBinaryWriter.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\INetworkSerializable.cs" />
+    <Compile Include="Net\PingedConnection.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\SerializationModeFlags.cs" />
     <Compile Include="Net\StreamMessage.cs" />

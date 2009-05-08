@@ -54,25 +54,25 @@ namespace AW2.Net
         /// Network connection to the management server, 
         /// or <c>null</c> if no such live connection exists.
         /// </summary>
-        ManagementServerConnection managementServerConnection;
+        PingedConnection managementServerConnection;
 
         /// <summary>
         /// Network connection to the game server of the current game session, 
         /// or <c>null</c> if no such live connection exists 
         /// (including the case that we are the game server).
         /// </summary>
-        GameServerConnection gameServerConnection;
+        PingedConnection gameServerConnection;
 
         /// <summary>
         /// Network connections to game clients. Nonempty only when 
         /// we are a game server.
         /// </summary>
-        LinkedList<GameClientConnection> clientConnections;
+        LinkedList<PingedConnection> clientConnections;
 
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
         /// </summary>
-        List<GameClientConnection> removedClientConnections;
+        List<PingedConnection> removedClientConnections;
 
         /// <summary>
         /// Handler of connection results for client that is connecting to a game server.
@@ -95,8 +95,8 @@ namespace AW2.Net
         public NetworkEngine(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            clientConnections = new LinkedList<GameClientConnection>();
-            removedClientConnections = new List<GameClientConnection>();
+            clientConnections = new LinkedList<PingedConnection>();
+            removedClientConnections = new List<PingedConnection>();
         }
 
         #endregion Constructor
@@ -133,8 +133,8 @@ namespace AW2.Net
         {
             Log.Write("Server stops listening");
             Connection.StopListening();
-            foreach (Connection connection in clientConnections)
-                connection.Dispose();
+            foreach (PingedConnection connection in clientConnections)
+                connection.BaseConnection.Dispose();
             clientConnections.Clear();
         }
 
@@ -164,7 +164,7 @@ namespace AW2.Net
             Log.Write("Client closes connection");
             if (gameServerConnection != null)
             {
-                gameServerConnection.Dispose();
+                gameServerConnection.BaseConnection.Dispose();
                 gameServerConnection = null;
             }
         }
@@ -179,7 +179,7 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
 
-            GameClientConnection connection = GetClientConnection(connectionId);
+            var connection = GetClientConnection(connectionId);
             removedClientConnections.Add(connection);
 
             // Remove the client's players.
@@ -188,14 +188,14 @@ namespace AW2.Net
                 List<string> droppedPlayerNames = new List<string>();
                 data.ForEachPlayer(plr =>
                 {
-                    if (plr.ConnectionId == connection.Id)
+                    if (plr.ConnectionId == connection.BaseConnection.Id)
                         droppedPlayerNames.Add(plr.Name);
                 });
                 string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
                 if (!player.IsRemote)
                     player.SendMessage(message);
             });
-            data.RemovePlayers(player => player.ConnectionId == connection.Id);
+            data.RemovePlayers(player => player.ConnectionId == connection.BaseConnection.Id);
         }
 
         /// <summary>
@@ -208,11 +208,11 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot send without connection to server");
             try
             {
-                gameServerConnection.Send(message);
+                gameServerConnection.BaseConnection.Send(message);
             }
             catch (SocketException e)
             {
-                gameServerConnection.Errors.Do(queue => queue.Enqueue(e));
+                gameServerConnection.BaseConnection.Errors.Do(queue => queue.Enqueue(e));
             }
         }
 
@@ -226,7 +226,7 @@ namespace AW2.Net
         {
             if (gameServerConnection == null)
                 throw new InvalidOperationException("Cannot receive without connection to server");
-            return gameServerConnection.Messages.TryDequeue<T>();
+            return gameServerConnection.BaseConnection.Messages.TryDequeue<T>();
         }
 
         /// <summary>
@@ -243,10 +243,10 @@ namespace AW2.Net
             if (gameServerConnection == null)
                 throw new InvalidOperationException("Cannot receive without connection to server");
             T message;
-            while ((message = gameServerConnection.Messages.TryDequeue<T>()) != null)
+            while ((message = gameServerConnection.BaseConnection.Messages.TryDequeue<T>()) != null)
                 if (!handler(message))
                 {
-                    gameServerConnection.Messages.Requeue(message);
+                    gameServerConnection.BaseConnection.Messages.Requeue(message);
                     break;
                 }
         }
@@ -257,8 +257,8 @@ namespace AW2.Net
         /// <param name="message">The message to send.</param>
         public void SendToClients(Message message)
         {
-            foreach (Connection connection in clientConnections)
-                connection.Send(message);
+            foreach (PingedConnection connection in clientConnections)
+                connection.BaseConnection.Send(message);
         }
 
         /// <summary>
@@ -268,8 +268,8 @@ namespace AW2.Net
         /// <param name="message">The message to send.</param>
         public void SendToClient(int connectionId, Message message)
         {
-            Connection connection = GetClientConnection(connectionId);
-            connection.Send(message);
+            PingedConnection connection = GetClientConnection(connectionId);
+            connection.BaseConnection.Send(message);
         }
 
         /// <summary>
@@ -282,9 +282,9 @@ namespace AW2.Net
         /// or <c>null</c> if no messages of the type were unreceived from game clients.</returns>
         public T ReceiveFromClients<T>() where T : Message
         {
-            foreach (Connection connection in clientConnections)
+            foreach (PingedConnection connection in clientConnections)
             {
-                T message = connection.Messages.TryDequeue<T>();
+                T message = connection.BaseConnection.Messages.TryDequeue<T>();
                 if (message != null) return message;
             }
             return null;
@@ -299,9 +299,9 @@ namespace AW2.Net
         /// or <c>null</c> if no messages of the type were unreceived from the game client.</returns>
         public T ReceiveFromClient<T>(int connectionId) where T : Message
         {
-            foreach (Connection connection in clientConnections)
-                if (connection.Id == connectionId)
-                    return connection.Messages.TryDequeue<T>();
+            foreach (PingedConnection connection in clientConnections)
+                if (connection.BaseConnection.Id == connectionId)
+                    return connection.BaseConnection.Messages.TryDequeue<T>();
             throw new ArgumentException("Invalid connection ID");
         }
 
@@ -313,9 +313,22 @@ namespace AW2.Net
             int count = 0;
             ForEachConnection(connection =>
             {
-                count += connection.GetSendQueueSize();
+                count += connection.BaseConnection.GetSendQueueSize();
             });
             return count;
+        }
+
+        /// <summary>
+        /// Round-trip ping time to the game server.
+        /// </summary>
+        public TimeSpan ServerPingTime
+        {
+            get
+            {
+                if (gameServerConnection == null)
+                    throw new InvalidOperationException("Cannot ping server without connection");
+                return gameServerConnection.PingTime;
+            }
         }
 
         #endregion Public interface
@@ -339,26 +352,20 @@ namespace AW2.Net
                     if (result.Id == "I connect")
                     {
                         if (result.Successful)
-                            gameServerConnection = (GameServerConnection)result.Value;
+                            gameServerConnection = new PingedConnection(result.Value);
                         startClientConnectionHandler(result);
                     }
                     if (result.Id == "I listen")
                     {
                         if (result.Successful)
-                            clientConnections.AddLast((GameClientConnection)result.Value);
+                            clientConnections.AddLast(new PingedConnection(result.Value));
                         startServerConnectionHandler(result);
                     }
                 }
             });
 
-            // Manage ping requests.
-            ForEachConnection(connection => 
-            {
-                var ping = connection.Messages.TryDequeue<PingRequestMessage>();
-                if (ping == null) return;
-                var pong = ping.GetPingReplyMessage();
-                connection.Send(pong);
-            });
+            // Update ping time measurements.
+            ForEachConnection(connection => connection.Update());
 
             // TODO: Move message handling to LogicEngine and other more appropriate places
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && gameServerConnection != null)
@@ -375,23 +382,23 @@ namespace AW2.Net
             }
 
             // Handle occurred errors.
-            ForEachConnection(connection => connection.HandleErrors());
+            ForEachConnection(connection => connection.BaseConnection.HandleErrors());
 
             // Finish removing dropped client connections.
-            foreach (GameClientConnection connection in removedClientConnections)
+            foreach (PingedConnection connection in removedClientConnections)
                 clientConnections.Remove(connection);
 
 #if DEBUG
             // Look for unhandled messages.
             Type lastMessageType = null; // to avoid flooding log messages
-            Connection lastConnection = null;
-            ForEachConnection(connection => connection.Messages.Prune(TimeSpan.FromSeconds(10), message =>
+            PingedConnection lastConnection = null;
+            ForEachConnection(connection => connection.BaseConnection.Messages.Prune(TimeSpan.FromSeconds(10), message =>
             {
                 if (lastMessageType != message.GetType() || lastConnection != connection)
                 {
                     lastMessageType = message.GetType();
                     lastConnection = connection;
-                    Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
+                    Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.BaseConnection.Name);
                 }
             }));
 #endif
@@ -405,8 +412,8 @@ namespace AW2.Net
         /// <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
-            foreach (Connection connection in clientConnections)
-                connection.Dispose();
+            foreach (PingedConnection connection in clientConnections)
+                connection.BaseConnection.Dispose();
             base.Dispose(disposing);
         }
 
@@ -419,10 +426,10 @@ namespace AW2.Net
         /// </summary>
         /// <param name="connectionId">The identifier of the client connection.</param>
         /// <returns>The client connection.</returns>
-        GameClientConnection GetClientConnection(int connectionId)
+        PingedConnection GetClientConnection(int connectionId)
         {
-            foreach (GameClientConnection connection in clientConnections)
-                if (connection.Id == connectionId)
+            foreach (PingedConnection connection in clientConnections)
+                if (connection.BaseConnection.Id == connectionId)
                     return connection;
             throw new ArgumentException("No client connection with ID " + connectionId);
         }
@@ -431,13 +438,13 @@ namespace AW2.Net
         /// Performs an operation on each established connection.
         /// </summary>
         /// <param name="action">The action to perform.</param>
-        void ForEachConnection(Action<Connection> action)
+        void ForEachConnection(Action<PingedConnection> action)
         {
             if (managementServerConnection != null)
                 action(managementServerConnection);
             if (gameServerConnection != null)
                 action(gameServerConnection);
-            foreach (Connection clientConnection in clientConnections)
+            foreach (PingedConnection clientConnection in clientConnections)
                 action(clientConnection);
         }
 

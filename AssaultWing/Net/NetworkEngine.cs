@@ -54,7 +54,7 @@ namespace AW2.Net
         /// Network connection to the management server, 
         /// or <c>null</c> if no such live connection exists.
         /// </summary>
-        PingedConnection managementServerConnection;
+        PingedConnection managementServerConnection = null; // HACK: assignment to avoid compiler warning
 
         /// <summary>
         /// Network connection to the game server of the current game session, 

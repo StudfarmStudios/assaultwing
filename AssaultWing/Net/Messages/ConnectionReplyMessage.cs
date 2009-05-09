@@ -11,6 +11,9 @@ namespace AW2.Net.Messages
     [Flags]
     public enum ConnectionReplyFlags : byte
     {
+        /// <summary>
+        /// Firewall has been detected (???)
+        /// </summary>
         TcpOk = 0x80,
     }
 
@@ -20,14 +23,20 @@ namespace AW2.Net.Messages
     /// </summary>
     public class ConnectionReplyMessage : Message
     {
-        ConnectionReplyFlags flags;
-        public ConnectionReplyFlags Flags { get { return flags; } set { flags = value; } }
+        /// <summary>
+        /// Flags of the message.
+        /// </summary>
+        public ConnectionReplyFlags Flags { get; set; }
 
-        ConnectionRequestAuthenticationMethod authenticationMethod;
-        public ConnectionRequestAuthenticationMethod AuthenticationMethod { get { return authenticationMethod; } set { authenticationMethod = value; } }
+        /// <summary>
+        /// Chosen authentication method.
+        /// </summary>
+        public ConnectionRequestAuthenticationMethod AuthenticationMethod { get; set; }
 
-        byte[] challenge;
-        public byte[] Challenge { get { return challenge; } set { challenge = value; } }
+        /// <summary>
+        /// Authentication challenge.
+        /// </summary>
+        public byte[] Challenge { get; set; }
 
         /// <summary>
         /// Challenge field length.
@@ -49,13 +58,13 @@ namespace AW2.Net.Messages
             // byte flags
             // byte authentication_method
             // byte[challengeFieldLength] challenge
-            writer.Write((byte)flags);
-            writer.Write((byte)authenticationMethod);
-            if (challenge == null)
+            writer.Write((byte)Flags);
+            writer.Write((byte)AuthenticationMethod);
+            if (Challenge == null)
                 throw new NullReferenceException("Null challenge field on serialization");
-            if (challenge.Length != challengeFieldLength)
-                throw new MessageException("Invalid challenge field length on serialization (" + challenge.Length + ", not " + challengeFieldLength + ")");
-            writer.Write(challenge);
+            if (Challenge.Length != challengeFieldLength)
+                throw new MessageException("Invalid challenge field length on serialization (" + Challenge.Length + ", not " + challengeFieldLength + ")");
+            writer.Write(Challenge);
         }
 
         /// <summary>
@@ -64,9 +73,9 @@ namespace AW2.Net.Messages
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            flags = (ConnectionReplyFlags)reader.ReadByte();
-            authenticationMethod = (ConnectionRequestAuthenticationMethod)reader.ReadByte();
-            challenge = reader.ReadBytes(challengeFieldLength);
+            Flags = (ConnectionReplyFlags)reader.ReadByte();
+            AuthenticationMethod = (ConnectionRequestAuthenticationMethod)reader.ReadByte();
+            Challenge = reader.ReadBytes(challengeFieldLength);
         }
     }
 }

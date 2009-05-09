@@ -11,6 +11,9 @@ namespace AW2.Net.Messages
     [Flags]
     public enum ConnectionRequestFlags : byte
     {
+        /// <summary>
+        /// The game instance doesn't want to be a server.
+        /// </summary>
         DontWannaBeServer = 0x80,
     }
 
@@ -19,26 +22,37 @@ namespace AW2.Net.Messages
     /// </summary>
     public enum ConnectionRequestAuthenticationMethod : byte
     {
+        /// <summary>
+        /// No authentication.
+        /// </summary>
         None = 0,
     }
 
     /// <summary>
-    /// A message from a game client to a management server 
+    /// A message from a game instance to a management server 
     /// for requesting connection.
     /// </summary>
     public class ConnectionRequestMessage : Message
     {
-        ConnectionRequestFlags flags;
-        public ConnectionRequestFlags Flags { get { return flags; } set { flags = value; } }
+        /// <summary>
+        /// Flags of the message.
+        /// </summary>
+        public ConnectionRequestFlags Flags { get; set; }
 
-        ConnectionRequestAuthenticationMethod authenticationMethod;
-        public ConnectionRequestAuthenticationMethod AuthenticationMethod { get { return authenticationMethod; } set { authenticationMethod = value; } }
+        /// <summary>
+        /// Chosen authentication method.
+        /// </summary>
+        public ConnectionRequestAuthenticationMethod AuthenticationMethod { get; set; }
 
-        ushort serverPort;
-        public ushort ServerPort { get { return serverPort; } set { serverPort = value; } }
+        /// <summary>
+        /// TCP port of the game instance, in case the game instance becomes the game server.
+        /// </summary>
+        public ushort ServerPort { get; set; }
 
-        string username;
-        public string Username { get { return username; } set { username = value; } }
+        /// <summary>
+        /// Name of the user on the game instance.
+        /// </summary>
+        public string Username { get; set; }
 
         /// <summary>
         /// User name field length. Including trailing zero!
@@ -61,10 +75,10 @@ namespace AW2.Net.Messages
             // byte authentication_method
             // word server_port
             // char[usernameFieldLength] username
-            writer.Write((byte)flags);
-            writer.Write((byte)authenticationMethod);
-            writer.Write((ushort)serverPort);
-            writer.Write((string)username, usernameFieldLength, true);
+            writer.Write((byte)Flags);
+            writer.Write((byte)AuthenticationMethod);
+            writer.Write((ushort)ServerPort);
+            writer.Write((string)Username, usernameFieldLength, true);
         }
 
         /// <summary>
@@ -73,10 +87,10 @@ namespace AW2.Net.Messages
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            flags = (ConnectionRequestFlags)reader.ReadByte();
-            authenticationMethod = (ConnectionRequestAuthenticationMethod)reader.ReadByte();
-            serverPort = reader.ReadUInt16();
-            username = reader.ReadString(usernameFieldLength);
+            Flags = (ConnectionRequestFlags)reader.ReadByte();
+            AuthenticationMethod = (ConnectionRequestAuthenticationMethod)reader.ReadByte();
+            ServerPort = reader.ReadUInt16();
+            Username = reader.ReadString(usernameFieldLength);
         }
     }
 }

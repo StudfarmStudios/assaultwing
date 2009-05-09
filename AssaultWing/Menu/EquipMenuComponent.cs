@@ -41,16 +41,6 @@ namespace AW2.Menu
             /// Set up Assault Wing's technical thingies.
             /// </summary>
             Weapon2,
-
-            /// <summary>
-            /// The first item in the main menu.
-            /// </summary>
-            _FirstItem = Ship,
-
-            /// <summary>
-            /// The last item in the main menu.
-            /// </summary>
-            _LastItem = Weapon2,
         }
 
         Control controlBack, controlDone;
@@ -78,6 +68,12 @@ namespace AW2.Menu
         EquipMenuItem[] currentItems;
 
         /// <summary>
+        /// Equipment selectors for each player and each aspect of the player's equipment.
+        /// Indexed as [playerI, aspectI].
+        /// </summary>
+        EquipmentSelector[,] equipmentSelectors;
+
+        /// <summary>
         /// Does the menu component react to input.
         /// </summary>
         public override bool Active
@@ -89,6 +85,7 @@ namespace AW2.Menu
                 {
                     menuEngine.IsProgressBarVisible = false;
                     menuEngine.IsHelpTextVisible = true;
+                    CreateSelectors();
                 }
             }
         }
@@ -151,167 +148,181 @@ namespace AW2.Menu
         /// </summary>
         public override void Update()
         {
-            // Check our controls and react to them.
             if (Active)
             {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+                CheckGeneralControls();
+                CheckPlayerControls();
+                CheckNetwork();
+            }
+        }
 
-                if (controlBack.Pulse)
-                    menuEngine.ActivateComponent(MenuComponentType.Main);
-                else if (controlDone.Pulse)
+        /// <summary>
+        /// Sets up selectors for each aspect of equipment of each player.
+        /// </summary>
+        private void CreateSelectors()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            int playerCount = 0;
+            data.ForEachPlayer(player => ++playerCount);
+            int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
+            equipmentSelectors = new EquipmentSelector[playerCount, aspectCount];
+
+            string[] shipNames = { "Hyperion", "Prowler" };
+            string[] weapon1Names = { "peashooter", "shotgun" };
+            string[] weapon2Names = { "bazooka", "rockets" };
+            int playerI = 0;
+            data.ForEachPlayer(player =>
+            {
+                equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player, shipNames);
+                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon1] = new Weapon1Selector(player, weapon1Names);
+                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player, weapon2Names);
+                ++playerI;
+            });
+        }
+
+        private void CheckGeneralControls()
+        {
+            if (controlBack.Pulse)
+                menuEngine.ActivateComponent(MenuComponentType.Main);
+            else if (controlDone.Pulse)
+            {
+                switch (AssaultWing.Instance.NetworkMode)
                 {
-                    switch (AssaultWing.Instance.NetworkMode)
-                    {
-                        case NetworkMode.Server:
-                            // HACK: Server has a fixed arena playlist
-                            // Start loading the first arena and display its progress.
-                            menuEngine.ProgressBarAction(
-                                AssaultWing.Instance.PrepareFirstArena,
-                                AssaultWing.Instance.StartArena);
-
-                            // We don't accept input while an arena is loading.
-                            Active = false;
-                            break;
-                        case NetworkMode.Client:
-                            // Client advances only when the server says so.
-                            break;
-                        case NetworkMode.Standalone:
-                            menuEngine.ActivateComponent(MenuComponentType.Arena);
-                            break;
-                        default: throw new Exception("Unexpected network mode " + AssaultWing.Instance.NetworkMode);
-                    }
-                }
-
-                // React to players' controls.
-                int playerI = -1;
-                data.ForEachPlayer(player =>
-                {
-                    if (player.IsRemote) return;
-                    ++playerI;
-                    if (player.Controls.thrust.Pulse)
-                    {
-                        cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
-                        if (currentItems[playerI] != EquipMenuItem._FirstItem) --currentItems[playerI];
-                    }
-                    if (player.Controls.down.Pulse)
-                    {
-                        cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
-                        if (currentItems[playerI] != EquipMenuItem._LastItem) ++currentItems[playerI];
-                    }
-                    if (player.Controls.fire1.Pulse)
-                    {
-                        cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
-                        string[] shipNames = { "Hyperion", "Prowler" };
-                        string[] weapon1Names = { "peashooter", "shotgun" };
-                        string[] weapon2Names = { "bazooka", "rockets" };
-                        switch (currentItems[playerI])
-                        {
-                            case EquipMenuItem.Ship:
-                                {
-                                    int currentI = 0;
-                                    for (int i = 0; i < shipNames.Length; ++i)
-                                        if (shipNames[i] == player.ShipName)
-                                        {
-                                            currentI = i;
-                                            break;
-                                        }
-                                    player.ShipName = shipNames[(currentI + 1) % shipNames.Length];
-                                } break;
-                            case EquipMenuItem.Weapon1:
-                                {
-                                    int currentI = 0;
-                                    for (int i = 0; i < weapon1Names.Length; ++i)
-                                        if (weapon1Names[i] == player.Weapon1Name)
-                                        {
-                                            currentI = i;
-                                            break;
-                                        }
-                                    player.Weapon1Name = weapon1Names[(currentI + 1) % weapon1Names.Length];
-                                } break;
-                            case EquipMenuItem.Weapon2:
-                                {
-                                    int currentI = 0;
-                                    for (int i = 0; i < weapon2Names.Length; ++i)
-                                        if (weapon2Names[i] == player.Weapon2Name)
-                                        {
-                                            currentI = i;
-                                            break;
-                                        }
-                                    player.Weapon2Name = weapon2Names[(currentI + 1) % weapon2Names.Length];
-                                } break;
-                        }
-
-                        // Send new equipment choices to the game server.
-                        if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                        {
-                            var equipUpdateRequest = new JoinGameRequest();
-                            equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
-                            net.SendToServer(equipUpdateRequest);
-                        }
-                    }
-                });
-
-                // React to network messages.
-                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                {
-                    // Handle JoinGameRequests from game clients.
-                    JoinGameRequest message = null;
-                    while ((message = net.ReceiveFromClients<JoinGameRequest>()) != null)
-                    {
-                        // Send player ID changes for new players, if any. A join game request
-                        // may also update the chosen equipment of a previously added player.
-                        JoinGameReply reply = new JoinGameReply();
-                        var playerIdChanges = new List<JoinGameReply.IdChange>();
-                        foreach (PlayerInfo info in message.PlayerInfos)
-                        {
-                            var oldPlayer = data.TryGetPlayer(plr => plr.ConnectionId == message.ConnectionId && plr.Id == info.id);
-                            if (oldPlayer != null)
-                            {
-                                oldPlayer.Name = info.name;
-                                oldPlayer.ShipName = info.shipTypeName;
-                                oldPlayer.Weapon1Name = info.weapon1TypeName;
-                                oldPlayer.Weapon2Name = info.weapon2TypeName;
-                            }
-                            else
-                            {
-                                Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
-                                data.AddPlayer(player);
-                                playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
-                            }
-                        }
-                        if (playerIdChanges.Count > 0)
-                        {
-                            reply.PlayerIdChanges = playerIdChanges.ToArray();
-                            net.SendToClient(message.ConnectionId, reply);
-                        }
-                    }
-                }
-                if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                {
-                    var message = net.ReceiveFromServer<StartGameMessage>();
-                    if (message != null)
-                    {
-                        for (int i = 0; i < message.PlayerCount; ++i)
-                        {
-                            Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
-                            message.Read(player, SerializationModeFlags.All);
-
-                            // Only add the player if it is remote.
-                            if (data.GetPlayer(player.Id) == null)
-                                data.AddPlayer(player);
-                        }
-
-                        data.ArenaPlaylist = message.ArenaPlaylist;
-
-                        // Prepare and start playing the game.
+                    case NetworkMode.Server:
+                        // HACK: Server has a fixed arena playlist
+                        // Start loading the first arena and display its progress.
                         menuEngine.ProgressBarAction(
                             AssaultWing.Instance.PrepareFirstArena,
                             AssaultWing.Instance.StartArena);
 
                         // We don't accept input while an arena is loading.
                         Active = false;
+                        break;
+                    case NetworkMode.Client:
+                        // Client advances only when the server says so.
+                        break;
+                    case NetworkMode.Standalone:
+                        menuEngine.ActivateComponent(MenuComponentType.Arena);
+                        break;
+                    default: throw new Exception("Unexpected network mode " + AssaultWing.Instance.NetworkMode);
+                }
+            }
+        }
+
+        private void CheckPlayerControls()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+
+            int playerI = -1;
+            data.ForEachPlayer(player =>
+            {
+                if (player.IsRemote) return;
+                ++playerI;
+
+                ConditionalPlayerAction(player.Controls.thrust.Pulse, playerI, () =>
+                {
+                    if (currentItems[playerI] > 0)
+                        --currentItems[playerI];
+                });
+                ConditionalPlayerAction(player.Controls.down.Pulse, playerI, () =>
+                {
+                    if ((int)currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
+                        ++currentItems[playerI];
+                });
+
+                int selectionChange = 0;
+                ConditionalPlayerAction(player.Controls.left.Pulse, playerI,
+                    () => { selectionChange = -1; });
+                ConditionalPlayerAction(player.Controls.fire1.Pulse || player.Controls.right.Pulse, playerI,
+                    () => { selectionChange = 1; });
+                if (selectionChange != 0)
+                {
+                    equipmentSelectors[playerI, (int)currentItems[playerI]].CurrentValue += selectionChange;
+
+                    // Send new equipment choices to the game server.
+                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                    {
+                        var equipUpdateRequest = new JoinGameRequest();
+                        equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
+                        net.SendToServer(equipUpdateRequest);
                     }
+                }
+            });
+        }
+
+        /// <summary>
+        /// Helper for <seealso cref="CheckPlayerControls"/>
+        /// </summary>
+        private void ConditionalPlayerAction(bool condition, int playerI, Action action)
+        {
+            if (!condition) return;
+            cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
+            action();
+        }
+
+        private void CheckNetwork()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                // Handle JoinGameRequests from game clients.
+                JoinGameRequest message = null;
+                while ((message = net.ReceiveFromClients<JoinGameRequest>()) != null)
+                {
+                    // Send player ID changes for new players, if any. A join game request
+                    // may also update the chosen equipment of a previously added player.
+                    JoinGameReply reply = new JoinGameReply();
+                    var playerIdChanges = new List<JoinGameReply.IdChange>();
+                    foreach (PlayerInfo info in message.PlayerInfos)
+                    {
+                        var oldPlayer = data.TryGetPlayer(plr => plr.ConnectionId == message.ConnectionId && plr.Id == info.id);
+                        if (oldPlayer != null)
+                        {
+                            oldPlayer.Name = info.name;
+                            oldPlayer.ShipName = info.shipTypeName;
+                            oldPlayer.Weapon1Name = info.weapon1TypeName;
+                            oldPlayer.Weapon2Name = info.weapon2TypeName;
+                        }
+                        else
+                        {
+                            Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
+                            data.AddPlayer(player);
+                            playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
+                        }
+                    }
+                    if (playerIdChanges.Count > 0)
+                    {
+                        reply.PlayerIdChanges = playerIdChanges.ToArray();
+                        net.SendToClient(message.ConnectionId, reply);
+                    }
+                }
+            }
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            {
+                var message = net.ReceiveFromServer<StartGameMessage>();
+                if (message != null)
+                {
+                    for (int i = 0; i < message.PlayerCount; ++i)
+                    {
+                        Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
+                        message.Read(player, SerializationModeFlags.All);
+
+                        // Only add the player if it is remote.
+                        if (data.GetPlayer(player.Id) == null)
+                            data.AddPlayer(player);
+                    }
+
+                    data.ArenaPlaylist = message.ArenaPlaylist;
+
+                    // Prepare and start playing the game.
+                    menuEngine.ProgressBarAction(
+                        AssaultWing.Instance.PrepareFirstArena,
+                        AssaultWing.Instance.StartArena);
+
+                    // We don't accept input while an arena is loading.
+                    Active = false;
                 }
             }
         }

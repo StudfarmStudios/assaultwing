@@ -223,6 +223,7 @@
     <Compile Include="Helpers\Pair.cs" />
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
+    <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\MainMenuComponent.cs" />
     <Compile Include="Menu\MenuComponent.cs" />

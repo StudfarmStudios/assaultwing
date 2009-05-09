@@ -26,16 +26,10 @@ namespace AW2.Game.Pengs
             Directed,
 
             /// <summary>
-            /// Particles face away from the emission center.
-            /// </summary>
-            [Obsolete]
-            Radial,
-
-            /// <summary>
             /// Particles face the direction where they start moving,
             /// that is, away from the emission center.
             /// </summary>
-            Forward = Radial,
+            Forward,
 
             /// <summary>
             /// Particles face in random directions.

@@ -267,9 +267,6 @@
     </Compile>
     <Compile Include="Helpers\SpatialGrid.cs" />
     <Compile Include="Helpers\Statistics.cs" />
-    <Compile Include="Helpers\StringHelper.cs">
-      <Name>StringHelper</Name>
-    </Compile>
     <Compile Include="Net\Connection.cs" />
     <Compile Include="Net\GameClientConnection.cs" />
     <Compile Include="Net\GameplayMessage.cs" />

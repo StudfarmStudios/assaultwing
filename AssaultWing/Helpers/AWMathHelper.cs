@@ -164,23 +164,13 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Adds a sprite string to the batch of sprites to be rendered, 
-        /// specifying the font, output text, screen position, and color tint.
-        /// The position on screen is rounded to integer coordinates
-        /// to avoid anti-aliasing on the text.
+        /// Rounds the components of a vector to the nearest integers.
         /// </summary>
-        /// <seealso cref="Microsoft.Xna.Framework.Graphics.SpriteBatch.DrawString(SpriteFont, string, Vector2, Color)"/>
-        /// <param name="spriteBatch">The sprite batch to draw with.</param>
-        /// <param name="font">The sprite font.</param>
-        /// <param name="text">The string to draw.</param>
-        /// <param name="pos">The location, in screen coordinates, where the text will be drawn
-        /// after rounding to integers.</param>
-        /// <param name="color">The desired color of the text.</param>
-        public static void DrawStringRounded(this SpriteBatch spriteBatch,
-            SpriteFont font, string text, Vector2 pos, Color color)
+        /// <param name="v">The vector.</param>
+        /// <returns>The vector with its components rounded to the nearest integers.</returns>
+        public static Vector2 Round(Vector2 v)
         {
-            pos = new Vector2((int)pos.X, (int)pos.Y);
-            spriteBatch.DrawString(font, text, pos, color);
+            return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y));
         }
 
         #region Unit tests

@@ -38,7 +38,7 @@ namespace AW2.Graphics
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             Vector2 textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
             Vector2 textSize = font.MeasureString(text);
-            spriteBatch.DrawStringRounded(font, text, textCenter - textSize / 2, Color.White);
+            spriteBatch.DrawString(font, text, AWMathHelper.Round(textCenter - textSize / 2), Color.White);
         }
 
         /// <summary>

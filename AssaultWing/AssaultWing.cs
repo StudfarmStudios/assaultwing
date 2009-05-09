@@ -663,6 +663,11 @@ namespace AW2
             dataEngine.AddPlayer(player1);
             dataEngine.AddPlayer(player2);
 
+            dataEngine.GameplayMode = new GameplayMode();
+            dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler" };
+            dataEngine.GameplayMode.Weapon1Types = new string[] { "peashooter", "shotgun" };
+            dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
+
             ChangeState(GameState.Menu);
 
             base.BeginRun();

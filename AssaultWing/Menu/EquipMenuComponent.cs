@@ -167,15 +167,12 @@ namespace AW2.Menu
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
             equipmentSelectors = new EquipmentSelector[playerCount, aspectCount];
 
-            string[] shipNames = { "Hyperion", "Prowler" };
-            string[] weapon1Names = { "peashooter", "shotgun" };
-            string[] weapon2Names = { "bazooka", "rockets" };
             int playerI = 0;
             data.ForEachPlayer(player =>
             {
-                equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player, shipNames);
-                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon1] = new Weapon1Selector(player, weapon1Names);
-                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player, weapon2Names);
+                equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
+                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon1] = new Weapon1Selector(player);
+                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player);
                 ++playerI;
             });
         }

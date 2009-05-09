@@ -902,6 +902,11 @@ namespace AW2.Game
         #region miscellaneous
 
         /// <summary>
+        /// The current mode of gameplay.
+        /// </summary>
+        public GameplayMode GameplayMode { get; set; }
+
+        /// <summary>
         /// The progress bar.
         /// </summary>
         /// Anybody can tell the progress bar that their tasks are completed.

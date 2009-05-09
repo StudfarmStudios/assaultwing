@@ -4,7 +4,6 @@ using NUnit.Framework;
 #endif
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Helpers
 {
@@ -173,6 +172,24 @@ namespace AW2.Helpers
             return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y));
         }
 
+        /// <summary>
+        /// Returns the smallest non-negative value congruent to a value.
+        /// The returned value will be between <c>0</c> and <c>modulus - 1</c>, inclusive.
+        /// This is different from the expression <c>value % modulus</c> 
+        /// which returns the remainder of the corresponding division.
+        /// </summary>
+        /// <param name="value">The value to modulate.</param>
+        /// <param name="modulus">The modulus.</param>
+        /// <returns>The smallest non-negative value congruent to 
+        /// <paramref name="value"/> modulo <paramref name="modulus"/>.</returns>
+        public static int Modulo(this int value, int modulus)
+        {
+            if (modulus <= 0) throw new InvalidOperationException("Cannot compute " + value + " modulo " + modulus);
+            int result = value % modulus;
+            if (result < 0) result += modulus;
+            return result;
+        }
+
         #region Unit tests
 #if DEBUG
         /// <summary>
@@ -306,6 +323,46 @@ namespace AW2.Helpers
                 DoFillCircleTest(313);
                 DoFillCircleTest(314);
                 DoFillCircleTest(1001);
+            }
+
+            /// <summary>
+            /// Tests Vector2 rounding
+            /// </summary>
+            [Test]
+            public void TestVector2Round()
+            {
+                Assert.AreEqual(new Vector2(0, 0), Round(new Vector2(0, 0)));
+                Assert.AreEqual(new Vector2(1, 1), Round(new Vector2(1.000001f, 1.499999f)));
+                Assert.AreEqual(new Vector2(2, 2), Round(new Vector2(1.500001f, 1.999999f)));
+                Assert.AreEqual(new Vector2(-1, -1), Round(new Vector2(-1.000001f, -1.499999f)));
+                Assert.AreEqual(new Vector2(-2, -2), Round(new Vector2(-1.500001f, -1.999999f)));
+                Assert.AreEqual(new Vector2(-1234567, 1234567), Round(new Vector2(-1234566.7f, 1234567.3f)));
+            }
+
+            /// <summary>
+            /// Tests integer congruence.
+            /// </summary>
+            [Test]
+            public void TestModulo()
+            {
+                try { 0.Modulo(0); Assert.Fail("Exception not thrown with zero modulus"); }
+                catch { }
+                try { 5.Modulo(-3); Assert.Fail("Exception not thrown with negative modulus"); }
+                catch { }
+
+                Assert.AreEqual(1, 1.Modulo(3));
+                Assert.AreEqual(2, 2.Modulo(3));
+                Assert.AreEqual(0, 3.Modulo(3));
+                Assert.AreEqual(1, 4.Modulo(3));
+
+                Assert.AreEqual(1234567, 3234567.Modulo(2000000));
+
+                Assert.AreEqual(2, (-1).Modulo(3));
+                Assert.AreEqual(1, (-2).Modulo(3));
+                Assert.AreEqual(0, (-3).Modulo(3));
+                Assert.AreEqual(2, (-4).Modulo(3));
+
+                Assert.AreEqual(-3234567 + 2 * 2000000, (-3234567).Modulo(2000000));
             }
 
             /// <summary>

@@ -17,7 +17,7 @@ namespace AW2.Menu
         int currentValue;
 
         /// <summary>
-        /// Index of the currently selected value in .
+        /// Index of the currently selected value in the list of possible values.
         /// </summary>
         public int CurrentValue
         {

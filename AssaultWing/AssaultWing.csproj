@@ -322,6 +322,7 @@
     <Compile Include="UI\Controls.cs">
       <Name>Controls</Name>
     </Compile>
+    <Compile Include="UI\EditableText.cs" />
     <Compile Include="UI\Keyboard.cs">
       <Name>Keyboard</Name>
     </Compile>

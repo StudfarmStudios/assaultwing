@@ -38,21 +38,9 @@ namespace AW2.Menu
         int currentItem = 0;
 
         /// <summary>
-        /// Position of caret in a text edit field, as a zero-based index from
-        /// the beginning of the editable text.
-        /// </summary>
-        int caretPosition = 0;
-
-        /// <summary>
-        /// Last key pressed in text edit field, or <c>null</c> if
-        /// no key pressed yet, or the pressed key has been released.
-        /// </summary>
-        Keys? lastPressedKey;
-
-        /// <summary>
         /// IP address of server to connect.
         /// </summary>
-        string connectAddress = "192.168.11.2";
+        EditableText connectAddress;
 
         string connectItemPrefix = "Connect to ";
         MultiControl controlUp, controlDown, controlSelect;
@@ -152,11 +140,13 @@ namespace AW2.Menu
                 data.RemovePlayers(player => count++ > 0);
                 data.ArenaPlaylist = new List<string> { "Amazonas" };
             };
-            networkContents[1].Name = connectItemPrefix + connectAddress;
+
+            connectAddress = new EditableText("192.168.11.2");
+            networkContents[1].Name = connectItemPrefix + connectAddress.Content;
             networkContents[1].Action = () =>
             {
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
-                AssaultWing.Instance.StartClient(connectAddress, result =>
+                AssaultWing.Instance.StartClient(connectAddress.Content, result =>
                 {
                     if (!result.Successful)
                     {
@@ -212,82 +202,45 @@ namespace AW2.Menu
             // Check our controls and react to them.
             if (Active)
             {
-                if (controlUp.Pulse)
+                ConditionalAction(controlUp.Pulse, () =>
                 {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    if (currentItem > 0) --currentItem;
-                }
-                if (controlDown.Pulse)
+                    if (currentItem > 0) 
+                        --currentItem;
+                });
+                ConditionalAction(controlDown.Pulse, () =>
                 {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    if (currentItem < currentContents.Count - 1) ++currentItem;
-                }
-                if (controlSelect.Pulse)
+                    if (currentItem < currentContents.Count - 1) 
+                        ++currentItem;
+                });
+                ConditionalAction(controlSelect.Pulse, () =>
                 {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                     currentContents[currentItem].Action();
-                }
-                if (controlBack.Pulse)
+                });
+                ConditionalAction(controlBack.Pulse, () =>
                 {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                     currentContents = startContents;
-                }
+                });
 
-                // Text field editing, a HACK for now
+                // Text field editing
                 if (currentContents == networkContents && currentItem == 1)
                 {
-                    KeyboardState state = Keyboard.GetState();
-
-                    // If a key has been pressed, do nothing until it is released.
-                    if (lastPressedKey.HasValue)
+                    connectAddress.Update(() =>
                     {
-                        if (state.IsKeyUp(lastPressedKey.Value))
-                            lastPressedKey = null;
-                    }
-                    if (!lastPressedKey.HasValue)
-                    {
-                        foreach (Keys key in state.GetPressedKeys())
-                        {
-                            switch (key)
-                            {
-                                case Keys.Left: --caretPosition; break;
-                                case Keys.Right: ++caretPosition; break;
-                                case Keys.Home: caretPosition = 0; break;
-                                case Keys.End: caretPosition = connectAddress.Length; break;
-                                case Keys.Back: 
-                                    if (caretPosition > 0)
-                                    {
-                                        --caretPosition;
-                                        connectAddress = connectAddress.Remove(caretPosition, 1);
-                                    }
-                                    break;
-                                case Keys.Delete:
-                                    if (caretPosition < connectAddress.Length)
-                                        connectAddress = connectAddress.Remove(caretPosition, 1);
-                                    break;
-                                default:
-                                    // React to text input
-                                    char? chr = null;
-                                    if (key >= Keys.D0 && key <= Keys.D9)
-                                        chr = (char)('0' + key - Keys.D0);
-                                    if (key == Keys.OemPeriod)
-                                        chr = '.';
-                                    if (chr.HasValue && connectAddress.Length < 15)
-                                    {
-                                        connectAddress = connectAddress.Insert(caretPosition, chr.Value.ToString());
-                                        ++caretPosition;
-                                    }
-                                    break;
-                            }
-                            caretPosition = Math.Min(caretPosition, connectAddress.Length);
-                            caretPosition = Math.Max(caretPosition, 0);
-                            lastPressedKey = key;
-                            cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                        }
-                        networkContents[1].Name = connectItemPrefix + connectAddress;
-                    }
+                        cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                        networkContents[1].Name = connectItemPrefix + connectAddress.Content;
+                    });
                 }
             }
+        }
+
+        /// <summary>
+        /// Helper for <seealso cref="Update"/>
+        /// </summary>
+        private void ConditionalAction(bool condition, Action action)
+        {
+            if (!condition) return;
+            cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            action();
         }
 
         /// <summary>
@@ -308,7 +261,8 @@ namespace AW2.Menu
             // HACK: Draw cursor as text field editing caret in a special case
             if (currentContents == networkContents && currentItem == 1)
             {
-                Vector2 partialTextSize = menuBigFont.MeasureString(connectItemPrefix + connectAddress.Substring(0, caretPosition));
+                Vector2 partialTextSize = menuBigFont.MeasureString(connectItemPrefix + 
+                    connectAddress.Content.Substring(0, connectAddress.CaretPosition));
                 cursorPos.X = textPos.X + partialTextSize.X;
             }
             spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));

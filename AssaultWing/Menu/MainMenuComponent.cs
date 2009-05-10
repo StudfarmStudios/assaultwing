@@ -17,6 +17,8 @@ namespace AW2.Menu
     /// </summary>
     class MainMenuComponent : MenuComponent
     {
+        #region Fields
+
         /// <summary>
         /// The very first menu when the game starts.
         /// </summary>
@@ -45,6 +47,7 @@ namespace AW2.Menu
         string connectItemPrefix = "Connect to ";
         MultiControl controlUp, controlDown, controlSelect;
         Control controlBack;
+        TriggeredCallbackCollection commonCallbacks;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont;
         Texture2D backgroundTexture, cursorTexture, highlightTexture;
@@ -60,6 +63,10 @@ namespace AW2.Menu
         /// </summary>
         TimeSpan cursorFadeStartTime;
 
+        #endregion Fields
+
+        #region Properties
+
         /// <summary>
         /// Does the menu component react to input.
         /// </summary>
@@ -72,6 +79,7 @@ namespace AW2.Menu
                 {
                     // Update our controls to players' possibly changed controls.
                     InitializeControls();
+                    InitializeControlCallbacks();
 
                     // Fall back to start menu.
                     currentContents = startContents;
@@ -92,7 +100,11 @@ namespace AW2.Menu
         /// This is a good place to center the menu view to when the menu component
         /// is to be seen well on the screen.
         public override Vector2 Center { get { return pos + new Vector2(700, 495); } }
-        
+
+        #endregion Properties
+
+        #region Constructor
+
         /// <summary>
         /// Creates a main menu component for a menu system.
         /// </summary>
@@ -100,7 +112,6 @@ namespace AW2.Menu
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             pos = new Vector2(0, 698);
 
             cursorFade = new Curve();
@@ -110,7 +121,94 @@ namespace AW2.Menu
             cursorFade.PreLoop = CurveLoopType.Cycle;
             cursorFade.PostLoop = CurveLoopType.Cycle;
 
-            // Initialise menu contents.
+            InitializeMenuContents();
+
+            // Set initial menu contents
+            currentContents = startContents;
+        }
+
+        #endregion Constructor
+
+        #region Public methods
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            menuBigFont = data.GetFont(FontName.MenuFontBig);
+            backgroundTexture = data.GetTexture(TextureName.MainMenuBackground);
+            cursorTexture = data.GetTexture(TextureName.MainMenuCursor);
+            highlightTexture = data.GetTexture(TextureName.MainMenuHighlight);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            // The textures and fonts we reference will be disposed by GraphicsEngine.
+        }
+
+        /// <summary>
+        /// Updates the menu component.
+        /// </summary>
+        public override void Update()
+        {
+            if (!Active) return;
+            commonCallbacks.Update();
+
+            // Text field editing
+            if (currentContents == networkContents && currentItem == 1)
+            {
+                connectAddress.Update(() =>
+                {
+                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                    networkContents[1].Name = connectItemPrefix + connectAddress.Content;
+                });
+            }
+        }
+
+        /// <summary>
+        /// Draws the menu component.
+        /// </summary>
+        /// <param name="view">Top left corner of the menu view in menu system coordinates.</param>
+        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
+        /// to have been called and <c>End</c> is assumed to be called after this
+        /// method returns.</param>
+        public override void Draw(Vector2 view, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
+            Vector2 textPos = pos - view + new Vector2(585, 355);
+            Vector2 cursorPos = pos - view + new Vector2(551, 358 + (int)currentItem * menuBigFont.LineSpacing);
+            Vector2 highlightPos = cursorPos + new Vector2(cursorTexture.Width, 0);
+            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
+
+            // HACK: Draw cursor as text field editing caret in a special case
+            if (currentContents == networkContents && currentItem == 1)
+            {
+                Vector2 partialTextSize = menuBigFont.MeasureString(connectItemPrefix + 
+                    connectAddress.Content.Substring(0, connectAddress.CaretPosition));
+                cursorPos.X = textPos.X + partialTextSize.X;
+            }
+            spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
+
+            spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
+            for (int i = 0; i < currentContents.Count; ++i)
+            {
+                spriteBatch.DrawString(menuBigFont, currentContents[i].Name, textPos, Color.White);
+                textPos.Y += menuBigFont.LineSpacing;
+            }
+        }
+
+        #endregion Public methods
+
+        #region Private methods
+
+        private void InitializeMenuContents()
+        {
+            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             startContents = new MainMenuContents("Start Menu", 4);
             startContents[0].Name = "Play Local";
             startContents[0].Action = () => menuEngine.ActivateComponent(MenuComponentType.Equip);
@@ -119,7 +217,7 @@ namespace AW2.Menu
             startContents[2].Name = "Setup";
             //startContents[2].Action = () => stuff;
             startContents[3].Name = "Quit";
-            startContents[3].Action = () => AssaultWing.Instance.Exit();
+            startContents[3].Action = AssaultWing.Instance.Exit;
 
             networkContents = new MainMenuContents("Battlefront Menu", 2);
             networkContents[0].Name = "Play as Server";
@@ -169,116 +267,39 @@ namespace AW2.Menu
                     net.SendToServer(joinGameRequest);
                 });
             };
-
-            // Set initial menu contents
-            currentContents = startContents;
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
-        public override void LoadContent()
+        private void InitializeControlCallbacks()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            menuBigFont = data.GetFont(FontName.MenuFontBig);
-            backgroundTexture = data.GetTexture(TextureName.MainMenuBackground);
-            cursorTexture = data.GetTexture(TextureName.MainMenuCursor);
-            highlightTexture = data.GetTexture(TextureName.MainMenuHighlight);
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // The textures and fonts we reference will be disposed by GraphicsEngine.
-        }
-
-        /// <summary>
-        /// Updates the menu component.
-        /// </summary>
-        public override void Update()
-        {
-            // Check our controls and react to them.
-            if (Active)
+            commonCallbacks = new TriggeredCallbackCollection();
+            commonCallbacks.TriggeredCallback = () =>
             {
-                ConditionalAction(controlUp.Pulse, () =>
-                {
-                    if (currentItem > 0) 
-                        --currentItem;
-                });
-                ConditionalAction(controlDown.Pulse, () =>
-                {
-                    if (currentItem < currentContents.Count - 1) 
-                        ++currentItem;
-                });
-                ConditionalAction(controlSelect.Pulse, () =>
-                {
-                    currentContents[currentItem].Action();
-                });
-                ConditionalAction(controlBack.Pulse, () =>
-                {
-                    currentContents = startContents;
-                });
-
-                // Text field editing
-                if (currentContents == networkContents && currentItem == 1)
-                {
-                    connectAddress.Update(() =>
-                    {
-                        cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                        networkContents[1].Name = connectItemPrefix + connectAddress.Content;
-                    });
-                }
-            }
-        }
-
-        /// <summary>
-        /// Helper for <seealso cref="Update"/>
-        /// </summary>
-        private void ConditionalAction(bool condition, Action action)
-        {
-            if (!condition) return;
-            cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-            action();
-        }
-
-        /// <summary>
-        /// Draws the menu component.
-        /// </summary>
-        /// <param name="view">Top left corner of the menu view in menu system coordinates.</param>
-        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
-        /// to have been called and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
-        public override void Draw(Vector2 view, SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
-            Vector2 textPos = pos - view + new Vector2(585, 355);
-            Vector2 cursorPos = pos - view + new Vector2(551, 358 + (int)currentItem * menuBigFont.LineSpacing);
-            Vector2 highlightPos = cursorPos + new Vector2(cursorTexture.Width, 0);
-            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
-
-            // HACK: Draw cursor as text field editing caret in a special case
-            if (currentContents == networkContents && currentItem == 1)
+                cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            };
+            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () =>
             {
-                Vector2 partialTextSize = menuBigFont.MeasureString(connectItemPrefix + 
-                    connectAddress.Content.Substring(0, connectAddress.CaretPosition));
-                cursorPos.X = textPos.X + partialTextSize.X;
-            }
-            spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
-
-            spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
-            for (int i = 0; i < currentContents.Count; ++i)
+                if (currentItem > 0)
+                    --currentItem;
+            }));
+            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () =>
             {
-                spriteBatch.DrawString(menuBigFont, currentContents[i].Name, textPos, Color.White);
-                textPos.Y += menuBigFont.LineSpacing;
-            }
+                if (currentItem < currentContents.Count - 1)
+                    ++currentItem;
+            }));
+            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlSelect, () =>
+            {
+                currentContents[currentItem].Action();
+            }));
+            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlBack, () =>
+            {
+                currentContents = startContents;
+            }));
         }
 
         /// <summary>
         /// Sets up the menu component's controls based on players' current control setup.
         /// </summary>
-        void InitializeControls()
+        private void InitializeControls()
         {
             if (controlUp != null) controlUp.Release();
             if (controlDown != null) controlDown.Release();
@@ -301,6 +322,8 @@ namespace AW2.Menu
                 controlSelect.Add(player.Controls.fire1);
             });
         }
+
+        #endregion Private methods
     }
 
     /// <summary>

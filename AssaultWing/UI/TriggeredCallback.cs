@@ -7,11 +7,6 @@ using AW2.Game;
 namespace AW2.UI
 {
     /// <summary>
-    /// A parameterless callback.
-    /// </summary>
-    public delegate void Callback();
-
-    /// <summary>
     /// A callback that can be triggered by a control.
     /// </summary>
     /// Call <c>Update</c> regularly to check for the triggering condition.
@@ -74,14 +69,14 @@ namespace AW2.UI
         #endregion Static members
 
         Control control;
-        Callback callback;
+        Action callback;
 
         /// <summary>
         /// Creates a triggered callback.
         /// </summary>
         /// <param name="control">The triggering control.</param>
         /// <param name="callback">The callback.</param>
-        public TriggeredCallback(Control control, Callback callback)
+        public TriggeredCallback(Control control, Action callback)
         {
             if (control == null || callback == null)
                 throw new ArgumentNullException("DialogAction got null arguments");
@@ -92,10 +87,16 @@ namespace AW2.UI
         /// <summary>
         /// Updates the triggered callback, invoking the callback if the control triggers it.
         /// </summary>
-        public void Update()
+        /// <returns><c>true</c> if the callback was invoked, or
+        /// <c>false</c> otherwise.</returns>
+        public bool Update()
         {
             if (control.Pulse)
+            {
                 callback();
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

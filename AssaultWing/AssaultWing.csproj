@@ -330,6 +330,7 @@
     <Compile Include="UI\MultiControl.cs" />
     <Compile Include="UI\RemoteControl.cs" />
     <Compile Include="UI\TriggeredCallback.cs" />
+    <Compile Include="UI\TriggeredCallbackCollection.cs" />
     <Compile Include="UI\UIEngineImpl.cs">
       <Name>UIEngineImpl</Name>
     </Compile>

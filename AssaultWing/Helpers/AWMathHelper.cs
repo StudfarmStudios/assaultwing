@@ -190,6 +190,21 @@ namespace AW2.Helpers
             return result;
         }
 
+        /// <summary>
+        /// Clamps an integer to an interval.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <param name="min">The smallest allowed integer.</param>
+        /// <param name="max">The largest allowed integer.</param>
+        /// <returns>The value clamped to the specified interval.</returns>
+        public static int Clamp(this int value, int min, int max)
+        {
+            if (min > max) throw new ArgumentException("Invalid interval, " + min + " > " + max);
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
+
         #region Unit tests
 #if DEBUG
         /// <summary>

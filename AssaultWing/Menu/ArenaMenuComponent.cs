@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Graphics;
+using AW2.Helpers;
 using AW2.UI;
 
 namespace AW2.Menu
@@ -33,6 +34,7 @@ namespace AW2.Menu
         readonly int menuItemCount = 7; // number of items that fit in the menu at once
         Control controlBack, controlDone;
         MultiControl controlUp, controlDown, controlSelect;
+        TriggeredCallbackCollection controlCallbacks;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
         Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture,arenaPreview;
@@ -74,6 +76,7 @@ namespace AW2.Menu
                 if (value)
                 {
                     InitializeControls();
+                    InitializeControlCallbacks();
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                     arenaInfos = new List<ArenaInfo>(
                         from namePair in data.ArenaFileNameList
@@ -136,55 +139,15 @@ namespace AW2.Menu
         /// </summary>
         public override void Update()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
             // Check our controls and react to them.
             if (Active)
             {
-                if (controlBack.Pulse)
-                    menuEngine.ActivateComponent(MenuComponentType.Equip);
-                else if (controlDone.Pulse)
-                {
-                    List<string> arenaPlaylist = new List<string>();
-                    foreach (ArenaInfo info in arenaInfos)
-                        if (info.selected)
-                            arenaPlaylist.Add(info.name);
-                    if (arenaPlaylist.Count > 0)
-                    {
-                        data.ArenaPlaylist = arenaPlaylist;
-                        menuEngine.ProgressBarAction(
-                            AssaultWing.Instance.PrepareFirstArena,
-                            AssaultWing.Instance.StartArena);
-
-                        // We don't accept input while an arena is loading.
-                        Active = false;
-                    }
-                }
-
-                if (controlUp.Pulse)
-                {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    --currentArena;
-                }
-                if (controlDown.Pulse)
-                {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    ++currentArena;
-                }
-                if (controlSelect.Pulse)
-                {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    if (currentArena >= 0 && currentArena < arenaInfos.Count)
-                        arenaInfos[currentArena].selected = !arenaInfos[currentArena].selected;
-                }
+                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                controlCallbacks.Update();
 
                 // Limit cursor to sensible limits and scroll currently highlighted arena into view.
-                currentArena = Math.Min(currentArena, arenaInfos.Count - 1);
-                currentArena = Math.Max(currentArena, 0);
-                if (currentArena >= arenaListStart + menuItemCount)
-                    arenaListStart = currentArena - menuItemCount + 1;
-                if (currentArena < arenaListStart)
-                    arenaListStart = currentArena;
+                currentArena = currentArena.Clamp(0, arenaInfos.Count - 1);
+                arenaListStart = arenaListStart.Clamp(currentArena - menuItemCount + 1, currentArena);
 
                 // Change preview image.
                 arenaPreview = data.GetArenaPreview(arenaInfos[currentArena].name);
@@ -229,10 +192,45 @@ namespace AW2.Menu
             spriteBatch.Draw(arenaPreview, arenaPreviewPos, Color.White);
         }
 
+        private void InitializeControlCallbacks()
+        {
+            controlCallbacks = new TriggeredCallbackCollection();
+            controlCallbacks.TriggeredCallback = () =>
+            {
+                cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            };
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlBack, () =>
+            { 
+                menuEngine.ActivateComponent(MenuComponentType.Equip); 
+            }));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDone, () =>
+            {
+                var arenaPlaylist = from info in arenaInfos where info.selected select info.name;
+                if (arenaPlaylist.Count() > 0)
+                {
+                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+                    data.ArenaPlaylist = arenaPlaylist.ToList();
+                    menuEngine.ProgressBarAction(
+                        AssaultWing.Instance.PrepareFirstArena,
+                        AssaultWing.Instance.StartArena);
+
+                    // We don't accept input while an arena is loading.
+                    Active = false;
+                }
+            }));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () => { --currentArena; }));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () => { ++currentArena; }));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlSelect, () =>
+            {
+                if (currentArena >= 0 && currentArena < arenaInfos.Count)
+                    arenaInfos[currentArena].selected = !arenaInfos[currentArena].selected;
+            }));
+        }
+        
         /// <summary>
         /// Sets up the menu component's controls based on players' current control setup.
         /// </summary>
-        void InitializeControls()
+        private void InitializeControls()
         {
             if (controlDone != null) controlDone.Release();
             if (controlBack != null) controlBack.Release();

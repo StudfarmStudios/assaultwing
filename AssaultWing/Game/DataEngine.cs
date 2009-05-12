@@ -753,6 +753,7 @@ namespace AW2.Game
         /// <param name="template">The instance to save as a template for the user-defined type.</param>
         public void AddTypeTemplate(Type baseClass, string typeName, object template)
         {
+            CanonicalString.Register(typeName);
             var baseClassKey = templates.Find(x => x.First.Equals(baseClass));
             if (baseClassKey != null)
             {

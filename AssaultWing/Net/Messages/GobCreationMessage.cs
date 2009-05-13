@@ -1,4 +1,5 @@
-﻿namespace AW2.Net.Messages
+﻿using AW2.Helpers;
+namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client notifying
@@ -24,11 +25,11 @@
         {
             base.Serialize(writer);
             // Gob creation (request) message structure:
-            // 32 bytes string: gob type name
+            // int: canonical form of gob type name
             // word: data length N
             // N bytes: serialised data of the gob (content known only by the Gob subclass in question)
             byte[] writeBytes = StreamedData;
-            writer.Write((string)GobTypeName, 32, true);
+            writer.Write((int)((CanonicalString)GobTypeName).Canonical);
             writer.Write(checked((ushort)writeBytes.Length));
             writer.Write(writeBytes, 0, writeBytes.Length);
         }
@@ -40,7 +41,7 @@
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            GobTypeName = reader.ReadString(32);
+            GobTypeName = (CanonicalString)reader.ReadInt32();
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);
         }

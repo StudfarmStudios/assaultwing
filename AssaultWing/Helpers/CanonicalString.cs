@@ -48,6 +48,11 @@ namespace AW2.Helpers
         public static explicit operator CanonicalString(string a) { return new CanonicalString(a); }
 
         /// <summary>
+        /// Explicit conversion from <see cref="int"/>.
+        /// </summary>
+        public static explicit operator CanonicalString(int a) { return new CanonicalString(a); }
+
+        /// <summary>
         /// Chooses a canonical form for a string.
         /// </summary>
         public static void Register(string value)
@@ -72,6 +77,18 @@ namespace AW2.Helpers
                     Log.Write("WARNING: 100 distinct CanonicalString values and counting... Consider using a Dictionary");
 #endif
             }
+        }
+
+        /// <summary>
+        /// Creates a canonical string from its canonical form.
+        /// </summary>
+        public CanonicalString(int canonical)
+            : this()
+        {
+            if (canonical < 0 || canonical >= CanonicalForms.Count)
+                throw new InvalidOperationException("No canonical string has canonical form " + canonical);
+            Canonical = canonical;
+            Value = CanonicalForms[canonical];
         }
     }
 }

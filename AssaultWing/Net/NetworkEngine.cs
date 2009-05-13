@@ -376,7 +376,7 @@ namespace AW2.Net
                     foreach (JoinGameReply.IdChange change in message.PlayerIdChanges)
                         data.GetPlayer(change.oldId).Id = change.newId;
                     CanonicalString.CanonicalForms = message.CanonicalStrings;
-                    return false;
+                    return true;
                 });
             }
 

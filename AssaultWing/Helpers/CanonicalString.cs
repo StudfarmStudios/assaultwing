@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace AW2.Helpers
 {
@@ -11,10 +12,20 @@ namespace AW2.Helpers
     /// the same string content will have the same canonical form.
     public struct CanonicalString
     {
+        static IList<string> canonicalForms = new List<string>();
+
         /// <summary>
         /// The index of a string in this list is its canonical form.
         /// </summary>
-        static List<string> canonicalForms = new List<string>();
+        public static IList<string> CanonicalForms
+        {
+            get { return canonicalForms; }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("Cannot set null list as canonical forms");
+                canonicalForms = new List<string>(value);
+            }
+        }
 
         /// <summary>
         /// The string.
@@ -51,14 +62,14 @@ namespace AW2.Helpers
             : this()
         {
             Value = value;
-            Canonical = canonicalForms.IndexOf(value);
+            Canonical = CanonicalForms.IndexOf(value);
             if (Canonical < 0)
             {
-                Canonical = canonicalForms.Count;
-                canonicalForms.Add(value);
+                Canonical = CanonicalForms.Count;
+                CanonicalForms.Add(value);
 #if DEBUG
-                if (canonicalForms.Count == 100)
-                    Log.Write("WARNING: 100 distinct CanonizedString values and counting... Consider using a Dictionary");
+                if (CanonicalForms.Count == 100)
+                    Log.Write("WARNING: 100 distinct CanonicalString values and counting... Consider using a Dictionary");
 #endif
             }
         }

@@ -371,14 +371,13 @@ namespace AW2.Net
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && gameServerConnection != null)
             {
                 // Handle JoinGameReplies from the game server.
-                JoinGameReply message = null;
-                while ((message = ReceiveFromServer<JoinGameReply>()) != null)
+                ReceiveFromServerWhile<JoinGameReply>(message =>
                 {
                     foreach (JoinGameReply.IdChange change in message.PlayerIdChanges)
-                    {
                         data.GetPlayer(change.oldId).Id = change.newId;
-                    }
-                }
+                    CanonicalString.CanonicalForms = message.CanonicalStrings;
+                    return false;
+                });
             }
 
             // Handle occurred errors.

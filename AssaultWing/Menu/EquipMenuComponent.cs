@@ -291,6 +291,7 @@ namespace AW2.Menu
                     }
                     if (playerIdChanges.Count > 0)
                     {
+                        reply.CanonicalStrings = AW2.Helpers.CanonicalString.CanonicalForms;
                         reply.PlayerIdChanges = playerIdChanges.ToArray();
                         net.SendToClient(message.ConnectionId, reply);
                     }

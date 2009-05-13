@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AW2.Net.Messages
 {
@@ -34,6 +31,11 @@ namespace AW2.Net.Messages
         public IdChange[] PlayerIdChanges { get; set; }
 
         /// <summary>
+        /// The list of canonical strings on the game server.
+        /// </summary>
+        public IList<string> CanonicalStrings { get; set; }
+
+        /// <summary>
         /// Identifier of the message type.
         /// </summary>
         protected static MessageType messageType = new MessageType(0x20, true);
@@ -45,16 +47,22 @@ namespace AW2.Net.Messages
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Join game reply message structure:
-            // byte number of players N
+            // byte: number of players, N
             // repeat N
-            //   int old player ID
-            //   int new player ID
+            //   int: old player ID
+            //   int: new player ID
+            // int: number of canonical strings, K
+            // repeat K
+            //   32 byte string: string value
             writer.Write((byte)PlayerIdChanges.Length);
             foreach (IdChange change in PlayerIdChanges)
             {
                 writer.Write((int)change.oldId);
                 writer.Write((int)change.newId);
             }
+            writer.Write((int)CanonicalStrings.Count);
+            foreach (var canonical in CanonicalStrings)
+                writer.Write((string)canonical, 32, true);
         }
 
         /// <summary>
@@ -63,13 +71,17 @@ namespace AW2.Net.Messages
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            int count = reader.ReadByte();
-            PlayerIdChanges = new IdChange[count];
-            for (int i = 0; i < count; ++i)
+            int idChangeCount = reader.ReadByte();
+            PlayerIdChanges = new IdChange[idChangeCount];
+            for (int i = 0; i < idChangeCount; ++i)
             {
                 PlayerIdChanges[i].oldId = reader.ReadInt32();
                 PlayerIdChanges[i].newId = reader.ReadInt32();
             }
+            int canonicalStringCount = reader.ReadInt32();
+            CanonicalStrings = new string[canonicalStringCount];
+            for (int i = 0; i < canonicalStringCount; ++i)
+                CanonicalStrings[i] = reader.ReadString(32);
         }
 
         /// <summary>

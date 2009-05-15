@@ -1,4 +1,5 @@
 //#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
+//#define DEBUG_MESSAGE_DELAY // delays message sending to simulate lag
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -113,6 +114,11 @@ namespace AW2.Net
 #if DEBUG_SENT_BYTE_COUNT
         static TimeSpan lastPrintTime = new TimeSpan(-1);
         static Dictionary<Type, int> messageSizes = new Dictionary<Type, int>();
+#endif
+
+#if DEBUG_MESSAGE_DELAY
+        // TimeSpan is the time to send the message
+        Queue<AW2.Helpers.Pair<Message, TimeSpan>> messagesToSend = new Queue<AW2.Helpers.Pair<Message, TimeSpan>>();
 #endif
 
         #endregion Fields
@@ -283,8 +289,19 @@ namespace AW2.Net
         /// <param name="message">The message to send.</param>
         public void Send(Message message)
         {
+#if DEBUG_MESSAGE_DELAY
+            // Store message and check if there are old messages to send.
+            TimeSpan sendTime = AssaultWing.Instance.GameTime.TotalRealTime + TimeSpan.FromMilliseconds(100);
+            messagesToSend.Enqueue(new AW2.Helpers.Pair<Message, TimeSpan>(message, sendTime));
+            while (messagesToSend.Peek().Second <= AssaultWing.Instance.GameTime.TotalRealTime)
+            {
+                var sendMessage = messagesToSend.Dequeue().First;
+                Send(sendMessage.Serialize());
+            }
+#else
             byte[] data = message.Serialize();
             Send(data);
+#endif
 #if DEBUG_SENT_BYTE_COUNT
             if (lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
             {

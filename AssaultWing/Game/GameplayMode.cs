@@ -24,5 +24,13 @@ namespace AW2.Game
         /// The types of secondary weapon available for selection in the gameplay mode.
         /// </summary>
         public string[] Weapon2Types { get; set; }
+
+        /// <summary>
+        /// Calculates the score of a player
+        /// </summary>
+        public int CalculateScore(Player player)
+        {
+            return player.Kills - player.Suicides;
+        }
     }
 }

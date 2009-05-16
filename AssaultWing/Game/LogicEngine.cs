@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
-using AW2.Events;
-using AW2.UI;
-using AW2.Game.Particles;
 using Microsoft.Xna.Framework.Input;
+using AW2.Events;
 using AW2.Net;
 using AW2.Net.Messages;
+using AW2.UI;
 
 namespace AW2.Game
 {
@@ -83,22 +82,10 @@ namespace AW2.Game
             
             UpdateControls();
 
-            // Player bonus expirations.
-            data.ForEachPlayer(delegate(Player player)
-            {
-                foreach (PlayerBonus playerBonus in Enum.GetValues(typeof(PlayerBonus)))
-                    if (playerBonus != PlayerBonus.None &&
-                        (player.Bonuses & playerBonus) != 0 &&
-                        player.BonusTimeouts[playerBonus] <= AssaultWing.Instance.GameTime.TotalGameTime)
-                    {
-                        player.RemoveBonus(playerBonus);
-                    }
-            });
-
             // Update gobs, weapons and players.
             data.ForEachGob(gob => gob.Update());
             data.ForEachWeapon(weapon => weapon.Update());
-            data.ForEachPlayer(player => player.Update());
+            foreach (var player in data.Players) player.Update();
 
             // Check for receptor collisions.
             physics.MovesDone();
@@ -114,8 +101,7 @@ namespace AW2.Game
             // Check for arena end. Network games end when the game server presses Esc.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
             {
-                int playersAlive = 0;
-                data.ForEachPlayer(player => { if (player.Lives != 0) ++playersAlive; });
+                int playersAlive = data.Players.Count(player => player.Lives != 0);
                 if (playersAlive <= 1)
                     AssaultWing.Instance.FinishArena();
             }

@@ -248,12 +248,12 @@ namespace AW2.Menu
             controlSelect.Add(new KeyboardKey(Keys.Space));
             
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.ForEachPlayer(delegate(Player player)
+            foreach (var player in data.Players)
             {
                 controlUp.Add(player.Controls.thrust);
                 controlDown.Add(player.Controls.down);
                 controlSelect.Add(player.Controls.fire1);
-            });
+            }
         }
     }
 }

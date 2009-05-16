@@ -3,9 +3,8 @@
 #endif
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Particles;
@@ -612,7 +611,7 @@ namespace AW2.Game
             // Check that important constructors have been declared
             Helpers.Log.Write("Checking gob constructors");
             foreach (Type type in Array.FindAll<Type>(System.Reflection.Assembly.GetExecutingAssembly().GetTypes(),
-                delegate(Type t) { return typeof(Gob).IsAssignableFrom(t); }))
+                t => typeof(Gob).IsAssignableFrom(t) && !t.IsAbstract))
             {
                 if (null == type.GetConstructor(Type.EmptyTypes))
                 {
@@ -1195,7 +1194,7 @@ namespace AW2.Game
             {
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
-                owner = data.GetPlayer(ownerId);
+                owner = data.Players.FirstOrDefault(player => player.Id == ownerId);
                 layer = reader.ReadInt32();
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)

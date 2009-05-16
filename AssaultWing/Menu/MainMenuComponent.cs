@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -234,8 +235,7 @@ namespace AW2.Menu
                 menuEngine.ActivateComponent(MenuComponentType.Equip);
 
                 // HACK: Force one local player and Amazonas as the only arena.
-                int count = 0;
-                data.RemovePlayers(player => count++ > 0);
+                data.Players.Remove(player => data.Players.Count > 1);
                 data.ArenaPlaylist = new List<string> { "Amazonas" };
             };
 
@@ -256,14 +256,14 @@ namespace AW2.Menu
                     menuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player.
-                    int count = 0;
-                    data.RemovePlayers(player => count++ > 0);
+                    data.Players.Remove(player => data.Players.Count > 1);
 
                     // Send a game join request to the game server.
                     NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
                     JoinGameRequest joinGameRequest = new JoinGameRequest();
                     joinGameRequest.PlayerInfos = new List<PlayerInfo>();
-                    data.ForEachPlayer(player => joinGameRequest.PlayerInfos.Add(new PlayerInfo(player)));
+                    foreach (var player in data.Players)
+                        joinGameRequest.PlayerInfos.Add(new PlayerInfo(player));
                     net.SendToServer(joinGameRequest);
                 });
             };
@@ -315,12 +315,12 @@ namespace AW2.Menu
             controlSelect.Add(new KeyboardKey(Keys.Enter));
 
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.ForEachPlayer(delegate(Player player)
+            foreach (var player in data.Players)
             {
                 controlUp.Add(player.Controls.thrust);
                 controlDown.Add(player.Controls.down);
                 controlSelect.Add(player.Controls.fire1);
-            });
+            }
         }
 
         #endregion Private methods

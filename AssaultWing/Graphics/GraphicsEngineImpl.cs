@@ -3,6 +3,7 @@
 using NUnit.Framework;
 #endif
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
@@ -614,9 +615,8 @@ namespace AW2.Graphics
         {
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             data.ClearViewports();
-            int players = 0;
-            data.ForEachPlayer(player => players += player.IsRemote ? 0 : 1);
-            if (players == 0) return;
+            int localPlayers = data.Players.Count(player => !player.IsRemote);
+            if (localPlayers == 0) return;
 
             // Find out an optimal arrangement of viewports.
             // These conditions are required:
@@ -629,11 +629,11 @@ namespace AW2.Graphics
             Rectangle window = AssaultWing.Instance.ClientBounds;
             float bestAspectRatio = Single.MaxValue;
             int bestRows = 1;
-            for (int rows = 1; rows <= players; ++rows)
+            for (int rows = 1; rows <= localPlayers; ++rows)
             {
                 // Only check out grids with cells as many as players.
-                if (players % rows != 0) continue;
-                int columns = players / rows;
+                if (localPlayers % rows != 0) continue;
+                int columns = localPlayers / rows;
                 int viewportWidth = window.Width / columns;
                 int viewportHeight = window.Height / rows;
                 float aspectRatio = (float)viewportHeight / (float)viewportWidth;
@@ -643,11 +643,11 @@ namespace AW2.Graphics
                     bestRows = rows;
                 }
             }
-            int bestColumns = players / bestRows;
+            int bestColumns = localPlayers / bestRows;
 
             // Assign the viewports to players.
             int playerI = 0;
-            data.ForEachPlayer(delegate(Player player)
+            foreach (var player in data.Players)
             {
                 if (player.IsRemote) return;
                 int viewportX = playerI % bestColumns;
@@ -661,7 +661,7 @@ namespace AW2.Graphics
                 AWViewport viewport = new PlayerViewport(player, onScreen);
                 data.AddViewport(viewport);
                 ++playerI;
-            });
+            }
 
             // Register all needed viewport separators.
             for (int i = 1; i < bestColumns; ++i)
@@ -680,16 +680,9 @@ namespace AW2.Graphics
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             data.ClearViewports();
             Rectangle window = AssaultWing.Instance.ClientBounds;
-            int playerI = 0;
-            data.ForEachPlayer(delegate(Player player) {
-                if (playerI == privilegedPlayer)
-                {
-                    Rectangle onScreen = new Rectangle(0, 0, window.Width, window.Height);
-                    AWViewport viewport = new PlayerViewport(player, onScreen);
-                    data.AddViewport(viewport);
-                }
-                ++playerI;
-            });
+            Rectangle onScreen = new Rectangle(0, 0, window.Width, window.Height);
+            AWViewport viewport = new PlayerViewport(data.Players[privilegedPlayer], onScreen);
+            data.AddViewport(viewport);
         }
 
         /// <summary>

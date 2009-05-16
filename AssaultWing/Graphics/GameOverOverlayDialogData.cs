@@ -42,13 +42,10 @@ namespace AW2.Graphics
             spriteBatch.DrawString(fontHuge, "Game Over", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
             textCenter += new Vector2(0, 2 * fontHuge.LineSpacing);
 
-
             // List players and their scores sorted decreasing by score.
-            List<Player> players = new List<Player>();
-            data.ForEachPlayer(player => players.Add(player));
             var scores =
-                from p in players
-                let Score = p.Kills - p.Suicides
+                from p in data.Players
+                let Score = data.GameplayMode.CalculateScore(p)
                 orderby Score descending
                 select new { p.Name, Score, p.Kills, p.Suicides };
             int line = 0;

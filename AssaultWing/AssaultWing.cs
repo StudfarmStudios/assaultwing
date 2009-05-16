@@ -334,18 +334,19 @@ namespace AW2
         /// </summary>
         public void PrepareFirstArena()
         {
-            dataEngine.ForEachPlayer(delegate(Player player) { player.Kills = player.Suicides = 0; });
+            foreach (var player in dataEngine.Players)
+                player.Kills = player.Suicides = 0;
 
             // Notify game clients if we are the game server.
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new StartGameMessage();
                 int playerCount = 0;
-                dataEngine.ForEachPlayer(player =>
+                foreach (var player in dataEngine.Players)
                 {
                     ++playerCount;
                     message.Write(player, SerializationModeFlags.All);
-                });
+                }
                 message.PlayerCount = playerCount;
                 message.ArenaPlaylist = dataEngine.ArenaPlaylist;
                 networkEngine.SendToClients(message);
@@ -660,8 +661,8 @@ namespace AW2
 
             Player player1 = new Player("Kaiser Lohengramm", "Hyperion", "peashooter", "rockets", plr1Controls);
             Player player2 = new Player("John Crichton", "Prowler", "shotgun", "bazooka", plr2Controls);
-            dataEngine.AddPlayer(player1);
-            dataEngine.AddPlayer(player2);
+            dataEngine.Players.Add(player1);
+            dataEngine.Players.Add(player2);
 
             dataEngine.GameplayMode = new GameplayMode();
             dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler" };
@@ -679,22 +680,6 @@ namespace AW2
         protected override void EndRun()
         {
             Log.Write("Assault Wing ends the run");
-
-            // Unregister player controls.
-            // !!!This is done here only so that when one finally implements 
-            // removing players, he will remember to release removed players' controls.
-            DataEngine data = (DataEngine)Services.GetService(typeof(DataEngine));
-            Action<Player> controlRelease = delegate(Player plr)
-            {
-                plr.Controls.thrust.Release();
-                plr.Controls.left.Release();
-                plr.Controls.right.Release();
-                plr.Controls.down.Release();
-                plr.Controls.fire1.Release();
-                plr.Controls.fire2.Release();
-                plr.Controls.extra.Release();
-            };
-            data.ForEachPlayer(controlRelease);
 
 #if DEBUG_PROFILE
             // HACK: profiling printout for gnuplot

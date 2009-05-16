@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
@@ -75,7 +73,7 @@ namespace AW2.UI
                 PlayerControlsMessage message = null;
                 while ((message = net.ReceiveFromClients<PlayerControlsMessage>()) != null)
                 {
-                    Player player = data.GetPlayer(message.PlayerId);
+                    Player player = data.Players.First(plr => plr.Id == message.PlayerId);
                     if (player.ConnectionId != message.ConnectionId)
                     {
                         // A client sent controls for a player that lives on another game instance.

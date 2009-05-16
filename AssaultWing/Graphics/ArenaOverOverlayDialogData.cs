@@ -41,17 +41,8 @@ namespace AW2.Graphics
             };
 
             // Find out the winner.
-            arenaWinner = "No-one";
-            int mostPoints = int.MinValue;
-            data.ForEachPlayer(player =>
-            {
-                int playerPoints = player.Kills - player.Suicides;
-                if (playerPoints > mostPoints)
-                {
-                    mostPoints = playerPoints;
-                    arenaWinner = player.Name;
-                }
-            });
+            int mostPoints = data.Players.Max(player => data.GameplayMode.CalculateScore(player));
+            arenaWinner = data.Players.First(player => data.GameplayMode.CalculateScore(player) == mostPoints).Name;
 
             // Start loading the next arena.
             data.ProgressBar.HorizontalAlignment = HorizontalAlignment.Center;
@@ -100,10 +91,8 @@ namespace AW2.Graphics
             textPos += new Vector2(0, fontBig.LineSpacing);
 
             // List players and their scores sorted decreasing by score.
-            List<Player> players = new List<Player>();
-            data.ForEachPlayer(player => players.Add(player));
             var scores =
-                from p in players
+                from p in data.Players
                 let Score = p.Kills - p.Suicides
                 orderby Score descending
                 select new { p.Name, Score, p.Kills, p.Suicides };

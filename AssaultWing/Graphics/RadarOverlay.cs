@@ -57,14 +57,14 @@ namespace AW2.Graphics
             // Ships on radar
             Matrix arenaToRadarTransform = data.ArenaToRadarTransform;
             Vector2 shipOnRadarTextureCenter = new Vector2(shipOnRadarTexture.Width, shipOnRadarTexture.Height) / 2;
-            data.ForEachPlayer(delegate(Player player)
+            foreach (var player in data.Players)
             {
                 if (player.Ship == null) return;
                 Vector2 posInArena = player.Ship.Pos;
                 Vector2 posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
                 spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, Color.White, 0,
                     shipOnRadarTextureCenter, 1, SpriteEffects.None, 0);
-            });
+            }
         }
 
         /// <summary>

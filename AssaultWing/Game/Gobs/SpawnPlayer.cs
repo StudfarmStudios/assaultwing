@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
@@ -74,12 +73,8 @@ namespace AW2.Game.Gobs
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
 
             // Measure safeness by our minimum distance to players' ships.
-            float safeness = float.MaxValue;
-            data.ForEachPlayer(delegate(Player player)
-            {
-                if (player.Ship != null)
-                    safeness = Math.Min(safeness, Geometry.Distance(new AW2.Helpers.Geometric.Point(player.Ship.Pos), spawnArea));
-            });
+            float safeness = data.Players.Min(player => player.Ship == null ? float.MaxValue :
+                Geometry.Distance(new AW2.Helpers.Geometric.Point(player.Ship.Pos), spawnArea));
             return safeness;
         }
 

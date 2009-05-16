@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Gobs;
@@ -27,7 +28,6 @@ namespace AW2.Game
         LinkedList<Weapon> weapons;
         List<Gob> addedGobs;
         List<Gob> removedGobs;
-        List<Player> players;
         List<Viewport> viewports;
         List<ViewportSeparator> viewportSeparators;
         Dictionary<string, Model> models;
@@ -81,6 +81,11 @@ namespace AW2.Game
         Viewport activeViewport;
 
         /// <summary>
+        /// Players who participate in the game session.
+        /// </summary>
+        public PlayerCollection Players { get; private set; }
+
+        /// <summary>
         /// Creates a new data engine.
         /// </summary>
         public DataEngine()
@@ -89,7 +94,19 @@ namespace AW2.Game
             addedGobs = new List<Gob>();
             removedGobs = new List<Gob>();
             weapons = new LinkedList<Weapon>();
-            players = new List<Player>();
+            Players = new PlayerCollection();
+            Players.Removed += player => 
+            {
+                if (player.Ship != null) 
+                    player.Ship.Die(new DeathCause());
+                player.Controls.thrust.Release();
+                player.Controls.left.Release();
+                player.Controls.right.Release();
+                player.Controls.down.Release();
+                player.Controls.fire1.Release();
+                player.Controls.fire2.Release();
+                player.Controls.extra.Release();
+            };
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
             models = new Dictionary<string, Model>();
@@ -414,13 +431,13 @@ namespace AW2.Game
         public void StartArena()
         {
             // Reset players.
-            ForEachPlayer(delegate(Player player)
+            foreach (var player in Players)
             {
                 player.Reset();
                 player.Lives = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
                     ? 3 // HACK: standalone games have three lives
                     : -1; // HACK: network games have infinite lives
-            });
+            }
 
             // Clear remaining data from a possible previous arena.
             foreach (ArenaLayer layer in arenaLayers)
@@ -548,7 +565,7 @@ namespace AW2.Game
         /// </summary>
         /// <param name="gob">The gob to add.</param>
         /// <param name="layer">The arena layer index.</param>
-        public void AddGob(Gob gob, int layer)
+        void AddGob(Gob gob, int layer)
         {
             gob.Layer = layer;
             addedGobs.Add(gob);
@@ -642,101 +659,6 @@ namespace AW2.Game
         }
 
         #endregion weapons
-
-        #region players
-
-        /// <summary>
-        /// Performs the specified action on each player.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each player.</param>
-        public void ForEachPlayer(Action<Player> action)
-        {
-            foreach (Player player in players)
-                action(player);
-        }
-
-        /// <summary>
-        /// Returns a player that satisfies a condition, or <c>null</c>
-        /// if no player satisfies the condition.
-        /// </summary>
-        /// <param name="condition">The condition to satisfy.</param>
-        public Player TryGetPlayer(Predicate<Player> condition)
-        {
-            foreach (Player player in players)
-                if (condition(player))
-                    return player;
-            return null;
-        }
-
-        /// <summary>
-        /// Returns the player with the given name, or null if none exists.
-        /// </summary>
-        /// <param name="playerName">The name of the player.</param>
-        /// <returns>The player.</returns>
-        public Player GetPlayer(string playerName)
-        {
-            foreach (Player player in players)
-                if (player.Name.Equals(playerName))
-                    return player;
-            return null;
-        }
-
-        /// <summary>
-        /// Returns a player by his identifier, or <c>null</c> if no such player exists.
-        /// </summary>
-        /// <param name="playerId">The identifier of the player.</param>
-        /// <returns>The player, or <c>null</c> if the player couldn't be found.</returns>
-        /// <seealso cref="AW2.Game.Player.Id"/>
-        public Player GetPlayer(int playerId)
-        {
-            foreach (Player player in players)
-                if (player.Id == playerId)
-                    return player;
-            return null;
-        }
-
-        /// <summary>
-        /// Adds a player to the game.
-        /// </summary>
-        /// <param name="player">The player to add.</param>
-        public void AddPlayer(Player player)
-        {
-            players.Add(player);
-        }
-
-        /// <summary>
-        /// Removes a player from the game.
-        /// </summary>
-        /// <param name="player">The player to remove.</param>
-        public void RemovePlayer(Player player)
-        {
-            // Kill the player's ship.
-            if (player.Ship != null)
-                player.Ship.Die(new DeathCause());
-
-            players.Remove(player);
-        }
-
-        /// <summary>
-        /// Removes certain players from the game.
-        /// </summary>
-        /// <param name="criterion">The criterion which players to remove.</param>
-        public void RemovePlayers(Predicate<Player> criterion)
-        {
-            for (int i = 0; i < players.Count; )
-                if (criterion(players[i]))
-                {
-                    // Kill the player's ship.
-                    if (players[i].Ship != null)
-                        players[i].Ship.Die(new DeathCause());
-
-                    players.RemoveAt(i);
-                }
-                else
-                    ++i;
-        }
-
-        #endregion players
 
         #region type templates
 
@@ -996,7 +918,7 @@ namespace AW2.Game
                 });
                 net.ReceiveFromServerWhile<PlayerUpdateMessage>(message =>
                 {
-                    Player player = GetPlayer(message.PlayerId);
+                    Player player = Players.FirstOrDefault(plr => plr.Id == message.PlayerId);
                     if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
                     message.Read(player, SerializationModeFlags.VaryingData);
                     return true;
@@ -1061,7 +983,7 @@ namespace AW2.Game
             // Send state updates about players to game clients if we are the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
-                ForEachPlayer(player =>
+                foreach (var player in Players)
                 {
                     if (!player.MustUpdateToClients) return;
                     player.MustUpdateToClients = false;
@@ -1069,7 +991,7 @@ namespace AW2.Game
                     message.PlayerId = player.Id;
                     message.Write(player, SerializationModeFlags.VaryingData);
                     net.SendToClients(message);
-                });
+                }
             }
 
 #if DEBUG_PROFILE

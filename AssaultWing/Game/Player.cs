@@ -547,6 +547,15 @@ namespace AW2.Game
         /// </summary>
         public void Update()
         {
+            // Player bonus expirations.
+            foreach (PlayerBonus playerBonus in Enum.GetValues(typeof(PlayerBonus)))
+                if (playerBonus != PlayerBonus.None &&
+                    (Bonuses & playerBonus) != 0 &&
+                    BonusTimeouts[playerBonus] <= AssaultWing.Instance.GameTime.TotalGameTime)
+                {
+                    RemoveBonus(playerBonus);
+                }
+
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
                 // Give birth to a new ship if it's time.

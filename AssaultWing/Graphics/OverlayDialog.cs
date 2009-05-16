@@ -58,11 +58,9 @@ namespace AW2.Graphics
             {
                 // K + P = kill players
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                data.ForEachPlayer(delegate(Player player)
-                {
+                foreach (var player in data.Players)
                     if (player.Ship != null)
                         player.Ship.Die(new DeathCause());
-                });
             }
 
             if (keys.IsKeyDown(Keys.L) && keys.IsKeyDown(Keys.E))

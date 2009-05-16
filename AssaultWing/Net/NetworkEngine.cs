@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Xna.Framework;
@@ -183,19 +184,15 @@ namespace AW2.Net
             removedClientConnections.Add(connection);
 
             // Remove the client's players.
-            data.ForEachPlayer(player =>
-            {
-                List<string> droppedPlayerNames = new List<string>();
-                data.ForEachPlayer(plr =>
-                {
-                    if (plr.ConnectionId == connection.BaseConnection.Id)
-                        droppedPlayerNames.Add(plr.Name);
-                });
-                string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
+            List<string> droppedPlayerNames = new List<string>();
+            foreach (var player in data.Players)
+                if (player.ConnectionId == connection.BaseConnection.Id)
+                    droppedPlayerNames.Add(player.Name);
+            string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
+            foreach (var player in data.Players)
                 if (!player.IsRemote)
                     player.SendMessage(message);
-            });
-            data.RemovePlayers(player => player.ConnectionId == connection.BaseConnection.Id);
+            data.Players.Remove(player => player.ConnectionId == connection.BaseConnection.Id);
         }
 
         /// <summary>
@@ -374,7 +371,7 @@ namespace AW2.Net
                 ReceiveFromServerWhile<JoinGameReply>(message =>
                 {
                     foreach (JoinGameReply.IdChange change in message.PlayerIdChanges)
-                        data.GetPlayer(change.oldId).Id = change.newId;
+                        data.Players.First(player => player.Id == change.oldId).Id = change.newId;
                     CanonicalString.CanonicalForms = message.CanonicalStrings;
                     return true;
                 });

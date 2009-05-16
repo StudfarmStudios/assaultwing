@@ -38,7 +38,8 @@ namespace AW2.UI
             proceedControl.Add(enterControl);
             proceedControl.Add(escapeControl);
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.ForEachPlayer(delegate(Player player) { proceedControl.Add(player.Controls.fire1); });
+            foreach (var player in data.Players)
+                proceedControl.Add(player.Controls.fire1);
             return proceedControl;
         }
 

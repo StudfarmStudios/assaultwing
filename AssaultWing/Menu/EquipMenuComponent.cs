@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -162,19 +163,17 @@ namespace AW2.Menu
         private void CreateSelectors()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            int playerCount = 0;
-            data.ForEachPlayer(player => ++playerCount);
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
-            equipmentSelectors = new EquipmentSelector[playerCount, aspectCount];
+            equipmentSelectors = new EquipmentSelector[data.Players.Count, aspectCount];
 
             int playerI = 0;
-            data.ForEachPlayer(player =>
+            foreach (var player in data.Players)
             {
                 equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
                 equipmentSelectors[playerI, (int)EquipMenuItem.Weapon1] = new Weapon1Selector(player);
                 equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player);
                 ++playerI;
-            });
+            }
         }
 
         private void CheckGeneralControls()
@@ -212,7 +211,7 @@ namespace AW2.Menu
             NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
 
             int playerI = -1;
-            data.ForEachPlayer(player =>
+            foreach (var player in data.Players)
             {
                 if (player.IsRemote) return;
                 ++playerI;
@@ -245,7 +244,7 @@ namespace AW2.Menu
                         net.SendToServer(equipUpdateRequest);
                     }
                 }
-            });
+            }
         }
 
         /// <summary>
@@ -274,7 +273,8 @@ namespace AW2.Menu
                     var playerIdChanges = new List<JoinGameReply.IdChange>();
                     foreach (PlayerInfo info in message.PlayerInfos)
                     {
-                        var oldPlayer = data.TryGetPlayer(plr => plr.ConnectionId == message.ConnectionId && plr.Id == info.id);
+                        var oldPlayer = data.Players.FirstOrDefault(
+                            plr => plr.ConnectionId == message.ConnectionId && plr.Id == info.id);
                         if (oldPlayer != null)
                         {
                             oldPlayer.Name = info.name;
@@ -285,7 +285,7 @@ namespace AW2.Menu
                         else
                         {
                             Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
-                            data.AddPlayer(player);
+                            data.Players.Add(player);
                             playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
                         }
                     }
@@ -308,8 +308,8 @@ namespace AW2.Menu
                         message.Read(player, SerializationModeFlags.All);
 
                         // Only add the player if it is remote.
-                        if (data.GetPlayer(player.Id) == null)
-                            data.AddPlayer(player);
+                        if (!data.Players.Any(plr => plr.Id == player.Id))
+                            data.Players.Add(player);
                     }
 
                     data.ArenaPlaylist = message.ArenaPlaylist;
@@ -346,7 +346,7 @@ namespace AW2.Menu
             Vector2 playerPaneRowDeltaPos = new Vector2(0, 91);
             Vector2 playerPaneNamePos = new Vector2(104, 30);
             int playerI = -1;
-            data.ForEachPlayer(player =>
+            foreach (var player in data.Players)
             {
                 if (player.IsRemote) return;
                 ++playerI;
@@ -377,7 +377,7 @@ namespace AW2.Menu
                 float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTimes[playerI]).TotalSeconds;
                 spriteBatch.Draw(highlightMainTexture, playerCursorPos, Color.White);
                 spriteBatch.Draw(cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
-            });
+            }
 
             // Draw network game status pane.
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
@@ -387,13 +387,11 @@ namespace AW2.Menu
                 spriteBatch.Draw(statusPaneTexture, statusPanePos, Color.White);
 
                 // Draw pane content text.
-                int playerCount = 0;
-                data.ForEachPlayer(player => ++playerCount);
                 Vector2 textPos = statusPanePos + new Vector2(60, 60);
                 string textContent = AssaultWing.Instance.NetworkMode == NetworkMode.Client
                     ? "Connected to game server"
                     : "Hosting a game as server";
-                textContent += "\n\n" + playerCount + (playerCount == 1 ? " player" : " players");
+                textContent += "\n\n" + data.Players.Count + (data.Players.Count == 1 ? " player" : " players");
                 textContent += "\n\nArena: " + data.ArenaPlaylist[0];
                 spriteBatch.DrawString(menuBigFont, textContent, textPos, Color.White);
             }

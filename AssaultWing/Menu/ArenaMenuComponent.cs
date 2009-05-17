@@ -123,7 +123,7 @@ namespace AW2.Menu
             cursorTexture = data.GetTexture(TextureName.ArenaMenuCursor);
             highlightTexture = data.GetTexture(TextureName.ArenaMenuHighlight);
             tagTexture = data.GetTexture(TextureName.ArenaMenuCheckboxTag);
-            arenaPreview = data.GetArenaPreview("noPreview");
+            arenaPreview = data.ArenaPreviews["noPreview"];
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace AW2.Menu
                 arenaListStart = arenaListStart.Clamp(currentArena - menuItemCount + 1, currentArena);
 
                 // Change preview image.
-                arenaPreview = data.GetArenaPreview(arenaInfos[currentArena].name);
+                arenaPreview = data.ArenaPreviews[arenaInfos[currentArena].name];
             }
         }
 

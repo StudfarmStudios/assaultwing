@@ -25,6 +25,24 @@ namespace AW2.Game
     /// The gameplay backlayer is for 2D graphics that needs to be behind gobs.
     public class DataEngine
     {
+        class NamedDataCollection<T> : NamedItemCollection<T>
+        {
+            public NamedDataCollection(string kindName, string substituteName)
+            {
+                if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
+                    Removed += item => ((IDisposable)item).Dispose();
+                NotFound += obj =>
+                {
+                    Log.Write(string.Format("Warning: {0} {1} not found", kindName, obj.ToString()));
+                    T substitute;
+                    if (TryGetValue(substituteName, out substitute))
+                        return substitute;
+                    string message = string.Format("Missing {0} {1} and default {2}", kindName, obj.ToString(), substituteName);
+                    throw new KeyNotFoundException(message);
+                };
+            }
+        }
+
         #region Fields
 
         List<ArenaLayer> arenaLayers;
@@ -33,7 +51,6 @@ namespace AW2.Game
         List<Gob> removedGobs;
         List<Viewport> viewports;
         List<ViewportSeparator> viewportSeparators;
-        Dictionary<string, Texture2D> arenaPreviews;
         Dictionary<string, string> arenaFileNameList;
 
         /// <summary>
@@ -99,6 +116,11 @@ namespace AW2.Game
         public NamedItemCollection<Texture2D> Textures { get; private set; }
 
         /// <summary>
+        /// Previews of arenas.
+        /// </summary>
+        public NamedItemCollection<Texture2D> ArenaPreviews { get; private set; }
+
+        /// <summary>
         /// Creates a new data engine.
         /// </summary>
         public DataEngine()
@@ -122,32 +144,14 @@ namespace AW2.Game
                 player.Controls.extra.Release();
             };
 
-            Models = new NamedItemCollection<Model>();
-            Models.NotFound += obj =>
-            {
-                Log.Write("Warning: Model " + obj.ToString() + " not found");
-                Model substitute;
-                if (Models.TryGetValue("dummymodel", out substitute))
-                    return substitute;
-                throw new KeyNotFoundException("Missing model " + obj.ToString() + " and default dummymodel");
-            };
-
-            Textures = new NamedItemCollection<Texture2D>();
-            Textures.Removed += texture => texture.Dispose();
-            Textures.NotFound += obj =>
-            {
-                Log.Write("Warning: Texture " + obj.ToString() + " not found");
-                Texture2D substitute;
-                if (Textures.TryGetValue("dummytexture", out substitute))
-                    return substitute;
-                throw new KeyNotFoundException("Missing texture " + obj.ToString() + " and default dummytexture");
-            };
+            Models = new NamedDataCollection<Model>("model", "dummymodel");
+            Textures = new NamedDataCollection<Texture2D>("texture", "dummytexture");
+            ArenaPreviews = new NamedDataCollection<Texture2D>("arena preview", "noPreview");
 
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
             templates = new List<Pair<Type, List<Pair<string, object>>>>();
             arenas = new Dictionary<string, Arena>();
-            arenaPreviews = new Dictionary<string, Texture2D>();
             overlays = new Texture2D[Enum.GetValues(typeof(TextureName)).Length];
             fonts = new SpriteFont[Enum.GetValues(typeof(FontName)).Length];
             activeArena = preparedArena = null;
@@ -178,44 +182,6 @@ namespace AW2.Game
         }
 
         #endregion textures
-
-        #region arena previews
-
-        /// <summary>
-        /// Stores a preview texture for a named arena.
-        /// </summary>
-        /// <param name="arenaName">The name of the arena.</param>
-        /// <param name="texture">The arena preview texture.</param>
-        public void AddArenaPreview(string arenaName, Texture2D texture)
-        {
-            arenaPreviews.Add(arenaName, texture);
-        }
-
-        /// <summary>
-        /// Returns preview picture from arena (2D texture). 
-        /// If no preview is available, then returns "no preview" picture.
-        /// </summary>
-        /// <param name="arena">The name of the arena.</param>
-        /// <returns>The arena preview.</returns>
-        public Texture2D GetArenaPreview(string arena)
-        {
-            if (arenaPreviews.ContainsKey(arena))
-                return arenaPreviews[arena];
-            else
-                return arenaPreviews["noPreview"];
-        }
-
-        /// <summary>
-        /// Disposes of all arena previews.
-        /// </summary>
-        public void ClearArenaPreviews()
-        {
-            foreach (Texture2D preview in arenaPreviews.Values)
-                preview.Dispose();
-            arenaPreviews.Clear();
-        }
-
-        #endregion arena previews
 
         #region fonts
 

@@ -379,26 +379,20 @@ namespace AW2.Graphics
 
             // Load static graphics.
             foreach (TextureName overlay in Enum.GetValues(typeof(TextureName)))
-            {
                 data.AddTexture(overlay, LoadTexture(overlayNames[(int)overlay]));
-            }
 
-            {
-                data.AddArenaPreview("noPreview", LoadTexture("no_preview"));            
-            }
+            data.ArenaPreviews.Add("noPreview", LoadTexture("no_preview"));            
             foreach (string name in data.ArenaPlaylist)
             {
                 string arenaName = name;
                 Texture2D preview = LoadTexture(arenaName.ToLower() + "_preview");
                 if (preview != null)
-                    data.AddArenaPreview(arenaName, preview);
+                    data.ArenaPreviews.Add(arenaName, preview);
             }
 
             // Load static fonts.
             foreach (FontName font in Enum.GetValues(typeof(FontName)))
-            {
                 data.AddFont(font, LoadFont(fontNames[(int)font]));
-            }
 
             // Load arena related content if an arena is being played right now.
             if (data.Arena != null)
@@ -466,7 +460,7 @@ namespace AW2.Graphics
                 spriteBatch = null;
             }
             data.Textures.Clear();
-            data.ClearArenaPreviews();
+            data.ArenaPreviews.Clear();
             data.Models.Clear();
             data.ClearFonts();
 

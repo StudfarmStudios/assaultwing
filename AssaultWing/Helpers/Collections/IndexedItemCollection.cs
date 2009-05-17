@@ -3,22 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AW2.Game
+namespace AW2.Helpers.Collections
 {
     /// <summary>
-    /// A collection of players.
+    /// A collection of indexed items.
     /// </summary>
-    public class PlayerCollection : IList<Player>
+    /// <typeparam name="T">The element type of the collection.</typeparam>
+    public class IndexedItemCollection<T> : IList<T>, IObservableCollection<T>
     {
-        List<Player> players = new List<Player>();
+        List<T> items = new List<T>();
 
-        #region Events
+        #region IObservableCollection<T> Members
 
         /// <summary>
         /// Called when an item has been removed from the collection.
         /// The argument is the removed item.
         /// </summary>
-        public event Action<Player> Removed;
+        public event Action<T> Removed;
+
+        /// <summary>
+        /// Called when an item was not found from the collection,
+        /// in place of throwing an exception.
+        /// The argument describes which item was looked for.
+        /// The expected return value is a substitute item.
+        /// </summary>
+        public event Func<object, T> NotFound;
 
         #endregion
 
@@ -26,29 +35,29 @@ namespace AW2.Game
         /// Removes items that satisfy a condition.
         /// </summary>
         /// <param name="condition">The condition by which to remove items.</param>
-        public void Remove(Predicate<Player> condition)
+        public void Remove(Predicate<T> condition)
         {
-            for (int index = players.Count - 1; index >= 0; --index)
-                if (condition(players[index]))
+            for (int index = items.Count - 1; index >= 0; --index)
+                if (condition(items[index]))
                     RemoveAt(index);
         }
 
-        #region IList<Player> Members
+        #region IList<T> Members
 
         /// <summary>
         /// Determines the index of a specific item in the list.
         /// </summary>
-        public int IndexOf(Player item)
+        public int IndexOf(T item)
         {
-            return players.IndexOf(item);
+            return items.IndexOf(item);
         }
 
         /// <summary>
         /// Inserts an item to the list at the specified index.
         /// </summary>
-        public void Insert(int index, Player item)
+        public void Insert(int index, T item)
         {
-            players.Insert(index, item);
+            items.Insert(index, item);
         }
 
         /// <summary>
@@ -56,26 +65,38 @@ namespace AW2.Game
         /// </summary>
         public void RemoveAt(int index)
         {
-            Player removed = players[index];
-            players.RemoveAt(index);
+            T removed = items[index];
+            items.RemoveAt(index);
             if (Removed != null) Removed(removed);
         }
 
         /// <summary>
         /// The list item at the specified index.
         /// </summary>
-        public Player this[int index] { get { return players[index]; } set { players[index] = value; } }
+        public T this[int index]
+        {
+            get
+            {
+                if (index >= 0 && index < items.Count)
+                    return items[index];
+                else if (NotFound != null)
+                    return NotFound(index);
+                else
+                    throw new ArgumentOutOfRangeException("No value in IndexedItemCollection for index " + index);
+            }
+            set { items[index] = value; }
+        }
 
         #endregion
 
-        #region ICollection<Player> Members
+        #region ICollection<T> Members
 
         /// <summary>
         /// Adds an item to the collection.
         /// </summary>
-        public void Add(Player item)
+        public void Add(T item)
         {
-            players.Add(item);
+            items.Add(item);
         }
 
         /// <summary>
@@ -85,35 +106,35 @@ namespace AW2.Game
         {
             if (Removed != null)
             {
-                var removedPlayers = players.ToArray();
-                players.Clear();
-                foreach (var player in removedPlayers)
-                    Removed(player);
+                var removedTs = items.ToArray();
+                items.Clear();
+                foreach (var T in removedTs)
+                    Removed(T);
             }
             else
-                players.Clear();
+                items.Clear();
         }
 
         /// <summary>
         /// Determines whether the collection contains a specific value.
         /// </summary>
-        public bool Contains(Player item)
+        public bool Contains(T item)
         {
-            return players.Contains(item);
+            return items.Contains(item);
         }
 
         /// <summary>
         /// Copies the elements of the collection to an array, starting at a particular array index.
         /// </summary>
-        public void CopyTo(Player[] array, int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
-            players.CopyTo(array, arrayIndex);
+            items.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
         /// The number of elements contained in the collection.
         /// </summary>
-        public int Count { get { return players.Count; } }
+        public int Count { get { return items.Count; } }
 
         /// <summary>
         /// Is the collection read-only.
@@ -123,13 +144,13 @@ namespace AW2.Game
         /// <summary>
         /// Removes the first occurrence of a specific element from the collection.
         /// </summary>
-        public bool Remove(Player item)
+        public bool Remove(T item)
         {
-            int index = players.IndexOf(item);
+            int index = items.IndexOf(item);
             if (index >= 0)
             {
-                var removed = players[index];
-                players.RemoveAt(index);
+                var removed = items[index];
+                items.RemoveAt(index);
                 if (Removed != null) Removed(removed);
                 return true;
             }
@@ -139,14 +160,14 @@ namespace AW2.Game
 
         #endregion
 
-        #region IEnumerable<Player> Members
+        #region IEnumerable<T> Members
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
-        public IEnumerator<Player> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
-            return players.GetEnumerator();
+            return items.GetEnumerator();
         }
 
         #endregion
@@ -158,7 +179,7 @@ namespace AW2.Game
         /// </summary>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return ((System.Collections.IEnumerable)players).GetEnumerator();
+            return ((System.Collections.IEnumerable)items).GetEnumerator();
         }
 
         #endregion

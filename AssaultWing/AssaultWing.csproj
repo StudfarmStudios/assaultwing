@@ -156,7 +156,7 @@
     <Compile Include="Game\Pengs\PengParameter.cs" />
     <Compile Include="Game\Pengs\SprayEmitter.cs" />
     <Compile Include="Game\Pengs\ViewportEmitter.cs" />
-    <Compile Include="Game\PlayerCollection.cs" />
+    <Compile Include="Helpers\Collections\IndexedItemCollection.cs" />
     <Compile Include="Game\TypeLoader.cs">
       <Name>TypeLoader</Name>
     </Compile>

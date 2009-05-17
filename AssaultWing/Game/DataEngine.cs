@@ -86,7 +86,7 @@ namespace AW2.Game
         /// <summary>
         /// Players who participate in the game session.
         /// </summary>
-        public PlayerCollection Players { get; private set; }
+        public IndexedItemCollection<Player> Players { get; private set; }
 
         /// <summary>
         /// 3D models available for the game.
@@ -108,7 +108,7 @@ namespace AW2.Game
             removedGobs = new List<Gob>();
             weapons = new LinkedList<Weapon>();
 
-            Players = new PlayerCollection();
+            Players = new IndexedItemCollection<Player>();
             Players.Removed += player => 
             {
                 if (player.Ship != null) 

@@ -351,17 +351,17 @@ namespace AW2.Graphics
             {
                 foreach (string modelName in gobTemplate.ModelNames)
                 {
-                    if (data.HasModel(modelName)) continue;
+                    if (data.Models.ContainsKey(modelName)) continue;
                     Model model = LoadModel(modelName);
                     if (model != null)
-                        data.AddModel(modelName, model);
+                        data.Models.Add(modelName, model);
                 }
                 foreach (string textureName in gobTemplate.TextureNames)
                 {
-                    if (data.HasTexture(textureName)) continue;
+                    if (data.Textures.ContainsKey(textureName)) continue;
                     Texture2D texture = LoadTexture(textureName);
                     if (texture != null)
-                        data.AddTexture(textureName, texture);
+                        data.Textures.Add(textureName, texture);
                 }
             });
 
@@ -370,10 +370,10 @@ namespace AW2.Graphics
             {
                 foreach (string textureName in weapon.TextureNames)
                 {
-                    if (data.HasTexture(textureName)) continue;
+                    if (data.Textures.ContainsKey(textureName)) continue;
                     Texture2D texture = LoadTexture(textureName);
                     if (texture != null)
-                        data.AddTexture(textureName, texture);
+                        data.Textures.Add(textureName, texture);
                 }
             });
 
@@ -425,29 +425,29 @@ namespace AW2.Graphics
                     // Load the layer's gob types.
                     foreach (string modelName in gob.ModelNames)
                     {
-                        if (data.HasModel(modelName)) continue;
+                        if (data.Models.ContainsKey(modelName)) continue;
                         Model model = LoadModel(modelName);
                         if (model != null)
-                            data.AddModel(modelName, model);
+                            data.Models.Add(modelName, model);
                     }
 
                     // Load the layer's gobs' textures.
                     foreach (string textureName in gob.TextureNames)
                     {
-                        if (data.HasTexture(textureName)) continue;
+                        if (data.Textures.ContainsKey(textureName)) continue;
                         Texture2D texture = LoadTexture(textureName);
                         if (texture != null)
-                            data.AddTexture(textureName, texture);
+                            data.Textures.Add(textureName, texture);
                     }
                 });
 
                 // Load the layer's parallax texture.
                 string parallaxName = layer.ParallaxName;
-                if (parallaxName != null && !data.HasTexture(parallaxName))
+                if (parallaxName != null && !data.Textures.ContainsKey(parallaxName))
                 {
                     Texture2D parallaxTexture = LoadTexture(parallaxName);
                     if (parallaxTexture != null)
-                        data.AddTexture(parallaxName, parallaxTexture);
+                        data.Textures.Add(parallaxName, parallaxTexture);
                 }
             }
         }
@@ -465,9 +465,9 @@ namespace AW2.Graphics
                 spriteBatch.Dispose();
                 spriteBatch = null;
             }
-            data.ClearTextures();
+            data.Textures.Clear();
             data.ClearArenaPreviews();
-            data.ClearModels();
+            data.Models.Clear();
             data.ClearFonts();
 
             // Propagate UnloadContent to other components that are known to

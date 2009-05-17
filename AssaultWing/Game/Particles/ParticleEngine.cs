@@ -479,7 +479,7 @@ namespace AW2.Game.Particles
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Texture2D tex = data.GetTexture(textureName);
+            Texture2D tex = data.Textures[textureName];
             Matrix transform = gameToScreen;
             
             foreach (Particle part in particles)

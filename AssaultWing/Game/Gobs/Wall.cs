@@ -174,7 +174,7 @@ namespace AW2.Game.Gobs
             effect = defaultEffect;
             silhouetteEffect = defaultSilhouetteEffect;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
-            texture = data.GetTexture(textureName);
+            texture = data.Textures[textureName];
             base.LoadContent();
         }
 

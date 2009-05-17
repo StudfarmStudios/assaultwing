@@ -366,9 +366,9 @@ namespace AW2.Menu
                 Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(typeof(Gob), player.ShipName);
                 Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
                 Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
-                Texture2D shipTexture = data.GetTexture(ship.IconEquipName);
-                Texture2D weapon1Texture = data.GetTexture(weapon1.IconEquipName);
-                Texture2D weapon2Texture = data.GetTexture(weapon2.IconEquipName);
+                Texture2D shipTexture = data.Textures[ship.IconEquipName];
+                Texture2D weapon1Texture = data.Textures[weapon1.IconEquipName];
+                Texture2D weapon2Texture = data.Textures[weapon2.IconEquipName];
                 spriteBatch.Draw(shipTexture, playerPanePos + playerPaneCursorDeltaPos, Color.White);
                 spriteBatch.Draw(weapon1Texture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
                 spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);

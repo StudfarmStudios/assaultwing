@@ -262,7 +262,7 @@ namespace AW2.Graphics
                             ? player.Ship.Weapon1
                             : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1RealName);
                         bonusText = player.Weapon1RealName;
-                        bonusIcon = data.GetTexture(weapon1.IconName);
+                        bonusIcon = data.Textures[weapon1.IconName];
                     }
                     break;
                 case PlayerBonus.Weapon2Upgrade:
@@ -271,7 +271,7 @@ namespace AW2.Graphics
                             ? player.Ship.Weapon2
                             : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2RealName);
                         bonusText = player.Weapon2RealName;
-                        bonusIcon = data.GetTexture(weapon2.IconName);
+                        bonusIcon = data.Textures[weapon2.IconName];
                     }
                     break;
                 default:

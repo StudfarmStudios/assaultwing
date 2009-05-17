@@ -535,7 +535,7 @@ namespace AW2.Game
             get
             {
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                Model model = data.GetModel(modelName);
+                Model model = data.Models[modelName];
                 if (modelPartTransforms == null || modelPartTransforms.Length != model.Bones.Count)
                 {
                     modelPartTransforms = new Matrix[model.Bones.Count];
@@ -824,7 +824,7 @@ namespace AW2.Game
             // Do special things with meshes named like collision areas.
             // TODO: This feature seems unused. Remove if so.
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.GetModel(gob.modelName);
+            Model model = data.Models[gob.modelName];
             List<CollisionArea> meshAreas = new List<CollisionArea>();
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -1020,7 +1020,7 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
-            Model model = data.GetModel(modelName);
+            Model model = data.Models[modelName];
             Matrix world = WorldMatrix;
             Matrix meshSphereTransform = // mesh bounding spheres are by default in model coordinates
                 Matrix.CreateScale(Scale) *
@@ -1238,7 +1238,7 @@ namespace AW2.Game
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             List<KeyValuePair<string, int>> boneIs = new List<KeyValuePair<string, int>>();
-            Model model = data.GetModel(ModelName);
+            Model model = data.Models[ModelName];
             foreach (ModelBone bone in model.Bones)
                 if (bone.Name != null && bone.Name.StartsWith(namePrefix))
                     boneIs.Add(new KeyValuePair<string, int>(bone.Name, bone.Index));

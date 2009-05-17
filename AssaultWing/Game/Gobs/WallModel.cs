@@ -139,7 +139,7 @@ namespace AW2.Game.Gobs
         {
             // Recover wall data from its 3D model.
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.GetModel(wallModelName);
+            Model model = data.Models[wallModelName];
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
             Graphics3D.GetModelData(model, out vertexData, out indexData);

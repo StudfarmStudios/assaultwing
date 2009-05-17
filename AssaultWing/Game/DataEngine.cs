@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Gobs;
 using AW2.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Collections;
 using AW2.Net;
 using AW2.Net.Messages;
 using Viewport = AW2.Graphics.AWViewport;
@@ -24,14 +25,14 @@ namespace AW2.Game
     /// The gameplay backlayer is for 2D graphics that needs to be behind gobs.
     public class DataEngine
     {
+        #region Fields
+
         List<ArenaLayer> arenaLayers;
         LinkedList<Weapon> weapons;
         List<Gob> addedGobs;
         List<Gob> removedGobs;
         List<Viewport> viewports;
         List<ViewportSeparator> viewportSeparators;
-        Dictionary<string, Model> models;
-        Dictionary<string, Texture2D> textures;
         Dictionary<string, Texture2D> arenaPreviews;
         Dictionary<string, string> arenaFileNameList;
 
@@ -80,10 +81,22 @@ namespace AW2.Game
         /// </summary>
         Viewport activeViewport;
 
+        #endregion Fields
+
         /// <summary>
         /// Players who participate in the game session.
         /// </summary>
         public PlayerCollection Players { get; private set; }
+
+        /// <summary>
+        /// 3D models available for the game.
+        /// </summary>
+        public NamedItemCollection<Model> Models { get; private set; }
+
+        /// <summary>
+        /// Textures available for the game.
+        /// </summary>
+        public NamedItemCollection<Texture2D> Textures { get; private set; }
 
         /// <summary>
         /// Creates a new data engine.
@@ -94,6 +107,7 @@ namespace AW2.Game
             addedGobs = new List<Gob>();
             removedGobs = new List<Gob>();
             weapons = new LinkedList<Weapon>();
+
             Players = new PlayerCollection();
             Players.Removed += player => 
             {
@@ -107,10 +121,30 @@ namespace AW2.Game
                 player.Controls.fire2.Release();
                 player.Controls.extra.Release();
             };
+
+            Models = new NamedItemCollection<Model>();
+            Models.NotFound += obj =>
+            {
+                Log.Write("Warning: Model " + obj.ToString() + " not found");
+                Model substitute;
+                if (Models.TryGetValue("dummymodel", out substitute))
+                    return substitute;
+                throw new KeyNotFoundException("Missing model " + obj.ToString() + " and default dummymodel");
+            };
+
+            Textures = new NamedItemCollection<Texture2D>();
+            Textures.Removed += texture => texture.Dispose();
+            Textures.NotFound += obj =>
+            {
+                Log.Write("Warning: Texture " + obj.ToString() + " not found");
+                Texture2D substitute;
+                if (Textures.TryGetValue("dummytexture", out substitute))
+                    return substitute;
+                throw new KeyNotFoundException("Missing texture " + obj.ToString() + " and default dummytexture");
+            };
+
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
-            models = new Dictionary<string, Model>();
-            textures = new Dictionary<string, Texture2D>();
             templates = new List<Pair<Type, List<Pair<string, object>>>>();
             arenas = new Dictionary<string, Arena>();
             arenaPreviews = new Dictionary<string, Texture2D>();
@@ -121,71 +155,7 @@ namespace AW2.Game
             arenaPlaylistI = -1;
         }
 
-        #region models
-
-        /// <summary>
-        /// Stores a 3D model by name, overwriting any model previously stored by the same name.
-        /// </summary>
-        /// <param name="name">The name of the 3D model.</param>
-        /// <param name="model">The 3D model.</param>
-        public void AddModel(string name, Model model)
-        {
-            if (models.ContainsKey(name))
-                Log.Write("Overwriting model " + name);
-            models[name] = model;
-        }
-
-        /// <summary>
-        /// Returns a named 3D model.
-        /// </summary>
-        /// <param name="name">The name of the 3D model.</param>
-        /// <returns>The 3D model.</returns>
-        public Model GetModel(string name)
-        {
-            Model model;
-            if (!models.TryGetValue(name, out model))
-            {
-                // Soft error handling; assign some default value and continue with the game.
-                Log.Write("Missing 3D model " + name);
-                if (!models.TryGetValue("dummymodel", out model))
-                    throw new Exception("Missing models " + name + " and fallback dummymodel");
-            }
-            return model;
-        }
-
-        /// <summary>
-        /// Tells if a name corresponds to any 3D model.
-        /// </summary>
-        /// <param name="name">The name of the 3D model.</param>
-        /// <returns><c>true</c> if there is a 3D model with the name, <c>false</c> otherwise.</returns>
-        public bool HasModel(string name)
-        {
-            return models.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// Disposes of all 3D models.
-        /// </summary>
-        public void ClearModels()
-        {
-            models.Clear();
-        }
-
-        #endregion models
-
         #region textures
-
-        /// <summary>
-        /// Stores a 2D texture by name, overwriting any texture previously stored by the same name.
-        /// </summary>
-        /// <param name="name">The name of the 2D texture.</param>
-        /// <param name="texture">The 2D texture.</param>
-        public void AddTexture(string name, Texture2D texture)
-        {
-            if (textures.ContainsKey(name))
-                Log.Write("Overwriting texture " + name);
-            textures[name] = texture;
-        }
 
         /// <summary>
         /// Stores a static 2D texture by name, overwriting any texture previously stored by the same name.
@@ -198,24 +168,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returns a named 2D texture.
-        /// </summary>
-        /// <param name="name">The name of the 2D texture.</param>
-        /// <returns>The 2D texture.</returns>
-        public Texture2D GetTexture(string name)
-        {
-            Texture2D texture;
-            if (!textures.TryGetValue(name, out texture))
-            {
-                // Soft error handling; assign some default value and continue with the game.
-                Log.Write("Missing texture " + name);
-                if (!textures.TryGetValue("dummytexture", out texture))
-                    throw new Exception("Missing textures " + name + " and fallback dummytexture");
-            }
-            return texture;
-        }
-
-        /// <summary>
         /// Returns a 2D texture used in static graphics.
         /// </summary>
         /// <param name="name">The name of the texture.</param>
@@ -223,26 +175,6 @@ namespace AW2.Game
         public Texture2D GetTexture(TextureName name)
         {
             return overlays[(int)name];
-        }
-
-        /// <summary>
-        /// Tells if a name corresponds to any texture.
-        /// </summary>
-        /// <param name="name">The name of the texture.</param>
-        /// <returns><c>true</c> if there is a texture with the name, <c>false</c> otherwise.</returns>
-        public bool HasTexture(string name)
-        {
-            return textures.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// Disposes of all textures.
-        /// </summary>
-        public void ClearTextures()
-        {
-            foreach (Texture2D texture in textures.Values)
-                texture.Dispose();
-            textures.Clear();
         }
 
         #endregion textures

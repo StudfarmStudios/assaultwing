@@ -445,7 +445,7 @@ namespace AW2.Graphics
                     // Render looping parallax as two huge triangles.
                     gfx.RenderState.DepthBufferEnable = false;
                     gfx.VertexDeclaration = vertexDeclaration;
-                    effect.Texture = data.GetTexture(layer.ParallaxName);
+                    effect.Texture = data.Textures[layer.ParallaxName];
 
                     Vector2 texMin = layerScale * new Vector2(
                         lookAt.X / effect.Texture.Width,
@@ -480,7 +480,7 @@ namespace AW2.Graphics
                     Vector2 pos = WorldAreaMin(0) * -layerScale;
                     pos.Y = -pos.Y;
                     Vector2 fillPos = new Vector2();
-                    Texture2D tex = data.GetTexture(layer.ParallaxName);
+                    Texture2D tex = data.Textures[layer.ParallaxName];
                     int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
                     pos.X = pos.X - mult * tex.Width;
                     mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);

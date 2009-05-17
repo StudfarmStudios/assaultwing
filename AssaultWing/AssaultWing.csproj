@@ -144,6 +144,7 @@
     <Compile Include="Game\Gobs\WallModel.cs">
       <Name>WallModel</Name>
     </Compile>
+    <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
     <Compile Include="Game\Particles\DotEmitter.cs" />
     <Compile Include="Game\Particles\Emitter.cs" />
     <Compile Include="Game\Particles\ExplodeEmitter.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="Graphics\ProgressBar.cs" />
     <Compile Include="Helpers\AbortableThreadPool.cs" />
     <Compile Include="Helpers\CanonicalString.cs" />
+    <Compile Include="Helpers\Collections\IObservableCollection.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Half.cs" />
     <Compile Include="Helpers\Pair.cs" />

@@ -527,7 +527,7 @@ namespace AW2.Game.Gobs
 
             // Flash and be disabled if we're just born.
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.GetModel(ModelName);
+            Model model = data.Models[ModelName];
             float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
             Alpha = birthAlpha.Evaluate(age);
             Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;

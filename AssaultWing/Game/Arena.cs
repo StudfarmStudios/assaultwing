@@ -384,52 +384,6 @@ namespace AW2.Game
             effect.LightingEnabled = true;
         }
 
-        /// <summary>
-        /// Draws parallaxes to the graphics device's current viewport using a sprite batch.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use for drawing. <c>Begin</c> is
-        /// assumed to have been called, and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
-        /// <param name="referencePoint">Reference point in game world coordinates for
-        /// parallax displacement.</param>
-        [Obsolete]
-        public void DrawParallaxes(SpriteBatch spriteBatch, Vector2 referencePoint)
-        {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            int viewportWidth = AssaultWing.Instance.GraphicsDevice.Viewport.Width;
-            int viewportHeight = AssaultWing.Instance.GraphicsDevice.Viewport.Height;
-            spriteBatch.Begin();
-            data.ForEachArenaLayer(delegate(ArenaLayer layer)
-            {
-                string parallaxName = layer.ParallaxName;
-                float z = layer.Z;
-                if (parallaxName == null) return;
-                Vector2 pos = new Vector2(-referencePoint.X * 1000 / (1000 - z), referencePoint.Y * 1000 / (1000 - z));
-                Vector2 fillPos = new Vector2();
-                Texture2D tex = data.GetTexture(parallaxName);
-                int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
-                pos.X = pos.X - mult * tex.Width;
-                mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);
-                pos.Y = pos.Y - mult * tex.Height;
-
-                int loopX = (int)Math.Ceiling((-pos.X + viewportWidth) / tex.Width);
-                int loopY = (int)Math.Ceiling((-pos.Y + viewportHeight) / tex.Height);
-                fillPos.Y = pos.Y;
-                for (int y = 0; y < loopY; y++)
-                {
-                    fillPos.X = pos.X;
-                    for (int x = 0; x < loopX; x++)
-                    {
-                        spriteBatch.Draw(tex, fillPos, Color.White);
-                        fillPos.X += tex.Width;
-                    }
-                    fillPos.Y += tex.Height;
-                }
-            });
-
-            spriteBatch.End();
-        }
-
         #region IConsistencyCheckable Members
 
         /// <summary>

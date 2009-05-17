@@ -58,7 +58,7 @@ namespace AW2.Game
         {
             Player removed = players[index];
             players.RemoveAt(index);
-            Removed(removed);
+            if (Removed != null) Removed(removed);
         }
 
         /// <summary>
@@ -83,10 +83,15 @@ namespace AW2.Game
         /// </summary>
         public void Clear()
         {
-            var removedPlayers = players.ToArray();
-            players.Clear();
-            foreach (var player in removedPlayers)
-                Removed(player);
+            if (Removed != null)
+            {
+                var removedPlayers = players.ToArray();
+                players.Clear();
+                foreach (var player in removedPlayers)
+                    Removed(player);
+            }
+            else
+                players.Clear();
         }
 
         /// <summary>
@@ -125,7 +130,7 @@ namespace AW2.Game
             {
                 var removed = players[index];
                 players.RemoveAt(index);
-                Removed(removed);
+                if (Removed != null) Removed(removed);
                 return true;
             }
             else 

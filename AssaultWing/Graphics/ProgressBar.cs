@@ -264,13 +264,13 @@ namespace AW2.Graphics
             {
                 task();
             }
+            catch (System.Threading.ThreadAbortException) { }
 #if !DEBUG
             catch (Exception e)
             {
                 status.Exception = e;
             }
 #endif
-            catch (System.Threading.ThreadAbortException) { }
             finally
             {
                 status.IsCompleted = true;

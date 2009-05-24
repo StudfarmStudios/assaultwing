@@ -473,7 +473,7 @@ namespace AW2.Graphics
                 gfx.RenderState.DepthBufferEnable = true;
 #else // HACK: The old way of drawing parallaxes, with several calls to SpriteBatch.Draw
                 // Layer parallax
-                if (layer.ParallaxName != null)
+                if (layer.ParallaxName != "")
                 {
                     spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
                     gfx.RenderState.AlphaTestEnable = false;

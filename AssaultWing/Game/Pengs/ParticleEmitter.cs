@@ -20,7 +20,7 @@ namespace AW2.Game.Pengs
         /// Names of textures of particles to emit.
         /// </summary>
         [TypeParameter]
-        protected string[] textureNames;
+        protected CanonicalString[] textureNames;
 
         /// <summary>
         /// Names of types of gobs to emit.
@@ -46,7 +46,7 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// Names of textures of particles to emit.
         /// </summary>
-        public string[] TextureNames { get { return textureNames; } }
+        public CanonicalString[] TextureNames { get { return textureNames; } }
 
         /// <summary>
         /// Names of types of gobs to emit.
@@ -85,7 +85,7 @@ namespace AW2.Game.Pengs
         /// This constructor is for serialisation.
         public ParticleEmitter()
         {
-            textureNames = new string[] { "dummytexture" };
+            textureNames = new CanonicalString[] { (CanonicalString)"dummytexture" };
             gobTypeNames = new string[] { "dummygob" };
             paused = false;
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -108,14 +109,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
-        public override List<string> TextureNames
+        public override IEnumerable<CanonicalString> TextureNames
         {
-            get
-            {
-                List<string> names = base.TextureNames;
-                names.AddRange(emitter.TextureNames);
-                return names;
-            }
+            get { return base.TextureNames.Union(emitter.TextureNames); }
         }
 
         /// <summary>

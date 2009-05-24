@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using AW2.Graphics;
 using AW2.Helpers;
@@ -32,7 +33,7 @@ namespace AW2.Game.Particles
         [TypeParameter]
         private Emitter emitter = new DotEmitter(); //Emitter of the system
         [TypeParameter]
-        private string textureName = "dummytexture"; // Name of texture for particles
+        private CanonicalString textureName = (CanonicalString)"dummytexture"; // Name of texture for particles
 
         Gob leader = null; // The leader who we follow, or null.
         float argument = 0; // Argument for FloatFactory instances that need it.
@@ -158,23 +159,14 @@ namespace AW2.Game.Particles
         /// <summary>
         /// Name of the texture to draw each particle with.
         /// </summary>
-        public string TextureName
-        {
-            get { return textureName; }
-            set { textureName = value; }
-        }
+        public CanonicalString TextureName { get { return textureName; } set { textureName = value; } }
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
-        public override List<string> TextureNames
+        public override IEnumerable<CanonicalString> TextureNames
         {
-            get
-            {
-                List<string> textureNames = base.TextureNames;
-                textureNames.Add(textureName);
-                return textureNames;
-            }
+            get { return base.TextureNames.Union(new CanonicalString[] { textureName }); }
         }
 
         /// <summary>
@@ -519,7 +511,8 @@ namespace AW2.Game.Particles
                     throw new Exception("Serialization error: ParticleEngine birthRate not defined in " + TypeName);
                 if (emitter == null)
                     throw new Exception("Serialization error: ParticleEngine emitter not defined in " + TypeName);
-                textureName = textureName ?? "dummytexture";
+                if (textureName == null)
+                    textureName = (CanonicalString)"dummytexture";
                 if (particleAge == null)
                     throw new Exception("Serialization error: ParticleEngine particleAge not defined in " + TypeName);
                 if (particleInitialSize == null)

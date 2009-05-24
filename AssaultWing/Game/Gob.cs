@@ -171,7 +171,7 @@ namespace AW2.Game
         /// Name of the 3D model of the gob. The name indexes the model database in GraphicsEngine.
         /// </summary>
         [TypeParameter]
-        string modelName;
+        CanonicalString modelName;
 
         /// <summary>
         /// Scaling factor of the 3D model.
@@ -379,26 +379,17 @@ namespace AW2.Game
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
-        public virtual List<string> ModelNames
+        public virtual IEnumerable<CanonicalString> ModelNames
         {
-            get
-            {
-                List<string> names = new List<string>();
-                names.Add(modelName);
-                return names;
-            }
+            get { return new List<CanonicalString> { modelName }; }
         }
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
-        public virtual List<string> TextureNames
+        public virtual IEnumerable<CanonicalString> TextureNames
         {
-            get
-            {
-                List<string> names = new List<string>();
-                return names;
-            }
+            get { return new List<CanonicalString>(); }
         }
 
         /// <summary>
@@ -460,7 +451,7 @@ namespace AW2.Game
         /// <summary>
         /// Returns the name of the 3D model of the gob.
         /// </summary>
-        public string ModelName { get { return modelName; } set { modelName = value; } }
+        public CanonicalString ModelName { get { return modelName; } set { modelName = value; } }
 
         /// <summary>
         /// Get and set the scaling factor of the 3D model.
@@ -664,24 +655,11 @@ namespace AW2.Game
             this.mass = 1;
             this.elasticity = 0.7f;
             this.friction = 0.7f;
-            this.modelName = "dummymodel";
+            this.modelName = (CanonicalString)"dummymodel";
             this.scale = 1f;
             this.birthGobTypes = new string[0];
             this.deathGobTypes = new string[0];
-            this.collisionAreas = new CollisionArea[] {
-                /*
-                new CollisionArea("General", new Circle(Vector2.Zero, 10f), null,
-                CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
-                new CollisionArea("General", new Polygon(new Vector2[] {
-                    new Vector2(10,0),
-                    new Vector2(0,7), 
-                    new Vector2(0,-7)
-                }), null,
-                CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
-                new CollisionArea("General", new Everything(), null,
-                CollisionAreaType.None, CollisionAreaType.None, CollisionAreaType.None),
-                */
-            };
+            this.collisionAreas = new CollisionArea[0];
             this.damage = 0;
             this.maxDamage = 100;
             bleachDamage = 0;
@@ -1468,7 +1446,7 @@ namespace AW2.Game
                 if (typeName == null)
                     typeName = "unknown gob type";
                 if (modelName == null)
-                    modelName = "dummymodel";
+                    modelName = (CanonicalString)"dummymodel";
                 if (collisionAreas == null)
                     collisionAreas = new CollisionArea[0];
                 if (birthGobTypes == null)
@@ -1501,12 +1479,6 @@ namespace AW2.Game
             {
                 // Make sure there's no null references.
                 typeName = typeName ?? "unknown gob type";
-
-                // 'modelName' is actually a type parameter,
-                // but its value is passed onwards by 'ModelNames' even
-                // if we were only a gob's runtime state.
-                if (modelName == null)
-                    modelName = "dummymodel";
             }
         }
 

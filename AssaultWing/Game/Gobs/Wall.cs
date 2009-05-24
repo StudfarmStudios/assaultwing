@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
@@ -69,7 +70,7 @@ namespace AW2.Game.Gobs
         /// The name indexes the static texture bank in DataEngine.
         /// </summary>
         [TypeParameter]
-        string textureName;
+        CanonicalString textureName;
 
         /// <summary>
         /// The texture to draw the wall's 3D model with.
@@ -115,14 +116,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
-        public override List<string> TextureNames
+        public override IEnumerable<CanonicalString> TextureNames
         {
-            get
-            {
-                List<string> names = base.TextureNames;
-                names.Add(textureName);
-                return names;
-            }
+            get { return base.TextureNames.Union(new CanonicalString[] { textureName }); }
         }
 
         #endregion // Wall Properties
@@ -141,7 +137,7 @@ namespace AW2.Game.Gobs
                 },
                 new short[] { 0, 1, 2 },
                 null, null);
-            textureName = "dummytexture";
+            textureName = (CanonicalString)"dummytexture";
             vertexDeclaration = null;
         }
 
@@ -354,7 +350,7 @@ namespace AW2.Game.Gobs
             {
                 // Make sure there's no null references.
                 if (textureName == null)
-                    textureName = "dummytexture";
+                    textureName = (CanonicalString)"dummytexture";
             }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
             {
@@ -368,7 +364,7 @@ namespace AW2.Game.Gobs
                 // but its value is passed onwards by 'TextureNames' even
                 // if we were only a gob's runtime state.
                 if (textureName == null)
-                    textureName = "dummytexture";
+                    textureName = (CanonicalString)"dummytexture";
             }
         }
 

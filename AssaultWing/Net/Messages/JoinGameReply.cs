@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AW2.Net.Messages
 {
@@ -52,7 +53,7 @@ namespace AW2.Net.Messages
             //   int: old player ID
             //   int: new player ID
             // int: number of canonical strings, K
-            // repeat K
+            // repeat K - 1 (all but the zero-indexed canonical string)
             //   32 byte string: string value
             writer.Write((byte)PlayerIdChanges.Length);
             foreach (IdChange change in PlayerIdChanges)
@@ -61,7 +62,7 @@ namespace AW2.Net.Messages
                 writer.Write((int)change.newId);
             }
             writer.Write((int)CanonicalStrings.Count);
-            foreach (var canonical in CanonicalStrings)
+            foreach (var canonical in CanonicalStrings.Skip(1))
                 writer.Write((string)canonical, 32, true);
         }
 
@@ -80,7 +81,8 @@ namespace AW2.Net.Messages
             }
             int canonicalStringCount = reader.ReadInt32();
             CanonicalStrings = new string[canonicalStringCount];
-            for (int i = 0; i < canonicalStringCount; ++i)
+            CanonicalStrings[0] = null;
+            for (int i = 1; i < canonicalStringCount; ++i)
                 CanonicalStrings[i] = reader.ReadString(32);
         }
 

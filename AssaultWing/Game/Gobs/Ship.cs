@@ -3,6 +3,7 @@
 #endif
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
@@ -167,7 +168,7 @@ namespace AW2.Game.Gobs
         /// Name of the ship's icon in the equip menu main display.
         /// </summary>
         [TypeParameter]
-        string iconEquipName;
+        CanonicalString iconEquipName;
 
         /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
@@ -317,19 +318,14 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Name of the ship's icon in the equip menu main display.
         /// </summary>
-        public string IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
+        public CanonicalString IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
-        public override List<string> TextureNames
+        public override IEnumerable<CanonicalString> TextureNames
         {
-            get
-            {
-                List<string> names = base.TextureNames;
-                names.Add(iconEquipName);
-                return names;
-            }
+            get { return base.TextureNames.Union(new CanonicalString[] { iconEquipName }); }
         }
 
         #endregion Ship properties
@@ -377,7 +373,7 @@ namespace AW2.Game.Gobs
             this.birthAlpha.ComputeTangents(CurveTangent.Flat);
             this.coughEngineNames = new string[] { "dummyparticleengine", };
             this.temporarilyDisabledGobs = new List<Gob>();
-            this.iconEquipName = "dummytexture";
+            this.iconEquipName = (CanonicalString)"dummytexture";
         }
 
         /// <summary>
@@ -833,7 +829,7 @@ namespace AW2.Game.Gobs
                 if (birthAlpha == null)
                     throw new Exception("Serialization error: Ship birthAlpha not defined in " + TypeName);
                 if (iconEquipName == null)
-                    iconEquipName = "dummytexture";
+                    iconEquipName = (CanonicalString)"dummytexture";
             }
         }
 

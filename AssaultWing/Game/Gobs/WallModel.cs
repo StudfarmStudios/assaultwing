@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
@@ -24,7 +25,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Note: This field overrides the type parameter Gob.modelName.
         [RuntimeState]
-        string wallModelName;
+        CanonicalString wallModelName;
 
         #endregion // WallModel Fields
 
@@ -33,25 +34,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Names of all models that this gob type will ever use.
         /// </summary>
-        public override List<string> ModelNames
+        public override IEnumerable<CanonicalString> ModelNames
         {
-            get
-            {
-                List<string> names = base.ModelNames;
-                names.Add(wallModelName);
-                return names;
-            }
-        }
-
-        /// <summary>
-        /// Names of all textures that this gob type will ever use.
-        /// </summary>
-        public override List<string> TextureNames
-        {
-            get
-            {
-                return base.TextureNames;
-            }
+            get { return base.ModelNames.Union(new CanonicalString[] { wallModelName }); }
         }
 
         #endregion // WallModel Properties
@@ -62,7 +47,7 @@ namespace AW2.Game.Gobs
         /// This constructor is only for serialisation.
         public WallModel() : base() 
         {
-            wallModelName = "dummymodel";
+            wallModelName = (CanonicalString)"dummymodel";
         }
 
         /// <summary>
@@ -72,7 +57,7 @@ namespace AW2.Game.Gobs
         public WallModel(string typeName)
             : base(typeName)
         {
-            this.wallModelName = "dummymodel";
+            this.wallModelName = (CanonicalString)"dummymodel";
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -111,7 +96,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((string)wallModelName, 32, true);
+                writer.Write((int)wallModelName.Canonical);
             }
         }
 
@@ -125,7 +110,7 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                wallModelName = reader.ReadString(32);
+                wallModelName = new CanonicalString(reader.ReadInt32());
                 Set3DModel();
             }
         }
@@ -187,13 +172,13 @@ namespace AW2.Game.Gobs
                 // that we don't make a difference between gob templates
                 // and actual gob instances (that have a proper runtime state).
                 if (wallModelName == null)
-                    wallModelName = "dummymodel";
+                    wallModelName = (CanonicalString)"dummymodel";
             }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
             {
                 // Make sure there's no null references.
                 if (wallModelName == null)
-                    wallModelName = "dummymodel";
+                    wallModelName = (CanonicalString)"dummymodel";
             }
         }
 

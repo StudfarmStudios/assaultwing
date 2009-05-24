@@ -4,18 +4,25 @@ using System;
 namespace AW2.Helpers
 {
     /// <summary>
-    /// A string that has a canonical form as an integer.
+    /// A string that has a canonical form as a positive integer.
+    /// Zero is the canonical value of an uninitialised string.
     /// </summary>
     /// The canonical form of a string is fixed the first time a
-    /// <c>CanonizedString</c> instance is created of the string.
-    /// From then on, all <c>CanonizedString</c> instances with
+    /// <see cref="CanonicalString"/> instance is created of the string.
+    /// From then on, all <see cref="CanonicalString"/> instances with
     /// the same string content will have the same canonical form.
+    /// This enables one to use <c>IList&lt;T&gt;</c> in place of
+    /// <c>IDictionary&lt;string, T&gt;</c> and to send only the canonical
+    /// integer value over a bandwidth-limited stream instead of an 
+    /// arbitrarily long string.
+    [SerializedType(typeof(string))]
     public struct CanonicalString
     {
-        static IList<string> canonicalForms = new List<string>();
+        static IList<string> canonicalForms = new List<string> { null };
 
         /// <summary>
         /// The index of a string in this list is its canonical form.
+        /// Zero index is reserved for the uninitialised string.
         /// </summary>
         public static IList<string> CanonicalForms
         {
@@ -30,7 +37,7 @@ namespace AW2.Helpers
         /// <summary>
         /// The string.
         /// </summary>
-        public string Value { get; private set; }
+        public string Value { get { return CanonicalForms[Canonical]; } }
 
         /// <summary>
         /// The canonical integer form of the string.
@@ -66,15 +73,14 @@ namespace AW2.Helpers
         public CanonicalString(string value)
             : this()
         {
-            Value = value;
             Canonical = CanonicalForms.IndexOf(value);
             if (Canonical < 0)
             {
                 Canonical = CanonicalForms.Count;
                 CanonicalForms.Add(value);
 #if DEBUG
-                if (CanonicalForms.Count == 100)
-                    Log.Write("WARNING: 100 distinct CanonicalString values and counting... Consider using a Dictionary");
+                if ((CanonicalForms.Count % 100) == 0)
+                    Log.Write("WARNING: " + CanonicalForms.Count + " distinct CanonicalString values and counting... Consider using a Dictionary");
 #endif
             }
         }
@@ -88,7 +94,14 @@ namespace AW2.Helpers
             if (canonical < 0 || canonical >= CanonicalForms.Count)
                 throw new InvalidOperationException("No canonical string has canonical form " + canonical);
             Canonical = canonical;
-            Value = CanonicalForms[canonical];
+        }
+
+        /// <summary>
+        /// Returns a string representation of the object.
+        /// </summary>
+        public override string ToString()
+        {
+            return Value;
         }
     }
 }

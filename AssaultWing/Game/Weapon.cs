@@ -61,13 +61,13 @@ namespace AW2.Game
         /// and bonus display.
         /// </summary>
         [TypeParameter]
-        string iconName;
+        CanonicalString iconName;
 
         /// <summary>
         /// Name of the weapon's icon in the equip menu main display.
         /// </summary>
         [TypeParameter]
-        string iconEquipName;
+        CanonicalString iconEquipName;
 
         /// <summary>
         /// The ship this weapon is attached to.
@@ -145,29 +145,19 @@ namespace AW2.Game
         /// Name of the icon of the weapon, to be displayed in weapon selection 
         /// and bonus display.
         /// </summary>
-        public string IconName
-        {
-            get { return iconName; }
-            set { iconName = value; }
-        }
+        public CanonicalString IconName { get { return iconName; } set { iconName = value; } }
 
         /// <summary>
         /// Name of the weapon's icon in the equip menu main display.
         /// </summary>
-        public string IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
+        public CanonicalString IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
 
         /// <summary>
         /// Names of all textures that this weapon will ever use.
         /// </summary>
-        public List<string> TextureNames
+        public IEnumerable<CanonicalString> TextureNames
         {
-            get
-            {
-                List<string> textureNames = new List<string>();
-                textureNames.Add(iconName);
-                textureNames.Add(iconEquipName);
-                return textureNames;
-            }
+            get { return new List<CanonicalString> { iconName, iconEquipName }; }
         }
 
         /// <summary>
@@ -257,8 +247,8 @@ namespace AW2.Game
         {
             this.typeName = "unknown weapon type";
             this.upgradeNames = new string[] { "dummyweapontype", };
-            this.iconName = "dummytexture";
-            this.iconEquipName = "dummytexture";
+            this.iconName = (CanonicalString)"dummytexture";
+            this.iconEquipName = (CanonicalString)"dummytexture";
             this.owner = null;
             this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };
@@ -419,8 +409,10 @@ namespace AW2.Game
                 // Make sure there's no null references.
                 typeName = typeName ?? "unknown weapon type";
                 upgradeNames = upgradeNames ?? new string[0];
-                iconName = iconName ?? "dummytexture";
-                iconEquipName = iconEquipName ?? "dummytexture";
+                if (iconName == null)
+                    iconName = (CanonicalString)"dummytexture";
+                if (iconEquipName == null)
+                    iconEquipName = (CanonicalString)"dummytexture";
                 shotTypeName = shotTypeName ?? "dummygob";
             }
         }

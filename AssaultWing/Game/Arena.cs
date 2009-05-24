@@ -25,7 +25,7 @@ namespace AW2.Game
         [TypeParameter]
         float z;
         [TypeParameter]
-        string parallaxName;
+        CanonicalString parallaxName;
 
         // This field will be serialised so that the gobs have their runtime state
         // (positions, movements, etc.) serialised and not their type parameters.
@@ -58,12 +58,9 @@ namespace AW2.Game
 
 
         /// <summary>
-        /// Name of the texture to use as parallax or <c>null</c> for no parallax.
+        /// Name of the texture to use as parallax or the empty string for no parallax.
         /// </summary>
-        /// Note: Deserialising the empty string to <c>ParallaxName</c> will
-        /// result in <c>ParallaxName</c> getting <c>null</c> as its value, i.e.
-        /// there will be no parallax.
-        public string ParallaxName { get { return parallaxName; } }
+        public CanonicalString ParallaxName { get { return parallaxName; } }
 
         /// <summary>
         /// Creates an uninitialised arena layer.
@@ -73,7 +70,7 @@ namespace AW2.Game
         {
             isGameplayLayer = true;
             z = 0;
-            parallaxName = "dummysprite";
+            parallaxName = (CanonicalString)"dummysprite";
             gobs = new List<Gob>();
             gobsSort2D = new List<Gob>();
             AddGob(Gob.CreateGob("dummygobtype"));
@@ -89,7 +86,7 @@ namespace AW2.Game
         {
             this.isGameplayLayer = isGameplayLayer;
             this.z = z;
-            this.parallaxName = parallaxName;
+            this.parallaxName = (CanonicalString)parallaxName;
             gobs = new List<Gob>();
             gobsSort2D = new List<Gob>();
         }
@@ -196,8 +193,6 @@ namespace AW2.Game
                 Log.Write("Warning: Clamping too big arena layer Z coordinate: " + z);
                 z = 500;
             }
-            if (parallaxName == "")
-                parallaxName = null;
         }
 
         #endregion

@@ -8,9 +8,10 @@ namespace AW2.Helpers.Collections
     /// A collection of named items.
     /// </summary>
     /// <typeparam name="T">The element type of the collection.</typeparam>
-    public class NamedItemCollection<T> : IDictionary<string, T>, IObservableCollection<T>
+    public class NamedItemCollection<T> : IDictionary<CanonicalString, T>, IObservableCollection<T>
+        where T : class
     {
-        Dictionary<string, T> items = new Dictionary<string, T>();
+        List<T> items = new List<T>();
 
         #region IObservableCollection<T> Members
 
@@ -30,87 +31,111 @@ namespace AW2.Helpers.Collections
 
         #endregion
 
-        #region IDictionary<string, T> Members
+        #region IDictionary<CanonicalString, T> Members
 
         /// <summary>
         /// Adds an element with the provided key and value to the dictionary.
+        /// Throws an exception if an element with the same key already exists.
         /// </summary>
-        public void Add(string key, T value)
+        public void Add(CanonicalString key, T value)
         {
-            items[key] = value;
+            if (value == null) throw new InvalidOperationException("Cannot add null value to a NamedItemCollection");
+            while (items.Count <= key.Canonical) items.Add(null);
+            if (items[key.Canonical] != null) throw new ArgumentException("An element with key " + key + " already exists");
+            items[key.Canonical] = value;
         }
 
         /// <summary>
         /// Determines whether the dictionary contains an element with the specified key.
         /// </summary>
-        public bool ContainsKey(string key)
+        public bool ContainsKey(CanonicalString key)
         {
-            return items.ContainsKey(key);
+            return items.Count > key.Canonical && items[key.Canonical] != null;
         }
 
         /// <summary>
         /// The keys of the dictionary.
         /// </summary>
-        public ICollection<string> Keys { get { return items.Keys; } }
+        public ICollection<CanonicalString> Keys
+        {
+            get
+            {
+                var keys = new List<CanonicalString>();
+                for (int i = 0; i < items.Count; ++i)
+                    if (items[i] != null) keys.Add(new CanonicalString(i));
+                return keys;
+            }
+        }
 
         /// <summary>
         /// Removes the element with the specified key from the dictionary.
         /// </summary>
-        /// <returns><c>true</c> if the element is successfully removed.
+        /// <returns><c>true</c> if the element was successfully removed.
         /// <c>false</c> if key was not found or could not be removed.</returns>
-        public bool Remove(string key)
+        public bool Remove(CanonicalString key)
         {
-            T value;
-            if (items.TryGetValue(key, out value))
-            {
-                bool result = items.Remove(key);
-                if (Removed != null) Removed(value);
-                return result;
-            }
-            return false;
+            if (key.Canonical < 0 || key.Canonical >= items.Count) return false;
+            T value = items[key.Canonical];
+            if (value == null) return false;
+            items.RemoveAt(key.Canonical);
+            if (Removed != null) Removed(value);
+            return true;
         }
 
         /// <summary>
         /// Gets the value associated with the specified key.
         /// </summary>
-        public bool TryGetValue(string key, out T value)
+        /// <returns><c>true</c> if the dictionary contains an element with the key,
+        /// otherwise <c>false</c>.</returns>
+        public bool TryGetValue(CanonicalString key, out T value)
         {
-            return items.TryGetValue(key, out value);
+            if (key.Canonical < 0 || key.Canonical >= items.Count)
+            {
+                value = null;
+                return false;
+            }
+            value = items[key.Canonical];
+            return value != null;
         }
 
         /// <summary>
         /// The values in the dictionary.
         /// </summary>
-        public ICollection<T> Values { get { return items.Values; } }
+        public ICollection<T> Values { get { return items.FindAll(item => item != null); } }
 
         /// <summary>
         /// The element with the specified key.
         /// </summary>
-        public T this[string key]
+        public T this[CanonicalString key]
         {
             get
             {
                 T value;
-                if (items.TryGetValue(key, out value))
+                if (TryGetValue(key, out value))
                     return value;
                 else if (NotFound != null)
                     return NotFound(key);
                 else
                     throw new KeyNotFoundException("NamedItemCollection has no value for key " + key);
             }
-            set { items[key] = value; }
+            set
+            {
+                if (value == null) throw new InvalidOperationException("Cannot add null value to a NamedItemCollection");
+                while (items.Count <= key.Canonical) items.Add(null);
+                items[key.Canonical] = value;
+            }
         }
 
         #endregion
 
-        #region ICollection<KeyValuePair<string, T>> Members
+        #region ICollection<KeyValuePair<CanonicalString, T>> Members
 
         /// <summary>
         /// Adds an item to the collection.
         /// </summary>
-        void ICollection<KeyValuePair<string, T>>.Add(KeyValuePair<string, T> item)
+        void ICollection<KeyValuePair<CanonicalString, T>>.Add(KeyValuePair<CanonicalString, T> item)
         {
-            ((ICollection<KeyValuePair<string, T>>)items).Add(item);
+            Add(item.Key, item.Value);
         }
 
         /// <summary>
@@ -120,9 +145,10 @@ namespace AW2.Helpers.Collections
         {
             if (Removed != null)
             {
-                T[] removedItems = items.Values.ToArray();
-                items.Clear();
-                foreach (T item in removedItems) Removed(item);
+                var removedItems = items;
+                items = new List<T>();
+                foreach (T item in removedItems) 
+                    if (item != null) Removed(item);
             }
             else
                 items.Clear();
@@ -131,23 +157,30 @@ namespace AW2.Helpers.Collections
         /// <summary>
         /// Determines whether the collection contains a specific value.
         /// </summary>
-        bool ICollection<KeyValuePair<string, T>>.Contains(KeyValuePair<string, T> item)
+        bool ICollection<KeyValuePair<CanonicalString, T>>.Contains(KeyValuePair<CanonicalString, T> item)
         {
-            return ((ICollection<KeyValuePair<string, T>>)items).Contains(item);
+            return ContainsKey(item.Key) && items[item.Key.Canonical] == item.Value;
         }
 
         /// <summary>
         /// Copies the elements of the collection to an array, starting at a particular array index.
         /// </summary>
-        void ICollection<KeyValuePair<string, T>>.CopyTo(KeyValuePair<string, T>[] array, int arrayIndex)
+        void ICollection<KeyValuePair<CanonicalString, T>>.CopyTo(KeyValuePair<CanonicalString, T>[] array, int arrayIndex)
         {
-            ((ICollection<KeyValuePair<string, T>>)items).CopyTo(array, arrayIndex);
+            if (array == null) throw new ArgumentNullException("Cannot copy to a null array");
+            if (arrayIndex < 0) throw new ArgumentOutOfRangeException("Negative array index");
+            if (array.Rank != 1) throw new ArgumentException("Cannot copy to a multidimensional array");
+            if (arrayIndex + Count > array.Length) throw new ArgumentException("Not enough space on array");
+            int writeI = arrayIndex;
+            for (int i = 0; i < items.Count; ++i)
+                if (items[i] != null)
+                    array[writeI++] = new KeyValuePair<CanonicalString, T>(new CanonicalString(i), items[i]);
         }
 
         /// <summary>
         /// The number of elements contained in the collection.
         /// </summary>
-        public int Count { get { return items.Count; } }
+        public int Count { get { return items.Count(item => item != null); } }
 
         /// <summary>
         /// Is the collection read-only.
@@ -157,27 +190,24 @@ namespace AW2.Helpers.Collections
         /// <summary>
         /// Removes the first occurrence of a specific element from the collection.
         /// </summary>
-        bool ICollection<KeyValuePair<string, T>>.Remove(KeyValuePair<string, T> item)
+        /// <returns><c>true</c> if the element was successfully removed.
+        /// <c>false</c> if key was not found or could not be removed.</returns>
+        bool ICollection<KeyValuePair<CanonicalString, T>>.Remove(KeyValuePair<CanonicalString, T> item)
         {
-            if (items.Contains(item))
-            {
-                bool result = ((ICollection<KeyValuePair<string, T>>)items).Remove(item);
-                if (Removed != null) Removed(item.Value);
-                return result;
-            }
-            return false;
+            if (!((ICollection<KeyValuePair<CanonicalString, T>>)this).Contains(item)) return false;
+            return Remove(item.Key);
         }
 
         #endregion
 
-        #region IEnumerable<KeyValuePair<string, T>> Members
+        #region IEnumerable<KeyValuePair<CanonicalString, T>> Members
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
-        public IEnumerator<KeyValuePair<string, T>> GetEnumerator()
+        public IEnumerator<KeyValuePair<CanonicalString, T>> GetEnumerator()
         {
-            return items.GetEnumerator();
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -189,7 +219,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return ((System.Collections.IEnumerable)items).GetEnumerator();
+            throw new NotImplementedException();
         }
 
         #endregion

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
@@ -28,19 +29,13 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// The actual model name for a bullet is chosen from these by random.
         [TypeParameter, ShallowCopy]
-        string[] bulletModelNames;
+        CanonicalString[] bulletModelNames;
 
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
-        public override List<string> ModelNames
-        {
-            get
-            {
-                List<string> names = base.ModelNames;
-                names.AddRange(bulletModelNames);
-                return names;
-            }
+        public override IEnumerable<CanonicalString> ModelNames {
+            get { return base.ModelNames.Union(bulletModelNames); }
         }
 
         /// <summary>
@@ -52,7 +47,7 @@ namespace AW2.Game.Gobs
         {
             impactDamage = 10;
             impactHoleRadius = 10;
-            bulletModelNames = new string[] { "dummymodel", };
+            bulletModelNames = new CanonicalString[] { (CanonicalString)"dummymodel" };
         }
 
         /// <summary>
@@ -120,7 +115,7 @@ namespace AW2.Game.Gobs
             {
                 // Make sure there's no null references.
                 if (bulletModelNames == null)
-                    bulletModelNames = new string[0];
+                    bulletModelNames = new CanonicalString[0];
             }
         }
 

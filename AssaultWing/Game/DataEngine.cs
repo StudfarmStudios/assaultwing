@@ -25,9 +25,9 @@ namespace AW2.Game
     /// The gameplay backlayer is for 2D graphics that needs to be behind gobs.
     public class DataEngine
     {
-        class NamedDataCollection<T> : NamedItemCollection<T>
+        class NamedDataCollection<T> : NamedItemCollection<T> where T : class
         {
-            public NamedDataCollection(string kindName, string substituteName)
+            public NamedDataCollection(string kindName, CanonicalString substituteName)
             {
                 if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
                     Removed += item => ((IDisposable)item).Dispose();
@@ -144,9 +144,9 @@ namespace AW2.Game
                 player.Controls.extra.Release();
             };
 
-            Models = new NamedDataCollection<Model>("model", "dummymodel");
-            Textures = new NamedDataCollection<Texture2D>("texture", "dummytexture");
-            ArenaPreviews = new NamedDataCollection<Texture2D>("arena preview", "noPreview");
+            Models = new NamedDataCollection<Model>("model", (CanonicalString)"dummymodel");
+            Textures = new NamedDataCollection<Texture2D>("texture", (CanonicalString)"dummytexture");
+            ArenaPreviews = new NamedDataCollection<Texture2D>("arena preview", (CanonicalString)"noPreview");
 
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
@@ -395,7 +395,7 @@ namespace AW2.Game
             // Otherwise we create a new layer.
             if (gameplayLayer == 0 || preparedArena.Layers[gameplayLayer - 1].Z != 0)
             {
-                preparedArena.Layers.Insert(gameplayLayer, new ArenaLayer(false, 0, null));
+                preparedArena.Layers.Insert(gameplayLayer, new ArenaLayer(false, 0, ""));
                 ++gameplayLayer;
             }
 

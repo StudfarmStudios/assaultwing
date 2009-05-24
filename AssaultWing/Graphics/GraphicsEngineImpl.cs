@@ -347,16 +347,16 @@ namespace AW2.Graphics
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
 
             // Loop through gob types and load all the 3D models and textures they need.
-            data.ForEachTypeTemplate<Gob>(delegate(Gob gobTemplate)
+            data.ForEachTypeTemplate<Gob>(gobTemplate =>
             {
-                foreach (string modelName in gobTemplate.ModelNames)
+                foreach (var modelName in gobTemplate.ModelNames)
                 {
                     if (data.Models.ContainsKey(modelName)) continue;
                     Model model = LoadModel(modelName);
                     if (model != null)
                         data.Models.Add(modelName, model);
                 }
-                foreach (string textureName in gobTemplate.TextureNames)
+                foreach (var textureName in gobTemplate.TextureNames)
                 {
                     if (data.Textures.ContainsKey(textureName)) continue;
                     Texture2D texture = LoadTexture(textureName);
@@ -366,9 +366,9 @@ namespace AW2.Graphics
             });
 
             // Load all textures that each weapon needs.
-            data.ForEachTypeTemplate<Weapon>(delegate(Weapon weapon)
+            data.ForEachTypeTemplate<Weapon>(weaponTemplate =>
             {
-                foreach (string textureName in weapon.TextureNames)
+                foreach (var textureName in weaponTemplate.TextureNames)
                 {
                     if (data.Textures.ContainsKey(textureName)) continue;
                     Texture2D texture = LoadTexture(textureName);
@@ -381,13 +381,13 @@ namespace AW2.Graphics
             foreach (TextureName overlay in Enum.GetValues(typeof(TextureName)))
                 data.AddTexture(overlay, LoadTexture(overlayNames[(int)overlay]));
 
-            data.ArenaPreviews.Add("noPreview", LoadTexture("no_preview"));            
-            foreach (string name in data.ArenaPlaylist)
+            data.ArenaPreviews.Add((CanonicalString)"noPreview", LoadTexture("no_preview"));            
+            foreach (var name in data.ArenaPlaylist)
             {
                 string arenaName = name;
                 Texture2D preview = LoadTexture(arenaName.ToLower() + "_preview");
                 if (preview != null)
-                    data.ArenaPreviews.Add(arenaName, preview);
+                    data.ArenaPreviews.Add((CanonicalString)arenaName, preview);
             }
 
             // Load static fonts.
@@ -400,8 +400,8 @@ namespace AW2.Graphics
 
             // Propagate LoadContent to other components that are known to
             // contain references to graphics content.
-            data.ForEachViewport(delegate(AWViewport viewport) { viewport.LoadContent(); });
-            data.ForEachGob(delegate(Gob gob) { gob.LoadContent(); });
+            data.ForEachViewport(viewport => viewport.LoadContent());
+            data.ForEachGob(gob => gob.LoadContent());
             data.LoadContent();
         }
 
@@ -417,7 +417,7 @@ namespace AW2.Graphics
                 layer.ForEachGob(gob =>
                 {
                     // Load the layer's gob types.
-                    foreach (string modelName in gob.ModelNames)
+                    foreach (var modelName in gob.ModelNames)
                     {
                         if (data.Models.ContainsKey(modelName)) continue;
                         Model model = LoadModel(modelName);
@@ -426,7 +426,7 @@ namespace AW2.Graphics
                     }
 
                     // Load the layer's gobs' textures.
-                    foreach (string textureName in gob.TextureNames)
+                    foreach (var textureName in gob.TextureNames)
                     {
                         if (data.Textures.ContainsKey(textureName)) continue;
                         Texture2D texture = LoadTexture(textureName);
@@ -436,8 +436,8 @@ namespace AW2.Graphics
                 });
 
                 // Load the layer's parallax texture.
-                string parallaxName = layer.ParallaxName;
-                if (parallaxName != null && !data.Textures.ContainsKey(parallaxName))
+                var parallaxName = layer.ParallaxName;
+                if (parallaxName != "" && !data.Textures.ContainsKey(parallaxName))
                 {
                     Texture2D parallaxTexture = LoadTexture(parallaxName);
                     if (parallaxTexture != null)

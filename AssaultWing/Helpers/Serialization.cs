@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -8,7 +9,7 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using Microsoft.Xna.Framework.Graphics;
-using TypePair = System.Collections.Generic.KeyValuePair<System.Type, System.Type>;
+using TypePair = AW2.Helpers.Pair<System.Type, System.Type>;
 
 namespace AW2.Helpers
 {
@@ -18,8 +19,8 @@ namespace AW2.Helpers
     /// </summary>
     /// This attribute is meant for use with Serialization.Serialize and Serialization.Deserialize
     /// as limiting the (de)serialisation of an object.
-    /// <see cref="Serialization.SerializeXml"/>
-    /// <see cref="Serialization.DeserializeXml"/>
+    /// <seealso cref="Serialization.SerializeXml"/>
+    /// <seealso cref="Serialization.DeserializeXml"/>
     [AttributeUsage(AttributeTargets.Field)]
     public class TypeParameterAttribute : Attribute
     {
@@ -30,8 +31,8 @@ namespace AW2.Helpers
     /// </summary>
     /// This attribute is meant for use with Serialization.SerializeXml and 
     /// Serialization.DeserializeXml as limiting the (de)serialisation of an object.
-    /// <see cref="Serialization.SerializeXml"/>
-    /// <see cref="Serialization.DeserializeXml"/>
+    /// <seealso cref="Serialization.SerializeXml"/>
+    /// <seealso cref="Serialization.DeserializeXml"/>
     [AttributeUsage(AttributeTargets.Field)]
     public class RuntimeStateAttribute : Attribute
     {
@@ -44,8 +45,8 @@ namespace AW2.Helpers
     /// This attribute is recognised by class Serialization.
     /// When (de)serialisation reaches a field marked with this attribute, its limitation
     /// attribute can change.
-    /// <see cref="Serialization.SerializeXml"/>
-    /// <see cref="Serialization.DeserializeXml"/>
+    /// <seealso cref="Serialization.SerializeXml"/>
+    /// <seealso cref="Serialization.DeserializeXml"/>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class LimitationSwitchAttribute : Attribute
     {
@@ -87,8 +88,8 @@ namespace AW2.Helpers
     /// This attribute is meant for use with Serialization.SerializeXml and 
     /// Serialization.DeserializeXml as a means to give custom names for XML elements. 
     /// Without this attribute, the elements are named exactly as their corresponding fields.
-    /// <see cref="Serialization.SerializeXml"/>
-    /// <see cref="Serialization.DeserializeXml"/>
+    /// <seealso cref="Serialization.SerializeXml"/>
+    /// <seealso cref="Serialization.DeserializeXml"/>
     [AttributeUsage(AttributeTargets.Field)]
     public class SerializedNameAttribute : Attribute
     {
@@ -112,12 +113,40 @@ namespace AW2.Helpers
     }
 
     /// <summary>
+    /// Makes a type be (de)serialised via conversion to another type.
+    /// </summary>
+    /// This attribute is meant for use with <see cref="Serialization.SerializeXml"/> and 
+    /// <see cref="Serialization.DeserializeXml"/> as a means to disguise a type in its
+    /// serialised form as some other type. This is helpful when one wants to change the
+    /// type of a field while still keeping the serialised form the same.
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public class SerializedTypeAttribute : Attribute
+    {
+        /// <summary>
+        /// The type of the value that is stored as an XML element.
+        /// </summary>
+        public Type SerializedType { get; private set; }
+
+        /// <summary>
+        /// Creates a custom (de)serialisation type for a field.
+        /// </summary>
+        /// <param name="serializedType">The type to store the field's value as.
+        /// There must exist explicit conversions between the field's type
+        /// and <paramref name="serializedType"/>.</param>
+        public SerializedTypeAttribute(Type serializedType)
+        {
+            if (serializedType == null) throw new ArgumentNullException("Cannot serialise via null type");
+            SerializedType = serializedType;
+        }
+    }
+
+    /// <summary>
     /// Denotes that a class uses limitation attributes on its fields to define 
     /// (de)serialisable parts of its instances.
     /// </summary>
     /// This attribute is recognised by class Serialization.
-    /// <see cref="Serialization.SerializeXml"/>
-    /// <see cref="Serialization.DeserializeXml"/>
+    /// <seealso cref="Serialization.SerializeXml"/>
+    /// <seealso cref="Serialization.DeserializeXml"/>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class LimitedSerializationAttribute : Attribute
     {
@@ -147,7 +176,7 @@ namespace AW2.Helpers
         /// </summary>
         /// <param name="limitationAttribute">Check only fields marked with 
         /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
+        /// <seealso cref="Serialization"/>
         void MakeConsistent(Type limitationAttribute);
     }
 
@@ -200,14 +229,14 @@ namespace AW2.Helpers
     /// Partial serialisation is supported via <b>limitation attributes</b>. 
     /// To limit the (de)serialisation of an object to a certain set of fields, apply
     /// an attribute to those fields and then pass the attribute's type to the 
-    /// (de)serialisation method. The object's will have only those fields
+    /// (de)serialisation method. The objects will have only those fields
     /// (de)serialised that have the specified attribute. The same limitation attribute
     /// will also apply to fields in deeper levels of (de)serialisation, i.e., when
     /// (de)serialising the fields of the value of a field in the original object.
     /// 
     /// The chosen limitation attribute can be switched to another during (de)serialisation
     /// for any chosen field. To do this, apply LimitationSwitchAttribute.
-    /// <see cref="LimitationSwitchAttribute"/>
+    /// <seealso cref="LimitationSwitchAttribute"/>
     public static class Serialization
     {
         /// <summary>
@@ -217,7 +246,7 @@ namespace AW2.Helpers
         /// we are talking about, and type2 is the limiting attribute that
         /// the fields must have, or <c>null</c> to list all fields.
         /// </summary>
-        /// <see cref="GetFields(object, Type)"/>
+        /// <seealso cref="GetFields(object, Type)"/>
         static Dictionary<TypePair, FieldInfo[]> typeFields = new Dictionary<TypePair, FieldInfo[]>();
 
         #region public methods
@@ -234,6 +263,15 @@ namespace AW2.Helpers
             if (obj == null)
                 throw new Exception("Won't serialise a null obj");
             Type type = obj.GetType();
+
+            // React to SerializedTypeAttribute
+            var serializedTypeAttribute = (SerializedTypeAttribute)Attribute.GetCustomAttribute(type, typeof(SerializedTypeAttribute));
+            if (serializedTypeAttribute != null)
+            {
+                type = serializedTypeAttribute.SerializedType;
+                obj = Cast(obj, type);
+            }
+
             writer.WriteStartElement(elementName);
             writer.WriteAttributeString("type", type.AssemblyQualifiedName);
             if (type.IsPrimitive || type == typeof(string))
@@ -263,8 +301,8 @@ namespace AW2.Helpers
         /// Restores the specified part of the state of a serialised object from an XML stream.
         /// </summary>
         /// Fields that don't have a serialised value are left untouched.
-        /// Unknown XML elements are reported to AW2.Helpers.Log.
-        /// If deserialised object is of a type that implements IConsistencyCheckable,
+        /// Unknown XML elements are reported to <see cref="AW2.Helpers.Log"/>.
+        /// If deserialised object is of a type that implements <see cref="IConsistencyCheckable"/>,
         /// the object is made consistent after deserialisation.
         /// <param name="reader">Where to read the serialised data.</param>
         /// <param name="elementName">Name of the XML element where the object is stored.</param>
@@ -286,6 +324,12 @@ namespace AW2.Helpers
                 if (!reader.IsStartElement(elementName))
                     throw new XmlException("Deserialisation expected start element " + elementName + " but got " + reader.Name);
 
+                // React to SerializedTypeAttribute
+                Type serializedType = objType;
+                var serializedTypeAttribute = (SerializedTypeAttribute)Attribute.GetCustomAttribute(objType, typeof(SerializedTypeAttribute));
+                if (serializedTypeAttribute != null)
+                    serializedType = serializedTypeAttribute.SerializedType;
+
                 // Find out type of value in XML
                 string writtenTypeName = reader.GetAttribute("type");
                 if (writtenTypeName == null)
@@ -293,7 +337,7 @@ namespace AW2.Helpers
                 Type writtenType = Type.GetType(writtenTypeName);
                 if (writtenType == null)
                     throw new XmlException("XML suggests unknown type " + writtenTypeName);
-                if (!objType.IsAssignableFrom(writtenType))
+                if (!IsAssignableFrom(objType, writtenType))
                     throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name);
 
                 // Deserialise
@@ -304,7 +348,6 @@ namespace AW2.Helpers
                 }
                 reader.Read();
                 object returnValue;
-                Type iEnumerableElementType = null;
 
                 // Is it a primitive type?
                 if (writtenType.IsPrimitive || writtenType == typeof(string))
@@ -327,30 +370,12 @@ namespace AW2.Helpers
                     returnValue = new Color(r, g, b, a);
                 }
 
-                // Is it an array?
-                else if (writtenType.IsArray)
+                // Is it IEnumerable or IEnumerable<T> for some type T?
+                else if (IsIEnumerable(writtenType))
                 {
-                    Type elementType = writtenType.GetElementType();
-                    Type listType = typeof(List<>).MakeGenericType(elementType);
-                    IList list = (IList)Activator.CreateInstance(listType);
-                    while (reader.IsStartElement("Item"))
-                    {
-                        object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
-                        list.Add(item);
-                    }
-                    BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
-                    returnValue = listType.InvokeMember("ToArray", flags, null, list, new Object[] { });
-                }
-
-                // Is it IEnumerable<T> for some type T?
-                else if (Array.Exists(writtenType.GetInterfaces(), delegate(Type iface)
-                    {
-                        bool good = iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-                        if (good) iEnumerableElementType = iface.GetGenericArguments()[0];
-                        return good;
-                    }))
-                {
-                    Type elementType = iEnumerableElementType;
+                    // Read as 'objType' so that the possibly needed cast to 'writtenType'
+                    // can be done nicely on the element type and not on the IEnumerable type.
+                    Type elementType = GetIEnumerableElementType(objType);
                     Type listType = typeof(List<>).MakeGenericType(elementType);
                     IList array = (IList)Activator.CreateInstance(listType);
                     while (reader.IsStartElement("Item"))
@@ -358,7 +383,13 @@ namespace AW2.Helpers
                         object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
                         array.Add(item);
                     }
-                    returnValue = Serialization.CreateInstance(writtenType, array);
+                    if (writtenType.IsArray)
+                    {
+                        BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
+                        returnValue = listType.InvokeMember("ToArray", flags, null, array, new Object[] { });
+                    }
+                    else
+                        returnValue = Serialization.CreateInstance(writtenType, array);
                 }
 
                 // Otherwise the value is an object that is just a collection of fields
@@ -369,6 +400,9 @@ namespace AW2.Helpers
                 }
 
                 reader.ReadEndElement();
+
+                if (serializedType != objType)
+                    returnValue = Cast(returnValue, objType);
 
                 if (typeof(IConsistencyCheckable).IsAssignableFrom(writtenType))
                     ((IConsistencyCheckable)returnValue).MakeConsistent(limitationAttribute);
@@ -532,7 +566,7 @@ namespace AW2.Helpers
         /// <param name="obj">The object whose fields to serialise.</param>
         /// <param name="limitationAttribute">Limit the serialisation to fields with this attribute,
         /// or serialise all fields if limitationAttribute is a null reference.</param>
-        /// <see cref="AW2.Helpers.LimitedSerializationAttribute"/>
+        /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
         private static void SerializeFieldsXml(XmlWriter writer, object obj, Type limitationAttribute)
         {
             Type type = obj.GetType();
@@ -546,9 +580,7 @@ namespace AW2.Helpers
                 string elementName = field.Name;
                 SerializedNameAttribute serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
                 if (serializedNameAttribute != null)
-                {
                     elementName = serializedNameAttribute.SerializedName;
-                }
 
                 // React to LimitationSwitchAttribute
                 Type fieldLimitationAttribute = limitationAttribute;
@@ -580,7 +612,7 @@ namespace AW2.Helpers
         /// <param name="obj">The object whose fields to deserialise.</param>
         /// <param name="limitationAttribute">Limit the deserialisation to fields with this attribute,
         /// or deserialise all fields if limitationAttribute is a null reference.</param>
-        /// <see cref="AW2.Helpers.LimitedSerializationAttribute"/>
+        /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
         private static void DeserializeFieldsXml(XmlReader reader, object obj, Type limitationAttribute)
         {
             Type type = obj.GetType();
@@ -602,9 +634,7 @@ namespace AW2.Helpers
                     string elementName = field.Name;
                     SerializedNameAttribute serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
                     if (serializedNameAttribute != null)
-                    {
                         elementName = serializedNameAttribute.SerializedName;
-                    }
 
                     if (reader.Name.Equals(elementName))
                     {
@@ -620,7 +650,7 @@ namespace AW2.Helpers
                         Type fieldLimitationAttribute = limitationAttribute;
 
                         // React to LimitationSwitchAttribute
-                        LimitationSwitchAttribute limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
+                        var limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
                         if (limitationSwitchAttribute != null)
                         {
                             if (limitationSwitchAttribute.From == limitationAttribute)
@@ -715,6 +745,90 @@ namespace AW2.Helpers
             else
                 throw new ArgumentException("Don't know how to add items to container of type "
                     + type.ToString());
+        }
+
+        /// <summary>
+        /// Casts an object to a type using some available cast operator.
+        /// </summary>
+        /// <param name="obj">The object to cast.</param>
+        /// <param name="type">The type to cast to.</param>
+        /// <returns>The cast object.</returns>
+        private static object Cast(object obj, Type type)
+        {
+            Type objType = obj.GetType();
+            if (type.IsAssignableFrom(objType)) return obj;
+
+            // Look for cast operator in 'objType'
+            var castMethodInfo = GetCastMethod(objType, type);
+            if (castMethodInfo == null)
+                throw new InvalidCastException("Cannot cast " + objType.Name + " to " + type.Name);
+            return castMethodInfo.Invoke(null, new object[] { obj });
+        }
+
+        /// <summary>
+        /// Can a value of type <paramref name="fromType"/> be cast to type <paramref name="toType"/>.
+        /// </summary>
+        private static bool CanBeCast(Type fromType, Type toType)
+        {
+            return GetCastMethod(fromType, toType) != null;
+        }
+
+        /// <summary>
+        /// Returns a method that casts a value of type <paramref name="fromtype"/>
+        /// into type <paramref name="toType"/>, or <c>null</c> if no such method exists.
+        /// </summary>
+        private static MethodInfo GetCastMethod(Type fromType, Type toType)
+        {
+            Type[] argTypes = new Type[1];
+            argTypes[0] = toType;
+            BindingFlags flags = BindingFlags.Public | BindingFlags.Static;
+            var methodInfos =
+                from info in fromType.GetMethods(flags).Union(toType.GetMethods(flags))
+                let paraminfos = info.GetParameters()
+                where (info.Name == "op_Implicit" || info.Name == "op_Explicit") &&
+                    info.ReturnType == toType && paraminfos.Length == 1 && paraminfos[0].ParameterType == fromType
+                select info;
+            return methodInfos.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Does a type implement some <see cref="IEnumerable&lt;T&gt;"/> interface
+        /// or the <see cref="IEnumerable"/> interface.
+        /// </summary>
+        private static bool IsIEnumerable(Type type)
+        {
+            return GetIEnumerableElementType(type) != null;
+        }
+
+        /// <summary>
+        /// Returns the type parameter of the <see cref="IEnumerable&lt;T&gt;"/> interface
+        /// a type implements, or returns <c>typeof(object)</c> if the type implements the
+        /// <see cref="IEnumerable"/> interface, or returns <c>null</c> if the type doesn't
+        /// implement any of these interfaces.
+        /// </summary>
+        private static Type GetIEnumerableElementType(Type type)
+        {
+            var genericElementTypes =
+                from iface in type.GetInterfaces()
+                where iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+                select iface.GetGenericArguments().First();
+            if (genericElementTypes.Any()) return genericElementTypes.First();
+            if (type.GetInterface("IEnumerable") != null) return typeof(object);
+            return null;
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if and only if a value of type <paramref name="rType"/>
+        /// can be assigned (possibly by casting) to an lvalue of type <paramref name="lType"/>.
+        /// </summary>
+        private static bool IsAssignableFrom(Type lType, Type rType)
+        {
+            if (lType.IsAssignableFrom(rType)) return true;
+            Type lElementType = GetIEnumerableElementType(lType);
+            Type rElementType = GetIEnumerableElementType(rType);
+            if (lElementType != null && rElementType != null)
+                return IsAssignableFrom(lElementType, rElementType);
+            return CanBeCast(rType, lType);
         }
 
         #endregion // private methods

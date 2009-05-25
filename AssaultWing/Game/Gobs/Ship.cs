@@ -242,7 +242,7 @@ namespace AW2.Game.Gobs
                 if (weapon1 != null)
                 {
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    data.RemoveWeapon(weapon1);
+                    data.Weapons.Remove(weapon1);
                 }
                 weapon1 = CreateWeapons(value, 1);
             }
@@ -259,7 +259,7 @@ namespace AW2.Game.Gobs
                 if (weapon2 != null)
                 {
                     DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                        data.RemoveWeapon(weapon2);
+                    data.Weapons.Remove(weapon2);
                 }
                 weapon2 = CreateWeapons(value, 2);
             }
@@ -428,7 +428,7 @@ namespace AW2.Game.Gobs
             int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs,
                 delegate(KeyValuePair<string, int> pair) { return pair.Value; });
             Weapon weapon = Weapon.CreateWeapon(weaponName, this, ownerHandle, boneIndices);
-            data.AddWeapon(weapon);
+            data.Weapons.Add(weapon);
             return weapon;
         }
 
@@ -547,8 +547,8 @@ namespace AW2.Game.Gobs
         public override void Dispose()
         {
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.RemoveWeapon(weapon1);
-            data.RemoveWeapon(weapon2);
+            data.Weapons.Remove(weapon1);
+            data.Weapons.Remove(weapon2);
             base.Dispose();
         }
 

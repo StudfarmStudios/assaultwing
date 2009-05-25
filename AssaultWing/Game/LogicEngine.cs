@@ -84,7 +84,7 @@ namespace AW2.Game
 
             // Update gobs, weapons and players.
             data.ForEachGob(gob => gob.Update());
-            data.ForEachWeapon(weapon => weapon.Update());
+            foreach (var weapon in data.Weapons) weapon.Update();
             foreach (var player in data.Players) player.Update();
 
             // Check for receptor collisions.

@@ -46,7 +46,6 @@ namespace AW2.Game
         #region Fields
 
         List<ArenaLayer> arenaLayers;
-        LinkedList<Weapon> weapons;
         List<Gob> addedGobs;
         List<Gob> removedGobs;
         List<Viewport> viewports;
@@ -106,6 +105,11 @@ namespace AW2.Game
         public IndexedItemCollection<Player> Players { get; private set; }
 
         /// <summary>
+        /// Weapons that are active in the game session.
+        /// </summary>
+        public IndexedItemCollection<Weapon> Weapons { get; private set; }
+
+        /// <summary>
         /// 3D models available for the game.
         /// </summary>
         public NamedItemCollection<Model> Models { get; private set; }
@@ -128,7 +132,6 @@ namespace AW2.Game
             arenaLayers = new List<ArenaLayer>();
             addedGobs = new List<Gob>();
             removedGobs = new List<Gob>();
-            weapons = new LinkedList<Weapon>();
 
             Players = new IndexedItemCollection<Player>();
             Players.Removed += player => 
@@ -144,6 +147,7 @@ namespace AW2.Game
                 player.Controls.extra.Release();
             };
 
+            Weapons = new IndexedItemCollection<Weapon>();
             Models = new NamedDataCollection<Model>("model", (CanonicalString)"dummymodel");
             Textures = new NamedDataCollection<Texture2D>("texture", (CanonicalString)"dummytexture");
             ArenaPreviews = new NamedDataCollection<Texture2D>("arena preview", (CanonicalString)"noPreview");
@@ -343,7 +347,7 @@ namespace AW2.Game
                 layer.ForEachGob(delegate(Gob gob) { gob.UnloadContent(); });
                 layer.ClearGobs();
             }
-            weapons.Clear();
+            Weapons.Clear();
 
             // Create layers for the arena.
             arenaLayers.Clear();
@@ -524,39 +528,6 @@ namespace AW2.Game
         }
 
         #endregion gobs
-
-        #region weapons
-
-        /// <summary>
-        /// Adds a weapon to the game.
-        /// </summary>
-        /// <param name="weapon">Weapon to add to the update and draw cycle.</param>
-        public void AddWeapon(Weapon weapon)
-        {
-            weapons.AddLast(weapon);
-        }
-
-        /// <summary>
-        /// Removes a weapon from the game.
-        /// </summary>
-        /// <param name="weapon">Weapon to remove from the update and draw cycle.</param>
-        public void RemoveWeapon(Weapon weapon)
-        {
-            weapon.Dispose();
-            weapons.Remove(weapon);
-        }
-
-        /// <summary>
-        /// Performs the specified action on each weapon.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each weapon.</param>
-        public void ForEachWeapon(Action<Weapon> action)
-        {
-            foreach (Weapon weapon in weapons)
-                action(weapon);
-        }
-
-        #endregion weapons
 
         #region type templates
 

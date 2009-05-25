@@ -267,12 +267,6 @@ namespace AW2.Graphics
         string[] fontNames;
 
         /// <summary>
-        /// Names of arena previes.
-        /// </summary>
-        string[] arenaPreviews;
-
-
-        /// <summary>
         /// Creates a new graphics engine.
         /// </summary>
         /// <param name="game">The Game to add the component to.</param>
@@ -330,11 +324,6 @@ namespace AW2.Graphics
                 "MenuFontBig",
                 "MenuFontSmall",
             };
-            arenaPreviews = new string[]
-            {
-                "amazonas_preview"
-            };
-
         }
 
         /// <summary>

@@ -286,25 +286,13 @@ namespace AW2.Game
         /// <summary>
         /// Returns a named arena.
         /// </summary>
-        /// <param name="name">The name of the arena.</param>
-        /// <returns>The arena.</returns>
-        public Arena GetArena(string name)
+        private Arena GetArena(string name)
         {
             if (preparedArena == null || !preparedArena.Name.Equals(name))
             {
-
                 TypeLoader arenaLoader = new TypeLoader(typeof(Arena), Paths.Arenas);
                 preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes(arenaFileNameList[name]);
             }
-            /*TODO: Write error handling*/
-            /*
-            if (!arenas.TryGetValue(name, out arena))
-            {
-                // Soft error handling; assign some default value and continue with the game.
-                Log.Write("Missing arena " + name);
-                if (!arenas.TryGetValue("dummyarena", out arena))
-                    throw new Exception("Missing arenas " + name + " and fallback dummyarena");
-            }*/
             return preparedArena;
         }
 

@@ -31,6 +31,11 @@ namespace AW2
         Gameplay,
 
         /// <summary>
+        /// An arena is being loaded in the middle of a gameplay session.
+        /// </summary>
+        ArenaLoading,
+
+        /// <summary>
         /// The game overlay dialog is visible, game is active but paused.
         /// </summary>
         OverlayDialog,
@@ -139,6 +144,21 @@ namespace AW2
                 return instance;
             }
         }
+
+        /// <summary>
+        /// The physics engine of the game instance.
+        /// </summary>
+        public PhysicsEngine PhysicsEngine { get { return physicsEngine; } }
+
+        /// <summary>
+        /// The data engine of the game instance.
+        /// </summary>
+        public DataEngine DataEngine { get { return dataEngine; } }
+
+        /// <summary>
+        /// The network engine of the game instance.
+        /// </summary>
+        public NetworkEngine NetworkEngine { get { return networkEngine; } }
 
         /// <summary>
         /// The current state of the game.
@@ -287,6 +307,10 @@ namespace AW2
                     logicEngine.Enabled = false;
                     graphicsEngine.Visible = false;
                     break;
+                case GameState.ArenaLoading:
+                    overlayDialog.Enabled = false;
+                    overlayDialog.Visible = false;
+                    break;
                 case GameState.Menu:
                     menuEngine.Enabled = false;
                     menuEngine.Visible = false;
@@ -306,6 +330,10 @@ namespace AW2
                 case GameState.Gameplay:
                     logicEngine.Enabled = true;
                     graphicsEngine.Visible = true;
+                    break;
+                case GameState.ArenaLoading:
+                    overlayDialog.Enabled = true;
+                    overlayDialog.Visible = true;
                     break;
                 case GameState.Menu:
                     menuEngine.Enabled = true;
@@ -364,8 +392,6 @@ namespace AW2
             dataEngine.StartArena();
             if (NetworkMode == NetworkMode.Server)
                 networkEngine.SendToClients(new ArenaStartMessage());
-            logicEngine.Reset();
-            physicsEngine.Reset();
             graphicsEngine.RearrangeViewports();
             ChangeState(GameState.Gameplay);
             soundEngine.PlayMusic(dataEngine.Arena);
@@ -376,6 +402,8 @@ namespace AW2
         /// </summary>
         public void FinishArena()
         {
+            if (gameState == GameState.OverlayDialog)
+                ChangeState(GameState.ArenaLoading); // HACK !!!
             Arena nextArena = dataEngine.GetNextPlayableArena();
             if (nextArena != null)
                 ShowDialog(new ArenaOverOverlayDialogData(nextArena.Name));
@@ -397,6 +425,9 @@ namespace AW2
         /// idea to make it run in a background thread.
         public void PrepareNextArena()
         {
+            if (gameState == GameState.OverlayDialog)
+                ChangeState(GameState.ArenaLoading); // HACK !!!
+
             // Disallow window resizing during arena loading.
             // A window resize event may reset the graphics card, fatally
             // screwing up initialisation of walls' index maps.
@@ -408,9 +439,14 @@ namespace AW2
                 // not in the main thread. Therefore, use Invoke() of the underlying Form.
                 windowForm.Invoke(new Action(() => { Window.AllowUserResizing = false; }));
             }
+
             Arena arenaTemplate = dataEngine.GetNextPlayableArena();
             if (arenaTemplate != null)
+            {
                 graphicsEngine.LoadArenaContent(arenaTemplate);
+                logicEngine.Reset();
+                physicsEngine.Reset(arenaTemplate);
+            }
             fail = dataEngine.NextArena();
             if (oldAllowUserResizing)
                 windowForm.Invoke(new Action(() => { Window.AllowUserResizing = true; }));
@@ -433,7 +469,10 @@ namespace AW2
         public void ShowDialog(OverlayDialogData dialogData)
         {
             overlayDialog.Data = dialogData;
-            ChangeState(GameState.OverlayDialog);
+            if (DataEngine.ProgressBar.TaskRunning)
+                ChangeState(GameState.ArenaLoading); // HACK !!!
+            else
+                ChangeState(GameState.OverlayDialog);
         }
 
         /// <summary>

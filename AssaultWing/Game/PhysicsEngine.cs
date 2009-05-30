@@ -199,11 +199,6 @@ namespace AW2.Game
         #region Fields
 
         /// <summary>
-        /// The number of seconds the current frame represents.
-        /// </summary>
-        GameTime gameTime;
-
-        /// <summary>
         /// Registered collision areas by type. The array element for index <b>i</b>
         /// holds the collision areas for <b>(CollisionAreaType)(2 &lt;&lt; i)</b>.
         /// </summary>
@@ -252,7 +247,6 @@ namespace AW2.Game
         {
             int collisionAreaTypeCount = 32; // Should be at least the number of bits in the type representing CollisionAreaType
             collisionAreas = new SpatialGrid<CollisionArea>[collisionAreaTypeCount];
-            gameTime = new GameTime();
             collisionAreaCellSize = new float[collisionAreaTypeCount];
             for (int i = 0; i < collisionAreaTypeCount; ++i)
                 collisionAreaCellSize[i] = -1;
@@ -274,19 +268,11 @@ namespace AW2.Game
         #region Public interface
 
         /// <summary>
-        /// Game timing information for the current frame.
-        /// </summary>
-        /// This is meant to be set by LogicEngine at the beginning of each frame
-        /// and can be used all over game logic.
-        public GameTime TimeStep { get { return gameTime; } set { gameTime = value; } }
-
-        /// <summary>
         /// Resets the physics engine for a new arena.
         /// </summary>
         /// <param name="arena">The arena to reset for, or <c>null</c> to clear data.</param>
         public void Reset(Arena arena)
         {
-            gameTime = new GameTime();
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
             if (arena == null)
@@ -437,7 +423,7 @@ namespace AW2.Game
         /// <param name="force">The force to apply, measured in Newtons.</param>
         public void ApplyForce(Gob gob, Vector2 force)
         {
-            gob.Move += force / gob.Mass * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            gob.Move += force / gob.Mass * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
         }
 
         /// <summary>
@@ -453,7 +439,7 @@ namespace AW2.Game
         public void ApplyLimitedForce(Gob gob, Vector2 force, float maxSpeed)
         {
             float oldSpeed = gob.Move.Length();
-            gob.Move += force / gob.Mass * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            gob.Move += force / gob.Mass * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
             float speed = gob.Move.Length();
             float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
             if (speed > speedLimit)
@@ -480,7 +466,7 @@ namespace AW2.Game
         /// <returns>The amount of change during the current frame.</returns>
         public float ApplyChange(float changePerSecond)
         {
-            return changePerSecond * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            return changePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
         }
 
         /// <summary>
@@ -491,7 +477,7 @@ namespace AW2.Game
         /// <returns>The vector of change during the current frame.</returns>
         public Vector2 ApplyChange(Vector2 changePerSecond)
         {
-            return changePerSecond * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            return changePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
         }
 
         /// <summary>
@@ -675,7 +661,7 @@ namespace AW2.Game
         private float TryMove(Gob gob, float moveLeft)
         {
             Vector2 oldPos = gob.Pos;
-            Vector2 goalPos = gob.Pos + gob.Move * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 goalPos = gob.Pos + gob.Move * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
             float moveGood = 0; // last known safe position
             float moveBad = moveLeft; // last known unsafe position, if 'badFound'
             bool badFound = false;

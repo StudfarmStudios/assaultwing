@@ -84,9 +84,8 @@ namespace AW2.Game.Particles
                 {
                     // Forget about creating particles whose creation was due 
                     // while we were dead.
-                    PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-                    if (nextBirth < physics.TimeStep.TotalGameTime)
-                        nextBirth = physics.TimeStep.TotalGameTime;
+                    if (nextBirth < AssaultWing.Instance.GameTime.TotalGameTime)
+                        nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
                 }
                 isAlive = value;
             }
@@ -307,7 +306,7 @@ namespace AW2.Game.Particles
         public override void Activate()
         {
             PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-            nextBirth = physics.TimeStep.TotalGameTime;
+            nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
 
             base.Activate();
         }

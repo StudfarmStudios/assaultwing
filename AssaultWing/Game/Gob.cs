@@ -552,7 +552,7 @@ namespace AW2.Game
         {
             get
             {
-                return physics.TimeStep.TotalGameTime.Subtract(birthTime).TotalSeconds < warmUpTime;
+                return (AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds < warmUpTime;
             }
         }
 
@@ -703,12 +703,12 @@ namespace AW2.Game
             for (int i = 0; i < collisionAreas.Length; ++i)
                 collisionAreas[i].Owner = this;
 
-            this.movable = true;
+            movable = true;
             this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-            this.birthTime = this.physics.TimeStep.TotalGameTime;
-            this.modelPartTransforms = null;
+            birthTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            modelPartTransforms = null;
             exhaustEngines = new Gob[0];
-            this.alpha = 1;
+            alpha = 1;
             bleachDamage = 0;
             bleach = -1;
             bleachResetTime = new TimeSpan(0);

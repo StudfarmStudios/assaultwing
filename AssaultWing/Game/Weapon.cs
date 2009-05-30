@@ -204,11 +204,11 @@ namespace AW2.Game
         /// </summary>
         public bool Loaded
         {
-            get { return loadedTime <= physics.TimeStep.TotalGameTime; }
+            get { return loadedTime <= AssaultWing.Instance.GameTime.TotalGameTime; }
             set
             {
-                if (value && !Loaded) loadedTime = physics.TimeStep.TotalGameTime;
-                if (!value && Loaded) loadedTime = physics.TimeStep.TotalGameTime + TimeSpan.FromSeconds(1);
+                if (value && !Loaded) loadedTime = AssaultWing.Instance.GameTime.TotalGameTime;
+                if (!value && Loaded) loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(1);
             }
         }
 

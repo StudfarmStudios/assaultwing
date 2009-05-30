@@ -137,10 +137,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (deathTime <= physics.TimeStep.TotalGameTime)
-            {
+            if (deathTime <= AssaultWing.Instance.GameTime.TotalGameTime)
                 Die(new DeathCause());
-            }
         }
 
         #endregion Methods related to gobs' functionality in the game world

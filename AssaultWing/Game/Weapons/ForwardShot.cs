@@ -176,7 +176,7 @@ namespace AW2.Game.Weapons
                 StartFiring();
                 owner.UseCharge(ownerHandle, fireCharge);
                 shotsLeft = shotCount;
-                nextShot = physics.TimeStep.TotalGameTime;
+                nextShot = AssaultWing.Instance.GameTime.TotalGameTime;
             }
         }
 
@@ -190,7 +190,7 @@ namespace AW2.Game.Weapons
 
             // Shoot if its time.
             bool muzzleFireCreated = false;
-            while (shotsLeft > 0 && nextShot <= physics.TimeStep.TotalGameTime)
+            while (shotsLeft > 0 && nextShot <= AssaultWing.Instance.GameTime.TotalGameTime)
             {
                 // Every gun barrel shoots.
                 for (int barrel = 0; barrel < boneIndices.Length; ++barrel)

@@ -78,7 +78,6 @@ namespace AW2.Game
             DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
             PhysicsEngine physics = (PhysicsEngine)Game.Services.GetService(typeof(PhysicsEngine));
-            physics.TimeStep = gameTime;
             
             UpdateControls();
 

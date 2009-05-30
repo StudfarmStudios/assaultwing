@@ -113,7 +113,7 @@ namespace AW2.Game.Pengs
             particle.layerDepth = lifePos;
             particle.move += physics.ApplyChange(acceleration.GetValue(lifePos, particle.pengInput, particle.random))
                 * new Vector2((float)Math.Cos(particle.direction), (float)Math.Sin(particle.direction));
-            particle.move *= (float)Math.Pow(1 - drag, physics.TimeStep.ElapsedGameTime.TotalSeconds);
+            particle.move *= (float)Math.Pow(1 - drag, AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds);
             particle.pos += physics.ApplyChange(particle.move);
             particle.rotation += physics.ApplyChange(rotationSpeed.GetValue(lifePos, particle.pengInput, particle.random));
             particle.scale = scale.GetValue(lifePos, particle.pengInput, particle.random);

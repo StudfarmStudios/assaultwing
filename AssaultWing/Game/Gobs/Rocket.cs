@@ -90,7 +90,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Update()
         {
-            if (physics.TimeStep.TotalGameTime < thrustEndTime)
+            if (AssaultWing.Instance.GameTime.TotalGameTime < thrustEndTime)
             {
                 // Thrust.
                 Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
@@ -110,7 +110,7 @@ namespace AW2.Game.Gobs
             base.Update();
 
             // Manage exhaust engines.
-            if (physics.TimeStep.TotalGameTime >= thrustEndTime)
+            if (AssaultWing.Instance.GameTime.TotalGameTime >= thrustEndTime)
                 SwitchExhaustEngines(false);
         }
 

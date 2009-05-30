@@ -929,7 +929,7 @@ namespace AW2.Game
         /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
-            AssaultWing.Instance.PhysicsEngine.Move(this);
+            AssaultWing.Instance.DataEngine.Arena.Move(this);
             UpdateExhaustEngines();
         }
 

@@ -109,6 +109,12 @@ namespace AW2.Game
         public IndexedItemCollection<Weapon> Weapons { get; private set; }
 
         /// <summary>
+        /// The currently active arena.
+        /// </summary>
+        /// You can set this field by calling InitializeFromArena(string).
+        public Arena Arena { get { return activeArena; } }
+
+        /// <summary>
         /// Gobs that are active in the game session.
         /// </summary>
         public GobCollection Gobs { get; private set; }
@@ -169,7 +175,7 @@ namespace AW2.Game
             {
                 gob.Activate();
                 if (gob.Layer == GameplayLayer)
-                    AssaultWing.Instance.PhysicsEngine.Register(gob);
+                    Arena.Register(gob);
                 else
                 {
                     // Gobs outside the gameplay layer cannot collide.
@@ -193,7 +199,7 @@ namespace AW2.Game
                 }
 
                 if (gob.Layer == GameplayLayer)
-                    AssaultWing.Instance.PhysicsEngine.Unregister(gob);
+                    Arena.Unregister(gob);
                 gob.Dispose();
             };
 
@@ -270,12 +276,6 @@ namespace AW2.Game
         #endregion fonts
 
         #region arenas
-
-        /// <summary>
-        /// The currently active arena.
-        /// </summary>
-        /// You can set this field by calling InitializeFromArena(string).
-        public Arena Arena { get { return activeArena; } }
 
         /// <summary>
         /// The currently active arena's silhouette, scaled and ready to be 
@@ -394,7 +394,7 @@ namespace AW2.Game
         /// <param name="name">The name of the arena.</param>
         public void InitializeFromArena(string name)
         {
-            preparedArena = GetArena(name);
+            activeArena = preparedArena = GetArena(name);
             CustomOperations = null;
 
             // Find the gameplay layer.

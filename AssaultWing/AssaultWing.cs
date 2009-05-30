@@ -444,8 +444,7 @@ namespace AW2
             if (arenaTemplate != null)
             {
                 graphicsEngine.LoadArenaContent(arenaTemplate);
-                logicEngine.Reset();
-                physicsEngine.Reset(arenaTemplate);
+                arenaTemplate.Reset();
             }
             fail = dataEngine.NextArena();
             if (oldAllowUserResizing)

@@ -910,7 +910,7 @@ namespace AW2.Game
                     }
                 }
                 if (bestSpawn == null)
-                    newShip.Pos = AssaultWing.Instance.PhysicsEngine.GetFreePosition(newShip, 
+                    newShip.Pos = AssaultWing.Instance.DataEngine.Arena.GetFreePosition(newShip, 
                         new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, AssaultWing.Instance.DataEngine.Arena.Dimensions));
                 else
                     bestSpawn.Spawn(newShip);

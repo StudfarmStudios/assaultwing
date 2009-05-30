@@ -236,7 +236,7 @@ namespace AW2.Game.Pengs
                         else
                         {
                             // Bail out if the position is not free for the gob.
-                            if (!lastAttempt && !AssaultWing.Instance.PhysicsEngine.IsFreePosition(gob, pos))
+                            if (!lastAttempt && !AssaultWing.Instance.DataEngine.Arena.IsFreePosition(gob, pos))
                             {
                                 attemptOk = false;
                                 continue;

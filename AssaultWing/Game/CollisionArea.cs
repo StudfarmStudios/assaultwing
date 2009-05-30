@@ -145,6 +145,11 @@ namespace AW2.Game
     [LimitedSerialization]
     public class CollisionArea
     {
+        /// <summary>
+        /// Upper limit for the number of bits in the type representing <see cref="CollisionAreaType"/>.
+        /// </summary>
+        public const int COLLISION_AREA_TYPE_COUNT = 32;
+
         [TypeParameter]
         CollisionAreaType type;
 

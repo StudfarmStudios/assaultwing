@@ -317,7 +317,7 @@ namespace AW2.Game.Gobs
                     indexData[3 * index + 2] = 0;
 
                     // Remove the triangle from physics engine.
-                    AssaultWing.Instance.PhysicsEngine.Unregister(collisionAreas[index]);
+                    AssaultWing.Instance.DataEngine.Arena.Unregister(collisionAreas[index]);
 
                     --triangleCount;
                 }

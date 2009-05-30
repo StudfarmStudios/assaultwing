@@ -62,13 +62,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Resets the logic engine for a new arena.
-        /// </summary>
-        public void Reset()
-        {
-        }
-
-        /// <summary>
         /// Performs game logic.
         /// </summary>
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
@@ -81,8 +74,7 @@ namespace AW2.Game
             foreach (var weapon in AssaultWing.Instance.DataEngine.Weapons) weapon.Update();
             foreach (var player in AssaultWing.Instance.DataEngine.Players) player.Update();
 
-            // Check for receptor collisions.
-            AssaultWing.Instance.PhysicsEngine.MovesDone();
+            AssaultWing.Instance.DataEngine.Arena.PerformNonphysicalCollisions();
 
             // Check for arena gameplay start if we are a game client.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)

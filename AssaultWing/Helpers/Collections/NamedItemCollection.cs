@@ -16,8 +16,14 @@ namespace AW2.Helpers.Collections
         #region IObservableCollection<T> Members
 
         /// <summary>
+        /// Called when an item has been added to the collection.
+        /// The argument is the added item.
+        /// </summary>
+        public event Action<T> Added;
+
+        /// <summary>
         /// Called when an item has been removed from the collection.
-        /// The argument is the removed item.
+        /// The argument is the removed item. Not called when the whole collection is cleared.
         /// </summary>
         public event Action<T> Removed;
 
@@ -43,6 +49,7 @@ namespace AW2.Helpers.Collections
             while (items.Count <= key.Canonical) items.Add(null);
             if (items[key.Canonical] != null) throw new ArgumentException("An element with key " + key + " already exists");
             items[key.Canonical] = value;
+            if (Added != null) Added(value);
         }
 
         /// <summary>
@@ -123,6 +130,7 @@ namespace AW2.Helpers.Collections
                 if (value == null) throw new InvalidOperationException("Cannot add null value to a NamedItemCollection");
                 while (items.Count <= key.Canonical) items.Add(null);
                 items[key.Canonical] = value;
+                if (Added != null) Added(value);
             }
         }
 
@@ -136,6 +144,7 @@ namespace AW2.Helpers.Collections
         void ICollection<KeyValuePair<CanonicalString, T>>.Add(KeyValuePair<CanonicalString, T> item)
         {
             Add(item.Key, item.Value);
+            if (Added != null) Added(item.Value);
         }
 
         /// <summary>
@@ -143,15 +152,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void Clear()
         {
-            if (Removed != null)
-            {
-                var removedItems = items;
-                items = new List<T>();
-                foreach (T item in removedItems) 
-                    if (item != null) Removed(item);
-            }
-            else
-                items.Clear();
+            items.Clear();
         }
 
         /// <summary>

@@ -197,7 +197,7 @@ namespace AW2.Game.Gobs
                     Gob.CreateGob("bomb explosion", explosion =>
                     {
                         explosion.Pos = this.Pos;
-                        data.AddGob(explosion);
+                        data.Gobs.Add(explosion);
                     });
                     break;
                 case BonusAction.UpgradeWeapon1:

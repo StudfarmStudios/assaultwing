@@ -138,11 +138,6 @@ namespace AW2.Game
         LayerPreferenceType layerPreference;
 
         /// <summary>
-        /// Arena layer index of the gob. Set by DataEngine.
-        /// </summary>
-        int layer;
-
-        /// <summary>
         /// Position of the gob in the game world.
         /// </summary>
         [RuntimeState]
@@ -441,12 +436,12 @@ namespace AW2.Game
         public Player Owner { get { return owner; } set { owner = value; } }
 
         /// <summary>
-        /// Arena layer index of the gob. Set by <c>DataEngine</c>.
+        /// Arena layer index of the gob, or <c>-1</c> if uninitialised. Set by <c>DataEngine</c>.
         /// </summary>
         /// Note that if somebody who is not DataEngine sets this value,
         /// it leads to confusion. This field only reflects the real knowledge
         /// that DataEngine possesses.
-        public int Layer { get { return layer; } set { layer = value; } }
+        public int Layer { get; set; }
 
         /// <summary>
         /// Returns the name of the 3D model of the gob.
@@ -718,6 +713,7 @@ namespace AW2.Game
             bleach = -1;
             bleachResetTime = new TimeSpan(0);
             LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalGameTime;
+            Layer = -1;
         }
 
         /// <summary>
@@ -902,7 +898,7 @@ namespace AW2.Game
                         ((ParticleEngine)gob).Leader = this;
                     if (gob is Gobs.Peng)
                         ((Gobs.Peng)gob).Leader = this;
-                    data.AddGob(gob);
+                    data.Gobs.Add(gob);
                 });
             }
 
@@ -931,7 +927,7 @@ namespace AW2.Game
                     ParticleEngine particleEngine = gob as ParticleEngine;
                     if (particleEngine != null)
                         particleEngine.Leader = this;
-                    data.AddGob(gob);
+                    data.Gobs.Add(gob);
                 });
             }
 
@@ -961,7 +957,7 @@ namespace AW2.Game
         public virtual void Die(DeathCause cause)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && IsRelevant) return;
-            DieImpl(cause);
+            DieImpl(cause, false);
         }
 
         /// <summary>
@@ -973,7 +969,7 @@ namespace AW2.Game
         /// <seealso cref="Die(DeathCause)"/>
         public void DieOnClient()
         {
-            DieImpl(new DeathCause());
+            DieImpl(new DeathCause(), true);
         }
 
         /// <summary>
@@ -1146,7 +1142,7 @@ namespace AW2.Game
                     writer.Write((int)owner.Id);
                 else
                     writer.Write((int)-1);
-                writer.Write((int)layer);
+                writer.Write((int)Layer);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1173,7 +1169,7 @@ namespace AW2.Game
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
                 owner = data.Players.FirstOrDefault(player => player.Id == ownerId);
-                layer = reader.ReadInt32();
+                Layer = reader.ReadInt32();
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1275,7 +1271,7 @@ namespace AW2.Game
                             peng.Leader = this;
                             peng.LeaderBone = boneIs[thrustI].Value;
                         }
-                        data.AddGob(gob);
+                        data.Gobs.Add(gob);
                         exhaustBoneIList.Add(boneIs[thrustI].Value);
                         exhaustEngineList.Add(gob);
                     });
@@ -1406,13 +1402,14 @@ namespace AW2.Game
         /// and <see cref="DieOnClient()"/>.
         /// </summary>
         /// <param name="cause">The cause of death.</param>
-        void DieImpl(DeathCause cause)
+        /// <param name="forceRemove">Force removal of the dead gob. Useful for clients.</param>
+        void DieImpl(DeathCause cause, bool forceRemove)
         {
             if (Dead) return;
             dead = true;
 
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.RemoveGob(this);
+            data.Gobs.Remove(this, forceRemove);
 
             // Create death gobs.
             foreach (string gobType in deathGobTypes)
@@ -1422,7 +1419,7 @@ namespace AW2.Game
                     gob.Pos = this.Pos;
                     gob.Rotation = this.Rotation;
                     gob.owner = this.owner;
-                    data.AddGob(gob);
+                    data.Gobs.Add(gob);
                 });
             }
         }

@@ -83,7 +83,7 @@ namespace AW2.Game
             UpdateControls();
 
             // Update gobs, weapons and players.
-            data.ForEachGob(gob => gob.Update());
+            foreach (var gob in data.Gobs) gob.Update();
             foreach (var weapon in data.Weapons) weapon.Update();
             foreach (var player in data.Players) player.Update();
 

@@ -9,8 +9,14 @@ namespace AW2.Helpers.Collections
     public interface IObservableCollection<T>
     {
         /// <summary>
+        /// Called when an item has been added to the collection.
+        /// The argument is the added item.
+        /// </summary>
+        event Action<T> Added;
+
+        /// <summary>
         /// Called when an item has been removed from the collection.
-        /// The argument is the removed item.
+        /// The argument is the removed item. Not called when the whole collection is cleared.
         /// </summary>
         event Action<T> Removed;
 

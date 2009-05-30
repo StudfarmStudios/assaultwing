@@ -210,7 +210,7 @@ namespace AW2.Game.Weapons
                         shot.Pos = owner.GetNamedPosition(boneI);
                         shot.Move = owner.Move + kick;
                         shot.Rotation = owner.Rotation; // could also be 'direction'
-                        data.AddGob(shot);
+                        data.Gobs.Add(shot);
                         liveShots.Add(shot);
                     });
 
@@ -228,7 +228,7 @@ namespace AW2.Game.Weapons
                                     peng.LeaderBone = boneI;
                                 }
                                 muzzleFireEngines[barrel].Add(fireEngine);
-                                data.AddGob(fireEngine);
+                                data.Gobs.Add(fireEngine);
                             });
                         }
                 }

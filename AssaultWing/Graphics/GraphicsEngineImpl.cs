@@ -390,7 +390,7 @@ namespace AW2.Graphics
             // Propagate LoadContent to other components that are known to
             // contain references to graphics content.
             data.ForEachViewport(viewport => viewport.LoadContent());
-            data.ForEachGob(gob => gob.LoadContent());
+            foreach (var gob in data.Gobs) gob.LoadContent();
             data.LoadContent();
         }
 
@@ -403,7 +403,7 @@ namespace AW2.Graphics
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             foreach (ArenaLayer layer in arenaTemplate.Layers)
             {
-                layer.ForEachGob(gob =>
+                foreach (var gob in layer.Gobs)
                 {
                     // Load the layer's gob types.
                     foreach (var modelName in gob.ModelNames)
@@ -422,7 +422,7 @@ namespace AW2.Graphics
                         if (texture != null)
                             data.Textures.Add(textureName, texture);
                     }
-                });
+                }
 
                 // Load the layer's parallax texture.
                 var parallaxName = layer.ParallaxName;
@@ -456,7 +456,7 @@ namespace AW2.Graphics
             // Propagate UnloadContent to other components that are known to
             // contain references to graphics content.
             data.ForEachViewport(delegate(AWViewport viewport) { viewport.UnloadContent(); });
-            data.ForEachGob(delegate(Gob gob) { gob.UnloadContent(); });
+            foreach (var gob in data.Gobs) gob.UnloadContent();
             data.UnloadContent();
 
             base.UnloadContent();

@@ -283,12 +283,13 @@ namespace AW2.Game
         /// <summary>
         /// Resets the physics engine for a new arena.
         /// </summary>
-        public void Reset()
+        /// <param name="arena">The arena to reset for, or <c>null</c> to clear data.</param>
+        public void Reset(Arena arena)
         {
             gameTime = new GameTime();
             DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
-            if (data.Arena == null)
+            if (arena == null)
             {
                 // Release arrays.
                 for (int i = 0; i < collisionAreas.Length; ++i)
@@ -298,7 +299,7 @@ namespace AW2.Game
             else 
             {
                 // Allocate new arrays.
-                Vector2 arrayDimensions = data.Arena.Dimensions + 2 * areaExcess;
+                Vector2 arrayDimensions = arena.Dimensions + 2 * areaExcess;
                 for (int i = 0; i < collisionAreas.Length; ++i)
                     if (collisionAreaCellSize[i] >= 0)
                         collisionAreas[i] = new SpatialGrid<CollisionArea>(collisionAreaCellSize[i],
@@ -625,7 +626,7 @@ namespace AW2.Game
             // Other projectiles disintegrate if they are outside 
             // the outer arena boundary.
             if ((outOfBounds & OutOfArenaBounds.OuterBoundary) != 0)
-                data.RemoveGob(gob);
+                data.Gobs.Remove(gob);
             return;
         }
 

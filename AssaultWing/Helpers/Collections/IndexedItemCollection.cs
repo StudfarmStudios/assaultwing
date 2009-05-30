@@ -16,8 +16,14 @@ namespace AW2.Helpers.Collections
         #region IObservableCollection<T> Members
 
         /// <summary>
+        /// Called when an item has been added to the collection.
+        /// The argument is the added item.
+        /// </summary>
+        public event Action<T> Added;
+
+        /// <summary>
         /// Called when an item has been removed from the collection.
-        /// The argument is the removed item.
+        /// The argument is the removed item. Not called when the whole collection is cleared.
         /// </summary>
         public event Action<T> Removed;
 
@@ -58,6 +64,7 @@ namespace AW2.Helpers.Collections
         public void Insert(int index, T item)
         {
             items.Insert(index, item);
+            if (Added != null) Added(item);
         }
 
         /// <summary>
@@ -84,7 +91,11 @@ namespace AW2.Helpers.Collections
                 else
                     throw new ArgumentOutOfRangeException("No value in IndexedItemCollection for index " + index);
             }
-            set { items[index] = value; }
+            set
+            {
+                items[index] = value;
+                if (Added != null) Added(value);
+            }
         }
 
         #endregion
@@ -97,6 +108,7 @@ namespace AW2.Helpers.Collections
         public void Add(T item)
         {
             items.Add(item);
+            if (Added != null) Added(item);
         }
 
         /// <summary>
@@ -104,15 +116,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void Clear()
         {
-            if (Removed != null)
-            {
-                var removedTs = items.ToArray();
-                items.Clear();
-                foreach (var T in removedTs)
-                    Removed(T);
-            }
-            else
-                items.Clear();
+            items.Clear();
         }
 
         /// <summary>

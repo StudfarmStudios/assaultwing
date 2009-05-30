@@ -456,7 +456,7 @@ namespace AW2.Game.Gobs
                         peng.Paused = true;
                         peng.Leader = this;
                     }
-                    data.AddGob(gob);
+                    data.Gobs.Add(gob);
                     coughEngineList.Add(gob);
                 });
             }

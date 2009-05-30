@@ -45,8 +45,6 @@ namespace AW2.Game
 
         #region Fields
 
-        List<Gob> addedGobs;
-        List<Gob> removedGobs;
         List<Viewport> viewports;
         List<ViewportSeparator> viewportSeparators;
         Dictionary<string, string> arenaFileNameList;
@@ -66,7 +64,7 @@ namespace AW2.Game
         ProgressBar progressBar;
 
         /// <summary>
-        /// Index of the gameplay arena layer. Gameplay backlayer is this minus one.
+        /// Use <see cref="gameplayLayer"/> only through the property <see cref="GameplayLayer"/>.
         /// </summary>
         int gameplayLayer;
 
@@ -98,6 +96,8 @@ namespace AW2.Game
 
         #endregion Fields
 
+        #region Properties
+
         /// <summary>
         /// Players who participate in the game session.
         /// </summary>
@@ -109,15 +109,21 @@ namespace AW2.Game
         public IndexedItemCollection<Weapon> Weapons { get; private set; }
 
         /// <summary>
+        /// Gobs that are active in the game session.
+        /// </summary>
+        public GobCollection Gobs { get; private set; }
+
+        /// <summary>
         /// Arena layers of the active arena.
         /// </summary>
         public IndexedItemCollection<ArenaLayer> ArenaLayers { get; private set; }
 
         /// <summary>
         /// The index of the layer of the currently active arena where the gameplay takes place.
+        /// Gameplay backlayer is this minus one.
         /// </summary>
         /// <seealso cref="ArenaLayers"/>
-        public int GameplayLayer { get { return gameplayLayer; } }
+        private int GameplayLayer { get { return gameplayLayer; } set { Gobs.GameplayLayer = gameplayLayer = value; } }
 
         /// <summary>
         /// 3D models available for the game.
@@ -134,14 +140,13 @@ namespace AW2.Game
         /// </summary>
         public NamedItemCollection<Texture2D> ArenaPreviews { get; private set; }
 
+        #endregion Properties
+
         /// <summary>
         /// Creates a new data engine.
         /// </summary>
         public DataEngine()
         {
-            addedGobs = new List<Gob>();
-            removedGobs = new List<Gob>();
-
             Players = new IndexedItemCollection<Player>();
             Players.Removed += player => 
             {
@@ -158,6 +163,40 @@ namespace AW2.Game
 
             Weapons = new IndexedItemCollection<Weapon>();
             ArenaLayers = new IndexedItemCollection<ArenaLayer>();
+
+            Gobs = new GobCollection(ArenaLayers);
+            Gobs.Added += gob =>
+            {
+                gob.Activate();
+                if (gob.Layer == GameplayLayer)
+                    AssaultWing.Instance.PhysicsEngine.Register(gob);
+                else
+                {
+                    // Gobs outside the gameplay layer cannot collide.
+                    // To achieve this, we take away all the gob's collision areas.
+                    gob.ClearCollisionAreas();
+                }
+            };
+            Gobs.Removing += item =>
+            {
+                // Game client removes relevant gobs only when the server says so.
+                return AssaultWing.Instance.NetworkMode != NetworkMode.Client || !item.IsRelevant;
+            };
+            Gobs.Removed += gob =>
+            {
+                // Game server notifies game clients of the removal of relevant gobs.
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+                {
+                    var message = new GobDeletionMessage();
+                    message.GobId = gob.Id;
+                    AssaultWing.Instance.NetworkEngine.SendToClients(message);
+                }
+
+                if (gob.Layer == GameplayLayer)
+                    AssaultWing.Instance.PhysicsEngine.Unregister(gob);
+                gob.Dispose();
+            };
+
             Models = new NamedDataCollection<Model>("model", (CanonicalString)"dummymodel");
             Textures = new NamedDataCollection<Texture2D>("texture", (CanonicalString)"dummytexture");
             ArenaPreviews = new NamedDataCollection<Texture2D>("arena preview", (CanonicalString)"noPreview");
@@ -339,26 +378,6 @@ namespace AW2.Game
                     : -1; // HACK: network games have infinite lives
             }
 
-            // Clear remaining data from a possible previous arena.
-            foreach (ArenaLayer layer in ArenaLayers)
-            {
-                layer.ForEachGob(gob => gob.UnloadContent());
-                layer.ClearGobs();
-            }
-            Weapons.Clear();
-
-            // Create layers for the arena.
-            ArenaLayers.Clear();
-            for (int i = 0; i < preparedArena.Layers.Count; ++i)
-            {
-                ArenaLayer layer = preparedArena.Layers[i];
-                ArenaLayers.Add(layer.EmptyCopy());
-                if (layer.IsGameplayLayer)
-                    gameplayLayer = i;
-            }
-            if (gameplayLayer == -1)
-                throw new ArgumentException("Arena doesn't have a gameplay layer");
-
             activeArena = preparedArena;
             preparedArena = null;
             RefreshArenaToRadarTransform();
@@ -376,43 +395,51 @@ namespace AW2.Game
         public void InitializeFromArena(string name)
         {
             preparedArena = GetArena(name);
-
-            // Clear old data.
-            // We clear visible objects only after most of the initialisation is done.
-            // This way the user can see the old arena until the new arena is ready.
-            addedGobs.Clear();
-            removedGobs.Clear();
             CustomOperations = null;
 
             // Find the gameplay layer.
-            gameplayLayer = -1;
+            GameplayLayer = -1;
             for (int i = 0; i < preparedArena.Layers.Count; ++i)
                 if (preparedArena.Layers[i].IsGameplayLayer)
-                    gameplayLayer = i;
-            if (gameplayLayer == -1)
+                    GameplayLayer = i;
+            if (GameplayLayer == -1)
                 throw new ArgumentException("Arena " + preparedArena.Name + " doesn't have a gameplay layer");
 
             // Make sure the gameplay backlayer is located right before the gameplay layer.
             // We use a suitable layer if one is defined in the arena. 
             // Otherwise we create a new layer.
-            if (gameplayLayer == 0 || preparedArena.Layers[gameplayLayer - 1].Z != 0)
+            if (GameplayLayer == 0 || preparedArena.Layers[GameplayLayer - 1].Z != 0)
             {
-                preparedArena.Layers.Insert(gameplayLayer, new ArenaLayer(false, 0, ""));
-                ++gameplayLayer;
+                preparedArena.Layers.Insert(GameplayLayer, new ArenaLayer(false, 0, ""));
+                ++GameplayLayer;
             }
+
+            // Create layers for the arena.
+            ArenaLayers.Clear();
+            for (int i = 0; i < preparedArena.Layers.Count; ++i)
+            {
+                ArenaLayer layer = preparedArena.Layers[i];
+                ArenaLayers.Add(layer.EmptyCopy());
+                if (layer.IsGameplayLayer)
+                    GameplayLayer = i;
+            }
+            if (GameplayLayer == -1)
+                throw new ArgumentException("Arena doesn't have a gameplay layer");
+
+            // Clear remaining data from a possible previous arena.
+            foreach (var gob in Gobs) gob.UnloadContent();
+            Gobs.Clear();
+            Weapons.Clear();
 
             // Create initial objects. This is by far the most time consuming part
             // in initialising an arena for playing.
-            // Note that the gobs will end up in 'ArenaLayers' only after the game starts running again.
             int wallCount = 0;
             foreach (ArenaLayer layer in preparedArena.Layers)
-                layer.ForEachGob(delegate(Gob gob)
-                {
-                    if (gob is Wall) ++wallCount;
-                });
+                wallCount += layer.Gobs.Count(gob => gob is Wall);
             progressBar.SetSubtaskCount(wallCount);
             for (int i = 0; i < preparedArena.Layers.Count; ++i)
-                preparedArena.Layers[i].ForEachGob(gob => Gob.CreateGob(gob, newGob => AddGob(newGob, i)));
+                foreach (var gob in preparedArena.Layers[i].Gobs) 
+                    Gob.CreateGob(gob, newGob => Gobs.Add(newGob, i));
         }
 
         /// <summary>
@@ -426,87 +453,6 @@ namespace AW2.Game
         }
 
         #endregion arenas
-
-        #region gobs
-
-        /// <summary>
-        /// Adds a gob to the game.
-        /// </summary>
-        /// <param name="gob">The gob to add.</param>
-        public void AddGob(Gob gob)
-        {
-            if (gob.LayerPreference == Gob.LayerPreferenceType.Front)
-                AddGob(gob, gameplayLayer);
-            else
-                AddGob(gob, gameplayLayer - 1);
-        }
-
-        /// <summary>
-        /// Adds a gob to an arena layer of the game.
-        /// </summary>
-        /// <param name="gob">The gob to add.</param>
-        /// <param name="layer">The arena layer index.</param>
-        void AddGob(Gob gob, int layer)
-        {
-            gob.Layer = layer;
-            addedGobs.Add(gob);
-            gob.Activate();
-
-            // If we are the game server, notify game clients of the new gob.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
-            {
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-                var message = new GobCreationMessage();
-                message.GobTypeName = gob.TypeName;
-                message.Write(gob, SerializationModeFlags.All);
-                net.SendToClients(message);
-            }
-        }
-
-        /// <summary>
-        /// Removes a gob from the game.
-        /// </summary>
-        /// <param name="gob">The gob to remove.</param>
-        public void RemoveGob(Gob gob)
-        {
-            // If we are a game client, we remove relevant gobs only when the server tells us to.
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
-                removedGobs.Add(gob);
-
-            // If we are the game server, notify game clients of the removal of relevant gobs.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
-            {
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-                var message = new GobDeletionMessage();
-                message.GobId = gob.Id;
-                net.SendToClients(message);
-            }
-        }
-
-        /// <summary>
-        /// Performs the specified action on each gob on each arena layer.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each gob.</param>
-        public void ForEachGob(Action<Gob> action)
-        {
-            foreach (ArenaLayer layer in ArenaLayers)
-                layer.ForEachGob(delegate(Gob gob) { action(gob); });
-        }
-
-        /// <summary>
-        /// Returns a gob by its identifier, or <c>null</c> if no such gob exists.
-        /// </summary>
-        /// <param name="gobId">The identifier of the gob.</param>
-        /// <returns>The gob, or <c>null</c> if the gob couldn't be found.</returns>
-        /// <seealso cref="AW2.Game.Gob.Id"/>
-        public Gob GetGob(int gobId)
-        {
-            Gob returnGob = null;
-            ArenaLayers[gameplayLayer].ForEachGob(gob => returnGob = gob.Id == gobId ? gob : returnGob);
-            return returnGob;
-        }
-
-        #endregion gobs
 
         #region type templates
 
@@ -714,18 +660,15 @@ namespace AW2.Game
         /// </summary>
         public void CommitPending()
         {
-            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-
             // If we are a game client, create gobs as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
                 GobCreationMessage message;
-                while ((message = net.ReceiveFromServer<GobCreationMessage>()) != null)
+                while ((message = AssaultWing.Instance.NetworkEngine.ReceiveFromServer<GobCreationMessage>()) != null)
                 {
                     Gob gob = Gob.CreateGob(message.GobTypeName);
                     message.Read(gob, SerializationModeFlags.All);
-                    AddGob(gob, gob.Layer);
+                    Gobs.Add(gob);
 
                     // Ships we set automatically as the ship the ship's owner is controlling.
                     Ship gobShip = gob as Ship;
@@ -734,37 +677,22 @@ namespace AW2.Game
                 }
             }
 
-            // Add gobs to add.
-            foreach (Gob gob in addedGobs)
-            {
-                if (gob.Layer == gameplayLayer)
-                    physics.Register(gob);
-                else
-                {
-                    // Gobs outside the gameplay layer cannot collide.
-                    // To achieve this, we take away all the gob's collision areas.
-                    gob.ClearCollisionAreas();
-                }
-                ArenaLayers[gob.Layer].AddGob(gob);
-            }
-            addedGobs.Clear();
-
             // If we are a game client, update gobs and players as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                net.ReceiveFromServerWhile<GobUpdateMessage>(message =>
+                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobUpdateMessage>(message =>
                 {
-                    message.ReadGobs(gobId => GetGob(gobId), SerializationModeFlags.VaryingData);
+                    message.ReadGobs(gobId => Gobs.FirstOrDefault(gob => gob.Id == gobId), SerializationModeFlags.VaryingData);
                     return true;
                 });
-                net.ReceiveFromServerWhile<GobDamageMessage>(message =>
+                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobDamageMessage>(message =>
                 {
-                    Gob gob = GetGob(message.GobId);
+                    Gob gob = Gobs.FirstOrDefault(gobb => gobb.Id == message.GobId);
                     if (gob == null) return true; // Skip updates for gobs we haven't yet created.
                     gob.DamageLevel = message.DamageLevel;
                     return true;
                 });
-                net.ReceiveFromServerWhile<PlayerUpdateMessage>(message =>
+                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<PlayerUpdateMessage>(message =>
                 {
                     Player player = Players.FirstOrDefault(plr => plr.Id == message.PlayerId);
                     if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
@@ -781,9 +709,9 @@ namespace AW2.Game
             // If we are a game client, remove gobs as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                net.ReceiveFromServerWhile<GobDeletionMessage>(message =>
+                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobDeletionMessage>(message =>
                 {
-                    Gob gob = GetGob(message.GobId);
+                    Gob gob = Gobs.FirstOrDefault(gobb => gobb.Id == message.GobId);
                     if (gob == null)
                     {
                         // The gob hasn't been created yet. This happens when the server
@@ -794,38 +722,24 @@ namespace AW2.Game
                         return false;
                     }
                     gob.DieOnClient();
-                    removedGobs.Add(gob);
                     return true;
                 });
             }
-
-            // Remove gobs to remove.
-            // Don't use foreach because removed gobs may still add more items
-            // to 'removedGobs'.
-            for (int i = 0; i < removedGobs.Count; ++i)
-            {
-                Gob gob = removedGobs[i];
-                if (gob.Layer == gameplayLayer)
-                    physics.Unregister(gob);
-                gob.Dispose();
-                ArenaLayers[gob.Layer].RemoveGob(gob);
-            }
-            removedGobs.Clear();
 
             // Send state updates about gobs to game clients if we are the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
                 TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
                 var message = new GobUpdateMessage();
-                ArenaLayers[gameplayLayer].ForEachGob(gob =>
+                foreach (var gob in ArenaLayers[GameplayLayer].Gobs)
                 {
                     if (!gob.IsRelevant) return;
                     if (!gob.Movable) return;
                     if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) return;
                     gob.LastNetworkUpdate = now;
                     message.AddGob(gob.Id, gob, SerializationModeFlags.VaryingData);
-                });
-                net.SendToClients(message);
+                }
+                AssaultWing.Instance.NetworkEngine.SendToClients(message);
             }
 
             // Send state updates about players to game clients if we are the game server.
@@ -838,14 +752,12 @@ namespace AW2.Game
                     var message = new PlayerUpdateMessage();
                     message.PlayerId = player.Id;
                     message.Write(player, SerializationModeFlags.VaryingData);
-                    net.SendToClients(message);
+                    AssaultWing.Instance.NetworkEngine.SendToClients(message);
                 }
             }
 
 #if DEBUG_PROFILE
-            AssaultWing.Instance.gobCount = 0;
-            foreach (ArenaLayer layer in ArenaLayers)
-                layer.ForEachGob(delegate(Gob gob) { ++AssaultWing.Instance.gobCount; });
+            AssaultWing.Instance.gobCount = Gobs.Count;
 #endif
         }
 
@@ -859,7 +771,7 @@ namespace AW2.Game
         public void ClearGameState()
         {
             activeArena = null;
-            foreach (var layer in ArenaLayers) layer.ClearGobs();
+            Gobs.Clear();
             ClearViewports();
         }
 
@@ -932,12 +844,12 @@ namespace AW2.Game
             // Draw the arena's walls.
             SpriteBatch spriteBatch = new SpriteBatch(gfx);
             spriteBatch.Begin();
-            ArenaLayers[gameplayLayer].ForEachGob(delegate(Gob gob)
+            foreach (var gob in ArenaLayers[GameplayLayer].Gobs)
             {
                 Wall wall = gob as Wall;
                 if (wall != null)
                     wall.DrawSilhouette(view, projection, spriteBatch);
-            });
+            }
             spriteBatch.End();
 
             // Restore render target so what we can extract drawn pixels.

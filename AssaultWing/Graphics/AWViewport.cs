@@ -511,7 +511,7 @@ namespace AW2.Graphics
 #endif
 
                 // 3D graphics
-                layer.ForEachGob(delegate(Gob gob) { gob.Draw(view, projection); });
+                foreach (var gob in layer.Gobs) gob.Draw(view, projection);
 
                 // 2D graphics
                 Matrix gameToScreen = view * projection
@@ -519,7 +519,7 @@ namespace AW2.Graphics
                     * Matrix.CreateTranslation(1, 1, 0)
                     * Matrix.CreateScale(new Vector3(viewport.Width, viewport.Height, viewport.MaxDepth - viewport.MinDepth) / 2);
                 DrawMode2D? drawMode = null;
-                layer.ForEachGobSort2D(delegate(Gob gob)
+                layer.Gobs.ForEachIn2DOrder(gob =>
                 {
                     if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                     {

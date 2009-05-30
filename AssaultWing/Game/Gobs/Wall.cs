@@ -331,7 +331,7 @@ namespace AW2.Game.Gobs
 
             // Remove the wall gob if all its triangles have been removed.
             if (triangleCount == 0)
-                data.RemoveGob(this);
+                data.Gobs.Remove(this);
         }
  
         #region IConsistencyCheckable Members

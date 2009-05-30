@@ -130,7 +130,7 @@ namespace AW2.Game.Gobs
                 Gob.CreateGob(particleEngineNames[i], gob =>
                 {
                     gob.Pos = this.Pos;
-                    data.AddGob(gob);
+                    data.Gobs.Add(gob);
                     particleEngineList.Add(gob);
                 });
             }

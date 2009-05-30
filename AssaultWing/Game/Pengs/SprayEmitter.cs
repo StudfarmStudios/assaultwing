@@ -247,7 +247,7 @@ namespace AW2.Game.Pengs
                             gob.Pos = pos;
                             gob.Move = move;
                             gob.Rotation = rotation;
-                            data.AddGob(gob);
+                            data.Gobs.Add(gob);
                         }
                     }
 

@@ -84,7 +84,7 @@ namespace AW2.Game.Gobs
                 {
                     Vector2 spawnPos = physics.GetFreePosition(newGob, spawnArea);
                     newGob.Pos = spawnPos;
-                    data.AddGob(newGob);
+                    data.Gobs.Add(newGob);
                 });
             }
             base.Update();

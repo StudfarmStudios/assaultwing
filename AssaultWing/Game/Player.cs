@@ -909,23 +909,23 @@ namespace AW2.Game
                 // Use player spawn areas if there's any. Otherwise just randomise a position.
                 SpawnPlayer bestSpawn = null;
                 float bestSafeness = float.MinValue;
-                data.ForEachGob(delegate(Gob otherGob)
+                foreach (var otherGob in data.Gobs)
                 {
                     SpawnPlayer spawn = otherGob as SpawnPlayer;
-                    if (spawn == null) return;
+                    if (spawn == null) continue;
                     float safeness = spawn.GetSafeness();
                     if (safeness >= bestSafeness)
                     {
                         bestSafeness = safeness;
                         bestSpawn = spawn;
                     }
-                });
+                }
                 if (bestSpawn == null)
                     newShip.Pos = physics.GetFreePosition(newShip, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
                 else
                     bestSpawn.Spawn(newShip);
 
-                data.AddGob(newShip);
+                data.Gobs.Add(newShip);
                 Ship = newShip;
             });
 
@@ -947,7 +947,7 @@ namespace AW2.Game
                     peng.Owner = this;
                     peng.Leader = Ship;
                 }
-                data.AddGob(playerColor);
+                data.Gobs.Add(playerColor);
             });
         }
 

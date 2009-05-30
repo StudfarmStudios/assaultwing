@@ -178,21 +178,20 @@ namespace AW2.Net
         {
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
 
             var connection = GetClientConnection(connectionId);
             removedClientConnections.Add(connection);
 
             // Remove the client's players.
             List<string> droppedPlayerNames = new List<string>();
-            foreach (var player in data.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
                 if (player.ConnectionId == connection.BaseConnection.Id)
                     droppedPlayerNames.Add(player.Name);
             string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
-            foreach (var player in data.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
                 if (!player.IsRemote)
                     player.SendMessage(message);
-            data.Players.Remove(player => player.ConnectionId == connection.BaseConnection.Id);
+            AssaultWing.Instance.DataEngine.Players.Remove(player => player.ConnectionId == connection.BaseConnection.Id);
         }
 
         /// <summary>
@@ -338,8 +337,6 @@ namespace AW2.Net
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
         public override void Update(GameTime gameTime)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
             // Handle established connections.
             Connection.ConnectionResults.Do(queue =>
             {
@@ -371,7 +368,7 @@ namespace AW2.Net
                 ReceiveFromServerWhile<JoinGameReply>(message =>
                 {
                     foreach (JoinGameReply.IdChange change in message.PlayerIdChanges)
-                        data.Players.First(player => player.Id == change.oldId).Id = change.newId;
+                        AssaultWing.Instance.DataEngine.Players.First(player => player.Id == change.oldId).Id = change.newId;
                     CanonicalString.CanonicalForms = message.CanonicalStrings;
                     return true;
                 });

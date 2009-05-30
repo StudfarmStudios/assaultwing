@@ -124,7 +124,7 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             menuBigFont = data.GetFont(FontName.MenuFontBig);
             menuSmallFont = data.GetFont(FontName.MenuFontSmall);
             backgroundTexture = data.GetTexture(TextureName.EquipMenuBackground);
@@ -162,12 +162,11 @@ namespace AW2.Menu
         /// </summary>
         private void CreateSelectors()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
-            equipmentSelectors = new EquipmentSelector[data.Players.Count, aspectCount];
+            equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Players.Count, aspectCount];
 
             int playerI = 0;
-            foreach (var player in data.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
                 equipmentSelectors[playerI, (int)EquipMenuItem.Weapon1] = new Weapon1Selector(player);
@@ -207,11 +206,8 @@ namespace AW2.Menu
 
         private void CheckPlayerControls()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-
             int playerI = -1;
-            foreach (var player in data.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 if (player.IsRemote) return;
                 ++playerI;
@@ -241,7 +237,7 @@ namespace AW2.Menu
                     {
                         var equipUpdateRequest = new JoinGameRequest();
                         equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
-                        net.SendToServer(equipUpdateRequest);
+                        AssaultWing.Instance.NetworkEngine.SendToServer(equipUpdateRequest);
                     }
                 }
             }
@@ -259,13 +255,11 @@ namespace AW2.Menu
 
         private void CheckNetwork()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
                 // Handle JoinGameRequests from game clients.
                 JoinGameRequest message = null;
-                while ((message = net.ReceiveFromClients<JoinGameRequest>()) != null)
+                while ((message = AssaultWing.Instance.NetworkEngine.ReceiveFromClients<JoinGameRequest>()) != null)
                 {
                     // Send player ID changes for new players, if any. A join game request
                     // may also update the chosen equipment of a previously added player.
@@ -273,7 +267,7 @@ namespace AW2.Menu
                     var playerIdChanges = new List<JoinGameReply.IdChange>();
                     foreach (PlayerInfo info in message.PlayerInfos)
                     {
-                        var oldPlayer = data.Players.FirstOrDefault(
+                        var oldPlayer = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(
                             plr => plr.ConnectionId == message.ConnectionId && plr.Id == info.id);
                         if (oldPlayer != null)
                         {
@@ -285,7 +279,7 @@ namespace AW2.Menu
                         else
                         {
                             Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
-                            data.Players.Add(player);
+                            AssaultWing.Instance.DataEngine.Players.Add(player);
                             playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
                         }
                     }
@@ -293,13 +287,13 @@ namespace AW2.Menu
                     {
                         reply.CanonicalStrings = AW2.Helpers.CanonicalString.CanonicalForms;
                         reply.PlayerIdChanges = playerIdChanges.ToArray();
-                        net.SendToClient(message.ConnectionId, reply);
+                        AssaultWing.Instance.NetworkEngine.SendToClient(message.ConnectionId, reply);
                     }
                 }
             }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                var message = net.ReceiveFromServer<StartGameMessage>();
+                var message = AssaultWing.Instance.NetworkEngine.ReceiveFromServer<StartGameMessage>();
                 if (message != null)
                 {
                     for (int i = 0; i < message.PlayerCount; ++i)
@@ -308,11 +302,11 @@ namespace AW2.Menu
                         message.Read(player, SerializationModeFlags.All);
 
                         // Only add the player if it is remote.
-                        if (!data.Players.Any(plr => plr.Id == player.Id))
-                            data.Players.Add(player);
+                        if (!AssaultWing.Instance.DataEngine.Players.Any(plr => plr.Id == player.Id))
+                            AssaultWing.Instance.DataEngine.Players.Add(player);
                     }
 
-                    data.ArenaPlaylist = message.ArenaPlaylist;
+                    AssaultWing.Instance.DataEngine.ArenaPlaylist = message.ArenaPlaylist;
 
                     // Prepare and start playing the game.
                     menuEngine.ProgressBarAction(
@@ -334,7 +328,7 @@ namespace AW2.Menu
         /// method returns.</param>
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
 
             // Draw player panes.

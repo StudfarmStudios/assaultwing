@@ -162,7 +162,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             defaultEffect = defaultEffect ?? new BasicEffect(gfx, null);
             defaultSilhouetteEffect = defaultSilhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
@@ -170,7 +169,7 @@ namespace AW2.Game.Gobs
             effect = defaultEffect;
             silhouetteEffect = defaultSilhouetteEffect;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
-            texture = data.Textures[textureName];
+            texture = AssaultWing.Instance.DataEngine.Textures[textureName];
             base.LoadContent();
         }
 
@@ -211,8 +210,7 @@ namespace AW2.Game.Gobs
             Prepare3DModel();
             FineTriangles();
             InitializeIndexMap();
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.ProgressBar.SubtaskCompleted();
+            AssaultWing.Instance.DataEngine.ProgressBar.SubtaskCompleted();
         }
 
         /// <summary>
@@ -225,7 +223,6 @@ namespace AW2.Game.Gobs
             BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
             if (!viewVolume.Intersects(boundingBox)) return;
 
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
             effect.World = Matrix.Identity;
@@ -233,7 +230,7 @@ namespace AW2.Game.Gobs
             effect.View = view;
             effect.Texture = texture;
             effect.TextureEnabled = true;
-            data.PrepareEffect(effect);
+            AssaultWing.Instance.DataEngine.PrepareEffect(effect);
             effect.Begin();
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
@@ -255,7 +252,6 @@ namespace AW2.Game.Gobs
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
             silhouetteEffect.World = Matrix.Identity;
@@ -301,7 +297,6 @@ namespace AW2.Game.Gobs
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return;
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
 
             // Eat a round hole.
@@ -331,7 +326,7 @@ namespace AW2.Game.Gobs
 
             // Remove the wall gob if all its triangles have been removed.
             if (triangleCount == 0)
-                data.Gobs.Remove(this);
+                AssaultWing.Instance.DataEngine.Gobs.Remove(this);
         }
  
         #region IConsistencyCheckable Members

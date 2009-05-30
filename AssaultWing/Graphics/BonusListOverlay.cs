@@ -241,7 +241,7 @@ namespace AW2.Graphics
         /// <param name="playerBonus">Which player bonus it is.</param>
         private void DrawBonusBox(SpriteBatch spriteBatch, Vector2 bonusPos, PlayerBonus playerBonus)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
 
             // Figure out what to draw for this bonus.
             string bonusText;
@@ -317,7 +317,7 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             bonusBackgroundTexture = data.GetTexture(TextureName.BonusBackground);
             bonusIconWeapon1LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon1LoadTime);
             bonusIconWeapon2LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon2LoadTime);

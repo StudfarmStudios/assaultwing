@@ -45,19 +45,17 @@ namespace AW2.Graphics
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
             // Radar background
             spriteBatch.Draw(radarDisplayTexture, Vector2.Zero, Color.White);
 
             // Arena walls on radar
             Vector2 radarDisplayTopLeft = new Vector2(0, 1); // TODO: Make this constant configurable
-            spriteBatch.Draw(data.ArenaRadarSilhouette, radarDisplayTopLeft, Color.White);
+            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, Color.White);
 
             // Ships on radar
-            Matrix arenaToRadarTransform = data.ArenaToRadarTransform;
+            Matrix arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
             Vector2 shipOnRadarTextureCenter = new Vector2(shipOnRadarTexture.Width, shipOnRadarTexture.Height) / 2;
-            foreach (var player in data.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 if (player.Ship == null) return;
                 Vector2 posInArena = player.Ship.Pos;
@@ -72,9 +70,8 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            radarDisplayTexture = data.GetTexture(TextureName.Radar);
-            shipOnRadarTexture = data.GetTexture(TextureName.RadarShip);
+            radarDisplayTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.Radar);
+            shipOnRadarTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.RadarShip);
         }
 
         /// <summary>

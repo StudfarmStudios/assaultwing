@@ -389,8 +389,7 @@ namespace AW2.Game
             {
                 if (weapon1Upgrades == 0)
                     return weapon1Name;
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+                Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon1Name);
                 return weapon1.UpgradeNames[weapon1Upgrades - 1];
             }
         }
@@ -404,8 +403,7 @@ namespace AW2.Game
             {
                 if (weapon2Upgrades == 0)
                     return weapon2Name;
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
+                Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon2Name);
                 return weapon2.UpgradeNames[weapon2Upgrades - 1];
             }
         }
@@ -585,9 +583,6 @@ namespace AW2.Game
         /// <param name="cause">The cause of death of the player's ship</param>
         public void Die(DeathCause cause)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-
             // Dying has some consequences.
             if (cause.IsSuicide) ++suicides;
             if (cause.IsKill)
@@ -715,8 +710,7 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon1()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon1Name);
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
             UpdateShipWeapons();
         }
@@ -735,8 +729,7 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon2()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), weapon2Name);
+            Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon2Name);
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
             UpdateShipWeapons();
         }
@@ -873,7 +866,6 @@ namespace AW2.Game
         /// </summary>
         void SendControlsToServer()
         {
-            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
             PlayerControlsMessage message = new PlayerControlsMessage();
             message.PlayerId = Id;
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
@@ -882,7 +874,7 @@ namespace AW2.Game
                 message.SetControlState(controlType,
                     new PlayerControlsMessage.ControlState { force = control.Force, pulse = control.Pulse });
             }
-            net.SendToServer(message);
+            AssaultWing.Instance.NetworkEngine.SendToServer(message);
         }
 
         /// <summary>
@@ -890,9 +882,6 @@ namespace AW2.Game
         /// </summary>
         void CreateShip()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
-
             // Gain ownership over the ship only after its position has been set.
             // This way the ship won't be affecting its own spawn position.
             Ship = null;
@@ -909,7 +898,7 @@ namespace AW2.Game
                 // Use player spawn areas if there's any. Otherwise just randomise a position.
                 SpawnPlayer bestSpawn = null;
                 float bestSafeness = float.MinValue;
-                foreach (var otherGob in data.Gobs)
+                foreach (var otherGob in AssaultWing.Instance.DataEngine.Gobs)
                 {
                     SpawnPlayer spawn = otherGob as SpawnPlayer;
                     if (spawn == null) continue;
@@ -921,11 +910,12 @@ namespace AW2.Game
                     }
                 }
                 if (bestSpawn == null)
-                    newShip.Pos = physics.GetFreePosition(newShip, new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, data.Arena.Dimensions));
+                    newShip.Pos = AssaultWing.Instance.PhysicsEngine.GetFreePosition(newShip, 
+                        new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, AssaultWing.Instance.DataEngine.Arena.Dimensions));
                 else
                     bestSpawn.Spawn(newShip);
 
-                data.Gobs.Add(newShip);
+                AssaultWing.Instance.DataEngine.Gobs.Add(newShip);
                 Ship = newShip;
             });
 
@@ -947,7 +937,7 @@ namespace AW2.Game
                     peng.Owner = this;
                     peng.Leader = Ship;
                 }
-                data.Gobs.Add(playerColor);
+                AssaultWing.Instance.DataEngine.Gobs.Add(playerColor);
             });
         }
 

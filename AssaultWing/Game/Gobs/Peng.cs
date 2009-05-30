@@ -308,7 +308,6 @@ namespace AW2.Game.Gobs
         /// <param name="scale">Scale of graphics.</param>
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Viewport gfxViewport = AssaultWing.Instance.GraphicsDevice.Viewport;
             Vector3 viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
             Matrix pengToGame = WorldMatrix;
@@ -324,7 +323,7 @@ namespace AW2.Game.Gobs
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.layerDepth, 0, 1);
-                Texture2D texture = data.Textures[particle.textureName];
+                Texture2D texture = AssaultWing.Instance.DataEngine.Textures[particle.textureName];
                 float drawRotation = coordinateSystem == CoordinateSystem.Game
                     ? particle.rotation
                     : particle.rotation + Rotation;

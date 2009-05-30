@@ -173,7 +173,6 @@ namespace AW2.Game.Gobs
         {
             if (possibilities.Length == 0) 
                 throw new InvalidOperationException("Bonus has no possible bonus actions");
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
 
             // Pick our choice from the combined probability mass 
             // and then find out which possibility we hit.
@@ -195,7 +194,7 @@ namespace AW2.Game.Gobs
                     Gob.CreateGob("bomb explosion", explosion =>
                     {
                         explosion.Pos = this.Pos;
-                        data.Gobs.Add(explosion);
+                        AssaultWing.Instance.DataEngine.Gobs.Add(explosion);
                     });
                     break;
                 case BonusAction.UpgradeWeapon1:

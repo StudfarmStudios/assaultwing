@@ -99,10 +99,10 @@ namespace AW2.Menu
                 showProgressBar = value;
                 if (value)
                 {
-                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    data.ProgressBar.HorizontalAlignment = HorizontalAlignment.Center;
-                    data.ProgressBar.VerticalAlignment = VerticalAlignment.Bottom;
-                    data.ProgressBar.CustomAlignment = new Vector2(0, -2);
+                    var progressBar = AssaultWing.Instance.DataEngine.ProgressBar;
+                    progressBar.HorizontalAlignment = HorizontalAlignment.Center;
+                    progressBar.VerticalAlignment = VerticalAlignment.Bottom;
+                    progressBar.CustomAlignment = new Vector2(0, -2);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace AW2.Menu
         /// </summary>
         protected override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
@@ -169,7 +169,6 @@ namespace AW2.Menu
         /// </summary>
         protected override void UnloadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             spriteBatch.Dispose();
             vertexDeclaration.Dispose();
             effect.Dispose();
@@ -179,7 +178,7 @@ namespace AW2.Menu
             // contain references to graphics content.
             foreach (MenuComponent component in components)
                 component.UnloadContent();
-            data.ProgressBar.UnloadContent();
+            AssaultWing.Instance.DataEngine.ProgressBar.UnloadContent();
 
             base.UnloadContent();
         }
@@ -229,7 +228,7 @@ namespace AW2.Menu
         /// when the asynchronous action completes.</param>
         public void ProgressBarAction(Action asyncAction, Action finishAction)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             this.finishAction = finishAction;
             IsHelpTextVisible = false;
             IsProgressBarVisible = true;
@@ -244,10 +243,9 @@ namespace AW2.Menu
         /// <param name="gameTime">Time elapsed since the last call to Microsoft.Xna.Framework.GameComponent.Update(Microsoft.Xna.Framework.GameTime)</param>
         public override void Update(GameTime gameTime)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            if (IsProgressBarVisible && data.ProgressBar.TaskCompleted)
+            if (IsProgressBarVisible && AssaultWing.Instance.DataEngine.ProgressBar.TaskCompleted)
             {
-                data.ProgressBar.FinishTask();
+                AssaultWing.Instance.DataEngine.ProgressBar.FinishTask();
                 IsProgressBarVisible = false;
                 IsHelpTextVisible = true;
                 finishAction();
@@ -345,10 +343,7 @@ namespace AW2.Menu
 
             // Draw progress bar if wanted.
             if (showProgressBar)
-            {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                data.ProgressBar.Draw(spriteBatch);
-            }
+                AssaultWing.Instance.DataEngine.ProgressBar.Draw(spriteBatch);
 
             // Draw static text.
             spriteBatch.Begin();

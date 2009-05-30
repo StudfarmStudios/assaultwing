@@ -386,7 +386,6 @@ namespace AW2.Graphics
         /// </summary>
         public override void Draw()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Viewport = viewport;
             Matrix view = ViewMatrix;
@@ -421,7 +420,7 @@ namespace AW2.Graphics
                 indexData = new short[] { 0, 1, 2, 3, };
             }
 #endif
-            foreach (var layer in data.ArenaLayers)
+            foreach (var layer in AssaultWing.Instance.DataEngine.ArenaLayers)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
                 float layerScale = GetScale(layer.Z);
@@ -480,7 +479,7 @@ namespace AW2.Graphics
                     Vector2 pos = WorldAreaMin(0) * -layerScale;
                     pos.Y = -pos.Y;
                     Vector2 fillPos = new Vector2();
-                    Texture2D tex = data.Textures[layer.ParallaxName];
+                    Texture2D tex = AssaultWing.Instance.DataEngine.Textures[layer.ParallaxName];
                     int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
                     pos.X = pos.X - mult * tex.Width;
                     mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);

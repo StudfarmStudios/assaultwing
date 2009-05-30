@@ -133,8 +133,6 @@ namespace AW2.Game.Pengs
         {
             if (paused) return null;
             if (numberToCreate == 0) return null;
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
             List<Particle> particles = null;
 
@@ -238,7 +236,7 @@ namespace AW2.Game.Pengs
                         else
                         {
                             // Bail out if the position is not free for the gob.
-                            if (!lastAttempt && !physics.IsFreePosition(gob, pos))
+                            if (!lastAttempt && !AssaultWing.Instance.PhysicsEngine.IsFreePosition(gob, pos))
                             {
                                 attemptOk = false;
                                 continue;
@@ -247,7 +245,7 @@ namespace AW2.Game.Pengs
                             gob.Pos = pos;
                             gob.Move = move;
                             gob.Rotation = rotation;
-                            data.Gobs.Add(gob);
+                            AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                         }
                     }
 

@@ -305,9 +305,7 @@ namespace AW2.Game.Particles
         /// an ongoing play of the game.
         public override void Activate()
         {
-            PhysicsEngine physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
-
             base.Activate();
         }
 
@@ -381,10 +379,7 @@ namespace AW2.Game.Particles
             // Remove the particle engine if it's created all its particles and
             // the particles have died.
             if (!loop && createdParticles >= totalNumberParticles && particles.Count == 0)
-            {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 Die(new DeathCause());
-            }
         }
 
         
@@ -469,8 +464,7 @@ namespace AW2.Game.Particles
         /// <param name="scale">Scale of graphics.</param>
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Texture2D tex = data.Textures[textureName];
+            Texture2D tex = AssaultWing.Instance.DataEngine.Textures[textureName];
             Matrix transform = gameToScreen;
             
             foreach (Particle part in particles)

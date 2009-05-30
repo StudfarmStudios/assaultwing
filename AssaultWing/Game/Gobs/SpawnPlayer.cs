@@ -70,11 +70,10 @@ namespace AW2.Game.Gobs
         /// born in the spawn area will be quickly under attack.
         public float GetSafeness()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
             // Measure safeness by our minimum distance to players' ships.
-            float safeness = data.Players.Min(player => player.Ship == null ? float.MaxValue :
-                Geometry.Distance(new AW2.Helpers.Geometric.Point(player.Ship.Pos), spawnArea));
+            float safeness = AssaultWing.Instance.DataEngine.Players.Min(player => player.Ship == null
+                ? float.MaxValue
+                : Geometry.Distance(new AW2.Helpers.Geometric.Point(player.Ship.Pos), spawnArea));
             return safeness;
         }
 

@@ -77,9 +77,8 @@ namespace AW2.Menu
                 {
                     InitializeControls();
                     InitializeControlCallbacks();
-                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                     arenaInfos = new List<ArenaInfo>(
-                        from namePair in data.ArenaFileNameList
+                        from namePair in AssaultWing.Instance.DataEngine.ArenaFileNameList
                         select new ArenaInfo(namePair.Key));
                 }
             }
@@ -116,7 +115,7 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             menuBigFont = data.GetFont(FontName.MenuFontBig);
             menuSmallFont = data.GetFont(FontName.MenuFontSmall);
             backgroundTexture = data.GetTexture(TextureName.ArenaMenuBackground);
@@ -142,7 +141,6 @@ namespace AW2.Menu
             // Check our controls and react to them.
             if (Active)
             {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 controlCallbacks.Update();
 
                 // Limit cursor to sensible limits and scroll currently highlighted arena into view.
@@ -150,7 +148,7 @@ namespace AW2.Menu
                 arenaListStart = arenaListStart.Clamp(currentArena - menuItemCount + 1, currentArena);
 
                 // Change preview image.
-                arenaPreview = data.ArenaPreviews[(CanonicalString)arenaInfos[currentArena].name];
+                arenaPreview = AssaultWing.Instance.DataEngine.ArenaPreviews[(CanonicalString)arenaInfos[currentArena].name];
             }
         }
 
@@ -208,8 +206,7 @@ namespace AW2.Menu
                 var arenaPlaylist = from info in arenaInfos where info.selected select info.name;
                 if (arenaPlaylist.Count() > 0)
                 {
-                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    data.ArenaPlaylist = arenaPlaylist.ToList();
+                    AssaultWing.Instance.DataEngine.ArenaPlaylist = arenaPlaylist.ToList();
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
                         AssaultWing.Instance.StartArena);
@@ -246,9 +243,8 @@ namespace AW2.Menu
             controlDown.Add(new KeyboardKey(Keys.Down));
             controlSelect = new MultiControl();
             controlSelect.Add(new KeyboardKey(Keys.Space));
-            
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            foreach (var player in data.Players)
+
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 controlUp.Add(player.Controls.thrust);
                 controlDown.Add(player.Controls.down);

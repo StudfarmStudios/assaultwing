@@ -46,8 +46,6 @@ namespace AW2.Graphics
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
             // Chat box background
             spriteBatch.Draw(chatBoxTexture, Vector2.Zero, Color.White);
 
@@ -62,9 +60,8 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            chatBoxTexture = data.GetTexture(TextureName.ChatBox);
-            chatBoxFont = data.GetFont(FontName.Overlay);
+            chatBoxTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.ChatBox);
+            chatBoxFont = AssaultWing.Instance.DataEngine.GetFont(FontName.Overlay);
         }
 
         /// <summary>

@@ -57,16 +57,14 @@ namespace AW2.Graphics
             if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
             {
                 // K + P = kill players
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                foreach (var player in data.Players)
+                foreach (var player in AssaultWing.Instance.DataEngine.Players)
                     if (player.Ship != null)
                         player.Ship.Die(new DeathCause());
             }
 
             if (keys.IsKeyDown(Keys.L) && keys.IsKeyDown(Keys.E))
             {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                if (!data.ProgressBar.TaskRunning)
+                if (!AssaultWing.Instance.DataEngine.ProgressBar.TaskRunning)
                     AssaultWing.Instance.FinishArena();
             }
 #endif
@@ -79,8 +77,7 @@ namespace AW2.Graphics
         /// </summary>
         protected override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            dialogTexture = data.GetTexture(TextureName.OverlayDialogBackground);
+            dialogTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.OverlayDialogBackground);
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
         }
 

@@ -273,7 +273,6 @@ namespace AW2.Game
         /// <param name="arena">The arena to reset for, or <c>null</c> to clear data.</param>
         public void Reset(Arena arena)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
             if (arena == null)
             {
@@ -545,20 +544,20 @@ namespace AW2.Game
         /// <returns>How is the gob out of the arena boundary, or is it inside.</returns>
         private OutOfArenaBounds IsOutOfArenaBounds(Gob gob)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            OutOfArenaBounds result = OutOfArenaBounds.None;
+            var result = OutOfArenaBounds.None;
+            var arena = AssaultWing.Instance.DataEngine.Arena;
 
             // The arena boundary.
             if (gob.Pos.X < 0) result |= OutOfArenaBounds.Left;
             if (gob.Pos.Y < 0) result |= OutOfArenaBounds.Bottom;
-            if (gob.Pos.X > data.Arena.Dimensions.X) result |= OutOfArenaBounds.Right;
-            if (gob.Pos.Y > data.Arena.Dimensions.Y) result |= OutOfArenaBounds.Top;
+            if (gob.Pos.X > arena.Dimensions.X) result |= OutOfArenaBounds.Right;
+            if (gob.Pos.Y > arena.Dimensions.Y) result |= OutOfArenaBounds.Top;
 
             // The outer arena boundary.
             if (gob.Pos.X < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterLeft;
             if (gob.Pos.Y < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterBottom;
-            if (gob.Pos.X > data.Arena.Dimensions.X + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterRight;
-            if (gob.Pos.Y > data.Arena.Dimensions.Y + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterTop;
+            if (gob.Pos.X > arena.Dimensions.X + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterRight;
+            if (gob.Pos.Y > arena.Dimensions.Y + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterTop;
 
             return result;
         }
@@ -592,7 +591,6 @@ namespace AW2.Game
         /// <param name="gob">The gob.</param>
         private void ArenaBoundaryActions(Gob gob)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             OutOfArenaBounds outOfBounds = IsOutOfArenaBounds(gob);
 
             // Ships we restrict to the arena boundary.
@@ -612,7 +610,7 @@ namespace AW2.Game
             // Other projectiles disintegrate if they are outside 
             // the outer arena boundary.
             if ((outOfBounds & OutOfArenaBounds.OuterBoundary) != 0)
-                data.Gobs.Remove(gob);
+                AssaultWing.Instance.DataEngine.Gobs.Remove(gob);
             return;
         }
 

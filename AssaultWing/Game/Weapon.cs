@@ -122,11 +122,6 @@ namespace AW2.Game
         [TypeParameter]
         float recoilMomentum;
 
-        /// <summary>
-        /// The physics engine of the game instance this gob belongs to.
-        /// </summary>
-        protected PhysicsEngine physics;
-
         #endregion // Weapon fields
 
         #region Weapon properties
@@ -257,7 +252,6 @@ namespace AW2.Game
             this.loadedTime = new TimeSpan(1, 2, 3);
             this.fireCharge = 100;
             this.recoilMomentum = 10000;
-            this.physics = null;
         }
 
         /// <summary>
@@ -267,8 +261,7 @@ namespace AW2.Game
         public Weapon(string typeName)
         {
             // Initialise fields from the weapon type's template.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon template = (Weapon)data.GetTypeTemplate(typeof(Weapon), typeName);
+            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), typeName);
             if (template.GetType() != this.GetType())
                 throw new Exception("Silly programmer tries to create a weapon (type " +
                     typeName + ") using a wrong Weapon subclass (class " + this.GetType().Name);
@@ -279,7 +272,6 @@ namespace AW2.Game
             this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };
             this.loadedTime = new TimeSpan(0);
-            this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
         }
 
         /// <summary>
@@ -297,7 +289,6 @@ namespace AW2.Game
             this.owner = owner;
             this.ownerHandle = ownerHandle;
             this.boneIndices = boneIndices;
-            this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
         }
   
         /// <summary>
@@ -316,8 +307,7 @@ namespace AW2.Game
         /// <returns>The newly created weapon.</returns>
         public static Weapon CreateWeapon(string typeName, Ship owner, int ownerHandle, int[] boneIndices, params object[] args)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Weapon template = (Weapon)data.GetTypeTemplate(typeof(Weapon), typeName);
+            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), typeName);
             Type type = template.GetType();
             if (args.Length == 0)
                 return (Weapon)Activator.CreateInstance(type, typeName, owner, ownerHandle, boneIndices);
@@ -373,10 +363,9 @@ namespace AW2.Game
         /// </summary>
         protected void ApplyRecoil()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             Vector2 momentum = new Vector2((float)Math.Cos(Owner.Rotation), (float)Math.Sin(Owner.Rotation))
                 * -recoilMomentum;
-            data.CustomOperations += () => { physics.ApplyMomentum(Owner, momentum); };
+            AssaultWing.Instance.DataEngine.CustomOperations += () => { AssaultWing.Instance.PhysicsEngine.ApplyMomentum(Owner, momentum); };
         }
 
         /// <summary>

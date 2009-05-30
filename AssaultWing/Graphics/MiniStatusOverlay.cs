@@ -84,7 +84,7 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             barFillTexture = data.GetTexture(TextureName.MiniDamageFill);
             barBackgroundTexture = data.GetTexture(TextureName.MiniDamageBackground);
             healthFont = data.GetFont(FontName.Overlay);

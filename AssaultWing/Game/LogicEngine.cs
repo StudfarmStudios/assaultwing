@@ -24,25 +24,24 @@ namespace AW2.Game
 
         public override void Initialize()
         {
-            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             Helpers.Log.Write("Loading user-defined types");
 
             TypeLoader gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Gobs);
             Gob[] gobs = (Gob[])gobLoader.LoadAllTypes();
             foreach (Gob gob in gobs)
-                data.AddTypeTemplate(typeof(Gob), gob.TypeName, gob);
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(typeof(Gob), gob.TypeName, gob);
             gobLoader.SaveTemplates();
 
             TypeLoader weaponLoader = new TypeLoader(typeof(Weapon), Helpers.Paths.Weapons);
             Weapon[] weapons = (Weapon[])weaponLoader.LoadAllTypes();
             foreach (Weapon weapon in weapons)
-                data.AddTypeTemplate(typeof(Weapon), weapon.TypeName, weapon);
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(typeof(Weapon), weapon.TypeName, weapon);
             weaponLoader.SaveTemplates();
 
             TypeLoader particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
             Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
             foreach (Gob particleEngine in particleEngines)
-                data.AddTypeTemplate(typeof(Gob), particleEngine.TypeName, particleEngine);
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(typeof(Gob), particleEngine.TypeName, particleEngine);
             particleLoader.SaveTemplates();
 
             ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
@@ -57,8 +56,8 @@ namespace AW2.Game
                     arenaNames.Add(arena.Name);
                     arenaFileNames.Add(arena.Name, arena.FileName);
                 }
-            data.ArenaPlaylist = arenaNames;
-            data.ArenaFileNameList = arenaFileNames;
+            AssaultWing.Instance.DataEngine.ArenaPlaylist = arenaNames;
+            AssaultWing.Instance.DataEngine.ArenaFileNameList = arenaFileNames;
             base.Initialize();
         }
 
@@ -75,37 +74,33 @@ namespace AW2.Game
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
         public override void Update(GameTime gameTime)
         {
-            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
-            NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-            PhysicsEngine physics = (PhysicsEngine)Game.Services.GetService(typeof(PhysicsEngine));
-            
             UpdateControls();
 
             // Update gobs, weapons and players.
-            foreach (var gob in data.Gobs) gob.Update();
-            foreach (var weapon in data.Weapons) weapon.Update();
-            foreach (var player in data.Players) player.Update();
+            foreach (var gob in AssaultWing.Instance.DataEngine.Gobs) gob.Update();
+            foreach (var weapon in AssaultWing.Instance.DataEngine.Weapons) weapon.Update();
+            foreach (var player in AssaultWing.Instance.DataEngine.Players) player.Update();
 
             // Check for receptor collisions.
-            physics.MovesDone();
+            AssaultWing.Instance.PhysicsEngine.MovesDone();
 
             // Check for arena gameplay start if we are a game client.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                net.ReceiveFromServerWhile<ArenaStartMessage>(message =>
+                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<ArenaStartMessage>(message =>
                 {
-                    data.RefreshArenaRadarSilhouette();
+                    AssaultWing.Instance.DataEngine.RefreshArenaRadarSilhouette();
                     return true;
                 });
 
             // Check for arena end. Network games end when the game server presses Esc.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
             {
-                int playersAlive = data.Players.Count(player => player.Lives != 0);
+                int playersAlive = AssaultWing.Instance.DataEngine.Players.Count(player => player.Lives != 0);
                 if (playersAlive <= 1)
                     AssaultWing.Instance.FinishArena();
             }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                net.ReceiveFromServerWhile<ArenaFinishMessage>(message =>
+                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<ArenaFinishMessage>(message =>
                 {
                     AssaultWing.Instance.FinishArena();
                     return false;
@@ -117,9 +112,6 @@ namespace AW2.Game
         /// </summary>
         private void UpdateControls()
         {
-            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
-            EventEngine eventEngine = (EventEngine)Game.Services.GetService(typeof(EventEngine));
-
             // Check general game controls.
             if (escapeControl.Pulse)
             {

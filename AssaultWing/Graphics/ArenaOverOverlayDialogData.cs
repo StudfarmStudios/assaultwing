@@ -28,7 +28,7 @@ namespace AW2.Graphics
         public ArenaOverOverlayDialogData(string arenaName)
             : base()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             this.arenaName = arenaName;
 
             Actions = new TriggeredCallback[] 
@@ -58,12 +58,10 @@ namespace AW2.Graphics
         /// </summary>
         public override void Update()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
             // Update our status based on the progress of arena loading.
-            if (!arenaLoaded && data.ProgressBar.TaskCompleted)
+            if (!arenaLoaded && AssaultWing.Instance.DataEngine.ProgressBar.TaskCompleted)
             {
-                data.ProgressBar.FinishTask();
+                AssaultWing.Instance.DataEngine.ProgressBar.FinishTask();
                 arenaLoaded = true;
             }
 
@@ -79,8 +77,6 @@ namespace AW2.Graphics
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-
             // Draw static text.
             Vector2 textPos = new Vector2(100, 50);
             spriteBatch.DrawString(fontBig, arenaWinner, textPos, Color.White);
@@ -92,7 +88,7 @@ namespace AW2.Graphics
 
             // List players and their scores sorted decreasing by score.
             var scores =
-                from p in data.Players
+                from p in AssaultWing.Instance.DataEngine.Players
                 let Score = p.Kills - p.Suicides
                 orderby Score descending
                 select new { p.Name, Score, p.Kills, p.Suicides };
@@ -112,7 +108,7 @@ namespace AW2.Graphics
             {
                 spriteBatch.DrawString(fontSmall, "Loading next arena: " + arenaName, loadTextPos, Color.White);
                 spriteBatch.End();
-                data.ProgressBar.Draw(spriteBatch);
+                AssaultWing.Instance.DataEngine.ProgressBar.Draw(spriteBatch);
                 spriteBatch.Begin();
             }
             else
@@ -128,9 +124,8 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            fontBig = data.GetFont(FontName.MenuFontBig);
-            fontSmall = data.GetFont(FontName.MenuFontSmall);
+            fontBig = AssaultWing.Instance.DataEngine.GetFont(FontName.MenuFontBig);
+            fontSmall = AssaultWing.Instance.DataEngine.GetFont(FontName.MenuFontSmall);
         }
 
         /// <summary>

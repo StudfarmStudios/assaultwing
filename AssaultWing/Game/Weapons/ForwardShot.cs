@@ -185,7 +185,6 @@ namespace AW2.Game.Weapons
         /// </summary>
         public override void Update()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
 
             // Shoot if its time.
@@ -210,7 +209,7 @@ namespace AW2.Game.Weapons
                         shot.Pos = owner.GetNamedPosition(boneI);
                         shot.Move = owner.Move + kick;
                         shot.Rotation = owner.Rotation; // could also be 'direction'
-                        data.Gobs.Add(shot);
+                        AssaultWing.Instance.DataEngine.Gobs.Add(shot);
                         liveShots.Add(shot);
                     });
 
@@ -228,7 +227,7 @@ namespace AW2.Game.Weapons
                                     peng.LeaderBone = boneI;
                                 }
                                 muzzleFireEngines[barrel].Add(fireEngine);
-                                data.Gobs.Add(fireEngine);
+                                AssaultWing.Instance.DataEngine.Gobs.Add(fireEngine);
                             });
                         }
                 }

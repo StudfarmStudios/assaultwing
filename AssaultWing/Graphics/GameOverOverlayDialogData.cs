@@ -34,7 +34,6 @@ namespace AW2.Graphics
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             float textLeftEdge = 100; // left edge of left-aligned text
             Vector2 textCenter = new Vector2(gfx.Viewport.Width / 2, 50); // text line top center
@@ -44,8 +43,8 @@ namespace AW2.Graphics
 
             // List players and their scores sorted decreasing by score.
             var scores =
-                from p in data.Players
-                let Score = data.GameplayMode.CalculateScore(p)
+                from p in AssaultWing.Instance.DataEngine.Players
+                let Score = AssaultWing.Instance.DataEngine.GameplayMode.CalculateScore(p)
                 orderby Score descending
                 select new { p.Name, Score, p.Kills, p.Suicides };
             int line = 0;
@@ -69,7 +68,7 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             fontHuge = data.GetFont(FontName.MenuFontHuge);
             fontBig = data.GetFont(FontName.MenuFontBig);
             fontSmall = data.GetFont(FontName.MenuFontSmall);

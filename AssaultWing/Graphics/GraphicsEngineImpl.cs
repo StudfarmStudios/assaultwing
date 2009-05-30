@@ -332,7 +332,7 @@ namespace AW2.Graphics
         protected override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
 
             // Loop through gob types and load all the 3D models and textures they need.
@@ -400,7 +400,7 @@ namespace AW2.Graphics
         /// <param name="arenaTemplate">The arena whose graphical content to load.</param>
         public void LoadArenaContent(Arena arenaTemplate)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             foreach (ArenaLayer layer in arenaTemplate.Layers)
             {
                 foreach (var gob in layer.Gobs)
@@ -441,7 +441,7 @@ namespace AW2.Graphics
         protected override void UnloadContent()
         {
             Log.Write("Graphics engine unloading graphics content.");
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
 
             if (spriteBatch != null)
             {
@@ -528,7 +528,6 @@ namespace AW2.Graphics
         /// <param name="gameTime">Time passed since the last call to Draw.</param>
         public override void Draw(GameTime gameTime)
         {
-            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
 
             Viewport screen = gfx.Viewport;
@@ -540,16 +539,16 @@ namespace AW2.Graphics
             gfx.Clear(new Color(0x40, 0x40, 0x40));
 
             // Draw all viewports.
-            data.ForEachViewport(delegate(AWViewport viewport) { viewport.Draw(); });
+            AssaultWing.Instance.DataEngine.ForEachViewport(delegate(AWViewport viewport) { viewport.Draw(); });
 
             // Restore viewport to the whole client window.
             gfx.Viewport = screen;
 
             // Draw viewport separators.
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-            data.ForEachViewportSeparator(delegate(ViewportSeparator separator)
+            AssaultWing.Instance.DataEngine.ForEachViewportSeparator(delegate(ViewportSeparator separator)
             {
-                Texture2D separatorTexture = data.GetTexture(TextureName.ViewportSeparatorVertical);
+                Texture2D separatorTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.ViewportSeparatorVertical);
                 Vector2 separatorOrigin = new Vector2(separatorTexture.Width, 0) / 2;
                 if (separator.vertical)
                 {
@@ -596,7 +595,7 @@ namespace AW2.Graphics
         /// </summary>
         public void RearrangeViewports()
         {
-            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             data.ClearViewports();
             int localPlayers = data.Players.Count(player => !player.IsRemote);
             if (localPlayers == 0) return;
@@ -660,12 +659,11 @@ namespace AW2.Graphics
         /// <param name="privilegedPlayer">The player who gets all the screen space.</param>
         public void RearrangeViewports(int privilegedPlayer)
         {
-            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
-            data.ClearViewports();
+            AssaultWing.Instance.DataEngine.ClearViewports();
             Rectangle window = AssaultWing.Instance.ClientBounds;
             Rectangle onScreen = new Rectangle(0, 0, window.Width, window.Height);
-            AWViewport viewport = new PlayerViewport(data.Players[privilegedPlayer], onScreen);
-            data.AddViewport(viewport);
+            AWViewport viewport = new PlayerViewport(AssaultWing.Instance.DataEngine.Players[privilegedPlayer], onScreen);
+            AssaultWing.Instance.DataEngine.AddViewport(viewport);
         }
 
         /// <summary>

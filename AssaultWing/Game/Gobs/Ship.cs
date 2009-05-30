@@ -240,10 +240,7 @@ namespace AW2.Game.Gobs
             set
             {
                 if (weapon1 != null)
-                {
-                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    data.Weapons.Remove(weapon1);
-                }
+                    AssaultWing.Instance.DataEngine.Weapons.Remove(weapon1);
                 weapon1 = CreateWeapons(value, 1);
             }
         }
@@ -257,10 +254,7 @@ namespace AW2.Game.Gobs
             set
             {
                 if (weapon2 != null)
-                {
-                    DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                    data.Weapons.Remove(weapon2);
-                }
+                    AssaultWing.Instance.DataEngine.Weapons.Remove(weapon2);
                 weapon2 = CreateWeapons(value, 2);
             }
         }
@@ -421,14 +415,12 @@ namespace AW2.Game.Gobs
         /// <returns>The created weapon.</returns>
         private Weapon CreateWeapons(string weaponName, int ownerHandle)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             KeyValuePair<string, int>[] boneIs = GetNamedPositions("Gun");
             if (boneIs.Length == 0)
                 Log.Write("Warning: Ship found no gun barrels in its 3D model");
-            int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs,
-                delegate(KeyValuePair<string, int> pair) { return pair.Value; });
+            int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs, pair => pair.Value);
             Weapon weapon = Weapon.CreateWeapon(weaponName, this, ownerHandle, boneIndices);
-            data.Weapons.Add(weapon);
+            AssaultWing.Instance.DataEngine.Weapons.Add(weapon);
             return weapon;
         }
 
@@ -437,7 +429,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         private void CreateCoughEngines()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             List<Gob> coughEngineList = new List<Gob>();
             for (int i = 0; i < coughEngineNames.Length; ++i)
             {
@@ -456,7 +447,7 @@ namespace AW2.Game.Gobs
                         peng.Paused = true;
                         peng.Leader = this;
                     }
-                    data.Gobs.Add(gob);
+                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                     coughEngineList.Add(gob);
                 });
             }
@@ -522,8 +513,7 @@ namespace AW2.Game.Gobs
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
 
             // Flash and be disabled if we're just born.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.Models[ModelName];
+            Model model = AssaultWing.Instance.DataEngine.Models[ModelName];
             float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
             Alpha = birthAlpha.Evaluate(age);
             Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;
@@ -546,9 +536,8 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Dispose()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.Weapons.Remove(weapon1);
-            data.Weapons.Remove(weapon2);
+            AssaultWing.Instance.DataEngine.Weapons.Remove(weapon1);
+            AssaultWing.Instance.DataEngine.Weapons.Remove(weapon2);
             base.Dispose();
         }
 

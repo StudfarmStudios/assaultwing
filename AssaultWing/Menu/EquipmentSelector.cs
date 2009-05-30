@@ -68,8 +68,7 @@ namespace AW2.Menu
         public ShipSelector(Player player)
             : base(player)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Values = data.GameplayMode.ShipTypes;
+            Values = AssaultWing.Instance.DataEngine.GameplayMode.ShipTypes;
 
             // Find the value the player currently has.
             CurrentValue = Values.IndexOf(player.ShipName);
@@ -98,8 +97,7 @@ namespace AW2.Menu
             : base(player)
         {
             // Find possible values.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Values = data.GameplayMode.Weapon1Types;
+            Values = AssaultWing.Instance.DataEngine.GameplayMode.Weapon1Types;
 
             // Find the value the player currently has.
             CurrentValue = Values.IndexOf(player.Weapon1Name);
@@ -128,8 +126,7 @@ namespace AW2.Menu
             : base(player)
         {
             // Find possible values.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Values = data.GameplayMode.Weapon2Types;
+            Values = AssaultWing.Instance.DataEngine.GameplayMode.Weapon2Types;
 
             // Find the value the player currently has.
             CurrentValue = Values.IndexOf(player.Weapon2Name);

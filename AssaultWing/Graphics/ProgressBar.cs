@@ -232,7 +232,7 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             backgroundTexture = data.GetTexture(TextureName.ProgressBarBackground);
             barTexture = data.GetTexture(TextureName.ProgressBarFill);
             flowTexture = data.GetTexture(TextureName.ProgressBarFlow);

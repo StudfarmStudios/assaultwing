@@ -515,8 +515,7 @@ namespace AW2.Game
         {
             get
             {
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                Model model = data.Models[modelName];
+                Model model = AssaultWing.Instance.DataEngine.Models[modelName];
                 if (modelPartTransforms == null || modelPartTransforms.Length != model.Bones.Count)
                 {
                     modelPartTransforms = new Matrix[model.Bones.Count];
@@ -672,8 +671,7 @@ namespace AW2.Game
         public Gob(string typeName)
         {
             // Initialise fields from the gob type's template.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Gob template = (Gob)data.GetTypeTemplate(typeof(Gob), typeName);
+            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Gob), typeName);
             if (template.GetType() != this.GetType())
                 throw new Exception("Silly programmer tries to create a gob (type " +
                     typeName + ") using a wrong Gob subclass (class " + this.GetType().Name + ")");
@@ -745,8 +743,7 @@ namespace AW2.Game
         /// <seealso cref="CreateGob(string, Action&lt;Gob&gt;)"/>
         public static Gob CreateGob(string typeName)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Gob template = (Gob)data.GetTypeTemplate(typeof(Gob), typeName);
+            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Gob), typeName);
             Type type = template.GetType();
             return (Gob)Activator.CreateInstance(type, typeName);
         }
@@ -790,8 +787,7 @@ namespace AW2.Game
 
             // Do special things with meshes named like collision areas.
             // TODO: This feature seems unused. Remove if so.
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            Model model = data.Models[gob.modelName];
+            Model model = AssaultWing.Instance.DataEngine.Models[gob.modelName];
             List<CollisionArea> meshAreas = new List<CollisionArea>();
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -876,7 +872,6 @@ namespace AW2.Game
         /// an ongoing play of the game.
         public virtual void Activate()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             LoadContent();
 
             // Create birth gobs as described by gob type.
@@ -891,7 +886,7 @@ namespace AW2.Game
                         ((ParticleEngine)gob).Leader = this;
                     if (gob is Gobs.Peng)
                         ((Gobs.Peng)gob).Leader = this;
-                    data.Gobs.Add(gob);
+                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                 });
             }
 
@@ -920,7 +915,7 @@ namespace AW2.Game
                     ParticleEngine particleEngine = gob as ParticleEngine;
                     if (particleEngine != null)
                         particleEngine.Leader = this;
-                    data.Gobs.Add(gob);
+                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                 });
             }
 
@@ -985,9 +980,8 @@ namespace AW2.Game
         /// <param name="projection">The projection matrix.</param>
         public virtual void Draw(Matrix view, Matrix projection)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
-            Model model = data.Models[modelName];
+            Model model = AssaultWing.Instance.DataEngine.Models[modelName];
             Matrix world = WorldMatrix;
             Matrix meshSphereTransform = // mesh bounding spheres are by default in model coordinates
                 Matrix.CreateScale(Scale) *
@@ -1018,7 +1012,7 @@ namespace AW2.Game
 
                 foreach (BasicEffect be in mesh.Effects)
                 {
-                    data.PrepareEffect(be);
+                    AssaultWing.Instance.DataEngine.PrepareEffect(be);
                     be.Projection = projection;
                     be.View = view;
                     be.World = ModelPartTransforms[mesh.ParentBone.Index] * world;
@@ -1156,12 +1150,11 @@ namespace AW2.Game
         /// <param name="mode">Which parts of the gob to deserialise.</param>
         public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
-                owner = data.Players.FirstOrDefault(player => player.Id == ownerId);
+                owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
                 Layer = reader.ReadInt32();
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
@@ -1203,9 +1196,8 @@ namespace AW2.Game
         /// <returns>A list of position names and bone indices in the gob's 3D model.</returns>
         public KeyValuePair<string, int>[] GetNamedPositions(string namePrefix)
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             List<KeyValuePair<string, int>> boneIs = new List<KeyValuePair<string, int>>();
-            Model model = data.Models[ModelName];
+            Model model = AssaultWing.Instance.DataEngine.Models[ModelName];
             foreach (ModelBone bone in model.Bones)
                 if (bone.Name != null && bone.Name.StartsWith(namePrefix))
                     boneIs.Add(new KeyValuePair<string, int>(bone.Name, bone.Index));
@@ -1237,7 +1229,6 @@ namespace AW2.Game
         /// The subclass should regularly <b>Update</b> its <b>exhaustEngines</b>.
         private void CreateExhaustEngines()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             KeyValuePair<string, int>[] boneIs = GetNamedPositions("Thruster");
 
             // Create proper exhaust engines.
@@ -1264,7 +1255,7 @@ namespace AW2.Game
                             peng.Leader = this;
                             peng.LeaderBone = boneIs[thrustI].Value;
                         }
-                        data.Gobs.Add(gob);
+                        AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                         exhaustBoneIList.Add(boneIs[thrustI].Value);
                         exhaustEngineList.Add(gob);
                     });
@@ -1373,11 +1364,10 @@ namespace AW2.Game
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
                 var message = new AW2.Net.Messages.GobDamageMessage();
                 message.GobId = this.Id;
                 message.DamageLevel = damage;
-                net.SendToClients(message);
+                AssaultWing.Instance.NetworkEngine.SendToClients(message);
             }
 
             if (damageAmount > 0)
@@ -1401,8 +1391,7 @@ namespace AW2.Game
             if (Dead) return;
             dead = true;
 
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            data.Gobs.Remove(this, forceRemove);
+            AssaultWing.Instance.DataEngine.Gobs.Remove(this, forceRemove);
 
             // Create death gobs.
             foreach (string gobType in deathGobTypes)
@@ -1412,7 +1401,7 @@ namespace AW2.Game
                     gob.Pos = this.Pos;
                     gob.Rotation = this.Rotation;
                     gob.owner = this.owner;
-                    data.Gobs.Add(gob);
+                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                 });
             }
         }

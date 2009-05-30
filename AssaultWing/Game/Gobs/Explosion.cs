@@ -115,7 +115,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Activate()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
 
             // Play the sound.
@@ -130,7 +129,7 @@ namespace AW2.Game.Gobs
                 Gob.CreateGob(particleEngineNames[i], gob =>
                 {
                     gob.Pos = this.Pos;
-                    data.Gobs.Add(gob);
+                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                     particleEngineList.Add(gob);
                 });
             }
@@ -158,8 +157,7 @@ namespace AW2.Game.Gobs
                 firstCollisionChecked = true;
 
                 // Remove collision areas that only needed to collide once.
-                DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-                data.CustomOperations += () =>
+                AssaultWing.Instance.DataEngine.CustomOperations += () =>
                 {
                     AssaultWing.Instance.PhysicsEngine.Unregister(this);
                     collisionAreas = Array.FindAll(collisionAreas, (collArea) => collArea.Name == "Force");

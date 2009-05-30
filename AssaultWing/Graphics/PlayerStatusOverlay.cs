@@ -165,7 +165,7 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             statusDisplayTexture = data.GetTexture(TextureName.StatusDisplay);
             barShipTexture = data.GetTexture(TextureName.BarShip);
             iconShipTexture = data.GetTexture(TextureName.IconShipsLeft);

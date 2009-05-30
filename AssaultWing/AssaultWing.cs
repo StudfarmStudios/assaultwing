@@ -663,7 +663,6 @@ namespace AW2
             Log.Write("Assault Wing begins to run");
 
             // Hardcoded for now!!!
-            DataEngine dataEngine = (DataEngine)Services.GetService(typeof(DataEngine));
 
             PlayerControls plr1Controls;
             plr1Controls.thrust = new KeyboardKey(Keys.Up);
@@ -752,8 +751,6 @@ namespace AW2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            DataEngine data = (DataEngine)Services.GetService(typeof(DataEngine));
-
             // Frame stepping (for debugging)
             if (frameRunControl.Pulse)
             {
@@ -786,7 +783,7 @@ namespace AW2
 
             base.Update(this.gameTime);
             if (logicEngine.Enabled)
-                data.CommitPending();
+                dataEngine.CommitPending();
         }
 
         /// <summary>

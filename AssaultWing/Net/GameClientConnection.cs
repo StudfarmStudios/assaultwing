@@ -27,10 +27,7 @@ namespace AW2.Net
         {
             // On internal error, notify the game instance.
             if (error)
-            {
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
-                net.DropClient(Id);
-            }
+                AssaultWing.Instance.NetworkEngine.DropClient(Id);
             base.DisposeImpl(error);
         }
     }

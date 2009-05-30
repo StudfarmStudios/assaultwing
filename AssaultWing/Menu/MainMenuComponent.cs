@@ -137,7 +137,7 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
+            var data = AssaultWing.Instance.DataEngine;
             menuBigFont = data.GetFont(FontName.MenuFontBig);
             backgroundTexture = data.GetTexture(TextureName.MainMenuBackground);
             cursorTexture = data.GetTexture(TextureName.MainMenuCursor);
@@ -209,7 +209,6 @@ namespace AW2.Menu
 
         private void InitializeMenuContents()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             startContents = new MainMenuContents("Start Menu", 4);
             startContents[0].Name = "Play Local";
             startContents[0].Action = () => menuEngine.ActivateComponent(MenuComponentType.Equip);
@@ -235,8 +234,8 @@ namespace AW2.Menu
                 menuEngine.ActivateComponent(MenuComponentType.Equip);
 
                 // HACK: Force one local player and Amazonas as the only arena.
-                data.Players.Remove(player => data.Players.Count > 1);
-                data.ArenaPlaylist = new List<string> { "Amazonas" };
+                AssaultWing.Instance.DataEngine.Players.Remove(player => AssaultWing.Instance.DataEngine.Players.Count > 1);
+                AssaultWing.Instance.DataEngine.ArenaPlaylist = new List<string> { "Amazonas" };
             };
 
             connectAddress = new EditableText("192.168.11.2");
@@ -256,15 +255,14 @@ namespace AW2.Menu
                     menuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player.
-                    data.Players.Remove(player => data.Players.Count > 1);
+                    AssaultWing.Instance.DataEngine.Players.Remove(player => AssaultWing.Instance.DataEngine.Players.Count > 1);
 
                     // Send a game join request to the game server.
-                    NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
                     JoinGameRequest joinGameRequest = new JoinGameRequest();
                     joinGameRequest.PlayerInfos = new List<PlayerInfo>();
-                    foreach (var player in data.Players)
+                    foreach (var player in AssaultWing.Instance.DataEngine.Players)
                         joinGameRequest.PlayerInfos.Add(new PlayerInfo(player));
-                    net.SendToServer(joinGameRequest);
+                    AssaultWing.Instance.NetworkEngine.SendToServer(joinGameRequest);
                 });
             };
         }
@@ -314,8 +312,7 @@ namespace AW2.Menu
             controlSelect = new MultiControl();
             controlSelect.Add(new KeyboardKey(Keys.Enter));
 
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
-            foreach (var player in data.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 controlUp.Add(player.Controls.thrust);
                 controlDown.Add(player.Controls.down);

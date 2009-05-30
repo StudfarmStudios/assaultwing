@@ -53,7 +53,6 @@ namespace AW2.UI
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
         public override void Update(GameTime gameTime)
         {
-            DataEngine data = (DataEngine)Game.Services.GetService(typeof(DataEngine));
             EventEngine eventEngine = (EventEngine)Game.Services.GetService(typeof(EventEngine));
             InputState newState = InputState.GetState();
 
@@ -69,11 +68,10 @@ namespace AW2.UI
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
                 // Fetch control messages from game clients.
-                NetworkEngine net = (NetworkEngine)AssaultWing.Instance.Services.GetService(typeof(NetworkEngine));
                 PlayerControlsMessage message = null;
-                while ((message = net.ReceiveFromClients<PlayerControlsMessage>()) != null)
+                while ((message = AssaultWing.Instance.NetworkEngine.ReceiveFromClients<PlayerControlsMessage>()) != null)
                 {
-                    Player player = data.Players.First(plr => plr.Id == message.PlayerId);
+                    Player player = AssaultWing.Instance.DataEngine.Players.First(plr => plr.Id == message.PlayerId);
                     if (player.ConnectionId != message.ConnectionId)
                     {
                         // A client sent controls for a player that lives on another game instance.

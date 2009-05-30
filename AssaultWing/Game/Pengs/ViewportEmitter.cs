@@ -117,9 +117,8 @@ namespace AW2.Game.Pengs
         /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
         public override ICollection<Particle> Emit()
         {
-            DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
-            float z = data.Arena.Layers[peng.Layer].Z;
+            float z = AssaultWing.Instance.DataEngine.Arena.Layers[peng.Layer].Z;
             List<Particle> particles = null;
 
             // Find out newly exposed areas in viewports.
@@ -128,7 +127,7 @@ namespace AW2.Game.Pengs
             // This might lead to many or too few things being created when
             // there are two or more viewports.
             List<Rectangle> viewports = new List<Rectangle>();
-            data.ForEachViewport(delegate(AWViewport viewport)
+            AssaultWing.Instance.DataEngine.ForEachViewport(delegate(AWViewport viewport)
             {
                 viewports.Add(new Rectangle(viewport.WorldAreaMin(z), viewport.WorldAreaMax(z)));
             });
@@ -229,7 +228,7 @@ namespace AW2.Game.Pengs
                         gob.Pos = pos;
                         gob.Move = move;
                         gob.Rotation = rotation;
-                        data.Gobs.Add(gob);
+                        AssaultWing.Instance.DataEngine.Gobs.Add(gob);
                     });
                 }
             }

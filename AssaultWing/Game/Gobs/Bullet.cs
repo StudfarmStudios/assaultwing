@@ -95,7 +95,7 @@ namespace AW2.Game.Gobs
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 theirArea.Owner.InflictDamage(impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
-            physics.MakeHole(Pos, impactHoleRadius);
+            AssaultWing.Instance.PhysicsEngine.MakeHole(Pos, impactHoleRadius);
             Die(new DeathCause());
         }
 

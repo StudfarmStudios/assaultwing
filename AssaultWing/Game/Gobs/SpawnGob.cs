@@ -82,7 +82,7 @@ namespace AW2.Game.Gobs
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 Gob.CreateGob(spawnTypeName, newGob =>
                 {
-                    Vector2 spawnPos = physics.GetFreePosition(newGob, spawnArea);
+                    Vector2 spawnPos = AssaultWing.Instance.PhysicsEngine.GetFreePosition(newGob, spawnArea);
                     newGob.Pos = spawnPos;
                     data.Gobs.Add(newGob);
                 });

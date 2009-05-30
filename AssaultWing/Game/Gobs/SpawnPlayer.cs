@@ -84,7 +84,7 @@ namespace AW2.Game.Gobs
         /// <param name="ship">The ship to position.</param>
         public void Spawn(Ship ship)
         {
-            ship.Pos = physics.GetFreePosition(ship, spawnArea);
+            ship.Pos = AssaultWing.Instance.PhysicsEngine.GetFreePosition(ship, spawnArea);
         }
 
         #endregion Public interface

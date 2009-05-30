@@ -225,11 +225,6 @@ namespace AW2.Game
         TimeSpan networkUpdatePeriod;
 
         /// <summary>
-        /// The physics engine of the game instance this gob belongs to.
-        /// </summary>
-        protected PhysicsEngine physics;
-
-        /// <summary>
         /// Access only through <see cref="ModelPartTransforms"/>.
         /// </summary>
         Matrix[] modelPartTransforms;
@@ -658,13 +653,12 @@ namespace AW2.Game
             this.damage = 0;
             this.maxDamage = 100;
             bleachDamage = 0;
-            this.birthTime = new TimeSpan(23, 59, 59);
-            this.dead = false;
-            this.disabled = false;
-            this.movable = true;
-            this.physics = null;
-            this.modelPartTransforms = null;
-            this.exhaustEngineNames = new string[0];
+            birthTime = new TimeSpan(23, 59, 59);
+            dead = false;
+            disabled = false;
+            movable = true;
+            modelPartTransforms = null;
+            exhaustEngineNames = new string[0];
         }
 
         /// <summary>
@@ -704,7 +698,6 @@ namespace AW2.Game
                 collisionAreas[i].Owner = this;
 
             movable = true;
-            this.physics = (PhysicsEngine)AssaultWing.Instance.Services.GetService(typeof(PhysicsEngine));
             birthTime = AssaultWing.Instance.GameTime.TotalGameTime;
             modelPartTransforms = null;
             exhaustEngines = new Gob[0];
@@ -941,7 +934,7 @@ namespace AW2.Game
         /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
-            physics.Move(this);
+            AssaultWing.Instance.PhysicsEngine.Move(this);
             UpdateExhaustEngines();
         }
 

@@ -482,8 +482,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             // Manage turn-related rolling.
-            rollAngle = AWMathHelper.InterpolateTowards(rollAngle, rollAngleGoal, 
-                physics.ApplyChange(rollSpeed));
+            rollAngle = AWMathHelper.InterpolateTowards(rollAngle, rollAngleGoal,
+                AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed));
             if (!rollAngleGoalUpdated)
                 rollAngleGoal = 0;
             rollAngleGoalUpdated = false;
@@ -516,9 +516,9 @@ namespace AW2.Game.Gobs
                 }
 
             // Update weapon charges.
-            weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);
+            weapon1Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon1ChargeSpeed);
             weapon1Charge = MathHelper.Clamp(weapon1Charge, 0, weapon1ChargeMax);
-            weapon2Charge += physics.ApplyChange(weapon2ChargeSpeed);
+            weapon2Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon2ChargeSpeed);
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
 
             // Flash and be disabled if we're just born.
@@ -647,7 +647,7 @@ namespace AW2.Game.Gobs
             force = MathHelper.Clamp(force, 0f, 1f);
             Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
                 * force * thrustForce;
-            physics.ApplyLimitedForce(this, forceVector, maxSpeed);
+            AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed);
             visualThrustForce = force;
 
             // Manage exhaust engines.
@@ -684,7 +684,7 @@ namespace AW2.Game.Gobs
         private void Turn(float force)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            Rotation += physics.ApplyChange(force * turnSpeed);
+            Rotation += AssaultWing.Instance.PhysicsEngine.ApplyChange(force * turnSpeed);
 
             Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
             float moveLength = Move.Length();

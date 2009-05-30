@@ -140,7 +140,7 @@ namespace AW2.Game.Gobs
             flowEndTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(flowTime);
 
             // Make a hole in the arena walls.
-            physics.MakeHole(Pos, impactHoleRadius);
+            AssaultWing.Instance.PhysicsEngine.MakeHole(Pos, impactHoleRadius);
 
             base.Activate();
         }
@@ -161,9 +161,9 @@ namespace AW2.Game.Gobs
                 DataEngine data = (DataEngine)AssaultWing.Instance.Services.GetService(typeof(DataEngine));
                 data.CustomOperations += () =>
                 {
-                    physics.Unregister(this);
+                    AssaultWing.Instance.PhysicsEngine.Unregister(this);
                     collisionAreas = Array.FindAll(collisionAreas, (collArea) => collArea.Name == "Force");
-                    physics.Register(this);
+                    AssaultWing.Instance.PhysicsEngine.Register(this);
                 };
             }
 
@@ -205,7 +205,7 @@ namespace AW2.Game.Gobs
                 float differenceLength = difference.Length();
                 Vector2 flow = difference / differenceLength *
                     flowSpeed.Evaluate(differenceLength);
-                physics.ApplyDrag(theirArea.Owner, flow, 0.003f);
+                AssaultWing.Instance.PhysicsEngine.ApplyDrag(theirArea.Owner, flow, 0.003f);
             }
             else if (myArea.Name == "Hit")
             {

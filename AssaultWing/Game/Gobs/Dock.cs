@@ -72,12 +72,12 @@ namespace AW2.Game.Gobs
             // Then 'theirArea.Owner' must be damageable.
             if (myArea.Type == CollisionAreaType.Receptor)
             {
-                theirArea.Owner.InflictDamage(physics.ApplyChange(repairSpeed), new DeathCause());
+                theirArea.Owner.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(repairSpeed), new DeathCause());
                 Ship ship = theirArea.Owner as Ship;
                 if (ship != null)
                 {
-                    ship.Weapon1Charge += physics.ApplyChange(weapon1ChargeSpeed);
-                    ship.Weapon2Charge += physics.ApplyChange(weapon2ChargeSpeed);
+                    ship.Weapon1Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon1ChargeSpeed);
+                    ship.Weapon2Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon2ChargeSpeed);
                 }
             }
         }

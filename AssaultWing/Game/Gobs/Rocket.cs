@@ -95,7 +95,7 @@ namespace AW2.Game.Gobs
                 // Thrust.
                 Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
                     * thrustForce;
-                physics.ApplyForce(this, forceVector);
+                AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
             }
             else
             {
@@ -103,8 +103,8 @@ namespace AW2.Game.Gobs
                 float rotationGoal = (float)Math.Acos(Move.X / Move.Length());
                 if (Move.Y < 0)
                     rotationGoal = MathHelper.TwoPi - rotationGoal;
-                Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal, 
-                    physics.ApplyChange(turnSpeed));
+                Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal,
+                    AssaultWing.Instance.PhysicsEngine.ApplyChange(turnSpeed));
             }
 
             base.Update();

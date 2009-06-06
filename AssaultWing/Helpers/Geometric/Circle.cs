@@ -8,7 +8,7 @@ namespace AW2.Helpers.Geometric
     /// <summary>
     /// A circle in two-dimensional space.
     /// </summary>
-    public class Circle : IGeomPrimitive
+    public class Circle : IGeomPrimitive, IConsistencyCheckable
     {
         Vector2 center;
         float radius;
@@ -35,7 +35,7 @@ namespace AW2.Helpers.Geometric
         {
             center = Vector2.Zero;
             radius = 0;
-            boundingBox = new Rectangle();
+            UpdateBoundingBox();
         }
 
         /// <summary>
@@ -47,6 +47,11 @@ namespace AW2.Helpers.Geometric
         {
             this.center = center;
             this.radius = radius;
+            UpdateBoundingBox();
+        }
+
+        void UpdateBoundingBox()
+        {
             boundingBox = new Rectangle(center.X - radius, center.Y - radius,
                                         center.X + radius, center.Y + radius);
         }
@@ -87,5 +92,18 @@ namespace AW2.Helpers.Geometric
         }
 
         #endregion IGeomPrimitive Members
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            UpdateBoundingBox();
+        }
+
+        #endregion
     }
 }

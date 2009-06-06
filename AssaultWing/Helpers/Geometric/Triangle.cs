@@ -14,13 +14,18 @@ namespace AW2.Helpers.Geometric
     /// A triangle can also be degenerate, i.e. all the corner points
     /// lie on the same line.
     /// </summary>
-    public class Triangle : IGeomPrimitive
+    public class Triangle : IGeomPrimitive, IConsistencyCheckable
     {
 #if TRUSTED_VISIBILITY_BREACH
+        /// <summary>First vertex</summary>
         [SerializedName("p1")]
         public Vector2 P1;
+
+        /// <summary>Second vertex</summary>
         [SerializedName("p2")]
         public Vector2 P2;
+
+        /// <summary>Third vertex</summary>
         [SerializedName("p3")]
         public Vector2 P3;
 #else
@@ -77,12 +82,6 @@ namespace AW2.Helpers.Geometric
         /// <param name="p3">The third corner point.</param>
         public Triangle(Vector2 p1, Vector2 p2, Vector2 p3)
         {
-            boundingBox = new Geometric.Rectangle(
-                Math.Min(p1.X, Math.Min(p2.X, p3.X)),
-                Math.Min(p1.Y, Math.Min(p2.Y, p3.Y)),
-                Math.Max(p1.X, Math.Max(p2.X, p3.X)),
-                Math.Max(p1.Y, Math.Max(p2.Y, p3.Y)));
-            
             // Assign p1 as given, but possibly swap p2 and p3 to enforce
             // clockwise order of corner points.
             Vector2 e12LeftNormal = new Vector2(p1.Y - p2.Y, p2.X - p1.X);
@@ -121,6 +120,7 @@ namespace AW2.Helpers.Geometric
             n12.Normalize();
             n13.Normalize();
             n23.Normalize();
+            UpdateBoundingBox();
         }
 
         /// <summary>
@@ -129,6 +129,23 @@ namespace AW2.Helpers.Geometric
         public override string ToString()
         {
             return "{" + P1 + ", " + P2 + ", " + P3 + "}";
+        }
+
+        void UpdateBoundingBox()
+        {
+#if TRUSTED_VISIBILITY_BREACH
+            boundingBox = new Geometric.Rectangle(
+                Math.Min(P1.X, Math.Min(P2.X, P3.X)),
+                Math.Min(P1.Y, Math.Min(P2.Y, P3.Y)),
+                Math.Max(P1.X, Math.Max(P2.X, P3.X)),
+                Math.Max(P1.Y, Math.Max(P2.Y, P3.Y)));
+#else
+            boundingBox = new Geometric.Rectangle(
+                Math.Min(p1.X, Math.Min(p2.X, p3.X)),
+                Math.Min(p1.Y, Math.Min(p2.Y, p3.Y)),
+                Math.Max(p1.X, Math.Max(p2.X, p3.X)),
+                Math.Max(p1.Y, Math.Max(p2.Y, p3.Y)));
+#endif
         }
 
         #region IGeomPrimitive Members
@@ -166,6 +183,19 @@ namespace AW2.Helpers.Geometric
         public float DistanceTo(Vector2 point)
         {
             return Geometry.Distance(new Point(point), this);
+        }
+
+        #endregion
+
+        #region IConsistencyCheckable Members
+
+        /// <summary>
+        /// Makes the instance consistent in respect of fields marked with a
+        /// limitation attribute.
+        /// </summary>
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            UpdateBoundingBox();
         }
 
         #endregion

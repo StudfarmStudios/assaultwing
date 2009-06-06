@@ -818,6 +818,7 @@ namespace AW2.Game
         {
             LoadContent();
             InitializeModelCollisionAreas();
+            TransformUnmovableCollisionAreas();
             CreateBirthGobs();
             CreateModelBirthGobs();
             CreateExhaustEngines();
@@ -1354,14 +1355,19 @@ namespace AW2.Game
                         Log.Write("Warning: Gob found collision mesh \"" + areaName +
                             "\" that didn't match any collision area name.");
                     else
-                    {
-                        IGeomPrimitive geomArea = Graphics3D.GetOutline(mesh);
-                        if (!Movable)
-                            geomArea = geomArea.Transform(WorldMatrix);
-                        changeArea.AreaGob = geomArea;
-                    }
+                        changeArea.AreaGob = Graphics3D.GetOutline(mesh);
                 }
             }
+        }
+
+        /// <summary>
+        /// Pretransforms the gob's collision areas if the gob is unmovable.
+        /// </summary>
+        void TransformUnmovableCollisionAreas()
+        {
+            if (Movable) return;
+            foreach (var area in collisionAreas)
+                area.AreaGob = area.AreaGob.Transform(WorldMatrix);
         }
 
         /// <summary>

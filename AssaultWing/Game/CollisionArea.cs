@@ -205,7 +205,7 @@ namespace AW2.Game
 
         /// <summary>
         /// The geometric area for overlap testing, in game world coordinates,
-        /// translated according to the hosting gob's location.
+        /// transformed according to the hosting gob's world matrix.
         /// </summary>
         public IGeomPrimitive Area
         {
@@ -223,7 +223,8 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// The geometric area for overlap testing, in hosting gob coordinates.
+        /// The geometric area for overlap testing, in hosting gob coordinates if the gob is movable,
+        /// in world coordinates if the gob is unmovable.
         /// </summary>
         public IGeomPrimitive AreaGob { get { return area; } set { area = value; } }
 

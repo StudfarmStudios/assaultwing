@@ -11,6 +11,7 @@ namespace AW2.Game
     /// Arena layers are a means to visualise depth in spite of the
     /// orthogonal projection of 3D graphics.
     [LimitedSerialization]
+    [System.Diagnostics.DebuggerDisplay("Z:{Z} Gobs:{Gobs.Count} IsGameplay:{isGameplayLayer} Parallax:{parallaxName}")]
     public class ArenaLayer : IConsistencyCheckable
     {
         [TypeParameter]

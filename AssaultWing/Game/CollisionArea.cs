@@ -143,6 +143,7 @@ namespace AW2.Game
     /// resulting in a collision.
     /// </summary>
     [LimitedSerialization]
+    [System.Diagnostics.DebuggerDisplay("Type:{type} Name:{name} Area:{area}")]
     public class CollisionArea
     {
         /// <summary>
@@ -210,12 +211,11 @@ namespace AW2.Game
         {
             get
             {
-                Gob gobOwner = (Gob)owner;
-                if (!gobOwner.Movable)
+                if (!owner.Movable)
                     return area;
-                if (!gobOwner.WorldMatrix.Equals(oldWorldMatrix))
+                if (!owner.WorldMatrix.Equals(oldWorldMatrix))
                 {
-                    oldWorldMatrix = ((Gob)owner).WorldMatrix;
+                    oldWorldMatrix = owner.WorldMatrix;
                     transformedArea = area.Transform(oldWorldMatrix);
                 }
                 return transformedArea;

@@ -118,7 +118,7 @@ namespace AW2.Game.Pengs
         public override ICollection<Particle> Emit()
         {
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
-            float z = AssaultWing.Instance.DataEngine.Arena.Layers[peng.Layer].Z;
+            float z = peng.Layer.Z;
             List<Particle> particles = null;
 
             // Find out newly exposed areas in viewports.
@@ -228,7 +228,7 @@ namespace AW2.Game.Pengs
                         gob.Pos = pos;
                         gob.Move = move;
                         gob.Rotation = rotation;
-                        AssaultWing.Instance.DataEngine.Gobs.Add(gob);
+                        Peng.Arena.Gobs.Add(gob);
                     });
                 }
             }

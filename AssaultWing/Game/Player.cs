@@ -889,6 +889,7 @@ namespace AW2.Game
             {
                 if (!(gob is Ship))
                     throw new Exception("Cannot create non-ship ship for player (" + gob.GetType().Name + ")");
+                var arena = AssaultWing.Instance.DataEngine.Arena;
                 Ship newShip = (Ship)gob;
                 newShip.Owner = this;
                 newShip.Weapon1Name = weapon1Name;
@@ -898,7 +899,7 @@ namespace AW2.Game
                 // Use player spawn areas if there's any. Otherwise just randomise a position.
                 SpawnPlayer bestSpawn = null;
                 float bestSafeness = float.MinValue;
-                foreach (var otherGob in AssaultWing.Instance.DataEngine.Gobs)
+                foreach (var otherGob in arena.Gobs)
                 {
                     SpawnPlayer spawn = otherGob as SpawnPlayer;
                     if (spawn == null) continue;
@@ -910,12 +911,12 @@ namespace AW2.Game
                     }
                 }
                 if (bestSpawn == null)
-                    newShip.Pos = AssaultWing.Instance.DataEngine.Arena.GetFreePosition(newShip, 
-                        new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, AssaultWing.Instance.DataEngine.Arena.Dimensions));
+                    newShip.Pos = arena.GetFreePosition(newShip,
+                        new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, arena.Dimensions));
                 else
                     bestSpawn.Spawn(newShip);
 
-                AssaultWing.Instance.DataEngine.Gobs.Add(newShip);
+                arena.Gobs.Add(newShip);
                 Ship = newShip;
             });
 
@@ -937,7 +938,7 @@ namespace AW2.Game
                     peng.Owner = this;
                     peng.Leader = Ship;
                 }
-                AssaultWing.Instance.DataEngine.Gobs.Add(playerColor);
+                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(playerColor);
             });
         }
 

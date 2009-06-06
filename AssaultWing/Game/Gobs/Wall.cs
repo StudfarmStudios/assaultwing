@@ -111,7 +111,7 @@ namespace AW2.Game.Gobs
 
         #endregion // Wall Fields
 
-        #region Wall Properties
+        #region Properties
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.
@@ -121,7 +121,13 @@ namespace AW2.Game.Gobs
             get { return base.TextureNames.Union(new CanonicalString[] { textureName }); }
         }
 
-        #endregion // Wall Properties
+        /// <summary>
+        /// Returns the world matrix of the gob, i.e., the translation from
+        /// game object coordinates to game world coordinates.
+        /// </summary>
+        public override Matrix WorldMatrix { get { return Matrix.Identity; } }
+
+        #endregion Properties
 
         /// <summary>
         /// Creates an uninitialised piece of wall.
@@ -284,9 +290,7 @@ namespace AW2.Game.Gobs
             base.SetRuntimeState(runtimeState);
             triangleCount = indexData.Length / 3;
             if (vertexData.Length > 0)
-                boundingBox = BoundingBox.CreateFromPoints(
-                    Array.ConvertAll<VertexPositionNormalTexture, Vector3>(vertexData,
-                    delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
+                boundingBox = BoundingBox.CreateFromPoints(vertexData.Select(vertex => vertex.Position));
         }
 
         /// <summary>
@@ -316,9 +320,7 @@ namespace AW2.Game.Gobs
                     indexData[3 * index + 1] = 0;
                     indexData[3 * index + 2] = 0;
 
-                    // Remove the triangle from physics engine.
-                    AssaultWing.Instance.DataEngine.Arena.Unregister(collisionAreas[index]);
-
+                    Arena.Unregister(collisionAreas[index]);
                     --triangleCount;
                 }
                 //indexMap[y, x] = null;
@@ -326,7 +328,7 @@ namespace AW2.Game.Gobs
 
             // Remove the wall gob if all its triangles have been removed.
             if (triangleCount == 0)
-                AssaultWing.Instance.DataEngine.Gobs.Remove(this);
+                Arena.Gobs.Remove(this);
         }
  
         #region IConsistencyCheckable Members
@@ -399,6 +401,7 @@ namespace AW2.Game.Gobs
             indexData = fineIndexData;
             vertexData = fineVertexData;
         }
+
         /// <summary>
         /// Prepares the wall's 3D model for use in gameplay.
         /// </summary>
@@ -408,9 +411,7 @@ namespace AW2.Game.Gobs
             silhouetteEffect = effect == null ? null : (BasicEffect)effect.Clone(gfx);
             FineTriangles();
             triangleCount = this.indexData.Length / 3;
-            boundingBox = BoundingBox.CreateFromPoints(
-                Array.ConvertAll<VertexPositionNormalTexture, Vector3>(this.vertexData,
-                delegate(VertexPositionNormalTexture vertex) { return vertex.Position; }));
+            boundingBox = BoundingBox.CreateFromPoints(vertexData.Select(vertex => vertex.Position));
 
             // Create collision areas; one for each triangle in the wall's 3D model
             // and one bounding collision area for making holes in the wall.
@@ -430,15 +431,10 @@ namespace AW2.Game.Gobs
             }
 
             // Create a bounding volume for the whole wall.
-            Vector2 min = new Vector2(float.MaxValue);
-            Vector2 max = new Vector2(float.MinValue);
-            foreach (VertexPositionNormalTexture vertex in this.vertexData)
-            {
-                Vector2 vertexPos = new Vector2(vertex.Position.X, vertex.Position.Y);
-                min = Vector2.Min(min, vertexPos);
-                max = Vector2.Max(max, vertexPos);
-            }
-            Rectangle boundingArea = new Rectangle(min, max);
+            var positions = vertexData.Select(vertex => new Vector2(vertex.Position.X, vertex.Position.Y));
+            var min = positions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
+            var max = positions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
+            var boundingArea = new Rectangle(min, max);
             collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
                 CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None);
         }
@@ -448,16 +444,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         private void InitializeIndexMap()
         {
-            // Find out model dimensions.
-            Vector2 modelMin = new Vector2(float.MaxValue);
-            Vector2 modelMax = new Vector2(float.MinValue);
-            foreach (VertexPositionNormalTexture vert in vertexData)
-            {
-                Vector2 vertV2 = new Vector2(vert.Position.X, vert.Position.Y);
-                modelMin = Vector2.Min(modelMin, vertV2);
-                modelMax = Vector2.Max(modelMax, vertV2);
-            }
-            Vector2 modelDim = new Vector2(modelMax.X - modelMin.X, modelMax.Y - modelMin.Y);
+            var boundingArea = collisionAreas.First(area => area.Name == "Bounding").Area.BoundingBox;
+            var modelMin = boundingArea.Min;
+            var modelDim = boundingArea.Dimensions;
 
             // Create an index map for the model.
             // The mask is initialised by a render of the 3D model by the graphics card.

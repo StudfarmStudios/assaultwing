@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Events;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Net.Messages;
 using AW2.Sound;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
@@ -61,6 +63,7 @@ namespace AW2.Game
     /// Important: For the whole system of physical collisions to act consistently, the CollisionArea.cannotOverlap must be a symmetric relation over all gobtypes. That is, if gobtype A cannot overlap gobtype B, then it must also be that gobtype B cannot overlap gobtype A, with the only allowed exception that if B is not movable then it need not bother with this requirement.
     /// </para>
     [LimitedSerialization]
+    [System.Diagnostics.DebuggerDisplay("{Name} Dimensions:{Dimensions} Layers:{Layers.Count} Gobs:{Gobs.Count}")]
     public class Arena : IConsistencyCheckable
     {
         #region Type definitions
@@ -128,15 +131,17 @@ namespace AW2.Game
 
         #endregion Type definitions
 
-        #region Arena fields
+        #region General fields
 
         /// <summary>
         /// Arena File name is needed for arena loading.
         /// </summary>
         string fileName;
 
+        GobCollection gobs;
+
         /// <summary>
-        /// Layers of the arena, containing initial gobs and parallaxes.
+        /// Layers of the arena.
         /// </summary>
         [TypeParameter]
         List<ArenaLayer> layers;
@@ -154,10 +159,15 @@ namespace AW2.Game
         [TypeParameter]
         Vector2 dimensions;
 
+        /// <summary>
+        /// Tunes to play in the background while playing this arena.
+        /// </summary>
         [TypeParameter]
-        List<BackgroundMusic> backgroundmusic;
+        List<BackgroundMusic> backgroundMusic;
 
-        #region Lighting settings for the arena
+        #endregion General fields
+
+        #region Lighting related fields
 
         [TypeParameter]
         Vector3 light0DiffuseColor;
@@ -207,7 +217,7 @@ namespace AW2.Game
         [TypeParameter]
         float fogStart;
 
-        #endregion
+        #endregion Lighting related fields
 
         #region Collision related fields
 
@@ -286,8 +296,6 @@ namespace AW2.Game
 
         #endregion Collision related fields
 
-        #endregion // Arena fields
-
         #region Arena properties
 
         /// <summary>
@@ -308,14 +316,46 @@ namespace AW2.Game
         public Vector2 Dimensions { get { return dimensions; } set { dimensions = value; } }
 
         /// <summary>
-        /// The layers of the arena.
+        /// Layers of the arena.
         /// </summary>
         public List<ArenaLayer> Layers { get { return layers; } }
 
         /// <summary>
+        /// Gobs in the arena. Reflects the data in <see cref="Layers"/>.
+        /// </summary>
+        public GobCollection Gobs
+        {
+            get { return gobs; }
+            private set
+            {
+                gobs = value;
+                Gobs.Added += gob => Prepare(gob);
+                Gobs.Removing += item =>
+                {
+                    // Game client removes relevant gobs only when the server says so.
+                    return AssaultWing.Instance.NetworkMode != NetworkMode.Client || !item.IsRelevant;
+                };
+                Gobs.Removed += gob =>
+                {
+                    // Game server notifies game clients of the removal of relevant gobs.
+                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+                    {
+                        var message = new GobDeletionMessage();
+                        message.GobId = gob.Id;
+                        AssaultWing.Instance.NetworkEngine.SendToClients(message);
+                    }
+
+                    if (gob.Layer == Gobs.GameplayLayer)
+                        Unregister(gob);
+                    gob.Dispose();
+                };
+            }
+        }
+
+        /// <summary>
         /// The bgmusics the arena contains when it is activated.
         /// </summary>
-        public List<BackgroundMusic> BackgroundMusic { get { return backgroundmusic; } }
+        public List<BackgroundMusic> BackgroundMusic { get { return backgroundMusic; } }
 
         #endregion // Arena properties
 
@@ -344,38 +384,57 @@ namespace AW2.Game
         /// This constructor is only for serialisation.
         public Arena()
         {
-            this.name = "dummyarena";
-            this.dimensions = new Vector2(4000, 4000);
+            name = "dummyarena";
+            dimensions = new Vector2(4000, 4000);
             layers = new List<ArenaLayer>();
             layers.Add(new ArenaLayer());
-            this.backgroundmusic = new List<BackgroundMusic>();
-            this.light0DiffuseColor = Vector3.Zero;
-            this.light0Direction = -Vector3.UnitZ;
-            this.light0Enabled = true;
-            this.light0SpecularColor = Vector3.Zero;
-            this.light1DiffuseColor = Vector3.Zero;
-            this.light1Direction = -Vector3.UnitZ;
-            this.light1Enabled = false;
-            this.light1SpecularColor = Vector3.Zero;
-            this.light2DiffuseColor = Vector3.Zero;
-            this.light2Direction = -Vector3.UnitZ;
-            this.light2Enabled = false;
-            this.light2SpecularColor = Vector3.Zero;
-            this.fogColor = Vector3.Zero;
-            this.fogEnabled = false;
-            this.fogEnd = 1.0f;
-            this.fogStart = 0.0f;
+            Gobs = new GobCollection(layers);
+            backgroundMusic = new List<BackgroundMusic>();
+            light0DiffuseColor = Vector3.Zero;
+            light0Direction = -Vector3.UnitZ;
+            light0Enabled = true;
+            light0SpecularColor = Vector3.Zero;
+            light1DiffuseColor = Vector3.Zero;
+            light1Direction = -Vector3.UnitZ;
+            light1Enabled = false;
+            light1SpecularColor = Vector3.Zero;
+            light2DiffuseColor = Vector3.Zero;
+            light2Direction = -Vector3.UnitZ;
+            light2Enabled = false;
+            light2SpecularColor = Vector3.Zero;
+            fogColor = Vector3.Zero;
+            fogEnabled = false;
+            fogEnd = 1.0f;
+            fogStart = 0.0f;
         }
 
         #region Public methods
 
         /// <summary>
-        /// Releases resources allocated for playing the arena.
+        /// Loads graphical content required by the arena.
         /// </summary>
-        public void Dispose() // TODO !!! make someone call this
+        public void LoadContent()
+        {
+            foreach (var gob in Gobs) gob.LoadContent();
+        }
+
+        /// <summary>
+        /// Unloads graphical content required by the arena.
+        /// </summary>
+        public void UnloadContent()
+        {
+            foreach (var gob in Gobs) gob.UnloadContent();
+        }
+
+        /// <summary>
+        /// Releases resources allocated for the arena.
+        /// </summary>
+        public void Dispose()
         {
             for (int i = 0; i < collisionAreas.Length; ++i)
                 collisionAreas[i] = null;
+            UnloadContent();
+            Gobs.Clear();
         }
 
         /// <summary>
@@ -458,9 +517,26 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Prepares a gob for a game session.
+        /// </summary>
+        public void Prepare(Gob gob) // TODO !!! This method should be private
+        {
+            gob.Arena = this;
+            gob.Activate();
+            if (gob.Layer == Gobs.GameplayLayer)
+                Register(gob);
+            else
+            {
+                // Gobs outside the gameplay layer cannot collide.
+                // To achieve this, we take away all the gob's collision areas.
+                gob.ClearCollisionAreas();
+            }
+        }
+
+        /// <summary>
         /// Registers a gob for collisions.
         /// </summary>
-        public void Register(Gob gob)
+        public void Register(Gob gob) // TODO !!! This method should be private
         {
             foreach (CollisionArea area in gob.CollisionAreas)
             {
@@ -474,7 +550,7 @@ namespace AW2.Game
         /// <summary>
         /// Removes a previously registered gob from having collisions.
         /// </summary>
-        public void Unregister(Gob gob)
+        public void Unregister(Gob gob) // TODO !!! This method should be private
         {
             foreach (CollisionArea area in gob.CollisionAreas)
                 Unregister(area);
@@ -888,19 +964,18 @@ namespace AW2.Game
         private OutOfArenaBounds IsOutOfArenaBounds(Gob gob)
         {
             var result = OutOfArenaBounds.None;
-            var arena = AssaultWing.Instance.DataEngine.Arena;
 
             // The arena boundary.
             if (gob.Pos.X < 0) result |= OutOfArenaBounds.Left;
             if (gob.Pos.Y < 0) result |= OutOfArenaBounds.Bottom;
-            if (gob.Pos.X > arena.Dimensions.X) result |= OutOfArenaBounds.Right;
-            if (gob.Pos.Y > arena.Dimensions.Y) result |= OutOfArenaBounds.Top;
+            if (gob.Pos.X > Dimensions.X) result |= OutOfArenaBounds.Right;
+            if (gob.Pos.Y > Dimensions.Y) result |= OutOfArenaBounds.Top;
 
             // The outer arena boundary.
             if (gob.Pos.X < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterLeft;
             if (gob.Pos.Y < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterBottom;
-            if (gob.Pos.X > arena.Dimensions.X + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterRight;
-            if (gob.Pos.Y > arena.Dimensions.Y + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterTop;
+            if (gob.Pos.X > Dimensions.X + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterRight;
+            if (gob.Pos.Y > Dimensions.Y + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterTop;
 
             return result;
         }
@@ -946,7 +1021,7 @@ namespace AW2.Game
             // Other projectiles disintegrate if they are outside 
             // the outer arena boundary.
             if ((outOfBounds & OutOfArenaBounds.OuterBoundary) != 0)
-                AssaultWing.Instance.DataEngine.Gobs.Remove(gob);
+                Gobs.Remove(gob);
             return;
         }
 
@@ -965,13 +1040,7 @@ namespace AW2.Game
         {
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                // Make sure there's no null references.
-                layers = layers ?? new List<ArenaLayer>();
-                name = name ?? "unknown arena";
-                backgroundmusic = backgroundmusic ?? new List<BackgroundMusic>();
-
                 dimensions = Vector2.Max(dimensions, new Vector2(500));
-
                 light0DiffuseColor = Vector3.Clamp(light0DiffuseColor, Vector3.Zero, Vector3.One);
                 light0Direction.Normalize();
                 light0SpecularColor = Vector3.Clamp(light0SpecularColor, Vector3.Zero, Vector3.One);
@@ -984,6 +1053,35 @@ namespace AW2.Game
                 fogColor = Vector3.Clamp(fogColor, Vector3.Zero, Vector3.One);
                 fogEnd = MathHelper.Max(fogEnd, 0);
                 fogStart = MathHelper.Max(fogStart, 0);
+
+                for (int i = 0; i < layers.Count; i++)
+                {
+                    var newLayer = layers[i].EmptyCopy();
+                    foreach (var gob in layers[i].Gobs)
+                    {
+                        Gob.CreateGob(gob, gobb =>
+                        {
+                            gobb.Layer = newLayer;
+                            newLayer.Gobs.Add(gobb);
+                        });
+                    }
+                    layers[i] = newLayer;
+                }
+
+                Gobs = new GobCollection(layers);
+
+                // Find the gameplay layer.
+                int gameplayLayerIndex = Layers.FindIndex(layer => layer.IsGameplayLayer);
+                if (gameplayLayerIndex == -1)
+                    throw new ArgumentException("Arena " + Name + " doesn't have a gameplay layer");
+                Gobs.GameplayLayer = Layers[gameplayLayerIndex];
+
+                // Make sure the gameplay backlayer is located right before the gameplay layer.
+                // Use a suitable layer if one is defined in the arena, otherwise create a new one.
+                if (gameplayLayerIndex == 0 || Layers[gameplayLayerIndex - 1].Z != 0)
+                    Layers.Insert(gameplayLayerIndex, Gobs.GameplayBackLayer = new ArenaLayer(false, 0, ""));
+                else
+                    Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
             }
         }
 

@@ -72,19 +72,21 @@ namespace AW2.Game.Gobs
             Set3DModel();
         }
 
+        /// <summary>
+        /// Activates the gob, i.e. performs an initialisation rite.
+        /// </summary>
+        /// DataEngine will call this method to make the gob do necessary 
+        /// initialisations to make it fully functional on addition to 
+        /// an ongoing play of the game.
+        public override void Activate()
+        {
+            Set3DModel();
+            base.Activate();
+        }
+
         #endregion Methods related to gobs' functionality in the game world
 
         #region Methods related to serialisation
-
-        /// <summary>
-        /// Copies the gob's runtime state from another gob.
-        /// </summary>
-        /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
-        protected override void SetRuntimeState(Gob runtimeState)
-        {
-            base.SetRuntimeState(runtimeState);
-            Set3DModel();
-        }
 
         /// <summary>
         /// Serialises the gob for to a binary writer.
@@ -127,7 +129,7 @@ namespace AW2.Game.Gobs
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
             Graphics3D.GetModelData(model, out vertexData, out indexData);
-            Matrix worldMatrix = WorldMatrix;
+            Matrix worldMatrix = AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
             for (int i = 0; i < vertexData.Length; ++i)
             {
                 vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);

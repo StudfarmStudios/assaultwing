@@ -1,4 +1,6 @@
-// marked in as DEBUG because we don't want NUnit framework to release builds
+#if !DEBUG
+#define OPTIMIZED_CODE // replace some function calls with fast elementary operations
+#endif
 #if DEBUG
 using NUnit.Framework;
 #endif
@@ -203,6 +205,27 @@ namespace AW2.Helpers
             if (value < min) return min;
             if (value > max) return max;
             return value;
+        }
+
+        /// <summary>
+        /// Returns a world matrix given a scaling factor, rotation angle in radians 
+        /// and center X and Y coordinates.
+        /// </summary>
+        public static Matrix CreateWorldMatrix(float scale, float rotation, Vector2 pos)
+        {
+#if OPTIMIZED_CODE
+            float scaledCos = scale * (float)Math.Cos(rotation);
+            float scaledSin = scale * (float)Math.Sin(rotation);
+            return new Matrix(
+                scaledCos, scaledSin, 0, 0,
+                -scaledSin, scaledCos, 0, 0,
+                0, 0, scale, 0,
+                pos.X, pos.Y, 0, 1);
+#else
+            return Matrix.CreateScale(scale)
+                 * Matrix.CreateRotationZ(rotation)
+                 * Matrix.CreateTranslation(new Vector3(pos, 0));
+#endif
         }
 
         #region Unit tests

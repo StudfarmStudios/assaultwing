@@ -420,7 +420,7 @@ namespace AW2.Graphics
                 indexData = new short[] { 0, 1, 2, 3, };
             }
 #endif
-            foreach (var layer in AssaultWing.Instance.DataEngine.ArenaLayers)
+            foreach (var layer in AssaultWing.Instance.DataEngine.Arena.Layers)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
                 float layerScale = GetScale(layer.Z);

@@ -194,7 +194,7 @@ namespace AW2.Game.Gobs
                     Gob.CreateGob("bomb explosion", explosion =>
                     {
                         explosion.Pos = this.Pos;
-                        AssaultWing.Instance.DataEngine.Gobs.Add(explosion);
+                        Arena.Gobs.Add(explosion);
                     });
                     break;
                 case BonusAction.UpgradeWeapon1:

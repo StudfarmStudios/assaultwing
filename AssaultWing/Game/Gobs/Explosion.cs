@@ -129,7 +129,7 @@ namespace AW2.Game.Gobs
                 Gob.CreateGob(particleEngineNames[i], gob =>
                 {
                     gob.Pos = this.Pos;
-                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
+                    Arena.Gobs.Add(gob);
                     particleEngineList.Add(gob);
                 });
             }
@@ -139,7 +139,7 @@ namespace AW2.Game.Gobs
             flowEndTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(flowTime);
 
             // Make a hole in the arena walls.
-            AssaultWing.Instance.DataEngine.Arena.MakeHole(Pos, impactHoleRadius);
+            Arena.MakeHole(Pos, impactHoleRadius);
 
             base.Activate();
         }
@@ -159,9 +159,9 @@ namespace AW2.Game.Gobs
                 // Remove collision areas that only needed to collide once.
                 AssaultWing.Instance.DataEngine.CustomOperations += () =>
                 {
-                    AssaultWing.Instance.DataEngine.Arena.Unregister(this);
+                    Arena.Unregister(this);
                     collisionAreas = Array.FindAll(collisionAreas, (collArea) => collArea.Name == "Force");
-                    AssaultWing.Instance.DataEngine.Arena.Register(this);
+                    Arena.Register(this);
                 };
             }
 

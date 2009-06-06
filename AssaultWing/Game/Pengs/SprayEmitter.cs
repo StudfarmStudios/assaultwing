@@ -236,7 +236,7 @@ namespace AW2.Game.Pengs
                         else
                         {
                             // Bail out if the position is not free for the gob.
-                            if (!lastAttempt && !AssaultWing.Instance.DataEngine.Arena.IsFreePosition(gob, pos))
+                            if (!lastAttempt && !Peng.Arena.IsFreePosition(gob, pos))
                             {
                                 attemptOk = false;
                                 continue;
@@ -245,7 +245,7 @@ namespace AW2.Game.Pengs
                             gob.Pos = pos;
                             gob.Move = move;
                             gob.Rotation = rotation;
-                            AssaultWing.Instance.DataEngine.Gobs.Add(gob);
+                            Peng.Arena.Gobs.Add(gob);
                         }
                     }
 

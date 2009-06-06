@@ -447,7 +447,7 @@ namespace AW2.Game.Gobs
                         peng.Paused = true;
                         peng.Leader = this;
                     }
-                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
+                    Arena.Gobs.Add(gob);
                     coughEngineList.Add(gob);
                 });
             }

@@ -41,7 +41,6 @@ namespace AW2.Game
     [LimitedSerialization]
     public abstract class Weapon : IConsistencyCheckable
     {
-
         #region Weapon fields
 
         /// <summary>
@@ -159,6 +158,11 @@ namespace AW2.Game
         /// The ship this weapon is attached to.
         /// </summary>
         public Ship Owner { get { return owner; } set { owner = value; } } // !!! hack
+
+        /// <summary>
+        /// The arena in which the weapon lives.
+        /// </summary>
+        public Arena Arena { get; set; }
 
         /// <summary>
         /// A handle for identifying the weapon at the owner.

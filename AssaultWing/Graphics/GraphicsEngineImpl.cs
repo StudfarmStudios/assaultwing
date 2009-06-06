@@ -390,7 +390,6 @@ namespace AW2.Graphics
             // Propagate LoadContent to other components that are known to
             // contain references to graphics content.
             data.ForEachViewport(viewport => viewport.LoadContent());
-            foreach (var gob in data.Gobs) gob.LoadContent();
             data.LoadContent();
         }
 
@@ -401,29 +400,32 @@ namespace AW2.Graphics
         public void LoadArenaContent(Arena arenaTemplate)
         {
             var data = AssaultWing.Instance.DataEngine;
-            foreach (ArenaLayer layer in arenaTemplate.Layers)
-            {
-                foreach (var gob in layer.Gobs)
-                {
-                    // Load the layer's gob types.
-                    foreach (var modelName in gob.ModelNames)
-                    {
-                        if (data.Models.ContainsKey(modelName)) continue;
-                        Model model = LoadModel(modelName);
-                        if (model != null)
-                            data.Models.Add(modelName, model);
-                    }
 
-                    // Load the layer's gobs' textures.
-                    foreach (var textureName in gob.TextureNames)
-                    {
-                        if (data.Textures.ContainsKey(textureName)) continue;
-                        Texture2D texture = LoadTexture(textureName);
-                        if (texture != null)
-                            data.Textures.Add(textureName, texture);
-                    }
+            foreach (var gob in arenaTemplate.Gobs)
+            {
+                // Load the layer's gob types.
+                foreach (var modelName in gob.ModelNames)
+                {
+                    if (data.Models.ContainsKey(modelName)) continue;
+                    Model model = LoadModel(modelName);
+                    if (model != null)
+                        data.Models.Add(modelName, model);
                 }
 
+                // Load the layer's gobs' textures.
+                foreach (var textureName in gob.TextureNames)
+                {
+                    if (data.Textures.ContainsKey(textureName)) continue;
+                    Texture2D texture = LoadTexture(textureName);
+                    if (texture != null)
+                        data.Textures.Add(textureName, texture);
+                }
+
+                gob.LoadContent();
+            }
+
+            foreach (ArenaLayer layer in arenaTemplate.Layers)
+            {
                 // Load the layer's parallax texture.
                 var parallaxName = layer.ParallaxName;
                 if (parallaxName != "" && !data.Textures.ContainsKey(parallaxName))
@@ -455,8 +457,8 @@ namespace AW2.Graphics
 
             // Propagate UnloadContent to other components that are known to
             // contain references to graphics content.
-            data.ForEachViewport(delegate(AWViewport viewport) { viewport.UnloadContent(); });
-            foreach (var gob in data.Gobs) gob.UnloadContent();
+            data.ForEachViewport(viewport => viewport.UnloadContent());
+            foreach (var gob in data.Arena.Gobs) gob.UnloadContent();
             data.UnloadContent();
 
             base.UnloadContent();

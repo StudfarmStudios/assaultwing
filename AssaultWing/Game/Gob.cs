@@ -1,6 +1,3 @@
-#if !DEBUG
-#define OPTIMIZED_CODE // replace some function calls with fast elementary operations
-#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,13 +73,13 @@ namespace AW2.Game
         /// <summary>
         /// Default rotation of gobs. Points up in the game world.
         /// </summary>
-        public static readonly float defaultRotation = MathHelper.PiOver2;
+        protected const float defaultRotation = MathHelper.PiOver2;
 
         /// <summary>
         /// Time, in seconds, for a gob to stop being cold.
         /// </summary>
         /// <see cref="Gob.Cold"/>
-        public static readonly float warmUpTime = 0.2f;
+        const float warmUpTime = 0.2f;
 
         /// <summary>
         /// Least int that is known not to have been used as a gob identifier
@@ -344,6 +341,11 @@ namespace AW2.Game
         public string TypeName { get { return typeName; } }
 
         /// <summary>
+        /// The arena in which the gob lives.
+        /// </summary>
+        public Arena Arena { get; set; }
+
+        /// <summary>
         /// Is the gob relevant to gameplay. Irrelevant gobs won't receive state updates
         /// from the server when playing over network and they can therefore be created
         /// independently on a client.
@@ -431,12 +433,11 @@ namespace AW2.Game
         public Player Owner { get { return owner; } set { owner = value; } }
 
         /// <summary>
-        /// Arena layer index of the gob, or <c>-1</c> if uninitialised. Set by <c>DataEngine</c>.
+        /// Arena layer of the gob, or <c>null</c> if uninitialised. Set by <see cref="Arena"/>.
         /// </summary>
-        /// Note that if somebody who is not DataEngine sets this value,
-        /// it leads to confusion. This field only reflects the real knowledge
-        /// that DataEngine possesses.
-        public int Layer { get; set; }
+        /// Note that if somebody who is not <see cref="Arena"/> sets this value,
+        /// it leads to confusion.
+        public ArenaLayer Layer { get; set; }
 
         /// <summary>
         /// Returns the name of the 3D model of the gob.
@@ -488,25 +489,7 @@ namespace AW2.Game
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public virtual Matrix WorldMatrix
-        {
-            get
-            {
-#if OPTIMIZED_CODE
-                float scaledCos = scale * (float)Math.Cos(rotation);
-                float scaledSin = scale * (float)Math.Sin(rotation);
-                return new Matrix(
-                    scaledCos, scaledSin, 0, 0,
-                    -scaledSin, scaledCos, 0, 0,
-                    0, 0, scale, 0,
-                    pos.X, pos.Y, 0, 1);
-#else
-                return Matrix.CreateScale(scale)
-                     * Matrix.CreateRotationZ(rotation)
-                     * Matrix.CreateTranslation(new Vector3(pos, 0));
-#endif
-            }
-        }
+        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(scale, rotation, pos); } }
 
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.
@@ -670,32 +653,13 @@ namespace AW2.Game
         /// <param name="typeName">The type of the gob.</param>
         public Gob(string typeName)
         {
-            // Initialise fields from the gob type's template.
-            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Gob), typeName);
-            if (template.GetType() != this.GetType())
-                throw new Exception("Silly programmer tries to create a gob (type " +
-                    typeName + ") using a wrong Gob subclass (class " + this.GetType().Name + ")");
-            foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
-                if (field.IsDefined(typeof(ShallowCopyAttribute), false))
-                    field.SetValue(this, field.GetValue(template));
-                else
-                    field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
-
-            Id = AssaultWing.Instance.NetworkMode == NetworkMode.Client 
-                ? leastUnusedIrrelevantId--
-                : leastUnusedId++;
-            this.owner = null;
-            this.Pos = Vector2.Zero; // also translates collPrimitives
-            this.move = Vector2.Zero;
-            this.rotation = Gob.defaultRotation;
-
-            // Set us as the owner of each collision area.
-            if (collisionAreas == null)
-                collisionAreas = new CollisionArea[0];
-            for (int i = 0; i < collisionAreas.Length; ++i)
-                collisionAreas[i].Owner = this;
-
-            movable = true;
+            this.typeName = typeName;
+            InitializeTypeParameters();
+            SetId();
+            owner = null;
+            Pos = Vector2.Zero; // also translates collPrimitives
+            move = Vector2.Zero;
+            rotation = Gob.defaultRotation;
             birthTime = AssaultWing.Instance.GameTime.TotalGameTime;
             modelPartTransforms = null;
             exhaustEngines = new Gob[0];
@@ -704,7 +668,6 @@ namespace AW2.Game
             bleach = -1;
             bleachResetTime = new TimeSpan(0);
             LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalGameTime;
-            Layer = -1;
         }
 
         /// <summary>
@@ -784,44 +747,6 @@ namespace AW2.Game
                 throw new ArgumentException("Runtime gob of class " + runtimeState.GetType().Name +
                     " has type name \"" + runtimeState.typeName + "\" which is for class " + gob.GetType().Name);
             gob.SetRuntimeState(runtimeState);
-
-            // Do special things with meshes named like collision areas.
-            // TODO: This feature seems unused. Remove if so.
-            Model model = AssaultWing.Instance.DataEngine.Models[gob.modelName];
-            List<CollisionArea> meshAreas = new List<CollisionArea>();
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                // A specially named mesh can replace the geometric area of a named collision area.
-                if (mesh.Name.StartsWith("mesh_Collision"))
-                {
-                    string areaName = mesh.Name.Replace("mesh_Collision", "");
-                    CollisionArea changeArea = null;
-                    foreach (CollisionArea area in gob.collisionAreas)
-                        if (area.Name == areaName)
-                        {
-                            changeArea = area;
-                            break;
-                        }
-                    if (changeArea == null)
-                        Log.Write("Warning: Gob found collision mesh \"" + areaName +
-                            "\" that didn't match any collision area name.");
-                    else
-                    {
-                        IGeomPrimitive geomArea = Graphics3D.GetOutline(mesh);
-                        if (!gob.Movable)
-                            geomArea = geomArea.Transform(gob.WorldMatrix);
-                        changeArea.AreaGob = geomArea;
-                    }
-                }
-            }
-            if (meshAreas.Count > 0)
-            {
-                CollisionArea[] newAreas = new CollisionArea[gob.collisionAreas.Length + meshAreas.Count];
-                Array.Copy(gob.collisionAreas, newAreas, gob.collisionAreas.Length);
-                Array.Copy(meshAreas.ToArray(), newAreas, meshAreas.Count);
-                gob.collisionAreas = newAreas;
-            }
-
             return gob;
         }
 
@@ -844,6 +769,25 @@ namespace AW2.Game
             Gob gob = CreateGob(runtimeState);
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
+        }
+
+        /// <summary>
+        /// Initialises the fields of the gob marked as type parameters 
+        /// from the values defined in the type template of the gob.
+        /// </summary>
+        public void InitializeTypeParameters()
+        {
+            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Gob), typeName);
+            if (template.GetType() != this.GetType())
+                throw new Exception("Silly programmer tries to initialise type parameters of a gob (type " +
+                    typeName + ") using a wrong Gob subclass (class " + this.GetType().Name + ")");
+            foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
+                if (field.IsDefined(typeof(ShallowCopyAttribute), false))
+                    field.SetValue(this, field.GetValue(template));
+                else
+                    field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
+
+            foreach (var area in collisionAreas) area.Owner = this;
         }
 
         #endregion Gob constructors and static constructor-like methods
@@ -873,52 +817,9 @@ namespace AW2.Game
         public virtual void Activate()
         {
             LoadContent();
-
-            // Create birth gobs as described by gob type.
-            foreach (string gobType in birthGobTypes)
-            {
-                CreateGob(gobType, gob =>
-                {
-                    gob.Pos = this.Pos;
-                    gob.Rotation = this.Rotation;
-                    gob.owner = this.owner;
-                    if (gob is ParticleEngine)
-                        ((ParticleEngine)gob).Leader = this;
-                    if (gob is Gobs.Peng)
-                        ((Gobs.Peng)gob).Leader = this;
-                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
-                });
-            }
-
-            // Create birth gobs as described by 3D model.
-            KeyValuePair<string, int>[] poses = GetNamedPositions("Peng_");
-            foreach (KeyValuePair<string, int> pos in poses)
-            {
-                // We expect 3D model bones named like "Peng_blinker_1", where
-                // "Peng" is a special marker,
-                // "blinker" is the typename of the Peng to create,
-                // "1" is an optional number used only to make such bone names unique.
-                string[] tokens = pos.Key.Split('_');
-                if (tokens.Length < 2 || tokens.Length > 3)
-                {
-                    Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + modelName);
-                    continue;
-                }
-                Gob.CreateGob(tokens[1], gob =>
-                {
-                    Gobs.Peng peng = gob as Gobs.Peng;
-                    if (peng != null)
-                    {
-                        peng.Leader = this;
-                        peng.LeaderBone = pos.Value;
-                    }
-                    ParticleEngine particleEngine = gob as ParticleEngine;
-                    if (particleEngine != null)
-                        particleEngine.Leader = this;
-                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
-                });
-            }
-
+            InitializeModelCollisionAreas();
+            CreateBirthGobs();
+            CreateModelBirthGobs();
             CreateExhaustEngines();
         }
 
@@ -929,7 +830,7 @@ namespace AW2.Game
         /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
-            AssaultWing.Instance.DataEngine.Arena.Move(this);
+            Arena.Move(this);
             UpdateExhaustEngines();
         }
 
@@ -1129,7 +1030,7 @@ namespace AW2.Game
                     writer.Write((int)owner.Id);
                 else
                     writer.Write((int)-1);
-                writer.Write((int)Layer);
+                writer.Write((int)Arena.Layers.IndexOf(Layer));
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1155,7 +1056,8 @@ namespace AW2.Game
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
                 owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
-                Layer = reader.ReadInt32();
+                int layerIndex = reader.ReadInt32();
+                Layer = Arena.Layers[layerIndex];
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1255,7 +1157,7 @@ namespace AW2.Game
                             peng.Leader = this;
                             peng.LeaderBone = boneIs[thrustI].Value;
                         }
-                        AssaultWing.Instance.DataEngine.Gobs.Add(gob);
+                        Arena.Gobs.Add(gob);
                         exhaustBoneIList.Add(boneIs[thrustI].Value);
                         exhaustEngineList.Add(gob);
                     });
@@ -1381,6 +1283,88 @@ namespace AW2.Game
         #region Private methods
 
         /// <summary>
+        /// Creates birth gobs for the gob.
+        /// </summary>
+        void CreateBirthGobs()
+        {
+            foreach (string gobType in birthGobTypes)
+            {
+                CreateGob(gobType, gob =>
+                {
+                    gob.Pos = this.Pos;
+                    gob.Rotation = this.Rotation;
+                    gob.owner = this.owner;
+                    if (gob is ParticleEngine)
+                        ((ParticleEngine)gob).Leader = this;
+                    if (gob is Gobs.Peng)
+                        ((Gobs.Peng)gob).Leader = this;
+                    Arena.Gobs.Add(gob);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Creates birth gobs for the gob from specially named meshes in the gob's 3D model.
+        /// </summary>
+        void CreateModelBirthGobs()
+        {
+            KeyValuePair<string, int>[] poses = GetNamedPositions("Peng_");
+            foreach (KeyValuePair<string, int> pos in poses)
+            {
+                // We expect 3D model bones named like "Peng_blinker_1", where
+                // "Peng" is a special marker,
+                // "blinker" is the typename of the Peng to create,
+                // "1" is an optional number used only to make such bone names unique.
+                string[] tokens = pos.Key.Split('_');
+                if (tokens.Length < 2 || tokens.Length > 3)
+                {
+                    Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + modelName);
+                    continue;
+                }
+                Gob.CreateGob(tokens[1], gob =>
+                {
+                    Gobs.Peng peng = gob as Gobs.Peng;
+                    if (peng != null)
+                    {
+                        peng.Leader = this;
+                        peng.LeaderBone = pos.Value;
+                    }
+                    ParticleEngine particleEngine = gob as ParticleEngine;
+                    if (particleEngine != null)
+                        particleEngine.Leader = this;
+                    Arena.Gobs.Add(gob);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Creates collision areas from specially named 3D model meshes.
+        /// </summary>
+        void InitializeModelCollisionAreas()
+        {
+            Model model = AssaultWing.Instance.DataEngine.Models[modelName];
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                // A specially named mesh can replace the geometric area of a named collision area.
+                if (mesh.Name.StartsWith("mesh_Collision"))
+                {
+                    string areaName = mesh.Name.Replace("mesh_Collision", "");
+                    var changeArea = collisionAreas.FirstOrDefault(area => area.Name == areaName);
+                    if (changeArea == null)
+                        Log.Write("Warning: Gob found collision mesh \"" + areaName +
+                            "\" that didn't match any collision area name.");
+                    else
+                    {
+                        IGeomPrimitive geomArea = Graphics3D.GetOutline(mesh);
+                        if (!Movable)
+                            geomArea = geomArea.Transform(WorldMatrix);
+                        changeArea.AreaGob = geomArea;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// The core implementation of the public methods <see cref="Die(DeathCause)"/>
         /// and <see cref="DieOnClient()"/>.
         /// </summary>
@@ -1391,7 +1375,7 @@ namespace AW2.Game
             if (Dead) return;
             dead = true;
 
-            AssaultWing.Instance.DataEngine.Gobs.Remove(this, forceRemove);
+            Arena.Gobs.Remove(this, forceRemove);
 
             // Create death gobs.
             foreach (string gobType in deathGobTypes)
@@ -1401,9 +1385,16 @@ namespace AW2.Game
                     gob.Pos = this.Pos;
                     gob.Rotation = this.Rotation;
                     gob.owner = this.owner;
-                    AssaultWing.Instance.DataEngine.Gobs.Add(gob);
+                    Arena.Gobs.Add(gob);
                 });
             }
+        }
+
+        void SetId()
+        {
+            Id = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+                ? leastUnusedIrrelevantId--
+                : leastUnusedId++;
         }
 
         #endregion
@@ -1456,8 +1447,7 @@ namespace AW2.Game
             }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
             {
-                // Make sure there's no null references.
-                typeName = typeName ?? "unknown gob type";
+                SetId();
             }
         }
 

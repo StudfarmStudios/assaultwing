@@ -70,7 +70,7 @@ namespace AW2.Game
             UpdateControls();
 
             // Update gobs, weapons and players.
-            foreach (var gob in AssaultWing.Instance.DataEngine.Gobs) gob.Update();
+            foreach (var gob in AssaultWing.Instance.DataEngine.Arena.Gobs) gob.Update();
             foreach (var weapon in AssaultWing.Instance.DataEngine.Weapons) weapon.Update();
             foreach (var player in AssaultWing.Instance.DataEngine.Players) player.Update();
 

@@ -31,10 +31,16 @@ namespace AW2.Game
         private IList<ArenaLayer> ArenaLayers { get; set; }
 
         /// <summary>
-        /// The index of the arena layer where the gameplay takes place.
+        /// The arena layer where the gameplay takes place.
         /// </summary>
         /// <seealso cref="ArenaLayers"/>
-        public int GameplayLayer { private get; set; }
+        public ArenaLayer GameplayLayer { get; set; }
+
+        /// <summary>
+        /// The arena layer right behind the gameplay layer.
+        /// </summary>
+        /// <seealso cref="GameplayLayer"/>
+        public ArenaLayer GameplayBackLayer { get; set; }
 
         /// <summary>
         /// Creates a new gob collection that reflects the gobs on some arena layers.
@@ -66,29 +72,19 @@ namespace AW2.Game
         /// <see cref="Removing"/> evaluates on the element.</param>
         public bool Remove(Gob gob, bool force)
         {
-            int layer = gob.Layer;
-            if (layer < 0 || layer >= ArenaLayers.Count) return false;
+            if (gob.Layer == null) return false;
             if (Removing != null && !Removing(gob) && !force) return false;
             if (isEnumerating)
             {
                 removedGobs.Add(gob);
-                return ArenaLayers[layer].Gobs.Contains(gob);
+                return gob.Layer.Gobs.Contains(gob);
             }
             else
             {
-                bool success = ArenaLayers[layer].Gobs.Remove(gob);
+                bool success = gob.Layer.Gobs.Remove(gob);
                 if (success && Removed != null) Removed(gob);
                 return success;
             }
-        }
-
-        /// <summary>
-        /// Adds an item to the collection to a specific arena layer.
-        /// </summary>
-        public void Add(Gob gob, int layerIndex)
-        {
-            gob.Layer = layerIndex;
-            Add(gob);
         }
 
         /// <summary>
@@ -133,15 +129,15 @@ namespace AW2.Game
         /// </summary>
         public void Add(Gob gob)
         {
-            if (gob.Layer == -1)
+            if (gob.Layer == null)
                 gob.Layer = gob.LayerPreference == Gob.LayerPreferenceType.Front
                     ? GameplayLayer
-                    : GameplayLayer - 1;
+                    : GameplayBackLayer;
             if (isEnumerating)
                 addedGobs.Add(gob);
             else
             {
-                ArenaLayers[gob.Layer].Gobs.Add(gob);
+                gob.Layer.Gobs.Add(gob);
                 if (Added != null) Added(gob);
             }
         }
@@ -163,7 +159,7 @@ namespace AW2.Game
         /// </summary>
         public bool Contains(Gob gob)
         {
-            return ArenaLayers[gob.Layer].Gobs.Contains(gob);
+            return gob.Layer.Gobs.Contains(gob);
         }
 
         /// <summary>

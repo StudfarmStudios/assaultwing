@@ -81,9 +81,9 @@ namespace AW2.Game.Gobs
                 nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
                 Gob.CreateGob(spawnTypeName, newGob =>
                 {
-                    Vector2 spawnPos = AssaultWing.Instance.DataEngine.Arena.GetFreePosition(newGob, spawnArea);
+                    Vector2 spawnPos = Arena.GetFreePosition(newGob, spawnArea);
                     newGob.Pos = spawnPos;
-                    AssaultWing.Instance.DataEngine.Gobs.Add(newGob);
+                    Arena.Gobs.Add(newGob);
                 });
             }
             base.Update();

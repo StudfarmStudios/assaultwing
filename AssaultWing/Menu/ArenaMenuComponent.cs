@@ -206,7 +206,7 @@ namespace AW2.Menu
                 var arenaPlaylist = from info in arenaInfos where info.selected select info.name;
                 if (arenaPlaylist.Count() > 0)
                 {
-                    AssaultWing.Instance.DataEngine.ArenaPlaylist = arenaPlaylist.ToList();
+                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(arenaPlaylist.ToList());
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
                         AssaultWing.Instance.StartArena);

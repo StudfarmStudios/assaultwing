@@ -380,7 +380,7 @@ namespace AW2
                 networkEngine.SendToClients(message);
             }
 
-            dataEngine.ArenaPlaylistI = -1;
+            dataEngine.ArenaPlaylist.Reset();
             PrepareNextArena();
         }
 
@@ -440,17 +440,23 @@ namespace AW2
                 windowForm.Invoke(new Action(() => { Window.AllowUserResizing = false; }));
             }
 
-            Arena arenaTemplate = dataEngine.GetNextPlayableArena();
-            if (arenaTemplate != null)
+            try
             {
-                graphicsEngine.LoadArenaContent(arenaTemplate);
-                arenaTemplate.Reset();
+                Arena arenaTemplate = dataEngine.GetNextPlayableArena();
+                if (arenaTemplate != null)
+                {
+                    graphicsEngine.LoadArenaContent(arenaTemplate);
+                    arenaTemplate.Reset();
+                }
+                fail = dataEngine.NextArena();
+                if (fail)
+                    throw new InvalidOperationException("There is no next arena to play");
             }
-            fail = dataEngine.NextArena();
-            if (oldAllowUserResizing)
-                windowForm.Invoke(new Action(() => { Window.AllowUserResizing = true; }));
-            if (fail)
-                throw new InvalidOperationException("There is no next arena to play");
+            finally
+            {
+                if (oldAllowUserResizing)
+                    windowForm.Invoke(new Action(() => { Window.AllowUserResizing = true; }));
+            }
         }
 
         /// <summary>

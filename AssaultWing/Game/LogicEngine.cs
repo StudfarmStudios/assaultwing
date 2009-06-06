@@ -56,7 +56,7 @@ namespace AW2.Game
                     arenaNames.Add(arena.Name);
                     arenaFileNames.Add(arena.Name, arena.FileName);
                 }
-            AssaultWing.Instance.DataEngine.ArenaPlaylist = arenaNames;
+            AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(arenaNames);
             AssaultWing.Instance.DataEngine.ArenaFileNameList = arenaFileNames;
             base.Initialize();
         }
@@ -87,8 +87,9 @@ namespace AW2.Game
             // Check for arena end. Network games end when the game server presses Esc.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
             {
+                int playersTotal = AssaultWing.Instance.DataEngine.Players.Count;
                 int playersAlive = AssaultWing.Instance.DataEngine.Players.Count(player => player.Lives != 0);
-                if (playersAlive <= 1)
+                if (playersAlive == 0 || (playersAlive == 1 && playersTotal > 1))
                     AssaultWing.Instance.FinishArena();
             }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)

@@ -33,7 +33,7 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Names of arenas to play in the game session.
         /// </summary>
-        public List<string> ArenaPlaylist { get; set; }
+        public IList<string> ArenaPlaylist { get; set; }
 
         /// <summary>
         /// Creates an uninitialised start game message.

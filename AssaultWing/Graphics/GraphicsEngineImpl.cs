@@ -458,7 +458,8 @@ namespace AW2.Graphics
             // Propagate UnloadContent to other components that are known to
             // contain references to graphics content.
             data.ForEachViewport(viewport => viewport.UnloadContent());
-            foreach (var gob in data.Arena.Gobs) gob.UnloadContent();
+            if (data.Arena != null)
+                foreach (var gob in data.Arena.Gobs) gob.UnloadContent();
             data.UnloadContent();
 
             base.UnloadContent();

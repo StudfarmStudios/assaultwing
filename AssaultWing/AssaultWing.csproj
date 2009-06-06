@@ -226,6 +226,7 @@
     <Compile Include="Helpers\AbortableThreadPool.cs" />
     <Compile Include="Helpers\CanonicalString.cs" />
     <Compile Include="Helpers\Collections\IObservableCollection.cs" />
+    <Compile Include="Helpers\Collections\Playlist.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Half.cs" />
     <Compile Include="Helpers\Pair.cs" />

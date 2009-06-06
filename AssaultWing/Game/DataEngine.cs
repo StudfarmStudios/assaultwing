@@ -74,17 +74,6 @@ namespace AW2.Game
         SpriteFont[] fonts;
 
         /// <summary>
-        /// Arenas to play in one session.
-        /// </summary>
-        List<string> arenaPlaylist;
-
-        /// <summary>
-        /// Index of current arena in arena playlist,
-        /// or -1 if there is no current arena.
-        /// </summary>
-        int arenaPlaylistI;
-
-        /// <summary>
         /// The viewport we are currently drawing into.
         /// </summary>
         Viewport activeViewport;
@@ -158,9 +147,7 @@ namespace AW2.Game
             arenas = new Dictionary<string, Arena>();
             overlays = new Texture2D[Enum.GetValues(typeof(TextureName)).Length];
             fonts = new SpriteFont[Enum.GetValues(typeof(FontName)).Length];
-            activeArena = preparedArena = null;
-            arenaPlaylist = new List<string>();
-            arenaPlaylistI = -1;
+            ArenaPlaylist = new Playlist(new string[] { "dummyarena" });
         }
 
         #region textures
@@ -241,15 +228,7 @@ namespace AW2.Game
         /// <summary>
         /// Arenas to play in one session.
         /// </summary>
-        public List<string> ArenaPlaylist
-        {
-            get { return arenaPlaylist; }
-            set
-            {
-                arenaPlaylist = value;
-                arenaPlaylistI = -1;
-            }
-        }
+        public Playlist ArenaPlaylist { get; set; }
 
         /// <summary>
         /// Mapping of all available arenas to the names of the files 
@@ -261,12 +240,6 @@ namespace AW2.Game
             set { arenaFileNameList = value; }
         }
 
-        /// <summary>
-        /// Index of current arena in arena playlist,
-        /// or -1 if there is no current arena.
-        /// </summary>
-        public int ArenaPlaylistI { get { return arenaPlaylistI; } set { arenaPlaylistI = value; } }
- 
         /// <summary>
         /// Returns a named arena.
         /// </summary>
@@ -285,10 +258,10 @@ namespace AW2.Game
         /// </summary>
         public Arena GetNextPlayableArena()
         {
-            if ((arenaPlaylistI + 1) >= arenaPlaylist.Count)
+            if (!ArenaPlaylist.HasNext)
                 return null;
             else
-                return GetArena(arenaPlaylist[arenaPlaylistI + 1]);
+                return GetArena(ArenaPlaylist.Next);
         }
 
         /// <summary>
@@ -299,12 +272,13 @@ namespace AW2.Game
         /// <b>true</b> otherwise.</returns>
         public bool NextArena()
         {
-            if (++arenaPlaylistI >= arenaPlaylist.Count)
+            if (!ArenaPlaylist.HasNext)
             {
                 activeArena = null;
                 return true;
             }
-            InitializeFromArena(arenaPlaylist[arenaPlaylistI]);
+            ArenaPlaylist.MoveNext();
+            InitializeFromArena(ArenaPlaylist.Current);
             return false;
         }
 

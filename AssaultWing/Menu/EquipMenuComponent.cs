@@ -306,7 +306,7 @@ namespace AW2.Menu
                             AssaultWing.Instance.DataEngine.Players.Add(player);
                     }
 
-                    AssaultWing.Instance.DataEngine.ArenaPlaylist = message.ArenaPlaylist;
+                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(message.ArenaPlaylist);
 
                     // Prepare and start playing the game.
                     menuEngine.ProgressBarAction(

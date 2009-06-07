@@ -254,32 +254,23 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returns the next playable arena.
-        /// </summary>
-        public Arena GetNextPlayableArena()
-        {
-            if (!ArenaPlaylist.HasNext)
-                return null;
-            else
-                return GetArena(ArenaPlaylist.Next);
-        }
-
-        /// <summary>
-        /// Prepares the next arena in the playlist ready for playing.
+        /// Advances the arena playlist and prepares the new current arena for playing.
         /// </summary>
         /// When the playing really should start, call <c>StartArena</c>.
-        /// <returns><b>false</b> if the initialisation succeeded,
-        /// <b>true</b> otherwise.</returns>
+        /// <returns><b>true</b> if the initialisation succeeded,
+        /// <b>false</b> otherwise.</returns>
         public bool NextArena()
         {
-            if (!ArenaPlaylist.HasNext)
+            if (ArenaPlaylist.MoveNext())
             {
-                activeArena = null;
+                InitializeFromArena(ArenaPlaylist.Current);
                 return true;
             }
-            ArenaPlaylist.MoveNext();
-            InitializeFromArena(ArenaPlaylist.Current);
-            return false;
+            else
+            {
+                activeArena = null;
+                return false;
+            }
         }
 
         /// <summary>
@@ -319,6 +310,8 @@ namespace AW2.Game
             CustomOperations = null;
 
             activeArena = preparedArena = GetArena(name);
+            preparedArena.Reset();
+            AssaultWing.Instance.LoadArenaContent(preparedArena);
 
             // Create initial objects. This is by far the most time consuming part
             // in initialising an arena for playing.

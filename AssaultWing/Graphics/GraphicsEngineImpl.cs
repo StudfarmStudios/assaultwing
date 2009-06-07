@@ -399,6 +399,7 @@ namespace AW2.Graphics
         /// <param name="arenaTemplate">The arena whose graphical content to load.</param>
         public void LoadArenaContent(Arena arenaTemplate)
         {
+            // NOTE !!! This method has very little to do with GraphicsEngineImpl. Refactor into Arena.LoadContent() !!!
             var data = AssaultWing.Instance.DataEngine;
 
             foreach (var gob in arenaTemplate.Gobs)

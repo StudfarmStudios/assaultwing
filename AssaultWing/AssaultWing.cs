@@ -404,9 +404,8 @@ namespace AW2
         {
             if (gameState == GameState.OverlayDialog)
                 ChangeState(GameState.ArenaLoading); // HACK !!!
-            Arena nextArena = dataEngine.GetNextPlayableArena();
-            if (nextArena != null)
-                ShowDialog(new ArenaOverOverlayDialogData(nextArena.Name));
+            if (DataEngine.ArenaPlaylist.HasNext)
+                ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
             else
                 ShowDialog(new GameOverOverlayDialogData());
             if (NetworkMode == NetworkMode.Server)
@@ -432,7 +431,6 @@ namespace AW2
             // A window resize event may reset the graphics card, fatally
             // screwing up initialisation of walls' index maps.
             bool oldAllowUserResizing = Window.AllowUserResizing;
-            bool fail = true;
             if (oldAllowUserResizing)
             {
                 // We cannot set Window.AllowUserResizing = false; if we are
@@ -442,14 +440,7 @@ namespace AW2
 
             try
             {
-                Arena arenaTemplate = dataEngine.GetNextPlayableArena();
-                if (arenaTemplate != null)
-                {
-                    graphicsEngine.LoadArenaContent(arenaTemplate);
-                    arenaTemplate.Reset();
-                }
-                fail = dataEngine.NextArena();
-                if (fail)
+                if (!DataEngine.NextArena())
                     throw new InvalidOperationException("There is no next arena to play");
             }
             finally
@@ -593,6 +584,15 @@ namespace AW2
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Standalone;
             networkEngine.StopClient();
+        }
+
+        /// <summary>
+        /// Loads graphical content required by an arena to DataEngine.
+        /// </summary>
+        /// <param name="arena"></param>
+        public void LoadArenaContent(Arena arena)
+        {
+            graphicsEngine.LoadArenaContent(arena);
         }
 
         #endregion Methods for game components

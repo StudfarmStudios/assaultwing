@@ -342,7 +342,7 @@ namespace AW2.Menu
             int playerI = -1;
             foreach (var player in data.Players)
             {
-                if (player.IsRemote) return;
+                if (player.IsRemote) continue;
                 ++playerI;
 
                 // Draw pane background.

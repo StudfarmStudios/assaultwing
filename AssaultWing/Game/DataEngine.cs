@@ -57,7 +57,7 @@ namespace AW2.Game
         List<Pair<Type, List<Pair<string, object>>>> templates;
 
         Dictionary<string, Arena> arenas;
-        Arena activeArena, preparedArena;
+        Arena preparedArena;
         Texture2D arenaRadarSilhouette;
         Vector2 arenaDimensionsOnRadar;
         Matrix arenaToRadarTransform;
@@ -95,8 +95,8 @@ namespace AW2.Game
         /// <summary>
         /// The currently active arena.
         /// </summary>
-        /// You can set this field by calling InitializeFromArena(string).
-        public Arena Arena { get { return activeArena; } }
+        /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
+        public Arena Arena { get; private set; }
 
         /// <summary>
         /// 3D models available for the game.
@@ -268,7 +268,7 @@ namespace AW2.Game
             }
             else
             {
-                activeArena = null;
+                Arena = null;
                 return false;
             }
         }
@@ -288,7 +288,7 @@ namespace AW2.Game
                     : -1; // HACK: network games have infinite lives
             }
 
-            activeArena = preparedArena;
+            Arena = preparedArena;
             preparedArena = null;
             RefreshArenaToRadarTransform();
 
@@ -309,7 +309,7 @@ namespace AW2.Game
             Weapons.Clear();
             CustomOperations = null;
 
-            activeArena = preparedArena = GetArena(name);
+            Arena = preparedArena = GetArena(name);
             preparedArena.Reset();
             AssaultWing.Instance.LoadArenaContent(preparedArena);
 
@@ -530,7 +530,7 @@ namespace AW2.Game
         /// <param name="effect">The effect to modify.</param>
         public void PrepareEffect(BasicEffect effect)
         {
-            activeArena.PrepareEffect(effect);
+            Arena.PrepareEffect(effect);
         }
 
         /// <summary>
@@ -648,8 +648,8 @@ namespace AW2.Game
         /// Call this method after the game session has ended.
         public void ClearGameState()
         {
-            Arena.Dispose();
-            activeArena = null;
+            if (Arena != null) Arena.Dispose();
+            Arena = null;
             ClearViewports();
         }
 
@@ -658,7 +658,7 @@ namespace AW2.Game
         /// </summary>
         public void LoadContent()
         {
-            if (activeArena != null)
+            if (Arena != null)
                 RefreshArenaRadarSilhouette();
         }
 
@@ -684,7 +684,7 @@ namespace AW2.Game
         /// <seealso cref="RefreshArenaToRadarTransform"/>
         public void RefreshArenaRadarSilhouette()
         {
-            if (activeArena == null)
+            if (Arena == null)
                 throw new InvalidOperationException("No active arena");
 
             // Dispose of any previous silhouette.
@@ -712,8 +712,8 @@ namespace AW2.Game
 
             // Set up draw matrices.
             Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0, activeArena.Dimensions.X,
-                0, activeArena.Dimensions.Y, 10, 1000);
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0, Arena.Dimensions.X,
+                0, Arena.Dimensions.Y, 10, 1000);
 
             // Set and clear our own render target.
             gfx.SetRenderTarget(0, maskTarget);
@@ -756,10 +756,10 @@ namespace AW2.Game
         /// <seealso cref="ArenaToRadarTransform"/>
         void RefreshArenaToRadarTransform()
         {
-            if (activeArena == null)
+            if (Arena == null)
                 throw new InvalidOperationException("No active arena");
             Vector2 radarDisplayDimensions = new Vector2(162, 150); // TODO: Make this constant configurable
-            Vector2 arenaDimensions = activeArena.Dimensions;
+            Vector2 arenaDimensions = Arena.Dimensions;
             float arenaToRadarScale = Math.Min(
                 radarDisplayDimensions.X / arenaDimensions.X,
                 radarDisplayDimensions.Y / arenaDimensions.Y);

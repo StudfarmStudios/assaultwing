@@ -329,7 +329,19 @@ namespace AW2.Game
             private set
             {
                 gobs = value;
-                Gobs.Added += gob => Prepare(gob);
+                Gobs.Added += gob =>
+                {
+                    Prepare(gob);
+
+                    // Game server notifies game clients of the new gob.
+                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+                    {
+                        var message = new GobCreationMessage();
+                        message.GobTypeName = gob.TypeName;
+                        message.Write(gob, AW2.Net.SerializationModeFlags.All);
+                        AssaultWing.Instance.NetworkEngine.SendToClients(message);
+                    }
+                };
                 Gobs.Removing += item =>
                 {
                     // Game client removes relevant gobs only when the server says so.

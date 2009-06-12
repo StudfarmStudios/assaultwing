@@ -337,7 +337,9 @@ namespace AW2.Game
                     if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
                     {
                         var message = new GobCreationMessage();
+                        message.CreateToNextArena = this != AssaultWing.Instance.DataEngine.Arena;
                         message.GobTypeName = gob.TypeName;
+                        message.LayerIndex = Layers.IndexOf(gob.Layer);
                         message.Write(gob, AW2.Net.SerializationModeFlags.All);
                         AssaultWing.Instance.NetworkEngine.SendToClients(message);
                     }
@@ -1066,21 +1068,16 @@ namespace AW2.Game
                 fogEnd = MathHelper.Max(fogEnd, 0);
                 fogStart = MathHelper.Max(fogStart, 0);
 
-                for (int i = 0; i < layers.Count; i++)
-                {
-                    var newLayer = layers[i].EmptyCopy();
-                    foreach (var gob in layers[i].Gobs)
-                    {
-                        Gob.CreateGob(gob, gobb =>
-                        {
-                            gobb.Layer = newLayer;
-                            newLayer.Gobs.Add(gobb);
-                        });
-                    }
-                    layers[i] = newLayer;
-                }
-
+                var oldLayers = layers;
+                layers = new List<ArenaLayer>();
+                foreach (var layer in oldLayers)
+                    layers.Add(layer.EmptyCopy());
                 Gobs = new GobCollection(layers);
+                foreach (var gob in new GobCollection(oldLayers))
+                {
+                    gob.Layer = layers[oldLayers.IndexOf(gob.Layer)];
+                    Gobs.Add(gob);
+                }
 
                 // Find the gameplay layer.
                 int gameplayLayerIndex = Layers.FindIndex(layer => layer.IsGameplayLayer);

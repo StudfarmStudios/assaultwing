@@ -1031,7 +1031,6 @@ namespace AW2.Game
                     writer.Write((int)owner.Id);
                 else
                     writer.Write((int)-1);
-                writer.Write((int)Arena.Layers.IndexOf(Layer));
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1057,8 +1056,6 @@ namespace AW2.Game
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
                 owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
-                int layerIndex = reader.ReadInt32();
-                Layer = Arena.Layers[layerIndex];
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {

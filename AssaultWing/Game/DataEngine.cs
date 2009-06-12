@@ -540,20 +540,23 @@ namespace AW2.Game
         {
             // Game client creates gobs as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-            {
-                GobCreationMessage message;
-                while ((message = AssaultWing.Instance.NetworkEngine.ReceiveFromServer<GobCreationMessage>()) != null)
+                while (true)
                 {
+                    var message = AssaultWing.Instance.NetworkEngine.ReceiveFromServer<GobCreationMessage>();
+                    if (message == null) break;
                     Gob gob = Gob.CreateGob(message.GobTypeName);
                     message.Read(gob, SerializationModeFlags.All);
-                    Arena.Gobs.Add(gob);
+                    gob.Layer = Arena.Layers[message.LayerIndex];
+                    if (message.CreateToNextArena)
+                        preparedArena.Gobs.Add(gob);
+                    else
+                        Arena.Gobs.Add(gob);
 
                     // Ships we set automatically as the ship the ship's owner is controlling.
                     Ship gobShip = gob as Ship;
                     if (gobShip != null)
                         gobShip.Owner.Ship = gobShip;
                 }
-            }
 
             // Game client updates gobs and players as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)

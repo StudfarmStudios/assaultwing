@@ -331,13 +331,14 @@ namespace AW2.Game
                 gobs = value;
                 Gobs.Added += gob =>
                 {
-                    Prepare(gob);
+                    if (IsActive)
+                        Prepare(gob);
 
                     // Game server notifies game clients of the new gob.
                     if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
                     {
                         var message = new GobCreationMessage();
-                        message.CreateToNextArena = this != AssaultWing.Instance.DataEngine.Arena;
+                        message.CreateToNextArena = !IsActive;
                         message.GobTypeName = gob.TypeName;
                         message.LayerIndex = Layers.IndexOf(gob.Layer);
                         message.Write(gob, AW2.Net.SerializationModeFlags.All);
@@ -370,6 +371,8 @@ namespace AW2.Game
         /// The bgmusics the arena contains when it is activated.
         /// </summary>
         public List<BackgroundMusic> BackgroundMusic { get { return backgroundMusic; } }
+
+        private bool IsActive { get { return this == AssaultWing.Instance.DataEngine.Arena; } }
 
         #endregion // Arena properties
 
@@ -1071,13 +1074,18 @@ namespace AW2.Game
                 var oldLayers = layers;
                 layers = new List<ArenaLayer>();
                 foreach (var layer in oldLayers)
+                {
                     layers.Add(layer.EmptyCopy());
+                    foreach (var gob in layer.Gobs)
+                        gob.Layer = layer;
+                }
                 Gobs = new GobCollection(layers);
                 foreach (var gob in new GobCollection(oldLayers))
-                {
-                    gob.Layer = layers[oldLayers.IndexOf(gob.Layer)];
-                    Gobs.Add(gob);
-                }
+                    Gob.CreateGob(gob, gobb =>
+                    {
+                        gobb.Layer = layers[oldLayers.IndexOf(gob.Layer)];
+                        Gobs.Add(gobb);
+                    });
 
                 // Find the gameplay layer.
                 int gameplayLayerIndex = Layers.FindIndex(layer => layer.IsGameplayLayer);

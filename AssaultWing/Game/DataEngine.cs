@@ -309,7 +309,7 @@ namespace AW2.Game
             Weapons.Clear();
             CustomOperations = null;
 
-            Arena = preparedArena = GetArena(name);
+            preparedArena = GetArena(name);
             preparedArena.Reset();
             AssaultWing.Instance.LoadArenaContent(preparedArena);
 

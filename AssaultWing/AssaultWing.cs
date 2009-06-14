@@ -389,7 +389,8 @@ namespace AW2
         /// </summary>
         public void StartArena()
         {
-            dataEngine.StartArena();
+            if (NetworkMode != NetworkMode.Client)
+                dataEngine.StartArena();
             if (NetworkMode == NetworkMode.Server)
                 networkEngine.SendToClients(new ArenaStartMessage());
             graphicsEngine.RearrangeViewports();

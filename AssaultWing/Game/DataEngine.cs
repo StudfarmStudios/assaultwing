@@ -291,10 +291,7 @@ namespace AW2.Game
             Arena = preparedArena;
             preparedArena = null;
             RefreshArenaToRadarTransform();
-
-            // Create arena silhouette not until the freshly added gobs
-            // have really been added to field 'gobs'.
-            CustomOperations += RefreshArenaRadarSilhouette;
+            RefreshArenaRadarSilhouette();
         }
 
         /// <summary>

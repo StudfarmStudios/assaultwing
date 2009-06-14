@@ -80,7 +80,7 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
                 AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<ArenaStartMessage>(message =>
                 {
-                    AssaultWing.Instance.DataEngine.RefreshArenaRadarSilhouette();
+                    AssaultWing.Instance.DataEngine.StartArena();
                     return true;
                 });
 

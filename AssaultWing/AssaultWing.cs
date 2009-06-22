@@ -389,10 +389,9 @@ namespace AW2
         /// </summary>
         public void StartArena()
         {
-            if (NetworkMode != NetworkMode.Client)
-                dataEngine.StartArena();
+            dataEngine.StartArena();
             if (NetworkMode == NetworkMode.Server)
-                networkEngine.SendToClients(new ArenaStartMessage());
+                networkEngine.SendToClients(new ArenaStartRequest());
             graphicsEngine.RearrangeViewports();
             ChangeState(GameState.Gameplay);
             soundEngine.PlayMusic(dataEngine.Arena);

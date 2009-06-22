@@ -1,15 +1,15 @@
 ﻿namespace AW2.Net.Messages
 {
     /// <summary>
-    /// A message from a game server to a game client notifying
-    /// that playing has started for the current arena.
+    /// A message from a game client to the game server acknowledging
+    /// that playing has started for the next arena.
     /// </summary>
-    public class ArenaStartMessage : GameplayMessage
+    public class ArenaStartReply : GameplayMessage
     {
         /// <summary>
         /// Identifier of the message type.
         /// </summary>
-        protected static MessageType messageType = new MessageType(0x29, false);
+        protected static MessageType messageType = new MessageType(0x29, true);
 
         /// <summary>
         /// Writes the body of the message in serialised form.
@@ -18,7 +18,7 @@
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             base.Serialize(writer);
-            // Arena start (request) message structure:
+            // Arena start reply structure:
             // empty
         }
 

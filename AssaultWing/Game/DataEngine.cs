@@ -535,25 +535,8 @@ namespace AW2.Game
         /// </summary>
         public void CommitPending()
         {
-            // Game client creates gobs as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                while (true)
-                {
-                    var message = AssaultWing.Instance.NetworkEngine.ReceiveFromServer<GobCreationMessage>();
-                    if (message == null) break;
-                    Gob gob = Gob.CreateGob(message.GobTypeName);
-                    message.Read(gob, SerializationModeFlags.All);
-                    gob.Layer = Arena.Layers[message.LayerIndex];
-                    if (message.CreateToNextArena)
-                        preparedArena.Gobs.Add(gob);
-                    else
-                        Arena.Gobs.Add(gob);
-
-                    // Ships we set automatically as the ship the ship's owner is controlling.
-                    Ship gobShip = gob as Ship;
-                    if (gobShip != null)
-                        gobShip.Owner.Ship = gobShip;
-                }
+                CheckGobCreationMessages();
 
             // Game client updates gobs and players as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
@@ -637,6 +620,36 @@ namespace AW2.Game
 #if DEBUG_PROFILE
             AssaultWing.Instance.gobCount = Arena.Gobs.Count;
 #endif
+        }
+
+        /// <summary>
+        /// Reacts to gob creation messages received from the game server.
+        /// </summary>
+        public void CheckGobCreationMessages()
+        {
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+                throw new InvalidOperationException("Only clients should listen to gob creation messages");
+            AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobCreationMessage>(message =>
+            {
+                Gob gob = Gob.CreateGob(message.GobTypeName);
+                message.Read(gob, SerializationModeFlags.All);
+                if (message.CreateToNextArena)
+                {
+                    gob.Layer = preparedArena.Layers[message.LayerIndex];
+                    preparedArena.Gobs.Add(gob);
+                }
+                else
+                {
+                    gob.Layer = Arena.Layers[message.LayerIndex];
+                    Arena.Gobs.Add(gob);
+                }
+                // Ships we set automatically as the ship the ship's owner is controlling.
+                Ship gobShip = gob as Ship;
+                if (gobShip != null)
+                    gobShip.Owner.Ship = gobShip;
+
+                return true;
+            });
         }
 
         /// <summary>

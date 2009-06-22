@@ -263,6 +263,17 @@ namespace AW2.Menu
                     foreach (var player in AssaultWing.Instance.DataEngine.Players)
                         joinGameRequest.PlayerInfos.Add(new PlayerInfo(player));
                     AssaultWing.Instance.NetworkEngine.SendToServer(joinGameRequest);
+
+                    // Handle one JoinGameReply from the game server.
+                    AssaultWing.Instance.NetworkEngine.MessageHandlers.SetMessageHandler(typeof(JoinGameReply), message =>
+                    {
+                        var reply = (JoinGameReply)message;
+                        foreach (JoinGameReply.IdChange change in reply.PlayerIdChanges)
+                            AssaultWing.Instance.DataEngine.Players.First(player => player.Id == change.oldId).Id = change.newId;
+                        CanonicalString.CanonicalForms = reply.CanonicalStrings;
+                        // TODO: remove handler: AssaultWing.Instance.NetworkEngine.MessageHandlers.SetMessageHandler(typeof(JoinGameReply), null);
+                    });
+
                 });
             };
         }

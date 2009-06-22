@@ -76,14 +76,6 @@ namespace AW2.Game
 
             AssaultWing.Instance.DataEngine.Arena.PerformNonphysicalCollisions();
 
-            // Check for arena gameplay start if we are a game client.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<ArenaStartMessage>(message =>
-                {
-                    AssaultWing.Instance.DataEngine.StartArena();
-                    return true;
-                });
-
             // Check for arena end. Network games end when the game server presses Esc.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
             {

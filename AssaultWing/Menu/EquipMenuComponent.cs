@@ -44,6 +44,7 @@ namespace AW2.Menu
             Weapon2,
         }
 
+        bool serverIsCreatingGobs; // HACK: for initialising arena on client
         Control controlBack, controlDone;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
@@ -87,6 +88,7 @@ namespace AW2.Menu
                     menuEngine.IsProgressBarVisible = false;
                     menuEngine.IsHelpTextVisible = true;
                     CreateSelectors();
+                    serverIsCreatingGobs = false;
                 }
             }
         }
@@ -155,6 +157,7 @@ namespace AW2.Menu
                 CheckPlayerControls();
                 CheckNetwork();
             }
+            if (serverIsCreatingGobs) CheckNetwork(); // HACK: done for inactive menu also to allow client to initialise and start arena
         }
 
         /// <summary>
@@ -311,10 +314,23 @@ namespace AW2.Menu
                     // Prepare and start playing the game.
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
-                        AssaultWing.Instance.StartArena);
+                        () => { serverIsCreatingGobs = true; });
 
                     // We don't accept input while an arena is loading.
                     Active = false;
+                }
+
+                if (serverIsCreatingGobs) // HACK
+                {
+                    bool startArena = false;
+                    AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<ArenaStartRequest>(mess =>
+                    {
+                        startArena = true;
+                        AssaultWing.Instance.NetworkEngine.SendToServer(new ArenaStartRequest());
+                        return false;
+                    });
+                    AssaultWing.Instance.DataEngine.CheckGobCreationMessages();
+                    if (startArena) AssaultWing.Instance.StartArena();
                 }
             }
         }

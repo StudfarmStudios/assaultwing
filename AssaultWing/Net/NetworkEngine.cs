@@ -14,6 +14,7 @@ namespace AW2.Net
     /// Network engine. Takes care of communications between several
     /// Assault Wing instances over the Internet.
     /// </summary>
+    /// <para>
     /// A game server can communicate with its game clients by sending
     /// multicast messages via <c>SendToClients</c> and receiving
     /// messages via <c>ReceiveFromClients</c>. Messages can be
@@ -22,14 +23,17 @@ namespace AW2.Net
     /// other parts of the game logic. Each received message
     /// contains an identifier of the connection to the client who
     /// sent that message.
-    /// 
+    /// </para><para>
     /// A game client can communicate with its game server by sending
     /// messages via <c>SendToServer</c> and receiving messages via
     /// <c>ReceiveFromServer</c>.
-    /// 
+    /// </para><para>
     /// All game instances can have a connection to a game management
     /// server. This hasn't been implemented yet.
-    /// 
+    /// </para><para>
+    /// <see cref="NetworkEngine"/> reacts to incoming messages according
+    /// to message handlers that other components register.
+    /// </para>
     /// <seealso cref="Message.ConnectionId"/>
     public class NetworkEngine : GameComponent
     {
@@ -98,11 +102,17 @@ namespace AW2.Net
         {
             clientConnections = new LinkedList<PingedConnection>();
             removedClientConnections = new List<PingedConnection>();
+            MessageHandlers = new MessageHandlerCollection();
         }
 
         #endregion Constructor
 
         #region Public interface
+
+        /// <summary>
+        /// The handlers of network messages.
+        /// </summary>
+        public MessageHandlerCollection MessageHandlers { get; private set; }
 
         /// <summary>
         /// Are we connected to a game server.
@@ -223,6 +233,19 @@ namespace AW2.Net
             if (gameServerConnection == null)
                 throw new InvalidOperationException("Cannot receive without connection to server");
             return gameServerConnection.BaseConnection.Messages.TryDequeue<T>();
+        }
+
+        /// <summary>
+        /// Receives a message from the game server.
+        /// </summary>
+        /// <param name="messageType">Type of message to receive.</param>
+        /// <returns>The oldest received message of the type received from the game server,
+        /// or <c>null</c> if no messages of the type were unreceived from the game server.</returns>
+        public Message ReceiveFromServer(Type messageType)
+        {
+            if (gameServerConnection == null)
+                throw new InvalidOperationException("Cannot receive without connection to server");
+            return gameServerConnection.BaseConnection.Messages.TryDequeue(messageType);
         }
 
         /// <summary>
@@ -361,17 +384,17 @@ namespace AW2.Net
             // Update ping time measurements.
             ForEachConnection(connection => connection.Update());
 
-            // TODO: Move message handling to LogicEngine and other more appropriate places
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && gameServerConnection != null)
+            foreach (var typeHandlerPair in MessageHandlers)
             {
-                // Handle JoinGameReplies from the game server.
-                ReceiveFromServerWhile<JoinGameReply>(message =>
+                // TODO: Specify message source: clients, server, management server
+                if (gameServerConnection != null)
                 {
-                    foreach (JoinGameReply.IdChange change in message.PlayerIdChanges)
-                        AssaultWing.Instance.DataEngine.Players.First(player => player.Id == change.oldId).Id = change.newId;
-                    CanonicalString.CanonicalForms = message.CanonicalStrings;
-                    return true;
-                });
+                    Message message;
+                    while ((message = ReceiveFromServer(typeHandlerPair.Key)) != null)
+                    {
+                        typeHandlerPair.Value(message);
+                    }
+                }
             }
 
             // Handle occurred errors.

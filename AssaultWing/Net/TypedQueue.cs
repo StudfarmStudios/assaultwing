@@ -73,11 +73,11 @@ namespace AW2.Net
 
         /// <summary>
         /// Removes and returns the first element in the queue that is of a type.
-        /// Returns the default value of <typeparamref name="U"/> if there are no elements.
+        /// Returns the default value of <typeparamref name="U"/> if there are no such elements.
         /// </summary>
         /// <typeparam name="U">The type of element to dequeue.</typeparam>
         /// <returns>The first element in the queue of the type, or the
-        /// default value of <typeparamref name="U"/> if there are no elements.</returns>
+        /// default value of <typeparamref name="U"/> if there are no such elements.</returns>
         /// <seealso cref="Dequeue"/>
         public U TryDequeue<U>() where U : T
         {
@@ -88,6 +88,25 @@ namespace AW2.Net
                 if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
                     return default(U);
                 return (U)subqueue.Dequeue().First;
+            }
+        }
+
+        /// <summary>
+        /// Removes and returns the first element in the queue that is of a type.
+        /// Returns the default value of <typeparamref name="T"/> if there are no such elements.
+        /// </summary>
+        /// <param name="elementType">The type of element to dequeue.</param>
+        /// <returns>The first element in the queue of the type, or the
+        /// default value of <typeparamref name="T"/> if there are no such elements.</returns>
+        /// <seealso cref="Dequeue"/>
+        public T TryDequeue(Type elementType)
+        {
+            lock (queues)
+            {
+                Queue<Pair<T, TimeSpan>> subqueue;
+                if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
+                    return default(T);
+                return subqueue.Dequeue().First;
             }
         }
 

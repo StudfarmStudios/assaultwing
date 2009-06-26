@@ -147,6 +147,7 @@
     <Compile Include="Game\Gobs\WallModel.cs">
       <Name>WallModel</Name>
     </Compile>
+    <Compile Include="Helpers\Collections\ITypedQueue.cs" />
     <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
     <Compile Include="Game\Particles\DotEmitter.cs" />
     <Compile Include="Game\Particles\Emitter.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Helpers\CanonicalString.cs" />
     <Compile Include="Helpers\Collections\IObservableCollection.cs" />
     <Compile Include="Helpers\Collections\Playlist.cs" />
+    <Compile Include="Helpers\Collections\TypedQueueCollection.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Half.cs" />
     <Compile Include="Helpers\Pair.cs" />
@@ -281,9 +283,10 @@
     <Compile Include="Net\GameClientConnection.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\GameServerConnection.cs" />
+    <Compile Include="Net\IConnection.cs" />
     <Compile Include="Net\ManagementServerConnection.cs" />
     <Compile Include="Net\Message.cs" />
-    <Compile Include="Net\MessageHandlerCollection.cs" />
+    <Compile Include="Net\MessageHandler.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
@@ -300,6 +303,7 @@
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
     <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
     <Compile Include="Net\Messages\StartGameMessage.cs" />
+    <Compile Include="Net\MultiConnection.cs" />
     <Compile Include="Net\NetworkBinaryReader.cs" />
     <Compile Include="Net\NetworkBinaryWriter.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
@@ -309,7 +313,7 @@
     <Compile Include="Net\SerializationModeFlags.cs" />
     <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Net\ThreadSafeWrapper.cs" />
-    <Compile Include="Net\TypedQueue.cs" />
+    <Compile Include="Helpers\Collections\TypedQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <Name>AssemblyInfo</Name>
     </Compile>

@@ -874,7 +874,7 @@ namespace AW2.Game
                 message.SetControlState(controlType,
                     new PlayerControlsMessage.ControlState { force = control.Force, pulse = control.Pulse });
             }
-            AssaultWing.Instance.NetworkEngine.SendToServer(message);
+            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(message);
         }
 
         /// <summary>

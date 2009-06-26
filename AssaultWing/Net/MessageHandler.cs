@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace AW2.Net
+{
+    /// <summary>
+    /// A handler of network messages.
+    /// </summary>
+    public interface IMessageHandler
+    {
+        /// <summary>
+        /// Is the handler not active.
+        /// </summary>
+        bool Disposed { get; }
+
+        /// <summary>
+        /// Receive and handle messages.
+        /// </summary>
+        void HandleMessages();
+    }
+
+    /// <summary>
+    /// Handler of network messages of type <typeparamref name="T"/>.
+    /// </summary>
+    public class MessageHandler<T> : IMessageHandler where T : Message
+    {
+        private bool OnlyOneMessage { get; set; }
+        private Action<T> Action { get; set; }
+        private Connection Source { get; set; }
+
+        /// <summary>
+        /// Is the handler not active.
+        /// </summary>
+        public bool Disposed { get; private set; }
+
+        /// <summary>
+        /// Creates a new MessageHander&lt;T&gt;.
+        /// </summary>
+        /// <param name="onlyOneMessage">Should the handler disactive itself after receiving one message.</param>
+        /// <param name="source">The <see cref="Connection"/> to receive messages from.</param>
+        /// <param name="action">What to do for each received message.</param>
+        public MessageHandler(bool onlyOneMessage, Connection source, Action<T> action)
+        {
+            OnlyOneMessage = onlyOneMessage;
+            Source = source;
+            Action = action;
+        }
+
+        /// <summary>
+        /// Receive and handle messages.
+        /// </summary>
+        public void HandleMessages()
+        {
+            if (Disposed) throw new InvalidOperationException("Cannot use disposed MessageHandler");
+            T message = null;
+            while ((message = Source.Messages.TryDequeue<T>()) != null)
+            {
+                Action(message);
+                if (OnlyOneMessage)
+                {
+                    Disposed = true;
+                    break;
+                }
+            }
+        }
+    }
+}

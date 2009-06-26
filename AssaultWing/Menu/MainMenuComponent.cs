@@ -245,6 +245,7 @@ namespace AW2.Menu
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
                 AssaultWing.Instance.StartClient(connectAddress.Content, result =>
                 {
+                    var net = AssaultWing.Instance.NetworkEngine;
                     if (!result.Successful)
                     {
                         Log.Write("Failed to connect to server: " + result.Error);
@@ -262,17 +263,15 @@ namespace AW2.Menu
                     joinGameRequest.PlayerInfos = new List<PlayerInfo>();
                     foreach (var player in AssaultWing.Instance.DataEngine.Players)
                         joinGameRequest.PlayerInfos.Add(new PlayerInfo(player));
-                    AssaultWing.Instance.NetworkEngine.SendToServer(joinGameRequest);
+                    net.GameServerConnection.Send(joinGameRequest);
 
                     // Handle one JoinGameReply from the game server.
-                    AssaultWing.Instance.NetworkEngine.MessageHandlers.SetMessageHandler(typeof(JoinGameReply), message =>
+                    net.MessageHandlers.Add(new MessageHandler<JoinGameReply>(true, net.GameServerConnection, reply =>
                     {
-                        var reply = (JoinGameReply)message;
                         foreach (JoinGameReply.IdChange change in reply.PlayerIdChanges)
                             AssaultWing.Instance.DataEngine.Players.First(player => player.Id == change.oldId).Id = change.newId;
                         CanonicalString.CanonicalForms = reply.CanonicalStrings;
-                        // TODO: remove handler: AssaultWing.Instance.NetworkEngine.MessageHandlers.SetMessageHandler(typeof(JoinGameReply), null);
-                    });
+                    }));
 
                 });
             };

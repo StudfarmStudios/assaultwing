@@ -541,25 +541,29 @@ namespace AW2.Game
             // Game client updates gobs and players as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobUpdateMessage>(message =>
                 {
-                    message.ReadGobs(gobId => Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId), SerializationModeFlags.VaryingData);
-                    return true;
-                });
-                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobDamageMessage>(message =>
+                    GobUpdateMessage message = null;
+                    while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobUpdateMessage>()) != null)
+                        message.ReadGobs(gobId => Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId), SerializationModeFlags.VaryingData);
+                }
                 {
-                    Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.Id == message.GobId);
-                    if (gob == null) return true; // Skip updates for gobs we haven't yet created.
-                    gob.DamageLevel = message.DamageLevel;
-                    return true;
-                });
-                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<PlayerUpdateMessage>(message =>
+                    GobDamageMessage message = null;
+                    while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobDamageMessage>()) != null)
+                    {
+                        Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.Id == message.GobId);
+                        if (gob == null) continue; // Skip updates for gobs we haven't yet created.
+                        gob.DamageLevel = message.DamageLevel;
+                    }
+                }
                 {
-                    Player player = Players.FirstOrDefault(plr => plr.Id == message.PlayerId);
-                    if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
-                    message.Read(player, SerializationModeFlags.VaryingData);
-                    return true;
-                });
+                    PlayerUpdateMessage message = null;
+                    while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<PlayerUpdateMessage>()) != null)
+                    {
+                        Player player = Players.FirstOrDefault(plr => plr.Id == message.PlayerId);
+                        if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
+                        message.Read(player, SerializationModeFlags.VaryingData);
+                    }
+                }
             }
 
             // Apply custom operations.
@@ -570,7 +574,8 @@ namespace AW2.Game
             // Game client removes gobs as told by the game server.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobDeletionMessage>(message =>
+                GobDeletionMessage message = null;
+                while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobDeletionMessage>()) != null)
                 {
                     Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.Id == message.GobId);
                     if (gob == null)
@@ -580,11 +585,10 @@ namespace AW2.Game
                         // the creation and deletion messages arrived just after we 
                         // finished receiving creation messages but right before we 
                         // started receiving deletion messages for this frame.
-                        return false;
+                        break;
                     }
                     gob.DieOnClient();
-                    return true;
-                });
+                }
             }
 
             // Game server sends state updates about gobs to game clients.
@@ -600,7 +604,7 @@ namespace AW2.Game
                     gob.LastNetworkUpdate = now;
                     message.AddGob(gob.Id, gob, SerializationModeFlags.VaryingData);
                 }
-                AssaultWing.Instance.NetworkEngine.SendToClients(message);
+                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }
 
             // Game server sends state updates about players to game clients.
@@ -613,7 +617,7 @@ namespace AW2.Game
                     var message = new PlayerUpdateMessage();
                     message.PlayerId = player.Id;
                     message.Write(player, SerializationModeFlags.VaryingData);
-                    AssaultWing.Instance.NetworkEngine.SendToClients(message);
+                    AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
                 }
             }
 
@@ -629,7 +633,8 @@ namespace AW2.Game
         {
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Only clients should listen to gob creation messages");
-            AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<GobCreationMessage>(message =>
+            GobCreationMessage message = null;
+            while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobCreationMessage>()) != null)
             {
                 Gob gob = Gob.CreateGob(message.GobTypeName);
                 message.Read(gob, SerializationModeFlags.All);
@@ -647,9 +652,7 @@ namespace AW2.Game
                 Ship gobShip = gob as Ship;
                 if (gobShip != null)
                     gobShip.Owner.Ship = gobShip;
-
-                return true;
-            });
+            }
         }
 
         /// <summary>

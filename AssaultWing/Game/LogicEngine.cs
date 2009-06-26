@@ -85,11 +85,11 @@ namespace AW2.Game
                     AssaultWing.Instance.FinishArena();
             }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<ArenaFinishMessage>(message =>
-                {
+            {
+                var message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<ArenaFinishMessage>();
+                if (message != null)
                     AssaultWing.Instance.FinishArena();
-                    return false;
-                });
+            }
         }
 
         /// <summary>

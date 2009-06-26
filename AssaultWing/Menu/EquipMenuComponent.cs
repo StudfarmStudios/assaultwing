@@ -240,7 +240,7 @@ namespace AW2.Menu
                     {
                         var equipUpdateRequest = new JoinGameRequest();
                         equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
-                        AssaultWing.Instance.NetworkEngine.SendToServer(equipUpdateRequest);
+                        AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(equipUpdateRequest);
                     }
                 }
             }
@@ -262,7 +262,7 @@ namespace AW2.Menu
             {
                 // Handle JoinGameRequests from game clients.
                 JoinGameRequest message = null;
-                while ((message = AssaultWing.Instance.NetworkEngine.ReceiveFromClients<JoinGameRequest>()) != null)
+                while ((message = AssaultWing.Instance.NetworkEngine.GameClientConnections.Messages.TryDequeue<JoinGameRequest>()) != null)
                 {
                     // Send player ID changes for new players, if any. A join game request
                     // may also update the chosen equipment of a previously added player.
@@ -290,13 +290,13 @@ namespace AW2.Menu
                     {
                         reply.CanonicalStrings = AW2.Helpers.CanonicalString.CanonicalForms;
                         reply.PlayerIdChanges = playerIdChanges.ToArray();
-                        AssaultWing.Instance.NetworkEngine.SendToClient(message.ConnectionId, reply);
+                        AssaultWing.Instance.NetworkEngine.GameClientConnections[message.ConnectionId].Send(reply);
                     }
                 }
             }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                var message = AssaultWing.Instance.NetworkEngine.ReceiveFromServer<StartGameMessage>();
+                var message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<StartGameMessage>();
                 if (message != null)
                 {
                     for (int i = 0; i < message.PlayerCount; ++i)
@@ -312,25 +312,25 @@ namespace AW2.Menu
                     AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(message.ArenaPlaylist);
 
                     // Prepare and start playing the game.
+                    var net = AssaultWing.Instance.NetworkEngine;
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
-                        () => { serverIsCreatingGobs = true; });
+                        () => {
+                            net.MessageHandlers.Add(new MessageHandler<GobCreationMessage>(false, net.GameServerConnection, mess =>
+                            {
+                                // !!! HACK TODO
+                                AssaultWing.Instance.DataEngine.CheckGobCreationMessages();
+                            }));
+                            net.MessageHandlers.Add(new MessageHandler<ArenaStartRequest>(false, net.GameServerConnection, mess =>
+                            {
+                                // TODO: Server must wait for AreanStartReply
+                                AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(new ArenaStartReply());
+                                AssaultWing.Instance.StartArena();
+                            }));
+                        });
 
                     // We don't accept input while an arena is loading.
                     Active = false;
-                }
-
-                if (serverIsCreatingGobs) // HACK
-                {
-                    bool startArena = false;
-                    AssaultWing.Instance.NetworkEngine.ReceiveFromServerWhile<ArenaStartRequest>(mess =>
-                    {
-                        startArena = true;
-                        AssaultWing.Instance.NetworkEngine.SendToServer(new ArenaStartRequest());
-                        return false;
-                    });
-                    AssaultWing.Instance.DataEngine.CheckGobCreationMessages();
-                    if (startArena) AssaultWing.Instance.StartArena();
                 }
             }
         }

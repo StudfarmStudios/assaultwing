@@ -3,10 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+using AW2.Helpers.Collections;
 
 namespace AW2.Net
 {
@@ -27,7 +29,7 @@ namespace AW2.Net
     /// (for each connection) and general error conditions (for each connection).
     /// 
     /// This class is thread safe.
-    public class Connection
+    public class Connection : IConnection
     {
         #region Type definitions
 
@@ -178,7 +180,7 @@ namespace AW2.Net
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
-        public TypedQueue<Message> Messages { get { return messages; } }
+        public ITypedQueue<Message> Messages { get { return messages; } }
 
         /// <summary>
         /// Called after a new element has been added to <c>Messages</c>.
@@ -283,39 +285,52 @@ namespace AW2.Net
         }
 
         /// <summary>
+        /// Updates the connection. Call this regularly.
+        /// </summary>
+        public void Update() { }
+
+        /// <summary>
         /// Sends a message to the remote host. The message is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
         /// <param name="message">The message to send.</param>
         public void Send(Message message)
         {
-#if DEBUG_MESSAGE_DELAY
-            // Store message and check if there are old messages to send.
-            TimeSpan sendTime = AssaultWing.Instance.GameTime.TotalRealTime + TimeSpan.FromMilliseconds(100);
-            messagesToSend.Enqueue(new AW2.Helpers.Pair<Message, TimeSpan>(message, sendTime));
-            while (messagesToSend.Peek().Second <= AssaultWing.Instance.GameTime.TotalRealTime)
+            try
             {
-                var sendMessage = messagesToSend.Dequeue().First;
-                Send(sendMessage.Serialize());
-            }
+#if DEBUG_MESSAGE_DELAY
+                // Store message and check if there are old messages to send.
+                TimeSpan sendTime = AssaultWing.Instance.GameTime.TotalRealTime + TimeSpan.FromMilliseconds(100);
+                messagesToSend.Enqueue(new AW2.Helpers.Pair<Message, TimeSpan>(message, sendTime));
+                while (messagesToSend.Peek().Second <= AssaultWing.Instance.GameTime.TotalRealTime)
+                {
+                    var sendMessage = messagesToSend.Dequeue().First;
+                    Send(sendMessage.Serialize());
+                }
 #else
-            byte[] data = message.Serialize();
-            Send(data);
+                byte[] data = message.Serialize();
+                Send(data);
 #endif
 #if DEBUG_SENT_BYTE_COUNT
-            if (lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
-            {
-                lastPrintTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
-                foreach (var pair in messageSizes)
-                    AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");
-                messageSizes.Clear();
-            }
-            if (!messageSizes.ContainsKey(message.GetType()))
-                messageSizes.Add(message.GetType(), data.Length);
-            else
-                messageSizes[message.GetType()] += data.Length;
+                if (lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
+                {
+                    lastPrintTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                    AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
+                    foreach (var pair in messageSizes)
+                        AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");
+                    messageSizes.Clear();
+                }
+                if (!messageSizes.ContainsKey(message.GetType()))
+                    messageSizes.Add(message.GetType(), data.Length);
+                else
+                    messageSizes[message.GetType()] += data.Length;
 #endif
+            }
+            catch (SocketException e)
+            {
+                Errors.Do(queue => queue.Enqueue(e));
+            }
+
         }
 
         /// <summary>

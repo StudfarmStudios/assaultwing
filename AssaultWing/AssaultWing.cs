@@ -377,7 +377,7 @@ namespace AW2
                 }
                 message.PlayerCount = playerCount;
                 message.ArenaPlaylist = dataEngine.ArenaPlaylist;
-                networkEngine.SendToClients(message);
+                networkEngine.GameClientConnections.Send(message);
             }
 
             dataEngine.ArenaPlaylist.Reset();
@@ -391,7 +391,7 @@ namespace AW2
         {
             dataEngine.StartArena();
             if (NetworkMode == NetworkMode.Server)
-                networkEngine.SendToClients(new ArenaStartRequest());
+                networkEngine.GameClientConnections.Send(new ArenaStartRequest());
             graphicsEngine.RearrangeViewports();
             ChangeState(GameState.Gameplay);
             soundEngine.PlayMusic(dataEngine.Arena);
@@ -411,7 +411,7 @@ namespace AW2
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new ArenaFinishMessage();
-                networkEngine.SendToClients(message);
+                networkEngine.GameClientConnections.Send(message);
             }
         }
 

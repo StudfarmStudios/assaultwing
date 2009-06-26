@@ -69,15 +69,14 @@ namespace AW2.Net
         PingedConnection gameServerConnection;
 
         /// <summary>
-        /// Network connections to game clients. Nonempty only when 
-        /// we are a game server.
+        /// Network connections to game clients. Nonempty only on a game server.
         /// </summary>
-        LinkedList<PingedConnection> clientConnections;
+        MultiConnection gameClientConnections;
 
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
         /// </summary>
-        List<PingedConnection> removedClientConnections;
+        List<IConnection> removedClientConnections;
 
         /// <summary>
         /// Handler of connection results for client that is connecting to a game server.
@@ -100,9 +99,9 @@ namespace AW2.Net
         public NetworkEngine(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            clientConnections = new LinkedList<PingedConnection>();
-            removedClientConnections = new List<PingedConnection>();
-            MessageHandlers = new MessageHandlerCollection();
+            gameClientConnections = new MultiConnection();
+            removedClientConnections = new List<IConnection>();
+            MessageHandlers = new List<IMessageHandler>();
         }
 
         #endregion Constructor
@@ -112,7 +111,7 @@ namespace AW2.Net
         /// <summary>
         /// The handlers of network messages.
         /// </summary>
-        public MessageHandlerCollection MessageHandlers { get; private set; }
+        public IList<IMessageHandler> MessageHandlers { get; private set; }
 
         /// <summary>
         /// Are we connected to a game server.
@@ -123,6 +122,42 @@ namespace AW2.Net
         /// Are we connected to the management server.
         /// </summary>
         public bool IsConnectedToManagementServer { get { return managementServerConnection != null; } }
+
+        /// <summary>
+        /// Connections to game clients.
+        /// </summary>
+        public MultiConnection GameClientConnections
+        {
+            get
+            {
+                if (gameClientConnections == null) throw new InvalidOperationException("No connections to game clients");
+                return gameClientConnections;
+            }
+        }
+
+        /// <summary>
+        /// Connection to the game server.
+        /// </summary>
+        public Connection GameServerConnection
+        {
+            get
+            {
+                if (gameServerConnection == null) throw new InvalidOperationException("No connection to game server");
+                return gameServerConnection.BaseConnection;
+            }
+        }
+
+        /// <summary>
+        /// Connection to the management server.
+        /// </summary>
+        public Connection ManagementServerConnection
+        {
+            get
+            {
+                if (managementServerConnection == null) throw new InvalidOperationException("No connection to management server");
+                return managementServerConnection.BaseConnection;
+            }
+        }
 
         /// <summary>
         /// Turns this game instance into a game server to whom other game instances
@@ -144,9 +179,8 @@ namespace AW2.Net
         {
             Log.Write("Server stops listening");
             Connection.StopListening();
-            foreach (PingedConnection connection in clientConnections)
-                connection.BaseConnection.Dispose();
-            clientConnections.Clear();
+            gameClientConnections.Dispose();
+            gameClientConnections = null;
         }
 
         /// <summary>
@@ -189,139 +223,19 @@ namespace AW2.Net
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
 
-            var connection = GetClientConnection(connectionId);
+            var connection = GameClientConnections[connectionId];
             removedClientConnections.Add(connection);
 
             // Remove the client's players.
             List<string> droppedPlayerNames = new List<string>();
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
-                if (player.ConnectionId == connection.BaseConnection.Id)
+                if (player.ConnectionId == connection.Id)
                     droppedPlayerNames.Add(player.Name);
             string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
                 if (!player.IsRemote)
                     player.SendMessage(message);
-            AssaultWing.Instance.DataEngine.Players.Remove(player => player.ConnectionId == connection.BaseConnection.Id);
-        }
-
-        /// <summary>
-        /// Sends a message to the game server.
-        /// </summary>
-        /// <param name="message">The message to send.</param>
-        public void SendToServer(Message message)
-        {
-            if (gameServerConnection == null)
-                throw new InvalidOperationException("Cannot send without connection to server");
-            try
-            {
-                gameServerConnection.BaseConnection.Send(message);
-            }
-            catch (SocketException e)
-            {
-                gameServerConnection.BaseConnection.Errors.Do(queue => queue.Enqueue(e));
-            }
-        }
-
-        /// <summary>
-        /// Receives a message from the game server.
-        /// </summary>
-        /// <typeparam name="T">Type of message to receive.</typeparam>
-        /// <returns>The oldest received message of the type received from the game server,
-        /// or <c>null</c> if no messages of the type were unreceived from the game server.</returns>
-        public T ReceiveFromServer<T>() where T : Message
-        {
-            if (gameServerConnection == null)
-                throw new InvalidOperationException("Cannot receive without connection to server");
-            return gameServerConnection.BaseConnection.Messages.TryDequeue<T>();
-        }
-
-        /// <summary>
-        /// Receives a message from the game server.
-        /// </summary>
-        /// <param name="messageType">Type of message to receive.</param>
-        /// <returns>The oldest received message of the type received from the game server,
-        /// or <c>null</c> if no messages of the type were unreceived from the game server.</returns>
-        public Message ReceiveFromServer(Type messageType)
-        {
-            if (gameServerConnection == null)
-                throw new InvalidOperationException("Cannot receive without connection to server");
-            return gameServerConnection.BaseConnection.Messages.TryDequeue(messageType);
-        }
-
-        /// <summary>
-        /// Receives messages from the game server while a condition holds.
-        /// </summary>
-        /// <typeparam name="T">Type of message to receive.</typeparam>
-        /// <param name="handler">Handler of received messages. If the handler returns
-        /// <c>true</c> then another message is received, if there is any.
-        /// If the handler returns <c>false</c>, then the currently handled message is returned
-        /// back to the front of the queue and no more messages will be received.
-        /// The requeued message will be the first one to receive next time.</param>
-        public void ReceiveFromServerWhile<T>(Predicate<T> handler) where T : Message
-        {
-            if (gameServerConnection == null)
-                throw new InvalidOperationException("Cannot receive without connection to server");
-            T message;
-            while ((message = gameServerConnection.BaseConnection.Messages.TryDequeue<T>()) != null)
-                if (!handler(message))
-                {
-                    gameServerConnection.BaseConnection.Messages.Requeue(message);
-                    break;
-                }
-        }
-
-        /// <summary>
-        /// Sends a message to all connected game clients.
-        /// </summary>
-        /// <param name="message">The message to send.</param>
-        public void SendToClients(Message message)
-        {
-            foreach (PingedConnection connection in clientConnections)
-                connection.BaseConnection.Send(message);
-        }
-
-        /// <summary>
-        /// Sends a message to a game client.
-        /// </summary>
-        /// <param name="connectionId">Identifier of the connection to the game client.</param>
-        /// <param name="message">The message to send.</param>
-        public void SendToClient(int connectionId, Message message)
-        {
-            PingedConnection connection = GetClientConnection(connectionId);
-            connection.BaseConnection.Send(message);
-        }
-
-        /// <summary>
-        /// Receives a message from any game client.
-        /// </summary>
-        /// This method receives messages from all game clients in
-        /// unspecified order.
-        /// <typeparam name="T">Type of message to receive.</typeparam>
-        /// <returns>The oldest received message of the type received from a game client,
-        /// or <c>null</c> if no messages of the type were unreceived from game clients.</returns>
-        public T ReceiveFromClients<T>() where T : Message
-        {
-            foreach (PingedConnection connection in clientConnections)
-            {
-                T message = connection.BaseConnection.Messages.TryDequeue<T>();
-                if (message != null) return message;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Receives a message from a specific game client.
-        /// </summary>
-        /// <param name="connectionId">Identifier of the connection to the game client to receive from.</param>
-        /// <typeparam name="T">Type of message to receive.</typeparam>
-        /// <returns>The oldest received message of the type received from the game client,
-        /// or <c>null</c> if no messages of the type were unreceived from the game client.</returns>
-        public T ReceiveFromClient<T>(int connectionId) where T : Message
-        {
-            foreach (PingedConnection connection in clientConnections)
-                if (connection.BaseConnection.Id == connectionId)
-                    return connection.BaseConnection.Messages.TryDequeue<T>();
-            throw new ArgumentException("Invalid connection ID");
+            AssaultWing.Instance.DataEngine.Players.Remove(player => player.ConnectionId == connection.Id);
         }
 
         /// <summary>
@@ -332,7 +246,7 @@ namespace AW2.Net
             int count = 0;
             ForEachConnection(connection =>
             {
-                count += connection.BaseConnection.GetSendQueueSize();
+                count += connection.GetSendQueueSize();
             });
             return count;
         }
@@ -375,7 +289,7 @@ namespace AW2.Net
                     if (result.Id == "I listen")
                     {
                         if (result.Successful)
-                            clientConnections.AddLast(new PingedConnection(result.Value));
+                            gameClientConnections.Connections.Add(new PingedConnection(result.Value));
                         startServerConnectionHandler(result);
                     }
                 }
@@ -384,37 +298,29 @@ namespace AW2.Net
             // Update ping time measurements.
             ForEachConnection(connection => connection.Update());
 
-            foreach (var typeHandlerPair in MessageHandlers)
-            {
-                // TODO: Specify message source: clients, server, management server
-                if (gameServerConnection != null)
-                {
-                    Message message;
-                    while ((message = ReceiveFromServer(typeHandlerPair.Key)) != null)
-                    {
-                        typeHandlerPair.Value(message);
-                    }
-                }
-            }
+            foreach (var handler in MessageHandlers)
+                handler.HandleMessages();
+            for (int i = MessageHandlers.Count - 1; i >= 0; --i)
+                if (MessageHandlers[i].Disposed) MessageHandlers.RemoveAt(i);
 
             // Handle occurred errors.
-            ForEachConnection(connection => connection.BaseConnection.HandleErrors());
+            ForEachConnection(connection => connection.HandleErrors());
 
             // Finish removing dropped client connections.
             foreach (PingedConnection connection in removedClientConnections)
-                clientConnections.Remove(connection);
+                gameClientConnections.Connections.Remove(connection);
 
 #if DEBUG
             // Look for unhandled messages.
             Type lastMessageType = null; // to avoid flooding log messages
-            PingedConnection lastConnection = null;
-            ForEachConnection(connection => connection.BaseConnection.Messages.Prune(TimeSpan.FromSeconds(10), message =>
+            IConnection lastConnection = null;
+            ForEachConnection(connection => connection.Messages.Prune(TimeSpan.FromSeconds(10), message =>
             {
                 if (lastMessageType != message.GetType() || lastConnection != connection)
                 {
                     lastMessageType = message.GetType();
                     lastConnection = connection;
-                    Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.BaseConnection.Name);
+                    Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
                 }
             }));
 #endif
@@ -428,8 +334,7 @@ namespace AW2.Net
         /// <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
-            foreach (PingedConnection connection in clientConnections)
-                connection.BaseConnection.Dispose();
+            gameClientConnections.Dispose();
             base.Dispose(disposing);
         }
 
@@ -438,30 +343,17 @@ namespace AW2.Net
         #region Private methods
 
         /// <summary>
-        /// Returns a client connection by its connection identifier.
-        /// </summary>
-        /// <param name="connectionId">The identifier of the client connection.</param>
-        /// <returns>The client connection.</returns>
-        PingedConnection GetClientConnection(int connectionId)
-        {
-            foreach (PingedConnection connection in clientConnections)
-                if (connection.BaseConnection.Id == connectionId)
-                    return connection;
-            throw new ArgumentException("No client connection with ID " + connectionId);
-        }
-
-        /// <summary>
         /// Performs an operation on each established connection.
         /// </summary>
         /// <param name="action">The action to perform.</param>
-        void ForEachConnection(Action<PingedConnection> action)
+        void ForEachConnection(Action<IConnection> action)
         {
             if (managementServerConnection != null)
                 action(managementServerConnection);
             if (gameServerConnection != null)
                 action(gameServerConnection);
-            foreach (PingedConnection clientConnection in clientConnections)
-                action(clientConnection);
+            if (gameClientConnections != null)
+                action(gameClientConnections);
         }
 
         #endregion Private methods

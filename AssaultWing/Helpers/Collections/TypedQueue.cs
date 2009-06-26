@@ -4,22 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using AW2.Helpers;
 
-namespace AW2.Net
+namespace AW2.Helpers.Collections
 {
     /// <summary>
     /// A queue that hands out elements based on their type.
     /// </summary>
     /// Thread-safe.
-    public class TypedQueue : TypedQueue<object>
-    {
-    }
-
-    /// <summary>
-    /// A queue that hands out elements based on their type.
-    /// </summary>
-    /// Thread-safe.
     /// <typeparam name="T">Base type of the elements in the queue.</typeparam>
-    public class TypedQueue<T>
+    public class TypedQueue<T> : ITypedQueue<T>
     {
         /// <summary>
         /// Mapping of element type to a queue holding 
@@ -88,25 +80,6 @@ namespace AW2.Net
                 if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
                     return default(U);
                 return (U)subqueue.Dequeue().First;
-            }
-        }
-
-        /// <summary>
-        /// Removes and returns the first element in the queue that is of a type.
-        /// Returns the default value of <typeparamref name="T"/> if there are no such elements.
-        /// </summary>
-        /// <param name="elementType">The type of element to dequeue.</param>
-        /// <returns>The first element in the queue of the type, or the
-        /// default value of <typeparamref name="T"/> if there are no such elements.</returns>
-        /// <seealso cref="Dequeue"/>
-        public T TryDequeue(Type elementType)
-        {
-            lock (queues)
-            {
-                Queue<Pair<T, TimeSpan>> subqueue;
-                if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
-                    return default(T);
-                return subqueue.Dequeue().First;
             }
         }
 

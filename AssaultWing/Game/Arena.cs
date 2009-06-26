@@ -342,7 +342,7 @@ namespace AW2.Game
                         message.GobTypeName = gob.TypeName;
                         message.LayerIndex = Layers.IndexOf(gob.Layer);
                         message.Write(gob, AW2.Net.SerializationModeFlags.All);
-                        AssaultWing.Instance.NetworkEngine.SendToClients(message);
+                        AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
                     }
                 };
                 Gobs.Removing += item =>
@@ -357,7 +357,7 @@ namespace AW2.Game
                     {
                         var message = new GobDeletionMessage();
                         message.GobId = gob.Id;
-                        AssaultWing.Instance.NetworkEngine.SendToClients(message);
+                        AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
                     }
 
                     if (gob.Layer == Gobs.GameplayLayer)

@@ -69,7 +69,7 @@ namespace AW2.UI
             {
                 // Fetch control messages from game clients.
                 PlayerControlsMessage message = null;
-                while ((message = AssaultWing.Instance.NetworkEngine.ReceiveFromClients<PlayerControlsMessage>()) != null)
+                while ((message = AssaultWing.Instance.NetworkEngine.GameClientConnections.Messages.TryDequeue<PlayerControlsMessage>()) != null)
                 {
                     Player player = AssaultWing.Instance.DataEngine.Players.First(plr => plr.Id == message.PlayerId);
                     if (player.ConnectionId != message.ConnectionId)

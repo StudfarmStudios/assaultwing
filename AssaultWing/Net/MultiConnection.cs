@@ -11,19 +11,42 @@ namespace AW2.Net
     /// </summary>
     public class MultiConnection : IConnection
     {
+        class ConnectionList : List<IConnection>
+        {
+            TypedQueueCollection<Message> messages;
+            public ConnectionList(TypedQueueCollection<Message> messages)
+            {
+                if (messages == null) throw new ArgumentNullException("Null message queue for MultiConnection.ConnectionList");
+                this.messages = messages;
+            }
+
+            public new void Add(IConnection item)
+            {
+                base.Add(item);
+                messages.Add(item.Messages);
+            }
+
+            public new bool Remove(IConnection item)
+            {
+                bool success = base.Remove(item);
+                if (success) messages.Remove(item.Messages);
+                return success;
+            }
+        }
+
         TypedQueueCollection<Message> messages = new TypedQueueCollection<Message>();
 
         /// <summary>
         /// The connections this <see cref="MultiConnection"/> consists of.
         /// </summary>
-        public List<IConnection> Connections { get; private set; }
+        public IList<IConnection> Connections { get; private set; }
 
         /// <summary>
         /// Access to individual connections by their identifier.
         /// </summary>
         /// <param name="connectionId"></param>
         /// <returns></returns>
-        public IConnection this[int connectionId] { get { return Connections.Find(conn => conn.Id == connectionId); } }
+        public IConnection this[int connectionId] { get { return Connections.First(conn => conn.Id == connectionId); } }
 
         /// <summary>
         /// Unique identifier of the connection. Nonnegative.
@@ -35,7 +58,7 @@ namespace AW2.Net
         /// </summary>
         public MultiConnection()
         {
-            Connections = new List<IConnection>();
+            Connections = new ConnectionList(messages);
         }
 
         /// <summary>
@@ -72,7 +95,7 @@ namespace AW2.Net
         /// </summary>
         public void Send(Message message)
         {
-            throw new NotImplementedException();
+            foreach (var conn in Connections) conn.Send(message);
         }
 
         /// <summary>

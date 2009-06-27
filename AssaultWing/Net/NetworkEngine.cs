@@ -180,7 +180,6 @@ namespace AW2.Net
             Log.Write("Server stops listening");
             Connection.StopListening();
             gameClientConnections.Dispose();
-            gameClientConnections = null;
         }
 
         /// <summary>

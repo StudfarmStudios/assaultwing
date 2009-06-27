@@ -28,7 +28,7 @@ namespace AW2.Net
     {
         private bool OnlyOneMessage { get; set; }
         private Action<T> Action { get; set; }
-        private Connection Source { get; set; }
+        private IConnection Source { get; set; }
 
         /// <summary>
         /// Is the handler not active.
@@ -39,9 +39,9 @@ namespace AW2.Net
         /// Creates a new MessageHander&lt;T&gt;.
         /// </summary>
         /// <param name="onlyOneMessage">Should the handler disactive itself after receiving one message.</param>
-        /// <param name="source">The <see cref="Connection"/> to receive messages from.</param>
+        /// <param name="source">The <see cref="IConnection"/> to receive messages from.</param>
         /// <param name="action">What to do for each received message.</param>
-        public MessageHandler(bool onlyOneMessage, Connection source, Action<T> action)
+        public MessageHandler(bool onlyOneMessage, IConnection source, Action<T> action)
         {
             OnlyOneMessage = onlyOneMessage;
             Source = source;

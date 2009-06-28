@@ -99,7 +99,7 @@ namespace AW2.Net
         public NetworkEngine(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            gameClientConnections = new MultiConnection();
+            gameClientConnections = new MultiConnection { Name = "Game Client Connections" };
             removedClientConnections = new List<IConnection>();
             MessageHandlers = new List<IMessageHandler>();
         }

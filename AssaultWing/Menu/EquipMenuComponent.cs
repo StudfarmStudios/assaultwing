@@ -316,14 +316,10 @@ namespace AW2.Menu
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
                         () => {
-                            net.MessageHandlers.Add(new MessageHandler<GobCreationMessage>(false, net.GameServerConnection, mess =>
-                            {
-                                // !!! HACK TODO
-                                AssaultWing.Instance.DataEngine.CheckGobCreationMessages();
-                            }));
+                            net.MessageHandlers.Add(new MessageHandler<GobCreationMessage>(false, net.GameServerConnection,
+                                AssaultWing.Instance.DataEngine.ProcessGobCreationMessage));
                             net.MessageHandlers.Add(new MessageHandler<ArenaStartRequest>(false, net.GameServerConnection, mess =>
                             {
-                                // TODO: Server must wait for AreanStartReply
                                 AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(new ArenaStartReply());
                                 AssaultWing.Instance.StartArena();
                             }));

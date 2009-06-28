@@ -253,7 +253,6 @@ namespace AW2.Menu
                         return;
                     }
                     Log.Write("Client connected to " + result.Value.RemoteEndPoint);
-                    menuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player.
                     AssaultWing.Instance.DataEngine.Players.Remove(player => AssaultWing.Instance.DataEngine.Players.Count > 1);
@@ -271,6 +270,8 @@ namespace AW2.Menu
                         foreach (JoinGameReply.IdChange change in reply.PlayerIdChanges)
                             AssaultWing.Instance.DataEngine.Players.First(player => player.Id == change.oldId).Id = change.newId;
                         CanonicalString.CanonicalForms = reply.CanonicalStrings;
+                        Log.Write("Game server accepted joining");
+                        menuEngine.ActivateComponent(MenuComponentType.Equip);
                     }));
 
                 });

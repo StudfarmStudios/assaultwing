@@ -1,6 +1,6 @@
-#region Using Statements
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,8 +15,6 @@ using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
 using Form = System.Windows.Forms.Form;
-
-#endregion
 
 namespace AW2
 {
@@ -98,6 +96,10 @@ namespace AW2
         GameTime gameTime;
         Rectangle clientBoundsMin;
         Form windowForm;
+
+        // Fields for game server starting an arena
+        bool startingArenaOnServer;
+        List<int> startedArenaOnClients = new List<int>();
 
         // HACK: Fields for frame stepping (for debugging)
         Control frameStepControl;
@@ -351,6 +353,14 @@ namespace AW2
             gameState = newState;
         }
 
+        void StartArenaImpl()
+        {
+            dataEngine.StartArena();
+            graphicsEngine.RearrangeViewports();
+            ChangeState(GameState.Gameplay);
+            soundEngine.PlayMusic(dataEngine.Arena);
+        }
+
         #endregion AssaultWing private methods
 
         #region Methods for game components
@@ -389,12 +399,18 @@ namespace AW2
         /// </summary>
         public void StartArena()
         {
-            dataEngine.StartArena();
             if (NetworkMode == NetworkMode.Server)
+            {
+                startingArenaOnServer = true;
+                startedArenaOnClients.Clear();
                 networkEngine.GameClientConnections.Send(new ArenaStartRequest());
-            graphicsEngine.RearrangeViewports();
-            ChangeState(GameState.Gameplay);
-            soundEngine.PlayMusic(dataEngine.Arena);
+                networkEngine.MessageHandlers.Add(new MessageHandler<ArenaStartReply>(false, networkEngine.GameClientConnections, mess =>
+                {
+                    startedArenaOnClients.Add(mess.ConnectionId);
+                }));
+            }
+            else
+                StartArenaImpl();
         }
 
         /// <summary>
@@ -756,6 +772,16 @@ namespace AW2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            if (startingArenaOnServer)
+            {
+                if (networkEngine.GameClientConnections.Connections.All(
+                    conn => startedArenaOnClients.Contains(conn.Id)))
+                {
+                    startingArenaOnServer = false;
+                    StartArenaImpl();
+                }
+            }
+
             // Frame stepping (for debugging)
             if (frameRunControl.Pulse)
             {

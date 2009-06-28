@@ -11,27 +11,67 @@ namespace AW2.Net
     /// </summary>
     public class MultiConnection : IConnection
     {
-        class ConnectionList : List<IConnection>
+        class ConnectionList : IList<IConnection>
         {
+            List<IConnection> list = new List<IConnection>();
             TypedQueueCollection<Message> messages;
+
             public ConnectionList(TypedQueueCollection<Message> messages)
             {
                 if (messages == null) throw new ArgumentNullException("Null message queue for MultiConnection.ConnectionList");
                 this.messages = messages;
             }
 
-            public new void Add(IConnection item)
+            #region IList<IConnection> Members
+
+            public void Add(IConnection item)
             {
-                base.Add(item);
+                list.Add(item);
                 messages.Add(item.Messages);
             }
 
-            public new bool Remove(IConnection item)
+            public bool Remove(IConnection item)
             {
-                bool success = base.Remove(item);
+                bool success = list.Remove(item);
                 if (success) messages.Remove(item.Messages);
                 return success;
             }
+
+            public int IndexOf(IConnection item) { return list.IndexOf(item); }
+
+            public void Insert(int index, IConnection item) { list.Insert(index,item); }
+
+            public void RemoveAt(int index) { list.RemoveAt(index); }
+
+            public IConnection this[int index] { get { return list[index]; } set { list[index] = value; } }
+
+            #endregion
+
+            #region ICollection<IConnection> Members
+
+            public void Clear() { list.Clear(); }
+
+            public bool Contains(IConnection item) { return list.Contains(item); }
+
+            public void CopyTo(IConnection[] array, int arrayIndex) { list.CopyTo(array,arrayIndex); }
+
+            public int Count { get { return list.Count; } }
+
+            public bool IsReadOnly { get { return ((ICollection<IConnection>)list).IsReadOnly; } }
+
+            #endregion
+
+            #region IEnumerable<IConnection> Members
+
+            public IEnumerator<IConnection> GetEnumerator() { return list.GetEnumerator(); }
+
+            #endregion
+
+            #region IEnumerable Members
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return ((System.Collections.IEnumerable)list).GetEnumerator(); }
+
+            #endregion
         }
 
         TypedQueueCollection<Message> messages = new TypedQueueCollection<Message>();
@@ -72,17 +112,7 @@ namespace AW2.Net
         /// <summary>
         /// Short, human-readable name of the connection.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.

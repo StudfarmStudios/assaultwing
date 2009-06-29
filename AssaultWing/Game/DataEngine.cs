@@ -31,13 +31,14 @@ namespace AW2.Game
             {
                 if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
                     Removed += item => ((IDisposable)item).Dispose();
-                NotFound += obj =>
+                NotFound += name =>
                 {
-                    Log.Write(string.Format("Warning: {0} {1} not found", kindName, obj.ToString()));
+                    // TODO: Ask someone to load the item
+                    Log.Write(string.Format("Warning: {0} {1} not found", kindName, name));
                     T substitute;
                     if (TryGetValue(substituteName, out substitute))
                         return substitute;
-                    string message = string.Format("Missing {0} {1} and default {2}", kindName, obj.ToString(), substituteName);
+                    string message = string.Format("Missing {0} {1} and default {2}", kindName, name, substituteName);
                     throw new KeyNotFoundException(message);
                 };
             }

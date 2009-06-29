@@ -5,20 +5,21 @@ namespace AW2.Helpers.Collections
     /// <summary>
     /// A collection that raises events when it is modified.
     /// </summary>
-    /// <typeparam name="T">The element type of the collection.</typeparam>
-    public interface IObservableCollection<T>
+    /// <typeparam name="TIndex">The index type of the collection.</typeparam>
+    /// <typeparam name="TElement">The element type of the collection.</typeparam>
+    public interface IObservableCollection<TIndex, TElement>
     {
         /// <summary>
         /// Called when an item has been added to the collection.
         /// The argument is the added item.
         /// </summary>
-        event Action<T> Added;
+        event Action<TElement> Added;
 
         /// <summary>
         /// Called when an item has been removed from the collection.
         /// The argument is the removed item. Not called when the whole collection is cleared.
         /// </summary>
-        event Action<T> Removed;
+        event Action<TElement> Removed;
 
         /// <summary>
         /// Called when an item was not found from the collection,
@@ -26,6 +27,6 @@ namespace AW2.Helpers.Collections
         /// The argument describes which item was looked for.
         /// The expected return value is a substitute item.
         /// </summary>
-        event Func<object, T> NotFound;
+        event Func<TIndex, TElement> NotFound;
     }
 }

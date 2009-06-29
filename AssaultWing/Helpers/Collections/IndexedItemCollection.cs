@@ -9,11 +9,11 @@ namespace AW2.Helpers.Collections
     /// A collection of indexed items.
     /// </summary>
     /// <typeparam name="T">The element type of the collection.</typeparam>
-    public class IndexedItemCollection<T> : IList<T>, IObservableCollection<T>
+    public class IndexedItemCollection<T> : IList<T>, IObservableCollection<int, T>
     {
         List<T> items = new List<T>();
 
-        #region IObservableCollection<T> Members
+        #region IObservableCollection<int, T> Members
 
         /// <summary>
         /// Called when an item has been added to the collection.
@@ -33,7 +33,7 @@ namespace AW2.Helpers.Collections
         /// The argument describes which item was looked for.
         /// The expected return value is a substitute item.
         /// </summary>
-        public event Func<object, T> NotFound;
+        public event Func<int, T> NotFound;
 
         #endregion
 

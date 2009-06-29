@@ -11,7 +11,7 @@ namespace AW2.Game
     /// and vice versa, operations on the <see cref="GobCollection"/> are forwarded
     /// to the underlying arena layers.
     /// </summary>
-    public class GobCollection : IEnumerable<Gob>, IObservableCollection<Gob>
+    public class GobCollection : IEnumerable<Gob>, IObservableCollection<object, Gob>
     {
         private bool isEnumerating;
 
@@ -94,7 +94,7 @@ namespace AW2.Game
         /// </summary>
         public event Predicate<Gob> Removing;
 
-        #region IObservableCollection<Gob> Members
+        #region IObservableCollection<object, Gob> Members
 
         /// <summary>
         /// Called when an item has been added to the collection.

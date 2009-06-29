@@ -8,12 +8,12 @@ namespace AW2.Helpers.Collections
     /// A collection of named items.
     /// </summary>
     /// <typeparam name="T">The element type of the collection.</typeparam>
-    public class NamedItemCollection<T> : IDictionary<CanonicalString, T>, IObservableCollection<T>
+    public class NamedItemCollection<T> : IDictionary<CanonicalString, T>, IObservableCollection<CanonicalString, T>
         where T : class
     {
         List<T> items = new List<T>();
 
-        #region IObservableCollection<T> Members
+        #region IObservableCollection<CanonicalString, T> Members
 
         /// <summary>
         /// Called when an item has been added to the collection.
@@ -33,7 +33,7 @@ namespace AW2.Helpers.Collections
         /// The argument describes which item was looked for.
         /// The expected return value is a substitute item.
         /// </summary>
-        public event Func<object, T> NotFound;
+        public event Func<CanonicalString, T> NotFound;
 
         #endregion
 

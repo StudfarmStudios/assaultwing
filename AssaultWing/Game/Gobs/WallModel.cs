@@ -125,7 +125,7 @@ namespace AW2.Game.Gobs
         void Set3DModel()
         {
             // Recover wall data from its 3D model.
-            Model model = AssaultWing.Instance.DataEngine.Models[wallModelName];
+            Model model = AssaultWing.Instance.Content.Load<Model>(wallModelName);
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
             Graphics3D.GetModelData(model, out vertexData, out indexData);

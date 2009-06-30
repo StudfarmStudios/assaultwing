@@ -25,25 +25,6 @@ namespace AW2.Game
     /// The gameplay backlayer is for 2D graphics that needs to be behind gobs.
     public class DataEngine
     {
-        class NamedDataCollection<T> : NamedItemCollection<T> where T : class
-        {
-            public NamedDataCollection(string kindName, CanonicalString substituteName)
-            {
-                if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
-                    Removed += item => ((IDisposable)item).Dispose();
-                NotFound += name =>
-                {
-                    // TODO: Ask someone to load the item
-                    Log.Write(string.Format("Warning: {0} {1} not found", kindName, name));
-                    T substitute;
-                    if (TryGetValue(substituteName, out substitute))
-                        return substitute;
-                    string message = string.Format("Missing {0} {1} and default {2}", kindName, name, substituteName);
-                    throw new KeyNotFoundException(message);
-                };
-            }
-        }
-
         #region Fields
 
         List<Viewport> viewports;
@@ -63,16 +44,6 @@ namespace AW2.Game
         Vector2 arenaDimensionsOnRadar;
         Matrix arenaToRadarTransform;
         ProgressBar progressBar;
-
-        /// <summary>
-        /// The textures used in static graphics, indexed by <c>TextureName</c>.
-        /// </summary>
-        Texture2D[] overlays;
-
-        /// <summary>
-        /// The fonts used in static graphics, indexed by <c>FontName</c>.
-        /// </summary>
-        SpriteFont[] fonts;
 
         /// <summary>
         /// The viewport we are currently drawing into.
@@ -99,21 +70,6 @@ namespace AW2.Game
         /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
         public Arena Arena { get; private set; }
 
-        /// <summary>
-        /// 3D models available for the game.
-        /// </summary>
-        public NamedItemCollection<Model> Models { get; private set; }
-
-        /// <summary>
-        /// Textures available for the game.
-        /// </summary>
-        public NamedItemCollection<Texture2D> Textures { get; private set; }
-
-        /// <summary>
-        /// Previews of arenas.
-        /// </summary>
-        public NamedItemCollection<Texture2D> ArenaPreviews { get; private set; }
-
         #endregion Properties
 
         /// <summary>
@@ -138,75 +94,12 @@ namespace AW2.Game
             Weapons = new IndexedItemCollection<Weapon>();
             Weapons.Added += weapon => { weapon.Arena = Arena; };
 
-            Models = new NamedDataCollection<Model>("model", (CanonicalString)"dummymodel");
-            Textures = new NamedDataCollection<Texture2D>("texture", (CanonicalString)"dummytexture");
-            ArenaPreviews = new NamedDataCollection<Texture2D>("arena preview", (CanonicalString)"noPreview");
-
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
             templates = new List<Pair<Type, List<Pair<string, object>>>>();
             arenas = new Dictionary<string, Arena>();
-            overlays = new Texture2D[Enum.GetValues(typeof(TextureName)).Length];
-            fonts = new SpriteFont[Enum.GetValues(typeof(FontName)).Length];
             ArenaPlaylist = new Playlist(new string[] { "dummyarena" });
         }
-
-        #region textures
-
-        /// <summary>
-        /// Stores a static 2D texture by name, overwriting any texture previously stored by the same name.
-        /// </summary>
-        /// <param name="name">The name of the 2D texture.</param>
-        /// <param name="texture">The 2D texture.</param>
-        public void AddTexture(TextureName name, Texture2D texture)
-        {
-            overlays[(int)name] = texture;
-        }
-
-        /// <summary>
-        /// Returns a 2D texture used in static graphics.
-        /// </summary>
-        /// <param name="name">The name of the texture.</param>
-        /// <returns>The texture.</returns>
-        public Texture2D GetTexture(TextureName name)
-        {
-            return overlays[(int)name];
-        }
-
-        #endregion textures
-
-        #region fonts
-
-        /// <summary>
-        /// Stores a static font by name, overwriting any font previously stored by the same name.
-        /// </summary>
-        /// <param name="name">The name of the font.</param>
-        /// <param name="font">The font.</param>
-        public void AddFont(FontName name, SpriteFont font)
-        {
-            fonts[(int)name] = font;
-        }
-
-        /// <summary>
-        /// Returns a font used in static graphics.
-        /// </summary>
-        /// <param name="name">The name of the font.</param>
-        /// <returns>The font.</returns>
-        public SpriteFont GetFont(FontName name)
-        {
-            return fonts[(int)name];
-        }
-
-        /// <summary>
-        /// Disposes of all fonts.
-        /// </summary>
-        public void ClearFonts()
-        {
-            for (int i = 0; i < fonts.Length; ++i)
-                fonts[i] = null;
-        }
-
-        #endregion fonts
 
         #region arenas
 

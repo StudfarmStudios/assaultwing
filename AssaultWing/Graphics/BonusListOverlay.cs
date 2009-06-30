@@ -262,7 +262,7 @@ namespace AW2.Graphics
                             ? player.Ship.Weapon1
                             : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1RealName);
                         bonusText = player.Weapon1RealName;
-                        bonusIcon = data.Textures[weapon1.IconName];
+                        bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(weapon1.IconName);
                     }
                     break;
                 case PlayerBonus.Weapon2Upgrade:
@@ -271,12 +271,12 @@ namespace AW2.Graphics
                             ? player.Ship.Weapon2
                             : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2RealName);
                         bonusText = player.Weapon2RealName;
-                        bonusIcon = data.Textures[weapon2.IconName];
+                        bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconName);
                     }
                     break;
                 default:
                     bonusText = "<unknown>";
-                    bonusIcon = data.GetTexture(TextureName.IconWeaponLoad);
+                    bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
                     Log.Write("Warning: Don't know how to draw player bonus box " + playerBonus);
                     throw new ArgumentException("Don't know how to draw player bonus box " + playerBonus);
             }
@@ -317,12 +317,12 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            bonusBackgroundTexture = data.GetTexture(TextureName.BonusBackground);
-            bonusIconWeapon1LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon1LoadTime);
-            bonusIconWeapon2LoadTimeTexture = data.GetTexture(TextureName.BonusIconWeapon2LoadTime);
-            bonusDurationTexture = data.GetTexture(TextureName.BonusDuration);
-            bonusFont = data.GetFont(FontName.Overlay);
+            var content = AssaultWing.Instance.Content;
+            bonusBackgroundTexture = content.Load<Texture2D>("gui_bonus_bg");
+            bonusIconWeapon1LoadTimeTexture = content.Load<Texture2D>("b_icon_rapid_fire_1");
+            bonusIconWeapon2LoadTimeTexture = content.Load<Texture2D>("b_icon_rapid_fire_1");
+            bonusDurationTexture = content.Load<Texture2D>("gui_bonus_duration");
+            bonusFont = content.Load<SpriteFont>("ConsoleFont");
         }
 
         /// <summary>

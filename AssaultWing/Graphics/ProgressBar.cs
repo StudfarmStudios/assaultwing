@@ -232,10 +232,10 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            backgroundTexture = data.GetTexture(TextureName.ProgressBarBackground);
-            barTexture = data.GetTexture(TextureName.ProgressBarFill);
-            flowTexture = data.GetTexture(TextureName.ProgressBarFlow);
+            var content = AssaultWing.Instance.Content;
+            backgroundTexture = content.Load<Texture2D>("menu_progressbar_bg");
+            barTexture = content.Load<Texture2D>("menu_progressbar_fill");
+            flowTexture = content.Load<Texture2D>("menu_progressbar_advancer");
         }
 
         /// <summary>

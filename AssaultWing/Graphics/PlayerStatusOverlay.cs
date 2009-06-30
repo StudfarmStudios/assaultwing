@@ -165,13 +165,13 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            statusDisplayTexture = data.GetTexture(TextureName.StatusDisplay);
-            barShipTexture = data.GetTexture(TextureName.BarShip);
-            iconShipTexture = data.GetTexture(TextureName.IconShipsLeft);
-            barMainTexture = data.GetTexture(TextureName.BarMain);
-            iconWeaponLoadTexture = data.GetTexture(TextureName.IconWeaponLoad);
-            barSpecialTexture = data.GetTexture(TextureName.BarSpecial);
+            var content = AssaultWing.Instance.Content;
+            statusDisplayTexture = content.Load<Texture2D>("gui_playerinfo_bg");
+            barShipTexture = content.Load<Texture2D>("gui_playerinfo_bar_ship");
+            iconShipTexture = content.Load<Texture2D>("gui_playerinfo_ship");
+            barMainTexture = content.Load<Texture2D>("gui_playerinfo_bar_main");
+            iconWeaponLoadTexture = content.Load<Texture2D>("gui_playerinfo_white_ball");
+            barSpecialTexture = content.Load<Texture2D>("gui_playerinfo_bar_special");
         }
 
         /// <summary>

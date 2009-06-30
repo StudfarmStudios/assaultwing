@@ -68,10 +68,10 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            fontHuge = data.GetFont(FontName.MenuFontHuge);
-            fontBig = data.GetFont(FontName.MenuFontBig);
-            fontSmall = data.GetFont(FontName.MenuFontSmall);
+            var content = AssaultWing.Instance.Content;
+            fontHuge = content.Load<SpriteFont>("MenuFontHuge");
+            fontBig = content.Load<SpriteFont>("MenuFontBig");
+            fontSmall = content.Load<SpriteFont>("MenuFontSmall");
         }
 
         /// <summary>

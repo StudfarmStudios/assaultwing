@@ -84,10 +84,10 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            barFillTexture = data.GetTexture(TextureName.MiniDamageFill);
-            barBackgroundTexture = data.GetTexture(TextureName.MiniDamageBackground);
-            healthFont = data.GetFont(FontName.Overlay);
+            var content = AssaultWing.Instance.Content;
+            barFillTexture = content.Load<Texture2D>("mini_hpbar_fill");
+            barBackgroundTexture = content.Load<Texture2D>("mini_hpbar_bg");
+            healthFont = content.Load<SpriteFont>("ConsoleFont");
         }
 
         /// <summary>

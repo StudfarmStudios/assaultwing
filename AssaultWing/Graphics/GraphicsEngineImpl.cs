@@ -12,259 +12,11 @@ using AW2.Helpers;
 namespace AW2.Graphics
 {
     /// <summary>
-    /// Type of texture used in static game graphics.
-    /// </summary>
-    public enum TextureName
-    {
-        #region Player viewport graphics
-
-        /// <summary>
-        /// Vertical viewport separator.
-        /// </summary>
-        ViewportSeparatorVertical,
-
-        /// <summary>
-        /// Player status display background.
-        /// </summary>
-        StatusDisplay,
-
-        /// <summary>
-        /// Ship damage bar.
-        /// </summary>
-        BarShip,
-
-        /// <summary>
-        /// Primary weapon load bar.
-        /// </summary>
-        BarMain,
-
-        /// <summary>
-        /// Secondary weapon load bar.
-        /// </summary>
-        BarSpecial,
-
-        /// <summary>
-        /// Player ships left icon.
-        /// </summary>
-        IconShipsLeft,
-
-        /// <summary>
-        /// Weapon load icon.
-        /// </summary>
-        IconWeaponLoad,
-
-        /// <summary>
-        /// Load bar marker.
-        /// </summary>
-        IconBarMarker,
-
-        /// <summary>
-        /// Player bonus box background.
-        /// </summary>
-        BonusBackground,
-
-        /// <summary>
-        /// Player bonus duration meter.
-        /// </summary>
-        BonusDuration,
-
-        /// <summary>
-        /// Player bonus icon for primary weapon load time upgrade.
-        /// </summary>
-        BonusIconWeapon1LoadTime,
-
-        /// <summary>
-        /// Player bonus icon for secondary weapon load time upgrade.
-        /// </summary>
-        BonusIconWeapon2LoadTime,
-
-        /// <summary>
-        /// Player bonus icon for secondary weapon upgrade Berserkers.
-        /// </summary>
-        Weapon2Berserkers,
-
-        /// <summary>
-        /// Player bonus icon for secondary weapon upgrade Bouncegun.
-        /// </summary>
-        Weapon2Bouncegun,
-
-        /// <summary>
-        /// Player radar background.
-        /// </summary>
-        Radar,
-
-        /// <summary>
-        /// Ship on radar
-        /// </summary>
-        RadarShip,
-
-        /// <summary>
-        /// Chat box background.
-        /// </summary>
-        ChatBox,
-
-        /// <summary>
-        /// Mini status display damage bar background.
-        /// </summary>
-        MiniDamageBackground,
-
-        /// <summary>
-        /// Mini status display damage bar fill.
-        /// </summary>
-        MiniDamageFill,
-
-        #endregion Player viewport graphics
-
-        /// <summary>
-        /// Game overlay dialog background.
-        /// </summary>
-        OverlayDialogBackground,
-
-        /// <summary>
-        /// Progress bar background.
-        /// </summary>
-        ProgressBarBackground,
-
-        /// <summary>
-        /// Progress bar filling.
-        /// </summary>
-        ProgressBarFill,
-
-        /// <summary>
-        /// Progress bar flow effect.
-        /// </summary>
-        ProgressBarFlow,
-
-        /// <summary>
-        /// Menu system background.
-        /// </summary>
-        MenuBackground,
-
-        #region Main menu graphics
-
-        /// <summary>
-        /// Main menu component background.
-        /// </summary>
-        MainMenuBackground,
-
-        /// <summary>
-        /// Main menu cursor.
-        /// </summary>
-        MainMenuCursor,
-
-        /// <summary>
-        /// Main menu highlight.
-        /// </summary>
-        MainMenuHighlight,
-
-        #endregion Main menu graphics
-
-        #region Equip menu graphics
-
-        /// <summary>
-        /// Equip menu component background.
-        /// </summary>
-        EquipMenuBackground,
-
-        /// <summary>
-        /// Equip menu background for network game status display.
-        /// </summary>
-        EquipMenuStatusDisplay,
-
-        /// <summary>
-        /// Equip menu background for one player pane.
-        /// </summary>
-        EquipMenuPlayerBackground,
-
-        /// <summary>
-        /// Equip menu player 1 pane top.
-        /// </summary>
-        EquipMenuPlayerTop1,
-
-        /// <summary>
-        /// Equip menu player 2 pane top.
-        /// </summary>
-        EquipMenuPlayerTop2,
-
-        /// <summary>
-        /// Equip menu cursor for player pane main display.
-        /// </summary>
-        EquipMenuCursorMain,
-
-        /// <summary>
-        /// Equip menu highlight for player pane main display.
-        /// </summary>
-        EquipMenuHighlightMain,
-
-        #endregion Equip menu graphics
-
-        #region Arena menu graphics
-
-        /// <summary>
-        /// Arena selection menu component background.
-        /// </summary>
-        ArenaMenuBackground,
-
-        /// <summary>
-        /// Arena selection menu cursor.
-        /// </summary>
-        ArenaMenuCursor,
-
-        /// <summary>
-        /// Arena selection menu highlight.
-        /// </summary>
-        ArenaMenuHighlight,
-
-        /// <summary>
-        /// Arena selection menu checkbox tag.
-        /// </summary>
-        ArenaMenuCheckboxTag,
-
-        #endregion Arena menu graphics
-    }
-
-    /// <summary>
-    /// Type of font used in static game graphics.
-    /// </summary>
-    public enum FontName
-    {
-        /// <summary>
-        /// Font used in overlay graphics.
-        /// </summary>
-        Overlay,
-
-        /// <summary>
-        /// Huge font used in the menu system.
-        /// </summary>
-        MenuFontHuge,
-
-        /// <summary>
-        /// Big font used in the menu system.
-        /// </summary>
-        MenuFontBig,
-
-        /// <summary>
-        /// Small font used in the menu system.
-        /// </summary>
-        MenuFontSmall,
-    }
-
-    /// <summary>
     /// Basic graphics engine.
     /// </summary>
     class GraphicsEngineImpl : DrawableGameComponent
     {
         SpriteBatch spriteBatch;
-
-        /// <summary>
-        /// Names of overlay graphics.
-        /// </summary>
-        string[] overlayNames;
-
-        /// <summary>
-        /// Names of static fonts.
-        /// </summary>
-        string[] fontNames;
 
         /// <summary>
         /// Creates a new graphics engine.
@@ -273,57 +25,6 @@ namespace AW2.Graphics
         public GraphicsEngineImpl(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            overlayNames = new string[] {
-                // Player viewport
-                "viewport_border_vertical",
-                "gui_playerinfo_bg",
-                "gui_playerinfo_bar_ship",
-                "gui_playerinfo_bar_main",
-                "gui_playerinfo_bar_special",
-                "gui_playerinfo_ship",
-                "gui_playerinfo_white_ball",
-                "gui_playerinfo_white_rect",
-                "gui_bonus_bg",
-                "gui_bonus_duration",
-                "b_icon_rapid_fire_1",
-                "b_icon_rapid_fire_1",
-                "b_icon_berserkers",
-                "b_icon_bouncegun",
-                "gui_radar_bg",
-                "gui_playerinfo_white_ball", // HACK: Ship sprite on radar display
-                "gui_console_bg",
-                "mini_hpbar_bg",
-                "mini_hpbar_fill",
-                // General
-                "ingame_dialog",
-                "menu_progressbar_bg",
-                "menu_progressbar_fill",
-                "menu_progressbar_advancer",
-                "menu_rustywall_bg",
-                // Main menu
-                "menu_main_bg",
-                "menu_main_cursor",
-                "menu_main_hilite",
-                // Equip menu
-                "menu_equip_bg",
-                "menu_equip_status_display",
-                "menu_equip_player_bg",
-                "menu_equip_player_color_green",
-                "menu_equip_player_color_red",
-                "menu_equip_cursor_large",
-                "menu_equip_hilite_large",
-                // Arena menu
-                "menu_levels_bg",
-                "menu_levels_cursor",
-                "menu_levels_hilite",
-                "menu_levels_tag",
-            };
-            fontNames = new string[] {
-                "ConsoleFont",
-                "MenuFontHuge",
-                "MenuFontBig",
-                "MenuFontSmall",
-            };
         }
 
         /// <summary>
@@ -336,36 +37,29 @@ namespace AW2.Graphics
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
 
             // Loop through gob types and load all the 3D models and textures they need.
+            // The purpose of this is to load from disk here and cache the content for fast access later.
             data.ForEachTypeTemplate<Gob>(gobTemplate =>
             {
                 foreach (var modelName in gobTemplate.ModelNames)
-                    if (!data.Models.ContainsKey(modelName))
-                        data.Models.Add(modelName, AssaultWing.Instance.Content.Load<Model>(modelName));
+                    AssaultWing.Instance.Content.Load<Model>(modelName);
                 foreach (var textureName in gobTemplate.TextureNames)
-                    if (!data.Textures.ContainsKey(textureName))
-                        data.Textures.Add(textureName, AssaultWing.Instance.Content.Load<Texture2D>(textureName));
+                    AssaultWing.Instance.Content.Load<Texture2D>(textureName);
             });
 
             // Load all textures that each weapon needs.
+            // The purpose of this is to load from disk here and cache the content for fast access later.
             data.ForEachTypeTemplate<Weapon>(weaponTemplate =>
             {
                 foreach (var textureName in weaponTemplate.TextureNames)
-                    if (!data.Textures.ContainsKey(textureName))
-                        data.Textures.Add(textureName, AssaultWing.Instance.Content.Load<Texture2D>(textureName));
+                    AssaultWing.Instance.Content.Load<Texture2D>(textureName);
             });
 
-            // Load static graphics.
-            foreach (TextureName overlay in Enum.GetValues(typeof(TextureName)))
-                data.AddTexture(overlay, AssaultWing.Instance.Content.Load<Texture2D>(overlayNames[(int)overlay]));
-
-            data.ArenaPreviews.Add((CanonicalString)"noPreview", AssaultWing.Instance.Content.Load<Texture2D>("no_preview"));
+            // Load arena previews.
+            // The purpose of this is to load from disk here and cache the content for fast access later.
+            AssaultWing.Instance.Content.Load<Texture2D>("no_preview");
             foreach (var name in data.ArenaPlaylist)
-                try { data.ArenaPreviews.Add((CanonicalString)name, AssaultWing.Instance.Content.Load<Texture2D>(name.ToLower() + "_preview")); }
+                try { AssaultWing.Instance.Content.Load<Texture2D>(name.ToLower() + "_preview"); }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException) { }
-
-            // Load static fonts.
-            foreach (FontName font in Enum.GetValues(typeof(FontName)))
-                data.AddFont(font, AssaultWing.Instance.Content.Load<SpriteFont>(fontNames[(int)font]));
 
             // Load arena related content if an arena is being played right now.
             if (data.Arena != null)
@@ -390,24 +84,18 @@ namespace AW2.Graphics
             {
                 // Load the layer's gob types.
                 foreach (var modelName in gob.ModelNames)
-                    if (!data.Models.ContainsKey(modelName)) 
-                        data.Models.Add(modelName, AssaultWing.Instance.Content.Load<Model>(modelName));
+                    AssaultWing.Instance.Content.Load<Model>(modelName);
 
                 // Load the layer's gobs' textures.
                 foreach (var textureName in gob.TextureNames)
-                    if (!data.Textures.ContainsKey(textureName))
-                        data.Textures.Add(textureName, AssaultWing.Instance.Content.Load<Texture2D>(textureName));
+                    AssaultWing.Instance.Content.Load<Texture2D>(textureName);
 
                 gob.LoadContent();
             }
 
             foreach (ArenaLayer layer in arenaTemplate.Layers)
-            {
-                // Load the layer's parallax texture.
-                var parallaxName = layer.ParallaxName;
-                if (parallaxName != "" && !data.Textures.ContainsKey(parallaxName))
-                    data.Textures.Add(parallaxName, AssaultWing.Instance.Content.Load<Texture2D>(parallaxName));
-            }
+                if (layer.ParallaxName != "")
+                    AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
         }
 
         /// <summary>
@@ -423,10 +111,6 @@ namespace AW2.Graphics
                 spriteBatch.Dispose();
                 spriteBatch = null;
             }
-            data.Textures.Clear();
-            data.ArenaPreviews.Clear();
-            data.Models.Clear();
-            data.ClearFonts();
 
             // Propagate UnloadContent to other components that are known to
             // contain references to graphics content.
@@ -464,7 +148,7 @@ namespace AW2.Graphics
             spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
             AssaultWing.Instance.DataEngine.ForEachViewportSeparator(delegate(ViewportSeparator separator)
             {
-                Texture2D separatorTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.ViewportSeparatorVertical);
+                Texture2D separatorTexture = AssaultWing.Instance.Content.Load<Texture2D>("viewport_border_vertical");
                 Vector2 separatorOrigin = new Vector2(separatorTexture.Width, 0) / 2;
                 if (separator.vertical)
                 {

@@ -60,8 +60,8 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            chatBoxTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.ChatBox);
-            chatBoxFont = AssaultWing.Instance.DataEngine.GetFont(FontName.Overlay);
+            chatBoxTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_console_bg");
+            chatBoxFont = AssaultWing.Instance.Content.Load<SpriteFont>("ConsoleFont");
         }
 
         /// <summary>

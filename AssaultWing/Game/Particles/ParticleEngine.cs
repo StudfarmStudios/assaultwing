@@ -464,7 +464,7 @@ namespace AW2.Game.Particles
         /// <param name="scale">Scale of graphics.</param>
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            Texture2D tex = AssaultWing.Instance.DataEngine.Textures[textureName];
+            Texture2D tex = AssaultWing.Instance.Content.Load<Texture2D>(textureName);
             Matrix transform = gameToScreen;
             
             foreach (Particle part in particles)

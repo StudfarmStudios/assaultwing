@@ -126,16 +126,16 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            menuBigFont = data.GetFont(FontName.MenuFontBig);
-            menuSmallFont = data.GetFont(FontName.MenuFontSmall);
-            backgroundTexture = data.GetTexture(TextureName.EquipMenuBackground);
-            cursorMainTexture = data.GetTexture(TextureName.EquipMenuCursorMain);
-            highlightMainTexture = data.GetTexture(TextureName.EquipMenuHighlightMain);
-            playerPaneTexture = data.GetTexture(TextureName.EquipMenuPlayerBackground);
-            player1PaneTopTexture = data.GetTexture(TextureName.EquipMenuPlayerTop1);
-            player2PaneTopTexture = data.GetTexture(TextureName.EquipMenuPlayerTop2);
-            statusPaneTexture = data.GetTexture(TextureName.EquipMenuStatusDisplay);
+            var content = AssaultWing.Instance.Content;
+            menuBigFont = content.Load<SpriteFont>("MenuFontBig");
+            menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
+            backgroundTexture = content.Load<Texture2D>("menu_equip_bg");
+            cursorMainTexture = content.Load<Texture2D>("menu_equip_cursor_large");
+            highlightMainTexture = content.Load<Texture2D>("menu_equip_hilite_large");
+            playerPaneTexture = content.Load<Texture2D>("menu_equip_player_bg");
+            player1PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_green");
+            player2PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_red");
+            statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
         }
 
         /// <summary>
@@ -372,9 +372,9 @@ namespace AW2.Menu
                 Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(typeof(Gob), player.ShipName);
                 Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
                 Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
-                Texture2D shipTexture = data.Textures[ship.IconEquipName];
-                Texture2D weapon1Texture = data.Textures[weapon1.IconEquipName];
-                Texture2D weapon2Texture = data.Textures[weapon2.IconEquipName];
+                Texture2D shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.IconEquipName);
+                Texture2D weapon1Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon1.IconEquipName);
+                Texture2D weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconEquipName);
                 spriteBatch.Draw(shipTexture, playerPanePos + playerPaneCursorDeltaPos, Color.White);
                 spriteBatch.Draw(weapon1Texture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
                 spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);

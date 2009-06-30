@@ -77,7 +77,7 @@ namespace AW2.Graphics
         /// </summary>
         protected override void LoadContent()
         {
-            dialogTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.OverlayDialogBackground);
+            dialogTexture = AssaultWing.Instance.Content.Load<Texture2D>("ingame_dialog");
             spriteBatch = new SpriteBatch(this.GraphicsDevice);
         }
 

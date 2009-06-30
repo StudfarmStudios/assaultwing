@@ -46,7 +46,7 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            font = AssaultWing.Instance.DataEngine.GetFont(FontName.MenuFontBig);
+            font = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontBig");
         }
 
         /// <summary>

@@ -137,11 +137,11 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            menuBigFont = data.GetFont(FontName.MenuFontBig);
-            backgroundTexture = data.GetTexture(TextureName.MainMenuBackground);
-            cursorTexture = data.GetTexture(TextureName.MainMenuCursor);
-            highlightTexture = data.GetTexture(TextureName.MainMenuHighlight);
+            var content = AssaultWing.Instance.Content;
+            menuBigFont = content.Load<SpriteFont>("MenuFontBig");
+            backgroundTexture = content.Load<Texture2D>("menu_main_bg");
+            cursorTexture = content.Load<Texture2D>("menu_main_cursor");
+            highlightTexture = content.Load<Texture2D>("menu_main_hilite");
         }
 
         /// <summary>

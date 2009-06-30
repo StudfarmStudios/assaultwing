@@ -70,8 +70,8 @@ namespace AW2.Graphics
         /// </summary>
         public override void LoadContent()
         {
-            radarDisplayTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.Radar);
-            shipOnRadarTexture = AssaultWing.Instance.DataEngine.GetTexture(TextureName.RadarShip);
+            radarDisplayTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_radar_bg");
+            shipOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
         }
 
         /// <summary>

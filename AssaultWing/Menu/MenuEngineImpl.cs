@@ -140,7 +140,6 @@ namespace AW2.Menu
         /// </summary>
         protected override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
@@ -151,14 +150,14 @@ namespace AW2.Menu
             effect.World = Matrix.Identity;
             effect.VertexColorEnabled = true;
             effect.TextureEnabled = false;
-            backgroundTexture = data.GetTexture(TextureName.MenuBackground);
-            smallFont = data.GetFont(FontName.MenuFontSmall);
+            backgroundTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_rustywall_bg");
+            smallFont = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontSmall");
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
             foreach (MenuComponent component in components)
                 component.LoadContent();
-            data.ProgressBar.LoadContent();
+            AssaultWing.Instance.DataEngine.ProgressBar.LoadContent();
 
             base.LoadContent();
         }

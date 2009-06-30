@@ -479,7 +479,7 @@ namespace AW2.Graphics
                     Vector2 pos = WorldAreaMin(0) * -layerScale;
                     pos.Y = -pos.Y;
                     Vector2 fillPos = new Vector2();
-                    Texture2D tex = AssaultWing.Instance.DataEngine.Textures[layer.ParallaxName];
+                    Texture2D tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                     int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
                     pos.X = pos.X - mult * tex.Width;
                     mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);

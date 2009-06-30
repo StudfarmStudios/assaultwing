@@ -323,7 +323,7 @@ namespace AW2.Game.Gobs
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.layerDepth, 0, 1);
-                Texture2D texture = AssaultWing.Instance.DataEngine.Textures[particle.textureName];
+                Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(particle.textureName);
                 float drawRotation = coordinateSystem == CoordinateSystem.Game
                     ? particle.rotation
                     : particle.rotation + Rotation;

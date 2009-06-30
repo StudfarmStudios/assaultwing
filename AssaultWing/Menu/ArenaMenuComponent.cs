@@ -115,14 +115,14 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            var data = AssaultWing.Instance.DataEngine;
-            menuBigFont = data.GetFont(FontName.MenuFontBig);
-            menuSmallFont = data.GetFont(FontName.MenuFontSmall);
-            backgroundTexture = data.GetTexture(TextureName.ArenaMenuBackground);
-            cursorTexture = data.GetTexture(TextureName.ArenaMenuCursor);
-            highlightTexture = data.GetTexture(TextureName.ArenaMenuHighlight);
-            tagTexture = data.GetTexture(TextureName.ArenaMenuCheckboxTag);
-            arenaPreview = data.ArenaPreviews[(CanonicalString)"noPreview"];
+            var content = AssaultWing.Instance.Content;
+            menuBigFont = content.Load<SpriteFont>("MenuFontBig");
+            menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
+            backgroundTexture = content.Load<Texture2D>("menu_levels_bg");
+            cursorTexture = content.Load<Texture2D>("menu_levels_cursor");
+            highlightTexture = content.Load<Texture2D>("menu_levels_hilite");
+            tagTexture = content.Load<Texture2D>("menu_levels_tag");
+            arenaPreview = content.Load<Texture2D>("no_preview");
         }
 
         /// <summary>
@@ -148,7 +148,15 @@ namespace AW2.Menu
                 arenaListStart = arenaListStart.Clamp(currentArena - menuItemCount + 1, currentArena);
 
                 // Change preview image.
-                arenaPreview = AssaultWing.Instance.DataEngine.ArenaPreviews[(CanonicalString)arenaInfos[currentArena].name];
+                try
+                {
+                    var previewName = arenaInfos[currentArena].name.ToLower() + "_preview";
+                    arenaPreview = AssaultWing.Instance.Content.Load<Texture2D>(previewName);
+                }
+                catch (Microsoft.Xna.Framework.Content.ContentLoadException)
+                {
+                    arenaPreview = AssaultWing.Instance.Content.Load<Texture2D>("no_preview");
+                }
             }
         }
 

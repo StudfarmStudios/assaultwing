@@ -175,7 +175,7 @@ namespace AW2.Game.Gobs
             effect = defaultEffect;
             silhouetteEffect = defaultSilhouetteEffect;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
-            texture = AssaultWing.Instance.DataEngine.Textures[textureName];
+            texture = AssaultWing.Instance.Content.Load<Texture2D>(textureName);
             base.LoadContent();
         }
 

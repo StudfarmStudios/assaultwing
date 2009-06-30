@@ -476,6 +476,7 @@ namespace AW2.Game
                         // the creation and deletion messages arrived just after we 
                         // finished receiving creation messages but right before we 
                         // started receiving deletion messages for this frame.
+                        AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.Requeue(message);
                         break;
                     }
                     gob.DieOnClient();
@@ -489,9 +490,9 @@ namespace AW2.Game
                 var message = new GobUpdateMessage();
                 foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
                 {
-                    if (!gob.IsRelevant) return;
-                    if (!gob.Movable) return;
-                    if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) return;
+                    if (!gob.IsRelevant) continue;
+                    if (!gob.Movable) continue;
+                    if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
                     gob.LastNetworkUpdate = now;
                     message.AddGob(gob.Id, gob, SerializationModeFlags.VaryingData);
                 }
@@ -503,7 +504,7 @@ namespace AW2.Game
             {
                 foreach (var player in Players)
                 {
-                    if (!player.MustUpdateToClients) return;
+                    if (!player.MustUpdateToClients) continue;
                     player.MustUpdateToClients = false;
                     var message = new PlayerUpdateMessage();
                     message.PlayerId = player.Id;

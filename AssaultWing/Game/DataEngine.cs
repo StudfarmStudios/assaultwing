@@ -529,6 +529,7 @@ namespace AW2.Game
             {
                 gob.Layer = preparedArena.Layers[message.LayerIndex];
                 preparedArena.Gobs.Add(gob);
+                preparedArena.Prepare(gob);
             }
             else
             {

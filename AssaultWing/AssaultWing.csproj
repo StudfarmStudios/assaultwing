@@ -147,6 +147,7 @@
     <Compile Include="Game\Gobs\WallModel.cs">
       <Name>WallModel</Name>
     </Compile>
+    <Compile Include="Graphics\AWContentManager.cs" />
     <Compile Include="Helpers\Collections\ITypedQueue.cs" />
     <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
     <Compile Include="Game\Particles\DotEmitter.cs" />

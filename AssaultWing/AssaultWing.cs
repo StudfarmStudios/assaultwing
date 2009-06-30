@@ -83,7 +83,6 @@ namespace AW2
         PhysicsEngine physicsEngine;
         SoundEngineImpl soundEngine;
         EventEngineImpl eventEngine;
-        ContentManager content;
         GraphicsDeviceManager graphics;
         int preferredWindowWidth, preferredWindowHeight;
         SurfaceFormat preferredWindowFormat;
@@ -228,7 +227,7 @@ namespace AW2
             clientBoundsMin.Width = 1000;
             clientBoundsMin.Height = 800;
 
-            content = new ContentManager(Services);
+            Content = new AWContentManager(Services);
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = preferredWindowWidth;
             graphics.PreferredBackBufferHeight = preferredWindowHeight;

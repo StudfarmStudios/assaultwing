@@ -339,49 +339,33 @@ namespace AW2.Graphics
             data.ForEachTypeTemplate<Gob>(gobTemplate =>
             {
                 foreach (var modelName in gobTemplate.ModelNames)
-                {
-                    if (data.Models.ContainsKey(modelName)) continue;
-                    Model model = LoadModel(modelName);
-                    if (model != null)
-                        data.Models.Add(modelName, model);
-                }
+                    if (!data.Models.ContainsKey(modelName))
+                        data.Models.Add(modelName, AssaultWing.Instance.Content.Load<Model>(modelName));
                 foreach (var textureName in gobTemplate.TextureNames)
-                {
-                    if (data.Textures.ContainsKey(textureName)) continue;
-                    Texture2D texture = LoadTexture(textureName);
-                    if (texture != null)
-                        data.Textures.Add(textureName, texture);
-                }
+                    if (!data.Textures.ContainsKey(textureName))
+                        data.Textures.Add(textureName, AssaultWing.Instance.Content.Load<Texture2D>(textureName));
             });
 
             // Load all textures that each weapon needs.
             data.ForEachTypeTemplate<Weapon>(weaponTemplate =>
             {
                 foreach (var textureName in weaponTemplate.TextureNames)
-                {
-                    if (data.Textures.ContainsKey(textureName)) continue;
-                    Texture2D texture = LoadTexture(textureName);
-                    if (texture != null)
-                        data.Textures.Add(textureName, texture);
-                }
+                    if (!data.Textures.ContainsKey(textureName))
+                        data.Textures.Add(textureName, AssaultWing.Instance.Content.Load<Texture2D>(textureName));
             });
 
             // Load static graphics.
             foreach (TextureName overlay in Enum.GetValues(typeof(TextureName)))
-                data.AddTexture(overlay, LoadTexture(overlayNames[(int)overlay]));
+                data.AddTexture(overlay, AssaultWing.Instance.Content.Load<Texture2D>(overlayNames[(int)overlay]));
 
-            data.ArenaPreviews.Add((CanonicalString)"noPreview", LoadTexture("no_preview"));            
+            data.ArenaPreviews.Add((CanonicalString)"noPreview", AssaultWing.Instance.Content.Load<Texture2D>("no_preview"));
             foreach (var name in data.ArenaPlaylist)
-            {
-                string arenaName = name;
-                Texture2D preview = LoadTexture(arenaName.ToLower() + "_preview");
-                if (preview != null)
-                    data.ArenaPreviews.Add((CanonicalString)arenaName, preview);
-            }
+                try { data.ArenaPreviews.Add((CanonicalString)name, AssaultWing.Instance.Content.Load<Texture2D>(name.ToLower() + "_preview")); }
+                catch (Microsoft.Xna.Framework.Content.ContentLoadException) { }
 
             // Load static fonts.
             foreach (FontName font in Enum.GetValues(typeof(FontName)))
-                data.AddFont(font, LoadFont(fontNames[(int)font]));
+                data.AddFont(font, AssaultWing.Instance.Content.Load<SpriteFont>(fontNames[(int)font]));
 
             // Load arena related content if an arena is being played right now.
             if (data.Arena != null)
@@ -406,21 +390,13 @@ namespace AW2.Graphics
             {
                 // Load the layer's gob types.
                 foreach (var modelName in gob.ModelNames)
-                {
-                    if (data.Models.ContainsKey(modelName)) continue;
-                    Model model = LoadModel(modelName);
-                    if (model != null)
-                        data.Models.Add(modelName, model);
-                }
+                    if (!data.Models.ContainsKey(modelName)) 
+                        data.Models.Add(modelName, AssaultWing.Instance.Content.Load<Model>(modelName));
 
                 // Load the layer's gobs' textures.
                 foreach (var textureName in gob.TextureNames)
-                {
-                    if (data.Textures.ContainsKey(textureName)) continue;
-                    Texture2D texture = LoadTexture(textureName);
-                    if (texture != null)
-                        data.Textures.Add(textureName, texture);
-                }
+                    if (!data.Textures.ContainsKey(textureName))
+                        data.Textures.Add(textureName, AssaultWing.Instance.Content.Load<Texture2D>(textureName));
 
                 gob.LoadContent();
             }
@@ -430,11 +406,7 @@ namespace AW2.Graphics
                 // Load the layer's parallax texture.
                 var parallaxName = layer.ParallaxName;
                 if (parallaxName != "" && !data.Textures.ContainsKey(parallaxName))
-                {
-                    Texture2D parallaxTexture = LoadTexture(parallaxName);
-                    if (parallaxTexture != null)
-                        data.Textures.Add(parallaxName, parallaxTexture);
-                }
+                    data.Textures.Add(parallaxName, AssaultWing.Instance.Content.Load<Texture2D>(parallaxName));
             }
         }
 
@@ -464,66 +436,6 @@ namespace AW2.Graphics
             data.UnloadContent();
 
             base.UnloadContent();
-        }
-
-        /// <summary>
-        /// Loads a texture by name and manages errors.
-        /// </summary>
-        /// <param name="name">The names of the textures.</param>
-        /// <returns>The loaded texture, or <b>null</b> on error.</returns>
-        private Texture2D LoadTexture(string name)
-        {
-            try
-            {
-                string textureNamePath = System.IO.Path.Combine(Paths.Textures, name);
-                Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(textureNamePath);
-                return texture;
-            }
-            catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
-            {
-                Log.Write("Error loading texture " + name + " (" + e.Message + ")");
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Loads a font by name and manages errors.
-        /// </summary>
-        /// <param name="name">The name of the font.</param>
-        /// <returns>The loaded font, or <b>null</b> on error.</returns>
-        private SpriteFont LoadFont(string name)
-        {
-            try
-            {
-                string fontNamePath = System.IO.Path.Combine(Paths.Fonts, name);
-                SpriteFont font = AssaultWing.Instance.Content.Load<SpriteFont>(fontNamePath);
-                return font;
-            }
-            catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
-            {
-                Log.Write("Error loading font " + name + " (" + e.Message + ")");
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Loads a 3D model by name and manages errors.
-        /// </summary>
-        /// <param name="name">The name of the 3D model.</param>
-        /// <returns>The loaded 3D model, or <b>null</b> on error.</returns>
-        private Model LoadModel(string name)
-        {
-            try
-            {
-                string modelNamePath = System.IO.Path.Combine(Paths.Models, name);
-                Model model = AssaultWing.Instance.Content.Load<Model>(modelNamePath);
-                return model;
-            }
-            catch (Microsoft.Xna.Framework.Content.ContentLoadException e)
-            {
-                Log.Write("Error loading 3D model " + name + " (" + e.Message + ")");
-            }
-            return null;
         }
 
         /// <summary>

@@ -207,7 +207,7 @@ namespace AW2.Game
                     yield return gob;
             isEnumerating = false;
             foreach (var gob in addedGobs) Add(gob);
-            foreach (var gob in removedGobs) Remove(gob);
+            foreach (var gob in removedGobs) Remove(gob, true);
             addedGobs.Clear();
             removedGobs.Clear();
         }

@@ -20,6 +20,13 @@ namespace AW2.Game.Gobs
         CanonicalString wallModelName;
 
         /// <summary>
+        /// Collision primitives, translated according to the gob's location.
+        /// </summary>
+        /// Note: This field overrides the type parameter <see cref="Gob.collisionAreas"/>.
+        [RuntimeState, LimitationSwitch(typeof(RuntimeStateAttribute), typeof(TypeParameterAttribute))]
+        CollisionArea[] wallCollisionAreas;
+
+        /// <summary>
         /// Target of the move.
         /// </summary>
         [RuntimeState]
@@ -51,6 +58,7 @@ namespace AW2.Game.Gobs
         public MovingWall()
         {
             wallModelName = (CanonicalString)"dummymodel";
+            wallCollisionAreas = new CollisionArea[0];
             targetPos = new Vector2(100, 200);
             movingCurve = new Curve();
             movingCurve.Keys.Add(new CurveKey(0, 0));
@@ -71,10 +79,11 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Triggers an predefined action on the ActionGob.
+        /// Triggers a predefined action on the ActionGob.
         /// </summary>
         public override void Act()
         {
+            if (startTime.Ticks >= 0) return;
             startPos = pos;
             startTime = AssaultWing.Instance.GameTime.TotalGameTime;
         }
@@ -85,6 +94,8 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             ModelName = wallModelName;
+            collisionAreas = wallCollisionAreas;
+            foreach (var area in wallCollisionAreas) area.Owner = this;
             base.Activate();
         }
 
@@ -93,12 +104,14 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Update()
         {
-            base.Update();
             if (startTime.Ticks >= 0)
             {
                 float seconds = (float)(AssaultWing.Instance.GameTime.TotalGameTime - startTime).TotalSeconds;
-                pos = Vector2.Lerp(startPos, targetPos, movingCurve.Evaluate(seconds));
+                var nextPos = Vector2.Lerp(startPos, targetPos, movingCurve.Evaluate(seconds));
+                move = (nextPos - pos) / (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                move = move.Clamp(0, 500); // limit movement speed to reasonable bounds
             }
+            base.Update();
         }
 
         #region Methods related to serialisation
@@ -114,6 +127,9 @@ namespace AW2.Game.Gobs
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)wallModelName.Canonical);
+                writer.Write((byte)wallCollisionAreas.Length);
+                foreach (var area in wallCollisionAreas)
+                    area.Serialize(writer, AW2.Net.SerializationModeFlags.All);
             }
         }
 
@@ -128,6 +144,11 @@ namespace AW2.Game.Gobs
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 ModelName = wallModelName = new CanonicalString(reader.ReadInt32());
+                int collisionAreaCount = reader.ReadByte();
+                collisionAreas = wallCollisionAreas = new CollisionArea[collisionAreaCount];
+                for (int i = 0; i < collisionAreaCount; ++i)
+                    wallCollisionAreas[i].Deserialize(reader, AW2.Net.SerializationModeFlags.All);
+                foreach (var area in wallCollisionAreas) area.Owner = this;
             }
         }
 

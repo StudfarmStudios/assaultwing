@@ -124,6 +124,7 @@
     <Compile Include="Events\SoundEffectEvent.cs">
       <Name>SoundEffectEvent</Name>
     </Compile>
+    <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs">
       <Name>Arena</Name>
     </Compile>
@@ -135,10 +136,12 @@
     <Compile Include="Game\GobCollection.cs" />
     <Compile Include="Game\Gobs\Bonus.cs" />
     <Compile Include="Game\Gobs\BounceBullet.cs" />
+    <Compile Include="Game\Gobs\CollisionTrigger.cs" />
     <Compile Include="Game\Gobs\Dock.cs">
       <Name>Dock</Name>
     </Compile>
     <Compile Include="Game\Gobs\Explosion.cs" />
+    <Compile Include="Game\Gobs\MovingWall.cs" />
     <Compile Include="Game\Gobs\Peng.cs" />
     <Compile Include="Game\Gobs\PropModel.cs" />
     <Compile Include="Game\Gobs\Rocket.cs" />

@@ -65,10 +65,8 @@ namespace AW2.Game
         {
             float oldSpeed = gob.Move.Length();
             gob.Move += force / gob.Mass * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-            float speed = gob.Move.Length();
             float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
-            if (speed > speedLimit)
-                gob.Move *= speedLimit / speed;
+            gob.Move = gob.Move.Clamp(0, speedLimit);
         }
 
         /// <summary>

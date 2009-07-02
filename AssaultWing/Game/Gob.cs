@@ -215,6 +215,12 @@ namespace AW2.Game
         protected bool movable;
 
         /// <summary>
+        /// True iff the gob is moved by gravity
+        /// </summary>
+        /// Subclasses should set this according to their needs.
+        protected bool gravitating;
+
+        /// <summary>
         /// Preferred maximum time between the gob's state updates
         /// from the game server to game clients, in real time.
         /// </summary>
@@ -550,6 +556,11 @@ namespace AW2.Game
         /// </summary>
         public bool Movable { get { return movable; } }
 
+        /// <summary>
+        /// True iff the gob is moved by gravity.
+        /// </summary>
+        public bool Gravitating { get { return gravitating; } }
+
         #endregion Gob Properties
 
         #region Network properties
@@ -654,6 +665,7 @@ namespace AW2.Game
         public Gob(string typeName)
         {
             this.typeName = typeName;
+            gravitating = true;
             InitializeTypeParameters();
             SetId();
             owner = null;

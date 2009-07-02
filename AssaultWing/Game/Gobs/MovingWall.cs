@@ -74,6 +74,7 @@ namespace AW2.Game.Gobs
         public MovingWall(string typeName)
             : base(typeName)
         {
+            gravitating = false;
             wallModelName = (CanonicalString)"dummymodel";
             startTime = new TimeSpan(-1);
         }

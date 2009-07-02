@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Net;
 
 namespace AW2.Helpers.Geometric
 {
@@ -111,6 +112,7 @@ namespace AW2.Helpers.Geometric
 
         /// <summary>
         /// Transforms the geometric primitive by a transformation matrix.
+        /// The result is a polygon.
         /// </summary>
         /// <param name="transformation">The transformation matrix.</param>
         /// <returns>The transformed geometric primitive.</returns>
@@ -119,12 +121,14 @@ namespace AW2.Helpers.Geometric
         public IGeomPrimitive Transform(Matrix transformation)
         {
 #if TRUSTED_VISIBILITY_BREACH
-            return new Rectangle(Vector2.Transform(Min, transformation), 
-                                 Vector2.Transform(Max, transformation));
-#else
-            return new Rectangle(Vector2.Transform(min, transformation), 
-                                 Vector2.Transform(max, transformation));
+            var min = Min;
+            var max = Max;
 #endif
+            var p1 = Vector2.Transform(min, transformation);
+            var p2 = Vector2.Transform(new Vector2(min.X, max.Y), transformation);
+            var p3 = Vector2.Transform(max, transformation);
+            var p4 = Vector2.Transform(new Vector2(max.X, min.Y), transformation);
+            return new Polygon(new Vector2[] { p1, p2, p3, p4 });
         }
 
         /// <summary>
@@ -137,6 +141,47 @@ namespace AW2.Helpers.Geometric
         public float DistanceTo(Vector2 point)
         {
             return Geometry.Distance(new Point(point), this);
+        }
+
+        #endregion
+
+        #region INetworkSerializable Members
+
+        /// <summary>
+        /// Serialises the object to a binary writer.
+        /// </summary>
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                var min = Min;
+                var max = Max;
+#endif
+                writer.Write((float)min.X);
+                writer.Write((float)min.Y);
+                writer.Write((float)max.X);
+                writer.Write((float)max.Y);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the object from a binary writer.
+        /// </summary>
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                Vector2 min, max;
+#endif
+                min = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                max = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+#if TRUSTED_VISIBILITY_BREACH
+                Min = min;
+                Max = max;
+#endif
+            }
         }
 
         #endregion

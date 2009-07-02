@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Net;
 
 namespace AW2.Helpers.Geometric
 {
@@ -115,5 +116,41 @@ namespace AW2.Helpers.Geometric
         }
 
         #endregion IGeomPrimitive Members
+
+        #region INetworkSerializable Members
+
+        /// <summary>
+        /// Serialises the object to a binary writer.
+        /// </summary>
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                var location = Location;
+#endif
+                writer.Write((float)location.X);
+                writer.Write((float)location.Y);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the object from a binary writer.
+        /// </summary>
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                var
+#endif
+                location = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+#if TRUSTED_VISIBILITY_BREACH
+                Location = location;
+#endif
+            }
+        }
+
+        #endregion
     }
 }

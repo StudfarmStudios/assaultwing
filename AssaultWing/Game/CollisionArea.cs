@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Net;
 
 namespace AW2.Game
 {
@@ -144,7 +145,7 @@ namespace AW2.Game
     /// </summary>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("Type:{type} Name:{name} Area:{area}")]
-    public class CollisionArea
+    public class CollisionArea : INetworkSerializable
     {
         /// <summary>
         /// Upper limit for the number of bits in the type representing <see cref="CollisionAreaType"/>.
@@ -277,5 +278,36 @@ namespace AW2.Game
             this.owner = owner;
             this.collisionData = null;
         }
+
+        #region INetworkSerializable Members
+
+        /// <summary>
+        /// Serialises the object to a binary writer.
+        /// </summary>
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((int)type);
+                writer.Write((int)collidesAgainst);
+                writer.Write((int)cannotOverlap);
+                writer.Write((string)name, 32, true);
+                area.Serialize(writer, SerializationModeFlags.All);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the object from a binary writer.
+        /// </summary>
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        {
+            type = (CollisionAreaType)reader.ReadInt32();
+            collidesAgainst = (CollisionAreaType)reader.ReadInt32();
+            cannotOverlap = (CollisionAreaType)reader.ReadInt32();
+            name = reader.ReadString(32);
+            area.Deserialize(reader, SerializationModeFlags.All);
+        }
+
+        #endregion
     }
 }

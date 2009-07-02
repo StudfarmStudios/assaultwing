@@ -8,7 +8,7 @@ namespace AW2.Helpers.Geometric
     /// <summary>
     /// Interface for a geometric primitive.
     /// </summary>
-    public interface IGeomPrimitive
+    public interface IGeomPrimitive : AW2.Net.INetworkSerializable
     {
         /// <summary>
         /// A rectangle that contains the geometric primitive.

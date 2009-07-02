@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Net;
 
 namespace AW2.Helpers.Geometric
 {
@@ -47,6 +48,20 @@ namespace AW2.Helpers.Geometric
         {
             return 0;
         }
+
+        #endregion
+
+        #region INetworkSerializable Members
+
+        /// <summary>
+        /// Serialises the object to a binary writer.
+        /// </summary>
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode) { }
+
+        /// <summary>
+        /// Deserialises the object from a binary writer.
+        /// </summary>
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode) { }
 
         #endregion
     }

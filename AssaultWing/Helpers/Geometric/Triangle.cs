@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Net;
 
 namespace AW2.Helpers.Geometric
 {
@@ -196,6 +197,52 @@ namespace AW2.Helpers.Geometric
         public void MakeConsistent(Type limitationAttribute)
         {
             UpdateBoundingBox();
+        }
+
+        #endregion
+
+        #region INetworkSerializable Members
+
+        /// <summary>
+        /// Serialises the object to a binary writer.
+        /// </summary>
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                var p1 = P1;
+                var p2 = P2;
+                var p3 = P3;
+#endif
+                writer.Write((float)p1.X);
+                writer.Write((float)p1.Y);
+                writer.Write((float)p2.X);
+                writer.Write((float)p2.Y);
+                writer.Write((float)p3.X);
+                writer.Write((float)p3.Y);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the object from a binary writer.
+        /// </summary>
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+#if TRUSTED_VISIBILITY_BREACH
+                Vector2 p1, p2, p3;
+#endif
+                p1 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                p2 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                p3 = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+#if TRUSTED_VISIBILITY_BREACH
+                P1 = p1;
+                P2 = p2;
+                P3 = p3;
+#endif
+            }
         }
 
         #endregion

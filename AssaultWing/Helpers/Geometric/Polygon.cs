@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Net;
 
 namespace AW2.Helpers.Geometric
 {
@@ -453,6 +454,42 @@ namespace AW2.Helpers.Geometric
         {
             UpdateBoundingBox();
             UpdateFaceStrips();
+        }
+
+        #endregion
+
+        #region INetworkSerializable Members
+
+        /// <summary>
+        /// Serialises the object to a binary writer.
+        /// </summary>
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((int)vertices.Length);
+                foreach (var vertex in vertices)
+                {
+                    writer.Write((float)vertex.X);
+                    writer.Write((float)vertex.Y);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the object from a binary writer.
+        /// </summary>
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                int vertexCount = reader.ReadInt32();
+                vertices = new Vector2[vertexCount];
+                for (int i = 0; i < vertexCount; ++i)
+                    vertices[i] = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                UpdateBoundingBox();
+                UpdateFaceStrips();
+            }
         }
 
         #endregion

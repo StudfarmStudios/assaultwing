@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Net;
 
 namespace AW2.Helpers.Geometric
 {
@@ -102,6 +103,35 @@ namespace AW2.Helpers.Geometric
         public void MakeConsistent(Type limitationAttribute)
         {
             UpdateBoundingBox();
+        }
+
+        #endregion
+
+        #region INetworkSerializable Members
+
+        /// <summary>
+        /// Serialises the object to a binary writer.
+        /// </summary>
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((float)center.X);
+                writer.Write((float)center.Y);
+                writer.Write((float)radius);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the object from a binary writer.
+        /// </summary>
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                center = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                radius = reader.ReadSingle();
+            }
         }
 
         #endregion

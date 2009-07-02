@@ -208,6 +208,27 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Clamps the length of a Vector2 to an interval.
+        /// </summary>
+        /// <param name="value">The value to clamp.</param>
+        /// <param name="min">The smallest allowed length.</param>
+        /// <param name="max">The largest allowed length.</param>
+        /// <returns>The value clamped by its length to the specified interval.</returns>
+        public static Vector2 Clamp(this Vector2 value, float min, float max)
+        {
+            if (max < min) throw new ArgumentException("Clamp max smaller than min");
+            float length = value.Length();
+            float newLength = MathHelper.Clamp(length, min, max);
+            if (newLength != length)
+            {
+                if (value == Vector2.Zero) throw new InvalidOperationException("Cannot scale zero vector");
+                if (newLength < 0) throw new InvalidOperationException("Cannot scale vector to negative length");
+                return value * newLength / length;
+            }
+            return value;
+        }
+
+        /// <summary>
         /// Returns a world matrix given a scaling factor, rotation angle in radians 
         /// and center X and Y coordinates.
         /// </summary>
@@ -401,6 +422,37 @@ namespace AW2.Helpers
                 Assert.AreEqual(2, (-4).Modulo(3));
 
                 Assert.AreEqual(-3234567 + 2 * 2000000, (-3234567).Modulo(2000000));
+            }
+
+            /// <summary>
+            /// Tests Vector2 clamping
+            /// </summary>
+            [Test]
+            public void TestVector2Clamp()
+            {
+                Assert.AreEqual(Vector2.Zero, Vector2.Zero.Clamp(0, 0));
+                Assert.AreEqual(Vector2.Zero, Vector2.One.Clamp(0, 0));
+                Assert.AreEqual(5 * Vector2.UnitX, Vector2.UnitX.Clamp(5, 10));
+                Assert.AreEqual(7 * Vector2.UnitY, (9 * Vector2.UnitY).Clamp(3, 7));
+                Assert.AreEqual(new Vector2(-3, -4), new Vector2(-6, -8).Clamp(1, 5));
+                try
+                {
+                    Vector2.One.Clamp(-2, -1);
+                    Assert.Fail("Failed to throw exception");
+                }
+                catch { }
+                try
+                {
+                    Vector2.One.Clamp(5, 3);
+                    Assert.Fail("Failed to throw exception");
+                }
+                catch { }
+                try
+                {
+                    Vector2.Zero.Clamp(1, 2);
+                    Assert.Fail("Failed to throw exception");
+                }
+                catch { }
             }
 
             /// <summary>

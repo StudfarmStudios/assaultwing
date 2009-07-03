@@ -75,8 +75,7 @@ namespace AW2.Game.Gobs
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             // We assume that we have only one collision area which collides with movables.
-            if (theirArea.Owner.Gravitating)
-                AssaultWing.Instance.PhysicsEngine.ApplyForce(theirArea.Owner, force * theirArea.Owner.Mass);
+            AssaultWing.Instance.PhysicsEngine.ApplyForce(theirArea.Owner, force * theirArea.Owner.Mass);
         }
 
         #region Methods related to serialisation

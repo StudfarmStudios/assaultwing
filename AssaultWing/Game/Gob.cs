@@ -215,7 +215,7 @@ namespace AW2.Game
         protected bool movable;
 
         /// <summary>
-        /// True iff the gob is moved by gravity
+        /// True iff the gob's movement is affected by gravity and other forces.
         /// </summary>
         /// Subclasses should set this according to their needs.
         protected bool gravitating;
@@ -557,7 +557,7 @@ namespace AW2.Game
         public bool Movable { get { return movable; } }
 
         /// <summary>
-        /// True iff the gob is moved by gravity.
+        /// True iff the gob's movement is affected by gravity and other forces.
         /// </summary>
         public bool Gravitating { get { return gravitating; } }
 

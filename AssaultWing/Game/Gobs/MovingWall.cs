@@ -33,15 +33,18 @@ namespace AW2.Game.Gobs
         Vector2 targetPos;
 
         /// <summary>
-        /// Moving curve. Acts as linear coefficient of position from the original
-        /// positino towards the target position. Curve argument is game time in 
-        /// seconds, measured from the beginning of the movement.
+        /// Amount of time it takes to move, in game time seconds.
         /// </summary>
-        [RuntimeState]
-        Curve movingCurve;
+        const float movementTime = 2;
 
+        /// <summary>
+        /// Original starting position.
+        /// </summary>
         Vector2 startPos;
+
+        MovementCurve movingCurve;
         TimeSpan startTime;
+        bool goingToTarget; // if false, then going to startPos
 
         /// <summary>
         /// Names of all models that this gob type will ever use.
@@ -60,12 +63,6 @@ namespace AW2.Game.Gobs
             wallModelName = (CanonicalString)"dummymodel";
             wallCollisionAreas = new CollisionArea[0];
             targetPos = new Vector2(100, 200);
-            movingCurve = new Curve();
-            movingCurve.Keys.Add(new CurveKey(0, 0));
-            movingCurve.Keys.Add(new CurveKey(3, 1));
-            movingCurve.ComputeTangents(CurveTangent.Linear);
-            movingCurve.PreLoop = CurveLoopType.Constant;
-            movingCurve.PostLoop = CurveLoopType.Constant;
         }
 
         /// <summary>
@@ -84,9 +81,12 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Act()
         {
-            if (startTime.Ticks >= 0) return;
-            startPos = pos;
-            startTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            var now = AssaultWing.Instance.GameTime.TotalGameTime;
+            if ((now - startTime).TotalSeconds < 1) return;
+            movingCurve.SetTarget(goingToTarget ? startPos : targetPos,
+                now, movementTime, MovementCurve.Curvature.SlowFastSlow);
+            goingToTarget = !goingToTarget;
+            startTime = now;
         }
 
         /// <summary>
@@ -97,6 +97,8 @@ namespace AW2.Game.Gobs
             ModelName = wallModelName;
             collisionAreas = wallCollisionAreas;
             foreach (var area in wallCollisionAreas) area.Owner = this;
+            startPos = pos;
+            movingCurve = new MovementCurve(startPos);
             base.Activate();
         }
 
@@ -107,8 +109,7 @@ namespace AW2.Game.Gobs
         {
             if (startTime.Ticks >= 0)
             {
-                float seconds = (float)(AssaultWing.Instance.GameTime.TotalGameTime - startTime).TotalSeconds;
-                var nextPos = Vector2.Lerp(startPos, targetPos, movingCurve.Evaluate(seconds));
+                var nextPos = movingCurve.Evaluate(AssaultWing.Instance.GameTime.TotalGameTime);
                 move = (nextPos - pos) / (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
                 move = move.Clamp(0, 500); // limit movement speed to reasonable bounds
             }

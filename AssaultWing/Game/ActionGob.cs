@@ -41,5 +41,33 @@ namespace AW2.Game
         /// Triggers an predefined action on the ActionGob.
         /// </summary>
         public abstract void Act();
+
+        #region Methods related to serialisation
+
+        /// <summary>
+        /// Serialises the gob to a binary writer.
+        /// </summary>
+        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((string)actionGobName, 32, true);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary reader.
+        /// </summary>
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        {
+            base.Deserialize(reader, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                actionGobName = reader.ReadString(32);
+            }
+        }
+
+        #endregion Methods related to serialisation
     }
 }

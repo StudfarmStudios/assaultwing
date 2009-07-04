@@ -19,9 +19,32 @@ namespace AW2.Game.Gobs
         string actionGobName;
 
         /// <summary>
+        /// Use only via property <see cref="ActionGob"/>.
+        /// </summary>
+        ActionGob actionGob;
+        bool actionGobInitialized;
+
+        /// <summary>
         /// The action gob to trigger.
         /// </summary>
-        public ActionGob ActionGob { get; private set; }
+        ActionGob ActionGob
+        {
+            get
+            {
+                if (!actionGobInitialized)
+                {
+                    actionGob = (ActionGob)Arena.Gobs.FirstOrDefault(gobb => gobb is ActionGob && ((ActionGob)gobb).ActionGobName == actionGobName);
+                    if (actionGob == null) Log.Write("Warning: Trigger gob cannot find ActionGob " + actionGobName);
+                    else actionGobInitialized = true;
+                }
+                return actionGob;
+            }
+            set
+            {
+                actionGob = value;
+                actionGobInitialized = true;
+            }
+        }
 
         /// <summary>
         /// Creates an uninitialised collision trigger.
@@ -46,16 +69,6 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
-        public override void Activate()
-        {
-            base.Activate();
-            ActionGob = (ActionGob)Arena.Gobs.FirstOrDefault(gob => gob is ActionGob && ((ActionGob)gob).ActionGobName == actionGobName);
-            if (ActionGob == null) Log.Write("Warning: Trigger gob cannot find ActionGob " + actionGobName);
-        }
-
-        /// <summary>
         /// Performs collision operations for the case when one of this gob's collision areas
         /// is overlapping one of another gob's collision areas.
         /// </summary>
@@ -74,8 +87,36 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (ActionGob.Dead)
+            if (ActionGob != null && ActionGob.Dead)
                 ActionGob = null;
         }
+
+        #region Methods related to serialisation
+
+        /// <summary>
+        /// Serialises the gob to a binary writer.
+        /// </summary>
+        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((string)actionGobName, 32, true);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary reader.
+        /// </summary>
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        {
+            base.Deserialize(reader, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                actionGobName = reader.ReadString(32);
+            }
+        }
+
+        #endregion Methods related to serialisation
     }
 }

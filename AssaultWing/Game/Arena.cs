@@ -949,6 +949,9 @@ namespace AW2.Game
                     if (move1Delta.Length() > minimumCollisionDelta)
                         gob1.InflictDamage(CollisionDamage(gob1, move1Delta),
                             new DeathCause(gob1, DeathCauseType.Collision, gob2));
+                }
+                if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                {
                     if (move2after.Length() > minimumCollisionDelta)
                         gob2.InflictDamage(CollisionDamage(gob2, move2after),
                             new DeathCause(gob2, DeathCauseType.Collision, gob1));

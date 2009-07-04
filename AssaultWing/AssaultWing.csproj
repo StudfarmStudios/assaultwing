@@ -235,6 +235,7 @@
     <Compile Include="Helpers\Collections\TypedQueueCollection.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Half.cs" />
+    <Compile Include="Helpers\MovementCurve.cs" />
     <Compile Include="Helpers\Pair.cs" />
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />

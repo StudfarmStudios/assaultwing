@@ -52,18 +52,11 @@ namespace AW2.Menu
         bool showHelpText, showProgressBar;
         string helpText;
         Action finishAction; // what to do when progress bar finishes
-        Vector2 view; // top left corner of menu view in menu system coordinates
-        Vector2 viewFrom, viewTo; // start and goal of current movement of 'view'
-        TimeSpan viewMoveStartTime; // time of start of view movement
+        Vector2 view; // center of menu view in menu system coordinates
+        Vector2 viewTarget;
+        MovementCurve viewCurve;
         int viewWidth, viewHeight; // how many pixels to show scaled down to the screen
         int screenWidth, screenHeight; // last known dimensions of client bounds
-
-        /// <summary>
-        /// Movement curve of 'view' from 'viewFrom' to 'viewTo' as a function of 
-        /// seconds from start of movement to linear interpolation weight (0..1) of 
-        /// 'viewTo' against 'viewFrom'.
-        /// </summary>
-        Curve viewMoveCurve;
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
         VertexPositionColor[] shadowVertexData;
@@ -117,17 +110,7 @@ namespace AW2.Menu
             components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
             // The components are created in Initialize() when other resources are ready.
 
-            viewMoveCurve = new Curve();
-            viewMoveCurve.Keys.Add(new CurveKey(0.0f, 0.0f));
-            viewMoveCurve.Keys.Add(new CurveKey(0.5f, 0.8f));
-            viewMoveCurve.Keys.Add(new CurveKey(1.0f, 0.98f));
-            viewMoveCurve.Keys.Add(new CurveKey(1.5f, 1.0f));
-            viewMoveCurve.PreLoop = CurveLoopType.Constant;
-            viewMoveCurve.PostLoop = CurveLoopType.Constant;
-            viewMoveCurve.ComputeTangents(CurveTangent.Smooth);
-            viewMoveCurve.Keys[0].TangentOut = 0;
-            viewMoveCurve.Keys[viewMoveCurve.Keys.Count - 1].TangentIn = 0;
-
+            viewCurve = new MovementCurve(Vector2.Zero);
             screenWidth = AssaultWing.Instance.ClientBounds.Width;
             screenHeight = AssaultWing.Instance.ClientBounds.Height;
 
@@ -208,9 +191,9 @@ namespace AW2.Menu
             MenuComponent newComponent = components[(int)activeComponent];
 
             // Make menu view scroll to the new component's position.
-            viewFrom = view;
-            viewTo = newComponent.Center - new Vector2(viewWidth, viewHeight) / 2;
-            viewMoveStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            viewTarget = newComponent.Center;
+            viewCurve.SetTarget(viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, 1,
+                MovementCurve.Curvature.FastSlow);
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             activeComponentActivatedOnce = false;
@@ -249,14 +232,10 @@ namespace AW2.Menu
                 IsHelpTextVisible = true;
                 finishAction();
             }
-
-            // Update menu view position.
-            float moveTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - viewMoveStartTime).TotalSeconds;
-            float moveWeight = viewMoveCurve.Evaluate(moveTime);
-            view = Vector2.Lerp(viewFrom, viewTo, moveWeight);
+            view = viewCurve.Evaluate(AssaultWing.Instance.GameTime.TotalRealTime);
 
             // Activate 'activeComponent' if the view has just come close enough to its center.
-            if (!activeComponentActivatedOnce && moveWeight > 0.7f)
+            if (!activeComponentActivatedOnce && Vector2.Distance(view, viewTarget) < 200)
             {
                 activeComponentActivatedOnce = true;
                 components[(int)activeComponent].Active = true;
@@ -319,7 +298,7 @@ namespace AW2.Menu
 
             // Draw menu components.
             foreach (MenuComponent component in components)
-                component.Draw(view, spriteBatch);
+                component.Draw(view - new Vector2(viewWidth, viewHeight) / 2, spriteBatch);
 
             spriteBatch.End();
 
@@ -403,11 +382,6 @@ namespace AW2.Menu
             int oldViewHeight = viewHeight;
             SetViewDimensions();
             InitializeShadow();
-
-            // Make menu view move to a new position suitable for the new client bounds.
-            Vector2 displacement = new Vector2(oldViewWidth - viewWidth, oldViewHeight - viewHeight) / 2;
-            viewFrom += displacement;
-            viewTo += displacement;
         }
 
         /// <summary>

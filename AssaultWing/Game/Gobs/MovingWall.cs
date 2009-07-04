@@ -149,7 +149,10 @@ namespace AW2.Game.Gobs
                 int collisionAreaCount = reader.ReadByte();
                 collisionAreas = wallCollisionAreas = new CollisionArea[collisionAreaCount];
                 for (int i = 0; i < collisionAreaCount; ++i)
+                {
+                    wallCollisionAreas[i] = new CollisionArea();
                     wallCollisionAreas[i].Deserialize(reader, AW2.Net.SerializationModeFlags.All);
+                }
                 foreach (var area in wallCollisionAreas) area.Owner = this;
             }
         }

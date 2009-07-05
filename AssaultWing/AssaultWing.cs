@@ -100,7 +100,8 @@ namespace AW2
         bool startingArenaOnServer;
         List<int> startedArenaOnClients = new List<int>();
 
-        // HACK: Fields for frame stepping (for debugging)
+        // HACK: Fields for frame stepping and configuration reloading
+        Control arenaReload;
         Control frameStepControl;
         Control frameRunControl;
         bool frameStep;
@@ -237,6 +238,7 @@ namespace AW2
             Window.ClientSizeChanged += new EventHandler(Window_ClientSizeChanged);
             Window.AllowUserResizing = true;
 
+            arenaReload = new KeyboardKey(Keys.F6);
             frameStepControl = new KeyboardKey(Keys.F8);
             frameRunControl = new KeyboardKey(Keys.F7);
             frameStep = false;
@@ -779,6 +781,13 @@ namespace AW2
                     startingArenaOnServer = false;
                     StartArenaImpl();
                 }
+            }
+
+            // Instant arena reload (simple aid for hand-editing an arena)
+            if (arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
+            {
+                dataEngine.InitializeFromArena(dataEngine.ArenaPlaylist.Current);
+                StartArena();
             }
 
             // Frame stepping (for debugging)

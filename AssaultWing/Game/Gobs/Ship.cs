@@ -384,25 +384,6 @@ namespace AW2.Game.Gobs
             this.temporarilyDisabledGobs = new List<Gob>();
         }
 
-        /// <summary>
-        /// Creates a new ship.
-        /// </summary>
-        /// <param name="typeName">Type of the ship.</param>
-        /// <param name="owner">Owner of the ship.</param>
-        /// <param name="pos">Initial position of the ship.</param>
-        /// <param name="weapon1Name">Name of the primary weapon type.</param>
-        /// <param name="weapon2Name">Name of the secondary weapon type.</param>
-        public Ship(string typeName, Player owner, Vector2 pos, string weapon1Name, string weapon2Name)
-            : base(typeName, owner, pos, Vector2.Zero, Gob.defaultRotation)
-        {
-            this.weapon1 = CreateWeapons(weapon1Name, 1);
-            this.weapon2 = CreateWeapons(weapon2Name, 2);
-            this.weapon1Charge = this.weapon1ChargeMax;
-            this.weapon2Charge = this.weapon2ChargeMax;
-            coughEngines = new Gob[0];
-            this.temporarilyDisabledGobs = new List<Gob>();
-        }
-
         #endregion Ship constructors
 
         /// <summary>

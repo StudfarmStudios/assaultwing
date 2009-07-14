@@ -662,7 +662,7 @@ namespace AW2.Game
         /// in subclasses, so a subclass constructor only has to initialise its runtime
         /// state fields, not the fields that define its gob type.
         /// <param name="typeName">The type of the gob.</param>
-        public Gob(string typeName)
+        protected Gob(string typeName)
         {
             this.typeName = (CanonicalString)typeName; // !!! HACK: Should take CanonicalString as parameter
             gravitating = true;
@@ -680,30 +680,6 @@ namespace AW2.Game
             bleach = -1;
             bleachResetTime = new TimeSpan(0);
             LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalGameTime;
-        }
-
-        /// <summary>
-        /// Creates a gob of the specified gob type.
-        /// </summary>
-        /// The gob's serialised fields are initialised according to the gob template 
-        /// instance associated with the gob type. This applies also to fields declared
-        /// in subclasses, so a subclass constructor only has to initialise its runtime
-        /// state fields, not the fields that define its gob type.
-        /// <param name="typeName">The type of the gob.</param>
-        /// <param name="owner">The player who owns the gob.</param>
-        /// <param name="pos">The position of the gob in the game world.</param>
-        /// <param name="move">The movement vector of the gob.</param>
-        /// <param name="rotation">The rotation of the gob around the Z-axis.</param>
-        public Gob(string typeName, Player owner, Vector2 pos, Vector2 move, float rotation)
-            : this(typeName)
-        {
-            Id = AssaultWing.Instance.NetworkMode == NetworkMode.Client
-                ? leastUnusedIrrelevantId--
-                : leastUnusedId++;
-            this.owner = owner;
-            this.Pos = pos; // also translates collPrimitives
-            this.move = move;
-            this.rotation = rotation;
         }
 
         /// <summary>

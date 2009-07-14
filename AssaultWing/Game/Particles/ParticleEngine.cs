@@ -26,7 +26,7 @@ namespace AW2.Game.Particles
         [TypeParameter]
         private int totalNumberParticles = 0; //Particles emitted in the total lifetime of the system
         private int createdParticles = 0; //Number of emitted particles so far
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory birthRate = new ExpectedValue(5,0); //Particles emitted per second
         private TimeSpan nextBirth; // Time of next particle birth, in game time.
         private Vector2 oldPosition = new Vector2(Single.NaN); //Previous position of the system
@@ -39,19 +39,19 @@ namespace AW2.Game.Particles
         float argument = 0; // Argument for FloatFactory instances that need it.
 
         //PARTICLES DATA
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory particleAge = new ExpectedValue(2, 0); // Expected age of a particle
 
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory particleInitialSize = new ExpectedValue(1, 0); //Initial size of a particle
 
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory particleFinalSize = new ExpectedValue(2, 0); //Final size of a particle
 
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory particleInitialRotation = new ExpectedValue(0, MathHelper.Pi); // Expected initial rotation of a particle
 
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory particleRotationSpeed = new ExpectedValue(); // Expected rotation speed of a particle
 
         [TypeParameter]
@@ -60,10 +60,10 @@ namespace AW2.Game.Particles
         [TypeParameter]
         private Color particleFinalColor = new Color(0, 0, 0, 0); //Final color of the particle
 
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory particleSpeed = new ExpectedValue(1, 0); //Expected speed of a particle
 
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         private FloatFactory particleAcceleration = new ExpectedValue(); //Expected acceleration of a particle
 
         private List<Particle> particles = new List<Particle>();

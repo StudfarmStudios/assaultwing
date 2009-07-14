@@ -42,7 +42,7 @@ namespace AW2.Game.Gobs
 
         [TypeParameter]
         ParticleEmitter emitter;
-        [TypeParameter]
+        [TypeParameter, ShallowCopy]
         ParticleUpdater updater;
 
         /// <summary>

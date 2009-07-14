@@ -108,7 +108,7 @@ namespace AW2.Game
         /// Gob type name.
         /// </summary>
         [TypeParameter, RuntimeState]
-        string typeName;
+        CanonicalString typeName;
 
         /// <summary>
         /// The player who owns the gob. Can be null for impartial gobs.
@@ -344,7 +344,7 @@ namespace AW2.Game
         /// <summary>
         /// Get the gob type name.
         /// </summary>
-        public string TypeName { get { return typeName; } }
+        public CanonicalString TypeName { get { return typeName; } }
 
         /// <summary>
         /// The arena in which the gob lives.
@@ -627,7 +627,7 @@ namespace AW2.Game
         {
             // We initialise the values so that they work as good examples in the XML template.
             Id = -1;
-            this.typeName = "unknown gob type";
+            this.typeName = (CanonicalString)"unknown gob type";
             depthLayer2D = 0.5f;
             drawMode2D = new DrawMode2D(DrawModeType2D.None);
             layerPreference = LayerPreferenceType.Front;
@@ -664,7 +664,7 @@ namespace AW2.Game
         /// <param name="typeName">The type of the gob.</param>
         public Gob(string typeName)
         {
-            this.typeName = typeName;
+            this.typeName = (CanonicalString)typeName; // !!! HACK: Should take CanonicalString as parameter
             gravitating = true;
             InitializeTypeParameters();
             SetId();
@@ -1429,7 +1429,7 @@ namespace AW2.Game
             {
                 // Make sure there's no null references.
                 if (typeName == null)
-                    typeName = "unknown gob type";
+                    typeName = (CanonicalString)"unknown gob type";
                 if (modelName == null)
                     modelName = (CanonicalString)"dummymodel";
                 if (collisionAreas == null)

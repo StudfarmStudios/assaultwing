@@ -15,7 +15,7 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Type name of the gob to create.
         /// </summary>
-        public string GobTypeName { get; set; }
+        public CanonicalString GobTypeName { get; set; }
 
         /// <summary>
         /// Index of the arena layer the gob lives in.
@@ -44,7 +44,7 @@ namespace AW2.Net.Messages
             byte[] writeBytes = StreamedData;
             writer.Write((bool)CreateToNextArena);
             writer.Write(checked((byte)LayerIndex));
-            writer.Write((int)((CanonicalString)GobTypeName).Canonical);
+            writer.Write((int)GobTypeName.Canonical);
             writer.Write(checked((ushort)writeBytes.Length));
             writer.Write(writeBytes, 0, writeBytes.Length);
         }

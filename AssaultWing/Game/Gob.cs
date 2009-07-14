@@ -587,13 +587,14 @@ namespace AW2.Game
             foreach (Type type in Array.FindAll<Type>(System.Reflection.Assembly.GetExecutingAssembly().GetTypes(),
                 t => typeof(Gob).IsAssignableFrom(t) && !t.IsAbstract))
             {
-                if (null == type.GetConstructor(Type.EmptyTypes))
+                var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Instance;
+                if (null == type.GetConstructor(flags, null, Type.EmptyTypes, null))
                 {
                     string message = "Missing constructor " + type.Name + "()";
                     Log.Write(message);
                     throw new Exception(message);
                 }
-                if (null == type.GetConstructor(new Type[] { typeof(string) }))
+                if (null == type.GetConstructor(flags, null, new Type[] { typeof(string) }, null))
                 {
                     string message = "Missing constructor " + type.Name + "(string)";
                     Log.Write(message);

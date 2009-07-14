@@ -325,7 +325,7 @@ namespace AW2.Menu
 
             // Draw static text.
             spriteBatch.Begin();
-            spriteBatch.DrawString(smallFont, "Second Playable Demo 2008-09-28",
+            spriteBatch.DrawString(smallFont, "3rd Milestone 2009-07-15",
                 new Vector2(10, viewHeight - smallFont.LineSpacing), Color.White);
             if (showHelpText)
             {

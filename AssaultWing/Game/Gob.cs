@@ -771,7 +771,7 @@ namespace AW2.Game
                 throw new Exception("Silly programmer tries to initialise type parameters of a gob (type " +
                     typeName + ") using a wrong Gob subclass (class " + this.GetType().Name + ")");
             foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
-                if (field.IsDefined(typeof(ShallowCopyAttribute), false))
+                if (field.FieldType.IsValueType || field.IsDefined(typeof(ShallowCopyAttribute), false))
                     field.SetValue(this, field.GetValue(template));
                 else
                     field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));

@@ -68,7 +68,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Creates a gob of the specified gob type.
         /// </summary>
-        public MovingWall(string typeName)
+        public MovingWall(CanonicalString typeName)
             : base(typeName)
         {
             gravitating = false;

@@ -53,7 +53,7 @@ namespace AW2.Game.Gobs
         /// Names of the particle engines to create.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        string[] particleEngineNames;
+        CanonicalString[] particleEngineNames;
 
         /// <summary>
         /// Name of the sound effect to play on creation.
@@ -93,7 +93,7 @@ namespace AW2.Game.Gobs
             flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
             flowTime = 0.5f;
             impactHoleRadius = 100;
-            particleEngineNames = new string[] { "dummyparticleengine", };
+            particleEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
             sound = SoundOptions.Action.Explosion;
             firstCollisionChecked = false;
         }
@@ -102,7 +102,7 @@ namespace AW2.Game.Gobs
         /// Creates an explosion.
         /// </summary>
         /// <param name="typeName">The type of the explosion.</param>
-        public Explosion(string typeName)
+        public Explosion(CanonicalString typeName)
             : base(typeName)
         {
             flowEndTime = new TimeSpan(1);
@@ -212,31 +212,5 @@ namespace AW2.Game.Gobs
                 theirArea.Owner.InflictDamage(damage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
             }
         }
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Make sure there's no null references.
-                if (particleEngineNames == null)
-                    particleEngineNames = new string[0];
-                if (inflictDamage == null)
-                    throw new Exception("Serialization error: Explosion inflictDamage not defined in " + TypeName);
-                if (flowSpeed == null)
-                    throw new Exception("Serialization error: Explosion flowSpeed not defined in " + TypeName);
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AW2.Helpers;
 
 namespace AW2.Net.Messages
 {
@@ -23,17 +24,17 @@ namespace AW2.Net.Messages
         /// <summary>
         /// The player's ship type.
         /// </summary>
-        public string shipTypeName;
+        public CanonicalString shipTypeName;
 
         /// <summary>
         /// The player's primary weapon type.
         /// </summary>
-        public string weapon1TypeName;
+        public CanonicalString weapon1TypeName;
 
         /// <summary>
         /// The player's secondary weapon type.
         /// </summary>
-        public string weapon2TypeName;
+        public CanonicalString weapon2TypeName;
 
         /// <summary>
         /// Creates a new player info based on a player.
@@ -104,9 +105,9 @@ namespace AW2.Net.Messages
                 PlayerInfo info;
                 info.id = reader.ReadInt32();
                 info.name = reader.ReadString(32);
-                info.shipTypeName = reader.ReadString(32);
-                info.weapon1TypeName = reader.ReadString(32);
-                info.weapon2TypeName = reader.ReadString(32);
+                info.shipTypeName = (CanonicalString)reader.ReadString(32);
+                info.weapon1TypeName = (CanonicalString)reader.ReadString(32);
+                info.weapon2TypeName = (CanonicalString)reader.ReadString(32);
                 PlayerInfos.Add(info);
             }
         }

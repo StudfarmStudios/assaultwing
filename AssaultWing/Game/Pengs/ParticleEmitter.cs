@@ -26,7 +26,7 @@ namespace AW2.Game.Pengs
         /// Names of types of gobs to emit.
         /// </summary>
         [TypeParameter]
-        protected string[] gobTypeNames;
+        protected CanonicalString[] gobTypeNames;
 
         /// <summary>
         /// If <c>true</c>, the peng won't emit new particles.
@@ -51,7 +51,7 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// Names of types of gobs to emit.
         /// </summary>
-        public string[] GobTypeNames { get { return gobTypeNames; } }
+        public CanonicalString[] GobTypeNames { get { return gobTypeNames; } }
 
         /// <summary>
         /// If <c>true</c>, no particles will be emitted.
@@ -86,7 +86,7 @@ namespace AW2.Game.Pengs
         public ParticleEmitter()
         {
             textureNames = new CanonicalString[] { (CanonicalString)"dummytexture" };
-            gobTypeNames = new string[] { "dummygob" };
+            gobTypeNames = new CanonicalString[] { (CanonicalString)"dummygob" };
             paused = false;
         }
     }

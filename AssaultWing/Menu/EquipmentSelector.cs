@@ -80,7 +80,7 @@ namespace AW2.Menu
         /// <param name="value">The name of the ship.</param>
         protected override void SetValue(string value)
         {
-            Player.ShipName = value;
+            Player.ShipName = (CanonicalString)value;
         }
     }
 
@@ -109,7 +109,7 @@ namespace AW2.Menu
         /// <param name="value">The name of the primary weapon.</param>
         protected override void SetValue(string value)
         {
-            Player.Weapon1Name = value;
+            Player.Weapon1Name = (CanonicalString)value;
         }
     }
 
@@ -138,7 +138,7 @@ namespace AW2.Menu
         /// <param name="value">The name of the secondary weapon.</param>
         protected override void SetValue(string value)
         {
-            Player.Weapon2Name = value;
+            Player.Weapon2Name = (CanonicalString)value;
         }
     }
 }

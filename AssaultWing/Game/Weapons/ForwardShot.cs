@@ -48,7 +48,7 @@ namespace AW2.Game.Weapons
         /// Names of muzzle fire engine types.
         /// </summary>
         [TypeParameter]
-        string[] muzzleFireEngineNames;
+        CanonicalString[] muzzleFireEngineNames;
 
         /// <summary>
         /// Currently active muzzle fire engines for each barrel.
@@ -124,7 +124,7 @@ namespace AW2.Game.Weapons
             : base()
         {
             this.fireSound = SoundOptions.Action.Pistol;
-            this.muzzleFireEngineNames = new string[] { "dummyparticleengine", };
+            this.muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
             this.shotSpeed = 300f;
             this.shotCount = 3;
             this.shotSpacing = 0.2f;
@@ -145,7 +145,7 @@ namespace AW2.Game.Weapons
         /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
-        public ForwardShot(string typeName, Ship owner, int ownerHandle, int[] boneIndices)
+        public ForwardShot(CanonicalString typeName, Ship owner, int ownerHandle, int[] boneIndices)
             : base(typeName, owner, ownerHandle, boneIndices)
         {
             this.shotsLeft = 0;
@@ -215,7 +215,7 @@ namespace AW2.Game.Weapons
 
                     // Create muzzle fire engines, but only once in a frame.
                     if (!muzzleFireCreated)
-                        foreach (string engineName in muzzleFireEngineNames)
+                        foreach (var engineName in muzzleFireEngineNames)
                         {
                             Gob.CreateGob(engineName, fireEngine =>
                             {
@@ -305,6 +305,7 @@ namespace AW2.Game.Weapons
                     gob.Die(new DeathCause());
             }
         }
+
         #region IConsistencyCheckable Members
 
         /// <summary>
@@ -314,9 +315,8 @@ namespace AW2.Game.Weapons
         /// <param name="limitationAttribute">Check only fields marked with 
         /// this limitation attribute.</param>
         /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
+        public void MakeConsistent(Type limitationAttribute)
         {
-            base.MakeConsistent(limitationAttribute);
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 shotCount = Math.Max(1, shotCount);

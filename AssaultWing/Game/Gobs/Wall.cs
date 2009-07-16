@@ -151,7 +151,7 @@ namespace AW2.Game.Gobs
         /// Creates a piece of wall.
         /// </summary>
         /// <param name="typeName">The type of the wall.</param>
-        public Wall(string typeName)
+        public Wall(CanonicalString typeName)
             : base(typeName)
         {
             vertexData = null;

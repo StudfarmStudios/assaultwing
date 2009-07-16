@@ -126,7 +126,7 @@ namespace AW2.Game
         /// <summary>
         /// Type of ship the player has chosen to fly.
         /// </summary>
-        string shipTypeName;
+        CanonicalString shipTypeName;
 
         /// <summary>
         /// Type of primary weapon the player has chosen to use.
@@ -135,7 +135,7 @@ namespace AW2.Game
         /// </summary>
         /// <seealso cref="Weapon1Name"/>
         /// <seealso cref="Weapon1RealName"/>
-        string weapon1Name;
+        CanonicalString weapon1Name;
 
         /// <summary>
         /// Type of secondary weapon the player has chosen to use.
@@ -144,7 +144,7 @@ namespace AW2.Game
         /// </summary>
         /// <seealso cref="Weapon2Name"/>
         /// <seealso cref="Weapon2RealName"/>
-        string weapon2Name;
+        CanonicalString weapon2Name;
 
         /// <summary>
         /// Number of active primary weapon upgrades.
@@ -352,12 +352,12 @@ namespace AW2.Game
         /// <summary>
         /// The name of the type of ship the player has chosen to fly.
         /// </summary>
-        public string ShipName { get { return shipTypeName; } set { shipTypeName = value; } }
+        public CanonicalString ShipName { get { return shipTypeName; } set { shipTypeName = value; } }
 
         /// <summary>
         /// The name of the primary weapon as the player has chosen it.
         /// </summary>
-        public string Weapon1Name
+        public CanonicalString Weapon1Name
         {
             get { return weapon1Name; }
             set
@@ -370,7 +370,7 @@ namespace AW2.Game
         /// <summary>
         /// The name of the secondary weapon as the player has chosen it.
         /// </summary>
-        public string Weapon2Name
+        public CanonicalString Weapon2Name
         {
             get { return weapon2Name; }
             set
@@ -383,13 +383,13 @@ namespace AW2.Game
         /// <summary>
         /// The name of the primary weapon, considering all current bonuses.
         /// </summary>
-        public string Weapon1RealName
+        public CanonicalString Weapon1RealName
         {
             get
             {
                 if (weapon1Upgrades == 0)
                     return weapon1Name;
-                Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon1Name);
+                Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon1Name);
                 return weapon1.UpgradeNames[weapon1Upgrades - 1];
             }
         }
@@ -397,13 +397,13 @@ namespace AW2.Game
         /// <summary>
         /// The name of the secondary weapon, considering all current bonuses.
         /// </summary>
-        public string Weapon2RealName
+        public CanonicalString Weapon2RealName
         {
             get
             {
                 if (weapon2Upgrades == 0)
                     return weapon2Name;
-                Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon2Name);
+                Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon2Name);
                 return weapon2.UpgradeNames[weapon2Upgrades - 1];
             }
         }
@@ -455,7 +455,7 @@ namespace AW2.Game
         /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
         /// <param name="weapon1Name">Name of the type of main weapon.</param>
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
-        Player(string name, string shipTypeName, string weapon1Name, string weapon2Name)
+        Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name)
         {
             Id = leastUnusedId++;
             this.Name = name;
@@ -503,7 +503,7 @@ namespace AW2.Game
         /// <param name="weapon1Name">Name of the type of main weapon.</param>
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
         /// <param name="controls">Player's in-game controls.</param>
-        public Player(string name, string shipTypeName, string weapon1Name, string weapon2Name,
+        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
             PlayerControls controls)
             : this(name, shipTypeName, weapon1Name, weapon2Name)
         {
@@ -521,7 +521,7 @@ namespace AW2.Game
         /// <param name="connectionId">Identifier of the connection to the remote game instance
         /// at which the player lives.</param>
         /// <see cref="AW2.Net.Connection.Id"/>
-        public Player(string name, string shipTypeName, string weapon1Name, string weapon2Name,
+        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
             int connectionId)
             : this(name, shipTypeName, weapon1Name, weapon2Name)
         {
@@ -710,7 +710,7 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon1()
         {
-            Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon1Name);
+            Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon1Name);
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
             UpdateShipWeapons();
         }
@@ -729,7 +729,7 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon2()
         {
-            Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), weapon2Name);
+            Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon2Name);
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
             UpdateShipWeapons();
         }
@@ -816,9 +816,9 @@ namespace AW2.Game
             {
                 Id = reader.ReadInt32();
                 Name = reader.ReadString(32);
-                shipTypeName = reader.ReadString(32);
-                weapon1Name = reader.ReadString(32);
-                weapon2Name = reader.ReadString(32);
+                shipTypeName = (CanonicalString)reader.ReadString(32);
+                weapon1Name = (CanonicalString)reader.ReadString(32);
+                weapon2Name = (CanonicalString)reader.ReadString(32);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -921,7 +921,7 @@ namespace AW2.Game
             });
 
             // Create a player marker for the ship.
-            string particleEngineName = Id == 1 ? "playerred" : "playergreen";
+            var particleEngineName = new CanonicalString(Id == 1 ? "playerred" : "playergreen");
             Gob.CreateGob(particleEngineName, playerColor =>
             {
                 if (playerColor is ParticleEngine)

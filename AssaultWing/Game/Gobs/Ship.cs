@@ -137,7 +137,7 @@ namespace AW2.Game.Gobs
         /// Names of cough engine types.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        string[] coughEngineNames;
+        CanonicalString[] coughEngineNames;
 
         /// <summary>
         /// Particle engines that manage coughing.
@@ -234,9 +234,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Name of the type of main weapon the ship is using.
         /// </summary>
-        public string Weapon1Name
+        public CanonicalString Weapon1Name
         {
-            get { return weapon1 == null ? "no weapon" : weapon1.TypeName; }
+            get { return weapon1 == null ? (CanonicalString)"no weapon" : weapon1.TypeName; }
             set
             {
                 if (weapon1 != null)
@@ -248,9 +248,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Name of the type of secondary weapon the ship is using.
         /// </summary>
-        public string Weapon2Name
+        public CanonicalString Weapon2Name
         {
-            get { return weapon2 == null ? "no weapon" : weapon2.TypeName; }
+            get { return weapon2 == null ? (CanonicalString)"no weapon" : weapon2.TypeName; }
             set
             {
                 if (weapon2 != null)
@@ -365,7 +365,7 @@ namespace AW2.Game.Gobs
             }
             this.birthAlpha.Keys.Add(new CurveKey(2, 1));
             this.birthAlpha.ComputeTangents(CurveTangent.Flat);
-            this.coughEngineNames = new string[] { "dummyparticleengine", };
+            this.coughEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
             this.temporarilyDisabledGobs = new List<Gob>();
             this.iconEquipName = (CanonicalString)"dummytexture";
         }
@@ -374,7 +374,7 @@ namespace AW2.Game.Gobs
         /// Creates a new ship.
         /// </summary>
         /// <param name="typeName">Type of the ship.</param>
-        public Ship(string typeName)
+        public Ship(CanonicalString typeName)
             : base(typeName)
         {
             this.weapon1 = null;
@@ -392,7 +392,7 @@ namespace AW2.Game.Gobs
         /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
         /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
         /// <returns>The created weapon.</returns>
-        private Weapon CreateWeapons(string weaponName, int ownerHandle)
+        private Weapon CreateWeapons(CanonicalString weaponName, int ownerHandle)
         {
             KeyValuePair<string, int>[] boneIs = GetNamedPositions("Gun");
             if (boneIs.Length == 0)
@@ -546,8 +546,8 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((string)weapon1.TypeName, 32, true);
-                writer.Write((string)weapon2.TypeName, 32, true);
+                writer.Write((int)weapon1.TypeName.Canonical);
+                writer.Write((int)weapon2.TypeName.Canonical);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -577,8 +577,8 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                Weapon1Name = reader.ReadString(32);
-                Weapon2Name = reader.ReadString(32);
+                Weapon1Name = (CanonicalString)reader.ReadInt32();
+                Weapon2Name = (CanonicalString)reader.ReadInt32();
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -776,33 +776,5 @@ namespace AW2.Game.Gobs
                 Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
         }
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Make sure there's no null references.
-                if (coughEngineNames == null)
-                    coughEngineNames = new string[0];
-                if (armour == null)
-                    throw new Exception("Serialization error: Ship armour not defined in " + TypeName);
-                if (birthAlpha == null)
-                    throw new Exception("Serialization error: Ship birthAlpha not defined in " + TypeName);
-                if (iconEquipName == null)
-                    iconEquipName = (CanonicalString)"dummytexture";
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
     }
 }

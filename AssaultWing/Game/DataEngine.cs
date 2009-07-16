@@ -14,6 +14,24 @@ using Viewport = AW2.Graphics.AWViewport;
 namespace AW2.Game
 {
     /// <summary>
+    /// Type of type template.
+    /// </summary>
+    /// <seealso cref="DataEngine.AddTypeTemplate"/>
+    /// /// <seealso cref="DataEngine.GetTypeTemplate"/>
+    public enum TypeTemplateType
+    {
+        /// <summary>
+        /// An instance of class <see cref="Gob"/>
+        /// </summary>
+        Gob,
+
+        /// <summary>
+        /// An instance of class <see cref="Weapon"/>
+        /// </summary>
+        Weapon,
+    }
+
+    /// <summary>
     /// Basic implementation of game data.
     /// </summary>
     /// Gobs in an arena are kept on several arena layers. One of the layers
@@ -32,11 +50,10 @@ namespace AW2.Game
         Dictionary<string, string> arenaFileNameList;
 
         /// <summary>
-        /// Type templates, as a list "indexed" by base class (such as 'typeof(Gob)'), 
-        /// yielding a list "indexed" by template type name (such as "rocket"),
-        /// yielding the template.
+        /// Type templates, indexed by <see cref="TypeTemplateType"/> and
+        /// <see cref="CanonicalString.Canonical"/> of type template names.
         /// </summary>
-        List<Pair<Type, List<Pair<string, object>>>> templates;
+        List<List<object>> templates;
 
         Dictionary<string, Arena> arenas;
         Arena preparedArena;
@@ -96,7 +113,7 @@ namespace AW2.Game
 
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
-            templates = new List<Pair<Type, List<Pair<string, object>>>>();
+            templates = new List<List<object>>();
             arenas = new Dictionary<string, Arena>();
             ArenaPlaylist = new Playlist(new string[] { "dummyarena" });
         }
@@ -233,90 +250,56 @@ namespace AW2.Game
         /// fields (called 'type parameters') of the subclasses, and the values are used in 
         /// initialising the fields when an instance of the user-defined type is created 
         /// during gameplay.
-        /// <param name="baseClass">The base class of the user-defined type, e.g. Gob or Weapon.</param>
+        /// <param name="type">Type of the template. This signifies the base class of the user-defined type, e.g. Gob or Weapon.</param>
         /// <param name="typeName">The name of the user-defined type, e.g. "explosion" or "shotgun".</param>
         /// <param name="template">The instance to save as a template for the user-defined type.</param>
-        public void AddTypeTemplate(Type baseClass, string typeName, object template)
+        public void AddTypeTemplate(TypeTemplateType type, CanonicalString typeName, object template)
         {
-            CanonicalString.Register(typeName);
-            var baseClassKey = templates.Find(x => x.First.Equals(baseClass));
-            if (baseClassKey != null)
-            {
-                var typeNameKey = baseClassKey.Second.Find(x => x.First == typeName);
-                if (typeNameKey != null)
-                {
-                    Log.Write("WARNING: Overwriting user-defined type " + baseClass.Name + "/" + typeName);
-                    typeNameKey.Second = template;
-                }
-                else
-                {
-                    baseClassKey.Second.Add(new Pair<string, object>(typeName, template));
-                }
-            }
-            else
-            {
-                List<Pair<string, object>> newList = new List<Pair<string, object>>();
-                newList.Add(new Pair<string, object>(typeName, template));
-                templates.Add(new Pair<Type, List<Pair<string, object>>>(baseClass, newList));
-            }
+            while (templates.Count < (int)type + 1)
+                templates.Add(new List<object>());
+            var typeList = templates[(int)type];
+            while (typeList.Count < typeName.Canonical + 1)
+                typeList.Add(null);
+            if (typeList[typeName.Canonical] != null)
+                Log.Write("WARNING: Overwriting user-defined type " + type + "/" + typeName);
+            typeList[typeName.Canonical] = template;
         }
 
         /// <summary>
         /// Returns the template instance that defines the named user-defined type.
         /// </summary>
-        /// <see cref="DataEngine.AddTypeTemplate"/>
-        /// <param name="baseClass">The base class of the user-defined type, e.g. Gob or Weapon.</param>
+        /// <seealso cref="DataEngine.AddTypeTemplate"/>
+        /// <param name="type">Type of the template. This signifies the base class of the user-defined type, e.g. Gob or Weapon.</param>
         /// <param name="typeName">The name of the user-defined type, e.g. "explosion" or "shotgun".</param>
         /// <returns>The template instance that defines the named user-defined type.</returns>
-        public object GetTypeTemplate(Type baseClass, string typeName)
+        public object GetTypeTemplate(TypeTemplateType type, CanonicalString typeName)
         {
-            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
-                if (typePair.First.Equals(baseClass))
-                {
-                    foreach (Pair<string, object> namePair in typePair.Second)
-                        if (namePair.First == typeName)
-                            return namePair.Second;
+            if ((int)type >= templates.Count)
+                throw new Exception("Missing templates for user-defined type " + type + "/" + typeName + " (no templates for the whole base class)");
+            var typeList = templates[(int)type];
+            var item = typeList.ElementAtOrDefault(typeName.Canonical);
+            if (item != null) return item;
 
-                    // Proper value not found. Try to find a dummy value.
-                    Log.Write("Missing template for user-defined type " + baseClass.Name + "/" + typeName);
-                    string fallbackTypeName = "dummy" + baseClass.Name.ToLower() + "type";
-                    foreach (Pair<string, object> namePair in typePair.Second)
-                        if (namePair.First == fallbackTypeName)
-                            return namePair.Second;
-                    throw new Exception("Missing templates for user-defined type " + baseClass.Name + "/" + typeName + " and fallback " + fallbackTypeName);
-                }
-            throw new Exception("Missing templates for user-defined type " + baseClass.Name + "/" + typeName + " (no templates for the whole base class)");
-        }
-
-        /// <summary>
-        /// Tells if a name corresponds to any user-defined type template.
-        /// </summary>
-        /// <param name="baseClass">The base class of the user-defined type template, e.g. Gob or Weapon.</param>
-        /// <param name="typeName">The name of the user-defined type template.</param>
-        /// <returns><c>true</c> if there is a user-defined type template with the name, <c>false</c> otherwise.</returns>
-        public bool HasTypeTemplate(Type baseClass, string typeName)
-        {
-            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
-                if (typePair.First.Equals(baseClass))
-                    foreach (Pair<string, object> namePair in typePair.Second)
-                        if (namePair.First == typeName)
-                            return true;
-            return false;
+            Log.Write("Missing template for user-defined type " + type + "/" + typeName);
+            var fallbackTypeName = new CanonicalString("dummy" + type.ToString().ToLower() + "type");
+            var fallbackItem = typeList.ElementAtOrDefault(fallbackTypeName.Canonical);
+            if (fallbackItem != null) return fallbackItem;
+            throw new Exception("Missing templates for user-defined type " + type + "/" + typeName + " and fallback " + fallbackTypeName);
         }
 
         /// <summary>
         /// Performs the specified action on each user-defined type template
         /// that was stored under the given base class.
         /// </summary>
-        /// <see cref="DataEngine.AddTypeTemplate"/>
+        /// <seealso cref="DataEngine.AddTypeTemplate"/>
         /// <typeparam name="T">Base class of templates to loop through.</typeparam>
         /// <param name="action">The Action delegate to perform on each template.</param>
         public void ForEachTypeTemplate<T>(Action<T> action)
         {
-            foreach (Pair<Type, List<Pair<string, object>>> typePair in templates)
-                if (typePair.First.Equals(typeof(T)))
-                    foreach (Pair<string, object> namePair in typePair.Second)
-                        action((T)namePair.Second);
+            var typeIndex = Array.IndexOf(Enum.GetNames(typeof(TypeTemplateType)), typeof(T).Name);
+            if (typeIndex < 0) throw new ArgumentException("No template type " + typeof(T) + " found");
+            foreach (var template in templates[typeIndex])
+                if (template != null) action((T)template);
         }
 
         #endregion type templates

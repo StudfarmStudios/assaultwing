@@ -63,7 +63,7 @@ namespace AW2.Game.Gobs
         /// in subclasses, so a subclass constructor only has to initialise its runtime
         /// state fields, not the fields that define its gob type.
         /// <param name="typeName">The type of the gob.</param>
-        public CollisionTrigger(string typeName)
+        public CollisionTrigger(CanonicalString typeName)
             : base(typeName)
         {
         }

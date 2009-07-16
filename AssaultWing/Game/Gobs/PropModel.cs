@@ -40,7 +40,7 @@ namespace AW2.Game.Gobs
         /// Creates a prop.
         /// </summary>
         /// <param name="typeName">The type of the prop.</param>
-        public PropModel(string typeName)
+        public PropModel(CanonicalString typeName)
             : base(typeName)
         {
             base.ModelName = propModelName;

@@ -123,7 +123,7 @@ namespace AW2.Game.Gobs
         /// Creates a new bonus.
         /// </summary>
         /// <param name="typeName">Type of the bonus.</param>
-        public Bonus(string typeName)
+        public Bonus(CanonicalString typeName)
             : base(typeName)
         {
         }
@@ -199,7 +199,7 @@ namespace AW2.Game.Gobs
             switch (poss.action)
             {
                 case BonusAction.Explode:
-                    Gob.CreateGob("bomb explosion", explosion =>
+                    Gob.CreateGob((CanonicalString)"bomb explosion", explosion =>
                     {
                         explosion.Pos = this.Pos;
                         Arena.Gobs.Add(explosion);

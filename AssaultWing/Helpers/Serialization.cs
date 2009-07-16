@@ -113,12 +113,13 @@ namespace AW2.Helpers
     }
 
     /// <summary>
-    /// Makes a type be (de)serialised via conversion to another type.
+    /// Makes a type be serialised via conversion to another type.
     /// </summary>
     /// This attribute is meant for use with <see cref="Serialization.SerializeXml"/> and 
     /// <see cref="Serialization.DeserializeXml"/> as a means to disguise a type in its
     /// serialised form as some other type. This is helpful when one wants to change the
-    /// type of a field while still keeping the serialised form the same.
+    /// type of a field while still keeping the serialised form the same. Deserialisation
+    /// works both from the original type and the type specified by this attribute.
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class SerializedTypeAttribute : Attribute
     {
@@ -324,12 +325,6 @@ namespace AW2.Helpers
                 if (!reader.IsStartElement(elementName))
                     throw new XmlException("Deserialisation expected start element " + elementName + " but got " + reader.Name);
 
-                // React to SerializedTypeAttribute
-                Type serializedType = objType;
-                var serializedTypeAttribute = (SerializedTypeAttribute)Attribute.GetCustomAttribute(objType, typeof(SerializedTypeAttribute));
-                if (serializedTypeAttribute != null)
-                    serializedType = serializedTypeAttribute.SerializedType;
-
                 // Find out type of value in XML
                 string writtenTypeName = reader.GetAttribute("type");
                 if (writtenTypeName == null)
@@ -341,69 +336,26 @@ namespace AW2.Helpers
                     throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name);
 
                 // Deserialise
-                if (reader.IsEmptyElement)
-                {
-                    reader.Read();
-                    return Serialization.CreateInstance(writtenType);
-                }
-                reader.Read();
                 object returnValue;
-
-                // Is it a primitive type?
-                if (writtenType.IsPrimitive || writtenType == typeof(string))
-                    returnValue = reader.ReadContentAs(writtenType, null);
-
-                // Is it an enum?
-                else if (writtenType.IsEnum)
-                {
-                    string enumStr = reader.ReadContentAsString();
-                    returnValue = Enum.Parse(writtenType, enumStr);
-                }
-
-                // Is it a Color?
-                else if (writtenType == typeof(Color))
-                {
-                    byte r = (byte)DeserializeXml(reader, "R", typeof(byte), limitationAttribute);
-                    byte g = (byte)DeserializeXml(reader, "G", typeof(byte), limitationAttribute);
-                    byte b = (byte)DeserializeXml(reader, "B", typeof(byte), limitationAttribute);
-                    byte a = (byte)DeserializeXml(reader, "A", typeof(byte), limitationAttribute);
-                    returnValue = new Color(r, g, b, a);
-                }
-
-                // Is it IEnumerable or IEnumerable<T> for some type T?
-                else if (IsIEnumerable(writtenType))
-                {
-                    // Read as 'objType' so that the possibly needed cast to 'writtenType'
-                    // can be done nicely on the element type and not on the IEnumerable type.
-                    Type elementType = GetIEnumerableElementType(objType);
-                    Type listType = typeof(List<>).MakeGenericType(elementType);
-                    IList array = (IList)Activator.CreateInstance(listType);
-                    while (reader.IsStartElement("Item"))
-                    {
-                        object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
-                        array.Add(item);
-                    }
-                    if (writtenType.IsArray)
-                    {
-                        BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
-                        returnValue = listType.InvokeMember("ToArray", flags, null, array, new Object[] { });
-                    }
-                    else
-                        returnValue = Serialization.CreateInstance(writtenType, array);
-                }
-
-                // Otherwise the value is an object that is just a collection of fields
-                else
-                {
+                bool emptyXmlElement = reader.IsEmptyElement;
+                reader.Read();
+                if (emptyXmlElement)
                     returnValue = Serialization.CreateInstance(writtenType);
-                    DeserializeFieldsXml(reader, returnValue, limitationAttribute);
-                }
-
-                reader.ReadEndElement();
-
-                if (serializedType != objType)
+                else if (writtenType.IsPrimitive || writtenType == typeof(string))
+                    returnValue = reader.ReadContentAs(writtenType, null);
+                else if (writtenType.IsEnum)
+                    returnValue = DeserializeXmlEnum(reader, writtenType);
+                else if (writtenType == typeof(Color))
+                    returnValue = DeserializeXmlColor(reader, limitationAttribute);
+                else if (IsIEnumerable(writtenType))
+                    returnValue = DeserializeXmlIEnumerable(reader, objType, limitationAttribute, writtenType);
+                else
+                    returnValue = DeserializeXmlOther(reader, limitationAttribute, writtenType);
+                
+                if (!emptyXmlElement)
+                    reader.ReadEndElement();
+                if (writtenType != objType)
                     returnValue = Cast(returnValue, objType);
-
                 if (typeof(IConsistencyCheckable).IsAssignableFrom(writtenType))
                     ((IConsistencyCheckable)returnValue).MakeConsistent(limitationAttribute);
                 return returnValue;
@@ -412,6 +364,49 @@ namespace AW2.Helpers
             {
                 throw new MemberSerializationException(e.Message, elementName + "." + e.MemberName);
             }
+        }
+
+        private static object DeserializeXmlOther(XmlReader reader, Type limitationAttribute, Type writtenType)
+        {
+            var returnValue = Serialization.CreateInstance(writtenType);
+            DeserializeFieldsXml(reader, returnValue, limitationAttribute);
+            return returnValue;
+        }
+
+        private static object DeserializeXmlEnum(XmlReader reader, Type writtenType)
+        {
+            string enumStr = reader.ReadContentAsString();
+            return Enum.Parse(writtenType, enumStr);
+        }
+
+        private static object DeserializeXmlColor(XmlReader reader, Type limitationAttribute)
+        {
+            byte r = (byte)DeserializeXml(reader, "R", typeof(byte), limitationAttribute);
+            byte g = (byte)DeserializeXml(reader, "G", typeof(byte), limitationAttribute);
+            byte b = (byte)DeserializeXml(reader, "B", typeof(byte), limitationAttribute);
+            byte a = (byte)DeserializeXml(reader, "A", typeof(byte), limitationAttribute);
+            return new Color(r, g, b, a);
+        }
+
+        private static object DeserializeXmlIEnumerable(XmlReader reader, Type objType, Type limitationAttribute, Type writtenType)
+        {
+            // Read as 'objType' so that the possibly needed cast to 'writtenType'
+            // can be done nicely on the element type and not on the IEnumerable type.
+            Type elementType = GetIEnumerableElementType(objType);
+            Type listType = typeof(List<>).MakeGenericType(elementType);
+            IList array = (IList)Activator.CreateInstance(listType);
+            while (reader.IsStartElement("Item"))
+            {
+                object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
+                array.Add(item);
+            }
+            if (writtenType.IsArray)
+            {
+                BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
+                return listType.InvokeMember("ToArray", flags, null, array, new Object[] { });
+            }
+            else
+                return Serialization.CreateInstance(writtenType, array);
         }
 
         /// <summary>
@@ -758,7 +753,7 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Casts an object to a type using some available cast operator.
+        /// Casts an object to a type using some available cast operator and other magic.
         /// </summary>
         /// <param name="obj">The object to cast.</param>
         /// <param name="type">The type to cast to.</param>
@@ -770,9 +765,27 @@ namespace AW2.Helpers
 
             // Look for cast operator in 'objType'
             var castMethodInfo = GetCastMethod(objType, type);
-            if (castMethodInfo == null)
-                throw new InvalidCastException("Cannot cast " + objType.Name + " to " + type.Name);
-            return castMethodInfo.Invoke(null, new object[] { obj });
+            if (castMethodInfo != null)
+                return castMethodInfo.Invoke(null, new object[] { obj });
+
+            // Fallback for IEnumerable: convert item by item
+            Type lElementType = GetIEnumerableElementType(type);
+            Type rElementType = GetIEnumerableElementType(objType);
+            if (lElementType != null && rElementType != null)
+            {
+                if (typeof(Array).IsAssignableFrom(objType))
+                {
+                    var listType = typeof(List<>).MakeGenericType(lElementType);
+                    var result = (IList)Activator.CreateInstance(listType);
+                    foreach (var item in (IEnumerable)obj)
+                        result.Add(Cast(item, lElementType));
+                    var toArrayMethod = listType.GetMethod("ToArray");
+                    return toArrayMethod.Invoke(result, null);
+                }
+                else throw new ArgumentException("Don't know how to cast IEnumerable element type " + rElementType + " into " + lElementType);
+            }
+
+            throw new InvalidCastException("Cannot cast " + objType.Name + " to " + type.Name);
         }
 
         /// <summary>

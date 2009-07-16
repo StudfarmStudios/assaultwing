@@ -238,7 +238,7 @@ namespace AW2.Game.Gobs
         /// Creates a peng.
         /// </summary>
         /// <param name="typeName">The type of the peng.</param>
-        public Peng(string typeName)
+        public Peng(CanonicalString typeName)
             : base(typeName)
         {
             input = 0;

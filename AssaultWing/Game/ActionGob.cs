@@ -32,7 +32,7 @@ namespace AW2.Game
         /// <summary>
         /// Creates a gob of the specified gob type.
         /// </summary>
-        public ActionGob(string typeName)
+        public ActionGob(CanonicalString typeName)
             : base(typeName)
         {
         }

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Graphics;
+using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
 using AW2.UI;
@@ -301,7 +302,7 @@ namespace AW2.Menu
                 {
                     for (int i = 0; i < message.PlayerCount; ++i)
                     {
-                        Player player = new Player("uninitialised", "uninitialised", "uninitialised", "uninitialised", 0x7ea1eaf);
+                        Player player = new Player("uninitialised", (CanonicalString)"uninitialised", (CanonicalString)"uninitialised", (CanonicalString)"uninitialised", 0x7ea1eaf);
                         message.Read(player, SerializationModeFlags.All);
 
                         // Only add the player if it is remote.
@@ -369,9 +370,9 @@ namespace AW2.Menu
                 spriteBatch.DrawString(menuSmallFont, player.Name, playerNamePos, Color.White);
 
                 // Draw icons of selected equipment.
-                Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(typeof(Gob), player.ShipName);
-                Weapon weapon1 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1Name);
-                Weapon weapon2 = (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2Name);
+                Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(TypeTemplateType.Gob, player.ShipName);
+                Weapon weapon1 = (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon1Name);
+                Weapon weapon2 = (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon2Name);
                 Texture2D shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.IconEquipName);
                 Texture2D weapon1Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon1.IconEquipName);
                 Texture2D weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconEquipName);

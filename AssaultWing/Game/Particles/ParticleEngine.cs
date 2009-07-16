@@ -285,7 +285,7 @@ namespace AW2.Game.Particles
         /// Creates a particle engine of the specified type.
         /// </summary>
         /// <param name="typeName">The type of the particle engine.</param>
-        public ParticleEngine(string typeName)
+        public ParticleEngine(CanonicalString typeName)
             : base(typeName)
         {
             // Gob sets our Pos to the origin.

@@ -180,14 +180,14 @@ namespace AW2.Game
         /// Types of gobs to create on birth.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        string[] birthGobTypes;
+        CanonicalString[] birthGobTypes;
 
         /// <summary>
         /// Types of gobs to create on death.
         /// </summary>
         /// You might want to put some gob types of subclass Explosion here.
         [TypeParameter, ShallowCopy]
-        string[] deathGobTypes;
+        CanonicalString[] deathGobTypes;
 
         /// <summary>
         /// Time of birth of the gob, in game time.
@@ -245,7 +245,7 @@ namespace AW2.Game
         /// Names of exhaust engine types.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        string[] exhaustEngineNames;
+        CanonicalString[] exhaustEngineNames;
 
         /// <summary>
         /// Indices of bones that indicate exhaust engine locations
@@ -594,9 +594,9 @@ namespace AW2.Game
                     Log.Write(message);
                     throw new Exception(message);
                 }
-                if (null == type.GetConstructor(flags, null, new Type[] { typeof(string) }, null))
+                if (null == type.GetConstructor(flags, null, new Type[] { typeof(CanonicalString) }, null))
                 {
-                    string message = "Missing constructor " + type.Name + "(string)";
+                    string message = "Missing constructor " + type.Name + "(CanonicalString)";
                     Log.Write(message);
                     throw new Exception(message);
                 }
@@ -641,8 +641,8 @@ namespace AW2.Game
             this.friction = 0.7f;
             this.modelName = (CanonicalString)"dummymodel";
             this.scale = 1f;
-            this.birthGobTypes = new string[0];
-            this.deathGobTypes = new string[0];
+            this.birthGobTypes = new CanonicalString[0];
+            this.deathGobTypes = new CanonicalString[0];
             this.collisionAreas = new CollisionArea[0];
             this.damage = 0;
             this.maxDamage = 100;
@@ -652,7 +652,7 @@ namespace AW2.Game
             disabled = false;
             movable = true;
             modelPartTransforms = null;
-            exhaustEngineNames = new string[0];
+            exhaustEngineNames = new CanonicalString[0];
         }
 
         /// <summary>
@@ -663,9 +663,9 @@ namespace AW2.Game
         /// in subclasses, so a subclass constructor only has to initialise its runtime
         /// state fields, not the fields that define its gob type.
         /// <param name="typeName">The type of the gob.</param>
-        protected Gob(string typeName)
+        protected Gob(CanonicalString typeName)
         {
-            this.typeName = (CanonicalString)typeName; // !!! HACK: Should take CanonicalString as parameter
+            this.typeName = typeName;
             gravitating = true;
             SetId();
             owner = null;
@@ -691,10 +691,10 @@ namespace AW2.Game
         /// takes care of finding the correct subclass.
         /// <param name="typeName">The type of the gob.</param>
         /// <returns>The newly created gob.</returns>
-        /// <seealso cref="CreateGob(string, Action&lt;Gob&gt;)"/>
-        public static Gob CreateGob(string typeName)
+        /// <seealso cref="CreateGob(CanonicalString, Action&lt;Gob&gt;)"/>
+        public static Gob CreateGob(CanonicalString typeName)
         {
-            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Gob), typeName);
+            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Gob, typeName);
             return (Gob)template.Clone();
         }
 
@@ -710,8 +710,8 @@ namespace AW2.Game
         /// should contain a call to <c>DataEngine.AddGob</c> or similar method.
         /// <param name="typeName">The type of the gob.</param>
         /// <param name="init">Initialisation to perform on the gob.</param>
-        /// <seealso cref="CreateGob(string)"/>
-        public static void CreateGob(string typeName, Action<Gob> init)
+        /// <seealso cref="CreateGob(CanonicalString)"/>
+        public static void CreateGob(CanonicalString typeName, Action<Gob> init)
         {
             Gob gob = CreateGob(typeName);
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
@@ -1253,7 +1253,7 @@ namespace AW2.Game
         /// </summary>
         void CreateBirthGobs()
         {
-            foreach (string gobType in birthGobTypes)
+            foreach (var gobType in birthGobTypes)
             {
                 CreateGob(gobType, gob =>
                 {
@@ -1287,7 +1287,7 @@ namespace AW2.Game
                     Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + modelName);
                     continue;
                 }
-                Gob.CreateGob(tokens[1], gob =>
+                Gob.CreateGob((CanonicalString)tokens[1], gob =>
                 {
                     Gobs.Peng peng = gob as Gobs.Peng;
                     if (peng != null)
@@ -1349,7 +1349,7 @@ namespace AW2.Game
             Arena.Gobs.Remove(this, forceRemove);
 
             // Create death gobs.
-            foreach (string gobType in deathGobTypes)
+            foreach (var gobType in deathGobTypes)
             {
                 CreateGob(gobType, gob =>
                 {
@@ -1391,20 +1391,6 @@ namespace AW2.Game
         {
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                // Make sure there's no null references.
-                if (typeName == null)
-                    typeName = (CanonicalString)"unknown gob type";
-                if (modelName == null)
-                    modelName = (CanonicalString)"dummymodel";
-                if (collisionAreas == null)
-                    collisionAreas = new CollisionArea[0];
-                if (birthGobTypes == null)
-                    birthGobTypes = new string[0];
-                if (deathGobTypes == null)
-                    deathGobTypes = new string[0];
-                if (exhaustEngineNames == null)
-                    exhaustEngineNames = new string[0];
-
                 // Rearrange our collision areas to have a physical area be first, 
                 // if there is such.
                 if (collisionAreas.Length > 0)

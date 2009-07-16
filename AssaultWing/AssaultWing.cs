@@ -719,8 +719,8 @@ namespace AW2
             uiEngine.MouseControlsEnabled = false;
 #endif
 
-            Player player1 = new Player("Kaiser Lohengramm", "Hyperion", "peashooter", "rockets", plr1Controls);
-            Player player2 = new Player("John Crichton", "Prowler", "shotgun", "bazooka", plr2Controls);
+            Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Hyperion", (CanonicalString)"peashooter", (CanonicalString)"rockets", plr1Controls);
+            Player player2 = new Player("John Crichton", (CanonicalString)"Prowler", (CanonicalString)"shotgun", (CanonicalString)"bazooka", plr2Controls);
             dataEngine.Players.Add(player1);
             dataEngine.Players.Add(player2);
 

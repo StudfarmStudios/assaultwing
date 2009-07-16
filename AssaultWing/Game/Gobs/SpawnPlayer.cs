@@ -35,7 +35,7 @@ namespace AW2.Game.Gobs
         /// Creates a player spawn area.
         /// </summary>
         /// <param name="typeName">The type of the player spawn area.</param>
-        public SpawnPlayer(string typeName)
+        public SpawnPlayer(CanonicalString typeName)
             : base(typeName)
         {
         }

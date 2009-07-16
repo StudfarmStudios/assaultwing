@@ -46,7 +46,7 @@ namespace AW2.Game.Gobs
         /// Creates a gravitational force.
         /// </summary>
         /// <param name="typeName">The type of the gravitational force.</param>
-        public Gravity(string typeName)
+        public Gravity(AW2.Helpers.CanonicalString typeName)
             : base(typeName)
         {
             movable = false;

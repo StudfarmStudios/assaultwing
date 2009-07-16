@@ -65,7 +65,7 @@ namespace AW2.Game.Gobs
         /// Creates a rocket.
         /// </summary>
         /// <param name="typeName">The type of the rocket.</param>
-        public Rocket(string typeName)
+        public Rocket(CanonicalString typeName)
             : base(typeName)
         {
         }

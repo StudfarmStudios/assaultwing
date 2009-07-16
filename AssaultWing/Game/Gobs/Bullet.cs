@@ -55,7 +55,7 @@ namespace AW2.Game.Gobs
         /// Creates a bullet.
         /// </summary>
         /// <param name="typeName">The type of the bullet.</param>
-        public Bullet(string typeName)
+        public Bullet(CanonicalString typeName)
             : base(typeName)
         {
         }
@@ -70,6 +70,7 @@ namespace AW2.Game.Gobs
                 int modelNameI = RandomHelper.GetRandomInt(bulletModelNames.Length);
                 base.ModelName = bulletModelNames[modelNameI];
             }
+            base.Activate();
         }
 
         /// <summary>

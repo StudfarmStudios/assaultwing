@@ -50,7 +50,7 @@ namespace AW2.Game.Gobs
         /// Creates a dock.
         /// </summary>
         /// <param name="typeName">The type of the dock.</param>
-        public Dock(string typeName)
+        public Dock(CanonicalString typeName)
             : base(typeName)
         {
             movable = false;

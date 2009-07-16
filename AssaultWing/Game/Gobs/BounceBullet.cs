@@ -40,7 +40,7 @@ namespace AW2.Game.Gobs
         /// Creates a bounce bullet.
         /// </summary>
         /// <param name="typeName">The type of the bounce bullet.</param>
-        public BounceBullet(string typeName)
+        public BounceBullet(CanonicalString typeName)
             : base(typeName)
         {
         }

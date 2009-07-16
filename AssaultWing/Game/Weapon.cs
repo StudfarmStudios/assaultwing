@@ -39,7 +39,7 @@ namespace AW2.Game
     /// of its type parameters to descriptive and exemplary default values.
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     [LimitedSerialization]
-    public abstract class Weapon : IConsistencyCheckable
+    public abstract class Weapon
     {
         #region Weapon fields
 
@@ -47,13 +47,13 @@ namespace AW2.Game
         /// Weapon type name.
         /// </summary>
         [TypeParameter]
-        string typeName;
+        CanonicalString typeName;
 
         /// <summary>
         /// Names of the weapon type upgrades of the weapon.
         /// </summary>
         [TypeParameter]
-        string[] upgradeNames;
+        CanonicalString[] upgradeNames;
 
         /// <summary>
         /// Name of the icon of the weapon, to be displayed in weapon selection 
@@ -90,9 +90,9 @@ namespace AW2.Game
         /// <summary>
         /// What type of gobs the weapon shoots out.
         /// </summary>
-        /// This gob type is assumed to be an instance of class AW2.Game.Gobs.Bullet.
+        /// This gob type is assumed to be an instance of class <see cref="AW2.Game.Gobs.Bullet"/>.
         [TypeParameter]
-        protected string shotTypeName;
+        protected CanonicalString shotTypeName;
         
         /// <summary>
         /// The time in seconds that it takes for the weapon to fire again after being fired once.
@@ -128,12 +128,12 @@ namespace AW2.Game
         /// <summary>
         /// Get the weapon type name.
         /// </summary>
-        public string TypeName { get { return typeName; } }
+        public CanonicalString TypeName { get { return typeName; } }
         
         /// <summary>
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.
         /// </summary>
-        public string[] UpgradeNames { get { return upgradeNames; } }
+        public CanonicalString[] UpgradeNames { get { return upgradeNames; } }
 
         /// <summary>
         /// Name of the icon of the weapon, to be displayed in weapon selection 
@@ -228,13 +228,13 @@ namespace AW2.Game
             // Check that important constructors have been declared
             Helpers.Log.Write("Checking weapon constructors");
             foreach (Type type in Array.FindAll<Type>(System.Reflection.Assembly.GetExecutingAssembly().GetTypes(),
-                delegate(Type t) { return typeof(Weapon).IsAssignableFrom(t); }))
+                t => typeof(Weapon).IsAssignableFrom(t)))
             {
                 if (null == type.GetConstructor(Type.EmptyTypes))
                     throw new Exception("Missing constructor " + type.Name + "()");
                 if (null == type.GetConstructor(new Type[] { 
-                    typeof(string), typeof(Ship), typeof(int), typeof(int[]), }))
-                    throw new Exception("Missing constructor " + type.Name + "(string, Ship, int, int[])");
+                    typeof(CanonicalString), typeof(Ship), typeof(int), typeof(int[]), }))
+                    throw new Exception("Missing constructor " + type.Name + "(CanonicalString, Ship, int, int[])");
             }
         }
 
@@ -244,14 +244,14 @@ namespace AW2.Game
         /// This constructor is only for serialisation.
         public Weapon()
         {
-            this.typeName = "unknown weapon type";
-            this.upgradeNames = new string[] { "dummyweapontype", };
+            this.typeName = (CanonicalString)"unknown weapon type";
+            this.upgradeNames = new CanonicalString[] { (CanonicalString)"dummyweapontype", };
             this.iconName = (CanonicalString)"dummytexture";
             this.iconEquipName = (CanonicalString)"dummytexture";
             this.owner = null;
             this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };
-            this.shotTypeName = "dummygobtype";
+            this.shotTypeName = (CanonicalString)"dummygobtype";
             this.loadTime = 0.5f;
             this.loadedTime = new TimeSpan(1, 2, 3);
             this.fireCharge = 100;
@@ -262,10 +262,10 @@ namespace AW2.Game
         /// Creates a new weapon of the specified type.
         /// </summary>
         /// <param name="typeName">The type of the weapon.</param>
-        public Weapon(string typeName)
+        protected Weapon(CanonicalString typeName)
         {
             // Initialise fields from the weapon type's template.
-            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), typeName);
+            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, typeName);
             if (template.GetType() != this.GetType())
                 throw new Exception("Silly programmer tries to create a weapon (type " +
                     typeName + ") using a wrong Weapon subclass (class " + this.GetType().Name);
@@ -287,7 +287,7 @@ namespace AW2.Game
         /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
-        public Weapon(string typeName, Ship owner, int ownerHandle, int[] boneIndices)
+        public Weapon(CanonicalString typeName, Ship owner, int ownerHandle, int[] boneIndices)
             : this(typeName)
         {
             this.owner = owner;
@@ -309,9 +309,9 @@ namespace AW2.Game
         /// barrels' locations on the owning ship.</param>
         /// <param name="args">Any arguments to pass to the subclass' constructor.</param>
         /// <returns>The newly created weapon.</returns>
-        public static Weapon CreateWeapon(string typeName, Ship owner, int ownerHandle, int[] boneIndices, params object[] args)
+        public static Weapon CreateWeapon(CanonicalString typeName, Ship owner, int ownerHandle, int[] boneIndices, params object[] args)
         {
-            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Weapon), typeName);
+            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, typeName);
             Type type = template.GetType();
             if (args.Length == 0)
                 return (Weapon)Activator.CreateInstance(type, typeName, owner, ownerHandle, boneIndices);
@@ -385,31 +385,5 @@ namespace AW2.Game
         }
 
         #endregion Weapon protected methods
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public virtual void MakeConsistent(Type limitationAttribute)
-        {
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Make sure there's no null references.
-                typeName = typeName ?? "unknown weapon type";
-                upgradeNames = upgradeNames ?? new string[0];
-                if (iconName == null)
-                    iconName = (CanonicalString)"dummytexture";
-                if (iconEquipName == null)
-                    iconEquipName = (CanonicalString)"dummytexture";
-                shotTypeName = shotTypeName ?? "dummygob";
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
     }
 }

@@ -260,7 +260,7 @@ namespace AW2.Graphics
                     {
                         Weapon weapon1 = player.Ship != null
                             ? player.Ship.Weapon1
-                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon1RealName);
+                            : (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon1RealName);
                         bonusText = player.Weapon1RealName;
                         bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(weapon1.IconName);
                     }
@@ -269,7 +269,7 @@ namespace AW2.Graphics
                     {
                         Weapon weapon2 = player.Ship != null
                             ? player.Ship.Weapon2
-                            : (Weapon)data.GetTypeTemplate(typeof(Weapon), player.Weapon2RealName);
+                            : (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon2RealName);
                         bonusText = player.Weapon2RealName;
                         bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconName);
                     }

@@ -67,18 +67,13 @@ namespace AW2.Helpers
             Type[] parameterTypes = { typeof(Clonable) };
             var dyna = new DynamicMethod("ConstructorInvoker", returnType, parameterTypes, typeof(Clonable));
             var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            var constructor = type.GetConstructor(flags, null, new Type[] { typeof(string) }, null);
+            var constructor = type.GetConstructor(flags, null, new Type[] { typeof(CanonicalString) }, null);
             var gob_GetTypeName = typeof(AW2.Game.Gob).GetProperty("TypeName").GetGetMethod(); // HACK: Reference to Gob
-            var canonicalString_GetValue = typeof(CanonicalString).GetProperty("Value").GetGetMethod();
             var generator = dyna.GetILGenerator();
-            var dummyLoc = generator.DeclareLocal(typeof(CanonicalString));
 
             // HACK: get value of ((Gob)this).TypeName
             generator.Emit(OpCodes.Ldarg_0);
             generator.Emit(OpCodes.Call, gob_GetTypeName);
-            generator.Emit(OpCodes.Stloc, dummyLoc);
-            generator.Emit(OpCodes.Ldloca_S, dummyLoc.LocalIndex);
-            generator.Emit(OpCodes.Call, canonicalString_GetValue);
 
             // call constructor and return its return value
             generator.Emit(OpCodes.Newobj, constructor);

@@ -54,7 +54,7 @@ namespace AW2.Game.Gobs
         /// Creates a piece of wall.
         /// </summary>
         /// <param name="typeName">The type of the wall.</param>
-        public WallModel(string typeName)
+        public WallModel(CanonicalString typeName)
             : base(typeName)
         {
             this.wallModelName = (CanonicalString)"dummymodel";

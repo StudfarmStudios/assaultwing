@@ -50,7 +50,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("Id:{Id} typeName:{typeName} pos:{pos} move:{move}")]
-    public class Gob : IConsistencyCheckable, Net.INetworkSerializable
+    public class Gob : Clonable, IConsistencyCheckable, Net.INetworkSerializable
     {
         /// <summary>
         /// Type of a gob's preferred placement to arena layers.
@@ -667,7 +667,6 @@ namespace AW2.Game
         {
             this.typeName = (CanonicalString)typeName; // !!! HACK: Should take CanonicalString as parameter
             gravitating = true;
-            InitializeTypeParameters();
             SetId();
             owner = null;
             Pos = Vector2.Zero; // also translates collPrimitives
@@ -696,8 +695,7 @@ namespace AW2.Game
         public static Gob CreateGob(string typeName)
         {
             Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Gob), typeName);
-            Type type = template.GetType();
-            return (Gob)Activator.CreateInstance(type, typeName);
+            return (Gob)template.Clone();
         }
 
         /// <summary>
@@ -758,25 +756,6 @@ namespace AW2.Game
             Gob gob = CreateGob(runtimeState);
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
-        }
-
-        /// <summary>
-        /// Initialises the fields of the gob marked as type parameters 
-        /// from the values defined in the type template of the gob.
-        /// </summary>
-        public void InitializeTypeParameters()
-        {
-            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeof(Gob), typeName);
-            if (template.GetType() != this.GetType())
-                throw new Exception("Silly programmer tries to initialise type parameters of a gob (type " +
-                    typeName + ") using a wrong Gob subclass (class " + this.GetType().Name + ")");
-            foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
-                if (field.FieldType.IsValueType || field.IsDefined(typeof(ShallowCopyAttribute), false))
-                    field.SetValue(this, field.GetValue(template));
-                else
-                    field.SetValue(this, Serialization.DeepCopy(field.GetValue(template)));
-
-            foreach (var area in collisionAreas) area.Owner = this;
         }
 
         #endregion Gob constructors and static constructor-like methods
@@ -1391,7 +1370,15 @@ namespace AW2.Game
 
         #endregion
 
-        #region IConsistencyCheckable Members
+        #region IConsistencyCheckable and Clonable Members
+
+        /// <summary>
+        /// Called on a cloned object after the cloning.
+        /// </summary>
+        public override void Cloned()
+        {
+            foreach (var area in collisionAreas) area.Owner = this;
+        }
 
         /// <summary>
         /// Makes the instance consistent in respect of fields marked with a

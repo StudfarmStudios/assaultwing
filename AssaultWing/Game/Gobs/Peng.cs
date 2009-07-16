@@ -248,9 +248,6 @@ namespace AW2.Game.Gobs
             prevPos = new Vector2(Single.NaN);
             oldPosTimestamp = TimeSpan.Zero;
             particles = new List<Particle>();
-
-            // Gain ownership of our emitter.
-            emitter.Peng = this;
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -354,7 +351,16 @@ namespace AW2.Game.Gobs
             oldPosTimestamp = AssaultWing.Instance.GameTime.TotalGameTime;
         }
 
-        #region IConsistencyCheckable Members
+        #region IConsistencyCheckable and Clonable Members
+
+        /// <summary>
+        /// Called on a cloned object after the cloning.
+        /// </summary>
+        public override void Cloned()
+        {
+            base.Cloned();
+            emitter.Peng = this;
+        }
 
         /// <summary>
         /// Makes the instance consistent in respect of fields marked with a

@@ -379,8 +379,6 @@ namespace AW2.Game.Gobs
         {
             this.weapon1 = null;
             this.weapon2 = null;
-            this.weapon1Charge = this.weapon1ChargeMax;
-            this.weapon2Charge = this.weapon2ChargeMax;
             this.temporarilyDisabledGobs = new List<Gob>();
         }
 
@@ -443,6 +441,8 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            weapon1Charge = weapon1ChargeMax;
+            weapon2Charge = weapon2ChargeMax;
             SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
             CreateCoughEngines();

@@ -34,7 +34,8 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
-        public override IEnumerable<CanonicalString> ModelNames {
+        public override IEnumerable<CanonicalString> ModelNames
+        {
             get { return base.ModelNames.Union(bulletModelNames); }
         }
 
@@ -56,6 +57,13 @@ namespace AW2.Game.Gobs
         /// <param name="typeName">The type of the bullet.</param>
         public Bullet(string typeName)
             : base(typeName)
+        {
+        }
+
+        /// <summary>
+        /// Activates the gob, i.e. performs an initialisation rite.
+        /// </summary>
+        public override void Activate()
         {
             if (bulletModelNames.Length > 0)
             {

@@ -126,10 +126,18 @@ namespace AW2.Game.Gobs
         public Bonus(string typeName)
             : base(typeName)
         {
-            deathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
         }
 
         #region Methods related to gobs' functionality in the game world
+
+        /// <summary>
+        /// Activates the gob, i.e. performs an initialisation rite.
+        /// </summary>
+        public override void Activate()
+        {
+            base.Activate();
+            deathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
+        }
 
         /// <summary>
         /// Updates the bonus's internal state.

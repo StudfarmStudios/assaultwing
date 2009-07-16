@@ -43,6 +43,14 @@ namespace AW2.Game.Gobs
         public BounceBullet(string typeName)
             : base(typeName)
         {
+        }
+
+        /// <summary>
+        /// Activates the gob, i.e. performs an initialisation rite.
+        /// </summary>
+        public override void Activate()
+        {
+            base.Activate();
             deathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
         }
 

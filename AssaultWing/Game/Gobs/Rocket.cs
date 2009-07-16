@@ -68,8 +68,6 @@ namespace AW2.Game.Gobs
         public Rocket(string typeName)
             : base(typeName)
         {
-            thrustEndTime = AssaultWing.Instance.GameTime.TotalGameTime 
-                + TimeSpan.FromSeconds(thrustDuration);
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -77,12 +75,10 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Activates the gob, i.e. performs an initialisation rite.
         /// </summary>
-        /// DataEngine will call this method to make the gob do necessary 
-        /// initialisations to make it fully functional on addition to 
-        /// an ongoing play of the game.
         public override void Activate()
         {
             base.Activate();
+            thrustEndTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(thrustDuration);
         }
 
         /// <summary>

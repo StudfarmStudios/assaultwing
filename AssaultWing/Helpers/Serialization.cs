@@ -444,15 +444,25 @@ namespace AW2.Helpers
             // each base class in turn.
             List<FieldInfo> fields = new List<FieldInfo>();
             for (Type type = objType; type != null; type = type.BaseType)
-                fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly |
-                                               BindingFlags.Public | BindingFlags.NonPublic));
-            Predicate<FieldInfo> fieldChoice = delegate(FieldInfo field)
-            {
-                return limitationAttribute == null || field.IsDefined(limitationAttribute, false);
-            };
-            result = Array.FindAll<FieldInfo>(fields.ToArray(), fieldChoice);
+                fields.AddRange(GetDeclaredFields(type, limitationAttribute));
+            result = fields.ToArray();
             typeFields[key] = result;
             return result;
+        }
+
+        /// <summary>
+        /// Returns the declared instance fields of the given object that optionally have the given attribute.
+        /// </summary>
+        /// The search includes the object's public and non-public fields declared in its 
+        /// type (excluding fields declared in any base types). Do not modify the returned array.
+        /// <param name="type">The type whose fields to scan for.</param>
+        /// <param name="limitationAttribute">Return fields with this attribute.
+        /// If set to null, returns all fields.</param>
+        public static IEnumerable<FieldInfo> GetDeclaredFields(Type type, Type limitationAttribute)
+        {
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic);
+            return Array.FindAll<FieldInfo>(fields.ToArray(), 
+                field => limitationAttribute == null || field.IsDefined(limitationAttribute, false));
         }
 
         /// <summary>

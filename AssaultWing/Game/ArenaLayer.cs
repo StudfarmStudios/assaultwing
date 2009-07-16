@@ -62,7 +62,6 @@ namespace AW2.Game
             z = 0;
             parallaxName = (CanonicalString)"dummysprite";
             gobs = new ArenaLayerGobCollection();
-            gobs.Add(Gob.CreateGob("dummygobtype"));
         }
 
         /// <summary>

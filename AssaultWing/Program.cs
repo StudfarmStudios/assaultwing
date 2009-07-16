@@ -1,4 +1,5 @@
 using System;
+using AW2.Helpers;
 
 namespace AW2
 {
@@ -14,15 +15,14 @@ namespace AW2
             try
             {
 #endif
-                AW2.Helpers.Log.Write("Assault Wing started");
-                using (AssaultWing game = AssaultWing.Instance)
-                {
-                    game.Run();
-                }
+                Log.Write("Assault Wing started");
+                using (var game = AssaultWing.Instance) game.Run();
 #if !DEBUG
             }
             catch (Exception e)
             {
+                Log.Write("Assault Wing fatal error");
+                Log.Write("Please send the following information to the developers:\n" + e.ToString());
                 System.Windows.Forms.MessageBox.Show(e.ToString(), "Assault Wing fatal error");
             }
 #endif

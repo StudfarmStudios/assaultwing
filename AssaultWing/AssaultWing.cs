@@ -15,6 +15,7 @@ using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
 using Form = System.Windows.Forms.Form;
+using System.Diagnostics;
 
 namespace AW2
 {
@@ -71,6 +72,21 @@ namespace AW2
     /// Game components can be requested from the AssaultWing.Services property.
     public class AssaultWing : Microsoft.Xna.Framework.Game
     {
+        /// <summary>
+        /// Wraps <see cref="CounterCreationDataCollection"/>, adding to it an implementation
+        /// of <see cref="IEnumerable&lt;CounterCreationData&gt;"/>.
+        /// </summary>
+        class AWCounterCreationDataCollection : CounterCreationDataCollection, IEnumerable<CounterCreationData>
+        {
+            /// <summary>
+            /// Returns an enumerator for the collection.
+            /// </summary>
+            public new IEnumerator<CounterCreationData> GetEnumerator()
+            {
+                foreach (var x in (System.Collections.IEnumerable)this) yield return (CounterCreationData)x;
+            }
+        }
+
         #region AssaultWing fields
 
         UIEngineImpl uiEngine;
@@ -204,6 +220,25 @@ namespace AW2
         }
 
         #endregion AssaultWing properties
+
+        #region AssaultWing performance counters
+
+        /// <summary>
+        /// Number of elapsed frames.
+        /// </summary>
+        public AWPerformanceCounter FramesElapsedCounter { get; private set; }
+
+        /// <summary>
+        /// Number of created gobs.
+        /// </summary>
+        public AWPerformanceCounter GobsCreatedCounter { get; private set; }
+
+        /// <summary>
+        /// Number of created gobs per frame, averaged over one second.
+        /// </summary>
+        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondCounter { get; private set; }
+
+        #endregion
 
         #region AssaultWing private methods
 
@@ -360,6 +395,64 @@ namespace AW2
             graphicsEngine.RearrangeViewports();
             ChangeState(GameState.Gameplay);
             soundEngine.PlayMusic(dataEngine.Arena);
+        }
+
+        [Conditional("DEBUG")]
+        void InitializePerformanceCounters()
+        {
+            var categoryName = "Assault Wing";
+            var instanceName = "AW Instance " + Process.GetCurrentProcess().Id;
+            
+            var counters = new AWCounterCreationDataCollection();
+            counters.Add(new CounterCreationData("Gobs Created", "Number of gobs created during the latest arena", PerformanceCounterType.NumberOfItems32));
+            counters.Add(new CounterCreationData("Gobs Created/f Avg/s", "Number of gobs created per frame as an average over the last second", PerformanceCounterType.AverageCount64));
+            counters.Add(new CounterCreationData("Frames Elapsed", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
+
+            // Delete registered category if it seems outdated.
+            if (PerformanceCounterCategory.Exists(categoryName))
+            {
+                var category = new PerformanceCounterCategory(categoryName).ReadCategory();
+                if (counters.Any(counter => !category.Contains(counter.CounterName)))
+                    PerformanceCounterCategory.Delete(categoryName);
+            }
+
+            // Create the category if it's missing
+            if (!PerformanceCounterCategory.Exists(categoryName))
+                PerformanceCounterCategory.Create(categoryName, "Assault Wing internal performance and activity counters", PerformanceCounterCategoryType.MultiInstance, counters);
+
+            // Initialise our counter instances dynamically with reflection
+            int propertyCount = 0;
+            foreach (var prop in GetType().GetProperties())
+                if (prop.PropertyType == typeof(AWPerformanceCounter))
+                {
+                    ++propertyCount;
+                    var counterData = counters.FirstOrDefault(data => CounterNameToPropertyName(data.CounterName) == prop.Name);
+                    if (counterData == null) throw new Exception("Superfluous performance counter property: AssaultWing." + prop.Name);
+                    var counter = new AWPerformanceCounter
+                    {
+                        Impl = new PerformanceCounter
+                        {
+                            CategoryName = categoryName,
+                            CounterName = counterData.CounterName,
+                            InstanceName = instanceName,
+                            ReadOnly = false,
+                            InstanceLifetime = PerformanceCounterInstanceLifetime.Process,
+                            RawValue = 0
+                        }
+                    };
+                    prop.SetValue(this, counter, null);
+                }
+            if (propertyCount < counters.Count(counter => !counter.CounterName.EndsWith("Base")))
+                throw new Exception("Some performance counters don't have corresponding public properties in class AssaultWing and thus won't have meaningful values");
+        }
+
+        string CounterNameToPropertyName(string counterName)
+        {
+            return counterName
+                .Replace(" ", "")
+                .Replace("/s", "PerSecond")
+                .Replace("/f", "PerFrame")
+                + "Counter";
         }
 
         #endregion AssaultWing private methods
@@ -626,6 +719,7 @@ namespace AW2
         {
             Log.Write("Assault Wing initializing");
             windowForm = (Form)Form.FromHandle(Window.Handle);
+            InitializePerformanceCounters();
 
             uiEngine = new UIEngineImpl(this);
             logicEngine = new LogicEngine(this);
@@ -822,7 +916,10 @@ namespace AW2
 
             base.Update(this.gameTime);
             if (logicEngine.Enabled)
+            {
+                FramesElapsedCounter.Increment();
                 dataEngine.CommitPending();
+            }
         }
 
         /// <summary>

@@ -216,7 +216,7 @@ namespace AW2.Game.Pengs
                     particle.random = random;
                     particle.rotation = rotation;
                     particle.scale = 1;
-                    particle.textureName = textureNames[emitType];
+                    particle.textureIndex = emitType;
                     particles.Add(particle);
                 }
                 else

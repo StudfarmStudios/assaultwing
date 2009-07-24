@@ -253,6 +253,24 @@ namespace AW2.Game.Gobs
         #region Methods related to gobs' functionality in the game world
 
         /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public override void LoadContent()
+        {
+            base.LoadContent();
+            emitter.LoadContent();
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public override void UnloadContent()
+        {
+            base.UnloadContent();
+            emitter.UnloadContent();
+        }
+
+        /// <summary>
         /// Updates the gob according to physical laws.
         /// </summary>
         public override void Update()
@@ -320,7 +338,7 @@ namespace AW2.Game.Gobs
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.layerDepth, 0, 1);
-                Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(particle.textureName);
+                Texture2D texture = emitter.Textures[particle.textureIndex];
                 float drawRotation = coordinateSystem == CoordinateSystem.Game
                     ? particle.rotation
                     : particle.rotation + Rotation;

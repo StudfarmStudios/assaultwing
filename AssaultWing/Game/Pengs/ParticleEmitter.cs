@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Gobs;
 using AW2.Helpers;
 
@@ -49,6 +50,11 @@ namespace AW2.Game.Pengs
         public CanonicalString[] TextureNames { get { return textureNames; } }
 
         /// <summary>
+        /// Textures in the same order as in <see cref="textureNames"/>.
+        /// </summary>
+        public Texture2D[] Textures { get; private set; }
+
+        /// <summary>
         /// Names of types of gobs to emit.
         /// </summary>
         public CanonicalString[] GobTypeNames { get { return gobTypeNames; } }
@@ -88,6 +94,28 @@ namespace AW2.Game.Pengs
             textureNames = new CanonicalString[] { (CanonicalString)"dummytexture" };
             gobTypeNames = new CanonicalString[] { (CanonicalString)"dummygob" };
             paused = false;
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public void LoadContent()
+        {
+            Textures = new Texture2D[TextureNames.Length];
+            for (int i = 0; i < TextureNames.Length; ++i)
+                Textures[i] = AssaultWing.Instance.Content.Load<Texture2D>(TextureNames[i]);
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public void UnloadContent()
+        {
+            /* TODO: Dispose unused textures somewhere. Maybe implement per-arena unloading to AWContentManager.
+            for (int i = 0; i < TextureNames.Length; ++i)
+                if (!Textures[i].IsDisposed) Textures[i].Dispose();
+            */
+            Textures = null;
         }
     }
 }

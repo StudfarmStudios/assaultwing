@@ -28,9 +28,10 @@ namespace AW2.Game.Pengs
         public TimeSpan timeout;
 
         /// <summary>
-        /// Name of the texture to draw the particle with.
+        /// Index of the texture to draw the particle with, as listed in
+        /// <see cref="ParticleEmitter.Textures"/>.
         /// </summary>
-        public CanonicalString textureName;
+        public int textureIndex;
 
         /// <summary>
         /// Position of the particle in an unspecified coordinate system.

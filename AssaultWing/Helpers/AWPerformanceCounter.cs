@@ -18,12 +18,30 @@ namespace AW2.Helpers
         public PerformanceCounter Impl { get; set; }
 
         /// <summary>
+        /// Sets the raw, or uncalculated, value of this counter.
+        /// </summary>
+        public void SetRawValue(long value)
+        {
+            if (Impl != null) Impl.RawValue = value;
+        }
+
+        /// <summary>
         /// Increments the associated performance counter by one through an efficient atomic operation.
         /// </summary>
         /// <returns>The incremented counter value.</returns>
         public long Increment()
         {
             if (Impl != null) return Impl.Increment();
+            return 0;
+        }
+
+        /// <summary>
+        /// Decrements the associated performance counter by one through an efficient atomic operation.
+        /// </summary>
+        /// <returns>The decremented counter value.</returns>
+        public long Decrement()
+        {
+            if (Impl != null) return Impl.Decrement();
             return 0;
         }
     }

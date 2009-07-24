@@ -332,7 +332,10 @@ namespace AW2.Game
                 Gobs.Added += gob =>
                 {
                     if (IsActive)
+                    {
+                        AssaultWing.Instance.GobsCounter.Increment();
                         Prepare(gob);
+                    }
 
                     // Game server notifies game clients of the new gob.
                     if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
@@ -355,11 +358,14 @@ namespace AW2.Game
                     // Game server notifies game clients of the removal of relevant gobs.
                     if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
                     {
+                        if (!IsActive) throw new Exception("Removing a gob from an inactive arena during network game");
                         var message = new GobDeletionMessage();
                         message.GobId = gob.Id;
                         AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
                     }
 
+                    if (IsActive)
+                        AssaultWing.Instance.GobsCounter.Decrement();
                     if (gob.Layer == Gobs.GameplayLayer)
                         Unregister(gob);
                     gob.Dispose();

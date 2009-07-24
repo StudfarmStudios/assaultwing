@@ -238,6 +238,11 @@ namespace AW2
         /// </summary>
         public AWPerformanceCounter FramesDrawnPerSecondCounter { get; private set; }
 
+        /// <summary>
+        /// Number of gobs currently alive.
+        /// </summary>
+        public AWPerformanceCounter GobsCounter { get; private set; }
+
         #endregion
 
         #region AssaultWing private methods
@@ -407,6 +412,7 @@ namespace AW2
             counters.Add(new CounterCreationData("Gobs Created/f Avg/s", "Number of gobs created per frame as an average over the last second", PerformanceCounterType.AverageCount64));
             counters.Add(new CounterCreationData("Frames Elapsed", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
             counters.Add(new CounterCreationData("Frames Drawn/s", "Number of frames drawn per second", PerformanceCounterType.RateOfCountsPerSecond32));
+            counters.Add(new CounterCreationData("Gobs", "Number of gobs in current arena", PerformanceCounterType.NumberOfItems32));
 
             // Delete registered category if it seems outdated.
             if (PerformanceCounterCategory.Exists(categoryName))

@@ -229,14 +229,14 @@ namespace AW2
         public AWPerformanceCounter FramesElapsedCounter { get; private set; }
 
         /// <summary>
-        /// Number of created gobs.
-        /// </summary>
-        public AWPerformanceCounter GobsCreatedCounter { get; private set; }
-
-        /// <summary>
         /// Number of created gobs per frame, averaged over one second.
         /// </summary>
         public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondCounter { get; private set; }
+
+        /// <summary>
+        /// Number of drawn frames per second.
+        /// </summary>
+        public AWPerformanceCounter FramesDrawnPerSecondCounter { get; private set; }
 
         #endregion
 
@@ -404,9 +404,9 @@ namespace AW2
             var instanceName = "AW Instance " + Process.GetCurrentProcess().Id;
             
             var counters = new AWCounterCreationDataCollection();
-            counters.Add(new CounterCreationData("Gobs Created", "Number of gobs created during the latest arena", PerformanceCounterType.NumberOfItems32));
             counters.Add(new CounterCreationData("Gobs Created/f Avg/s", "Number of gobs created per frame as an average over the last second", PerformanceCounterType.AverageCount64));
             counters.Add(new CounterCreationData("Frames Elapsed", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
+            counters.Add(new CounterCreationData("Frames Drawn/s", "Number of frames drawn per second", PerformanceCounterType.RateOfCountsPerSecond32));
 
             // Delete registered category if it seems outdated.
             if (PerformanceCounterCategory.Exists(categoryName))
@@ -930,6 +930,7 @@ namespace AW2
         {
             if ((gameTime.TotalRealTime - lastFramerateCheck).TotalSeconds < 1)
             {
+                FramesDrawnPerSecondCounter.Increment();
                 ++framesSinceLastCheck;
             }
             else

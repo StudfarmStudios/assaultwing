@@ -694,7 +694,6 @@ namespace AW2.Game
         /// <seealso cref="CreateGob(CanonicalString, Action&lt;Gob&gt;)"/>
         public static Gob CreateGob(CanonicalString typeName)
         {
-            AssaultWing.Instance.GobsCreatedCounter.Increment();
             AssaultWing.Instance.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
             Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Gob, typeName);
             return (Gob)template.Clone();

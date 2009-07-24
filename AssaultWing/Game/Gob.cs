@@ -165,6 +165,8 @@ namespace AW2.Game
         [TypeParameter]
         CanonicalString modelName;
 
+        Model model;
+
         /// <summary>
         /// Scaling factor of the 3D model.
         /// </summary>
@@ -504,7 +506,6 @@ namespace AW2.Game
         {
             get
             {
-                Model model = AssaultWing.Instance.Content.Load<Model>(modelName);
                 if (modelPartTransforms == null || modelPartTransforms.Length != model.Bones.Count)
                 {
                     modelPartTransforms = new Matrix[model.Bones.Count];
@@ -768,6 +769,7 @@ namespace AW2.Game
         /// </summary>
         public virtual void LoadContent()
         {
+            model = AssaultWing.Instance.Content.Load<Model>(ModelName);
         }
 
         /// <summary>
@@ -852,7 +854,6 @@ namespace AW2.Game
         public virtual void Draw(Matrix view, Matrix projection)
         {
             BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
-            Model model = AssaultWing.Instance.Content.Load<Model>(modelName);
             Matrix world = WorldMatrix;
             Matrix meshSphereTransform = // mesh bounding spheres are by default in model coordinates
                 Matrix.CreateScale(Scale) *
@@ -1066,7 +1067,6 @@ namespace AW2.Game
         public KeyValuePair<string, int>[] GetNamedPositions(string namePrefix)
         {
             List<KeyValuePair<string, int>> boneIs = new List<KeyValuePair<string, int>>();
-            Model model = AssaultWing.Instance.Content.Load<Model>(ModelName);
             foreach (ModelBone bone in model.Bones)
                 if (bone.Name != null && bone.Name.StartsWith(namePrefix))
                     boneIs.Add(new KeyValuePair<string, int>(bone.Name, bone.Index));
@@ -1309,7 +1309,6 @@ namespace AW2.Game
         /// </summary>
         void InitializeModelCollisionAreas()
         {
-            Model model = AssaultWing.Instance.Content.Load<Model>(modelName);
             foreach (ModelMesh mesh in model.Meshes)
             {
                 // A specially named mesh can replace the geometric area of a named collision area.

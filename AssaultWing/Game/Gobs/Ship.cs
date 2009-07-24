@@ -53,6 +53,9 @@ namespace AW2.Game.Gobs
         [RuntimeState]
         Weapon weapon2;
 
+        // Names of weapons to create when possible.
+        CanonicalString weapon1Name, weapon2Name;
+
         /// <summary>
         /// Maximum amount of charge for primary weapons.
         /// </summary>
@@ -239,9 +242,14 @@ namespace AW2.Game.Gobs
             get { return weapon1 == null ? (CanonicalString)"no weapon" : weapon1.TypeName; }
             set
             {
+                // Null weapon means we're not yet activated. Then create weapon later.
                 if (weapon1 != null)
+                {
                     AssaultWing.Instance.DataEngine.Weapons.Remove(weapon1);
-                weapon1 = CreateWeapons(value, 1);
+                    weapon1 = CreateWeapons(value, 1);
+                }
+                else
+                    weapon1Name = value;
             }
         }
 
@@ -253,9 +261,14 @@ namespace AW2.Game.Gobs
             get { return weapon2 == null ? (CanonicalString)"no weapon" : weapon2.TypeName; }
             set
             {
+                // Null weapon means we're not yet activated. Then create weapon later.
                 if (weapon2 != null)
+                {
                     AssaultWing.Instance.DataEngine.Weapons.Remove(weapon2);
-                weapon2 = CreateWeapons(value, 2);
+                    weapon2 = CreateWeapons(value, 2);
+                }
+                else
+                    weapon2Name = value;
             }
         }
 
@@ -441,6 +454,8 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            if (weapon1Name != CanonicalString.Null) weapon1 = CreateWeapons(weapon1Name, 1);
+            if (weapon2Name != CanonicalString.Null) weapon2 = CreateWeapons(weapon2Name, 2);
             weapon1Charge = weapon1ChargeMax;
             weapon2Charge = weapon2ChargeMax;
             SwitchExhaustEngines(false);
@@ -494,7 +509,6 @@ namespace AW2.Game.Gobs
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
 
             // Flash and be disabled if we're just born.
-            Model model = AssaultWing.Instance.Content.Load<Model>(ModelName);
             float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
             Alpha = birthAlpha.Evaluate(age);
             Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;

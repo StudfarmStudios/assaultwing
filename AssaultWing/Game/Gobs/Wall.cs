@@ -202,7 +202,7 @@ namespace AW2.Game.Gobs
             if (!silhouetteEffect.IsDisposed)
                 silhouetteEffect.Dispose();
             vertexDeclaration.Dispose();
-            if (!texture.IsDisposed) texture.Dispose();
+            // 'texture' will be disposed by the graphics engine.
             // 'effect' and 'silhouetteEffect' are managed by other objects
             base.UnloadContent();
         }

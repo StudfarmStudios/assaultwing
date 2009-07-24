@@ -21,6 +21,11 @@ namespace AW2.Helpers
         static IList<string> canonicalForms = new List<string> { null };
 
         /// <summary>
+        /// The <see cref="CanonicalString"/> instance corresponding to the null <see cref="string"/>.
+        /// </summary>
+        public static readonly CanonicalString Null = new CanonicalString(0);
+
+        /// <summary>
         /// The index of a string in this list is its canonical form.
         /// Zero index is reserved for the uninitialised string.
         /// </summary>
@@ -31,6 +36,8 @@ namespace AW2.Helpers
             {
                 if (value == null) throw new ArgumentNullException("Cannot set null list as canonical forms");
                 canonicalForms = new List<string>(value);
+                if (canonicalForms.Count == 0 || canonicalForms[0] != null)
+                    throw new ArgumentException("First canonical form must be null");
             }
         }
 

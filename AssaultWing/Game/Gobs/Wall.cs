@@ -427,7 +427,7 @@ namespace AW2.Game.Gobs
                     new Vector2(v2.X, v2.Y),
                     new Vector2(v3.X, v3.Y));
                 collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
-                    CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None);
+                    CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
             }
 
             // Create a bounding volume for the whole wall.
@@ -436,7 +436,7 @@ namespace AW2.Game.Gobs
             var max = positions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
             var boundingArea = new Rectangle(min, max);
             collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
-                CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None);
+                CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
         }
 
         /// <summary>

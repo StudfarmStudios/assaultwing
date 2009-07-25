@@ -9,6 +9,7 @@ using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Graphics;
 using AW2.Net;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace AW2.Game
 {
@@ -265,27 +266,6 @@ namespace AW2.Game
         #region Fields for collisions
 
         /// <summary>
-        /// Elasticity factor of the gob. Zero means the no bouncing off 
-        /// at a collision for either gob. One means fully elastic collision.
-        /// </summary>
-        /// The elasticity factors of both colliding gobs affect the final elasticity
-        /// of the collision. Avoid using zero; instead, use a very small number.
-        /// Use a number above one to regain fully elastic collisions even
-        /// when countered by inelastic gobs.
-        [TypeParameter]
-        float elasticity;
-
-        /// <summary>
-        /// Friction factor of the gob. Zero means that movement along the
-        /// collision surface is not slowed by friction.
-        /// </summary>
-        /// The friction factors of both colliding gobs affect the final friction
-        /// of the collision. It's a good idea to use values that are closer to
-        /// zero than one.
-        [TypeParameter]
-        float friction;
-
-        /// <summary>
         /// Collision primitives, translated according to the gob's location.
         /// </summary>
         [TypeParameter]
@@ -406,25 +386,6 @@ namespace AW2.Game
         /// Mass of the gob, measured in kilograms.
         /// </summary>
         public float Mass { get { return mass; } }
-
-        /// <summary>
-        /// Elasticity factor of the gob. Zero means the no bouncing off 
-        /// at a collision for either gob. One means fully elastic collision.
-        /// </summary>
-        /// The elasticity factors of both colliding gobs affect the final elasticity
-        /// of the collision. Avoid using zero; instead, use a very small number.
-        /// Use a number above one to regain fully elastic collisions even
-        /// when countered by inelastic gobs.
-        public float Elasticity { get { return elasticity; } }
-
-        /// <summary>
-        /// Friction factor of the gob. Zero means that movement along the
-        /// collision surface is not slowed by friction.
-        /// </summary>
-        /// The friction factors of both colliding gobs affect the final friction
-        /// of the collision. It's a good idea to use values that are closer to
-        /// zero than one. 
-        public float Friction { get { return friction; } }
 
         /// <summary>
         /// Get or set the gob's rotation around the Z-axis.
@@ -629,24 +590,22 @@ namespace AW2.Game
         {
             // We initialise the values so that they work as good examples in the XML template.
             Id = -1;
-            this.typeName = (CanonicalString)"unknown gob type";
+            typeName = (CanonicalString)"unknown gob type";
             depthLayer2D = 0.5f;
             drawMode2D = new DrawMode2D(DrawModeType2D.None);
             layerPreference = LayerPreferenceType.Front;
-            this.owner = null;
-            this.pos = Vector2.Zero;
-            this.move = Vector2.Zero;
-            this.rotation = 0;
-            this.mass = 1;
-            this.elasticity = 0.7f;
-            this.friction = 0.7f;
-            this.modelName = (CanonicalString)"dummymodel";
-            this.scale = 1f;
-            this.birthGobTypes = new CanonicalString[0];
-            this.deathGobTypes = new CanonicalString[0];
-            this.collisionAreas = new CollisionArea[0];
-            this.damage = 0;
-            this.maxDamage = 100;
+            owner = null;
+            pos = Vector2.Zero;
+            move = Vector2.Zero;
+            rotation = 0;
+            mass = 1;
+            modelName = (CanonicalString)"dummymodel";
+            scale = 1f;
+            birthGobTypes = new CanonicalString[0];
+            deathGobTypes = new CanonicalString[0];
+            collisionAreas = new CollisionArea[0];
+            damage = 0;
+            maxDamage = 100;
             bleachDamage = 0;
             birthTime = new TimeSpan(23, 59, 59);
             dead = false;
@@ -1174,8 +1133,11 @@ namespace AW2.Game
         #region Collision methods
 
         /// <summary>
-        /// The physical collision area of the gob or <b>null</b> if it doesn't have one.
+        /// The primary physical collision area of the gob or <b>null</b> if it doesn't have one.
         /// </summary>
+        /// The primary physical collision area is used mostly for movable gobs as an
+        /// optimisation to avoid looping through all collision areas in order to find
+        /// physical ones.
         public CollisionArea PhysicalArea
         {
             get
@@ -1393,22 +1355,17 @@ namespace AW2.Game
             {
                 // Rearrange our collision areas to have a physical area be first, 
                 // if there is such.
-                if (collisionAreas.Length > 0)
-                {
-                    for (int i = 0; i < collisionAreas.Length; ++i)
-                        if ((collisionAreas[i].Type & CollisionAreaType.Physical) != 0)
-                        {
-                            CollisionArea swap = collisionAreas[i];
-                            collisionAreas[i] = collisionAreas[0];
-                            collisionAreas[0] = swap;
-                            break;
-                        }
-                }
+                for (int i = 0; i < collisionAreas.Length; ++i)
+                    if ((collisionAreas[i].Type & CollisionAreaType.Physical) != 0)
+                    {
+                        CollisionArea swap = collisionAreas[i];
+                        collisionAreas[i] = collisionAreas[0];
+                        collisionAreas[0] = swap;
+                        break;
+                    }
 
                 // Make physical attributes sensible.
                 mass = Math.Max(0.001f, mass); // strictly positive mass
-                elasticity = Math.Max(0, elasticity);
-                friction = Math.Max(0, friction);
             }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
             {

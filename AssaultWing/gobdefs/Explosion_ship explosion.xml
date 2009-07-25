@@ -27,8 +27,6 @@
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</movable>
   <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</mass>
   <modelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummymodel</modelName>
-  <elasticity type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.9</elasticity>
-  <friction type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</friction>
   <scale type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.0</scale>
   <maxDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
   <birthGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -42,6 +40,7 @@
          <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Receptor</type>
          <collidesAgainst type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalDamageable</collidesAgainst>
          <cannotOverlap type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</cannotOverlap>
+         <collisionMaterial type="AW2.Game.CollisionMaterialType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Regular</collisionMaterial>
          <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Hit</name>
          <area type="AW2.Helpers.Geometric.Circle, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <center type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
@@ -65,6 +64,7 @@
          <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Receptor</type>
          <collidesAgainst type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalMovable</collidesAgainst>
          <cannotOverlap type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</cannotOverlap>
+         <collisionMaterial type="AW2.Game.CollisionMaterialType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Regular</collisionMaterial>
          <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Force</name>
          <area type="AW2.Helpers.Geometric.Circle, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <center type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">

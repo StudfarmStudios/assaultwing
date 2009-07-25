@@ -487,7 +487,7 @@ namespace AW2.Game
             if (!gob.Movable) return;
             if (gob.Disabled) return;
             CollisionArea gobPhysical = gob.PhysicalArea;
-            UnregisterPhysical(gob);
+            if (gobPhysical != null) Unregister(gobPhysical);
 
             // If the gob is stuck, let it resolve the situation.
             if (gobPhysical != null)
@@ -513,7 +513,7 @@ namespace AW2.Game
                 if (gob.Move == oldMove)
                     break;
             }
-            RegisterPhysical(gob);
+            if (gobPhysical != null) Register(gobPhysical);
             ArenaBoundaryActions(gob);
         }
 
@@ -675,29 +675,35 @@ namespace AW2.Game
         #region Collision and moving methods
 
         /// <summary>
-        /// Registers a gob's physical collision area for collisions.
+        /// Registers a collision area for collisions.
         /// </summary>
-        /// <see cref="Register(Gob)"/>
-        private void RegisterPhysical(Gob gob)
+        private void Register(CollisionArea area)
         {
-            CollisionArea area = gob.PhysicalArea;
-            if (area == null) return;
-            area.CollisionData = collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Add(
-                area, area.Area.BoundingBox);
+            area.CollisionData = collisionAreas[AWMathHelper.LogTwo((int)area.Type)]
+                .Add(area, area.Area.BoundingBox);
         }
 
         /// <summary>
-        /// Removes a previously registered gob's physical collision area
+        /// Registers a gob's physical collision areas for collisions.
+        /// </summary>
+        /// <seealso cref="Register(Gob)"/>
+        private void RegisterPhysical(Gob gob)
+        {
+            foreach (var area in gob.CollisionAreas)
+                if ((area.Type & CollisionAreaType.Physical) != 0)
+                    Register(area);
+        }
+
+        /// <summary>
+        /// Removes a previously registered gob's physical collision areas
         /// from the register.
         /// </summary>
-        /// <see cref="Unregister(Gob)"/>
+        /// <seealso cref="Unregister(Gob)"/>
         private void UnregisterPhysical(Gob gob)
         {
-            CollisionArea area = gob.PhysicalArea;
-            if (area == null) return;
-            SpatialGridElement<CollisionArea> element = (SpatialGridElement<CollisionArea>)area.CollisionData;
-            collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Remove(element);
-            area.CollisionData = null;
+            foreach (var area in gob.CollisionAreas)
+                if ((area.Type & CollisionAreaType.Physical) != 0)
+                    Unregister(area);
         }
 
         /// <summary>
@@ -863,8 +869,9 @@ namespace AW2.Game
                 // of the force that pushes the colliding movable gob away. Here, we 
                 // imitate that force by the change of the head-on component of
                 // gob movement vector.
-                float elasticity = Math.Min(1, movableGob.Elasticity * unmovableGob.Elasticity);
-                float friction = movableGob.Friction * unmovableGob.Friction;
+                float elasticity = Math.Min(1, movableArea.Elasticity * unmovableArea.Elasticity);
+                float friction = movableArea.Friction * unmovableArea.Friction;
+                float damageMultiplier = movableArea.Damage * unmovableArea.Damage;
                 Vector2 move1afterElastic = new Vector2(-move1.X, move1.Y);
                 // move1afterInelastic = Vector2.Zero
                 Vector2 move1after;
@@ -877,7 +884,7 @@ namespace AW2.Game
                 if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 {
                     if (move1Delta.Length() > minimumCollisionDelta)
-                        movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta),
+                        movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier),
                             new DeathCause(movableGob, DeathCauseType.Collision, unmovableGob));
                 }
                 /* TODO: What if the unmovable gob wants to be damaged, too?
@@ -885,7 +892,7 @@ namespace AW2.Game
                 {
                     Vector2 move2Delta = Vector2.Zero;
                     if (move1Delta.Length() > minimumCollisionDelta)
-                        unmovableGob.InflictDamage(CollisionDamage(unmovableGob, move2Delta));
+                        unmovableGob.InflictDamage(CollisionDamage(unmovableGob, move2Delta, damageMultiplier));
                 }
                 */
 
@@ -931,8 +938,9 @@ namespace AW2.Game
                 // of the force that pushes the colliding gobs apart. Here, we 
                 // imitate that force by the change of the head-on component of
                 // gob movement vector.
-                float elasticity = Math.Min(1, gob1.Elasticity * gob2.Elasticity);
-                float friction = gob1.Friction * gob2.Friction;
+                float elasticity = Math.Min(1, movableArea1.Elasticity * movableArea2.Elasticity);
+                float friction = movableArea1.Friction * movableArea2.Friction;
+                float damageMultiplier = movableArea1.Damage * movableArea2.Damage;
                 Vector2 move1afterElastic = new Vector2(move1.X * (gob1.Mass - gob2.Mass) / (gob1.Mass + gob2.Mass), move1.Y);
                 Vector2 move1afterInelastic = move1 * gob1.Mass / (gob1.Mass + gob2.Mass);
                 Vector2 move1after;
@@ -953,13 +961,13 @@ namespace AW2.Game
                 if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 {
                     if (move1Delta.Length() > minimumCollisionDelta)
-                        gob1.InflictDamage(CollisionDamage(gob1, move1Delta),
+                        gob1.InflictDamage(CollisionDamage(gob1, move1Delta, damageMultiplier),
                             new DeathCause(gob1, DeathCauseType.Collision, gob2));
                 }
                 if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 {
                     if (move2after.Length() > minimumCollisionDelta)
-                        gob2.InflictDamage(CollisionDamage(gob2, move2after),
+                        gob2.InflictDamage(CollisionDamage(gob2, move2after, damageMultiplier),
                             new DeathCause(gob2, DeathCauseType.Collision, gob1));
                 }
 
@@ -975,9 +983,9 @@ namespace AW2.Game
             }
         }
 
-        private float CollisionDamage(Gob gob, Vector2 moveDelta)
+        private float CollisionDamage(Gob gob, Vector2 moveDelta, float damageMultiplier)
         {
-            return moveDelta.Length() / 2 * gob.Mass * collisionDamageDownGrade;
+            return moveDelta.Length() / 2 * gob.Mass * collisionDamageDownGrade * damageMultiplier;
         }
 
         #endregion Collision and moving methods

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -140,6 +141,35 @@ namespace AW2.Game
     }
 
     /// <summary>
+    /// Type of material of a collision area.
+    /// </summary>
+    /// The collision material determines the behaviour of a physical collision
+    /// area in a physical collision. A material consists of elasticity, friction
+    /// and damage factor.
+    public enum CollisionMaterialType
+    {
+        /// <summary>
+        /// Quite elastic, with moderate friction, normal damage
+        /// </summary>
+        Regular,
+
+        /// <summary>
+        /// Rather inelastic, with strong friction, normal damage
+        /// </summary>
+        Rough,
+
+        /// <summary>
+        /// Excessively elastic, with moderate friction, normal damage
+        /// </summary>
+        Bouncy,
+
+        /// <summary>
+        /// Very inelastic, with high friction, no damage
+        /// </summary>
+        Sticky,
+    }
+
+    /// <summary>
     /// An area with which a gob can overlap with other gobs' areas,
     /// resulting in a collision.
     /// </summary>
@@ -147,10 +177,39 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("Type:{type} Name:{name} Area:{area}")]
     public class CollisionArea : INetworkSerializable
     {
+        struct CollisionMaterial
+        {
+            /// <summary>
+            /// Elasticity factor of the collision area. Zero means no collision bounce.
+            /// One means fully elastic collision.
+            /// </summary>
+            /// The elasticity factors of both colliding collision areas affect the final elasticity
+            /// of the collision. Avoid using zero; instead, use a very small number.
+            /// Use a number above one to regain fully elastic collisions even
+            /// when countered by inelastic gobs.
+            public float Elasticity;
+
+            /// <summary>
+            /// Friction factor of the collision area. Zero means that movement along the
+            /// collision surface is not slowed by friction.
+            /// </summary>
+            /// The friction factors of both colliding collision areas affect the final friction
+            /// of the collision. It's a good idea to use values that are closer to
+            /// zero than one.
+            public float Friction;
+
+            /// <summary>
+            /// Multiplier for collision damage.
+            /// </summary>
+            public float Damage;
+        }
+
         /// <summary>
         /// Upper limit for the number of bits in the type representing <see cref="CollisionAreaType"/>.
         /// </summary>
         public const int COLLISION_AREA_TYPE_COUNT = 32;
+
+        static CollisionMaterial[] collisionMaterials;
 
         [TypeParameter]
         CollisionAreaType type;
@@ -160,6 +219,9 @@ namespace AW2.Game
 
         [TypeParameter]
         CollisionAreaType cannotOverlap;
+
+        [TypeParameter]
+        CollisionMaterialType collisionMaterial;
 
         [TypeParameter]
         string name;
@@ -205,6 +267,23 @@ namespace AW2.Game
         public CollisionAreaType CannotOverlap { get { return cannotOverlap; } }
 
         /// <summary>
+        /// Elasticity factor of the collision area. Zero means no collision bounce.
+        /// One means fully elastic collision.
+        /// </summary>
+        public float Elasticity { get { return collisionMaterials[(int)collisionMaterial].Elasticity; } }
+
+        /// <summary>
+        /// Friction factor of the collision area. Zero means that movement along the
+        /// collision surface is not slowed by friction.
+        /// </summary>
+        public float Friction { get { return collisionMaterials[(int)collisionMaterial].Friction; } }
+
+        /// <summary>
+        /// Multiplier for collision damage.
+        /// </summary>
+        public float Damage { get { return collisionMaterials[(int)collisionMaterial].Damage; } }
+
+        /// <summary>
         /// The geometric area for overlap testing, in game world coordinates,
         /// transformed according to the hosting gob's world matrix.
         /// </summary>
@@ -239,6 +318,40 @@ namespace AW2.Game
         /// </summary>
         public object CollisionData { get { return collisionData; } set { collisionData = value; } }
 
+        static CollisionArea()
+        {
+            collisionMaterials = new CollisionMaterial[Enum.GetValues(typeof(CollisionMaterialType)).Length];
+            for (int i = 0; i < collisionMaterials.Length; ++i) collisionMaterials[i].Elasticity = -1;
+
+            collisionMaterials[(int)CollisionMaterialType.Regular] = new CollisionMaterial
+            {
+                Elasticity = 0.9f,
+                Friction = 0.5f,
+                Damage = 1.0f,
+            };
+            collisionMaterials[(int)CollisionMaterialType.Rough] = new CollisionMaterial
+            {
+                Elasticity = 0.2f,
+                Friction = 0.7f,
+                Damage = 1.0f,
+            };
+            collisionMaterials[(int)CollisionMaterialType.Bouncy] = new CollisionMaterial
+            {
+                Elasticity = 2.0f,
+                Friction = 0.1f,
+                Damage = 1.0f,
+            };
+            collisionMaterials[(int)CollisionMaterialType.Sticky] = new CollisionMaterial
+            {
+                Elasticity = 0.01f,
+                Friction = 4.0f,
+                Damage = 0.0f,
+            };
+
+            if (collisionMaterials.Any(mat => mat.Elasticity == -1))
+                throw new Exception("Invalid number of collision materials defined");
+        }
+
         /// <summary>
         /// Creates an uninitialised collision area. 
         /// This constructor is only for (de)serialisation.
@@ -249,6 +362,7 @@ namespace AW2.Game
             collidesAgainst = CollisionAreaType.None;
             cannotOverlap = CollisionAreaType.None;
             name = "dummyarea";
+            collisionMaterial = CollisionMaterialType.Regular;
             area = new Everything();
             transformedArea = null;
             oldWorldMatrix = 0 * Matrix.Identity;
@@ -263,14 +377,17 @@ namespace AW2.Game
         /// <param name="area">The geometric area.</param>
         /// <param name="owner">The gob whose collision area this is.</param>
         /// <param name="type">The type of the collision area.</param>
+        /// <param name="collisionMaterial">Material of the collision area.</param>
         /// <param name="collidesAgainst">The types of collision areas this area collides against.</param>
         /// <param name="cannotOverlap">The types of collision areas this area collides against and cannot overlap.</param>
         public CollisionArea(string name, IGeomPrimitive area, Gob owner,
-            CollisionAreaType type, CollisionAreaType collidesAgainst, CollisionAreaType cannotOverlap)
+            CollisionAreaType type, CollisionAreaType collidesAgainst, CollisionAreaType cannotOverlap,
+            CollisionMaterialType collisionMaterial)
         {
             this.type = type;
             this.collidesAgainst = collidesAgainst;
             this.cannotOverlap = cannotOverlap;
+            this.collisionMaterial = collisionMaterial;
             this.name = name;
             this.area = area;
             this.transformedArea = null;
@@ -292,6 +409,7 @@ namespace AW2.Game
                 writer.Write((int)collidesAgainst);
                 writer.Write((int)cannotOverlap);
                 writer.Write((string)name, 32, true);
+                writer.Write((byte)collisionMaterial);
                 area.Serialize(writer, SerializationModeFlags.All);
             }
         }
@@ -305,6 +423,7 @@ namespace AW2.Game
             collidesAgainst = (CollisionAreaType)reader.ReadInt32();
             cannotOverlap = (CollisionAreaType)reader.ReadInt32();
             name = reader.ReadString(32);
+            collisionMaterial = (CollisionMaterialType)reader.ReadByte();
             area.Deserialize(reader, SerializationModeFlags.All);
         }
 

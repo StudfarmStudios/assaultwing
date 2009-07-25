@@ -70,7 +70,7 @@ namespace AW2.Game.Gobs
         {
             // We assume we have only one Receptor collision area which handles docking.
             // Then 'theirArea.Owner' must be damageable.
-            if (myArea.Type == CollisionAreaType.Receptor)
+            if (myArea.Name == "Dock")
             {
                 theirArea.Owner.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(repairSpeed), new DeathCause());
                 Ship ship = theirArea.Owner as Ship;

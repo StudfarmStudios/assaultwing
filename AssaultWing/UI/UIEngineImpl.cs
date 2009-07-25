@@ -111,7 +111,7 @@ namespace AW2.UI
                 AssaultWing.Instance.ShowOnlyPlayer(-1);
             if (showOnlyPlayer1Control.Pulse)
                 AssaultWing.Instance.ShowOnlyPlayer(0);
-            if (showOnlyPlayer2Control.Pulse)
+            if (showOnlyPlayer2Control.Pulse && AssaultWing.Instance.DataEngine.Players.Count > 1)
                 AssaultWing.Instance.ShowOnlyPlayer(1);
         }
     }

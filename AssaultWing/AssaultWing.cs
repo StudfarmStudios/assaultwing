@@ -224,14 +224,24 @@ namespace AW2
         #region AssaultWing performance counters
 
         /// <summary>
-        /// Number of elapsed frames.
-        /// </summary>
-        public AWPerformanceCounter FramesElapsedCounter { get; private set; }
-
-        /// <summary>
-        /// Number of created gobs per frame, averaged over one second.
+        /// Number of gobs created per frame, averaged over one second.
         /// </summary>
         public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondCounter { get; private set; }
+
+        /// <summary>
+        /// Number of elapsed frames.
+        /// </summary>
+        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondBaseCounter { get; private set; }
+
+        /// <summary>
+        /// Number of gobs drawn per frame, averaged over one second.
+        /// </summary>
+        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondCounter { get; private set; }
+
+        /// <summary>
+        /// Number of elapsed frames.
+        /// </summary>
+        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondBaseCounter { get; private set; }
 
         /// <summary>
         /// Number of drawn frames per second.
@@ -410,7 +420,9 @@ namespace AW2
             
             var counters = new AWCounterCreationDataCollection();
             counters.Add(new CounterCreationData("Gobs Created/f Avg/s", "Number of gobs created per frame as an average over the last second", PerformanceCounterType.AverageCount64));
-            counters.Add(new CounterCreationData("Frames Elapsed", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
+            counters.Add(new CounterCreationData("Gobs Created/f Avg/s Base", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
+            counters.Add(new CounterCreationData("Gobs Drawn/f Avg/s", "Number of gobs drawn per frame as an average over the last second", PerformanceCounterType.AverageCount64));
+            counters.Add(new CounterCreationData("Gobs Drawn/f Avg/s Base", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));
             counters.Add(new CounterCreationData("Frames Drawn/s", "Number of frames drawn per second", PerformanceCounterType.RateOfCountsPerSecond32));
             counters.Add(new CounterCreationData("Gobs", "Number of gobs in current arena", PerformanceCounterType.NumberOfItems32));
 
@@ -923,7 +935,7 @@ namespace AW2
             base.Update(this.gameTime);
             if (logicEngine.Enabled)
             {
-                FramesElapsedCounter.Increment();
+                GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
                 dataEngine.CommitPending();
             }
         }

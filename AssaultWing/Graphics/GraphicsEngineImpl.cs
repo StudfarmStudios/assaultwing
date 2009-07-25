@@ -128,6 +128,7 @@ namespace AW2.Graphics
         /// <param name="gameTime">Time passed since the last call to Draw.</param>
         public override void Draw(GameTime gameTime)
         {
+            AssaultWing.Instance.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
 
             Viewport screen = gfx.Viewport;

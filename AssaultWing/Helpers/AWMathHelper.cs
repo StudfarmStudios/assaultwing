@@ -249,6 +249,20 @@ namespace AW2.Helpers
 #endif
         }
 
+        /// <summary>
+        /// Returns <paramref name="v"/> rotated around the positive Z axis 
+        /// <paramref name="radians"/> radians.
+        /// </summary>
+        public static Vector3 RotateZ(this Vector3 v, float radians)
+        {
+            var cosRadians = (float)Math.Cos(radians);
+            var sinRadians = (float)Math.Sin(radians);
+            return new Vector3(
+                v.X * cosRadians - v.Y * sinRadians,
+                v.Y * cosRadians + v.X * sinRadians,
+                v.Z);
+        }
+
         #region Unit tests
 #if DEBUG
         /// <summary>

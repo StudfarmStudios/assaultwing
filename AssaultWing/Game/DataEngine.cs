@@ -226,7 +226,10 @@ namespace AW2.Game
             // in initialising an arena for playing.
             int wallCount = preparedArena.Gobs.Count(gob => gob is Wall);
             progressBar.SetSubtaskCount(wallCount);
-            foreach (var gob in preparedArena.Gobs) preparedArena.Prepare(gob);
+            // Each iteration over the gobs may create more gobs.
+            // Keep iterating until all gobs are prepared.
+            while (preparedArena.Gobs.Any(gob => gob.Arena == null))
+                foreach (var gob in preparedArena.Gobs) if (gob.Arena == null) preparedArena.Prepare(gob);
         }
 
         /// <summary>

@@ -13,7 +13,10 @@ namespace AW2.Game
     /// </summary>
     public class GobCollection : IEnumerable<Gob>, IObservableCollection<object, Gob>
     {
-        private bool isEnumerating;
+        /// <summary>
+        /// Number of simultaneous iterations over the collection.
+        /// </summary>
+        private int isEnumerating;
 
         /// <summary>
         /// Gobs that were scheduled for removal while enumeration was in progress.
@@ -58,7 +61,7 @@ namespace AW2.Game
         public void Remove(Predicate<Gob> condition)
         {
             foreach (var layer in ArenaLayers)
-                if (isEnumerating)
+                if (isEnumerating > 0)
                     removedGobs.AddRange(layer.Gobs.Where(new Func<Gob, bool>(condition)));
                 else
                     layer.Gobs.Remove(condition);
@@ -74,7 +77,7 @@ namespace AW2.Game
         {
             if (gob.Layer == null) return false;
             if (Removing != null && !Removing(gob) && !force) return false;
-            if (isEnumerating)
+            if (isEnumerating > 0)
             {
                 removedGobs.Add(gob);
                 return gob.Layer.Gobs.Contains(gob);
@@ -133,7 +136,7 @@ namespace AW2.Game
                 gob.Layer = gob.LayerPreference == Gob.LayerPreferenceType.Front
                     ? GameplayLayer
                     : GameplayBackLayer;
-            if (isEnumerating)
+            if (isEnumerating > 0)
                 addedGobs.Add(gob);
             else
             {
@@ -148,7 +151,7 @@ namespace AW2.Game
         public void Clear()
         {
             foreach (var layer in ArenaLayers)
-                if (isEnumerating)
+                if (isEnumerating > 0)
                     removedGobs.AddRange(layer.Gobs);
                 else
                     layer.Gobs.Clear();
@@ -201,15 +204,21 @@ namespace AW2.Game
         /// </summary>
         public IEnumerator<Gob> GetEnumerator()
         {
-            isEnumerating = true;
-            foreach (var layer in ArenaLayers)
-                foreach (var gob in layer.Gobs)
-                    yield return gob;
-            isEnumerating = false;
-            foreach (var gob in addedGobs) Add(gob);
-            foreach (var gob in removedGobs) Remove(gob, true);
-            addedGobs.Clear();
-            removedGobs.Clear();
+            try
+            {
+                ++isEnumerating;
+                foreach (var layer in ArenaLayers)
+                    foreach (var gob in layer.Gobs)
+                        yield return gob;
+            }
+            finally
+            {
+                --isEnumerating;
+                foreach (var gob in addedGobs) Add(gob);
+                foreach (var gob in removedGobs) Remove(gob, true);
+                addedGobs.Clear();
+                removedGobs.Clear();
+            }
         }
 
         #endregion

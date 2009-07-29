@@ -72,7 +72,7 @@ namespace AW2.Helpers
     /// <summary>
     /// Contains helper methods for 3D graphics.
     /// </summary>
-    public partial class Graphics3D
+    public static class Graphics3D
     {
         #region Type definitions
 
@@ -107,6 +107,23 @@ namespace AW2.Helpers
 
         #endregion Type definitions
 
+        static BasicEffect debugEffect;
+        static BasicEffect DebugEffect
+        {
+            get
+            {
+                if (debugEffect == null)
+                {
+                    debugEffect = new BasicEffect(AssaultWing.Instance.GraphicsDevice, null);
+                    debugEffect.TextureEnabled = false;
+                    debugEffect.VertexColorEnabled = true;
+                    debugEffect.LightingEnabled = false;
+                    debugEffect.FogEnabled = false;
+                }
+                return debugEffect;
+            }
+        }
+
         #region Methods for exporting raw data from 3D models and importing it back
 
         /// <summary>
@@ -119,10 +136,12 @@ namespace AW2.Helpers
         public static void GetModelData(Model model, out VertexPositionNormalTexture[] vertexData,
             out short[] indexData)
         {
-            // TODO: Get rid of our assumption that the model has only one mesh.
-            if (model.Meshes.Count > 1)
-                throw new ArgumentOutOfRangeException("Model has more than one mesh");
-            GetMeshData(model.Meshes[0], out vertexData, out indexData);
+            var vertices = new List<VertexPositionNormalTexture>();
+            var indices = new List<short>();
+            foreach (var mesh in model.Meshes)
+                GetMeshData(mesh, vertices, indices);
+            vertexData = vertices.ToArray();
+            indexData = indices.ToArray();
         }
         
         /// <summary>
@@ -130,29 +149,29 @@ namespace AW2.Helpers
         /// </summary>
         /// The triangle data is stored as a triangle list.
         /// <param name="mesh">The 3D mesh.</param>
-        /// <param name="vertexData">Where to store the vertex data.</param>
-        /// <param name="indexData">Where to store the triangle data.</param>
-        private static void GetMeshData(ModelMesh mesh, out VertexPositionNormalTexture[] vertexData,
-            out short[] indexData)
+        /// <param name="vertices">Where to store the vertex data.</param>
+        /// <param name="indices">Where to store the triangle data.</param>
+        private static void GetMeshData(ModelMesh mesh, List<VertexPositionNormalTexture> vertices,
+            List<short> indices)
         {
-            // TODO: Get rid of our assumption that the mesh has only one part.
-            if (mesh.MeshParts.Count > 1)
-                throw new ArgumentOutOfRangeException("ModelMesh has more than one part");
-            VertexBuffer vertexBuffer = mesh.VertexBuffer;
-            IndexBuffer indexBuffer = mesh.IndexBuffer;
-            int vertexCount = mesh.MeshParts[0].NumVertices;
-            int indexCount = mesh.MeshParts[0].PrimitiveCount;
-            vertexData = new VertexPositionNormalTexture[vertexCount];
-            indexData = new short[indexCount * 3];
-            vertexBuffer.GetData<VertexPositionNormalTexture>(vertexData);
-            indexBuffer.GetData<short>(indexData);
-            Matrix worldMatrix = Matrix.Identity;
-            for (ModelBone bone = mesh.ParentBone; bone != null; bone = bone.Parent)
-                worldMatrix *= bone.Transform;
-            for (int i = 0; i < vertexData.Length; ++i)
+            foreach (var part in mesh.MeshParts)
             {
-                vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
-                vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
+                int vertexCount = part.NumVertices;
+                int indexCount = part.PrimitiveCount;
+                var vertexData = new VertexPositionNormalTexture[vertexCount];
+                var indexData = new short[indexCount * 3];
+                mesh.VertexBuffer.GetData(vertexData);
+                mesh.IndexBuffer.GetData(indexData);
+                Matrix worldMatrix = Matrix.Identity;
+                for (ModelBone bone = mesh.ParentBone; bone != null; bone = bone.Parent)
+                    worldMatrix *= bone.Transform;
+                for (int i = 0; i < vertexData.Length; ++i)
+                {
+                    vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
+                    vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
+                }
+                vertices.AddRange(vertexData);
+                indices.AddRange(indexData);
             }
         }
 
@@ -304,10 +323,10 @@ namespace AW2.Helpers
         /// <returns>A polygonal outline for the 3D mesh.</returns>
         public static Polygon GetOutline(ModelMesh mesh)
         {
-            VertexPositionNormalTexture[] vertexData;
-            short[] indexData;
-            GetMeshData(mesh, out vertexData, out indexData);
-            return GetOutline(vertexData, indexData);
+            var vertexData = new List<VertexPositionNormalTexture>();
+            var indexData = new List<short>();
+            GetMeshData(mesh, vertexData, indexData);
+            return GetOutline(vertexData.ToArray(), indexData.ToArray());
         }
 
         /// <summary>
@@ -628,6 +647,28 @@ namespace AW2.Helpers
         #endregion Methods for modifying 3D models
 
         #region Utility methods for 3D graphics
+
+        /// <summary>
+        /// Draws a bounding sphere for debug purposes.
+        /// </summary>
+        public static void DebugDraw(BoundingSphere sphere, Matrix view, Matrix projection, Matrix world)
+        {
+            VertexPositionColor[] vertexData;
+            Graphics3D.GetWireframeModelData(sphere, 300, Color.Aquamarine, out vertexData);
+            DebugEffect.View = view;
+            DebugEffect.Projection = projection;
+            DebugEffect.World = world;
+            AssaultWing.Instance.GraphicsDevice.VertexDeclaration = new VertexDeclaration(AssaultWing.Instance.GraphicsDevice, VertexPositionColor.VertexElements);
+            DebugEffect.Begin(SaveStateMode.SaveState);
+            foreach (EffectPass pass in DebugEffect.CurrentTechnique.Passes)
+            {
+                pass.Begin();
+                AssaultWing.Instance.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+                    PrimitiveType.LineStrip, vertexData, 0, vertexData.Length - 1);
+                pass.End();
+            }
+            DebugEffect.End();
+        }
 
         /// <summary>
         /// Interpolates a new 3D model vertex based on three other vertices.

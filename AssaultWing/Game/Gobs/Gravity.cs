@@ -21,6 +21,11 @@ namespace AW2.Game.Gobs
         Vector2 force;
 
         /// <summary>
+        /// Bounding volume of the 3D visuals of the gob, in world coordinates.
+        /// </summary>
+        public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+
+        /// <summary>
         /// Creates an uninitialised gravitational force.
         /// </summary>
         /// This constructor is only for serialisation.
@@ -38,16 +43,6 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             movable = false;
-        }
-
-        /// <summary>
-        /// Draws the gob's 3D graphics.
-        /// </summary>
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
-        public override void Draw(Matrix view, Matrix projection)
-        {
-            // You must feel the force. You can't see it.
         }
 
         /// <summary>

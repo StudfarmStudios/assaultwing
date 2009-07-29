@@ -263,6 +263,11 @@ namespace AW2.Game.Particles
             get { return particles; }
         }
 
+        /// <summary>
+        /// Bounding volume of the 3D visuals of the gob, in world coordinates.
+        /// </summary>
+        public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+
         #endregion
 
         #region Constructors
@@ -305,8 +310,8 @@ namespace AW2.Game.Particles
         /// an ongoing play of the game.
         public override void Activate()
         {
-            nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
             base.Activate();
+            nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
         }
 
         /// <summary>
@@ -442,16 +447,6 @@ namespace AW2.Game.Particles
         }
 
         #endregion
-
-        /// <summary>
-        /// Draws the gob's 3D graphics.
-        /// </summary>
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
-        public override void Draw(Matrix view, Matrix projection)
-        {
-            // Peng has no 3D graphics.
-        }
 
         /// <summary>
         /// Draws the gob's 2D graphics.

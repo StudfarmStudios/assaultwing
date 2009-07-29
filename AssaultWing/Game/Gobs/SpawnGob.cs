@@ -40,6 +40,11 @@ namespace AW2.Game.Gobs
         #endregion SpawnGob fields
 
         /// <summary>
+        /// Bounding volume of the 3D visuals of the gob, in world coordinates.
+        /// </summary>
+        public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+
+        /// <summary>
         /// Creates an uninitialised gob.
         /// </summary>
         /// This constructor is only for serialisation.
@@ -87,16 +92,6 @@ namespace AW2.Game.Gobs
                 });
             }
             base.Update();
-        }
-
-        /// <summary>
-        /// Draws the gob's 3D graphics.
-        /// </summary>
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
-        public override void Draw(Matrix view, Matrix projection)
-        {
-            // We're invisible.
         }
 
         #region Methods related to serialisation

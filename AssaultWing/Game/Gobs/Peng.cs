@@ -213,6 +213,11 @@ namespace AW2.Game.Gobs
             }
         }
 
+        /// <summary>
+        /// Bounding volume of the 3D visuals of the gob, in world coordinates.
+        /// </summary>
+        public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+
         #endregion Peng properties
 
         /// <summary>
@@ -300,16 +305,6 @@ namespace AW2.Game.Gobs
             // Die if we're finished.
             if (particles.Count == 0 && emitter.Finished)
                 Die(new DeathCause());
-        }
-
-        /// <summary>
-        /// Draws the gob's 3D graphics.
-        /// </summary>
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
-        public override void Draw(Matrix view, Matrix projection)
-        {
-            // Peng has no 3D graphics.
         }
 
         /// <summary>

@@ -240,6 +240,11 @@ namespace AW2.Game
         /// </summary>
         TimeSpan modelPartTransformsUpdated;
 
+        /// <summary>
+        /// Bounding volume of the visuals of the gob, in gob coordinates.
+        /// </summary>
+        protected BoundingSphere drawBounds;
+
         #endregion Fields for all gobs
 
         #region Fields for gobs with thrusters
@@ -355,6 +360,17 @@ namespace AW2.Game
         /// Preferred placement of gob to arena layers.
         /// </summary>
         public LayerPreferenceType LayerPreference { get { return layerPreference; } }
+
+        /// <summary>
+        /// Bounding volume of the visuals of the gob, in world coordinates.
+        /// </summary>
+        public virtual BoundingSphere DrawBounds
+        {
+            get
+            {
+                return new BoundingSphere(drawBounds.Center.RotateZ(Rotation) + new Vector3(Pos, 0), drawBounds.Radius);
+            }
+        }
 
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
@@ -752,6 +768,12 @@ namespace AW2.Game
             CreateBirthGobs();
             CreateModelBirthGobs();
             CreateExhaustEngines();
+
+            // Create draw bounding volume
+            VertexPositionNormalTexture[] vertexData;
+            short[] indexData;
+            Graphics3D.GetModelData(model, out vertexData, out indexData);
+            drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position * scale));
         }
 
         /// <summary>
@@ -812,18 +834,12 @@ namespace AW2.Game
         /// <param name="projection">The projection matrix.</param>
         public virtual void Draw(Matrix view, Matrix projection)
         {
-            BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
             Matrix world = WorldMatrix;
-            Matrix meshSphereTransform = // mesh bounding spheres are by default in model coordinates
-                Matrix.CreateScale(Scale) *
-                Matrix.CreateTranslation(new Vector3(Pos, 0));
 
             // Draw each mesh in the 3D model.
             foreach (ModelMesh mesh in model.Meshes)
             {
                 if (mesh.Name.StartsWith("mesh_Collision"))
-                    continue;
-                if (!viewVolume.Intersects(mesh.BoundingSphere.Transform(meshSphereTransform)))
                     continue;
 
                 // Apply alpha.

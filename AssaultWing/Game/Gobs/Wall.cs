@@ -127,6 +127,11 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override Matrix WorldMatrix { get { return Matrix.Identity; } }
 
+        /// <summary>
+        /// Bounding volume of the visuals of the gob, in world coordinates.
+        /// </summary>
+        public override BoundingSphere DrawBounds { get { return drawBounds; } }
+
         #endregion Properties
 
         /// <summary>
@@ -226,9 +231,6 @@ namespace AW2.Game.Gobs
         /// <param name="projection">The projection matrix.</param>
         public override void Draw(Matrix view, Matrix projection)
         {
-            BoundingFrustum viewVolume = new BoundingFrustum(view * projection);
-            if (!viewVolume.Intersects(boundingBox)) return;
-
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
             effect.World = Matrix.Identity;
@@ -430,13 +432,16 @@ namespace AW2.Game.Gobs
                     CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
             }
 
-            // Create a bounding volume for the whole wall.
+            // Create a collision bounding volume for the wall.
             var positions = vertexData.Select(vertex => new Vector2(vertex.Position.X, vertex.Position.Y));
             var min = positions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
             var max = positions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
             var boundingArea = new Rectangle(min, max);
             collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
                 CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
+
+            // Create a drawing bounding volume for the wall.
+            drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position));
         }
 
         /// <summary>

@@ -510,7 +510,15 @@ namespace AW2.Graphics
 #endif
 
                 // 3D graphics
-                foreach (var gob in layer.Gobs) gob.Draw(view, projection);
+                foreach (var gob in layer.Gobs)
+                {
+                    var bounds = gob.DrawBounds;
+                    if (bounds.Radius > 0 && Intersects(bounds, layer.Z))
+                    {
+                        AssaultWing.Instance.GobsDrawnPerFrameAvgPerSecondCounter.Increment();
+                        gob.Draw(view, projection);
+                    }
+                }
 
                 // 2D graphics
                 Matrix gameToScreen = view * projection

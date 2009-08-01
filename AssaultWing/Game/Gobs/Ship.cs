@@ -600,8 +600,8 @@ namespace AW2.Game.Gobs
                 weapon2Charge = reader.ReadHalf();
                 float thrustForce = reader.ReadHalf();
                 byte flags = reader.ReadByte();
-                Weapon1.Loaded = (flags & 0x01) != 0;
-                Weapon2.Loaded = (flags & 0x02) != 0;
+                if (Weapon1 != null) Weapon1.Loaded = (flags & 0x01) != 0;
+                if (Weapon2 != null) Weapon2.Loaded = (flags & 0x02) != 0;
                 bool weapon1Fired = (flags & 0x04) != 0;
                 bool weapon2Fired = (flags & 0x08) != 0;
 

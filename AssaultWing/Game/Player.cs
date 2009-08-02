@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.UI;
@@ -268,6 +269,12 @@ namespace AW2.Game
         /// </summary>
         /// The identifier may change if a remote game server says so.
         public int Id { get; set; }
+
+        /// <summary>
+        /// The player's Color on radar.
+        /// </summary>
+        public Color RadarColor { get; set; }
+
 
         /// <summary>
         /// Identifier of the connection behind which this player lives,

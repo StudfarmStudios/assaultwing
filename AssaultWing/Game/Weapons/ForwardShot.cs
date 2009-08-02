@@ -114,6 +114,11 @@ namespace AW2.Game.Weapons
         [RuntimeState]
         List<Gob> liveShots;
 
+        /// <summary>
+        /// Have all shooting-related muzzle fire engines and sound effects been created this frame.
+        /// </summary>
+        bool flashAndBangCreated;
+
         #endregion ForwardShot fields
 
         /// <summary>
@@ -185,61 +190,22 @@ namespace AW2.Game.Weapons
         /// </summary>
         public override void Update()
         {
-            EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+            flashAndBangCreated = false;
 
             // Shoot if its time.
-            bool muzzleFireCreated = false;
             while (shotsLeft > 0 && nextShot <= AssaultWing.Instance.GameTime.TotalGameTime)
             {
                 // Every gun barrel shoots.
                 for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
                 {
                     int boneI = boneIndices[barrel];
-
-                    // Create a shot.
-                    float direction = owner.Rotation +
-                        shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
-                    float kickSpeed = shotSpeed +
-                        shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
-                    Vector2 kick = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction))
-                        * kickSpeed;
-                    Gob.CreateGob(shotTypeName, shot =>
-                    {
-                        shot.Owner = owner.Owner;
-                        shot.Pos = owner.GetNamedPosition(boneI);
-                        shot.Move = owner.Move + kick;
-                        shot.Rotation = owner.Rotation; // could also be 'direction'
-                        Arena.Gobs.Add(shot);
-                        liveShots.Add(shot);
-                    });
-
-                    // Create muzzle fire engines, but only once in a frame.
-                    if (!muzzleFireCreated)
-                        foreach (var engineName in muzzleFireEngineNames)
-                        {
-                            Gob.CreateGob(engineName, fireEngine =>
-                            {
-                                if (fireEngine is Peng)
-                                {
-                                    Peng peng = (Peng)fireEngine;
-                                    peng.Owner = owner.Owner;
-                                    peng.Leader = owner;
-                                    peng.LeaderBone = boneI;
-                                }
-                                muzzleFireEngines[barrel].Add(fireEngine);
-                                Arena.Gobs.Add(fireEngine);
-                            });
-                        }
+                    CreateShot(boneI);
+                    CreateMuzzleFire(barrel, boneI);
                 }
-                muzzleFireCreated = true;
 
-                // Let our owner feel the consequences.
                 ApplyRecoil();
-
-                // Play a firing sound.
-                SoundEffectEvent soundEvent = new SoundEffectEvent();
-                soundEvent.setAction(fireSound);
-                eventEngine.SendEvent(soundEvent);
+                PlayFiringSound();
+                flashAndBangCreated = true;
 
                 // Remember when to shoot again.
                 --shotsLeft;
@@ -249,7 +215,61 @@ namespace AW2.Game.Weapons
                     DoneFiring();
             }
 
-            // Update muzzle fire engines.
+            UpdateMuzzleFire();
+            RemoveOldMuzzleFire();
+            RemoveOldShots();
+        }
+
+        private void CreateShot(int boneI)
+        {
+            float direction = owner.Rotation +
+                shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            float kickSpeed = shotSpeed +
+                shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            Vector2 kick = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction))
+                * kickSpeed;
+            Gob.CreateGob(shotTypeName, shot =>
+            {
+                shot.Owner = owner.Owner;
+                shot.Pos = owner.GetNamedPosition(boneI);
+                shot.Move = owner.Move + kick;
+                shot.Rotation = owner.Rotation; // could also be 'direction'
+                Arena.Gobs.Add(shot);
+                liveShots.Add(shot);
+            });
+        }
+
+        private void CreateMuzzleFire(int barrel, int boneI)
+        {
+            if (flashAndBangCreated) return;
+            foreach (var engineName in muzzleFireEngineNames)
+            {
+                Gob.CreateGob(engineName, fireEngine =>
+                {
+                    if (fireEngine is Peng)
+                    {
+                        Peng peng = (Peng)fireEngine;
+                        peng.Owner = owner.Owner;
+                        peng.Leader = owner;
+                        peng.LeaderBone = boneI;
+                    }
+                    muzzleFireEngines[barrel].Add(fireEngine);
+                    Arena.Gobs.Add(fireEngine);
+                });
+            }
+        }
+
+        private void PlayFiringSound()
+        {
+            if (flashAndBangCreated) return;
+            var eventer = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+            var soundEvent = new SoundEffectEvent();
+            soundEvent.setAction(fireSound);
+            eventer.SendEvent(soundEvent);
+        }
+
+        private void UpdateMuzzleFire()
+        {
             for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
                 foreach (Gob engine in muzzleFireEngines[barrel])
                     if (engine is ParticleEngine)
@@ -261,35 +281,27 @@ namespace AW2.Game.Weapons
                         peng.Pos = Owner.GetNamedPosition(boneI);
                         peng.Move = owner.Move;
                     }
+        }
 
-            // Forget about dead fire engines.
+        private void RemoveOldMuzzleFire()
+        {
             for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
-                for (int i = 0; i < muzzleFireEngines[barrel].Count; )
-                {
+                for (int i = muzzleFireEngines[barrel].Count - 1; i >= 0; --i)
                     if (muzzleFireEngines[barrel][i] is ParticleEngine)
                     {
                         if (!((ParticleEngine)muzzleFireEngines[barrel][i]).IsAlive)
                             muzzleFireEngines[barrel].RemoveAt(i);
-                        else
-                            ++i;
                     }
                     else
-                    {
                         if (muzzleFireEngines[barrel][i].Dead)
                             muzzleFireEngines[barrel].RemoveAt(i);
-                        else
-                            ++i;
-                    }
-                }
+        }
 
-            // Forget about dead shots.
-            for (int i = 0; i < liveShots.Count; )
-            {
+        private void RemoveOldShots()
+        {
+            for (int i = liveShots.Count - 1; i >= 0; --i)
                 if (liveShots[i].Dead)
                     liveShots.RemoveAt(i);
-                else
-                    ++i;
-            }
         }
 
         /// <summary>

@@ -478,6 +478,7 @@ namespace AW2.Game
             this.lives = 3;
             this.shipSpawnTime = new TimeSpan(1);
             this.relativeShakeDamage = 0;
+            this.RadarColor = Color.Gray;
             shakeCurve = new Curve();
             shakeCurve.PreLoop = CurveLoopType.Constant;
             shakeCurve.PostLoop = CurveLoopType.Constant;

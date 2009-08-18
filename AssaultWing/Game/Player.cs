@@ -273,7 +273,7 @@ namespace AW2.Game
         /// <summary>
         /// The player's Color on radar.
         /// </summary>
-        public Color RadarColor { get; set; }
+        public Color PlayerColor { get; set; }
 
 
         /// <summary>
@@ -478,7 +478,7 @@ namespace AW2.Game
             this.lives = 3;
             this.shipSpawnTime = new TimeSpan(1);
             this.relativeShakeDamage = 0;
-            this.RadarColor = Color.Gray;
+            this.PlayerColor = Color.Gray;
             shakeCurve = new Curve();
             shakeCurve.PreLoop = CurveLoopType.Constant;
             shakeCurve.PostLoop = CurveLoopType.Constant;

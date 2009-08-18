@@ -60,7 +60,7 @@ namespace AW2.Graphics
                 if (player.Ship == null) return;
                 Vector2 posInArena = player.Ship.Pos;
                 Vector2 posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
-                spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, player.RadarColor, 0,
+                spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, player.PlayerColor, 0,
                     shipOnRadarTextureCenter, 0.4f, SpriteEffects.None, 0);
             }
         }

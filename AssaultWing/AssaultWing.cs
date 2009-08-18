@@ -833,8 +833,8 @@ namespace AW2
 
             Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Hyperion", (CanonicalString)"peashooter", (CanonicalString)"rockets", plr1Controls);
             Player player2 = new Player("John Crichton", (CanonicalString)"Prowler", (CanonicalString)"shotgun", (CanonicalString)"bazooka", plr2Controls);
-            player1.RadarColor = Color.LightGreen;
-            player2.RadarColor = Color.Tomato;
+            player1.PlayerColor = Color.Blue;
+            player2.PlayerColor = Color.DeepPink;
 
             dataEngine.Players.Add(player1);
             dataEngine.Players.Add(player2);

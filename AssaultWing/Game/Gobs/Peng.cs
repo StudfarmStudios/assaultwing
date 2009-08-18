@@ -52,6 +52,13 @@ namespace AW2.Game.Gobs
         CoordinateSystem coordinateSystem;
 
         /// <summary>
+        /// Marks peng to have dependency to Player
+        /// </summary>
+        [TypeParameter]
+        Boolean playerRelated;
+
+
+        /// <summary>
         /// External input argument of the peng, between 0 and 1.
         /// </summary>
         /// This value can be set by anyone and it may affect the behaviour
@@ -184,6 +191,11 @@ namespace AW2.Game.Gobs
         /// the particles of this peng.
         /// </summary>
         public CoordinateSystem ParticleCoordinates { get { return coordinateSystem; } set { coordinateSystem = value; } }
+
+        /// <summary>
+        /// Marks peng to have dependency to Player
+        /// </summary>
+        public Boolean PlayerRelated { get { return playerRelated; } set { playerRelated = value; } }
 
         /// <summary>
         /// <c>null</c> or the gob that determines the origin of the peng's coordinate system.
@@ -321,7 +333,9 @@ namespace AW2.Game.Gobs
             Viewport gfxViewport = AssaultWing.Instance.GraphicsDevice.Viewport;
             Vector3 viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
             Matrix pengToGame = WorldMatrix;
-
+            Color pengColor = new Color(new Vector3(1, 1, 1));
+            if(this.PlayerRelated)
+                pengColor = this.Owner.PlayerColor;
             foreach (Particle particle in particles)
             {
                 // Find out particle's center's position on screen.
@@ -339,7 +353,7 @@ namespace AW2.Game.Gobs
                     : particle.rotation + Rotation;
                 drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
                 spriteBatch.Draw(texture, screenCenter, null,
-                    new Color(new Vector4(1, 1, 1, particle.alpha)), drawRotation,
+                    new Color(new Vector4(pengColor.ToVector3(), particle.alpha)), drawRotation,
                     new Vector2(texture.Width, texture.Height) / 2, particle.scale * scale,
                     SpriteEffects.None, layerDepth);
             }

@@ -173,7 +173,7 @@ namespace AW2.Menu
 
             // Draw arena list.
             Vector2 lineDeltaPos = new Vector2(0, 40);
-            Vector2 arenaNamePos = pos - view + new Vector2(147, 297);
+            Vector2 arenaNamePos = pos - view + new Vector2(147, 292);
             Vector2 arenaTagPos = pos - view + new Vector2(283, 297);
             for (int i = 0; i < menuItemCount && arenaListStart + i < arenaInfos.Count; ++i)
             {

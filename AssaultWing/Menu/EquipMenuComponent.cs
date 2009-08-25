@@ -358,13 +358,24 @@ namespace AW2.Menu
                 if (player.IsRemote) continue;
                 ++playerI;
 
-                // Draw pane background.
+                // Find out things.
+                string playerItemName = "???";
+                switch (currentItems[playerI])
+                {
+                    case EquipMenuItem.Ship: playerItemName = player.ShipName; break;
+                    case EquipMenuItem.Weapon1: playerItemName = player.Weapon1Name; break;
+                    case EquipMenuItem.Weapon2: playerItemName = player.Weapon2Name; break;
+                }
                 Vector2 playerPanePos = pos - view + player1PanePos + playerI * playerPaneDeltaPos;
                 Vector2 playerCursorPos = playerPanePos + playerPaneCursorDeltaPos
                     + (int)currentItems[playerI] * playerPaneRowDeltaPos;
                 Vector2 playerNamePos = playerPanePos
                     + new Vector2((int)(104 - menuSmallFont.MeasureString(player.Name).X / 2), 30);
+                Vector2 playerItemNamePos = playerPanePos
+                    + new Vector2((int)(104 - menuSmallFont.MeasureString(playerItemName).X / 2), 346);
                 Texture2D playerPaneTopTexture = playerI == 1 ? player2PaneTopTexture : player1PaneTopTexture;
+
+                // Draw pane background.
                 spriteBatch.Draw(playerPaneTopTexture, playerPanePos, Color.White);
                 spriteBatch.Draw(playerPaneTexture, playerPanePos + playerPaneMainDeltaPos, Color.White);
                 spriteBatch.DrawString(menuSmallFont, player.Name, playerNamePos, Color.White);
@@ -380,10 +391,11 @@ namespace AW2.Menu
                 spriteBatch.Draw(weapon1Texture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
                 spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);
 
-                // Draw cursor and highlight.
+                // Draw cursor, highlight and item name.
                 float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTimes[playerI]).TotalSeconds;
                 spriteBatch.Draw(highlightMainTexture, playerCursorPos, Color.White);
                 spriteBatch.Draw(cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
+                spriteBatch.DrawString(menuSmallFont, playerItemName, playerItemNamePos, Color.White);
             }
 
             // Draw network game status pane.

@@ -183,7 +183,7 @@ namespace AW2.Menu
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
             Vector2 textPos = pos - view + new Vector2(585, 355);
             Vector2 cursorPos = pos - view + new Vector2(551, 358 + (int)currentItem * menuBigFont.LineSpacing);
-            Vector2 highlightPos = cursorPos + new Vector2(cursorTexture.Width, 0);
+            Vector2 highlightPos = cursorPos;
             float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
 
             // HACK: Draw cursor as text field editing caret in a special case

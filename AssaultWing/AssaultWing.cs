@@ -840,7 +840,7 @@ namespace AW2
             dataEngine.Players.Add(player2);
 
             dataEngine.GameplayMode = new GameplayMode();
-            dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler" };
+            dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler", "Snake" };
             dataEngine.GameplayMode.Weapon1Types = new string[] { "peashooter", "shotgun" };
             dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
 

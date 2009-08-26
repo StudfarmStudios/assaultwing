@@ -49,7 +49,7 @@ namespace AW2.Graphics
             spriteBatch.Draw(radarDisplayTexture, Vector2.Zero, Color.White);
 
             // Arena walls on radar
-            Vector2 radarDisplayTopLeft = new Vector2(0, 1); // TODO: Make this constant configurable
+            Vector2 radarDisplayTopLeft = new Vector2(10, 10); // TODO: Make this constant configurable
             spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, Color.White);
 
             // Ships on radar

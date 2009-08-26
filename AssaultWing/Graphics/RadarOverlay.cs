@@ -5,6 +5,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 
+using System.Linq;
+using AW2.Game.Gobs;
+
+
+
+
 namespace AW2.Graphics
 {
     /// <summary>
@@ -15,6 +21,7 @@ namespace AW2.Graphics
         Player player;
         Texture2D radarDisplayTexture;
         Texture2D shipOnRadarTexture;
+        Texture2D dockOnRadarTexture;
 
         /// <summary>
         /// The dimensions of the component in pixels.
@@ -54,15 +61,25 @@ namespace AW2.Graphics
 
             // Ships on radar
             Matrix arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
-            Vector2 shipOnRadarTextureCenter = new Vector2(shipOnRadarTexture.Width, shipOnRadarTexture.Height) / 2;
+
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 if (player.Ship == null) return;
                 Vector2 posInArena = player.Ship.Pos;
                 Vector2 posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
                 spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, player.PlayerColor, 0,
-                    shipOnRadarTextureCenter, 0.4f, SpriteEffects.None, 0);
+                    calculateTextureCenter(shipOnRadarTexture), 0.4f, SpriteEffects.None, 0);
             }
+            
+            foreach (var dock in AssaultWing.Instance.DataEngine.Arena.Gobs.OfType<Dock>())
+            {
+                Vector2 posInArena = dock.Pos;
+                Vector2 posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
+                spriteBatch.Draw(dockOnRadarTexture, posOnRadar, null, Color.White, 0,
+                    calculateTextureCenter(dockOnRadarTexture), 0.1f, SpriteEffects.None, 0);
+
+            }
+            
         }
 
         /// <summary>
@@ -72,6 +89,7 @@ namespace AW2.Graphics
         {
             radarDisplayTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_radar_bg");
             shipOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
+            dockOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("p_green_box");
         }
 
         /// <summary>
@@ -80,6 +98,11 @@ namespace AW2.Graphics
         public override void UnloadContent()
         {
             // Our textures and fonts are disposed by the graphics engine.
+        }
+
+        private Vector2 calculateTextureCenter(Texture2D texture)
+        {
+            return new Vector2(texture.Width, texture.Height) / 2;
         }
     }
 }

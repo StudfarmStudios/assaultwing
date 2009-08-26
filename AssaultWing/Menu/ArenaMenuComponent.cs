@@ -173,8 +173,8 @@ namespace AW2.Menu
 
             // Draw arena list.
             Vector2 lineDeltaPos = new Vector2(0, 40);
-            Vector2 arenaNamePos = pos - view + new Vector2(147, 292);
-            Vector2 arenaTagPos = pos - view + new Vector2(283, 297);
+            Vector2 arenaNamePos = pos - view + new Vector2(147, 230);
+            Vector2 arenaTagPos = pos - view + new Vector2(283, 235);
             for (int i = 0; i < menuItemCount && arenaListStart + i < arenaInfos.Count; ++i)
             {
                 int arenaI = arenaListStart + i;
@@ -189,7 +189,7 @@ namespace AW2.Menu
                     pos - view + new Vector2(540, 297), Color.White);
 
             // Draw cursor and highlight.
-            Vector2 highlightPos = pos - view + new Vector2(124, 285) + (currentArena - arenaListStart) * lineDeltaPos;
+            Vector2 highlightPos = pos - view + new Vector2(124, 223) + (currentArena - arenaListStart) * lineDeltaPos;
             Vector2 cursorPos = highlightPos + new Vector2(2, 1);
             Vector2 arenaPreviewPos = pos-view + new Vector2(430, 232);
             float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;

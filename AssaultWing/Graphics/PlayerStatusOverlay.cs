@@ -109,7 +109,7 @@ namespace AW2.Graphics
                     Color color = Color.White;
                     if (seconds < 0.2f)
                     {
-                        scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
+                        //scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
                         color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.1f), Vector4.One, seconds / 0.2f));
                     }
                     spriteBatch.Draw(iconWeaponLoadTexture,
@@ -146,7 +146,7 @@ namespace AW2.Graphics
                     Color color = Color.White;
                     if (seconds < 0.2f)
                     {
-                        scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
+                        //scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
                         color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.2f), Vector4.One, seconds / 0.2f));
                     }
                     spriteBatch.Draw(iconWeaponLoadTexture,
@@ -170,7 +170,7 @@ namespace AW2.Graphics
             barShipTexture = content.Load<Texture2D>("gui_playerinfo_bar_ship");
             iconShipTexture = content.Load<Texture2D>("gui_playerinfo_ship");
             barMainTexture = content.Load<Texture2D>("gui_playerinfo_bar_main");
-            iconWeaponLoadTexture = content.Load<Texture2D>("gui_playerinfo_white_ball");
+            iconWeaponLoadTexture = content.Load<Texture2D>("gui_playerinfo_loaded");
             barSpecialTexture = content.Load<Texture2D>("gui_playerinfo_bar_special");
         }
 

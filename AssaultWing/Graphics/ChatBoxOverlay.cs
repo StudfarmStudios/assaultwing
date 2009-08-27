@@ -50,7 +50,7 @@ namespace AW2.Graphics
             spriteBatch.Draw(chatBoxTexture, Vector2.Zero, Color.White);
 
             // Chat messages
-            Vector2 messagePos = new Vector2(10, chatBoxTexture.Height - chatBoxFont.LineSpacing);
+            Vector2 messagePos = new Vector2(8, chatBoxTexture.Height - chatBoxFont.LineSpacing - 8);
             for (int i = player.Messages.Count - 1; i >= 0 && messagePos.Y > 16; --i, messagePos.Y -= chatBoxFont.LineSpacing)
                 spriteBatch.DrawString(chatBoxFont, player.Messages[i], messagePos, Color.White);
         }

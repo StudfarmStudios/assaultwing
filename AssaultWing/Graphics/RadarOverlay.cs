@@ -57,7 +57,15 @@ namespace AW2.Graphics
 
             // Arena walls on radar
             Vector2 radarDisplayTopLeft = new Vector2(10, 10); // TODO: Make this constant configurable
-            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, Color.White);
+            
+            // Define arena silhouette color on map (Pekka)
+            Color arenaRadarSilhouetteColor = new Color();
+            arenaRadarSilhouetteColor.A = 100;
+            arenaRadarSilhouetteColor.R = 190;
+            arenaRadarSilhouetteColor.G = 190;
+            arenaRadarSilhouetteColor.B = 190;
+
+            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, arenaRadarSilhouetteColor);
 
             // Ships on radar
             Matrix arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;

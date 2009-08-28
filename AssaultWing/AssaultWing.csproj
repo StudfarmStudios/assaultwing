@@ -145,6 +145,7 @@
     <Compile Include="Game\Gobs\Peng.cs" />
     <Compile Include="Game\Gobs\PropModel.cs" />
     <Compile Include="Game\Gobs\Rocket.cs" />
+    <Compile Include="Game\Gobs\SnakeShip.cs" />
     <Compile Include="Game\Gobs\SpawnGob.cs" />
     <Compile Include="Game\Gobs\SpawnPlayer.cs" />
     <Compile Include="Game\Gobs\WallModel.cs">

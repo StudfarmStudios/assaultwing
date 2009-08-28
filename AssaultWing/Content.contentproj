@@ -1732,8 +1732,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Ship_Snake.xml">
-      <Name>Ship_Snake</Name>
+    <None Include="gobdefs\SnakeShip_Snake.xml">
+      <Name>SnakeShip_Snake</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -166,8 +166,6 @@ namespace AW2.Game
         [TypeParameter]
         CanonicalString modelName;
 
-        Model model;
-
         /// <summary>
         /// Scaling factor of the 3D model.
         /// </summary>
@@ -373,6 +371,11 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// The 3D model of the gob.
+        /// </summary>
+        protected Model Model { get; private set; }
+
+        /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
         public virtual IEnumerable<CanonicalString> ModelNames
@@ -483,16 +486,16 @@ namespace AW2.Game
         {
             get
             {
-                if (modelPartTransforms == null || modelPartTransforms.Length != model.Bones.Count)
+                if (modelPartTransforms == null || modelPartTransforms.Length != Model.Bones.Count)
                 {
-                    modelPartTransforms = new Matrix[model.Bones.Count];
+                    modelPartTransforms = new Matrix[Model.Bones.Count];
                     modelPartTransformsUpdated = new TimeSpan(-1);
                 }
                 TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
                 if (modelPartTransformsUpdated < now)
                 {
                     modelPartTransformsUpdated = now;
-                    model.CopyAbsoluteBoneTransformsTo(modelPartTransforms);
+                    CopyAbsoluteBoneTransformsTo(Model, modelPartTransforms);
                 }
                 return modelPartTransforms;
             }
@@ -744,7 +747,7 @@ namespace AW2.Game
         /// </summary>
         public virtual void LoadContent()
         {
-            model = AssaultWing.Instance.Content.Load<Model>(ModelName);
+            Model = AssaultWing.Instance.Content.Load<Model>(ModelName);
         }
 
         /// <summary>
@@ -772,7 +775,7 @@ namespace AW2.Game
             // Create draw bounding volume
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
-            Graphics3D.GetModelData(model, out vertexData, out indexData);
+            Graphics3D.GetModelData(Model, out vertexData, out indexData);
             drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position * scale));
         }
 
@@ -837,7 +840,7 @@ namespace AW2.Game
             Matrix world = WorldMatrix;
 
             // Draw each mesh in the 3D model.
-            foreach (ModelMesh mesh in model.Meshes)
+            foreach (ModelMesh mesh in Model.Meshes)
             {
                 if (mesh.Name.StartsWith("mesh_Collision"))
                     continue;
@@ -1042,7 +1045,7 @@ namespace AW2.Game
         public KeyValuePair<string, int>[] GetNamedPositions(string namePrefix)
         {
             List<KeyValuePair<string, int>> boneIs = new List<KeyValuePair<string, int>>();
-            foreach (ModelBone bone in model.Bones)
+            foreach (ModelBone bone in Model.Bones)
                 if (bone.Name != null && bone.Name.StartsWith(namePrefix))
                     boneIs.Add(new KeyValuePair<string, int>(bone.Name, bone.Index));
             return boneIs.ToArray();
@@ -1142,6 +1145,14 @@ namespace AW2.Game
                 else if (exhaustEngine is Gobs.Peng)
                     ((Gobs.Peng)exhaustEngine).Paused = !active;
             }
+        }
+
+        /// <summary>
+        /// Copies a transform of each bone in a model relative to all parent bones of the bone into a given array.
+        /// </summary>
+        protected virtual void CopyAbsoluteBoneTransformsTo(Model model, Matrix[] transforms)
+        {
+            model.CopyAbsoluteBoneTransformsTo(transforms);
         }
 
         #endregion Gob miscellaneous protected methods
@@ -1287,7 +1298,7 @@ namespace AW2.Game
         /// </summary>
         void InitializeModelCollisionAreas()
         {
-            foreach (ModelMesh mesh in model.Meshes)
+            foreach (ModelMesh mesh in Model.Meshes)
             {
                 // A specially named mesh can replace the geometric area of a named collision area.
                 if (mesh.Name.StartsWith("mesh_Collision"))

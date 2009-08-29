@@ -66,15 +66,15 @@ namespace AW2.Game.Gobs
                 tailAmplitudes[i] = 0;
             }
             float phase = 0;
-            float amplitude = 0.2f;
+            float amplitude = 0.3f;
             foreach (int i in tailIndices)
             {
                 tailPhases[i] = phase;
-                phase += 4.3f;
+                phase += phase == 0 ? MathHelper.PiOver2 : MathHelper.Pi / 3;
                 tailAmplitudes[i] = amplitude;
-                amplitude = Math.Min(0.7f, amplitude + 0.3f);
             }
-            wiggleFrequency = 2f;
+            wiggleFrequency = 3f;
+            wiggleMainPhase = Owner.Id * 1.2345f; // to avoid different ships wiggling synchronously
         }
 
         /// <summary>
@@ -83,8 +83,8 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            float time = (float)AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds;
-            wiggleMainPhase = time * MathHelper.Pi * wiggleFrequency; // NOTE: Will slowly run out of precision
+            float elapsedTime = (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            wiggleMainPhase = (wiggleMainPhase - elapsedTime * MathHelper.Pi * wiggleFrequency) % MathHelper.TwoPi;
         }
 
         #endregion Methods related to gobs' functionality in the game world

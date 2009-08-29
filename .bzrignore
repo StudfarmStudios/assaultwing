@@ -1,4 +1,7 @@
 *.suo
 *.cache
+*.user
+*.cachefile
 bin
 obj
+publish

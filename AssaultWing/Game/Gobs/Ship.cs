@@ -103,16 +103,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Current rotation of the ship around its tail-to-head axis.
         /// </summary>
-        /// This value will move towards <b>rollAngleGoal</b> at a constant speed.
-        [RuntimeState]
-        float rollAngle;
-
-        /// <summary>
-        /// The currently desired roll angle.
-        /// </summary>
-        /// This value is calculated separately each frame based
-        /// on ship turning.
-        float rollAngleGoal;
+        InterpolatingValue rollAngle;
 
         /// <summary>
         /// True iff <b>rollAngleGoal</b> has been set by ship turning this frame.
@@ -206,8 +197,8 @@ namespace AW2.Game.Gobs
 #if OPTIMIZED_CODE
                 float scale = Scale;
                 float rotation = Rotation;
-                float scaledCosRoll = scale * (float)Math.Cos(rollAngle);
-                float scaledSinRoll = scale * (float)Math.Sin(rollAngle);
+                float scaledCosRoll = scale * (float)Math.Cos(rollAngle.Current);
+                float scaledSinRoll = scale * (float)Math.Sin(rollAngle.Current);
                 float cosRota = (float)Math.Cos(rotation);
                 float sinRota = (float)Math.Sin(rotation);
                 return new Matrix(
@@ -217,7 +208,7 @@ namespace AW2.Game.Gobs
                     pos.X, pos.Y, 0, 1);
 #else
                 return Matrix.CreateScale(Scale)
-                     * Matrix.CreateRotationX(rollAngle)
+                     * Matrix.CreateRotationX(rollAngle.Current)
                      * Matrix.CreateRotationZ(Rotation)
                      * Matrix.CreateTranslation(new Vector3(Pos, 0));
 #endif
@@ -349,9 +340,6 @@ namespace AW2.Game.Gobs
             this.thrustForce = 100;
             this.turnSpeed = 3;
             this.maxSpeed = 200;
-            this.weapon1 = null;
-            this.weapon2 = null;
-            this.rollAngle = 0;
             this.rollMax = (float)MathHelper.PiOver4;
             this.rollSpeed = (float)(MathHelper.TwoPi / 2.0);
             this.weapon1ChargeMax = 5000;
@@ -396,6 +384,23 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Ship constructors
+
+        #region Protected methods
+
+        /// <summary>
+        /// Called when the ship is thrusting.
+        /// </summary>
+        /// <param name="thrustForce">Thrusting force</param>
+        protected virtual void Thrusting(float thrustForce) { }
+
+        /// <summary>
+        /// Called when the ship is turning.
+        /// </summary>
+        protected virtual void Turning(float turnAngle) { }
+
+        #endregion Protected methods
+
+        #region Private methods
 
         /// <summary>
         /// Creates a new instance of a named weapon type so that all
@@ -446,6 +451,8 @@ namespace AW2.Game.Gobs
             coughEngines = coughEngineList.ToArray();
         }
 
+        #endregion Private methods
+
         #region Methods related to gobs' functionality in the game world
 
         /// <summary>
@@ -469,10 +476,10 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             // Manage turn-related rolling.
-            rollAngle = AWMathHelper.InterpolateTowards(rollAngle, rollAngleGoal,
-                AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed));
+            rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed);
+            rollAngle.Advance();
             if (!rollAngleGoalUpdated)
-                rollAngleGoal = 0;
+                rollAngle.Target = 0;
             rollAngleGoalUpdated = false;
 
             base.Update();
@@ -633,6 +640,7 @@ namespace AW2.Game.Gobs
                 * force * thrustForce;
             AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed);
             visualThrustForce = force;
+            Thrusting(force);
 
             // Manage exhaust engines.
             SwitchExhaustEngines(true);
@@ -668,7 +676,9 @@ namespace AW2.Game.Gobs
         private void Turn(float force)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            Rotation += AssaultWing.Instance.PhysicsEngine.ApplyChange(force * turnSpeed);
+            float deltaRotation = AssaultWing.Instance.PhysicsEngine.ApplyChange(force * turnSpeed);
+            Rotation += deltaRotation;
+            Turning(deltaRotation);
 
             Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
             float moveLength = Move.Length();
@@ -677,7 +687,7 @@ namespace AW2.Game.Gobs
                 moveLength <= maxSpeed ? Vector2.Dot(headingNormal, Move / maxSpeed) :
                 Vector2.Dot(headingNormal, Move / moveLength);
             //float headingFactor = 1.0f; // naive roll
-            rollAngleGoal = -rollMax * force * headingFactor;
+            rollAngle.Target = -rollMax * force * headingFactor;
             rollAngleGoalUpdated = true;
         }
 

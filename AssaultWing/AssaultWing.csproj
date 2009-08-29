@@ -241,6 +241,7 @@
     <Compile Include="Helpers\MovementCurve.cs" />
     <Compile Include="Helpers\Pair.cs" />
     <Compile Include="Helpers\Paths.cs" />
+    <Compile Include="Helpers\InterpolatingValue.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />

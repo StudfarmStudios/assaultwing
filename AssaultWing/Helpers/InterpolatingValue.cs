@@ -1,8 +1,11 @@
-﻿namespace AW2.Helpers
+﻿using System.Diagnostics;
+
+namespace AW2.Helpers
 {
     /// <summary>
     /// A value that interpolates towards a target with in constant steps.
     /// </summary>
+    [DebuggerDisplay("{Current} +- {Step} -> {Target}")]
     public struct InterpolatingValue
     {
         /// <summary>

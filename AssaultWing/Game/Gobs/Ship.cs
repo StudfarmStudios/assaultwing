@@ -516,7 +516,7 @@ namespace AW2.Game.Gobs
             weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
 
             // Flash and be disabled if we're just born.
-            float age = (float)(AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds;
+            float age = birthTime.SecondsAgo();
             Alpha = birthAlpha.Evaluate(age);
             Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;
         }

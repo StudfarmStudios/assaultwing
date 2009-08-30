@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
+using AW2.Helpers;
 
 namespace AW2.Graphics
 {
@@ -104,14 +105,11 @@ namespace AW2.Graphics
             {
                 if (player.Ship.Weapon1Loaded)
                 {
-                    float seconds = (float)(AssaultWing.Instance.GameTime.TotalGameTime - player.Ship.Weapon1.LoadedTime).TotalSeconds;
+                    float seconds = player.Ship.Weapon1.LoadedTime.SecondsAgo();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)
-                    {
-                        //scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
                         color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.1f), Vector4.One, seconds / 0.2f));
-                    }
                     spriteBatch.Draw(iconWeaponLoadTexture,
                         new Vector2(statusDisplayTexture.Width + iconWeaponLoadTexture.Width +
                                     barMainTexture.Width + 8 * 2,
@@ -141,14 +139,11 @@ namespace AW2.Graphics
             {
                 if (player.Ship.Weapon2Loaded)
                 {
-                    float seconds = (float)(AssaultWing.Instance.GameTime.TotalGameTime - player.Ship.Weapon2.LoadedTime).TotalSeconds;
+                    float seconds = player.Ship.Weapon2.LoadedTime.SecondsAgo();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)
-                    {
-                        //scale = MathHelper.Lerp(3, 1, seconds / 0.2f);
                         color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.2f), Vector4.One, seconds / 0.2f));
-                    }
                     spriteBatch.Draw(iconWeaponLoadTexture,
                         new Vector2(statusDisplayTexture.Width + iconWeaponLoadTexture.Width +
                                     barSpecialTexture.Width + 8 * 2,

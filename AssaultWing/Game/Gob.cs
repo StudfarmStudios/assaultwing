@@ -512,13 +512,7 @@ namespace AW2.Game
         /// All gobs are born <b>cold</b>. If a gob is cold, it won't
         /// collide with other gobs that have the same owner. This works around
         /// the problem of bullets hitting the firing ship immediately at birth.
-        public virtual bool Cold
-        {
-            get
-            {
-                return (AssaultWing.Instance.GameTime.TotalGameTime - birthTime).TotalSeconds < warmUpTime;
-            }
-        }
+        public virtual bool Cold { get { return birthTime.SecondsAgo() < warmUpTime; } }
 
         /// <summary>
         /// Is the gob dead, i.e. has Die been called for this gob.

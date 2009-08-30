@@ -169,7 +169,7 @@ namespace AW2.Helpers
         /// </summary>
         /// <param name="v">The vector.</param>
         /// <returns>The vector with its components rounded to the nearest integers.</returns>
-        public static Vector2 Round(Vector2 v)
+        public static Vector2 Round(this Vector2 v)
         {
             return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y));
         }
@@ -226,6 +226,15 @@ namespace AW2.Helpers
                 return value * newLength / length;
             }
             return value;
+        }
+
+        /// <summary>
+        /// Returns the number of seconds this <see cref="TimeSpan"/> is ahead of
+        /// the current game time.
+        /// </summary>
+        public static float SecondsAgo(this TimeSpan time1)
+        {
+            return (float)(AssaultWing.Instance.GameTime.TotalGameTime - time1).TotalSeconds;
         }
 
         /// <summary>

@@ -15,8 +15,6 @@ namespace AW2.Graphics
     {
         Player player;
         Texture2D bonusBackgroundTexture;
-        Texture2D bonusIconWeapon1LoadTimeTexture;
-        Texture2D bonusIconWeapon2LoadTimeTexture;
         Texture2D bonusDurationTexture;
         SpriteFont bonusFont;
         
@@ -151,15 +149,15 @@ namespace AW2.Graphics
             List<Vector2> bonusPos = new List<Vector2>();
 
             // Lists the types of bonuses whose coordinates are in 'bonusPos'.
-            List<PlayerBonus> bonusBonus = new List<PlayerBonus>();
+            List<PlayerBonusTypes> bonusBonus = new List<PlayerBonusTypes>();
 
             bonusPos.Add(Vector2.Zero);
-            bonusBonus.Add(PlayerBonus.None);
+            bonusBonus.Add(PlayerBonusTypes.None);
 
             // Find out which boxes to draw and where.
-            foreach (PlayerBonus bonus in Enum.GetValues(typeof(PlayerBonus)))
+            foreach (PlayerBonusTypes bonus in Enum.GetValues(typeof(PlayerBonusTypes)))
             {
-                if (bonus == PlayerBonus.None) continue;
+                if (bonus == PlayerBonusTypes.None) continue;
 
                 // Calculate bonus box position.
                 float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
@@ -226,7 +224,7 @@ namespace AW2.Graphics
             {
                 Vector2 leftMiddlePoint = new Vector2(bonusPos[i].X + bonusBoxAreaTopRight.X,
                     bonusBoxAreaTopRight.Y + (bonusPos[i].Y + bonusPos[i - 1].Y) / 2);
-                DrawBonusBox(spriteBatch, leftMiddlePoint, bonusBonus[i]);
+                DrawBonusBox(spriteBatch, leftMiddlePoint, (PlayerBonus)bonusBonus[i]);
             }
         }
 
@@ -243,43 +241,11 @@ namespace AW2.Graphics
         {
             var data = AssaultWing.Instance.DataEngine;
 
+            var bonusData = playerBonus.GetData(player);
+
             // Figure out what to draw for this bonus.
-            string bonusText;
-            Texture2D bonusIcon;
-            switch (playerBonus)
-            {
-                case PlayerBonus.Weapon1LoadTime:
-                    bonusText = player.Weapon1RealName + "\nspeedloader";
-                    bonusIcon = bonusIconWeapon1LoadTimeTexture;
-                    break;
-                case PlayerBonus.Weapon2LoadTime:
-                    bonusText = player.Weapon2RealName + "\nspeedloader";
-                    bonusIcon = bonusIconWeapon2LoadTimeTexture;
-                    break;
-                case PlayerBonus.Weapon1Upgrade:
-                    {
-                        Weapon weapon1 = player.Ship != null
-                            ? player.Ship.Weapon1
-                            : (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon1RealName);
-                        bonusText = player.Weapon1RealName;
-                        bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(weapon1.IconName);
-                    }
-                    break;
-                case PlayerBonus.Weapon2Upgrade:
-                    {
-                        Weapon weapon2 = player.Ship != null
-                            ? player.Ship.Weapon2
-                            : (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon2RealName);
-                        bonusText = player.Weapon2RealName;
-                        bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconName);
-                    }
-                    break;
-                default:
-                    bonusText = "<unknown>";
-                    bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
-                    Log.Write("Warning: Don't know how to draw player bonus box " + playerBonus);
-                    throw new ArgumentException("Don't know how to draw player bonus box " + playerBonus);
-            }
+            string bonusText = bonusData.message;
+            Texture2D bonusIcon = bonusData.icon;
 
             // Draw bonus box background.
             Vector2 backgroundOrigin = new Vector2(0, bonusBackgroundTexture.Height) / 2;
@@ -292,8 +258,8 @@ namespace AW2.Graphics
                 iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus duration meter.
-            float startSeconds = (float)player.BonusTimeins[playerBonus].TotalSeconds;
-            float endSeconds = (float)player.BonusTimeouts[playerBonus].TotalSeconds;
+            float startSeconds = (float)player.BonusTimeins[playerBonus.Types].TotalSeconds;
+            float endSeconds = (float)player.BonusTimeouts[playerBonus.Types].TotalSeconds;
             float nowSeconds = (float)AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds;
             float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
             int durationHeight = (int)Math.Round(duration * bonusDurationTexture.Height);
@@ -319,8 +285,6 @@ namespace AW2.Graphics
         {
             var content = AssaultWing.Instance.Content;
             bonusBackgroundTexture = content.Load<Texture2D>("gui_bonus_bg");
-            bonusIconWeapon1LoadTimeTexture = content.Load<Texture2D>("b_icon_rapid_fire_1");
-            bonusIconWeapon2LoadTimeTexture = content.Load<Texture2D>("b_icon_rapid_fire_1");
             bonusDurationTexture = content.Load<Texture2D>("gui_bonus_duration");
             bonusFont = content.Load<SpriteFont>("ConsoleFont");
         }

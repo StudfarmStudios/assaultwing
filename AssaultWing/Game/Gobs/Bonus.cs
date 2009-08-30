@@ -195,7 +195,7 @@ namespace AW2.Game.Gobs
             }
 
             // Perform the bonus action.
-            PlayerBonus playerBonus = PlayerBonus.None; // bonus to add to the player, or None
+            PlayerBonusTypes playerBonus = PlayerBonusTypes.None; // bonus to add to the player, or None
             switch (poss.action)
             {
                 case BonusAction.Explode:
@@ -206,29 +206,40 @@ namespace AW2.Game.Gobs
                     });
                     break;
                 case BonusAction.UpgradeWeapon1:
-                    playerBonus = PlayerBonus.Weapon1Upgrade;
+                    playerBonus = PlayerBonusTypes.Weapon1Upgrade;
                     break;
                 case BonusAction.UpgradeWeapon2:
-                    playerBonus = PlayerBonus.Weapon2Upgrade;
+                    playerBonus = PlayerBonusTypes.Weapon2Upgrade;
                     break;
                 case BonusAction.UpgradeWeapon1LoadTime:
-                    playerBonus = PlayerBonus.Weapon1LoadTime;
+                    playerBonus = PlayerBonusTypes.Weapon1LoadTime;
                     break;
                 case BonusAction.UpgradeWeapon2LoadTime:
-                    playerBonus = PlayerBonus.Weapon2LoadTime;
+                    playerBonus = PlayerBonusTypes.Weapon2LoadTime;
                     break;
                 default:
                     Log.Write("WARNING: Bonus didn't do anything, programmer's mistake");
                     break;
             }
 
-            if (playerBonus != PlayerBonus.None)
+            if (playerBonus != PlayerBonusTypes.None)
             {
                 TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
                     + TimeSpan.FromSeconds(poss.duration);
                 player.AddBonus(playerBonus, expiryTime);
                 if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                     player.MustUpdateToClients = true;
+
+                // Display bonusmessage
+                Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
+                {
+                    gob.Pos = Pos;
+                    var data = ((PlayerBonus)playerBonus).GetData(player);
+                    ((BonusMessage)gob).Message = data.message;
+                    ((BonusMessage)gob).IconName = data.iconName;
+                    AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
+                });
+
             }
         }
 

@@ -184,9 +184,9 @@ namespace AW2.Game
             {
                 if (PlayerOwner != null)
                 {
-                    if (ownerHandle == 1 && PlayerOwner.HasBonus(PlayerBonus.Weapon1LoadTime))
+                    if (ownerHandle == 1 && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon1LoadTime))
                         return loadTime / 2;
-                    if (ownerHandle == 2 && PlayerOwner.HasBonus(PlayerBonus.Weapon2LoadTime))
+                    if (ownerHandle == 2 && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon2LoadTime))
                         return loadTime / 2;
                 }
                 return loadTime;

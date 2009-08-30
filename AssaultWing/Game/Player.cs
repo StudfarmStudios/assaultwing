@@ -13,45 +13,6 @@ using AW2.Net.Messages;
 namespace AW2.Game
 {
     /// <summary>
-    /// Bonuses that a player can have.
-    /// </summary>
-    /// This enum is closely related to the enum BonusAction which lists
-    /// what can happen when a bonus is activated.
-    /// <seealso cref="AW2.Game.Gobs.BonusAction"/>
-    [Flags]
-    public enum PlayerBonus : ushort
-    {
-        /// <summary>
-        /// No bonuses
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// Primary weapon's load time upgrade
-        /// </summary>
-        Weapon1LoadTime = 0x0001,
-
-        /// <summary>
-        /// Secondary weapon's load time upgrade
-        /// </summary>
-        Weapon2LoadTime = 0x0002,
-
-        /// <summary>
-        /// Primary weapon upgrade
-        /// </summary>
-        /// This bonus is cumulative and the number of accumulated
-        /// primary weapon upgrades is not expressed in these flags.
-        Weapon1Upgrade = 0x0004,
-
-        /// <summary>
-        /// Secondary weapon upgrade
-        /// </summary>
-        /// This bonus is cumulative and the number of accumulated
-        /// secondary weapon upgrades is not expressed in these flags.
-        Weapon2Upgrade = 0x0008,
-    }
-
-    /// <summary>
     /// A collection of values associated with bonuses of a player instance.
     /// </summary>
     public class PlayerBonusItems<T>
@@ -67,7 +28,7 @@ namespace AW2.Game
         /// </summary>
         /// <param name="bonus">The player bonus.</param>
         /// <returns>The item associated with the bonus.</returns>
-        public T this[PlayerBonus bonus]
+        public T this[PlayerBonusTypes bonus]
         {
             get
             {
@@ -172,7 +133,7 @@ namespace AW2.Game
         /// is stored in <b>weapon1Upgrades</b> and <b>weapon2Upgrades</b>.
         /// <seealso cref="weapon1Upgrades"/>
         /// <seealso cref="weapon2Upgrades"/>
-        PlayerBonus bonuses;
+        PlayerBonusTypes bonuses;
 
         /// <summary>
         /// Starting times of the player's bonuses.
@@ -418,7 +379,7 @@ namespace AW2.Game
         /// <summary>
         /// On/off bonuses that the player currently has.
         /// </summary>
-        public PlayerBonus Bonuses { get { return bonuses; } }
+        public PlayerBonusTypes Bonuses { get { return bonuses; } }
 
         /// <summary>
         /// Starting times of the player's bonuses.
@@ -471,7 +432,7 @@ namespace AW2.Game
             this.weapon2Name = weapon2Name;
             this.weapon1Upgrades = 0;
             this.weapon2Upgrades = 0;
-            this.bonuses = PlayerBonus.None;
+            this.bonuses = PlayerBonusTypes.None;
             this.bonusTimeins = new PlayerBonusItems<TimeSpan>();
             this.bonusTimeouts = new PlayerBonusItems<TimeSpan>();
             this.messages = new List<string>();
@@ -554,8 +515,8 @@ namespace AW2.Game
         public void Update()
         {
             // Player bonus expirations.
-            foreach (PlayerBonus playerBonus in Enum.GetValues(typeof(PlayerBonus)))
-                if (playerBonus != PlayerBonus.None &&
+            foreach (PlayerBonusTypes playerBonus in Enum.GetValues(typeof(PlayerBonusTypes)))
+                if (playerBonus != PlayerBonusTypes.None &&
                     (Bonuses & playerBonus) != 0 &&
                     BonusTimeouts[playerBonus] <= AssaultWing.Instance.GameTime.TotalGameTime)
                 {
@@ -602,7 +563,7 @@ namespace AW2.Game
             --lives;
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
-            bonuses = PlayerBonus.None;
+            bonuses = PlayerBonusTypes.None;
             Ship = null;
 
             // Notify the player about his death and possible killer about his frag.
@@ -625,7 +586,7 @@ namespace AW2.Game
         {
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
-            bonuses = PlayerBonus.None;
+            bonuses = PlayerBonusTypes.None;
             bonusTimeins = new PlayerBonusItems<TimeSpan>();
             bonusTimeouts = new PlayerBonusItems<TimeSpan>();
             Ship = null;
@@ -657,29 +618,29 @@ namespace AW2.Game
         /// </summary>
         /// <param name="bonus">The bonus or bonuses.</param>
         /// <param name="expiryTime">Time of expiry of the bonus or bonuses in game time.</param>
-        public void AddBonus(PlayerBonus bonus, TimeSpan expiryTime)
+        public void AddBonus(PlayerBonusTypes bonus, TimeSpan expiryTime)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 MustUpdateToClients = true;
             bonuses |= bonus;
-            if ((bonus & PlayerBonus.Weapon1LoadTime) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon1LoadTime) != 0)
             {
-                SetBonusTimes(PlayerBonus.Weapon1LoadTime, expiryTime);
+                SetBonusTimes(PlayerBonusTypes.Weapon1LoadTime, expiryTime);
                 UpgradeWeapon1LoadTime();
             }
-            if ((bonus & PlayerBonus.Weapon2LoadTime) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon2LoadTime) != 0)
             {
-                SetBonusTimes(PlayerBonus.Weapon2LoadTime, expiryTime);
+                SetBonusTimes(PlayerBonusTypes.Weapon2LoadTime, expiryTime);
                 UpgradeWeapon2LoadTime();
             }
-            if ((bonus & PlayerBonus.Weapon1Upgrade) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon1Upgrade) != 0)
             {
-                SetBonusTimes(PlayerBonus.Weapon1Upgrade, expiryTime);
+                SetBonusTimes(PlayerBonusTypes.Weapon1Upgrade, expiryTime);
                 UpgradeWeapon1();
             }
-            if ((bonus & PlayerBonus.Weapon2Upgrade) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon2Upgrade) != 0)
             {
-                SetBonusTimes(PlayerBonus.Weapon2Upgrade, expiryTime);
+                SetBonusTimes(PlayerBonusTypes.Weapon2Upgrade, expiryTime);
                 UpgradeWeapon2();
             }
         }
@@ -688,18 +649,18 @@ namespace AW2.Game
         /// Removes a bonus from the player.
         /// </summary>
         /// <param name="bonus">The bonus.</param>
-        public void RemoveBonus(PlayerBonus bonus)
+        public void RemoveBonus(PlayerBonusTypes bonus)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 MustUpdateToClients = true;
             bonuses &= ~bonus;
-            if ((bonus & PlayerBonus.Weapon1LoadTime) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon1LoadTime) != 0)
                 DeupgradeWeapon1LoadTime();
-            if ((bonus & PlayerBonus.Weapon2LoadTime) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon2LoadTime) != 0)
                 DeupgradeWeapon2LoadTime();
-            if ((bonus & PlayerBonus.Weapon1Upgrade) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon1Upgrade) != 0)
                 DeupgradeWeapon1();
-            if ((bonus & PlayerBonus.Weapon2Upgrade) != 0)
+            if ((bonus & PlayerBonusTypes.Weapon2Upgrade) != 0)
                 DeupgradeWeapon2();
         }
 
@@ -708,7 +669,7 @@ namespace AW2.Game
         /// </summary>
         /// <param name="bonus">The bonus to query.</param>
         /// <returns><c>true</c> if the player has the bonus, <c>false</c> otherwise.</returns>
-        public bool HasBonus(PlayerBonus bonus)
+        public bool HasBonus(PlayerBonusTypes bonus)
         {
             return (bonuses & bonus) != 0;
         }
@@ -832,8 +793,8 @@ namespace AW2.Game
             {
                 weapon1Upgrades = reader.ReadSByte();
                 weapon2Upgrades = reader.ReadSByte();
-                PlayerBonus oldBonuses = bonuses;
-                PlayerBonus newBonuses = (PlayerBonus)reader.ReadUInt16();
+                PlayerBonusTypes oldBonuses = bonuses;
+                PlayerBonusTypes newBonuses = (PlayerBonusTypes)reader.ReadUInt16();
                 RemoveBonus(oldBonuses & (oldBonuses ^ newBonuses));
                 AddBonus(newBonuses & (oldBonuses ^ newBonuses), 
                     AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(999)); // HACK: bonus expiryTime
@@ -981,7 +942,7 @@ namespace AW2.Game
             relativeShakeDamage = shakeAttenuationCurve.Evaluate(shakeTime);
         }
 
-        void SetBonusTimes(PlayerBonus bonus, TimeSpan expiryTime)
+        void SetBonusTimes(PlayerBonusTypes bonus, TimeSpan expiryTime)
         {
             BonusTimeins[bonus] = AssaultWing.Instance.GameTime.TotalGameTime;
             BonusTimeouts[bonus] = expiryTime;

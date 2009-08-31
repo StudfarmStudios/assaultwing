@@ -1823,6 +1823,11 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="models\junk_crate_1.X">
+      <Name>junk_crate_1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <Compile Include="models\junk_pipe_1.X">
       <Name>junk_pipe_1</Name>
       <Importer>XImporter</Importer>

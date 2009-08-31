@@ -13,11 +13,16 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class SnakeShip : Ship
     {
+        const float MAX_TAIL_TURN = MathHelper.Pi * 0.3f;
+        const float THRUST_NEEDED_FOR_TURN_SHIFT = 15;
         IEnumerable<int> tailIndices;
         float wiggleMainPhase;
         float wiggleFrequency; // wiggles per second
         float[] tailPhases; // for all model bones
         float[] tailAmplitudes; // for all model bones
+        InterpolatingValue[] tailTurns; // for all model bones
+        float thrustRemainderForTurnShift;
+        bool advanceTailTurns;
 
         #region Properties
 
@@ -60,10 +65,14 @@ namespace AW2.Game.Gobs
                 .Select(bone => bone.Index);
             tailPhases = new float[model.Bones.Count];
             tailAmplitudes = new float[model.Bones.Count];
+            tailTurns = new InterpolatingValue[model.Bones.Count];
             for (int i = 0; i < model.Bones.Count; ++i)
             {
                 tailPhases[i] = -1;
                 tailAmplitudes[i] = 0;
+                tailTurns[i].Reset(Rotation);
+                tailTurns[i].Step = MAX_TAIL_TURN / THRUST_NEEDED_FOR_TURN_SHIFT;
+                tailTurns[i].AngularInterpolation = true;
             }
             float phase = 0;
             float amplitude = 0.3f;
@@ -85,9 +94,57 @@ namespace AW2.Game.Gobs
             base.Update();
             float elapsedTime = (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
             wiggleMainPhase = (wiggleMainPhase - elapsedTime * MathHelper.Pi * wiggleFrequency) % MathHelper.TwoPi;
+            if (advanceTailTurns)
+                foreach (int i in tailIndices)
+                    tailTurns[i].Advance();
+            advanceTailTurns = false;
+            foreach (int i in tailIndices)
+                tailAmplitudes[i] = MathHelper.Max(0, tailAmplitudes[i] - 0.01f);
         }
 
         #endregion Methods related to gobs' functionality in the game world
+
+        #region Protected methods
+
+        /// <summary>
+        /// Called when the ship is thrusting.
+        /// </summary>
+        protected override void Thrusting(float thrustForce)
+        {
+            thrustRemainderForTurnShift += thrustForce;
+            while (thrustRemainderForTurnShift > THRUST_NEEDED_FOR_TURN_SHIFT)
+            {
+                thrustRemainderForTurnShift -= THRUST_NEEDED_FOR_TURN_SHIFT;
+
+                // Shift tail turn angles forward one step.
+                float prevTailTurn = Rotation;
+                foreach (int i in tailIndices)
+                {
+                    float thisTailTurn = tailTurns[i].Target;
+                    tailTurns[i].Target = prevTailTurn;
+                    prevTailTurn = thisTailTurn;
+                }
+            }
+            advanceTailTurns = true;
+            foreach (int i in tailIndices)
+                tailAmplitudes[i] = MathHelper.Min(0.3f, tailAmplitudes[i] + 0.03f);
+        }
+
+        /// <summary>
+        /// Called when the ship is turning.
+        /// </summary>
+        protected override void Turning(float turnAngle)
+        {
+            float prevTailTurn = Rotation;
+            foreach (int i in tailIndices)
+            {
+                float turnDifference = MathHelper.WrapAngle(tailTurns[i].Target - prevTailTurn);
+                if (Math.Abs(turnDifference) <= MAX_TAIL_TURN) break;
+                prevTailTurn = tailTurns[i].Target = 
+                    prevTailTurn + MathHelper.Clamp(turnDifference, -MAX_TAIL_TURN, MAX_TAIL_TURN);
+            }
+            advanceTailTurns = true;
+        }
 
         /// <summary>
         /// Copies a transform of each bone in a model relative to all parent bones of the bone into a given array.
@@ -96,12 +153,19 @@ namespace AW2.Game.Gobs
         {
             if (transforms == null) throw new ArgumentNullException("Null transformation matrix array");
             if (transforms.Length < model.Bones.Count) throw new ArgumentException("Too short transformation matrix array");
+
+            float[] tailTurnDeltas = new float[model.Bones.Count];
+            float prevTailTurn = Rotation;
+            foreach (int i in tailIndices)
+            {
+                tailTurnDeltas[i] = tailTurns[i].Current - prevTailTurn;
+                prevTailTurn = tailTurns[i].Current;
+            }
+
             foreach (var bone in model.Bones)
             {
                 if (bone.Parent == null)
-                {
                     transforms[bone.Index] = bone.Transform;
-                }
                 else
                 {
                     if (bone.Parent.Index >= bone.Index) throw new Exception("Unexpected situation: bone parent doesn't precede the bone itself");
@@ -110,12 +174,14 @@ namespace AW2.Game.Gobs
                     else
                     {
                         float wigglePhase = wiggleMainPhase + tailPhases[bone.Index];
-                        float wiggleAngle = tailAmplitudes[bone.Index] * (float)Math.Sin(wigglePhase);
+                        float wiggleAngle = tailTurnDeltas[bone.Index] + tailAmplitudes[bone.Index] * (float)Math.Sin(wigglePhase);
                         var extraTransform = Matrix.CreateRotationZ(wiggleAngle);
                         transforms[bone.Index] = extraTransform * bone.Transform * transforms[bone.Parent.Index];
                     }
                 }
             }
         }
+
+        #endregion Protected methods
     }
 }

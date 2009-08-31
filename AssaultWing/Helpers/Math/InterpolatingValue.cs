@@ -30,5 +30,13 @@ namespace AW2.Helpers
         {
             Current = AWMathHelper.InterpolateTowards(Current, Target, Step);
         }
+
+        /// <summary>
+        /// Resets the current value and target to a given value.
+        /// </summary>
+        public void Reset(float value)
+        {
+            Current = Target = value;
+        }
     }
 }

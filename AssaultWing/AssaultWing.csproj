@@ -239,11 +239,11 @@
     <Compile Include="Helpers\Collections\Playlist.cs" />
     <Compile Include="Helpers\Collections\TypedQueueCollection.cs" />
     <Compile Include="Helpers\Converter.cs" />
-    <Compile Include="Helpers\Half.cs" />
-    <Compile Include="Helpers\MovementCurve.cs" />
+    <Compile Include="Helpers\Math\Half.cs" />
+    <Compile Include="Helpers\Math\MovementCurve.cs" />
     <Compile Include="Helpers\Pair.cs" />
     <Compile Include="Helpers\Paths.cs" />
-    <Compile Include="Helpers\InterpolatingValue.cs" />
+    <Compile Include="Helpers\Math\InterpolatingValue.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
@@ -260,11 +260,11 @@
     <Compile Include="Graphics\OverlayDialog.cs" />
     <Compile Include="Graphics\PlayerStatusOverlay.cs" />
     <Compile Include="Graphics\RadarOverlay.cs" />
-    <Compile Include="Helpers\AWMathHelper.cs" />
-    <Compile Include="Helpers\ConstantValue.cs" />
-    <Compile Include="Helpers\ExpectedValue.cs" />
-    <Compile Include="Helpers\ExpectedValueCurve.cs" />
-    <Compile Include="Helpers\FloatFactory.cs" />
+    <Compile Include="Helpers\Math\AWMathHelper.cs" />
+    <Compile Include="Helpers\Math\ConstantValue.cs" />
+    <Compile Include="Helpers\Math\ExpectedValue.cs" />
+    <Compile Include="Helpers\Math\ExpectedValueCurve.cs" />
+    <Compile Include="Helpers\Math\FloatFactory.cs" />
     <Compile Include="Helpers\Geometric\Circle.cs" />
     <Compile Include="Helpers\Geometric\Everything.cs" />
     <Compile Include="Helpers\Geometric\Geometry.cs">
@@ -289,7 +289,7 @@
       <Name>Serialization</Name>
     </Compile>
     <Compile Include="Helpers\SpatialGrid.cs" />
-    <Compile Include="Helpers\Statistics.cs" />
+    <Compile Include="Helpers\Math\Statistics.cs" />
     <Compile Include="Net\Connection.cs" />
     <Compile Include="Net\GameClientConnection.cs" />
     <Compile Include="Net\GameplayMessage.cs" />

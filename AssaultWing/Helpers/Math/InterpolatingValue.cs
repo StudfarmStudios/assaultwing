@@ -24,11 +24,19 @@ namespace AW2.Helpers
         public float Target { get; set; }
 
         /// <summary>
+        /// Is the value treated as an angle in radians, wrapping around every 2*pi.
+        /// </summary>
+        public bool AngularInterpolation { get; set; }
+
+        /// <summary>
         /// Advances the current value by interpolating the next value.
         /// </summary>
         public void Advance()
         {
-            Current = AWMathHelper.InterpolateTowards(Current, Target, Step);
+            if (AngularInterpolation)
+                Current = AWMathHelper.InterpolateTowardsAngle(Current, Target, Step);
+            else
+                Current = AWMathHelper.InterpolateTowards(Current, Target, Step);
         }
 
         /// <summary>

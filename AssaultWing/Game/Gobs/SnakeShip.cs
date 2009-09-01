@@ -177,7 +177,8 @@ namespace AW2.Game.Gobs
                     {
                         float wigglePhase = wiggleMainPhase + tailPhases[bone.Index];
                         float turnDamping = 1 - Math.Abs(tailTurnDeltas[bone.Index]) / MAX_TAIL_TURN; // wiggle less when bent
-                        float wiggleAngle = tailTurnDeltas[bone.Index] + turnDamping * tailAmplitudes[bone.Index] * (float)Math.Sin(wigglePhase);
+                        float tailAmplitude = MIN_TAIL_AMPLITUDE + turnDamping * (tailAmplitudes[bone.Index] - MIN_TAIL_AMPLITUDE);
+                        float wiggleAngle = tailTurnDeltas[bone.Index] + tailAmplitude * (float)Math.Sin(wigglePhase);
                         var extraTransform = Matrix.CreateRotationZ(wiggleAngle);
                         transforms[bone.Index] = extraTransform * bone.Transform * transforms[bone.Parent.Index];
                     }

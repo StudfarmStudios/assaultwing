@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWing", "AssaultWing\AssaultWing.csproj", "{E8EFC5DB-1665-4079-9F4E-BD60AB104630}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaEditor", "ArenaEditor\ArenaEditor.csproj", "{7FF8C694-2989-470E-8374-DBF3770E1BF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,21 @@ Global
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Release|Any CPU.ActiveCfg = Release|x86
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{37327719-5D88-4EAD-9B6C-A97611027858}.Release|x86.ActiveCfg = Release|x86
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug2|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug2|Any CPU.Build.0 = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug2|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug2|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Debug2|x86.ActiveCfg = Debug|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7FF8C694-2989-470E-8374-DBF3770E1BF4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

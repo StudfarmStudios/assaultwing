@@ -1,0 +1,15 @@
+﻿<Window x:Class="ArenaEditor.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+    Title="Assault Wing Arena Editor"
+    Height="800" Width="1000">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Left">
+            <Button DockPanel.Dock="Top">Create that beautiful arena now</Button>
+        </DockPanel>
+        <WindowsFormsHost x:Name="arenaViewHost">
+            <wf:PictureBox x:Name="arenaView"/>
+        </WindowsFormsHost>
+    </DockPanel>
+</Window>

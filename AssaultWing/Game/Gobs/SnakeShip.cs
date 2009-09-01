@@ -15,6 +15,8 @@ namespace AW2.Game.Gobs
     {
         const float MAX_TAIL_TURN = MathHelper.Pi * 0.3f;
         const float THRUST_NEEDED_FOR_TURN_SHIFT = 15;
+        const float MIN_TAIL_AMPLITUDE = 0.03f;
+        const float MAX_TAIL_AMPLITUDE = 0.3f;
         IEnumerable<int> tailIndices;
         float wiggleMainPhase;
         float wiggleFrequency; // wiggles per second
@@ -71,11 +73,11 @@ namespace AW2.Game.Gobs
                 tailPhases[i] = -1;
                 tailAmplitudes[i] = 0;
                 tailTurns[i].Reset(Rotation);
-                tailTurns[i].Step = MAX_TAIL_TURN / THRUST_NEEDED_FOR_TURN_SHIFT;
+                tailTurns[i].Step = 1.2f * MAX_TAIL_TURN / THRUST_NEEDED_FOR_TURN_SHIFT;
                 tailTurns[i].AngularInterpolation = true;
             }
             float phase = 0;
-            float amplitude = 0.3f;
+            float amplitude = MIN_TAIL_AMPLITUDE;
             foreach (int i in tailIndices)
             {
                 tailPhases[i] = phase;
@@ -99,7 +101,7 @@ namespace AW2.Game.Gobs
                     tailTurns[i].Advance();
             advanceTailTurns = false;
             foreach (int i in tailIndices)
-                tailAmplitudes[i] = MathHelper.Max(0, tailAmplitudes[i] - 0.01f);
+                tailAmplitudes[i] = MathHelper.Max(MIN_TAIL_AMPLITUDE, tailAmplitudes[i] - 0.01f);
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -127,7 +129,7 @@ namespace AW2.Game.Gobs
             }
             advanceTailTurns = true;
             foreach (int i in tailIndices)
-                tailAmplitudes[i] = MathHelper.Min(0.3f, tailAmplitudes[i] + 0.03f);
+                tailAmplitudes[i] = MathHelper.Min(MAX_TAIL_AMPLITUDE, tailAmplitudes[i] + 0.03f);
         }
 
         /// <summary>

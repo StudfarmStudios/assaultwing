@@ -160,7 +160,7 @@ namespace AW2.Game.Gobs
             float prevTailTurn = Rotation;
             foreach (int i in tailIndices)
             {
-                tailTurnDeltas[i] = tailTurns[i].Current - prevTailTurn;
+                tailTurnDeltas[i] = MathHelper.WrapAngle(tailTurns[i].Current - prevTailTurn);
                 prevTailTurn = tailTurns[i].Current;
             }
 
@@ -176,7 +176,8 @@ namespace AW2.Game.Gobs
                     else
                     {
                         float wigglePhase = wiggleMainPhase + tailPhases[bone.Index];
-                        float wiggleAngle = tailTurnDeltas[bone.Index] + tailAmplitudes[bone.Index] * (float)Math.Sin(wigglePhase);
+                        float turnDamping = 1 - Math.Abs(tailTurnDeltas[bone.Index]) / MAX_TAIL_TURN; // wiggle less when bent
+                        float wiggleAngle = tailTurnDeltas[bone.Index] + turnDamping * tailAmplitudes[bone.Index] * (float)Math.Sin(wigglePhase);
                         var extraTransform = Matrix.CreateRotationZ(wiggleAngle);
                         transforms[bone.Index] = extraTransform * bone.Transform * transforms[bone.Parent.Index];
                     }

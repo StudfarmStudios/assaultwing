@@ -44,7 +44,7 @@ namespace AW2.Menu
     /// 
     /// The menu system draws some static text on top of the menu view. This includes
     /// an optional help text and an optional progress bar.
-    public class MenuEngineImpl : DrawableGameComponent
+    public class MenuEngineImpl : DrawableGameComponent, IMenuEngine
     {
         MenuComponentType activeComponent;
         MenuComponent[] components;
@@ -177,6 +177,14 @@ namespace AW2.Menu
             WindowResize();
             ActivateComponent(MenuComponentType.Main);
             base.Initialize();
+        }
+
+        /// <summary>
+        /// Activates the menu system.
+        /// </summary>
+        public void Activate()
+        {
+            ActivateComponent(MenuComponentType.Main);
         }
 
         /// <summary>

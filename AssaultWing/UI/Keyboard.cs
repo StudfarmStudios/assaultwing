@@ -9,7 +9,7 @@ namespace AW2.UI
     /// <summary>
     /// A key on the keyboard.
     /// </summary>
-    class KeyboardKey : Control
+    public class KeyboardKey : Control
     {
         private Keys key;
         private bool pulse;

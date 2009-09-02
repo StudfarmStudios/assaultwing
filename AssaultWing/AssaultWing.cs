@@ -92,13 +92,13 @@ namespace AW2
         UIEngineImpl uiEngine;
         GraphicsEngineImpl graphicsEngine;
         OverlayDialog overlayDialog;
-        MenuEngineImpl menuEngine;
         NetworkEngine networkEngine;
         LogicEngine logicEngine;
         DataEngine dataEngine;
         PhysicsEngine physicsEngine;
         SoundEngineImpl soundEngine;
         EventEngineImpl eventEngine;
+        IMenuEngine menuEngine;
         GraphicsDeviceManager graphics;
         int preferredWindowWidth, preferredWindowHeight;
         SurfaceFormat preferredWindowFormat;
@@ -177,6 +177,12 @@ namespace AW2
         /// The network engine of the game instance.
         /// </summary>
         public NetworkEngine NetworkEngine { get { return networkEngine; } }
+
+        /// <summary>
+        /// Called during initialisation of the game instance.
+        /// The event handler should return the menu engine of the game instance.
+        /// </summary>
+        public static event Func<Microsoft.Xna.Framework.Game, IMenuEngine> MenuEngineInitializing;
 
         /// <summary>
         /// The current state of the game.
@@ -606,7 +612,7 @@ namespace AW2
         {
             soundEngine.StopMusic();
             dataEngine.ClearGameState();
-            menuEngine.ActivateComponent(MenuComponentType.Main);
+            menuEngine.Activate();
             ChangeState(GameState.Menu);
         }
 
@@ -739,11 +745,13 @@ namespace AW2
             windowForm = (Form)Form.FromHandle(Window.Handle);
             InitializePerformanceCounters();
 
+            if (MenuEngineInitializing == null)
+                throw new Exception("AssaultWing.MenuEngineInitializing must be set before first reference to AssaultWing.Instance");
             uiEngine = new UIEngineImpl(this);
             logicEngine = new LogicEngine(this);
             soundEngine = new SoundEngineImpl(this);
             graphicsEngine = new GraphicsEngineImpl(this);
-            menuEngine = new MenuEngineImpl(this);
+            menuEngine = MenuEngineInitializing(this);
             networkEngine = new NetworkEngine(this);
             overlayDialog = new OverlayDialog(this);
             dataEngine = new DataEngine();

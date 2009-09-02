@@ -1,15 +1,14 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Assault Wing")]
-[assembly: AssemblyProduct("Assault Wing")]
-[assembly: AssemblyDescription("Fast-paced multiplayer online shoot'em up")]
+[assembly: AssemblyTitle("Assault Wing core")]
+[assembly: AssemblyProduct("Assault Wing core")]
+[assembly: AssemblyDescription("Core functionality of Assault Wing")]
 [assembly: AssemblyCompany("Studfarm Studios")]
-
 [assembly: AssemblyCopyright("Copyright ©  2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,8 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("130358a1-13b4-4fa5-b7ff-7da30e96bbda")]
-
+[assembly: Guid("77f7630a-0df2-4466-b540-656f3cfab933")]
 
 // Version information for an assembly consists of the following four values:
 //

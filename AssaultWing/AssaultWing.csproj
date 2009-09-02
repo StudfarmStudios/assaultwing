@@ -1,58 +1,31 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
-    <ProjectGuid>{E8EFC5DB-1665-4079-9F4E-BD60AB104630}</ProjectGuid>
+    <ProjectGuid>{CBFE65DF-0911-46C8-BEBB-C57254648ABC}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AW2</RootNamespace>
     <AssemblyName>AssaultWing</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <XnaFrameworkVersion>v3.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
-    <ApplicationIcon>Game.ico</ApplicationIcon>
-    <ManifestCertificateThumbprint>7E0078CD3D959F197223004F7BE2C3CD313A050B</ManifestCertificateThumbprint>
-    <ManifestKeyFile>AssaultWing_TemporaryKey.pfx</ManifestKeyFile>
-    <GenerateManifests>true</GenerateManifests>
-    <SignManifests>false</SignManifests>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <Thumbnail>GameThumbnail.png</Thumbnail>
-    <XnaCrossPlatformGroupID>{15153d80-6b81-4a3d-b3f9-536b30b7a7d0}</XnaCrossPlatformGroupID>
-    <XnaUpgrade>
-    </XnaUpgrade>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetZone>LocalIntranet</TargetZone>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <TargetFrameworkSubset>Full</TargetFrameworkSubset>
-    <SignAssembly>false</SignAssembly>
-    <DelaySign>false</DelaySign>
-    <ExcludedPermissions>
-    </ExcludedPermissions>
+    <XnaCrossPlatformGroupID>59db2dd9-51b1-4be0-aa99-15948d90b749</XnaCrossPlatformGroupID>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://koti.welho.com/vvnurmi/aw2/install/</InstallUrl>
-    <ProductName>Assault Wing - Galactic Battlefront</ProductName>
-    <PublisherName>Studfarm Studios</PublisherName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>index.html</WebPage>
-    <ApplicationRevision>12</ApplicationRevision>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <CreateDesktopShortcut>true</CreateDesktopShortcut>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -60,41 +33,35 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DEBUG_PROFILE NO_GEOMETRY_APPROXIMATE;WINDOWS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <DocumentationFile>bin\x86\Debug\AssaultWing.XML</DocumentationFile>
+    <XnaCompressContent>false</XnaCompressContent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>True</XnaCompressContent>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug2|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug2\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DEBUG_PROFILE NO_GEOMETRY_APPROXIMATE;WINDOWS</DefineConstants>
-    <DocumentationFile>bin\x86\Debug\AssaultWing.XML</DocumentationFile>
-    <NoStdLib>true</NoStdLib>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
+    <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
+    <Reference Include="Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=x86">
+      <Private>False</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
@@ -105,59 +72,60 @@
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssaultWing.cs" />
     <Compile Include="Events\BonusExpiryEvent.cs" />
-    <Compile Include="Events\PlayerControlEvent.cs">
-      <Name>PlayerControlEvent</Name>
-    </Compile>
-    <Compile Include="Events\SoundEffectEvent.cs">
-      <Name>SoundEffectEvent</Name>
-    </Compile>
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\EventEngine.cs" />
+    <Compile Include="Events\EventEngineImpl.cs" />
+    <Compile Include="Events\NetworkableEvent.cs" />
+    <Compile Include="Events\PlayerControlEvent.cs" />
+    <Compile Include="Events\SoundEffectEvent.cs" />
     <Compile Include="Game\ActionGob.cs" />
-    <Compile Include="Game\Arena.cs">
-      <Name>Arena</Name>
-    </Compile>
+    <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\ArenaLayer.cs" />
     <Compile Include="Game\ArenaLayerGobCollection.cs" />
     <Compile Include="Game\ArenaTypeLoader.cs" />
+    <Compile Include="Game\CollisionArea.cs" />
+    <Compile Include="Game\DataEngine.cs" />
     <Compile Include="Game\DeathCause.cs" />
     <Compile Include="Game\GameplayMode.cs" />
+    <Compile Include="Game\Gob.cs" />
     <Compile Include="Game\GobCollection.cs" />
     <Compile Include="Game\Gobs\Bonus.cs" />
     <Compile Include="Game\Gobs\BonusMessage.cs" />
     <Compile Include="Game\Gobs\BounceBullet.cs" />
+    <Compile Include="Game\Gobs\Bullet.cs" />
     <Compile Include="Game\Gobs\CollisionTrigger.cs" />
-    <Compile Include="Game\Gobs\Dock.cs">
-      <Name>Dock</Name>
-    </Compile>
+    <Compile Include="Game\Gobs\Dock.cs" />
     <Compile Include="Game\Gobs\Explosion.cs" />
+    <Compile Include="Game\Gobs\Gravity.cs" />
     <Compile Include="Game\Gobs\MovingWall.cs" />
     <Compile Include="Game\Gobs\Peng.cs" />
     <Compile Include="Game\Gobs\PropModel.cs" />
     <Compile Include="Game\Gobs\Rocket.cs" />
+    <Compile Include="Game\Gobs\Ship.cs" />
     <Compile Include="Game\Gobs\SnakeShip.cs" />
     <Compile Include="Game\Gobs\SpawnGob.cs" />
     <Compile Include="Game\Gobs\SpawnPlayer.cs" />
-    <Compile Include="Game\Gobs\WallModel.cs">
-      <Name>WallModel</Name>
-    </Compile>
-    <Compile Include="Game\PlayerBonus.cs" />
-    <Compile Include="Graphics\AWContentManager.cs" />
-    <Compile Include="Helpers\AWPerformanceCounter.cs" />
-    <Compile Include="Helpers\Clonable.cs" />
-    <Compile Include="Helpers\Collections\ITypedQueue.cs" />
-    <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
+    <Compile Include="Game\Gobs\Wall.cs" />
+    <Compile Include="Game\Gobs\WallModel.cs" />
+    <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Particles\DotEmitter.cs" />
     <Compile Include="Game\Particles\Emitter.cs" />
     <Compile Include="Game\Particles\ExplodeEmitter.cs" />
@@ -169,147 +137,88 @@
     <Compile Include="Game\Pengs\PengParameter.cs" />
     <Compile Include="Game\Pengs\SprayEmitter.cs" />
     <Compile Include="Game\Pengs\ViewportEmitter.cs" />
-    <Compile Include="Helpers\Collections\IndexedItemCollection.cs" />
-    <Compile Include="Game\TypeLoader.cs">
-      <Name>TypeLoader</Name>
-    </Compile>
-    <Compile Include="Game\Gobs\Bullet.cs">
-      <Name>Bullet</Name>
-    </Compile>
-    <Compile Include="Game\DataEngine.cs">
-      <Name>DataEngineImpl</Name>
-    </Compile>
-    <Compile Include="Events\Event.cs">
-      <Name>Event</Name>
-    </Compile>
-    <Compile Include="Events\EventEngine.cs">
-      <Name>EventEngine</Name>
-    </Compile>
-    <Compile Include="Events\EventEngineImpl.cs">
-      <Name>EventEngineImpl</Name>
-    </Compile>
-    <Compile Include="Events\NetworkableEvent.cs">
-      <Name>NetworkableEvent</Name>
-    </Compile>
-    <Compile Include="Game\Gob.cs">
-      <Name>Gob</Name>
-    </Compile>
-    <Compile Include="Game\Gobs\Gravity.cs">
-      <Name>Gravity</Name>
-    </Compile>
-    <Compile Include="Game\Gobs\Wall.cs">
-      <Name>Wall</Name>
-    </Compile>
-    <Compile Include="Game\CollisionArea.cs">
-      <Name>IGob</Name>
-    </Compile>
-    <Compile Include="Game\PhysicsEngine.cs">
-      <Name>PhysicsEngineImpl</Name>
-    </Compile>
-    <Compile Include="Game\Player.cs">
-      <Name>Player</Name>
-    </Compile>
-    <Compile Include="Game\Gobs\Ship.cs">
-      <Name>Ship</Name>
-    </Compile>
-    <Compile Include="Game\Weapon.cs">
-      <Name>Weapon</Name>
-    </Compile>
-    <Compile Include="Game\Weapons\ForwardShot.cs">
-      <Name>ForwardShot</Name>
-    </Compile>
+    <Compile Include="Game\PhysicsEngine.cs" />
+    <Compile Include="Game\Player.cs" />
+    <Compile Include="Game\PlayerBonus.cs" />
+    <Compile Include="Game\TypeLoader.cs" />
+    <Compile Include="Game\Weapon.cs" />
+    <Compile Include="Game\Weapons\ForwardShot.cs" />
     <Compile Include="Graphics\ArenaOverOverlayDialogData.cs" />
+    <Compile Include="Graphics\AWContentManager.cs" />
+    <Compile Include="Graphics\AWViewport.cs" />
     <Compile Include="Graphics\BonusListOverlay.cs" />
     <Compile Include="Graphics\ChatBoxOverlay.cs" />
     <Compile Include="Graphics\CustomOverlayDialogData.cs" />
     <Compile Include="Graphics\DrawMode2D.cs" />
     <Compile Include="Graphics\GameOverOverlayDialogData.cs" />
-    <Compile Include="Graphics\GraphicsEngineImpl.cs">
-      <Name>GraphicsEngineImpl</Name>
-    </Compile>
-    <Compile Include="Game\LogicEngine.cs">
-      <Name>LogicEngineImpl</Name>
-    </Compile>
+    <Compile Include="Graphics\GraphicsEngineImpl.cs" />
     <Compile Include="Graphics\MiniStatusOverlay.cs" />
-    <Compile Include="Graphics\OverlayDialogData.cs" />
-    <Compile Include="Graphics\ProgressBar.cs" />
-    <Compile Include="Helpers\AbortableThreadPool.cs" />
-    <Compile Include="Helpers\CanonicalString.cs" />
-    <Compile Include="Helpers\Collections\IObservableCollection.cs" />
-    <Compile Include="Helpers\Collections\Playlist.cs" />
-    <Compile Include="Helpers\Collections\TypedQueueCollection.cs" />
-    <Compile Include="Helpers\Converter.cs" />
-    <Compile Include="Helpers\Math\Half.cs" />
-    <Compile Include="Helpers\Math\MovementCurve.cs" />
-    <Compile Include="Helpers\Pair.cs" />
-    <Compile Include="Helpers\Paths.cs" />
-    <Compile Include="Helpers\Math\InterpolatingValue.cs" />
-    <Compile Include="Menu\ArenaMenuComponent.cs" />
-    <Compile Include="Menu\EquipmentSelector.cs" />
-    <Compile Include="Menu\EquipMenuComponent.cs" />
-    <Compile Include="Menu\MainMenuComponent.cs" />
-    <Compile Include="Menu\MenuComponent.cs" />
-    <Compile Include="Menu\MenuEngineImpl.cs">
-      <SubType>Code</SubType>
-      <Name>MenuEngineImpl</Name>
-    </Compile>
-    <Compile Include="Graphics\AWViewport.cs">
-      <Name>AWViewport</Name>
-    </Compile>
     <Compile Include="Graphics\OverlayComponent.cs" />
     <Compile Include="Graphics\OverlayDialog.cs" />
+    <Compile Include="Graphics\OverlayDialogData.cs" />
     <Compile Include="Graphics\PlayerStatusOverlay.cs" />
+    <Compile Include="Graphics\ProgressBar.cs" />
     <Compile Include="Graphics\RadarOverlay.cs" />
-    <Compile Include="Helpers\Math\AWMathHelper.cs" />
-    <Compile Include="Helpers\Math\ConstantValue.cs" />
-    <Compile Include="Helpers\Math\ExpectedValue.cs" />
-    <Compile Include="Helpers\Math\ExpectedValueCurve.cs" />
-    <Compile Include="Helpers\Math\FloatFactory.cs" />
+    <Compile Include="Helpers\AbortableThreadPool.cs" />
+    <Compile Include="Helpers\AWPerformanceCounter.cs" />
+    <Compile Include="Helpers\CanonicalString.cs" />
+    <Compile Include="Helpers\Clonable.cs" />
+    <Compile Include="Helpers\Collections\IndexedItemCollection.cs" />
+    <Compile Include="Helpers\Collections\IObservableCollection.cs" />
+    <Compile Include="Helpers\Collections\ITypedQueue.cs" />
+    <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
+    <Compile Include="Helpers\Collections\Playlist.cs" />
+    <Compile Include="Helpers\Collections\TypedQueue.cs" />
+    <Compile Include="Helpers\Collections\TypedQueueCollection.cs" />
+    <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Geometric\Circle.cs" />
     <Compile Include="Helpers\Geometric\Everything.cs" />
-    <Compile Include="Helpers\Geometric\Geometry.cs">
-      <Name>Geometry</Name>
-    </Compile>
+    <Compile Include="Helpers\Geometric\Geometry.cs" />
     <Compile Include="Helpers\Geometric\IGeomPrimitive.cs" />
     <Compile Include="Helpers\Geometric\Point.cs" />
     <Compile Include="Helpers\Geometric\Polygon.cs" />
     <Compile Include="Helpers\Geometric\Rectangle.cs" />
     <Compile Include="Helpers\Geometric\Triangle.cs" />
-    <Compile Include="Helpers\Log.cs">
-      <Name>Log</Name>
-    </Compile>
-    <Compile Include="Helpers\Graphics3D.cs">
-      <Name>Graphics3D</Name>
-    </Compile>
-    <Compile Include="Helpers\PriorityQueue.cs" />
-    <Compile Include="Helpers\RandomHelper.cs">
-      <Name>RandomHelper</Name>
-    </Compile>
-    <Compile Include="Helpers\Serialization.cs">
-      <Name>Serialization</Name>
-    </Compile>
-    <Compile Include="Helpers\SpatialGrid.cs" />
+    <Compile Include="Helpers\Graphics3D.cs" />
+    <Compile Include="Helpers\Log.cs" />
+    <Compile Include="Helpers\Math\AWMathHelper.cs" />
+    <Compile Include="Helpers\Math\ConstantValue.cs" />
+    <Compile Include="Helpers\Math\ExpectedValue.cs" />
+    <Compile Include="Helpers\Math\ExpectedValueCurve.cs" />
+    <Compile Include="Helpers\Math\FloatFactory.cs" />
+    <Compile Include="Helpers\Math\Half.cs" />
+    <Compile Include="Helpers\Math\InterpolatingValue.cs" />
+    <Compile Include="Helpers\Math\MovementCurve.cs" />
     <Compile Include="Helpers\Math\Statistics.cs" />
+    <Compile Include="Helpers\Pair.cs" />
+    <Compile Include="Helpers\Paths.cs" />
+    <Compile Include="Helpers\PriorityQueue.cs" />
+    <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="Helpers\Serialization.cs" />
+    <Compile Include="Helpers\SpatialGrid.cs" />
+    <Compile Include="Menu\DummyMenuEngine.cs" />
+    <Compile Include="Menu\IMenuEngine.cs" />
     <Compile Include="Net\Connection.cs" />
     <Compile Include="Net\GameClientConnection.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\GameServerConnection.cs" />
     <Compile Include="Net\IConnection.cs" />
+    <Compile Include="Net\INetworkSerializable.cs" />
     <Compile Include="Net\ManagementServerConnection.cs" />
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\MessageHandler.cs" />
+    <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
+    <Compile Include="Net\Messages\ArenaStartReply.cs" />
+    <Compile Include="Net\Messages\ArenaStartRequest.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
-    <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
-    <Compile Include="Net\Messages\ArenaStartRequest.cs" />
-    <Compile Include="Net\Messages\ArenaStartReply.cs" />
-    <Compile Include="Net\Messages\PingReplyMessage.cs" />
-    <Compile Include="Net\Messages\GobDamageMessage.cs" />
     <Compile Include="Net\Messages\GobCreationMessage.cs" />
+    <Compile Include="Net\Messages\GobDamageMessage.cs" />
     <Compile Include="Net\Messages\GobDeletionMessage.cs" />
     <Compile Include="Net\Messages\GobUpdateMessage.cs" />
     <Compile Include="Net\Messages\JoinGameReply.cs" />
     <Compile Include="Net\Messages\JoinGameRequest.cs" />
+    <Compile Include="Net\Messages\PingReplyMessage.cs" />
     <Compile Include="Net\Messages\PingRequestMessage.cs" />
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
     <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
@@ -318,54 +227,31 @@
     <Compile Include="Net\NetworkBinaryReader.cs" />
     <Compile Include="Net\NetworkBinaryWriter.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
-    <Compile Include="Net\INetworkSerializable.cs" />
     <Compile Include="Net\PingedConnection.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\SerializationModeFlags.cs" />
     <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Net\ThreadSafeWrapper.cs" />
-    <Compile Include="Helpers\Collections\TypedQueue.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <Name>AssemblyInfo</Name>
-    </Compile>
-    <Compile Include="Program.cs">
-      <Name>Program</Name>
-    </Compile>
-    <Compile Include="AssaultWing.cs">
-      <Name>AssaultWing</Name>
-    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sound\BackgroundMusic.cs" />
-    <Compile Include="Sound\SoundEngine.cs">
-      <Name>SoundEngine</Name>
-    </Compile>
-    <Compile Include="Sound\SoundEngineImpl.cs">
-      <Name>SoundEngineImpl</Name>
-    </Compile>
-    <Compile Include="Sound\SoundOptions.cs">
-      <Name>SoundOptions</Name>
-    </Compile>
-    <Compile Include="UI\Controls.cs">
-      <Name>Controls</Name>
-    </Compile>
+    <Compile Include="Sound\SoundEngine.cs" />
+    <Compile Include="Sound\SoundEngineImpl.cs" />
+    <Compile Include="Sound\SoundOptions.cs" />
+    <Compile Include="UI\Controls.cs" />
     <Compile Include="UI\EditableText.cs" />
-    <Compile Include="UI\Keyboard.cs">
-      <Name>Keyboard</Name>
-    </Compile>
+    <Compile Include="UI\Keyboard.cs" />
     <Compile Include="UI\Mouse.cs" />
     <Compile Include="UI\MultiControl.cs" />
     <Compile Include="UI\RemoteControl.cs" />
     <Compile Include="UI\TriggeredCallback.cs" />
     <Compile Include="UI\TriggeredCallbackCollection.cs" />
-    <Compile Include="UI\UIEngineImpl.cs">
-      <Name>UIEngineImpl</Name>
-    </Compile>
+    <Compile Include="UI\UIEngineImpl.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Game.ico">
-      <Name>Game</Name>
-    </Content>
-    <Content Include="GameThumbnail.png">
-    </Content>
+    <NestedContentProject Include="Content\Content.contentproj">
+      <Project>a5448717-ca58-484a-b818-a0cfcd969767</Project>
+      <Visible>False</Visible>
+    </NestedContentProject>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -404,32 +290,8 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <NestedContentProject Include="Content.contentproj">
-      <Project>{37327719-5d88-4ead-9b6c-a97611027858}</Project>
-      <Visible>False</Visible>
-    </NestedContentProject>
-  </ItemGroup>
-  <ItemGroup>
-    <PublishFile Include="nunit.framework">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="AssaultWing.exe.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Properties\app.manifest" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -437,9 +299,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ProjectExtensions>
-    <VisualStudio>
-    </VisualStudio>
-  </ProjectExtensions>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" Condition="" />
 </Project>

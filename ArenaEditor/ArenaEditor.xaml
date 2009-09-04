@@ -5,9 +5,21 @@
     xmlns:aw="clr-namespace:AW2"
     Title="Assault Wing Arena Editor"
     Height="800" Width="1000">
+    <Window.Resources>
+         <Style TargetType="{x:Type Button}">
+            <Setter Property="FrameworkElement.Margin" Value="0,0,3,3"/>
+        </Style>
+    </Window.Resources>
     <DockPanel>
-        <DockPanel DockPanel.Dock="Left">
-            <Button DockPanel.Dock="Top" Click="Button_Click">Create that beautiful arena now</Button>
+        <DockPanel DockPanel.Dock="Left" LastChildFill="False">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label>Arena</Label>
+                <ComboBox Name="arenaName" DockPanel.Dock="Top" IsEditable="False" MinWidth="150"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <Button HorizontalAlignment="Stretch" DockPanel.Dock="Top" Click="LoadArenaClick">Load</Button>
+                <Button DockPanel.Dock="Top" IsEnabled="False">Save</Button>
+            </StackPanel>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">
             <aw:EditorWindow x:Name="arenaView"/>

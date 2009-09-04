@@ -23,6 +23,11 @@ namespace AW2
     public enum GameState
     {
         /// <summary>
+        /// The game is initialising.
+        /// </summary>
+        Initializing,
+
+        /// <summary>
         /// The game is active.
         /// </summary>
         Gameplay,
@@ -145,7 +150,7 @@ namespace AW2
 
         #endregion AssaultWing fields
 
-        #region Initialisation callbacks
+        #region Callbacks
 
         /// <summary>
         /// Called during initialisation of the game instance.
@@ -160,7 +165,12 @@ namespace AW2
         /// </summary>
         public static event Func<Microsoft.Xna.Framework.Game, IWindow> WindowInitializing;
 
-        #endregion Initialisation callbacks
+        /// <summary>
+        /// Called when <see cref="GameState"/> has changed.
+        /// </summary>
+        public event Action<GameState> GameStateChanged;
+
+        #endregion Callbacks
 
         #region AssaultWing properties
 
@@ -195,7 +205,68 @@ namespace AW2
         /// <summary>
         /// The current state of the game.
         /// </summary>
-        public GameState GameState { get { return gameState; } }
+        public GameState GameState
+        {
+            get { return gameState; }
+            private set
+            {
+                // Disable current state.
+                switch (gameState)
+                {
+                    case GameState.Initializing:
+                        break;
+                    case GameState.Gameplay:
+                        logicEngine.Enabled = false;
+                        graphicsEngine.Visible = false;
+                        break;
+                    case GameState.ArenaLoading:
+                        overlayDialog.Enabled = false;
+                        overlayDialog.Visible = false;
+                        break;
+                    case GameState.Menu:
+                        menuEngine.Enabled = false;
+                        menuEngine.Visible = false;
+                        break;
+                    case GameState.OverlayDialog:
+                        overlayDialog.Enabled = false;
+                        overlayDialog.Visible = false;
+                        graphicsEngine.Visible = false;
+                        break;
+                    default:
+                        throw new Exception("Cannot change away from unexpected game state " + GameState);
+                }
+
+                // Enable new state.
+                switch (value)
+                {
+                    case GameState.Initializing:
+                        break;
+                    case GameState.Gameplay:
+                        logicEngine.Enabled = true;
+                        graphicsEngine.Visible = true;
+                        break;
+                    case GameState.ArenaLoading:
+                        overlayDialog.Enabled = true;
+                        overlayDialog.Visible = true;
+                        break;
+                    case GameState.Menu:
+                        menuEngine.Enabled = true;
+                        menuEngine.Visible = true;
+                        break;
+                    case GameState.OverlayDialog:
+                        overlayDialog.Enabled = true;
+                        overlayDialog.Visible = true;
+                        graphicsEngine.Visible = true;
+                        break;
+                    default:
+                        throw new Exception("Cannot change to unexpected game state " + value);
+                }
+                var oldState = gameState;
+                gameState = value;
+                if (GameStateChanged != null && gameState != oldState)
+                    GameStateChanged(gameState);
+            }
+        }
 
         /// <summary>
         /// The current mode of network operation of the game.
@@ -314,7 +385,7 @@ namespace AW2
             Content = new AWContentManager(Services);
             lastFramerateCheck = new TimeSpan(0);
             framesSinceLastCheck = 0;
-            gameState = GameState.Gameplay;
+            GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
             gameTime = new GameTime();
             lastDrawTime = new TimeSpan(0);
@@ -352,68 +423,11 @@ namespace AW2
             if (menuEngine != null) menuEngine.WindowResize();
         }
 
-        /// <summary>
-        /// Changes game state.
-        /// </summary>
-        /// <param name="newState">The state to change to.</param>
-        void ChangeState(GameState newState)
-        {
-            // Disable current state.
-            switch (gameState)
-            {
-                case GameState.Gameplay:
-                    logicEngine.Enabled = false;
-                    graphicsEngine.Visible = false;
-                    break;
-                case GameState.ArenaLoading:
-                    overlayDialog.Enabled = false;
-                    overlayDialog.Visible = false;
-                    break;
-                case GameState.Menu:
-                    menuEngine.Enabled = false;
-                    menuEngine.Visible = false;
-                    break;
-                case GameState.OverlayDialog:
-                    overlayDialog.Enabled = false;
-                    overlayDialog.Visible = false;
-                    graphicsEngine.Visible = false;
-                    break;
-                default:
-                    throw new Exception("Unhandled game state " + gameState + " in AssaultWing.ChangeState()");
-            }
-
-            // Enable new state.
-            switch (newState)
-            {
-                case GameState.Gameplay:
-                    logicEngine.Enabled = true;
-                    graphicsEngine.Visible = true;
-                    break;
-                case GameState.ArenaLoading:
-                    overlayDialog.Enabled = true;
-                    overlayDialog.Visible = true;
-                    break;
-                case GameState.Menu:
-                    menuEngine.Enabled = true;
-                    menuEngine.Visible = true;
-                    break;
-                case GameState.OverlayDialog:
-                    overlayDialog.Enabled = true;
-                    overlayDialog.Visible = true;
-                    graphicsEngine.Visible = true;
-                    break;
-                default:
-                    throw new Exception("Unhandled game state " + newState + " in AssaultWing.ChangeState()");
-            }
-
-            gameState = newState;
-        }
-
         void StartArenaImpl()
         {
             dataEngine.StartArena();
             graphicsEngine.RearrangeViewports();
-            ChangeState(GameState.Gameplay);
+            GameState = GameState.Gameplay;
             soundEngine.PlayMusic(dataEngine.Arena);
         }
 
@@ -535,8 +549,8 @@ namespace AW2
         /// </summary>
         public void FinishArena()
         {
-            if (gameState == GameState.OverlayDialog)
-                ChangeState(GameState.ArenaLoading); // HACK !!!
+            if (GameState == GameState.OverlayDialog)
+                GameState = GameState.ArenaLoading; // HACK !!!
             if (DataEngine.ArenaPlaylist.HasNext)
                 ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
             else
@@ -557,8 +571,8 @@ namespace AW2
         /// idea to make it run in a background thread.
         public void PrepareNextArena()
         {
-            if (gameState == GameState.OverlayDialog)
-                ChangeState(GameState.ArenaLoading); // HACK !!!
+            if (GameState == GameState.OverlayDialog)
+                GameState = GameState.ArenaLoading; // HACK !!!
 
             // Disallow window resizing during arena loading.
             // A window resize event may reset the graphics card, fatally
@@ -584,7 +598,7 @@ namespace AW2
         /// </summary>
         public void ResumePlay()
         {
-            ChangeState(GameState.Gameplay);
+            GameState = GameState.Gameplay;
         }
 
         /// <summary>
@@ -595,9 +609,9 @@ namespace AW2
         {
             overlayDialog.Data = dialogData;
             if (DataEngine.ProgressBar.TaskRunning)
-                ChangeState(GameState.ArenaLoading); // HACK !!!
+                GameState = GameState.ArenaLoading; // HACK !!!
             else
-                ChangeState(GameState.OverlayDialog);
+                GameState = GameState.OverlayDialog;
         }
 
         /// <summary>
@@ -608,7 +622,7 @@ namespace AW2
             soundEngine.StopMusic();
             dataEngine.ClearGameState();
             menuEngine.Activate();
-            ChangeState(GameState.Menu);
+            GameState = GameState.Menu;
         }
 
         /// <summary>
@@ -844,7 +858,7 @@ namespace AW2
             dataEngine.GameplayMode.Weapon1Types = new string[] { "peashooter", "shotgun" };
             dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
 
-            ChangeState(GameState.Menu);
+            GameState = GameState.Menu;
 
             base.BeginRun();
         }

@@ -24,10 +24,12 @@ namespace AW2
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void LoadArenaClick(object sender, RoutedEventArgs e)
         {
+            var arenaToLoad = arenaName.Text;
+            if (arenaToLoad == "") return;
             var data = AssaultWing.Instance.DataEngine;
-            data.ProgressBar.Task = () => data.InitializeFromArena("Anna Lunta");
+            data.ProgressBar.Task = () => data.InitializeFromArena(arenaToLoad);
             data.ProgressBar.StartTask();
             while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
             data.ProgressBar.FinishTask();

@@ -9,6 +9,8 @@ namespace AW2
 {
     static class ArenaEditorProgram
     {
+        static ArenaEditor editor;
+
         /// <summary>
         /// The main entry point for Assault Wing Arena Editor.
         /// </summary>
@@ -16,17 +18,27 @@ namespace AW2
         static void Main(string[] args)
         {
             Log.Write("Assault Wing Arena Editor started");
-            var editor = new ArenaEditor();
+            editor = new ArenaEditor();
             editor.Show(); // needed for retrieving the window's handle
             var app = new Application();
             AssaultWing.WindowInitializing += g => editor.arenaView;
             var game = AssaultWing.Instance;
             game.ClientBoundsMin = new Microsoft.Xna.Framework.Rectangle(0, 0, 1, 1);
+            game.GameStateChanged += GetArenaNames;
             var xnaWindow = System.Windows.Forms.Control.FromHandle(((Microsoft.Xna.Framework.Game)game).Window.Handle);
             xnaWindow.VisibleChanged += (sender, eventArgs) => xnaWindow.Visible = false;
             app.Startup += (sender, eventArgs) => game.Run();
             app.Exit += (sender, eventArgs) => game.Exit();
             app.Run(editor);
+        }
+
+        static void GetArenaNames(GameState state)
+        {
+            if (state == GameState.Initializing) return;
+            editor.arenaName.Items.Clear();
+            foreach (var arenaName in AssaultWing.Instance.DataEngine.ArenaFileNameList.Keys)
+                editor.arenaName.Items.Add(arenaName);
+            AssaultWing.Instance.GameStateChanged -= GetArenaNames;
         }
     }
 }

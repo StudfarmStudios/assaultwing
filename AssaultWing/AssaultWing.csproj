@@ -73,7 +73,6 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
@@ -152,6 +151,7 @@
     <Compile Include="Graphics\DrawMode2D.cs" />
     <Compile Include="Graphics\GameOverOverlayDialogData.cs" />
     <Compile Include="Graphics\GraphicsEngineImpl.cs" />
+    <Compile Include="Graphics\IWindow.cs" />
     <Compile Include="Graphics\MiniStatusOverlay.cs" />
     <Compile Include="Graphics\OverlayComponent.cs" />
     <Compile Include="Graphics\OverlayDialog.cs" />

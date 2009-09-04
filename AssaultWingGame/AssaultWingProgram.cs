@@ -4,7 +4,7 @@ using AW2.Menu;
 
 namespace AW2
 {
-    static class Program
+    static class AssaultWingProgram
     {
         /// <summary>
         /// The main entry point for the application.
@@ -18,6 +18,7 @@ namespace AW2
 #endif
                 Log.Write("Assault Wing started");
                 AssaultWing.MenuEngineInitializing += game => new MenuEngineImpl(game);
+                AssaultWing.WindowInitializing += game => new AWGameWindow(game.Window);
                 using (var game = AssaultWing.Instance)
                 {
                     game.Run();

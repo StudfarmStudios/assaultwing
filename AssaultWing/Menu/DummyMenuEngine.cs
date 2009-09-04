@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Menu
 {
@@ -10,45 +11,38 @@ namespace AW2.Menu
     /// </summary>
     class DummyMenuEngine : IMenuEngine
     {
+        bool enabled;
+        bool visible;
+        int updateOrder;
+        int drawOrder;
+
         #region IMenuEngine Members
 
         public bool Enabled
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get { return enabled; }
             set
             {
+                enabled = value;
                 if (EnabledChanged != null)
                     EnabledChanged(this, new EventArgs());
-                throw new NotImplementedException();
             }
         }
 
         public bool Visible
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get { return visible; }
             set
             {
+                visible = value;
                 if (VisibleChanged != null)
                     VisibleChanged(this, new EventArgs());
-                throw new NotImplementedException();
             }
         }
 
-        public void Activate()
-        {
-            throw new NotImplementedException();
-        }
+        public void Activate() { }
 
-        public void WindowResize()
-        {
-            throw new NotImplementedException();
-        }
+        public void WindowResize() { }
 
         #endregion
 
@@ -56,17 +50,24 @@ namespace AW2.Menu
 
         public void Draw(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            throw new NotImplementedException();
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            Viewport screen = gfx.Viewport;
+            screen.X = AssaultWing.Instance.ClientBounds.X;
+            screen.Y = AssaultWing.Instance.ClientBounds.Y;
+            screen.Width = AssaultWing.Instance.ClientBounds.Width;
+            screen.Height = AssaultWing.Instance.ClientBounds.Height;
+            gfx.Viewport = screen;
+            AssaultWing.Instance.GraphicsDevice.Clear(Microsoft.Xna.Framework.Graphics.Color.DarkKhaki);
         }
 
         public int DrawOrder
         {
-            get { throw new NotImplementedException(); }
+            get { return drawOrder; }
             set
             {
+                drawOrder = value;
                 if (DrawOrderChanged != null)
                     DrawOrderChanged(this, new EventArgs());
-                throw new NotImplementedException();
             }
         }
 
@@ -80,10 +81,7 @@ namespace AW2.Menu
 
         public event EventHandler EnabledChanged;
 
-        public void Update(Microsoft.Xna.Framework.GameTime gameTime)
-        {
-            throw new NotImplementedException();
-        }
+        public void Update(Microsoft.Xna.Framework.GameTime gameTime) { }
 
         public event EventHandler UpdateOrderChanged;
 
@@ -93,15 +91,12 @@ namespace AW2.Menu
 
         public int UpdateOrder
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get { return updateOrder; }
             set
             {
+                updateOrder = value;
                 if (UpdateOrderChanged != null)
                     UpdateOrderChanged(this, new EventArgs());
-                throw new NotImplementedException();
             }
         }
 
@@ -109,10 +104,7 @@ namespace AW2.Menu
 
         #region IGameComponent Members
 
-        public void Initialize()
-        {
-            throw new NotImplementedException();
-        }
+        public void Initialize() { }
 
         #endregion
     }

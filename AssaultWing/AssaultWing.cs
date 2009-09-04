@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
@@ -14,8 +14,6 @@ using AW2.Events;
 using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
-using Form = System.Windows.Forms.Form;
-using System.Diagnostics;
 
 namespace AW2
 {
@@ -109,8 +107,7 @@ namespace AW2
         int framesSinceLastCheck;
         GameState gameState;
         GameTime gameTime;
-        Rectangle clientBoundsMin;
-        Form windowForm;
+        IWindow window; // use this and not Game.Window
 
         // Fields for game server starting an arena
         bool startingArenaOnServer;
@@ -148,6 +145,23 @@ namespace AW2
 
         #endregion AssaultWing fields
 
+        #region Initialisation callbacks
+
+        /// <summary>
+        /// Called during initialisation of the game instance.
+        /// The event handler should return the menu engine of the game instance.
+        /// If no handlers have been added, a dummy menu engine is used.
+        /// </summary>
+        public static event Func<Microsoft.Xna.Framework.Game, IMenuEngine> MenuEngineInitializing;
+
+        /// <summary>
+        /// Called during initialisation of the game instance.
+        /// The event handler should return a window where AssaultWing can draw itself.
+        /// </summary>
+        public static event Func<Microsoft.Xna.Framework.Game, IWindow> WindowInitializing;
+
+        #endregion Initialisation callbacks
+
         #region AssaultWing properties
 
         /// <summary>
@@ -179,12 +193,6 @@ namespace AW2
         public NetworkEngine NetworkEngine { get { return networkEngine; } }
 
         /// <summary>
-        /// Called during initialisation of the game instance.
-        /// The event handler should return the menu engine of the game instance.
-        /// </summary>
-        public static event Func<Microsoft.Xna.Framework.Game, IMenuEngine> MenuEngineInitializing;
-
-        /// <summary>
         /// The current state of the game.
         /// </summary>
         public GameState GameState { get { return gameState; } }
@@ -207,23 +215,25 @@ namespace AW2
         /// <summary>
         /// The screen dimensions of the game window's client rectangle.
         /// </summary>
-        public Rectangle ClientBounds { get { return Window.ClientBounds; } }
+        public Rectangle ClientBounds { get { return window.ClientBounds; } }
 
         /// <summary>
         /// The minimum allowed screen dimensions of the game window's client rectangle.
         /// </summary>
         public Rectangle ClientBoundsMin
         {
-            get { return clientBoundsMin; }
-            set
-            {
-                clientBoundsMin = value;
-                // Enforce new minimum bounds.
-                if (Window.ClientBounds.Width < clientBoundsMin.Width ||
-                    Window.ClientBounds.Height < clientBoundsMin.Height)
-                    Window_ClientSizeChanged(null, null);
-            }
+            get { return window.ClientBoundsMin; }
+            set { window.ClientBoundsMin = value; }
         }
+
+        /// <summary>
+        /// The <see cref="Microsoft.Xna.Framework.Game.Window"/> property inherited from
+        /// <see cref="Microsoft.Xna.Framework.Game"/> is dangerously confusable with
+        /// the private <see cref="window"/> field. Thus, access to
+        /// <see cref="Microsoft.Xna.Framework.Game.Window"/> is limited only to
+        /// references of type <see cref="Microsoft.Xna.Framework.Game"/>.
+        /// </summary>
+        public new GameWindow Window { get { throw new Exception("Use either ((Microsoft.Xna.Framework.Game)AssaultWing).Window or AssaultWing.window"); } }
 
         #endregion AssaultWing properties
 
@@ -272,6 +282,8 @@ namespace AW2
             : base()
         {
             Log.Write("Creating an Assault Wing instance");
+            if (WindowInitializing == null)
+                throw new Exception("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
 
             // Decide on preferred windowed and fullscreen sizes and formats.
             DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
@@ -281,18 +293,17 @@ namespace AW2
             preferredWindowWidth = 1000;
             preferredWindowHeight = 800;
             preferredWindowFormat = displayMode.Format;
-            clientBoundsMin.Width = 1000;
-            clientBoundsMin.Height = 800;
 
-            Content = new AWContentManager(Services);
             graphics = new GraphicsDeviceManager(this);
+            graphics.IsFullScreen = false;
             graphics.PreferredBackBufferWidth = preferredWindowWidth;
             graphics.PreferredBackBufferHeight = preferredWindowHeight;
-            // loading the NVIDIA perfHUD device if available
-            graphics.PreparingDeviceSettings += new EventHandler<PreparingDeviceSettingsEventArgs>(graphics_PreparingDeviceSettings);
-            graphics.IsFullScreen = false;
-            Window.ClientSizeChanged += new EventHandler(Window_ClientSizeChanged);
-            Window.AllowUserResizing = true;
+            graphics.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
+
+            window = WindowInitializing(this);
+            window.AllowUserResizing = true;
+            window.ClientSizeChanged += ClientSizeChanged;
+            ClientBoundsMin = new Rectangle(0, 0, 1000, 800);
 
             arenaReload = new KeyboardKey(Keys.F6);
             frameStepControl = new KeyboardKey(Keys.F8);
@@ -300,6 +311,7 @@ namespace AW2
             frameStep = false;
             gameTimeDelay = new TimeSpan(0);
 
+            Content = new AWContentManager(Services);
             lastFramerateCheck = new TimeSpan(0);
             framesSinceLastCheck = 0;
             gameState = GameState.Gameplay;
@@ -309,48 +321,35 @@ namespace AW2
         }
 
         /// <summary>
-        /// If there is an NVIDIA PerfHUD adapter, set the GraphicsDeviceManager to use that adapter, and a Reference Device
+        /// If there is an NVIDIA PerfHUD adapter, sets the GraphicsDeviceManager 
+        /// to use that adapter and a reference device.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs args)
         {
-#if false
-            e.GraphicsDeviceInformation.PresentationParameters.PresentationInterval = PresentInterval.Immediate;
-            if (e.GraphicsDeviceInformation.PresentationParameters.IsFullScreen)
-                e.GraphicsDeviceInformation.PresentationParameters.FullScreenRefreshRateInHz = 60;
-#endif
 #if DEBUG
-            foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
+            var adapter = GraphicsAdapter.Adapters.FirstOrDefault(ada => ada.Description == "NVIDIA PerfHUD");
+            if (adapter != null)
             {
-                if (adapter.Description.Equals("NVIDIA PerfHUD"))
-                {
-                    e.GraphicsDeviceInformation.DeviceType = DeviceType.Reference;
-                    e.GraphicsDeviceInformation.Adapter = adapter;
-                    Log.Write("Found NVIDIA PerfHUD device, PerfHUD now enabled.");
-                    break;
-                }
+                args.GraphicsDeviceInformation.DeviceType = DeviceType.Reference;
+                args.GraphicsDeviceInformation.Adapter = adapter;
+                Log.Write("Found NVIDIA PerfHUD device, PerfHUD now enabled.");
             }
+            else
 #endif
+                args.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = window.Handle;
+
         }
 
-        void Window_ClientSizeChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Reacts to a client window resize event.
+        /// </summary>
+        void ClientSizeChanged(object sender, EventArgs e)
         {
-            // If screen dimensions are below acceptable bounds, make the window bigger.
-            if (ClientBounds.Width < clientBoundsMin.Width ||
-                ClientBounds.Height < clientBoundsMin.Height)
-            {
-                int newClientWidth = Math.Max(ClientBounds.Width, clientBoundsMin.Width);
-                int newClientHeight = Math.Max(ClientBounds.Height, clientBoundsMin.Height);
-                IntPtr ptr = Window.Handle;
-                System.Windows.Forms.Form form = (System.Windows.Forms.Form)System.Windows.Forms.Control.FromHandle(ptr);
-                form.Size = new System.Drawing.Size(newClientWidth, newClientHeight);
-                graphics.PreferredBackBufferWidth = newClientWidth;
-                graphics.PreferredBackBufferHeight = newClientHeight;
-                graphics.ApplyChanges();
-            }
-            graphicsEngine.WindowResize();
-            menuEngine.WindowResize();
+            graphics.PreferredBackBufferWidth = ClientBounds.Width;
+            graphics.PreferredBackBufferHeight = ClientBounds.Height;
+            graphics.ApplyChanges();
+            if (graphicsEngine != null) graphicsEngine.WindowResize();
+            if (menuEngine != null) menuEngine.WindowResize();
         }
 
         /// <summary>
@@ -564,13 +563,9 @@ namespace AW2
             // Disallow window resizing during arena loading.
             // A window resize event may reset the graphics card, fatally
             // screwing up initialisation of walls' index maps.
-            bool oldAllowUserResizing = Window.AllowUserResizing;
+            bool oldAllowUserResizing = window.AllowUserResizing;
             if (oldAllowUserResizing)
-            {
-                // We cannot set Window.AllowUserResizing = false; if we are
-                // not in the main thread. Therefore, use Invoke() of the underlying Form.
-                windowForm.Invoke(new Action(() => { Window.AllowUserResizing = false; }));
-            }
+                window.AllowUserResizing = false;
 
             try
             {
@@ -580,7 +575,7 @@ namespace AW2
             finally
             {
                 if (oldAllowUserResizing)
-                    windowForm.Invoke(new Action(() => { Window.AllowUserResizing = true; }));
+                    window.AllowUserResizing = true;
             }
         }
 
@@ -742,16 +737,13 @@ namespace AW2
         protected override void Initialize()
         {
             Log.Write("Assault Wing initializing");
-            windowForm = (Form)Form.FromHandle(Window.Handle);
             InitializePerformanceCounters();
 
-            if (MenuEngineInitializing == null)
-                throw new Exception("AssaultWing.MenuEngineInitializing must be set before first reference to AssaultWing.Instance");
             uiEngine = new UIEngineImpl(this);
             logicEngine = new LogicEngine(this);
             soundEngine = new SoundEngineImpl(this);
             graphicsEngine = new GraphicsEngineImpl(this);
-            menuEngine = MenuEngineInitializing(this);
+            menuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
             networkEngine = new NetworkEngine(this);
             overlayDialog = new OverlayDialog(this);
             dataEngine = new DataEngine();
@@ -970,15 +962,15 @@ namespace AW2
                 collisionCounts.Add(collisionCount);
                 gobCount = collisionCount = 0;
 #endif
-                Window.Title = "Assault Wing [~" + framesSinceLastCheck + " fps]";
+                window.Title = "Assault Wing [~" + framesSinceLastCheck + " fps]";
                 framesSinceLastCheck = 1;
                 lastFramerateCheck = gameTime.TotalRealTime;
 
                 if (NetworkMode != NetworkMode.Standalone)
-                    Window.Title += " [" + networkEngine.GetSendQueueSize() + " B send queue]";
+                    window.Title += " [" + networkEngine.GetSendQueueSize() + " B send queue]";
 
                 if (NetworkMode == NetworkMode.Client && networkEngine.IsConnectedToGameServer)
-                    Window.Title += " [" + (int)networkEngine.ServerPingTime.TotalMilliseconds + " ms lag]";
+                    window.Title += " [" + (int)networkEngine.ServerPingTime.TotalMilliseconds + " ms lag]";
             }
             lock (GraphicsDevice)
                 base.Draw(this.gameTime);

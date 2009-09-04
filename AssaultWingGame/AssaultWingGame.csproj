@@ -117,6 +117,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AWGameWindow.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
@@ -129,7 +130,7 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <Name>AssemblyInfo</Name>
     </Compile>
-    <Compile Include="Program.cs">
+    <Compile Include="AssaultWingProgram.cs">
       <Name>Program</Name>
     </Compile>
   </ItemGroup>

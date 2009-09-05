@@ -219,7 +219,6 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             Prepare3DModel();
-            FineTriangles();
             InitializeIndexMap();
             AssaultWing.Instance.DataEngine.ProgressBar.SubtaskCompleted();
         }

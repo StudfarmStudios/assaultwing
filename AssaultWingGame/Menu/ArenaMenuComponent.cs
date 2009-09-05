@@ -17,27 +17,15 @@ namespace AW2.Menu
     /// </summary>
     class ArenaMenuComponent : MenuComponent
     {
-        /// <summary>
-        /// Information about an arena, relevant to the arena menu.
-        /// </summary>
-        class ArenaInfo
-        {
-            public string name;
-            public bool selected;
-            public ArenaInfo(string name)
-            {
-                this.name = name; 
-                selected = true;
-            }
-        }
+        const int MENU_ITEM_COUNT = 8; // number of items that fit in the menu at once
 
-        readonly int menuItemCount = 7; // number of items that fit in the menu at once
         Control controlBack, controlDone;
         MultiControl controlUp, controlDown, controlSelect;
         TriggeredCallbackCollection controlCallbacks;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
-        Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture,arenaPreview;
+        Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture;
+        List<Texture2D> arenaPreviews;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -60,10 +48,8 @@ namespace AW2.Menu
         /// </summary>
         int arenaListStart;
 
-        /// <summary>
-        /// List of relevant information about known arenas.
-        /// </summary>
-        List<ArenaInfo> arenaInfos;
+        List<ArenaInfo> ArenaInfos { get { return AssaultWing.Instance.DataEngine.ArenaInfos; } }
+        List<string> selectedArenaNames;
 
         /// <summary>
         /// Does the menu component react to input.
@@ -77,9 +63,7 @@ namespace AW2.Menu
                 {
                     InitializeControls();
                     InitializeControlCallbacks();
-                    arenaInfos = new List<ArenaInfo>(
-                        from namePair in AssaultWing.Instance.DataEngine.ArenaFileNameList
-                        select new ArenaInfo(namePair.Key));
+                    selectedArenaNames = ArenaInfos.Select(info => info.Name).ToList();
                 }
             }
         }
@@ -100,7 +84,7 @@ namespace AW2.Menu
         {
             pos = new Vector2(1220, 698);
 
-            arenaInfos = new List<ArenaInfo>();
+            selectedArenaNames = new List<string>();
 
             cursorFade = new Curve();
             cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
@@ -122,7 +106,17 @@ namespace AW2.Menu
             cursorTexture = content.Load<Texture2D>("menu_levels_cursor");
             highlightTexture = content.Load<Texture2D>("menu_levels_hilite");
             tagTexture = content.Load<Texture2D>("menu_levels_tag");
-            arenaPreview = content.Load<Texture2D>("no_preview");
+            arenaPreviews = ArenaInfos.Select(info =>
+            {
+                try
+                {
+                    return content.Load<Texture2D>(info.PreviewName);
+                }
+                catch (Microsoft.Xna.Framework.Content.ContentLoadException)
+                {
+                    return content.Load<Texture2D>("no_preview");
+                }
+            }).ToList();
         }
 
         /// <summary>
@@ -144,19 +138,8 @@ namespace AW2.Menu
                 controlCallbacks.Update();
 
                 // Limit cursor to sensible limits and scroll currently highlighted arena into view.
-                currentArena = currentArena.Clamp(0, arenaInfos.Count - 1);
-                arenaListStart = arenaListStart.Clamp(currentArena - menuItemCount + 1, currentArena);
-
-                // Change preview image.
-                try
-                {
-                    var previewName = arenaInfos[currentArena].name.ToLower() + "_preview";
-                    arenaPreview = AssaultWing.Instance.Content.Load<Texture2D>(previewName);
-                }
-                catch (Microsoft.Xna.Framework.Content.ContentLoadException)
-                {
-                    arenaPreview = AssaultWing.Instance.Content.Load<Texture2D>("no_preview");
-                }
+                currentArena = currentArena.Clamp(0, ArenaInfos.Count - 1);
+                arenaListStart = arenaListStart.Clamp(currentArena - MENU_ITEM_COUNT + 1, currentArena);
             }
         }
 
@@ -175,16 +158,16 @@ namespace AW2.Menu
             Vector2 lineDeltaPos = new Vector2(0, 40);
             Vector2 arenaNamePos = pos - view + new Vector2(147, 230);
             Vector2 arenaTagPos = pos - view + new Vector2(283, 235);
-            for (int i = 0; i < menuItemCount && arenaListStart + i < arenaInfos.Count; ++i)
+            for (int i = 0; i < MENU_ITEM_COUNT && arenaListStart + i < ArenaInfos.Count; ++i)
             {
                 int arenaI = arenaListStart + i;
-                spriteBatch.DrawString(menuSmallFont, arenaInfos[arenaI].name, arenaNamePos + i * lineDeltaPos, Color.White);
-                if (arenaInfos[arenaI].selected)
+                spriteBatch.DrawString(menuSmallFont, ArenaInfos[arenaI].Name, arenaNamePos + i * lineDeltaPos, Color.White);
+                if (selectedArenaNames.Contains(ArenaInfos[arenaI].Name))
                     spriteBatch.Draw(tagTexture, arenaTagPos + i * lineDeltaPos, Color.White);
             }
 
             // Draw condolences.
-            if (arenaInfos.Count == 0)
+            if (ArenaInfos.Count == 0)
                 spriteBatch.DrawString(menuBigFont, "No arenas, can't play, sorry!",
                     pos - view + new Vector2(540, 297), Color.White);
 
@@ -195,7 +178,7 @@ namespace AW2.Menu
             float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
             spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
-            spriteBatch.Draw(arenaPreview, arenaPreviewPos, Color.White);
+            spriteBatch.Draw(arenaPreviews[currentArena], arenaPreviewPos, Color.White);
         }
 
         private void InitializeControlCallbacks()
@@ -211,10 +194,10 @@ namespace AW2.Menu
             }));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDone, () =>
             {
-                var arenaPlaylist = from info in arenaInfos where info.selected select info.name;
-                if (arenaPlaylist.Count() > 0)
+                if (selectedArenaNames.Count > 0)
                 {
-                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(arenaPlaylist.ToList());
+                    selectedArenaNames.Sort();
+                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
                         AssaultWing.Instance.StartArena);
@@ -223,12 +206,18 @@ namespace AW2.Menu
                     Active = false;
                 }
             }));
-            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () => { --currentArena; }));
-            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () => { ++currentArena; }));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () => --currentArena));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () => ++currentArena));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlSelect, () =>
             {
-                if (currentArena >= 0 && currentArena < arenaInfos.Count)
-                    arenaInfos[currentArena].selected = !arenaInfos[currentArena].selected;
+                if (currentArena >= 0 && currentArena < ArenaInfos.Count)
+                {
+                    var name = ArenaInfos[currentArena].Name;
+                    if (selectedArenaNames.Contains(name))
+                        selectedArenaNames.Remove(name);
+                    else
+                        selectedArenaNames.Add(name);
+                }
             }));
         }
         

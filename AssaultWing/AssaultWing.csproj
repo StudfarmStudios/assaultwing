@@ -97,6 +97,7 @@
     <Compile Include="Events\SoundEffectEvent.cs" />
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />
+    <Compile Include="Game\ArenaInfo.cs" />
     <Compile Include="Game\ArenaLayer.cs" />
     <Compile Include="Game\ArenaLayerGobCollection.cs" />
     <Compile Include="Game\ArenaTypeLoader.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Graphics\OverlayDialog.cs" />
     <Compile Include="Graphics\OverlayDialogData.cs" />
     <Compile Include="Graphics\PlayerStatusOverlay.cs" />
+    <Compile Include="Graphics\PlayerViewport.cs" />
     <Compile Include="Graphics\ProgressBar.cs" />
     <Compile Include="Graphics\RadarOverlay.cs" />
     <Compile Include="Helpers\AbortableThreadPool.cs" />

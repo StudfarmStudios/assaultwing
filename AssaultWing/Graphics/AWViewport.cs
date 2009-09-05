@@ -1,12 +1,7 @@
-//#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
-//#define VIEWPORT_BLUR // Defining this will make player viewports blurred
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Game;
-using AW2.Game.Particles;
-using AW2.Helpers;
+using System;
 
 namespace AW2.Graphics
 {
@@ -14,7 +9,7 @@ namespace AW2.Graphics
     /// A view on the display that looks into the game world.
     /// </summary>
     /// <c>LoadContent</c> must be called before a viewport is used.
-    public abstract class AWViewport
+    public class AWViewport
     {
         /// <summary>
         /// Sprite batch to use for drawing sprites.
@@ -27,25 +22,62 @@ namespace AW2.Graphics
         protected List<OverlayComponent> overlayComponents;
 
         /// <summary>
+        /// The area of the display to draw on.
+        /// </summary>
+        protected Viewport Viewport { get; set; }
+
+        /// <summary>
+        /// Center of the view in game world coordinates.
+        /// </summary>
+        protected Vector2 LookAt { get; set; }
+
+        /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport shows
         /// at a depth.
         /// </summary>
         /// <param name="z">The depth.</param>
-        public abstract Vector2 WorldAreaMin(float z);
+        public Vector2 WorldAreaMin(float z)
+        {
+            return LookAt - new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
+        }
 
         /// <summary>
         /// The maximum X and Y coordinates of the game world this viewport shows
         /// at a depth.
         /// </summary>
         /// <param name="z">The depth.</param>
-        public abstract Vector2 WorldAreaMax(float z);
+        public Vector2 WorldAreaMax(float z)
+        {
+            return LookAt + new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
+        }
+
+        /// <summary>
+        /// The view matrix for drawing 3D content into the viewport.
+        /// </summary>
+        protected virtual Matrix ViewMatrix
+        {
+            get
+            {
+                return Matrix.CreateLookAt(new Vector3(LookAt, 1000), new Vector3(LookAt, 0), Vector3.Up);
+            }
+        }
 
         /// <summary>
         /// Creates a viewport.
         /// </summary>
-        public AWViewport()
+        /// <param name="onScreen">Where on screen is the viewport located.</param>
+        public AWViewport(Rectangle onScreen)
         {
             overlayComponents = new List<OverlayComponent>();
+            Viewport = new Viewport
+            {
+                X = onScreen.X,
+                Y = onScreen.Y,
+                Width = onScreen.Width,
+                Height = onScreen.Height,
+                MinDepth = 0f,
+                MaxDepth = 1f
+            };
         }
 
         /// <summary>
@@ -72,225 +104,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth at which the volume resides.</param>
         /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
         /// <b>true</b> otherwise.</returns>
-        public abstract bool Intersects(BoundingSphere volume, float z);
-
-        /// <summary>
-        /// Checks if a bounding volume might be visible in the viewport.
-        /// </summary>
-        /// <param name="volume">The bounding volume.</param>
-        /// <param name="z">The depth at which the volume resides.</param>
-        /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
-        /// <b>true</b> otherwise.</returns>
-        public abstract bool Intersects(BoundingBox volume, float z);
-
-        /// <summary>
-        /// Draws the viewport's overlay graphics components.
-        /// </summary>
-        public virtual void Draw()
-        {
-            foreach (OverlayComponent component in overlayComponents)
-                component.Draw(spriteBatch);
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
-        public virtual void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
-            foreach (OverlayComponent component in overlayComponents)
-                component.LoadContent();
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public virtual void UnloadContent()
-        {
-            foreach (OverlayComponent component in overlayComponents)
-                component.UnloadContent();
-            spriteBatch.Dispose();
-        }
-    }
-
-    /// <summary>
-    /// A visual separator between viewports.
-    /// </summary>
-    public struct ViewportSeparator
-    {
-        /// <summary>
-        /// If <b>true</b>, the separator is vertical;
-        /// if <b>false</b>, the separator is horizontal.
-        /// </summary>
-        public bool vertical;
-
-        /// <summary>
-        /// The X coordinate of a vertical separator, or
-        /// the Y coordinate of a horizontal separator.
-        /// </summary>
-        public int coordinate;
-
-        /// <summary>
-        /// Creates a new viewport separator.
-        /// </summary>
-        /// <param name="vertical">Is the separator vertical.</param>
-        /// <param name="coordinate">The X or Y coordinate of the separator.</param>
-        public ViewportSeparator(bool vertical, int coordinate)
-        {
-            this.vertical = vertical;
-            this.coordinate = coordinate;
-        }
-    }
-    
-    /// <summary>
-    /// A viewport that follows a player.
-    /// </summary>
-    class PlayerViewport : AWViewport
-    {
-#if VIEWPORT_BLUR
-        protected RenderTarget2D rTarg;
-        protected RenderTarget2D rTarg2;
-        protected SpriteBatch sprite;
-        protected DepthStencilBuffer depthBuffer;
-        protected DepthStencilBuffer depthBuffer2;
-        protected DepthStencilBuffer defDepthBuffer;
-        protected Effect bloomatic;
-#endif
-        #region PlayerViewport fields
-
-        /// <summary>
-        /// The player we are following.
-        /// </summary>
-        Player player;
-
-        /// <summary>
-        /// The area of the display to draw on.
-        /// </summary>
-        Viewport viewport;
-
-        /// <summary>
-        /// Last point we looked at.
-        /// </summary>
-        Vector2 lookAt;
-
-        /// <summary>
-        /// Last used sign of player's shake angle. Either 1 or -1.
-        /// </summary>
-        float shakeSign;
-
-#if PARALLAX_IN_3D
-        #region Fields for drawing parallax as 3D primitives
-
-        /// <summary>
-        /// Effect for drawing parallaxes as 3D primitives.
-        /// </summary>
-        BasicEffect effect;
-
-        /// <summary>
-        /// Vertex declaration for drawing parallaxes as 3D primitives.
-        /// </summary>
-        VertexDeclaration vertexDeclaration;
-
-        /// <summary>
-        /// Vertex data scratch buffer for drawing parallaxes as 3D primitives.
-        /// </summary>
-        VertexPositionTexture[] vertexData;
-
-        /// <summary>
-        /// Index data scratch buffer for drawing parallaxes as 3D primitives.
-        /// </summary>
-        short[] indexData; // triangle fan
-
-        #endregion Fields for drawing parallax as 3D primitives
-#endif
-        #endregion PlayerViewport fields
-
-        /// <summary>
-        /// Creates a new player viewport.
-        /// </summary>
-        /// <param name="player">Which player the viewport will follow.</param>
-        /// <param name="onScreen">Where on screen is the viewport located.</param>
-        public PlayerViewport(Player player, Rectangle onScreen)
-        {
-            this.player = player;
-            viewport = new Viewport();
-            viewport.X = onScreen.X;
-            viewport.Y = onScreen.Y;
-            viewport.Width = onScreen.Width;
-            viewport.Height = onScreen.Height;
-            viewport.MinDepth = 0f;
-            viewport.MaxDepth = 1f;
-            lookAt = Vector2.Zero;
-            shakeSign = -1;
-
-            // Create overlay graphics components.
-            AddOverlayComponent(new MiniStatusOverlay(player));
-            AddOverlayComponent(new ChatBoxOverlay(player));
-            AddOverlayComponent(new RadarOverlay(player));
-            AddOverlayComponent(new BonusListOverlay(player));
-            AddOverlayComponent(new PlayerStatusOverlay(player));
-        }
-
-        #region PlayerViewport properties
-
-        public Player Player { get { return player; } }
-
-        /// <summary>
-        /// The view matrix for drawing 3D content into the viewport.
-        /// </summary>
-        private Matrix ViewMatrix
-        {
-            get
-            {
-                Gob ship = player.Ship;
-                if (ship != null)
-                    lookAt = ship.Pos;
-
-                // Shake only if gameplay is on. Otherwise freeze because
-                // shake won't be attenuated either.
-                if (AssaultWing.Instance.GameState == GameState.Gameplay)
-                    shakeSign = -shakeSign;
-
-                float viewShake = shakeSign * player.Shake;
-                return Matrix.CreateLookAt(new Vector3(lookAt, 1000), new Vector3(lookAt, 0),
-                    new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),
-                                (float)Math.Sin(MathHelper.PiOver2 + viewShake),
-                                0));
-            }
-        }
-
-        #endregion PlayerViewport properties
-
-        #region AWViewport implementation
-
-        /// <summary>
-        /// The minimum X and Y coordinates of the game world this viewport shows
-        /// at a depth.
-        /// </summary>
-        /// <param name="z">The depth.</param>
-        public override Vector2 WorldAreaMin(float z)
-        {
-            return lookAt - new Vector2(viewport.Width, viewport.Height) / 2 / GetScale(z);
-        }
-
-        /// <summary>
-        /// The maximum X and Y coordinates of the game world this viewport shows
-        /// at a depth.
-        /// </summary>
-        /// <param name="z">The depth.</param>
-        public override Vector2 WorldAreaMax(float z)
-        {
-            return lookAt + new Vector2(viewport.Width, viewport.Height) / 2 / GetScale(z);
-        }
-
-        /// <summary>
-        /// Checks if a bounding volume might be visible in the viewport.
-        /// </summary>
-        /// <param name="volume">The bounding volume.</param>
-        /// <param name="z">The depth at which the volume resides.</param>
-        /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
-        /// <b>true</b> otherwise.</returns>
-        public override bool Intersects(BoundingSphere volume, float z)
+        public bool Intersects(BoundingSphere volume, float z)
         {
             // We add one unit to the bounding sphere to account for rounding of floating-point
             // world coordinates to integer-valued screen pixels.
@@ -314,7 +128,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth at which the volume resides.</param>
         /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
         /// <b>true</b> otherwise.</returns>
-        public override bool Intersects(BoundingBox volume, float z)
+        public bool Intersects(BoundingBox volume, float z)
         {
             // We add one unit to the bounding box to account for rounding of floating-point
             // world coordinates to integer-valued screen pixels.
@@ -332,62 +146,12 @@ namespace AW2.Graphics
         }
 
         /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
-        public override void LoadContent()
-        {
-            base.LoadContent();
-
-#if VIEWPORT_BLUR
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            defDepthBuffer = gfx.DepthStencilBuffer;
-            if (viewport.Width > 0)
-            {
-                rTarg = new RenderTarget2D(gfx, viewport.Width, viewport.Height,
-                    0, SurfaceFormat.Color);
-                rTarg2 = new RenderTarget2D(gfx, viewport.Width, viewport.Height,
-                    0, SurfaceFormat.Color);
-                sprite = new SpriteBatch(gfx);
-                depthBuffer =
-                    new DepthStencilBuffer(
-                        gfx,
-                        viewport.Width,
-                        viewport.Height,
-                        gfx.DepthStencilBuffer.Format);
-                depthBuffer2 =
-                    new DepthStencilBuffer(
-                        gfx,
-                        viewport.Width,
-                        viewport.Height,
-                        gfx.DepthStencilBuffer.Format);
-            }
-            bloomatic = AssaultWing.Instance.Content.Load<Effect>(@"effects/bloom");
-#endif
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-#if VIEWPORT_BLUR
-            if (rTarg != null)
-                rTarg.Dispose();
-            if (sprite != null)
-                sprite.Dispose();
-            if (depthBuffer != null)
-                depthBuffer.Dispose();
-            // 'bloomatic' is managed by ContentManager
-#endif
-        }
-
-        /// <summary>
         /// Draws the viewport's contents.
         /// </summary>
-        public override void Draw()
+        public void Draw()
         {
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            gfx.Viewport = viewport;
+            gfx.Viewport = Viewport;
             Matrix view = ViewMatrix;
 
 #if VIEWPORT_BLUR
@@ -425,7 +189,7 @@ namespace AW2.Graphics
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
                 float layerScale = GetScale(layer.Z);
                 Matrix projection = Matrix.CreateOrthographic(
-                    viewport.Width / layerScale, viewport.Height / layerScale,
+                    Viewport.Width / layerScale, Viewport.Height / layerScale,
                     1f, 11000f);
 
 #if PARALLAX_IN_3D // HACK: Alternative implementation, parallax drawing in 3D by two triangles. Perhaps less time lost in RenderState changes.
@@ -485,8 +249,8 @@ namespace AW2.Graphics
                     mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);
                     pos.Y = pos.Y - mult * tex.Height;
 
-                    int loopX = (int)Math.Ceiling((-pos.X + viewport.Width) / tex.Width);
-                    int loopY = (int)Math.Ceiling((-pos.Y + viewport.Height) / tex.Height);
+                    int loopX = (int)Math.Ceiling((-pos.X + Viewport.Width) / tex.Width);
+                    int loopY = (int)Math.Ceiling((-pos.Y + Viewport.Height) / tex.Height);
                     fillPos.Y = pos.Y;
                     for (int y = 0; y < loopY; y++)
                     {
@@ -524,7 +288,7 @@ namespace AW2.Graphics
                 Matrix gameToScreen = view * projection
                     * Matrix.CreateReflection(new Plane(Vector3.UnitY, 0))
                     * Matrix.CreateTranslation(1, 1, 0)
-                    * Matrix.CreateScale(new Vector3(viewport.Width, viewport.Height, viewport.MaxDepth - viewport.MinDepth) / 2);
+                    * Matrix.CreateScale(new Vector3(Viewport.Width, Viewport.Height, Viewport.MaxDepth - Viewport.MinDepth) / 2);
                 DrawMode2D? drawMode = null;
                 layer.Gobs.ForEachIn2DOrder(gob =>
                 {
@@ -540,7 +304,6 @@ namespace AW2.Graphics
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(spriteBatch);
             }
-
 
 #if VIEWPORT_BLUR
             // EFFECTS REDRAW
@@ -594,11 +357,30 @@ namespace AW2.Graphics
 #endif
 
             // Overlay components
-            gfx.Viewport = viewport;
-            base.Draw();
+            gfx.Viewport = Viewport;
+            foreach (OverlayComponent component in overlayComponents)
+                component.Draw(spriteBatch);
         }
 
-        #endregion AWViewport implementation
+        /// <summary>
+        /// Called when graphics resources need to be loaded.
+        /// </summary>
+        public virtual void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            foreach (OverlayComponent component in overlayComponents)
+                component.LoadContent();
+        }
+
+        /// <summary>
+        /// Called when graphics resources need to be unloaded.
+        /// </summary>
+        public virtual void UnloadContent()
+        {
+            foreach (OverlayComponent component in overlayComponents)
+                component.UnloadContent();
+            spriteBatch.Dispose();
+        }
 
         /// <summary>
         /// Returns the visual scaling factor at a depth in game coordinates.
@@ -608,6 +390,35 @@ namespace AW2.Graphics
         float GetScale(float z)
         {
             return 1000 / (1000 - z);
+        }
+    }
+
+    /// <summary>
+    /// A visual separator between viewports.
+    /// </summary>
+    public struct ViewportSeparator
+    {
+        /// <summary>
+        /// If <b>true</b>, the separator is vertical;
+        /// if <b>false</b>, the separator is horizontal.
+        /// </summary>
+        public bool vertical;
+
+        /// <summary>
+        /// The X coordinate of a vertical separator, or
+        /// the Y coordinate of a horizontal separator.
+        /// </summary>
+        public int coordinate;
+
+        /// <summary>
+        /// Creates a new viewport separator.
+        /// </summary>
+        /// <param name="vertical">Is the separator vertical.</param>
+        /// <param name="coordinate">The X or Y coordinate of the separator.</param>
+        public ViewportSeparator(bool vertical, int coordinate)
+        {
+            this.vertical = vertical;
+            this.coordinate = coordinate;
         }
     }
 }

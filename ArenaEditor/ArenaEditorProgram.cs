@@ -36,8 +36,8 @@ namespace AW2
         {
             if (state == GameState.Initializing) return;
             editor.arenaName.Items.Clear();
-            foreach (var arenaName in AssaultWing.Instance.DataEngine.ArenaFileNameList.Keys)
-                editor.arenaName.Items.Add(arenaName);
+            foreach (var arenaInfo in AssaultWing.Instance.DataEngine.ArenaInfos)
+                editor.arenaName.Items.Add(arenaInfo.Name);
             AssaultWing.Instance.GameStateChanged -= GetArenaNames;
         }
     }

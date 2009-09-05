@@ -45,19 +45,12 @@ namespace AW2.Game
             particleLoader.SaveTemplates();
 
             ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
-            Arena[] arenas = (Arena[])arenaLoader.LoadAllTypes();
+            IEnumerable<Arena> arenas = (Arena[])arenaLoader.LoadAllTypes();
             arenaLoader.SaveTemplates();
-            List<string> arenaNames = new List<string>();
-
             Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();
-            foreach (Arena arena in arenas)
-                if (arena.Name != "dummyarena") // HACK: avoiding the automatically generated arena template
-                {
-                    arenaNames.Add(arena.Name);
-                    arenaFileNames.Add(arena.Name, arena.FileName);
-                }
-            AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(arenaNames);
-            AssaultWing.Instance.DataEngine.ArenaFileNameList = arenaFileNames;
+            arenas = arenas.Where(arena => arena.Name != "dummyarena"); // HACK: avoiding the automatically generated arena template
+            AssaultWing.Instance.DataEngine.ArenaInfos = arenas.Select(arena => arena.Info).ToList();
+
             base.Initialize();
         }
 

@@ -915,7 +915,7 @@ namespace AW2
             // Instant arena reload (simple aid for hand-editing an arena)
             if (arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
             {
-                dataEngine.InitializeFromArena(dataEngine.ArenaPlaylist.Current);
+                dataEngine.InitializeFromArena(dataEngine.ArenaPlaylist.Current, true);
                 StartArena();
             }
 

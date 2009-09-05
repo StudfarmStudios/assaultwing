@@ -298,6 +298,20 @@ namespace AW2.Game
 
         #region Arena properties
 
+        public ArenaInfo Info
+        {
+            get
+            {
+                return new ArenaInfo
+                {
+                    Name = name,
+                    FileName = fileName,
+                    Dimensions = dimensions,
+                    PreviewName = name.ToLower() + "_preview"
+                };
+            }
+        }
+
         /// <summary>
         /// The name of the arena.
         /// </summary>
@@ -321,6 +335,11 @@ namespace AW2.Game
         public List<ArenaLayer> Layers { get { return layers; } }
 
         /// <summary>
+        /// Is the arena meant to be played. Otherwise it is only for looking at.
+        /// </summary>
+        public bool IsForPlaying { get; set; }
+
+        /// <summary>
         /// Gobs in the arena. Reflects the data in <see cref="Layers"/>.
         /// </summary>
         public GobCollection Gobs
@@ -331,11 +350,8 @@ namespace AW2.Game
                 gobs = value;
                 Gobs.Added += gob =>
                 {
-                    if (IsActive)
-                    {
-                        AssaultWing.Instance.GobsCounter.Increment();
-                        Prepare(gob);
-                    }
+                    if (IsActive) AssaultWing.Instance.GobsCounter.Increment();
+                    if (IsForPlaying) Prepare(gob);
 
                     // Game server notifies game clients of the new gob.
                     if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
@@ -384,6 +400,7 @@ namespace AW2.Game
 
         static Arena()
         {
+            
             collisionAreaCellSize = new float[CollisionArea.COLLISION_AREA_TYPE_COUNT];
             for (int i = 0; i < CollisionArea.COLLISION_AREA_TYPE_COUNT; ++i)
                 collisionAreaCellSize[i] = -1;
@@ -429,6 +446,7 @@ namespace AW2.Game
             fogEnabled = false;
             fogEnd = 1.0f;
             fogStart = 0.0f;
+            IsForPlaying = true;
         }
 
         #region Public methods
@@ -465,15 +483,8 @@ namespace AW2.Game
         /// </summary>
         public void Reset()
         {
-            collisionAreas = new SpatialGrid<CollisionArea>[CollisionArea.COLLISION_AREA_TYPE_COUNT];
-            collisionAreaMayCollide = new bool[CollisionArea.COLLISION_AREA_TYPE_COUNT];
-            Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
-            Vector2 arrayDimensions = Dimensions + 2 * areaExcess;
-            for (int i = 0; i < collisionAreas.Length; ++i)
-                if (collisionAreaCellSize[i] >= 0)
-                    collisionAreas[i] = new SpatialGrid<CollisionArea>(collisionAreaCellSize[i],
-                        -areaExcess, arrayDimensions - areaExcess);
-            collisionAreaMayCollide.Initialize();
+            InitializeCollisionAreas();
+            InitializeGobs();
         }
 
         /// <summary>
@@ -1087,38 +1098,72 @@ namespace AW2.Game
                 fogColor = Vector3.Clamp(fogColor, Vector3.Zero, Vector3.One);
                 fogEnd = MathHelper.Max(fogEnd, 0);
                 fogStart = MathHelper.Max(fogStart, 0);
-
-                var oldLayers = layers;
-                layers = new List<ArenaLayer>();
-                foreach (var layer in oldLayers)
-                {
-                    layers.Add(layer.EmptyCopy());
-                    foreach (var gob in layer.Gobs)
-                        gob.Layer = layer;
-                }
-                Gobs = new GobCollection(layers);
-                foreach (var gob in new GobCollection(oldLayers))
-                    Gob.CreateGob(gob, gobb =>
-                    {
-                        gobb.Layer = layers[oldLayers.IndexOf(gob.Layer)];
-                        Gobs.Add(gobb);
-                    });
-
-                // Find the gameplay layer.
-                int gameplayLayerIndex = Layers.FindIndex(layer => layer.IsGameplayLayer);
-                if (gameplayLayerIndex == -1)
-                    throw new ArgumentException("Arena " + Name + " doesn't have a gameplay layer");
-                Gobs.GameplayLayer = Layers[gameplayLayerIndex];
-
-                // Make sure the gameplay backlayer is located right before the gameplay layer.
-                // Use a suitable layer if one is defined in the arena, otherwise create a new one.
-                if (gameplayLayerIndex == 0 || Layers[gameplayLayerIndex - 1].Z != 0)
-                    Layers.Insert(gameplayLayerIndex, Gobs.GameplayBackLayer = new ArenaLayer(false, 0, ""));
-                else
-                    Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
             }
+            Gobs = new GobCollection(Layers);
         }
 
         #endregion
+
+        /// <summary>
+        /// Initialises the gobs that are initially contained in the arena for playing the arena.
+        /// </summary>
+        /// This is done by taking copies of all the gobs. In effect, this turns deserialised
+        /// gobs into properly initialised gobs. Namely, deserialised gobs are created by 
+        /// the parameterless constructor that doesn't properly initialise all fields.
+        private void InitializeGobs()
+        {
+            FindGameplayLayer(); // makes sure there is a gameplay backlayer
+            var oldLayers = layers;
+            layers = new List<ArenaLayer>();
+            foreach (var layer in oldLayers)
+            {
+                layers.Add(layer.EmptyCopy());
+                foreach (var gob in layer.Gobs)
+                    gob.Layer = layer;
+            }
+            Gobs = new GobCollection(layers);
+            FindGameplayLayer();
+            foreach (var gob in new GobCollection(oldLayers))
+                Gob.CreateGob(gob, gobb =>
+                {
+                    gobb.Layer = layers[oldLayers.IndexOf(gob.Layer)];
+                    Gobs.Add(gobb);
+                });
+        }
+
+        /// <summary>
+        /// Initialises <see cref="collisionAreas"/> for playing the arena.
+        /// </summary>
+        private void InitializeCollisionAreas()
+        {
+            collisionAreas = new SpatialGrid<CollisionArea>[CollisionArea.COLLISION_AREA_TYPE_COUNT];
+            collisionAreaMayCollide = new bool[CollisionArea.COLLISION_AREA_TYPE_COUNT];
+            Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
+            Vector2 arrayDimensions = Dimensions + 2 * areaExcess;
+            for (int i = 0; i < collisionAreas.Length; ++i)
+                if (collisionAreaCellSize[i] >= 0)
+                    collisionAreas[i] = new SpatialGrid<CollisionArea>(collisionAreaCellSize[i],
+                        -areaExcess, arrayDimensions - areaExcess);
+            collisionAreaMayCollide.Initialize();
+        }
+
+        /// <summary>
+        /// Initialises <see cref="GameplayLayer"/> and <see cref="GameplayBackLayer"/>
+        /// for the current <see cref="Layers"/>.
+        /// </summary>
+        private void FindGameplayLayer()
+        {
+            int gameplayLayerIndex = Layers.FindIndex(layer => layer.IsGameplayLayer);
+            if (gameplayLayerIndex == -1)
+                throw new ArgumentException("Arena " + Name + " doesn't have a gameplay layer");
+            Gobs.GameplayLayer = Layers[gameplayLayerIndex];
+
+            // Make sure the gameplay backlayer is located right before the gameplay layer.
+            // Use a suitable layer if one is defined in the arena, otherwise create a new one.
+            if (gameplayLayerIndex == 0 || Layers[gameplayLayerIndex - 1].Z != 0)
+                Layers.Insert(gameplayLayerIndex, Gobs.GameplayBackLayer = new ArenaLayer(false, 0, ""));
+            else
+                Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
+        }
     }
 }

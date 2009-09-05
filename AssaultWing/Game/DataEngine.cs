@@ -47,7 +47,6 @@ namespace AW2.Game
 
         List<Viewport> viewports;
         List<ViewportSeparator> viewportSeparators;
-        Dictionary<string, string> arenaFileNameList;
 
         /// <summary>
         /// Type templates, indexed by <see cref="TypeTemplateType"/> and
@@ -142,14 +141,9 @@ namespace AW2.Game
         public Playlist ArenaPlaylist { get; set; }
 
         /// <summary>
-        /// Mapping of all available arenas to the names of the files 
-        /// where the arenas are defined.
+        /// Information about all available arenas.
         /// </summary>
-        public Dictionary<string, string> ArenaFileNameList
-        {
-            get { return arenaFileNameList; }
-            set { arenaFileNameList = value; }
-        }
+        public List<ArenaInfo> ArenaInfos { get; set; }
 
         /// <summary>
         /// Returns a named arena.
@@ -159,7 +153,7 @@ namespace AW2.Game
             if (preparedArena == null || !preparedArena.Name.Equals(name))
             {
                 TypeLoader arenaLoader = new TypeLoader(typeof(Arena), Paths.Arenas);
-                preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes(arenaFileNameList[name]);
+                preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes(ArenaInfos.First(info => info.Name == name).FileName);
             }
             return preparedArena;
         }
@@ -174,7 +168,7 @@ namespace AW2.Game
         {
             if (ArenaPlaylist.MoveNext())
             {
-                InitializeFromArena(ArenaPlaylist.Current);
+                InitializeFromArena(ArenaPlaylist.Current, true);
                 return true;
             }
             else
@@ -211,7 +205,9 @@ namespace AW2.Game
         /// </summary>
         /// When the playing really should start, call <c>StartArena</c>.
         /// <param name="name">The name of the arena.</param>
-        public void InitializeFromArena(string name)
+        /// <param name="initializeForPlaying">Should the arena be initialised
+        /// for playing. If not, some initialisations are skipped.</param>
+        public void InitializeFromArena(string name, bool initializeForPlaying)
         {
             // Clear remaining data from a possible previous arena.
             if (Arena != null) Arena.Dispose();
@@ -219,17 +215,11 @@ namespace AW2.Game
             CustomOperations = null;
 
             preparedArena = GetArena(name);
-            preparedArena.Reset();
+            preparedArena.IsForPlaying = initializeForPlaying;
             AssaultWing.Instance.LoadArenaContent(preparedArena);
-
-            // Create initial objects. This is by far the most time consuming part
-            // in initialising an arena for playing.
             int wallCount = preparedArena.Gobs.Count(gob => gob is Wall);
             progressBar.SetSubtaskCount(wallCount);
-            // Each iteration over the gobs may create more gobs.
-            // Keep iterating until all gobs are prepared.
-            while (preparedArena.Gobs.Any(gob => gob.Arena == null))
-                foreach (var gob in preparedArena.Gobs) if (gob.Arena == null) preparedArena.Prepare(gob);
+            preparedArena.Reset(); // this usually takes several seconds
         }
 
         /// <summary>

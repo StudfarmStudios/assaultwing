@@ -29,7 +29,7 @@ namespace AW2
             var arenaToLoad = arenaName.Text;
             if (arenaToLoad == "") return;
             var data = AssaultWing.Instance.DataEngine;
-            data.ProgressBar.Task = () => data.InitializeFromArena(arenaToLoad);
+            data.ProgressBar.Task = () => data.InitializeFromArena(arenaToLoad, true);
             data.ProgressBar.StartTask();
             while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
             data.ProgressBar.FinishTask();

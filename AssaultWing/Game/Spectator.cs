@@ -13,6 +13,13 @@ namespace AW2.Game
     /// </summary>
     public class Spectator : IDisposable, INetworkSerializable
     {
+        class LookAtPoint : AW2.Graphics.ILookAt
+        {
+            public Vector2 Position { get; set; }
+        }
+
+        LookAtPoint lookAt;
+
         /// <summary>
         /// The player's unique identifier.
         /// </summary>
@@ -49,6 +56,7 @@ namespace AW2.Game
         {
             Controls = controls;
             ConnectionId = connectionId;
+            lookAt = new LookAtPoint();
         }
 
         /// <summary>
@@ -57,7 +65,7 @@ namespace AW2.Game
         /// <param name="onScreen">Location of the viewport on screen.</param>
         public virtual AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
-            return new AW2.Graphics.AWViewport(onScreen);
+            return new AW2.Graphics.AWViewport(onScreen, lookAt);
         }
 
         /// <summary>
@@ -72,6 +80,12 @@ namespace AW2.Game
         /// </summary>
         public virtual void Update()
         {
+            float moveSpeed = 10;
+            lookAt.Position +=
+                Vector2.UnitY * moveSpeed * Controls.thrust.Force
+                - Vector2.UnitY * moveSpeed * Controls.down.Force
+                + Vector2.UnitX * moveSpeed * Controls.right.Force
+                - Vector2.UnitX * moveSpeed * Controls.left.Force;
         }
 
         /// <summary>

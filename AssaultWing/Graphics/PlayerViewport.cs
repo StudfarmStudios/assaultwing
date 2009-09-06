@@ -65,8 +65,9 @@ namespace AW2.Graphics
         /// </summary>
         /// <param name="player">Which player the viewport will follow.</param>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
-        public PlayerViewport(Player player, Rectangle onScreen)
-            : base(onScreen)
+        /// <param name="lookAt">The point to follow.</param>
+        public PlayerViewport(Player player, Rectangle onScreen, ILookAt lookAt)
+            : base(onScreen, lookAt)
         {
             this.player = player;
             shakeSign = -1;
@@ -90,17 +91,13 @@ namespace AW2.Graphics
         {
             get
             {
-                Gob ship = player.Ship;
-                if (ship != null)
-                    LookAt = ship.Pos;
-
                 // Shake only if gameplay is on. Otherwise freeze because
                 // shake won't be attenuated either.
                 if (AssaultWing.Instance.GameState == GameState.Gameplay)
                     shakeSign = -shakeSign;
 
                 float viewShake = shakeSign * player.Shake;
-                return Matrix.CreateLookAt(new Vector3(LookAt, 1000), new Vector3(LookAt, 0),
+                return Matrix.CreateLookAt(new Vector3(LookAt.Position, 1000), new Vector3(LookAt.Position, 0),
                     new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),
                                 (float)Math.Sin(MathHelper.PiOver2 + viewShake),
                                 0));

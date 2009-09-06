@@ -67,6 +67,20 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("Id:{Id} name:{Name} shipType:{shipTypeName}")]
     public class Player : Spectator
     {
+        class LookAtShip : AW2.Graphics.ILookAt
+        {
+            Vector2 oldPos;
+            public Vector2 Position
+            {
+                get
+                {
+                    if (Ship != null) oldPos = Ship.Pos;
+                    return oldPos;
+                }
+            }
+            public Ship Ship { get; set; }
+        }
+
         #region Player constants
 
         /// <summary>
@@ -201,6 +215,10 @@ namespace AW2.Game
         /// </summary>
         TimeSpan shakeUpdateTime;
 
+        LookAtShip lookAt;
+
+        Ship ship;
+
         #endregion Player fields about general things
 
         #region Player fields about statistics
@@ -245,7 +263,7 @@ namespace AW2.Game
         /// <summary>
         /// The ship the player is controlling in the game arena.
         /// </summary>
-        public Ship Ship { get; set; }
+        public Ship Ship { get { return ship; } set { lookAt.Ship = ship = value; } }
 
         /// <summary>
         /// If positive, how many reincarnations the player has left.
@@ -476,6 +494,7 @@ namespace AW2.Game
             foreach (CurveKey key in shakeAttenuationCurve.Keys)
                 shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
+            lookAt = new LookAtShip();
         }
 
         #endregion Constructors
@@ -569,7 +588,7 @@ namespace AW2.Game
         /// <param name="onScreen">Location of the viewport on screen.</param>
         public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
-            return new AW2.Graphics.PlayerViewport(this, onScreen);
+            return new AW2.Graphics.PlayerViewport(this, onScreen, lookAt);
         }
 
         /// <summary>
@@ -823,21 +842,19 @@ namespace AW2.Game
         /// </summary>
         void ApplyControlsToShip()
         {
-            if (Ship != null)
-            {
-                if (Controls[PlayerControlType.Thrust].Force > 0)
-                    Ship.Thrust(Controls[PlayerControlType.Thrust].Force);
-                if (Controls[PlayerControlType.Left].Force > 0)
-                    Ship.TurnLeft(Controls[PlayerControlType.Left].Force);
-                if (Controls[PlayerControlType.Right].Force > 0)
-                    Ship.TurnRight(Controls[PlayerControlType.Right].Force);
-                if (Controls[PlayerControlType.Fire1].Pulse)
-                    Ship.Fire1();
-                if (Controls[PlayerControlType.Fire2].Pulse)
-                    Ship.Fire2();
-                if (Controls[PlayerControlType.Extra].Pulse)
-                    Ship.DoExtra();
-            }
+            if (Ship == null) return;
+            if (Controls.thrust.Force > 0)
+                Ship.Thrust(Controls.thrust.Force);
+            if (Controls.left.Force > 0)
+                Ship.TurnLeft(Controls.left.Force);
+            if (Controls.right.Force > 0)
+                Ship.TurnRight(Controls.right.Force);
+            if (Controls.fire1.Pulse)
+                Ship.Fire1();
+            if (Controls.fire2.Pulse)
+                Ship.Fire2();
+            if (Controls.extra.Pulse)
+                Ship.DoExtra();
         }
 
         /// <summary>

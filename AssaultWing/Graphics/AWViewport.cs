@@ -6,6 +6,14 @@ using System;
 namespace AW2.Graphics
 {
     /// <summary>
+    /// A point in game world that a viewport is viewing.
+    /// </summary>
+    public interface ILookAt
+    {
+        Vector2 Position { get; }
+    }
+
+    /// <summary>
     /// A view on the display that looks into the game world.
     /// </summary>
     /// <c>LoadContent</c> must be called before a viewport is used.
@@ -29,7 +37,7 @@ namespace AW2.Graphics
         /// <summary>
         /// Center of the view in game world coordinates.
         /// </summary>
-        protected Vector2 LookAt { get; set; }
+        protected ILookAt LookAt { get; set; }
 
         /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport shows
@@ -38,7 +46,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMin(float z)
         {
-            return LookAt - new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
+            return LookAt.Position - new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
         }
 
         /// <summary>
@@ -48,7 +56,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMax(float z)
         {
-            return LookAt + new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
+            return LookAt.Position + new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
         }
 
         /// <summary>
@@ -58,7 +66,7 @@ namespace AW2.Graphics
         {
             get
             {
-                return Matrix.CreateLookAt(new Vector3(LookAt, 1000), new Vector3(LookAt, 0), Vector3.Up);
+                return Matrix.CreateLookAt(new Vector3(LookAt.Position, 1000), new Vector3(LookAt.Position, 0), Vector3.Up);
             }
         }
 
@@ -66,7 +74,8 @@ namespace AW2.Graphics
         /// Creates a viewport.
         /// </summary>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
-        public AWViewport(Rectangle onScreen)
+        /// <param name="lookAt">The point to follow.</param>
+        public AWViewport(Rectangle onScreen, ILookAt lookAt)
         {
             overlayComponents = new List<OverlayComponent>();
             Viewport = new Viewport
@@ -78,6 +87,7 @@ namespace AW2.Graphics
                 MinDepth = 0f,
                 MaxDepth = 1f
             };
+            LookAt = lookAt;
         }
 
         /// <summary>

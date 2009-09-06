@@ -71,9 +71,17 @@ namespace AW2.Game
         #region Properties
 
         /// <summary>
-        /// Players who participate in the game session.
+        /// Players and other spectators of the game session.
         /// </summary>
-        public IndexedItemCollection<Player> Players { get; private set; }
+        public IndexedItemCollection<Spectator> Spectators { get; private set; }
+
+        /// <summary>
+        /// Players of the game session.
+        /// </summary>
+        public IEnumerable<Player> Players
+        {
+            get { return Spectators.Where(p => p is Player).Cast<Player>(); }
+        }
 
         /// <summary>
         /// Weapons that are active in the game session.
@@ -93,19 +101,8 @@ namespace AW2.Game
         /// </summary>
         public DataEngine()
         {
-            Players = new IndexedItemCollection<Player>();
-            Players.Removed += player => 
-            {
-                if (player.Ship != null) 
-                    player.Ship.Die(new DeathCause());
-                player.Controls.thrust.Release();
-                player.Controls.left.Release();
-                player.Controls.right.Release();
-                player.Controls.down.Release();
-                player.Controls.fire1.Release();
-                player.Controls.fire2.Release();
-                player.Controls.extra.Release();
-            };
+            Spectators = new IndexedItemCollection<Spectator>();
+            Spectators.Removed += player => player.Dispose();
 
             Weapons = new IndexedItemCollection<Weapon>();
             Weapons.Added += weapon => { weapon.Arena = Arena; };
@@ -185,13 +182,8 @@ namespace AW2.Game
         public void StartArena()
         {
             // Reset players.
-            foreach (var player in Players)
-            {
+            foreach (var player in Spectators)
                 player.Reset();
-                player.Lives = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
-                    ? 3 // HACK: standalone games have three lives
-                    : -1; // HACK: network games have infinite lives
-            }
 
             Arena = preparedArena;
             preparedArena = null;
@@ -427,7 +419,7 @@ namespace AW2.Game
                     PlayerUpdateMessage message = null;
                     while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<PlayerUpdateMessage>()) != null)
                     {
-                        Player player = Players.FirstOrDefault(plr => plr.Id == message.PlayerId);
+                        var player = Spectators.FirstOrDefault(plr => plr.Id == message.PlayerId);
                         if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
                         message.Read(player, SerializationModeFlags.VaryingData);
                     }
@@ -476,20 +468,6 @@ namespace AW2.Game
                 AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }
 
-            // Game server sends state updates about players to game clients.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-            {
-                foreach (var player in Players)
-                {
-                    if (!player.MustUpdateToClients) continue;
-                    player.MustUpdateToClients = false;
-                    var message = new PlayerUpdateMessage();
-                    message.PlayerId = player.Id;
-                    message.Write(player, SerializationModeFlags.VaryingData);
-                    AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
-                }
-            }
-
 #if DEBUG_PROFILE
             AssaultWing.Instance.gobCount = Arena.Gobs.Count;
 #endif
@@ -531,6 +509,7 @@ namespace AW2.Game
             if (Arena != null) Arena.Dispose();
             Arena = null;
             ClearViewports();
+            foreach (var player in Spectators) player.Reset();
         }
 
         /// <summary>

@@ -234,7 +234,7 @@ namespace AW2.Menu
                 menuEngine.ActivateComponent(MenuComponentType.Equip);
 
                 // HACK: Force one local player and Amazonas as the only arena.
-                AssaultWing.Instance.DataEngine.Players.Remove(player => AssaultWing.Instance.DataEngine.Players.Count > 1);
+                AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
                 AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist( new string[] { "Amazonas" });
             };
 
@@ -255,7 +255,7 @@ namespace AW2.Menu
                     Log.Write("Client connected to " + result.Value.RemoteEndPoint);
 
                     // HACK: Force one local player.
-                    AssaultWing.Instance.DataEngine.Players.Remove(player => AssaultWing.Instance.DataEngine.Players.Count > 1);
+                    AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
 
                     // Send a game join request to the game server.
                     JoinGameRequest joinGameRequest = new JoinGameRequest();
@@ -268,7 +268,7 @@ namespace AW2.Menu
                     net.MessageHandlers.Add(new MessageHandler<JoinGameReply>(true, net.GameServerConnection, reply =>
                     {
                         foreach (JoinGameReply.IdChange change in reply.PlayerIdChanges)
-                            AssaultWing.Instance.DataEngine.Players.First(player => player.Id == change.oldId).Id = change.newId;
+                            AssaultWing.Instance.DataEngine.Spectators.First(player => player.Id == change.oldId).Id = change.newId;
                         CanonicalString.CanonicalForms = reply.CanonicalStrings;
                         Log.Write("Game server accepted joining");
                         menuEngine.ActivateComponent(MenuComponentType.Equip);
@@ -323,7 +323,7 @@ namespace AW2.Menu
             controlSelect = new MultiControl();
             controlSelect.Add(new KeyboardKey(Keys.Enter));
 
-            foreach (var player in AssaultWing.Instance.DataEngine.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
             {
                 controlUp.Add(player.Controls.thrust);
                 controlDown.Add(player.Controls.down);

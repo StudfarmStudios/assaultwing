@@ -227,14 +227,14 @@ namespace AW2.Net
 
             // Remove the client's players.
             List<string> droppedPlayerNames = new List<string>();
-            foreach (var player in AssaultWing.Instance.DataEngine.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
                 if (player.ConnectionId == connection.Id)
                     droppedPlayerNames.Add(player.Name);
             string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
                 if (!player.IsRemote)
                     player.SendMessage(message);
-            AssaultWing.Instance.DataEngine.Players.Remove(player => player.ConnectionId == connection.Id);
+            AssaultWing.Instance.DataEngine.Spectators.Remove(player => player.ConnectionId == connection.Id);
         }
 
         /// <summary>

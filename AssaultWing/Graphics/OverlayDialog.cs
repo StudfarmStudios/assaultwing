@@ -57,9 +57,9 @@ namespace AW2.Graphics
             if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
             {
                 // K + P = kill players
-                foreach (var player in AssaultWing.Instance.DataEngine.Players)
-                    if (player.Ship != null)
-                        player.Ship.Die(new DeathCause());
+                foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
+                    if (player is Player && ((Player)player).Ship != null)
+                        ((Player)player).Ship.Die(new DeathCause());
             }
 
             if (keys.IsKeyDown(Keys.L) && keys.IsKeyDown(Keys.E))

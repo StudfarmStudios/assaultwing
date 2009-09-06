@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -64,7 +65,7 @@ namespace AW2.Game
     /// Player of the game. 
     /// </summary>
     [System.Diagnostics.DebuggerDisplay("Id:{Id} name:{Name} shipType:{shipTypeName}")]
-    public class Player : INetworkSerializable
+    public class Player : Spectator
     {
         #region Player constants
 
@@ -154,12 +155,6 @@ namespace AW2.Game
         List<string> messages;
 
         /// <summary>
-        /// The player's controls for moving in menus and controlling his ship.
-        /// Uninitialised if the player lives at a remote game instance.
-        /// </summary>
-        protected PlayerControls controls;
-
-        /// <summary>
         /// How many reincarnations the player has left.
         /// </summary>
         protected int lives;
@@ -226,22 +221,9 @@ namespace AW2.Game
         #region Player properties
 
         /// <summary>
-        /// The player's unique identifier.
-        /// </summary>
-        /// The identifier may change if a remote game server says so.
-        public int Id { get; set; }
-
-        /// <summary>
         /// The player's Color on radar.
         /// </summary>
         public Color PlayerColor { get; set; }
-
-
-        /// <summary>
-        /// Identifier of the connection behind which this player lives,
-        /// or negative if the player lives at the local game instance.
-        /// </summary>
-        public int ConnectionId { get; private set; }
 
         /// <summary>
         /// If <c>true</c> then the player is playing at a remote game instance.
@@ -250,15 +232,15 @@ namespace AW2.Game
         public bool IsRemote { get { return ConnectionId >= 0; } }
 
         /// <summary>
+        /// Does the player need a viewport on the game window.
+        /// </summary>
+        public override bool NeedsViewport { get { return !IsRemote; } }
+
+        /// <summary>
         /// Does the player state need to be updated to the clients.
         /// For use by game server only.
         /// </summary>
         public bool MustUpdateToClients { get; set; }
-
-        /// <summary>
-        /// The controls the player uses in menus and in game.
-        /// </summary>
-        public PlayerControls Controls { get { return controls; } }
 
         /// <summary>
         /// The ship the player is controlling in the game arena.
@@ -311,11 +293,6 @@ namespace AW2.Game
             if (Ship == null) return;
             relativeShakeDamage = Math.Max(0, relativeShakeDamage + damageAmount / Ship.MaxDamageLevel);
         }
-
-        /// <summary>
-        /// The human-readable name of the player.
-        /// </summary>
-        public string Name { get; set; }
 
         /// <summary>
         /// The name of the type of ship the player has chosen to fly.
@@ -417,29 +394,66 @@ namespace AW2.Game
         #region Constructors
 
         /// <summary>
-        /// Creates a new player.
+        /// Creates a new player who plays at the local game instance.
         /// </summary>
         /// <param name="name">Name of the player.</param>
         /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
         /// <param name="weapon1Name">Name of the type of main weapon.</param>
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
-        Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name)
+        /// <param name="controls">Player's in-game controls.</param>
+        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
+            PlayerControls controls)
+            : this(name, shipTypeName, weapon1Name, weapon2Name, controls, -1)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new player who plays at a remote game instance.
+        /// </summary>
+        /// <param name="name">Name of the player.</param>
+        /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
+        /// <param name="weapon1Name">Name of the type of main weapon.</param>
+        /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
+        /// <param name="connectionId">Identifier of the connection to the remote game instance
+        /// at which the player lives.</param>
+        /// <see cref="AW2.Net.Connection.Id"/>
+        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
+            int connectionId)
+            : this(name, shipTypeName, weapon1Name, weapon2Name, new PlayerControls
+            {
+                thrust = new RemoteControl(),
+                left = new RemoteControl(),
+                right = new RemoteControl(),
+                down = new RemoteControl(),
+                fire1 = new RemoteControl(),
+                fire2 = new RemoteControl(),
+                extra = new RemoteControl()
+            }, connectionId)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new player.
+        /// </summary>
+        private Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
+            PlayerControls controls, int connectionId)
+            : base(controls, connectionId)
         {
             Id = leastUnusedId++;
-            this.Name = name;
+            Name = name;
             this.shipTypeName = shipTypeName;
             this.weapon1Name = weapon1Name;
             this.weapon2Name = weapon2Name;
-            this.weapon1Upgrades = 0;
-            this.weapon2Upgrades = 0;
-            this.bonuses = PlayerBonusTypes.None;
-            this.bonusTimeins = new PlayerBonusItems<TimeSpan>();
-            this.bonusTimeouts = new PlayerBonusItems<TimeSpan>();
-            this.messages = new List<string>();
-            this.lives = 3;
-            this.shipSpawnTime = new TimeSpan(1);
-            this.relativeShakeDamage = 0;
-            this.PlayerColor = Color.Gray;
+            weapon1Upgrades = 0;
+            weapon2Upgrades = 0;
+            bonuses = PlayerBonusTypes.None;
+            bonusTimeins = new PlayerBonusItems<TimeSpan>();
+            bonusTimeouts = new PlayerBonusItems<TimeSpan>();
+            messages = new List<string>();
+            lives = 3;
+            shipSpawnTime = new TimeSpan(1);
+            relativeShakeDamage = 0;
+            PlayerColor = Color.Gray;
             shakeCurve = new Curve();
             shakeCurve.PreLoop = CurveLoopType.Constant;
             shakeCurve.PostLoop = CurveLoopType.Constant;
@@ -464,47 +478,6 @@ namespace AW2.Game
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
         }
 
-        /// <summary>
-        /// Creates a new player who plays at the local game instance.
-        /// </summary>
-        /// <param name="name">Name of the player.</param>
-        /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
-        /// <param name="weapon1Name">Name of the type of main weapon.</param>
-        /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
-        /// <param name="controls">Player's in-game controls.</param>
-        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
-            PlayerControls controls)
-            : this(name, shipTypeName, weapon1Name, weapon2Name)
-        {
-            ConnectionId = -1;
-            this.controls = controls;
-        }
-
-        /// <summary>
-        /// Creates a new player who plays at a remote game instance.
-        /// </summary>
-        /// <param name="name">Name of the player.</param>
-        /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
-        /// <param name="weapon1Name">Name of the type of main weapon.</param>
-        /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
-        /// <param name="connectionId">Identifier of the connection to the remote game instance
-        /// at which the player lives.</param>
-        /// <see cref="AW2.Net.Connection.Id"/>
-        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
-            int connectionId)
-            : this(name, shipTypeName, weapon1Name, weapon2Name)
-        {
-            ConnectionId = connectionId;
-            controls = new PlayerControls();
-            controls.thrust = new RemoteControl();
-            controls.left = new RemoteControl();
-            controls.right = new RemoteControl();
-            controls.down = new RemoteControl();
-            controls.fire1 = new RemoteControl();
-            controls.fire2 = new RemoteControl();
-            controls.extra = new RemoteControl();
-        }
-
         #endregion Constructors
 
         #region General public methods
@@ -512,8 +485,10 @@ namespace AW2.Game
         /// <summary>
         /// Updates the player.
         /// </summary>
-        public void Update()
+        public override void Update()
         {
+            base.Update();
+
             // Player bonus expirations.
             foreach (PlayerBonusTypes playerBonus in Enum.GetValues(typeof(PlayerBonusTypes)))
                 if (playerBonus != PlayerBonusTypes.None &&
@@ -543,6 +518,16 @@ namespace AW2.Game
                     SendControlsToServer();
                     ApplyControlsToShip();
                 }
+            }
+
+            // Game server sends state updates about players to game clients.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && MustUpdateToClients)
+            {
+                MustUpdateToClients = false;
+                var message = new PlayerUpdateMessage();
+                message.PlayerId = Id;
+                message.Write(this, SerializationModeFlags.VaryingData);
+                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }
         }
 
@@ -579,11 +564,28 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Resets the player's internal state for a new arena.
-        /// Note that e.g. lives must be set by some external entity.
+        /// Creates a viewport for the player.
         /// </summary>
-        public void Reset()
+        /// <param name="onScreen">Location of the viewport on screen.</param>
+        public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
+            return new AW2.Graphics.PlayerViewport(this, onScreen);
+        }
+
+        /// <summary>
+        /// Initialises the player for a game session, that is, for the first arena.
+        /// </summary>
+        public override void InitializeForGameSession()
+        {
+            Kills = Suicides = 0;
+        }
+
+        /// <summary>
+        /// Resets the player's internal state for a new arena.
+        /// </summary>
+        public override void Reset()
+        {
+            base.Reset();
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
             bonuses = PlayerBonusTypes.None;
@@ -592,6 +594,7 @@ namespace AW2.Game
             Ship = null;
             shipSpawnTime = new TimeSpan(1);
             relativeShakeDamage = 0;
+            Lives = AssaultWing.Instance.DataEngine.GameplayMode.StartLives;
         }
 
         /// <summary>
@@ -607,6 +610,13 @@ namespace AW2.Game
             // Throw away very old messages.
             if (messages.Count > 10000)
                 messages.RemoveRange(0, messages.Count - 5000);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (Ship != null)
+                Ship.Die(new DeathCause());
         }
 
         #endregion General public methods
@@ -751,7 +761,7 @@ namespace AW2.Game
         /// before performing their own serialisation.
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
@@ -779,7 +789,7 @@ namespace AW2.Game
         /// before performing their own deserialisation.
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
@@ -815,17 +825,17 @@ namespace AW2.Game
         {
             if (Ship != null)
             {
-                if (controls[PlayerControlType.Thrust].Force > 0)
-                    Ship.Thrust(controls[PlayerControlType.Thrust].Force);
-                if (controls[PlayerControlType.Left].Force > 0)
-                    Ship.TurnLeft(controls[PlayerControlType.Left].Force);
-                if (controls[PlayerControlType.Right].Force > 0)
-                    Ship.TurnRight(controls[PlayerControlType.Right].Force);
-                if (controls[PlayerControlType.Fire1].Pulse)
+                if (Controls[PlayerControlType.Thrust].Force > 0)
+                    Ship.Thrust(Controls[PlayerControlType.Thrust].Force);
+                if (Controls[PlayerControlType.Left].Force > 0)
+                    Ship.TurnLeft(Controls[PlayerControlType.Left].Force);
+                if (Controls[PlayerControlType.Right].Force > 0)
+                    Ship.TurnRight(Controls[PlayerControlType.Right].Force);
+                if (Controls[PlayerControlType.Fire1].Pulse)
                     Ship.Fire1();
-                if (controls[PlayerControlType.Fire2].Pulse)
+                if (Controls[PlayerControlType.Fire2].Pulse)
                     Ship.Fire2();
-                if (controls[PlayerControlType.Extra].Pulse)
+                if (Controls[PlayerControlType.Extra].Pulse)
                     Ship.DoExtra();
             }
         }
@@ -839,7 +849,7 @@ namespace AW2.Game
             message.PlayerId = Id;
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
             {
-                Control control = controls[controlType];
+                Control control = Controls[controlType];
                 message.SetControlState(controlType,
                     new PlayerControlsMessage.ControlState { force = control.Force, pulse = control.Pulse });
             }
@@ -866,19 +876,14 @@ namespace AW2.Game
 
                 // Find a starting place for the new ship.
                 // Use player spawn areas if there's any. Otherwise just randomise a position.
-                SpawnPlayer bestSpawn = null;
-                float bestSafeness = float.MinValue;
-                foreach (var otherGob in arena.Gobs)
-                {
-                    SpawnPlayer spawn = otherGob as SpawnPlayer;
-                    if (spawn == null) continue;
-                    float safeness = spawn.GetSafeness();
-                    if (safeness >= bestSafeness)
-                    {
-                        bestSafeness = safeness;
-                        bestSpawn = spawn;
-                    }
-                }
+                var spawns =
+                    from g in arena.Gobs
+                    let spawn = g as SpawnPlayer
+                    where spawn != null
+                    let safeness = spawn.GetSafeness()
+                    orderby safeness descending
+                    select spawn;
+                var bestSpawn = spawns.FirstOrDefault();
                 if (bestSpawn == null)
                     newShip.Pos = arena.GetFreePosition(newShip,
                         new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, arena.Dimensions));

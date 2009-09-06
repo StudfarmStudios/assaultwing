@@ -167,7 +167,7 @@ namespace AW2.Menu
         private void CreateSelectors()
         {
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
-            equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Players.Count, aspectCount];
+            equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Spectators.Count, aspectCount];
 
             int playerI = 0;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
@@ -283,7 +283,7 @@ namespace AW2.Menu
                         else
                         {
                             Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
-                            AssaultWing.Instance.DataEngine.Players.Add(player);
+                            AssaultWing.Instance.DataEngine.Spectators.Add(player);
                             playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
                         }
                     }
@@ -306,8 +306,8 @@ namespace AW2.Menu
                         message.Read(player, SerializationModeFlags.All);
 
                         // Only add the player if it is remote.
-                        if (!AssaultWing.Instance.DataEngine.Players.Any(plr => plr.Id == player.Id))
-                            AssaultWing.Instance.DataEngine.Players.Add(player);
+                        if (!AssaultWing.Instance.DataEngine.Spectators.Any(plr => plr.Id == player.Id))
+                            AssaultWing.Instance.DataEngine.Spectators.Add(player);
                     }
 
                     AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(message.ArenaPlaylist);
@@ -410,7 +410,7 @@ namespace AW2.Menu
                 string textContent = AssaultWing.Instance.NetworkMode == NetworkMode.Client
                     ? "Connected to game server"
                     : "Hosting a game as server";
-                textContent += "\n\n" + data.Players.Count + (data.Players.Count == 1 ? " player" : " players");
+                textContent += "\n\n" + data.Spectators.Count + (data.Spectators.Count == 1 ? " player" : " players");
                 textContent += "\n\nArena: " + data.ArenaPlaylist[0];
                 spriteBatch.DrawString(menuBigFont, textContent, textPos, Color.White);
             }

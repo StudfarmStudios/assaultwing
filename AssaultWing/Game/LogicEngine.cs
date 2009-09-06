@@ -60,21 +60,20 @@ namespace AW2.Game
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
         public override void Update(GameTime gameTime)
         {
+            var data = AssaultWing.Instance.DataEngine;
             UpdateControls();
 
             // Update gobs, weapons and players.
-            foreach (var gob in AssaultWing.Instance.DataEngine.Arena.Gobs) gob.Update();
-            foreach (var weapon in AssaultWing.Instance.DataEngine.Weapons) weapon.Update();
-            foreach (var player in AssaultWing.Instance.DataEngine.Players) player.Update();
+            foreach (var gob in data.Arena.Gobs) gob.Update();
+            foreach (var weapon in data.Weapons) weapon.Update();
+            foreach (var player in data.Spectators) player.Update();
 
             AssaultWing.Instance.DataEngine.Arena.PerformNonphysicalCollisions();
 
             // Check for arena end. Network games end when the game server presses Esc.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone)
             {
-                int playersTotal = AssaultWing.Instance.DataEngine.Players.Count;
-                int playersAlive = AssaultWing.Instance.DataEngine.Players.Count(player => player.Lives != 0);
-                if (playersAlive == 0 || (playersAlive == 1 && playersTotal > 1))
+                if (data.GameplayMode.ArenaFinished(data.Arena, data.Players))
                     AssaultWing.Instance.FinishArena();
             }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)

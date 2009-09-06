@@ -41,14 +41,10 @@ namespace AW2.Graphics
             spriteBatch.DrawString(fontHuge, "Game Over", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
             textCenter += new Vector2(0, 2 * fontHuge.LineSpacing);
 
-            // List players and their scores sorted decreasing by score.
-            var scores =
-                from p in AssaultWing.Instance.DataEngine.Players
-                let Score = AssaultWing.Instance.DataEngine.GameplayMode.CalculateScore(p)
-                orderby Score descending
-                select new { p.Name, Score, p.Kills, p.Suicides };
+            var data = AssaultWing.Instance.DataEngine;
+            var standings = data.GameplayMode.GetStandings(data.Players);
             int line = 0;
-            foreach (var entry in scores)
+            foreach (var entry in standings)
             {
                 Vector2 textPos = new Vector2(textLeftEdge, textCenter.Y);
                 string scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);

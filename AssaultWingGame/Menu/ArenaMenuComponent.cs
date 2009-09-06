@@ -241,7 +241,7 @@ namespace AW2.Menu
             controlSelect = new MultiControl();
             controlSelect.Add(new KeyboardKey(Keys.Space));
 
-            foreach (var player in AssaultWing.Instance.DataEngine.Players)
+            foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
             {
                 controlUp.Add(player.Controls.thrust);
                 controlDown.Add(player.Controls.down);

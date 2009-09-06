@@ -200,7 +200,7 @@ namespace AW2.Graphics
         {
             var data = AssaultWing.Instance.DataEngine;
             data.ClearViewports();
-            int localPlayers = data.Players.Count(player => !player.IsRemote);
+            int localPlayers = data.Spectators.Count(player => player.NeedsViewport);
             if (localPlayers == 0) return;
 
             // Find out an optimal arrangement of viewports.
@@ -232,9 +232,9 @@ namespace AW2.Graphics
 
             // Assign the viewports to players.
             int playerI = 0;
-            foreach (var player in data.Players)
+            foreach (var player in data.Spectators)
             {
-                if (player.IsRemote) return;
+                if (!player.NeedsViewport) return;
                 int viewportX = playerI % bestColumns;
                 int viewportY = playerI / bestColumns;
                 int onScreenX1 = window.Width * viewportX / bestColumns;
@@ -243,7 +243,7 @@ namespace AW2.Graphics
                 int onScreenY2 = window.Height * (viewportY + 1) / bestRows;
                 Rectangle onScreen = new Rectangle(onScreenX1, onScreenY1,
                     onScreenX2 - onScreenX1, onScreenY2 - onScreenY1);
-                AWViewport viewport = new PlayerViewport(player, onScreen);
+                var viewport = player.CreateViewport(onScreen);
                 data.AddViewport(viewport);
                 ++playerI;
             }
@@ -265,7 +265,7 @@ namespace AW2.Graphics
             AssaultWing.Instance.DataEngine.ClearViewports();
             Rectangle window = AssaultWing.Instance.ClientBounds;
             Rectangle onScreen = new Rectangle(0, 0, window.Width, window.Height);
-            AWViewport viewport = new PlayerViewport(AssaultWing.Instance.DataEngine.Players[privilegedPlayer], onScreen);
+            AWViewport viewport = AssaultWing.Instance.DataEngine.Spectators[privilegedPlayer].CreateViewport(onScreen);
             AssaultWing.Instance.DataEngine.AddViewport(viewport);
         }
 

@@ -41,8 +41,8 @@ namespace AW2.Graphics
             };
 
             // Find out the winner.
-            int mostPoints = data.Players.Max(player => data.GameplayMode.CalculateScore(player));
-            arenaWinner = data.Players.First(player => data.GameplayMode.CalculateScore(player) == mostPoints).Name;
+            var standings = data.GameplayMode.GetStandings(data.Players);
+            arenaWinner = standings.Any() ? standings.FirstOrDefault().Name : "no-one";
 
             // Start loading the next arena.
             data.ProgressBar.HorizontalAlignment = HorizontalAlignment.Center;
@@ -87,13 +87,10 @@ namespace AW2.Graphics
             textPos += new Vector2(0, fontBig.LineSpacing);
 
             // List players and their scores sorted decreasing by score.
-            var scores =
-                from p in AssaultWing.Instance.DataEngine.Players
-                let Score = p.Kills - p.Suicides
-                orderby Score descending
-                select new { p.Name, Score, p.Kills, p.Suicides };
+            var data = AssaultWing.Instance.DataEngine;
+            var standings = data.GameplayMode.GetStandings(data.Players);
             int line = 0;
-            foreach (var entry in scores)
+            foreach (var entry in standings)
             {
                 string scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
                 spriteBatch.DrawString(fontSmall, (line + 1) + ". " + entry.Name, textPos, Color.White);

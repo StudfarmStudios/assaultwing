@@ -503,15 +503,15 @@ namespace AW2
         /// </summary>
         public void PrepareFirstArena()
         {
-            foreach (var player in dataEngine.Players)
-                player.Kills = player.Suicides = 0;
+            foreach (var player in dataEngine.Spectators)
+                player.InitializeForGameSession();
 
             // Notify game clients if we are the game server.
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new StartGameMessage();
                 int playerCount = 0;
-                foreach (var player in dataEngine.Players)
+                foreach (var player in dataEngine.Spectators)
                 {
                     ++playerCount;
                     message.Write(player, SerializationModeFlags.All);
@@ -850,8 +850,8 @@ namespace AW2
             player1.PlayerColor = Color.Blue;
             player2.PlayerColor = Color.DeepPink;
 
-            dataEngine.Players.Add(player1);
-            dataEngine.Players.Add(player2);
+            dataEngine.Spectators.Add(player1);
+            dataEngine.Spectators.Add(player2);
 
             dataEngine.GameplayMode = new GameplayMode();
             dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler", "Snake" };

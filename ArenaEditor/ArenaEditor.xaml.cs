@@ -11,6 +11,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Xna.Framework.Input;
+using AW2.Game;
+using AW2.UI;
 
 namespace AW2
 {
@@ -28,6 +31,18 @@ namespace AW2
         {
             var arenaToLoad = arenaName.Text;
             if (arenaToLoad == "") return;
+            AssaultWing.Instance.DataEngine.Spectators.Clear();
+            var spectatorControls = new PlayerControls
+            {
+                thrust = new KeyboardKey(Keys.Up),
+                left = new KeyboardKey(Keys.Left),
+                right = new KeyboardKey(Keys.Right),
+                down = new KeyboardKey(Keys.Down),
+                fire1 = new KeyboardKey(Keys.RightControl),
+                fire2 = new KeyboardKey(Keys.RightShift),
+                extra = new KeyboardKey(Keys.Enter)
+            };
+            AssaultWing.Instance.DataEngine.Spectators.Add(new Spectator(spectatorControls));
             var data = AssaultWing.Instance.DataEngine;
             data.ProgressBar.Task = () => data.InitializeFromArena(arenaToLoad, true);
             data.ProgressBar.StartTask();

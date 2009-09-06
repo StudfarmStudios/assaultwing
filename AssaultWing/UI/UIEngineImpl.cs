@@ -71,7 +71,7 @@ namespace AW2.UI
                 PlayerControlsMessage message = null;
                 while ((message = AssaultWing.Instance.NetworkEngine.GameClientConnections.Messages.TryDequeue<PlayerControlsMessage>()) != null)
                 {
-                    Player player = AssaultWing.Instance.DataEngine.Players.First(plr => plr.Id == message.PlayerId);
+                    var player = AssaultWing.Instance.DataEngine.Spectators.First(plr => plr.Id == message.PlayerId);
                     if (player.ConnectionId != message.ConnectionId)
                     {
                         // A client sent controls for a player that lives on another game instance.
@@ -111,7 +111,7 @@ namespace AW2.UI
                 AssaultWing.Instance.ShowOnlyPlayer(-1);
             if (showOnlyPlayer1Control.Pulse)
                 AssaultWing.Instance.ShowOnlyPlayer(0);
-            if (showOnlyPlayer2Control.Pulse && AssaultWing.Instance.DataEngine.Players.Count > 1)
+            if (showOnlyPlayer2Control.Pulse && AssaultWing.Instance.DataEngine.Spectators.Count > 1)
                 AssaultWing.Instance.ShowOnlyPlayer(1);
         }
     }

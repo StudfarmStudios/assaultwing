@@ -7,7 +7,10 @@
     Height="800" Width="1000">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Button.Margin" Value="0,0,3,3"/>
+            <Setter Property="Button.Margin" Value="0,0,5,0"/>
+        </Style>
+        <Style TargetType="{x:Type Separator}">
+            <Setter Property="Separator.Margin" Value="0,5,0,5"/>
         </Style>
     </Window.Resources>
     <DockPanel>
@@ -25,9 +28,14 @@
                 <Label>Layers</Label>
                 <ListBox Name="layerNames" MinWidth="10"/>
             </DockPanel>
+            <Separator DockPanel.Dock="Top"/>
+            <DockPanel DockPanel.Dock="Top">
+                <Label>Gobs</Label>
+                <ListBox Name="gobNames" MinWidth="10"/>
+            </DockPanel>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">
-            <aw:EditorWindow x:Name="arenaView"/>
+            <aw:EditorWindow x:Name="arenaView" MouseClick="ArenaView_MouseClick"/>
         </WindowsFormsHost>
     </DockPanel>
 </Window>

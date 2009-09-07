@@ -60,6 +60,17 @@ namespace AW2.Graphics
         }
 
         /// <summary>
+        /// The matrix for projecting world coordinates to view coordinates.
+        /// </summary>
+        protected Matrix GetProjectionMatrix(float z)
+        {
+            float layerScale = GetScale(z);
+            return Matrix.CreateOrthographic(
+                Viewport.Width / layerScale, Viewport.Height / layerScale,
+                1f, 11000f);
+        }
+
+        /// <summary>
         /// The view matrix for drawing 3D content into the viewport.
         /// </summary>
         protected virtual Matrix ViewMatrix
@@ -156,6 +167,25 @@ namespace AW2.Graphics
         }
 
         /// <summary>
+        /// Converts a 2D point in the viewport into a ray in one arena layer in the game world.
+        /// </summary>
+        /// <param name="pointInViewport">Point in viewport; origin is top left corner,
+        /// positive X is right and positive Y is down.</param>
+        /// <param name="z">The Z coordinate of the arena layer.</param>
+        public Ray ToRay(Vector2 pointInViewport, float z)
+        {
+            var nearView = new Vector3(pointInViewport, 0f);
+            var farView = new Vector3(pointInViewport, 1f);
+            var view = ViewMatrix;
+            var projection = GetProjectionMatrix(z);
+            var nearWorld = Viewport.Unproject(nearView, projection, view, Matrix.Identity);
+            var farWorld = Viewport.Unproject(farView, projection, view, Matrix.Identity);
+            var direction = farWorld - nearWorld;
+            direction.Normalize();
+            return new Ray(nearWorld, direction);
+        }
+
+        /// <summary>
         /// Draws the viewport's contents.
         /// </summary>
         public void Draw()
@@ -198,9 +228,7 @@ namespace AW2.Graphics
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
                 float layerScale = GetScale(layer.Z);
-                Matrix projection = Matrix.CreateOrthographic(
-                    Viewport.Width / layerScale, Viewport.Height / layerScale,
-                    1f, 11000f);
+                var projection = GetProjectionMatrix(layer.Z);
 
 #if PARALLAX_IN_3D // HACK: Alternative implementation, parallax drawing in 3D by two triangles. Perhaps less time lost in RenderState changes.
                 // Modify renderstate for parallax.

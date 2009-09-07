@@ -18,7 +18,7 @@ namespace AW2
 #endif
                 Log.Write("Assault Wing started");
                 AssaultWing.MenuEngineInitializing += game => new MenuEngineImpl(game);
-                AssaultWing.WindowInitializing += game => new AWGameWindow(game.Window);
+                AssaultWing.WindowInitializing += game => new AWGameWindow(((Microsoft.Xna.Framework.Game)game).Window, game.GraphicsDeviceManager);
                 using (var game = AssaultWing.Instance)
                 {
                     game.Run();

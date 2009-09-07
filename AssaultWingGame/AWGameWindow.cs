@@ -11,14 +11,17 @@ namespace AW2
     {
         GameWindow window;
         Form windowForm;
+        GraphicsDeviceManager graphics;
+        Rectangle windowedSize;
 
         /// <summary>
         /// Creates a new Assault Wing game window wrapper.
         /// </summary>
-        public AWGameWindow(GameWindow window)
+        public AWGameWindow(GameWindow window, GraphicsDeviceManager graphics)
         {
             this.window = window;
             windowForm = (Form)Form.FromHandle(window.Handle);
+            this.graphics = graphics;
         }
 
         #region IWindow Members
@@ -83,6 +86,31 @@ namespace AW2
         public void Resize(int width, int height)
         {
             windowForm.Size = new System.Drawing.Size(width, height);
+        }
+
+        /// <summary>
+        /// Toggles between fullscreen and windowed mode.
+        /// </summary>
+        public void ToggleFullscreen()
+        {
+            var displayMode = graphics.GraphicsDevice.DisplayMode;
+            lock (graphics)
+            {
+                // Set our window size and format preferences before switching.
+                if (graphics.IsFullScreen)
+                {
+                    graphics.PreferredBackBufferWidth = windowedSize.Width;
+                    graphics.PreferredBackBufferHeight = windowedSize.Height;
+                }
+                else
+                {
+                    windowedSize.Width = ClientBounds.Width;
+                    windowedSize.Height = ClientBounds.Height;
+                    graphics.PreferredBackBufferWidth = displayMode.Width;
+                    graphics.PreferredBackBufferHeight = displayMode.Height;
+                }
+                graphics.ToggleFullScreen();
+            }
         }
 
         #endregion

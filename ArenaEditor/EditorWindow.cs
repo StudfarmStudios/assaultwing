@@ -46,6 +46,11 @@ namespace AW2
             Size = new System.Drawing.Size(width, height);
         }
 
+        public void ToggleFullscreen()
+        {
+            // silently ignored
+        }
+
         #endregion
     }
 }

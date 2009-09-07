@@ -102,7 +102,6 @@ namespace AW2
         SoundEngineImpl soundEngine;
         EventEngineImpl eventEngine;
         IMenuEngine menuEngine;
-        GraphicsDeviceManager graphics;
         int preferredWindowWidth, preferredWindowHeight;
         SurfaceFormat preferredWindowFormat;
         int preferredFullscreenWidth, preferredFullscreenHeight;
@@ -157,13 +156,13 @@ namespace AW2
         /// The event handler should return the menu engine of the game instance.
         /// If no handlers have been added, a dummy menu engine is used.
         /// </summary>
-        public static event Func<Microsoft.Xna.Framework.Game, IMenuEngine> MenuEngineInitializing;
+        public static event Func<AssaultWing, IMenuEngine> MenuEngineInitializing;
 
         /// <summary>
         /// Called during initialisation of the game instance.
         /// The event handler should return a window where AssaultWing can draw itself.
         /// </summary>
-        public static event Func<Microsoft.Xna.Framework.Game, IWindow> WindowInitializing;
+        public static event Func<AssaultWing, IWindow> WindowInitializing;
 
         /// <summary>
         /// Called when <see cref="GameState"/> has changed.
@@ -306,6 +305,8 @@ namespace AW2
         /// </summary>
         public new GameWindow Window { get { throw new Exception("Use either ((Microsoft.Xna.Framework.Game)AssaultWing).Window or AssaultWing.window"); } }
 
+        public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
+
         #endregion AssaultWing properties
 
         #region AssaultWing performance counters
@@ -365,11 +366,11 @@ namespace AW2
             preferredWindowHeight = 800;
             preferredWindowFormat = displayMode.Format;
 
-            graphics = new GraphicsDeviceManager(this);
-            graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = preferredWindowWidth;
-            graphics.PreferredBackBufferHeight = preferredWindowHeight;
-            graphics.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
+            GraphicsDeviceManager = new GraphicsDeviceManager(this);
+            GraphicsDeviceManager.IsFullScreen = false;
+            GraphicsDeviceManager.PreferredBackBufferWidth = preferredWindowWidth;
+            GraphicsDeviceManager.PreferredBackBufferHeight = preferredWindowHeight;
+            GraphicsDeviceManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
 
             window = WindowInitializing(this);
             window.AllowUserResizing = true;
@@ -416,9 +417,9 @@ namespace AW2
         /// </summary>
         void ClientSizeChanged(object sender, EventArgs e)
         {
-            graphics.PreferredBackBufferWidth = ClientBounds.Width;
-            graphics.PreferredBackBufferHeight = ClientBounds.Height;
-            graphics.ApplyChanges();
+            GraphicsDeviceManager.PreferredBackBufferWidth = ClientBounds.Width;
+            GraphicsDeviceManager.PreferredBackBufferHeight = ClientBounds.Height;
+            GraphicsDeviceManager.ApplyChanges();
             if (graphicsEngine != null) graphicsEngine.WindowResize();
             if (menuEngine != null) menuEngine.WindowResize();
         }
@@ -630,23 +631,7 @@ namespace AW2
         /// </summary>
         public void ToggleFullscreen()
         {
-            lock (GraphicsDevice)
-            {
-                // Set our window size and format preferences before switching.
-                if (graphics.IsFullScreen)
-                {
-                    graphics.PreferredBackBufferFormat = preferredWindowFormat;
-                    graphics.PreferredBackBufferHeight = preferredWindowHeight;
-                    graphics.PreferredBackBufferWidth = preferredWindowWidth;
-                }
-                else
-                {
-                    graphics.PreferredBackBufferFormat = preferredFullscreenFormat;
-                    graphics.PreferredBackBufferHeight = preferredFullscreenHeight;
-                    graphics.PreferredBackBufferWidth = preferredFullscreenWidth;
-                }
-                graphics.ToggleFullScreen();
-            }
+            window.ToggleFullscreen();
         }
 
         /// <summary>

@@ -45,5 +45,10 @@ namespace AW2.Graphics
         /// Resizes the window.
         /// </summary>
         void Resize(int width, int height);
+
+        /// <summary>
+        /// Toggles between fullscreen and windowed mode.
+        /// </summary>
+        void ToggleFullscreen();
     }
 }

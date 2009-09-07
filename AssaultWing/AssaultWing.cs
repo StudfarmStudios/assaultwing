@@ -307,6 +307,11 @@ namespace AW2
 
         public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
+        /// <summary>
+        /// Are overlay dialogs allowed.
+        /// </summary>
+        public bool AllowDialogs { get; set; }
+
         #endregion AssaultWing properties
 
         #region AssaultWing performance counters
@@ -376,6 +381,7 @@ namespace AW2
             window.AllowUserResizing = true;
             window.ClientSizeChanged += ClientSizeChanged;
             ClientBoundsMin = new Rectangle(0, 0, 1000, 800);
+            AllowDialogs = true;
 
             arenaReload = new KeyboardKey(Keys.F6);
             frameStepControl = new KeyboardKey(Keys.F8);
@@ -608,6 +614,7 @@ namespace AW2
         /// <param name="dialogData">The contents and actions for the dialog.</param>
         public void ShowDialog(OverlayDialogData dialogData)
         {
+            if (!AllowDialogs) return;
             overlayDialog.Data = dialogData;
             if (DataEngine.ProgressBar.TaskRunning)
                 GameState = GameState.ArenaLoading; // HACK !!!

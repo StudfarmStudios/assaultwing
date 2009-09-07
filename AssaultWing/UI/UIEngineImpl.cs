@@ -24,13 +24,6 @@ namespace AW2.UI
         bool eatMouse;
 
         /// <summary>
-        /// Controls for general functionality.
-        /// </summary>
-        // HACK: Remove from release builds: showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl
-        private Control fullscreenControl;
-        private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
-
-        /// <summary>
         /// If mouse input is being consumed for the purposes of using the mouse
         /// for game controls. Such consumption prevents other programs from using
         /// the mouse in any practical manner. Defaults to <b>false</b>.
@@ -41,10 +34,6 @@ namespace AW2.UI
         {
             oldState = InputState.GetState();
             eatMouse = false;
-            fullscreenControl = new KeyboardKey(Keys.F10);
-            showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
-            showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
-            showEverybodyControl = new KeyboardKey(Keys.F9);
         }
 
         /// <summary>
@@ -103,16 +92,6 @@ namespace AW2.UI
             }
 
             oldState = newState;
-
-            // Check general controls.
-            if (fullscreenControl.Pulse)
-                AssaultWing.Instance.ToggleFullscreen();
-            if (showEverybodyControl.Pulse)
-                AssaultWing.Instance.ShowOnlyPlayer(-1);
-            if (showOnlyPlayer1Control.Pulse)
-                AssaultWing.Instance.ShowOnlyPlayer(0);
-            if (showOnlyPlayer2Control.Pulse && AssaultWing.Instance.DataEngine.Spectators.Count > 1)
-                AssaultWing.Instance.ShowOnlyPlayer(1);
         }
     }
 }

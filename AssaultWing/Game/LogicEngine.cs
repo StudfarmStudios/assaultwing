@@ -15,11 +15,20 @@ namespace AW2.Game
     /// </summary>
     class LogicEngine : GameComponent
     {
-        Control escapeControl;
+        Control fullscreenControl, escapeControl;
+#if DEBUG
+        Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
+#endif
 
         public LogicEngine(Microsoft.Xna.Framework.Game game) : base(game)
         {
             escapeControl = new KeyboardKey(Keys.Escape);
+            fullscreenControl = new KeyboardKey(Keys.F10);
+#if DEBUG
+            showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
+            showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
+            showEverybodyControl = new KeyboardKey(Keys.F9);
+#endif
         }
 
         public override void Initialize()
@@ -89,7 +98,16 @@ namespace AW2.Game
         /// </summary>
         private void UpdateControls()
         {
-            // Check general game controls.
+            if (fullscreenControl.Pulse)
+                AssaultWing.Instance.ToggleFullscreen();
+#if DEBUG
+            if (showEverybodyControl.Pulse)
+                AssaultWing.Instance.ShowOnlyPlayer(-1);
+            if (showOnlyPlayer1Control.Pulse)
+                AssaultWing.Instance.ShowOnlyPlayer(0);
+            if (showOnlyPlayer2Control.Pulse && AssaultWing.Instance.DataEngine.Spectators.Count > 1)
+                AssaultWing.Instance.ShowOnlyPlayer(1);
+#endif
             if (escapeControl.Pulse)
             {
                 AW2.Graphics.CustomOverlayDialogData dialogData;

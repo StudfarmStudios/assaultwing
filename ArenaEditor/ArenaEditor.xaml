@@ -6,20 +6,25 @@
     Title="Assault Wing Arena Editor"
     Height="800" Width="1000">
     <Window.Resources>
-         <Style TargetType="{x:Type Button}">
-            <Setter Property="FrameworkElement.Margin" Value="0,0,3,3"/>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Button.Margin" Value="0,0,3,3"/>
         </Style>
     </Window.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Left" LastChildFill="False">
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <DockPanel DockPanel.Dock="Top">
                 <Label>Arena</Label>
                 <ComboBox Name="arenaName" DockPanel.Dock="Top" IsEditable="False" MinWidth="150"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Button HorizontalAlignment="Stretch" DockPanel.Dock="Top" Click="LoadArenaClick">Load</Button>
-                <Button DockPanel.Dock="Top" IsEnabled="False">Save</Button>
-            </StackPanel>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+                <Button Click="LoadArenaClick">Load</Button>
+                <Button IsEnabled="False">Save</Button>
+            </DockPanel>
+            <Separator DockPanel.Dock="Top"/>
+            <DockPanel DockPanel.Dock="Top">
+                <Label>Layers</Label>
+                <ListBox Name="layerNames" MinWidth="10"/>
+            </DockPanel>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">
             <aw:EditorWindow x:Name="arenaView"/>

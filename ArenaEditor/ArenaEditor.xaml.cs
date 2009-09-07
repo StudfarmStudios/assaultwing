@@ -49,6 +49,13 @@ namespace AW2
             while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
             data.ProgressBar.FinishTask();
             AssaultWing.Instance.StartArena();
+
+            // Put arena layer names on display.
+            layerNames.Items.Clear();
+            var layerNameList = data.Arena.Layers.Select((layer, index) =>
+                string.Format("#{0} z={1:.0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
+            foreach (var layerName in layerNameList)
+                layerNames.Items.Add(layerName);
         }
     }
 }

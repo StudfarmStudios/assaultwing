@@ -35,7 +35,13 @@
             </DockPanel>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">
-            <aw:EditorWindow x:Name="arenaView" MouseClick="ArenaView_MouseClick"/>
+            <aw:EditorWindow x:Name="arenaView"
+                             MouseClick="ArenaView_MouseClick"
+                             MouseMove="ArenaView_MouseMove"
+                             MouseDown="ArenaView_MouseDown"
+                             MouseUp="ArenaView_MouseUp"
+                             MouseEnter="ArenaView_MouseEnterOrLeave"
+                             MouseLeave="ArenaView_MouseEnterOrLeave"/>
         </WindowsFormsHost>
     </DockPanel>
 </Window>

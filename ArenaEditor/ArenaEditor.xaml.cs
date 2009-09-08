@@ -81,11 +81,10 @@ namespace AW2
                 var ray = viewport.ToRay(pointInViewport, layer.Z);
                 foreach (var gob in layer.Gobs)
                 {
+                    float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z));
                     float? t = gob.DrawBounds.Intersects(ray);
-                    if (t.HasValue)
-                    {
+                    if (distance < 20 || t.HasValue)
                         gobNames.Items.Add(string.Format("z={0} {1}", layer.Z, gob.TypeName));
-                    }
                 }
             }
         }

@@ -172,6 +172,23 @@ namespace AW2.Graphics
         }
 
         /// <summary>
+        /// Converts a 2D point in the viewport into a 2D point in an arena layer in the game world.
+        /// </summary>
+        /// <param name="pointInViewport">Point in viewport; origin is top left corner,
+        /// positive X is right and positive Y is down.</param>
+        /// <param name="z">The Z coordinate of the arena layer.</param>
+        public Vector2 ToPos(Vector2 pointInViewport, float z)
+        {
+            // Note: Z coordinate in view space is irrelevant because we have
+            // an orthogonal projection from game world space to view space.
+            var viewPos = new Vector3(pointInViewport, 0f);
+            var view = ViewMatrix;
+            var projection = GetProjectionMatrix(z);
+            var worldPos = Viewport.Unproject(viewPos, projection, view, Matrix.Identity);
+            return new Vector2(worldPos.X, worldPos.Y);
+        }
+
+        /// <summary>
         /// Converts a 2D point in the viewport into a ray in one arena layer in the game world.
         /// </summary>
         /// <param name="pointInViewport">Point in viewport; origin is top left corner,

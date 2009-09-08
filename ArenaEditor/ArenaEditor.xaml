@@ -31,7 +31,7 @@
             <Separator DockPanel.Dock="Top"/>
             <DockPanel DockPanel.Dock="Top">
                 <Label>Gobs</Label>
-                <ListBox Name="gobNames" MinWidth="10"/>
+                <ListBox Name="gobNames" MinWidth="10" SelectedValuePath="Value"/>
             </DockPanel>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">

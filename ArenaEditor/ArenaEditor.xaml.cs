@@ -18,6 +18,16 @@ namespace AW2
     /// </summary>
     public partial class ArenaEditor : Window
     {
+        class GobReference
+        {
+            public Gob Value { get; set; }
+            public int LayerIndex { get; set; }
+            public override string ToString()
+            {
+                return string.Format("#{0} {1}", LayerIndex, Value.TypeName);
+            }
+        }
+
         Spectator spectator;
         System.Windows.Forms.MouseButtons mouseButtons;
         Point lastMouseLocation, dragStartLocation;
@@ -97,6 +107,7 @@ namespace AW2
                     gobNames.Items.Clear();
                     var pointInViewport = new Vector2(e.Location.X, e.Location.Y);
                     var viewport = GetViewport(e.Location);
+                    int layerIndex = 0;
                     foreach (var layer in data.Arena.Layers)
                     {
                         var ray = viewport.ToRay(pointInViewport, layer.Z);
@@ -105,8 +116,9 @@ namespace AW2
                             float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z));
                             float? t = gob.DrawBounds.Intersects(ray);
                             if (distance < 20 || t.HasValue)
-                                gobNames.Items.Add(string.Format("z={0} {1}", layer.Z, gob.TypeName));
+                                gobNames.Items.Add(new GobReference { Value = gob, LayerIndex = layerIndex });
                         }
+                        ++layerIndex;
                     }
                 }
             }
@@ -123,13 +135,24 @@ namespace AW2
                 isDragging = true;
             try
             {
-                // Right button drag moves view
+                var viewport = GetViewport(dragStartLocation);
+
+                // Left mouse button drag moves selected gob.
+                if ((mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0)
+                {
+                    var gob = (Gob)gobNames.SelectedValue;
+                    if (gob != null)
+                    {
+                        var move = viewport.MouseMoveToWorldCoordinates(lastMouseLocation, e.Location, gob.Layer.Z);
+                        gob.Pos += move;
+                    }
+                }
+
+                // Right mouse button drag moves view.
                 if ((mouseButtons & System.Windows.Forms.MouseButtons.Right) != 0)
                 {
-                    var viewport = GetViewport(dragStartLocation);
-                    var oldPos = viewport.ToPos(lastMouseLocation.ToVector2(), 0);
-                    var nowPos = viewport.ToPos(e.Location.ToVector2(), 0);
-                    spectator.LookAt.Position -= nowPos - oldPos;
+                    var move = viewport.MouseMoveToWorldCoordinates(lastMouseLocation, e.Location, 0);
+                    spectator.LookAt.Position -= move;
                 }
                 lastMouseLocation = e.Location;
             }
@@ -165,6 +188,13 @@ namespace AW2
         public static Vector2 ToVector2(this Point point)
         {
             return new Vector2(point.X, point.Y);
+        }
+
+        public static Vector2 MouseMoveToWorldCoordinates(this AW2.Graphics.AWViewport viewport, Point oldMouseLocation, Point newMouseLocation, float z)
+        {
+            var oldPos = viewport.ToPos(oldMouseLocation.ToVector2(), z);
+            var nowPos = viewport.ToPos(newMouseLocation.ToVector2(), z);
+            return nowPos - oldPos;
         }
     }
 }

@@ -64,33 +64,50 @@ namespace AW2
             // Put arena layers on display.
             layerNames.Items.Clear();
             var layerNameList = data.Arena.Layers.Select((layer, index) =>
-                string.Format("#{0} z={1:.0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
+                string.Format("#{0} z={1:f0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
             foreach (var layerName in layerNameList)
                 layerNames.Items.Add(layerName);
         }
 
         private void ArenaView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            gobNames.Items.Clear();
             var data = AssaultWing.Instance.DataEngine;
+            if (data.Arena == null) return;
+            gobNames.Items.Clear();
             var pointInViewport = new Vector2(e.Location.X, e.Location.Y);
-            var clickVolume = new BoundingSphere(new Vector3(pointInViewport, 0), 0.1f);
+            var viewport = GetViewport(e.Location.X, e.Location.Y);
+            foreach (var layer in data.Arena.Layers)
+            {
+                var ray = viewport.ToRay(pointInViewport, layer.Z);
+                foreach (var gob in layer.Gobs)
+                {
+                    float? t = gob.DrawBounds.Intersects(ray);
+                    if (t.HasValue)
+                    {
+                        gobNames.Items.Add(string.Format("z={0} {1}", layer.Z, gob.TypeName));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the viewport that contains a point on the arena view.
+        /// </summary>
+        /// The coordinates are in arena view coordinates, origin at the top left corner,
+        /// positive X pointing right and positive Y pointing down.
+        AW2.Graphics.AWViewport GetViewport(int x, int y)
+        {
+            var data = AssaultWing.Instance.DataEngine;
+            AW2.Graphics.AWViewport result = null;
             foreach (var layer in data.Arena.Layers)
                 data.ForEachViewport(viewport =>
                 {
-                    if (viewport.Intersects(clickVolume, layer.Z))
-                    {
-                        var ray = viewport.ToRay(pointInViewport, layer.Z);
-                        foreach (var gob in layer.Gobs)
-                        {
-                            float? t = gob.DrawBounds.Intersects(ray);
-                            if (t.HasValue)
-                            {
-                                gobNames.Items.Add(string.Format("z={0} {1}", layer.Z, gob.TypeName));
-                            }
-                        }
-                    }
+                    if (viewport.OnScreen.Contains(x, y))
+                        result = viewport;
                 });
+            if (result == null)
+                throw new ArgumentException("There is no viewport at render target surface coordinates " + x + ", " + y);
+            return result;
         }
     }
 }

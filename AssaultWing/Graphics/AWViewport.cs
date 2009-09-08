@@ -40,6 +40,11 @@ namespace AW2.Graphics
         protected ILookAt LookAt { get; set; }
 
         /// <summary>
+        /// The area of the viewport on the render target surface.
+        /// </summary>
+        public Rectangle OnScreen { get { return new Rectangle(Viewport.Y, Viewport.Y, Viewport.Width, Viewport.Height); } }
+
+        /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport shows
         /// at a depth.
         /// </summary>

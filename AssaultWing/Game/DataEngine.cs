@@ -188,8 +188,11 @@ namespace AW2.Game
             Arena = preparedArena;
             preparedArena = null;
             AssaultWing.Instance.GobsCounter.SetRawValue(Arena.Gobs.Count);
-            RefreshArenaToRadarTransform();
-            RefreshArenaRadarSilhouette();
+            if (Arena.IsForPlaying)
+            {
+                RefreshArenaToRadarTransform();
+                RefreshArenaRadarSilhouette();
+            }
         }
 
         /// <summary>

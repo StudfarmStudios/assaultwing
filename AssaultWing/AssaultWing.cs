@@ -241,7 +241,7 @@ namespace AW2
                     case GameState.Initializing:
                         break;
                     case GameState.Gameplay:
-                        logicEngine.Enabled = true;
+                        logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                         graphicsEngine.Visible = true;
                         break;
                     case GameState.ArenaLoading:
@@ -933,9 +933,10 @@ namespace AW2
             // Take care of game time freezing if game logic is disabled.
             if (!logicEngine.Enabled)
                 gameTimeDelay = gameTimeDelay.Add(gameTime.ElapsedGameTime);
+            var totalGameTime = gameTime.TotalGameTime.Subtract(gameTimeDelay);
+            if (totalGameTime < TimeSpan.Zero) totalGameTime = TimeSpan.Zero;
             this.gameTime = new GameTime(gameTime.TotalRealTime, gameTime.ElapsedRealTime,
-                gameTime.TotalGameTime.Subtract(gameTimeDelay),
-                gameTime.ElapsedGameTime);
+                totalGameTime, gameTime.ElapsedGameTime);
 
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)

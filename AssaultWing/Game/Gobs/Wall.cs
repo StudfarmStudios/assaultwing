@@ -204,9 +204,17 @@ namespace AW2.Game.Gobs
                 maskEff.Dispose();
                 maskEff = null;
             }
-            if (!silhouetteEffect.IsDisposed)
-                silhouetteEffect.Dispose();
-            vertexDeclaration.Dispose();
+            if (silhouetteEffect != null)
+            {
+                if (!silhouetteEffect.IsDisposed)
+                    silhouetteEffect.Dispose();
+                silhouetteEffect = null;
+            }
+            if (vertexDeclaration != null)
+            {
+                vertexDeclaration.Dispose();
+                vertexDeclaration = null;
+            }
             // 'texture' will be disposed by the graphics engine.
             // 'effect' and 'silhouetteEffect' are managed by other objects
             base.UnloadContent();
@@ -219,7 +227,8 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             Prepare3DModel();
-            InitializeIndexMap();
+            if (Arena.IsForPlaying)
+                InitializeIndexMap();
             AssaultWing.Instance.DataEngine.ProgressBar.SubtaskCompleted();
         }
 

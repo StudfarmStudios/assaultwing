@@ -63,7 +63,7 @@ namespace AW2
             AssaultWing.Instance.DataEngine.Spectators.Add(spectator);
         }
 
-        private void LoadArenaClick(object sender, RoutedEventArgs e)
+        private void LoadArena_Click(object sender, RoutedEventArgs e)
         {
             Initialize(); // TODO: Move Initialize() to be called once after AssaultWing has started running
 
@@ -71,7 +71,7 @@ namespace AW2
             var arenaToLoad = arenaName.Text;
             if (arenaToLoad == "") return;
             var data = AssaultWing.Instance.DataEngine;
-            data.ProgressBar.Task = () => data.InitializeFromArena(arenaToLoad, true);
+            data.ProgressBar.Task = () => data.InitializeFromArena(arenaToLoad, false);
             data.ProgressBar.StartTask();
             while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
             data.ProgressBar.FinishTask();
@@ -191,6 +191,7 @@ namespace AW2
 
         private void GobRotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (SelectedGob == null) return;
             SelectedGob.Rotation = (float)e.NewValue;
         }
 

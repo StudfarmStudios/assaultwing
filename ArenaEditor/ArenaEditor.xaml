@@ -20,7 +20,7 @@
                 <ComboBox Name="arenaName" DockPanel.Dock="Top" IsEditable="False" MinWidth="150"/>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-                <Button Click="LoadArenaClick">Load</Button>
+                <Button Click="LoadArena_Click">Load</Button>
                 <Button IsEnabled="False">Save</Button>
             </DockPanel>
             <Separator DockPanel.Dock="Top"/>

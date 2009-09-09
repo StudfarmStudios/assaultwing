@@ -760,11 +760,14 @@ namespace AW2.Game
         public virtual void Activate()
         {
             LoadContent();
-            InitializeModelCollisionAreas();
-            TransformUnmovableCollisionAreas();
-            CreateBirthGobs();
-            CreateModelBirthGobs();
-            CreateExhaustEngines();
+            if (Arena.IsForPlaying)
+            {
+                InitializeModelCollisionAreas();
+                TransformUnmovableCollisionAreas();
+                CreateBirthGobs();
+                CreateModelBirthGobs();
+                CreateExhaustEngines();
+            }
 
             // Create draw bounding volume
             VertexPositionNormalTexture[] vertexData;

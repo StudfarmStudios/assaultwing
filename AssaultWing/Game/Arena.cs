@@ -351,7 +351,7 @@ namespace AW2.Game
                 Gobs.Added += gob =>
                 {
                     if (IsActive) AssaultWing.Instance.GobsCounter.Increment();
-                    if (IsForPlaying) Prepare(gob);
+                    Prepare(gob);
 
                     // Game server notifies game clients of the new gob.
                     if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
@@ -557,13 +557,16 @@ namespace AW2.Game
         {
             gob.Arena = this;
             gob.Activate();
-            if (gob.Layer == Gobs.GameplayLayer)
-                Register(gob);
-            else
+            if (IsForPlaying)
             {
-                // Gobs outside the gameplay layer cannot collide.
-                // To achieve this, we take away all the gob's collision areas.
-                gob.ClearCollisionAreas();
+                if (gob.Layer == Gobs.GameplayLayer)
+                    Register(gob);
+                else
+                {
+                    // Gobs outside the gameplay layer cannot collide.
+                    // To achieve this, we take away all the gob's collision areas.
+                    gob.ClearCollisionAreas();
+                }
             }
         }
 

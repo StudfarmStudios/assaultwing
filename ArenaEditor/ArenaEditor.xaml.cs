@@ -33,6 +33,14 @@ namespace AW2
         Point lastMouseLocation, dragStartLocation;
         bool isDragging;
 
+        Gob SelectedGob
+        {
+            get
+            {
+                return (Gob)gobNames.SelectedValue;
+            }
+        }
+
         public ArenaEditor()
         {
             InitializeComponent();
@@ -140,11 +148,10 @@ namespace AW2
                 // Left mouse button drag moves selected gob.
                 if ((mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0)
                 {
-                    var gob = (Gob)gobNames.SelectedValue;
-                    if (gob != null)
+                    if (SelectedGob != null)
                     {
-                        var move = viewport.MouseMoveToWorldCoordinates(lastMouseLocation, e.Location, gob.Layer.Z);
-                        gob.Pos += move;
+                        var move = viewport.MouseMoveToWorldCoordinates(lastMouseLocation, e.Location, SelectedGob.Layer.Z);
+                        SelectedGob.Pos += move;
                     }
                 }
 
@@ -180,6 +187,19 @@ namespace AW2
             if (result == null)
                 throw new ArgumentException("There is no viewport at render target surface coordinates " + location.ToString());
             return result;
+        }
+
+        private void GobRotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            SelectedGob.Rotation = (float)e.NewValue;
+        }
+
+        private void GobNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (SelectedGob == null) return;
+            float newValue = SelectedGob.Rotation % MathHelper.TwoPi;
+            if (newValue < 0) newValue += MathHelper.TwoPi;
+            gobRotation.Value = newValue;
         }
     }
 

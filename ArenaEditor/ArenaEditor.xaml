@@ -31,7 +31,15 @@
             <Separator DockPanel.Dock="Top"/>
             <DockPanel DockPanel.Dock="Top">
                 <Label>Gobs</Label>
-                <ListBox Name="gobNames" MinWidth="10" SelectedValuePath="Value"/>
+                <ListBox Name="gobNames" MinWidth="10" SelectedValuePath="Value"
+                         SelectionChanged="GobNames_SelectionChanged"/>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <Label>Rotation</Label>
+                <Slider Name="gobRotation" DockPanel.Dock="Top"
+                        Minimum="0" Maximum="6.28318531" TickFrequency="0.785398163"
+                        SmallChange="0.196349541" LargeChange="0.785398163"
+                        ValueChanged="GobRotation_ValueChanged"/>
             </DockPanel>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">

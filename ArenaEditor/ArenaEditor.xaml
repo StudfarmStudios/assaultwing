@@ -26,12 +26,13 @@
             <Separator DockPanel.Dock="Top"/>
             <DockPanel DockPanel.Dock="Top">
                 <Label>Layers</Label>
-                <ListBox Name="layerNames" MinWidth="10"/>
+                <ListBox Name="layerNames" MinWidth="100" MaxHeight="200"/>
             </DockPanel>
             <Separator DockPanel.Dock="Top"/>
             <DockPanel DockPanel.Dock="Top">
                 <Label>Gobs</Label>
-                <ListBox Name="gobNames" MinWidth="10" SelectedValuePath="Value"
+                <ListBox Name="gobNames" MinWidth="100" MaxHeight="400"
+                         SelectedValuePath="Value"
                          SelectionChanged="GobNames_SelectionChanged"/>
             </DockPanel>
             <DockPanel DockPanel.Dock="Top">

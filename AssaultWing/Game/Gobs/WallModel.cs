@@ -80,7 +80,8 @@ namespace AW2.Game.Gobs
         /// an ongoing play of the game.
         public override void Activate()
         {
-            Set3DModel();
+            if (Arena.IsForPlaying) Set3DModel();
+            else ModelName = wallModelName;
             base.Activate();
         }
 

@@ -125,12 +125,28 @@ namespace AW2.Game.Gobs
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public override Matrix WorldMatrix { get { return Matrix.Identity; } }
+        public override Matrix WorldMatrix
+        {
+            get
+            {
+                return Arena.IsForPlaying
+                    ? Matrix.Identity
+                    : base.WorldMatrix;
+            }
+        }
 
         /// <summary>
         /// Bounding volume of the visuals of the gob, in world coordinates.
         /// </summary>
-        public override BoundingSphere DrawBounds { get { return drawBounds; } }
+        public override BoundingSphere DrawBounds
+        {
+            get
+            {
+                return Arena.IsForPlaying
+                    ? drawBounds
+                    : base.DrawBounds;
+            }
+        }
 
         #endregion Properties
 
@@ -226,9 +242,12 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            Prepare3DModel();
             if (Arena.IsForPlaying)
+            {
+                Prepare3DModel();
                 InitializeIndexMap();
+                drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position));
+            }
             AssaultWing.Instance.DataEngine.ProgressBar.SubtaskCompleted();
         }
 
@@ -239,6 +258,11 @@ namespace AW2.Game.Gobs
         /// <param name="projection">The projection matrix.</param>
         public override void Draw(Matrix view, Matrix projection)
         {
+            if (!Arena.IsForPlaying)
+            {
+                base.Draw(view, projection);
+                return;
+            }
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
             effect.World = Matrix.Identity;
@@ -447,9 +471,6 @@ namespace AW2.Game.Gobs
             var boundingArea = new Rectangle(min, max);
             collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
                 CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
-
-            // Create a drawing bounding volume for the wall.
-            drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position));
         }
 
         /// <summary>

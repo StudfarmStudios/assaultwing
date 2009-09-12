@@ -21,7 +21,7 @@
             </DockPanel>
             <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                 <Button Click="LoadArena_Click">Load</Button>
-                <Button IsEnabled="False">Save</Button>
+                <Button Click="SaveArena_Click">Save</Button>
             </DockPanel>
             <Separator DockPanel.Dock="Top"/>
             <DockPanel DockPanel.Dock="Top">

@@ -125,6 +125,7 @@
     <Compile Include="Game\Gobs\SpawnPlayer.cs" />
     <Compile Include="Game\Gobs\Wall.cs" />
     <Compile Include="Game\Gobs\WallModel.cs" />
+    <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Particles\DotEmitter.cs" />
     <Compile Include="Game\Particles\Emitter.cs" />

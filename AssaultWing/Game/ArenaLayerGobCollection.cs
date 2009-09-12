@@ -8,7 +8,7 @@ namespace AW2.Game
     /// <summary>
     /// A collection of gobs in an arena layer.
     /// </summary>
-    [SerializedType(typeof(IList<Gob>))]
+    [SerializedType(typeof(List<Gob>))]
     public class ArenaLayerGobCollection : IList<Gob>
     {
         IList<Gob> gobs = new List<Gob>();

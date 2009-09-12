@@ -17,21 +17,19 @@ namespace AW2.Game.Gobs
     /// Note that a wall has no position or movement like other gobs have. 
     /// Instead, a wall acts like a polygon. For visual purposes, walls have 
     /// also a third dimension.
-    public class Wall : Gob, IConsistencyCheckable
+    public class Wall : Gob
     {
         #region Wall Fields
 
         /// <summary>
         /// The location of the wall's vertices in the game world.
         /// </summary>
-        [RuntimeState]
         protected VertexPositionNormalTexture[] vertexData;
 
         /// <summary>
         /// The index data where every consequtive index triplet signifies
         /// one triangle. The indices index 'vertexData'.
         /// </summary>
-        [RuntimeState]
         protected short[] indexData;
 
         /// <summary>
@@ -63,19 +61,12 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The number of triangles in the wall's 3D model not yet removed.
         /// </summary>
-        int triangleCount;
-
-        /// <summary>
-        /// The name of the texture to fill the wall with.
-        /// The name indexes the static texture bank in DataEngine.
-        /// </summary>
-        [TypeParameter]
-        CanonicalString textureName;
+        protected int TriangleCount { get; set; }
 
         /// <summary>
         /// The texture to draw the wall's 3D model with.
         /// </summary>
-        Texture2D texture;
+        protected Texture2D Texture { get; set; }
 
         /// <summary>
         /// The effect for drawing the wall.
@@ -104,22 +95,9 @@ namespace AW2.Game.Gobs
 
         VertexDeclaration vertexDeclaration;
 
-        /// <summary>
-        /// The wall's 3D model's bounding box, in world coordinates.
-        /// </summary>
-        BoundingBox boundingBox;
-
         #endregion // Wall Fields
 
         #region Properties
-
-        /// <summary>
-        /// Names of all textures that this gob type will ever use.
-        /// </summary>
-        public override IEnumerable<CanonicalString> TextureNames
-        {
-            get { return base.TextureNames.Union(new CanonicalString[] { textureName }); }
-        }
 
         /// <summary>
         /// Returns the world matrix of the gob, i.e., the translation from
@@ -164,8 +142,6 @@ namespace AW2.Game.Gobs
                 },
                 new short[] { 0, 1, 2 },
                 null, null);
-            textureName = (CanonicalString)"dummytexture";
-            vertexDeclaration = null;
         }
 
         /// <summary>
@@ -175,10 +151,6 @@ namespace AW2.Game.Gobs
         public Wall(CanonicalString typeName)
             : base(typeName)
         {
-            vertexData = null;
-            indexData = null;
-            triangleCount = 0;
-            boundingBox = new BoundingBox();
             movable = false;
         }
 
@@ -196,7 +168,6 @@ namespace AW2.Game.Gobs
             effect = defaultEffect;
             silhouetteEffect = defaultSilhouetteEffect;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
-            texture = AssaultWing.Instance.Content.Load<Texture2D>(textureName);
             base.LoadContent();
         }
 
@@ -268,7 +239,7 @@ namespace AW2.Game.Gobs
             effect.World = Matrix.Identity;
             effect.Projection = projection;
             effect.View = view;
-            effect.Texture = texture;
+            effect.Texture = Texture;
             effect.TextureEnabled = true;
             AssaultWing.Instance.DataEngine.PrepareEffect(effect);
             effect.Begin();
@@ -297,7 +268,7 @@ namespace AW2.Game.Gobs
             silhouetteEffect.World = Matrix.Identity;
             silhouetteEffect.Projection = projection;
             silhouetteEffect.View = view;
-            silhouetteEffect.Texture = texture;
+            silhouetteEffect.Texture = Texture;
             silhouetteEffect.VertexColorEnabled = false;
             silhouetteEffect.LightingEnabled = false;
             silhouetteEffect.TextureEnabled = false;
@@ -314,18 +285,6 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Methods related to gobs' functionality in the game world
-
-        /// <summary>
-        /// Copies the gob's runtime state from another gob.
-        /// </summary>
-        /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
-        protected override void SetRuntimeState(Gob runtimeState)
-        {
-            base.SetRuntimeState(runtimeState);
-            triangleCount = indexData.Length / 3;
-            if (vertexData.Length > 0)
-                boundingBox = BoundingBox.CreateFromPoints(vertexData.Select(vertex => vertex.Position));
-        }
 
         /// <summary>
         /// Removes a round area from this wall, i.e. makes a hole.
@@ -355,52 +314,16 @@ namespace AW2.Game.Gobs
                     indexData[3 * index + 2] = 0;
 
                     Arena.Unregister(collisionAreas[index]);
-                    --triangleCount;
+                    --TriangleCount;
                 }
                 //indexMap[y, x] = null;
             });
 
             // Remove the wall gob if all its triangles have been removed.
-            if (triangleCount == 0)
+            if (TriangleCount == 0)
                 Arena.Gobs.Remove(this);
         }
  
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Make sure there's no null references.
-                if (textureName == null)
-                    textureName = (CanonicalString)"dummytexture";
-            }
-            if (limitationAttribute == typeof(RuntimeStateAttribute))
-            {
-                // Make sure there's no null references.
-                if (vertexData == null)
-                    vertexData = new VertexPositionNormalTexture[0];
-                if (indexData == null)
-                    indexData = new short[0];
-
-                // 'textureName' is actually a type parameter,
-                // but its value is passed onwards by 'TextureNames' even
-                // if we were only a gob's runtime state.
-                if (textureName == null)
-                    textureName = (CanonicalString)"dummytexture";
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
-
         #region Protected methods
 
         /// <summary>
@@ -415,7 +338,7 @@ namespace AW2.Game.Gobs
         {
             this.vertexData = vertexData;
             this.indexData = indexData;
-            this.texture = texture;
+            this.Texture = texture;
             this.effect = effect;
         }
 
@@ -444,8 +367,7 @@ namespace AW2.Game.Gobs
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             silhouetteEffect = effect == null ? null : (BasicEffect)effect.Clone(gfx);
             FineTriangles();
-            triangleCount = this.indexData.Length / 3;
-            boundingBox = BoundingBox.CreateFromPoints(vertexData.Select(vertex => vertex.Position));
+            TriangleCount = this.indexData.Length / 3;
 
             // Create collision areas; one for each triangle in the wall's 3D model
             // and one bounding collision area for making holes in the wall.

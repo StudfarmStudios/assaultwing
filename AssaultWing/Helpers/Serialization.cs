@@ -705,16 +705,18 @@ namespace AW2.Helpers
             if (type.IsValueType)
                 return Activator.CreateInstance(type);
 
+            // System.String has no parameterless constructor so we provide a default value.
+            if (type == typeof(string))
+                return "";
+
             // Otherwise 'type' refers to a class. Find its constructors.
             ConstructorInfo[] constructors = type.GetConstructors();
             if (constructors.Length == 0)
                 throw new Exception("No constructors found for type " + type.ToString());
 
             // Call a constructor with a minimal number of parameters.
-            Array.Sort(constructors, delegate(ConstructorInfo x, ConstructorInfo y)
-            {
-                return Comparer.Default.Compare(x.GetParameters().Length, y.GetParameters().Length);
-            });
+            Array.Sort(constructors, (cons1, cons2) =>
+                cons1.GetParameters().Length.CompareTo(cons2.GetParameters().Length));
             ParameterInfo[] paramTypes = constructors[0].GetParameters();
             List<object> parameters = new List<object>();
             foreach (ParameterInfo paramType in paramTypes)

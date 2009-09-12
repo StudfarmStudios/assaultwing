@@ -305,14 +305,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Wall_soil.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Wall_soil</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="gobdefs\WallModel_wall model.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WallModel_wall model</Name>

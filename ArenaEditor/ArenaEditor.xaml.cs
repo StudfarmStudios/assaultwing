@@ -28,6 +28,7 @@ namespace AW2
             }
         }
 
+        TypeLoader arenaSaver;
         Spectator spectator;
         System.Windows.Forms.MouseButtons mouseButtons;
         Point lastMouseLocation, dragStartLocation;
@@ -61,6 +62,7 @@ namespace AW2
             };
             spectator = new Spectator(spectatorControls);
             AssaultWing.Instance.DataEngine.Spectators.Add(spectator);
+            arenaSaver = new TypeLoader(typeof(Arena), Paths.Arenas);
         }
 
         private void LoadArena_Click(object sender, RoutedEventArgs e)
@@ -83,6 +85,13 @@ namespace AW2
                 string.Format("#{0} z={1:f0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
             foreach (var layerName in layerNameList)
                 layerNames.Items.Add(layerName);
+        }
+
+        private void SaveArena_Click(object sender, RoutedEventArgs e)
+        {
+            var arena = AssaultWing.Instance.DataEngine.Arena;
+            if (!arena.Name.EndsWith("_edited")) arena.Name += "_edited";
+            arenaSaver.SaveObject(arena, typeof(TypeParameterAttribute), arena.Name);
         }
 
         private void ArenaView_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)

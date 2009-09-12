@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using AW2.Helpers;
 
 namespace AW2.Game
@@ -12,7 +13,7 @@ namespace AW2.Game
     /// Handles loading and saving template instances that represent user-defined types
     /// of some class hierarchy such as Gob and its subclasses or Weapon and its subclasses.
     /// </summary>
-    class TypeLoader
+    public class TypeLoader
     {
         DirectoryInfo definitionDir;
         Type baseClass;
@@ -20,7 +21,7 @@ namespace AW2.Game
         /// <summary>
         /// Suffix for producing a type definition template file from a type name.
         /// </summary>
-        const string typeDefinitionTemplateSuffix = "_template.xml";
+        const string typeDefinitionTemplateSuffix = "template";
 
         /// <summary>
         /// Creates a type loader.
@@ -78,15 +79,20 @@ namespace AW2.Game
 #if TYPELOADER_DEBUG
                 Log.Write("Saving template for " + type.Name);
 #endif
-                string filename = System.IO.Path.Combine(definitionDir.FullName,
-                    type.Name + typeDefinitionTemplateSuffix);
-                TextWriter writer = new StreamWriter(filename);
-                System.Xml.XmlWriter xmlWriter = Serialization.GetXmlWriter(writer);
                 object instance = Activator.CreateInstance(type);
-                Type limitationAttribute = typeof(TypeParameterAttribute);
-                Serialization.SerializeXml(xmlWriter, baseClass.Name + "Type", instance, limitationAttribute);
-                xmlWriter.Close();
+                SaveObject(instance, typeof(TypeParameterAttribute), typeDefinitionTemplateSuffix);
             }
+        }
+
+        public void SaveObject(object obj, Type limitationAttribute, string name)
+        {
+            name = Regex.Replace(name, "[^a-z]", "_", RegexOptions.IgnoreCase);
+            string filename = System.IO.Path.Combine(definitionDir.FullName,
+                string.Format("{0}_{1}.xml", obj.GetType().Name, name));
+            TextWriter writer = new StreamWriter(filename);
+            System.Xml.XmlWriter xmlWriter = Serialization.GetXmlWriter(writer);
+            Serialization.SerializeXml(xmlWriter, baseClass.Name + "Type", obj, limitationAttribute);
+            xmlWriter.Close();
         }
 
 #endregion

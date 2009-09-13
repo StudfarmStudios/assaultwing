@@ -41,6 +41,8 @@ namespace AW2.Game.Gobs
 
         #region Ship fields related to weapons
 
+        static readonly CanonicalString WEAPON_DEFAULT_NAME = (CanonicalString)"no weapon";
+
         /// <summary>
         /// Primary weapons of the ship.
         /// </summary>
@@ -230,7 +232,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public CanonicalString Weapon1Name
         {
-            get { return weapon1 == null ? (CanonicalString)"no weapon" : weapon1.TypeName; }
+            get { return weapon1 == null ? WEAPON_DEFAULT_NAME : weapon1.TypeName; }
             set
             {
                 // Null weapon means we're not yet activated. Then create weapon later.
@@ -249,7 +251,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public CanonicalString Weapon2Name
         {
-            get { return weapon2 == null ? (CanonicalString)"no weapon" : weapon2.TypeName; }
+            get { return weapon2 == null ? WEAPON_DEFAULT_NAME : weapon2.TypeName; }
             set
             {
                 // Null weapon means we're not yet activated. Then create weapon later.

@@ -302,7 +302,7 @@ namespace AW2.Menu
                 {
                     for (int i = 0; i < message.PlayerCount; ++i)
                     {
-                        Player player = new Player("uninitialised", (CanonicalString)"uninitialised", (CanonicalString)"uninitialised", (CanonicalString)"uninitialised", 0x7ea1eaf);
+                        Player player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
                         message.Read(player, SerializationModeFlags.All);
 
                         // Only add the player if it is remote.

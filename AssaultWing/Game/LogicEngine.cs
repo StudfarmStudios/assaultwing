@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Events;
+using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
 using AW2.UI;
@@ -59,6 +60,14 @@ namespace AW2.Game
             Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();
             arenas = arenas.Where(arena => arena.Name != "dummyarena"); // HACK: avoiding the automatically generated arena template
             AssaultWing.Instance.DataEngine.ArenaInfos = arenas.Select(arena => arena.Info).ToList();
+
+            // Freeze CanonicalStrings to enable sharing them over a network.
+            // Type names of gobs, weapons and particle engines are registered implicitly
+            // above while loading the types. Graphics needs separate handling.
+            // TODO: Loop through all textures and all 3D models available in the ContentManager.
+            var content = (AW2.Graphics.AWContentManager)AssaultWing.Instance.Content;
+            foreach (var assetName in content.GetAssetNames()) CanonicalString.Register(assetName);
+            CanonicalString.DisableRegistering();
 
             base.Initialize();
         }

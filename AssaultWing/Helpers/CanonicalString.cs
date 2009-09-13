@@ -19,6 +19,7 @@ namespace AW2.Helpers
     public struct CanonicalString
     {
         static IList<string> canonicalForms = new List<string> { null };
+        static bool canRegister = true;
 
         /// <summary>
         /// The <see cref="CanonicalString"/> instance corresponding to the null <see cref="string"/>.
@@ -75,6 +76,16 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Ensures that each <see cref="CanonicalString"/> instance that is created
+        /// after this method returns will be equal to one of the previously registered
+        /// instances as listed in <see cref="CanonicalForms"/>.
+        /// </summary>
+        public static void DisableRegistering()
+        {
+            canRegister = false;
+        }
+
+        /// <summary>
         /// Creates a canonical string from a string value.
         /// </summary>
         public CanonicalString(string value)
@@ -83,6 +94,7 @@ namespace AW2.Helpers
             Canonical = CanonicalForms.IndexOf(value);
             if (Canonical < 0)
             {
+                if (!canRegister) throw new InvalidOperationException("Registering previously unseen CanonicalString instances has been disabled");
                 Canonical = CanonicalForms.Count;
                 CanonicalForms.Add(value);
 #if DEBUG

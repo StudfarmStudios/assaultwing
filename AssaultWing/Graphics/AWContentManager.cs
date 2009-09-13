@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Collections;
+using System.Text.RegularExpressions;
 
 namespace AW2.Graphics
 {
@@ -50,6 +51,23 @@ namespace AW2.Graphics
             item = ReadAsset<T>(assetFullName, null);
             loadedContent.Add(assetFullName, item);
             return (T)item;
+        }
+
+        /// <summary>
+        /// Returns the names of all assets. Only XNB files are considered
+        /// as containing assets. Unprocessed XML files are ignored.
+        /// </summary>
+        public IEnumerable<string> GetAssetNames()
+        {
+            foreach (var filename in Directory.GetFiles(RootDirectory, "*.xnb", SearchOption.AllDirectories))
+            {
+                // We skip texture names that are part of 3D models.
+                // Note: This works only if texture asset names never end in "_0".
+                // The foolproof way to do the skipping is to skip the asset names
+                // mentioned inside other asset files.
+                var match = Regex.Match(filename, @"^.*[\\/]([^\\/]*?)(_0)?\.xnb$", RegexOptions.IgnoreCase);
+                if (match.Groups[2].Length == 0) yield return match.Groups[1].Value;
+            }
         }
 
         /// <summary>

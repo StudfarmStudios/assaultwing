@@ -79,6 +79,8 @@ namespace AW2.Game.Gobs
         {
         }
 
+        #region Methods related to gobs' functionality in the game world
+
         /// <summary>
         /// Draws the gob's 2D graphics.
         /// </summary>
@@ -142,5 +144,44 @@ namespace AW2.Game.Gobs
         {
             base.UnloadContent();
         }
-    }
+
+        #endregion Methods related to gobs' functionality in the game world
+
+        #region Methods related to serialisation
+
+        /// <summary>
+        /// Serialises the gob to a binary writer.
+        /// </summary>
+        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((int)((CanonicalString)IconName).Canonical);
+                writer.Write((string)Message, 48, false);
+            }
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary writer.
+        /// </summary>
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        {
+            base.Deserialize(reader, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                int canonical = reader.ReadInt32();
+                IconName = (CanonicalString)canonical;
+                Message = reader.ReadString(48);
+            }
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+            }
+        }
+
+        #endregion Methods related to serialisation
+}
 }

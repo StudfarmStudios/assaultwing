@@ -783,7 +783,7 @@ namespace AW2.Game
         /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
-            Arena.Move(this);
+            Arena.Move(this, AssaultWing.Instance.GameTime.ElapsedGameTime, true);
             UpdateExhaustEngines();
         }
 
@@ -1005,11 +1005,21 @@ namespace AW2.Game
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
                 Vector2 newPos = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
-                pos = newPos;
                 Vector2 newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
-                move = newMove;
+                ExtrapolatePosAndMove(newPos, newMove, TimeSpan.FromMilliseconds(200)); // TODO: use a realistic delay estimate
                 rotation = reader.ReadHalf();
             }
+        }
+
+        /// <summary>
+        /// Sets the gob's position and movement by computing it from a known position
+        /// and movement some time ago.
+        /// </summary>
+        protected void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, TimeSpan gameTimeAgo)
+        {
+            pos = oldPos;
+            move = oldMove;
+            Arena.Move(this, gameTimeAgo, false);
         }
 
         #endregion Methods related to serialisation

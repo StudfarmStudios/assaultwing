@@ -237,25 +237,22 @@ namespace AW2.Game
         /// <summary>
         /// Distance outside the arena boundaries that we still allow some gobs to stay alive.
         /// </summary>
-        const float arenaOuterBoundaryThickness = 1000;
+        const float ARENA_OUTER_BOUNDARY_THICKNESS = 1000;
 
         /// <summary>
-        /// Accuracy of finding the point of collision. Measured in time,
-        /// with one frame as the unit.
+        /// Accuracy of finding the point of collision. Measured in game time.
         /// </summary>
         /// Exactly, when a collision occurs, the moving gob's point of collision
-        /// will be no more than <b>collisionAccuracy</b> of a frame's time
+        /// will be no more than <see cref="COLLISION_ACCURACY"/>'s time of movement
         /// away from the actual point of collision.
-        /// <b>1</b> means no iteration;
-        /// <b>0</b> means iteration to infinite precision.
-        const float collisionAccuracy = 0.6f;
+        readonly TimeSpan COLLISION_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.01));
 
         /// <summary>
         /// Accuracy to which movement of a gob in a frame is done. 
-        /// Measured in time, with one frame as the unit.
+        /// Measured in game time.
         /// </summary>
         /// This constant is to work around rounding errors.
-        const float movementAccuracy = 0.001f;
+        readonly TimeSpan MOVEMENT_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.00001666));
 
         /// <summary>
         /// The maximum number of times to try to move a gob in one frame.
@@ -264,35 +261,41 @@ namespace AW2.Game
         /// Higher number means more accurate and responsive collisions
         /// but requires more CPU power in complex situations.
         /// Low numbers may result in "lazy" collisions.
-        const int moveTryMaximum = 2;
+        const int MOVE_TRY_MAXIMUM = 4;
+
+        /// <summary>
+        /// Maximum length to move a gob at one time, in meters.
+        /// </summary>
+        /// Small values give better collision precision but require more computation.
+        const float MOVE_LENGTH_MAXIMUM = 10;
 
         /// <summary>
         /// The maximum number of attempts to find a free position for a gob.
         /// </summary>
-        const int freePosMaxAttempts = 50;
+        const int FREE_POS_MAX_ATTEMPTS = 50;
 
         /// <summary>
         /// Multiplier for collision damage.
         /// </summary>
-        const float collisionDamageDownGrade = 0.0006f;
+        const float COLLISION_DAMAGE_DOWNGRADE = 0.0006f;
 
         /// <summary>
         /// Minimum change of gob speed in a collision to cause damage and a sound effect.
         /// </summary>
-        const float minimumCollisionDelta = 20;
+        const float MINIMUM_COLLISION_DELTA = 20;
 
         /// <summary>
         /// Excess area to cover by the spatial index of wall triangles,
         /// in addition to arena boundaries.
         /// </summary>
-        const float wallTriangleArenaExcess = 1000;
+        const float WALL_TRIANGLE_ARENA_EXCESS = 1000;
 
         /// <summary>
         /// Cell sizes of each type of collision area, or 
         /// a negative value if the type is not in use.
         /// </summary>
         /// Indexed by bit indices of <see cref="CollisionAreaType"/>.
-        static readonly float[] collisionAreaCellSize;
+        static readonly float[] COLLISION_AREA_CELL_SIZE;
 
         #endregion Collision related fields
 
@@ -400,22 +403,21 @@ namespace AW2.Game
 
         static Arena()
         {
-            
-            collisionAreaCellSize = new float[CollisionArea.COLLISION_AREA_TYPE_COUNT];
+            COLLISION_AREA_CELL_SIZE = new float[CollisionArea.COLLISION_AREA_TYPE_COUNT];
             for (int i = 0; i < CollisionArea.COLLISION_AREA_TYPE_COUNT; ++i)
-                collisionAreaCellSize[i] = -1;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.Receptor)] = float.MaxValue;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.Force)] = float.MaxValue;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds)] = 500;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShip)] = 100;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShot)] = 100;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalWall)] = 20;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalWater)] = 100;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalGas)] = 100;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherUndamageableUnmovable)] = 100;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherDamageableUnmovable)] = 100;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherUndamageableMovable)] = 100;
-            collisionAreaCellSize[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherDamageableMovable)] = 100;
+                COLLISION_AREA_CELL_SIZE[i] = -1;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.Receptor)] = float.MaxValue;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.Force)] = float.MaxValue;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds)] = 500;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShip)] = 100;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalShot)] = 100;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalWall)] = 20;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalWater)] = 100;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalGas)] = 100;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherUndamageableUnmovable)] = 100;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherDamageableUnmovable)] = 100;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherUndamageableMovable)] = 100;
+            COLLISION_AREA_CELL_SIZE[AWMathHelper.LogTwo((int)CollisionAreaType.PhysicalOtherDamageableMovable)] = 100;
         }
 
         /// <summary>
@@ -493,31 +495,36 @@ namespace AW2.Game
         /// of the moving gob's physical collision area.
         /// </summary>
         /// <param name="gob">The gob to move.</param>
-        public void Move(Gob gob)
+        /// <param name="moveTime">Duration of the move</param>
+        /// <param name="allowSideEffects">Should effects other than changing the gob's
+        /// position and movement be allowed.</param>
+        public void Move(Gob gob, TimeSpan moveTime, bool allowSideEffects)
         {
             if (!gob.Movable) return;
             if (gob.Disabled) return;
             CollisionArea gobPhysical = gob.PhysicalArea;
             if (gobPhysical != null) Unregister(gobPhysical);
 
-            // If the gob is stuck, let it resolve the situation.
-            if (gobPhysical != null)
-                ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
-                {
-                    gob.Collide(gobPhysical, area2, true);
-                    area2.Owner.Collide(area2, gobPhysical, true);
-                    // No need for a physical collision -- the gobs are stuck.
-                    return gob.Dead;
-                });
-            if (gob.Dead) return;
+            if (allowSideEffects)
+            {
+                // If the gob is stuck, let it resolve the situation.
+                if (gobPhysical != null)
+                    ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
+                    {
+                        gob.Collide(gobPhysical, area2, true);
+                        area2.Owner.Collide(area2, gobPhysical, true);
+                        // No need for a physical collision -- the gobs are stuck.
+                        return gob.Dead;
+                    });
+                if (gob.Dead) return;
+            }
 
-            float moveLeft = 1; // interpolation coefficient; between 0 and 1
-            int moveTries = 0;
-            while (moveLeft > movementAccuracy && moveTries < moveTryMaximum)
+            int attempts = 0;
+            while (moveTime > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
             {
                 Vector2 oldMove = gob.Move;
-                moveLeft = TryMove(gob, moveLeft);
-                ++moveTries;
+                TryMove(gob, ref moveTime, allowSideEffects);
+                ++attempts;
 
                 // If we just have to wait for another gob to move out of the way,
                 // there's nothing more we can do.
@@ -525,7 +532,7 @@ namespace AW2.Game
                     break;
             }
             if (gobPhysical != null) Register(gobPhysical);
-            ArenaBoundaryActions(gob);
+            ArenaBoundaryActions(gob, allowSideEffects);
         }
 
         /// <summary>
@@ -615,7 +622,7 @@ namespace AW2.Game
         {
             // Iterate in the area for a while, looking for a free position.
             // Ultimately give up and return something that may be bad.
-            for (int attempt = 1; attempt < freePosMaxAttempts; ++attempt)
+            for (int attempt = 1; attempt < FREE_POS_MAX_ATTEMPTS; ++attempt)
             {
                 Vector2 tryPos = Geometry.GetRandomLocation(area);
                 if (IsFreePosition(gob, tryPos))
@@ -725,27 +732,36 @@ namespace AW2.Game
         /// and performing the physical collision.
         /// </summary>
         /// <param name="gob">The gob to move.</param>
-        /// <param name="moveLeft">How much of the gob's movement is left this frame.
-        /// <b>0</b> means the gob has completed moving;
-        /// <b>1</b> means the gob has not moved yet.</param>
-        /// <returns>How much of the gob's movement is still left,
-        /// between <b>0</b> and <b>1</b>.</returns>
-        private float TryMove(Gob gob, float moveLeft)
+        /// <param name="moveTime">Remaining duration of the move</param>
+        /// <param name="allowSideEffects">Should effects other than changing the gob's
+        /// position and movement be allowed.</param>
+        private void TryMove(Gob gob, ref TimeSpan moveTime, bool allowSideEffects)
         {
             Vector2 oldPos = gob.Pos;
-            Vector2 goalPos = gob.Pos + gob.Move * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-            float moveGood = 0; // last known safe position
-            float moveBad = moveLeft; // last known unsafe position, if 'badFound'
+            Vector2 oldMove = gob.Move;
+            TimeSpan moveGood = TimeSpan.Zero; // last known safe position
+            TimeSpan moveBad = moveTime; // last known unsafe position, if 'badFound'
             bool badFound = false;
             CollisionArea gobPhysical = gob.PhysicalArea;
             bool badDueToOverlappers = false;
 
             // Find out last non-collision position and first colliding position, 
             // up to required accuracy.
-            float moveTry = moveLeft;
-            while (moveBad - moveGood > collisionAccuracy)
+            TimeSpan moveTry = moveTime;
+            TimeSpan lastMoveTry = TimeSpan.Zero;
+            float oldMoveLength = oldMove.Length();
+            while (moveBad - moveGood > COLLISION_ACCURACY)
             {
-                gob.Pos = Vector2.Lerp(oldPos, goalPos, moveTry);
+                float posDeltaBetweenTries = oldMoveLength * (float)(moveTry - lastMoveTry).Duration().TotalSeconds;
+                if (posDeltaBetweenTries > MOVE_LENGTH_MAXIMUM)
+                {
+                    var limitFactor = MOVE_LENGTH_MAXIMUM / posDeltaBetweenTries;
+                    long lastMoveTryTicks = lastMoveTry.Ticks;
+                    long moveTryTicksDelta = moveTry.Ticks - lastMoveTryTicks;
+                    long moveTryNewTicks = lastMoveTryTicks + (long)(moveTryTicksDelta * limitFactor);
+                    moveTry = TimeSpan.FromTicks(moveTryNewTicks);
+                }
+                gob.Pos = oldPos + oldMove * (float)moveTry.TotalSeconds;
                 bool overlapperFound = gobPhysical == null ? false
                     : ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
                 if (ArenaBoundaryLegal(gob) && !overlapperFound)
@@ -758,27 +774,31 @@ namespace AW2.Game
                     badFound = true;
                     badDueToOverlappers = overlapperFound;
                 }
-                moveTry = MathHelper.Lerp(moveGood, moveBad, 0.5f);
+                lastMoveTry = moveTry;
+                moveTry = TimeSpan.FromTicks((moveGood.Ticks + moveBad.Ticks) / 2);
             }
 
             // Perform physical collisions.
             if (badFound)
             {
-                gob.Pos = Vector2.Lerp(oldPos, goalPos, moveBad);
+                gob.Pos = oldPos + oldMove * (float)moveBad.TotalSeconds;
                 if (badDueToOverlappers)
                     ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
                     {
-                        gob.Collide(gobPhysical, area2, false);
-                        area2.Owner.Collide(area2, gobPhysical, false);
-                        PerformCollision(gobPhysical, area2);
+                        if (allowSideEffects)
+                        {
+                            gob.Collide(gobPhysical, area2, false);
+                            area2.Owner.Collide(area2, gobPhysical, false);
+                        }
+                        PerformCollision(gobPhysical, area2, allowSideEffects);
                         return gob.Dead;
                     });
-                ArenaBoundaryActions(gob);
+                ArenaBoundaryActions(gob, allowSideEffects);
             }
 
             // Return to last non-colliding position.
-            gob.Pos = Vector2.Lerp(oldPos, goalPos, moveGood);
-            return moveLeft - moveGood;
+            gob.Pos = oldPos + oldMove * (float)moveGood.TotalSeconds;
+            moveTime -= moveGood;
         }
 
         /// <summary>
@@ -833,7 +853,9 @@ namespace AW2.Game
         /// Physical collisions are a means to maintain overlap consistency.
         /// <param name="area1">The overlapping collision area of one gob.</param>
         /// <param name="area2">The overlapping collision area of the other gob.</param>
-        public void PerformCollision(CollisionArea area1, CollisionArea area2)
+        /// <param name="allowSideEffects">Should effects other than changing the gob's
+        /// position and movement be allowed.</param>
+        public void PerformCollision(CollisionArea area1, CollisionArea area2, bool allowSideEffects)
         {
 #if DEBUG_PROFILE
             ++AssaultWing.Instance.collisionCount;
@@ -841,9 +863,9 @@ namespace AW2.Game
             // At least one area must be from a movable gob, lest there be no collision.
             bool area1Movable = (area1.Type & CollisionAreaType.PhysicalMovable) != 0;
             bool area2Movable = (area2.Type & CollisionAreaType.PhysicalMovable) != 0;
-            if (!area1Movable) PerformCollisionMovableUnmovable(area2, area1);
-            else if (!area2Movable) PerformCollisionMovableUnmovable(area1, area2);
-            else PerformCollisionMovableMovable(area1, area2);
+            if (!area1Movable) PerformCollisionMovableUnmovable(area2, area1, allowSideEffects);
+            else if (!area2Movable) PerformCollisionMovableUnmovable(area1, area2, allowSideEffects);
+            else PerformCollisionMovableMovable(area1, area2, allowSideEffects);
         }
 
         /// <summary>
@@ -851,7 +873,9 @@ namespace AW2.Game
         /// </summary>
         /// <param name="movableArea">The overlapping collision area of the movable gob.</param>
         /// <param name="unmovableArea">The overlapping collision area of the unmovable gob.</param>
-        private void PerformCollisionMovableUnmovable(CollisionArea movableArea, CollisionArea unmovableArea)
+        /// <param name="allowSideEffects">Should effects other than changing the movable gob's
+        /// position and movement be allowed.</param>
+        private void PerformCollisionMovableUnmovable(CollisionArea movableArea, CollisionArea unmovableArea, bool allowSideEffects)
         {
             Gob movableGob = movableArea.Owner;
             Gob unmovableGob = unmovableArea.Owner;
@@ -894,29 +918,32 @@ namespace AW2.Game
                 movableGob.Move = xUnit * move1after.X + yUnit * move1after.Y;
                 Vector2 move1Delta = move1 - move1after;
 
-                // Inflict damage to damageable gobs.
-                if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                if (allowSideEffects)
                 {
-                    if (move1Delta.Length() > minimumCollisionDelta)
-                        movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier),
-                            new DeathCause(movableGob, DeathCauseType.Collision, unmovableGob));
-                }
-                /* TODO: What if the unmovable gob wants to be damaged, too?
-                if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0)
-                {
-                    Vector2 move2Delta = Vector2.Zero;
-                    if (move1Delta.Length() > minimumCollisionDelta)
-                        unmovableGob.InflictDamage(CollisionDamage(unmovableGob, move2Delta, damageMultiplier));
-                }
-                */
+                    // Inflict damage to damageable gobs.
+                    if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                    {
+                        if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                            movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier),
+                                new DeathCause(movableGob, DeathCauseType.Collision, unmovableGob));
+                    }
+                    /* TODO: What if the unmovable gob wants to be damaged, too?
+                    if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0)
+                    {
+                        Vector2 move2Delta = Vector2.Zero;
+                        if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                            unmovableGob.InflictDamage(CollisionDamage(unmovableGob, move2Delta, damageMultiplier));
+                    }
+                    */
 
-                // Play a sound.
-                if (move1Delta.Length() > minimumCollisionDelta)
-                {
-                    EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-                    SoundEffectEvent soundEvent = new SoundEffectEvent();
-                    soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
-                    eventEngine.SendEvent(soundEvent);
+                    // Play a sound.
+                    if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                    {
+                        EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+                        SoundEffectEvent soundEvent = new SoundEffectEvent();
+                        soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
+                        eventEngine.SendEvent(soundEvent);
+                    }
                 }
             }
         }
@@ -926,7 +953,9 @@ namespace AW2.Game
         /// </summary>
         /// <param name="movableArea1">The overlapping collision area of one movable gob.</param>
         /// <param name="movableArea2">The overlapping collision area of the other movable gob.</param>
-        private void PerformCollisionMovableMovable(CollisionArea movableArea1, CollisionArea movableArea2)
+        /// <param name="allowSideEffects">Should effects other than changing the first movable gob's
+        /// position and movement be allowed.</param>
+        private void PerformCollisionMovableMovable(CollisionArea movableArea1, CollisionArea movableArea2, bool allowSideEffects)
         {
             Gob gob1 = movableArea1.Owner;
             Gob gob2 = movableArea2.Owner;
@@ -966,40 +995,42 @@ namespace AW2.Game
                 move2after.X = MathHelper.Lerp(move1afterInelastic.X, move2afterElastic.X, elasticity);
                 move2after.Y = AWMathHelper.InterpolateTowards(move2afterElastic.Y, move1afterInelastic.Y, friction * move2after.X);
                 gob1.Move = xUnit * move1after.X + yUnit * move1after.Y + gob2.Move;
-                gob2.Move = xUnit * move2after.X + yUnit * move2after.Y + gob2.Move;
+                if (allowSideEffects) gob2.Move = xUnit * move2after.X + yUnit * move2after.Y + gob2.Move;
                 Vector2 move1Delta = move1 - move1after;
                 // move2Delta = move2after because collision is calculated from the 2nd gob's point of view (2nd gob is still)
 
-                /*We want to deal damage in physics engine because calculations only happen once per collision!*/
-                // Inflict damage to damageable gobs.
-                if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                if (allowSideEffects)
                 {
-                    if (move1Delta.Length() > minimumCollisionDelta)
-                        gob1.InflictDamage(CollisionDamage(gob1, move1Delta, damageMultiplier),
-                            new DeathCause(gob1, DeathCauseType.Collision, gob2));
-                }
-                if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                {
-                    if (move2after.Length() > minimumCollisionDelta)
-                        gob2.InflictDamage(CollisionDamage(gob2, move2after, damageMultiplier),
-                            new DeathCause(gob2, DeathCauseType.Collision, gob1));
-                }
+                    /*We want to deal damage in physics engine because calculations only happen once per collision!*/
+                    // Inflict damage to damageable gobs.
+                    if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                    {
+                        if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
+                            gob1.InflictDamage(CollisionDamage(gob1, move1Delta, damageMultiplier),
+                                new DeathCause(gob1, DeathCauseType.Collision, gob2));
+                    }
+                    if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                    {
+                        if (move2after.Length() > MINIMUM_COLLISION_DELTA)
+                            gob2.InflictDamage(CollisionDamage(gob2, move2after, damageMultiplier),
+                                new DeathCause(gob2, DeathCauseType.Collision, gob1));
+                    }
 
-                // Play a sound only if actual collision happened!.
-                if (move1Delta.Length() > minimumCollisionDelta || move2after.Length() > minimumCollisionDelta)
-                {
-                    EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-                    SoundEffectEvent soundEvent = new SoundEffectEvent();
-                    soundEvent.setAction(AW2.Sound.SoundOptions.Action.Shipcollision);
-                    eventEngine.SendEvent(soundEvent);
+                    // Play a sound only if actual collision happened!.
+                    if (move1Delta.Length() > MINIMUM_COLLISION_DELTA || move2after.Length() > MINIMUM_COLLISION_DELTA)
+                    {
+                        EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
+                        SoundEffectEvent soundEvent = new SoundEffectEvent();
+                        soundEvent.setAction(AW2.Sound.SoundOptions.Action.Shipcollision);
+                        eventEngine.SendEvent(soundEvent);
+                    }
                 }
-
             }
         }
 
         private float CollisionDamage(Gob gob, Vector2 moveDelta, float damageMultiplier)
         {
-            return moveDelta.Length() / 2 * gob.Mass * collisionDamageDownGrade * damageMultiplier;
+            return moveDelta.Length() / 2 * gob.Mass * COLLISION_DAMAGE_DOWNGRADE * damageMultiplier;
         }
 
         #endregion Collision and moving methods
@@ -1020,10 +1051,10 @@ namespace AW2.Game
             if (gob.Pos.Y > Dimensions.Y) result |= OutOfArenaBounds.Top;
 
             // The outer arena boundary.
-            if (gob.Pos.X < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterLeft;
-            if (gob.Pos.Y < -arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterBottom;
-            if (gob.Pos.X > Dimensions.X + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterRight;
-            if (gob.Pos.Y > Dimensions.Y + arenaOuterBoundaryThickness) result |= OutOfArenaBounds.OuterTop;
+            if (gob.Pos.X < -ARENA_OUTER_BOUNDARY_THICKNESS) result |= OutOfArenaBounds.OuterLeft;
+            if (gob.Pos.Y < -ARENA_OUTER_BOUNDARY_THICKNESS) result |= OutOfArenaBounds.OuterBottom;
+            if (gob.Pos.X > Dimensions.X + ARENA_OUTER_BOUNDARY_THICKNESS) result |= OutOfArenaBounds.OuterRight;
+            if (gob.Pos.Y > Dimensions.Y + ARENA_OUTER_BOUNDARY_THICKNESS) result |= OutOfArenaBounds.OuterTop;
 
             return result;
         }
@@ -1048,7 +1079,9 @@ namespace AW2.Game
         /// and the arena boundaries. Think of this as physical collision
         /// but against arena boundaries instead of other gobs.
         /// </summary>
-        private void ArenaBoundaryActions(Gob gob)
+        /// <param name="allowSideEffects">Should effects other than changing the gob's
+        /// position and movement be allowed.</param>
+        private void ArenaBoundaryActions(Gob gob, bool allowSideEffects)
         {
             var outOfBounds = IsOutOfArenaBounds(gob);
 
@@ -1068,9 +1101,8 @@ namespace AW2.Game
 
             // Other projectiles disintegrate if they are outside 
             // the outer arena boundary.
-            if ((outOfBounds & OutOfArenaBounds.OuterBoundary) != 0)
+            if ((outOfBounds & OutOfArenaBounds.OuterBoundary) != 0 && allowSideEffects)
                 Gobs.Remove(gob);
-            return;
         }
 
         #endregion Arena boundary methods
@@ -1141,11 +1173,11 @@ namespace AW2.Game
         {
             collisionAreas = new SpatialGrid<CollisionArea>[CollisionArea.COLLISION_AREA_TYPE_COUNT];
             collisionAreaMayCollide = new bool[CollisionArea.COLLISION_AREA_TYPE_COUNT];
-            Vector2 areaExcess = new Vector2(wallTriangleArenaExcess);
+            Vector2 areaExcess = new Vector2(WALL_TRIANGLE_ARENA_EXCESS);
             Vector2 arrayDimensions = Dimensions + 2 * areaExcess;
             for (int i = 0; i < collisionAreas.Length; ++i)
-                if (collisionAreaCellSize[i] >= 0)
-                    collisionAreas[i] = new SpatialGrid<CollisionArea>(collisionAreaCellSize[i],
+                if (COLLISION_AREA_CELL_SIZE[i] >= 0)
+                    collisionAreas[i] = new SpatialGrid<CollisionArea>(COLLISION_AREA_CELL_SIZE[i],
                         -areaExcess, arrayDimensions - areaExcess);
             collisionAreaMayCollide.Initialize();
         }

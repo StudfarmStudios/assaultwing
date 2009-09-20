@@ -107,7 +107,7 @@ namespace AW2.Game
         /// <summary>
         /// Deserialises the gob from a binary writer.
         /// </summary>
-        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
         {
         }
 

@@ -138,24 +138,24 @@ namespace AW2.Net
         /// <summary>
         /// Connection to the game server.
         /// </summary>
-        public Connection GameServerConnection
+        public IConnection GameServerConnection
         {
             get
             {
                 if (gameServerConnection == null) throw new InvalidOperationException("No connection to game server");
-                return gameServerConnection.BaseConnection;
+                return gameServerConnection;
             }
         }
 
         /// <summary>
         /// Connection to the management server.
         /// </summary>
-        public Connection ManagementServerConnection
+        public IConnection ManagementServerConnection
         {
             get
             {
                 if (managementServerConnection == null) throw new InvalidOperationException("No connection to management server");
-                return managementServerConnection.BaseConnection;
+                return managementServerConnection;
             }
         }
 
@@ -261,6 +261,41 @@ namespace AW2.Net
                     throw new InvalidOperationException("Cannot ping server without connection");
                 return gameServerConnection.PingTime;
             }
+        }
+
+        /// <summary>
+        /// Offset of game time on the server compared to this game instance.
+        /// </summary>
+        /// Adding the offset to the server game time gives our game time.
+        public TimeSpan ServerGameTimeOffset
+        {
+            get
+            {
+                if (gameServerConnection == null)
+                    throw new InvalidOperationException("Cannot count server game time offset without connection");
+                return gameServerConnection.RemoteGameTimeOffset;
+            }
+        }
+
+        /// <summary>
+        /// Round-trip ping time to a game client.
+        /// </summary>
+        public TimeSpan GetClientPingTime(int connectionId)
+        {
+            var connection = GameClientConnections[connectionId] as PingedConnection;
+            if (connection == null) throw new InvalidOperationException("Cannot ping client without PingedConnection");
+            return connection.PingTime;
+        }
+
+        /// <summary>
+        /// Offset of game time on a client compared to this server instance.
+        /// </summary>
+        /// Adding the offset to the client game time gives our game time.
+        public TimeSpan GetClientGameTimeOffset(int connectionId)
+        {
+            var connection = GameClientConnections[connectionId] as PingedConnection;
+            if (connection == null) throw new InvalidOperationException("Cannot count client game time offset without PingedConnection");
+            return connection.RemoteGameTimeOffset;
         }
 
         #endregion Public interface

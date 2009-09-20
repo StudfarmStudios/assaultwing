@@ -168,17 +168,14 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Deserialises the gob from a binary writer.
         /// </summary>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
-            base.Deserialize(reader, mode);
+            base.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 int canonical = reader.ReadInt32();
                 IconName = (CanonicalString)canonical;
                 Message = reader.ReadString(48);
-            }
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
-            {
             }
         }
 

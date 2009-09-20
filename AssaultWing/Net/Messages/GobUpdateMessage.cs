@@ -37,13 +37,14 @@ namespace AW2.Net.Messages
         /// If it returns <c>null</c>, the corresponding serialised data is
         /// skipped.</param>
         /// <param name="mode">What to deserialise of the gobs.</param>
-        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, SerializationModeFlags mode)
+        /// <param name="messageAge">How long time ago was the message current.</param>
+        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, SerializationModeFlags mode, TimeSpan messageAge)
         {
             for (int i = 0; i < gobIds.Count; ++i)
             {
                 INetworkSerializable gob = gobFinder(gobIds[i]);
                 if (gob != null)
-                    Read(gob, mode);
+                    Read(gob, mode, messageAge);
                 else
                     Skip(byteCounts[i]);
             }

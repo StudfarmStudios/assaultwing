@@ -417,14 +417,14 @@ namespace AW2.Game
         /// <summary>
         /// Deserialises the object from a binary writer.
         /// </summary>
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode)
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
         {
             type = (CollisionAreaType)reader.ReadInt32();
             collidesAgainst = (CollisionAreaType)reader.ReadInt32();
             cannotOverlap = (CollisionAreaType)reader.ReadInt32();
             name = reader.ReadString(32);
             collisionMaterial = (CollisionMaterialType)reader.ReadByte();
-            area.Deserialize(reader, SerializationModeFlags.All);
+            area.Deserialize(reader, SerializationModeFlags.All, messageAge);
         }
 
         #endregion

@@ -804,11 +804,7 @@ namespace AW2.Game
         /// <summary>
         /// Deserialises the gob from a binary writer.
         /// </summary>
-        /// Subclasses should call the base implementation
-        /// before performing their own deserialisation.
-        /// <param name="reader">The reader where to read the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {

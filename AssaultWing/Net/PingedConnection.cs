@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Net.Messages;
 
@@ -9,10 +11,17 @@ namespace AW2.Net
     /// </summary>
     public class PingedConnection : IConnection
     {
+        static readonly TimeSpan PING_INTERVAL = TimeSpan.FromSeconds(1);
+        const int PING_AVERAGED_COUNT = 3;
+
         /// <summary>
         /// Time at which the next ping request should be sent, in real time.
         /// </summary>
         TimeSpan nextPingSend;
+
+        TimeSpan[] pingTimes;
+        TimeSpan[] remoteGameTimeOffsets;
+        int nextIndex; // indexes pingTimes and remoteGameTimeOffsets
 
         /// <summary>
         /// The underlying connection.
@@ -22,7 +31,13 @@ namespace AW2.Net
         /// <summary>
         /// Round-trip ping time of the underlying connection.
         /// </summary>
-        public TimeSpan PingTime { get; private set; }
+        public TimeSpan PingTime { get { return TimeSpan.FromTicks(pingTimes.Sum(pingTime => pingTime.Ticks) / pingTimes.Length); } }
+
+        /// <summary>
+        /// Offset of game time on the remote game instance compared to this game instance.
+        /// </summary>
+        /// Adding the offset to the remote game time gives our game time.
+        public TimeSpan RemoteGameTimeOffset { get { return TimeSpan.FromTicks(remoteGameTimeOffsets.Sum(pingTime => pingTime.Ticks) / remoteGameTimeOffsets.Length); } }
 
         /// <summary>
         /// Unique identifier of the connection. Nonnegative.
@@ -47,6 +62,8 @@ namespace AW2.Net
         public PingedConnection(Connection baseConnection)
         {
             this.BaseConnection = baseConnection;
+            pingTimes = new TimeSpan[PING_AVERAGED_COUNT];
+            remoteGameTimeOffsets = new TimeSpan[PING_AVERAGED_COUNT];
         }
 
         /// <summary>
@@ -59,7 +76,7 @@ namespace AW2.Net
             // Send ping requests every now and then.
             if (now >= nextPingSend)
             {
-                nextPingSend = now + TimeSpan.FromSeconds(1);
+                nextPingSend = now + PING_INTERVAL;
                 var pingSend = new PingRequestMessage();
                 pingSend.Timestamp = now;
                 BaseConnection.Send(pingSend);
@@ -69,14 +86,22 @@ namespace AW2.Net
             var pingReceive = BaseConnection.Messages.TryDequeue<PingRequestMessage>();
             if (pingReceive != null)
             {
-                var pongSend = pingReceive.GetPingReplyMessage();
+                var pongSend = pingReceive.GetPingReplyMessage(AssaultWing.Instance.GameTime.TotalGameTime);
                 BaseConnection.Send(pongSend);
             }
 
             // Respond to received ping replies.
             var pongReceive = BaseConnection.Messages.TryDequeue<PingReplyMessage>();
             if (pongReceive != null)
-                PingTime = now - pongReceive.Timestamp;
+            {
+                var pingTime = now - pongReceive.Timestamp;
+                pingTimes[nextIndex] = pingTime;
+                remoteGameTimeOffsets[nextIndex] =
+                    AssaultWing.Instance.GameTime.TotalGameTime
+                    - pongReceive.TotalGameTimeOnReply
+                    - pingTime.Divide(2);
+                nextIndex = (nextIndex + 1) % pingTimes.Length;
+            }
         }
 
         /// <summary>

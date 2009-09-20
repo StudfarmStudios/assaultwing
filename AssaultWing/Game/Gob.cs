@@ -994,7 +994,7 @@ namespace AW2.Game
         /// before performing their own deserialisation.
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
@@ -1006,7 +1006,7 @@ namespace AW2.Game
             {
                 Vector2 newPos = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
                 Vector2 newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
-                ExtrapolatePosAndMove(newPos, newMove, TimeSpan.FromMilliseconds(200)); // TODO: use a realistic delay estimate
+                ExtrapolatePosAndMove(newPos, newMove, messageAge);
                 rotation = reader.ReadHalf();
             }
         }
@@ -1019,7 +1019,7 @@ namespace AW2.Game
         {
             pos = oldPos;
             move = oldMove;
-            Arena.Move(this, gameTimeAgo, false);
+            if (Arena != null) Arena.Move(this, gameTimeAgo, false);
         }
 
         #endregion Methods related to serialisation

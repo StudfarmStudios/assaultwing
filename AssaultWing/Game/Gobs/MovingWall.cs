@@ -138,11 +138,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Deserialises the gob from a binary writer.
         /// </summary>
-        /// <param name="reader">The reader where to read the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
-            base.Deserialize(reader, mode);
+            base.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 ModelName = wallModelName = new CanonicalString(reader.ReadInt32());
@@ -151,7 +149,7 @@ namespace AW2.Game.Gobs
                 for (int i = 0; i < collisionAreaCount; ++i)
                 {
                     wallCollisionAreas[i] = new CollisionArea();
-                    wallCollisionAreas[i].Deserialize(reader, AW2.Net.SerializationModeFlags.All);
+                    wallCollisionAreas[i].Deserialize(reader, AW2.Net.SerializationModeFlags.All, messageAge);
                 }
                 foreach (var area in wallCollisionAreas) area.Owner = this;
             }

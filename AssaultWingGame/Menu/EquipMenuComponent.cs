@@ -303,7 +303,7 @@ namespace AW2.Menu
                     for (int i = 0; i < message.PlayerCount; ++i)
                     {
                         Player player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
-                        message.Read(player, SerializationModeFlags.All);
+                        message.Read(player, SerializationModeFlags.All, TimeSpan.Zero);
 
                         // Only add the player if it is remote.
                         if (!AssaultWing.Instance.DataEngine.Spectators.Any(plr => plr.Id == player.Id))
@@ -316,8 +316,10 @@ namespace AW2.Menu
                     var net = AssaultWing.Instance.NetworkEngine;
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
-                        () => {
-                            net.MessageHandlers.Add(new MessageHandler<GobCreationMessage>(false, net.GameServerConnection,
+                        () =>
+                        {
+                            net.MessageHandlers.Add(new GameplayMessageHandler<GobCreationMessage>(false,
+                                (PingedConnection)net.GameServerConnection,
                                 AssaultWing.Instance.DataEngine.ProcessGobCreationMessage));
                             net.MessageHandlers.Add(new MessageHandler<ArenaStartRequest>(false, net.GameServerConnection, mess =>
                             {

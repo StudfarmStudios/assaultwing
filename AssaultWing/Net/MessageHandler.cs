@@ -66,4 +66,53 @@ namespace AW2.Net
             }
         }
     }
+
+    /// <summary>
+    /// Handler of gameplay related network messages of type <typeparamref name="T"/>.
+    /// </summary>
+    public class GameplayMessageHandler<T> : IMessageHandler where T : GameplayMessage
+    {
+        private bool OnlyOneMessage { get; set; }
+        private Action<T, TimeSpan> Action { get; set; }
+        private PingedConnection Source { get; set; }
+
+        /// <summary>
+        /// Is the handler not active.
+        /// </summary>
+        public bool Disposed { get; private set; }
+
+        /// <summary>
+        /// Creates a new <see cref="GameplayMessageHandler&lt;T&gt;"/>
+        /// </summary>
+        /// <param name="onlyOneMessage">Should the handler disactive itself after receiving one message.</param>
+        /// <param name="source">The <see cref="IConnection"/> to receive messages from.</param>
+        /// <param name="action">What to do for each received message, given the age of the message.</param>
+        public GameplayMessageHandler(bool onlyOneMessage, PingedConnection source, Action<T, TimeSpan> action)
+        {
+            OnlyOneMessage = onlyOneMessage;
+            Source = source;
+            Action = action;
+        }
+
+        /// <summary>
+        /// Receive and handle messages.
+        /// </summary>
+        /// <param name="totalGameTime">Total game time at local game instance.</param>
+        public void HandleMessages()
+        {
+            if (Disposed) throw new InvalidOperationException("Cannot use disposed GameplayMessageHandler");
+            T message = null;
+            while ((message = Source.Messages.TryDequeue<T>()) != null)
+            {
+                var messageAge = AssaultWing.Instance.GameTime.TotalGameTime
+                    - (message.TotalGameTime + Source.RemoteGameTimeOffset);
+                Action(message, messageAge);
+                if (OnlyOneMessage)
+                {
+                    Disposed = true;
+                    break;
+                }
+            }
+        }
+    }
 }

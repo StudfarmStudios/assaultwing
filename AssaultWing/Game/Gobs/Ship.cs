@@ -453,6 +453,14 @@ namespace AW2.Game.Gobs
             coughEngines = coughEngineList.ToArray();
         }
 
+        private void UpdateWeaponCharges(TimeSpan elapsedGameTime)
+        {
+            weapon1Charge += weapon1ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
+            weapon1Charge = MathHelper.Clamp(weapon1Charge, 0, weapon1ChargeMax);
+            weapon2Charge += weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
+            weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
+        }
+
         #endregion Private methods
 
         #region Methods related to gobs' functionality in the game world
@@ -511,11 +519,7 @@ namespace AW2.Game.Gobs
                     ((Peng)coughEngine).Paused = coughArgument == 0;
                 }
 
-            // Update weapon charges.
-            weapon1Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon1ChargeSpeed);
-            weapon1Charge = MathHelper.Clamp(weapon1Charge, 0, weapon1ChargeMax);
-            weapon2Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon2ChargeSpeed);
-            weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
+            UpdateWeaponCharges(AssaultWing.Instance.GameTime.ElapsedGameTime);
 
             // Flash and be disabled if we're just born.
             float age = birthTime.SecondsAgo();
@@ -595,9 +599,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
-            base.Deserialize(reader, mode);
+            base.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 Weapon1Name = (CanonicalString)reader.ReadInt32();
@@ -614,6 +618,7 @@ namespace AW2.Game.Gobs
                 bool weapon1Fired = (flags & 0x04) != 0;
                 bool weapon2Fired = (flags & 0x08) != 0;
 
+                UpdateWeaponCharges(messageAge);
                 if (thrustForce > 0)
                     Thrust(thrustForce);
                 // TODO: Fire1() and Fire2() are intended to create muzzle pengs

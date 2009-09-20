@@ -124,9 +124,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
-            base.Deserialize(reader, mode);
+            base.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 // TODO: Deserialise 'spawnArea'

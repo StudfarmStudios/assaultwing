@@ -1,4 +1,6 @@
-﻿namespace AW2.Net
+﻿using System;
+
+namespace AW2.Net
 {
     /// <summary>
     /// An entity that supports serialisation for sending over a network
@@ -22,6 +24,7 @@
         /// before performing their own deserialisation.
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode);
+        /// <param name="messageAge">How long time ago was the data current.</param>
+        void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge);
     }
 }

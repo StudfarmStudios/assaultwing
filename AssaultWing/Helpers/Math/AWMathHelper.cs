@@ -272,6 +272,14 @@ namespace AW2.Helpers
                 v.Z);
         }
 
+        /// <summary>
+        /// Divides the <see cref="TimeSpan"/> by an integer.
+        /// </summary>
+        public static TimeSpan Divide(this TimeSpan time, int divisor)
+        {
+            return TimeSpan.FromTicks(time.Ticks / divisor);
+        }
+
         #region Unit tests
 #if DEBUG
         /// <summary>

@@ -407,7 +407,11 @@ namespace AW2.Game
                 {
                     GobUpdateMessage message = null;
                     while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobUpdateMessage>()) != null)
-                        message.ReadGobs(gobId => Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId), SerializationModeFlags.VaryingData);
+                    {
+                        var messageAge = AssaultWing.Instance.GameTime.TotalGameTime
+                            - (message.TotalGameTime + AssaultWing.Instance.NetworkEngine.ServerGameTimeOffset);
+                        message.ReadGobs(gobId => Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId), SerializationModeFlags.VaryingData, messageAge);
+                    }
                 }
                 {
                     GobDamageMessage message = null;
@@ -422,9 +426,11 @@ namespace AW2.Game
                     PlayerUpdateMessage message = null;
                     while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<PlayerUpdateMessage>()) != null)
                     {
+                        var messageAge = AssaultWing.Instance.GameTime.TotalGameTime
+                            - (message.TotalGameTime + AssaultWing.Instance.NetworkEngine.ServerGameTimeOffset);
                         var player = Spectators.FirstOrDefault(plr => plr.Id == message.PlayerId);
                         if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
-                        message.Read(player, SerializationModeFlags.VaryingData);
+                        message.Read(player, SerializationModeFlags.VaryingData, messageAge);
                     }
                 }
             }
@@ -479,10 +485,10 @@ namespace AW2.Game
         /// <summary>
         /// Reacts to one received <see cref="GobCreationMessage"/>.
         /// </summary>
-        public void ProcessGobCreationMessage(GobCreationMessage message)
+        public void ProcessGobCreationMessage(GobCreationMessage message, TimeSpan messageAge)
         {
             Gob gob = Gob.CreateGob(message.GobTypeName);
-            message.Read(gob, SerializationModeFlags.All);
+            message.Read(gob, SerializationModeFlags.All, messageAge);
             if (message.CreateToNextArena)
             {
                 gob.Layer = preparedArena.Layers[message.LayerIndex];

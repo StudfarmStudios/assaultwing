@@ -12,7 +12,7 @@ namespace AW2.Net
     {
         /// <summary>
         /// Total elapsed game time at the point in game time the message is 
-        /// current.
+        /// current, measured at the game instance who sent the message.
         /// </summary>
         public TimeSpan TotalGameTime { get; set; }
 
@@ -31,8 +31,7 @@ namespace AW2.Net
         /// <param name="writer">Writer of serialised data.</param>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            // UNDONE: game time not used in networking at the moment
-            //writer.Write((long)TotalGameTime.Ticks);
+            writer.Write((long)TotalGameTime.Ticks);
         }
 
         /// <summary>
@@ -41,8 +40,7 @@ namespace AW2.Net
         /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            // UNDONE: game time not used in networking at the moment
-            //TotalGameTime = new TimeSpan(reader.ReadInt64());
+            TotalGameTime = new TimeSpan(reader.ReadInt64());
         }
     }
 }

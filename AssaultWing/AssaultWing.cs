@@ -423,6 +423,7 @@ namespace AW2
         /// </summary>
         void ClientSizeChanged(object sender, EventArgs e)
         {
+            if (ClientBounds.Width == 0 || ClientBounds.Height == 0) return;
             GraphicsDeviceManager.PreferredBackBufferWidth = ClientBounds.Width;
             GraphicsDeviceManager.PreferredBackBufferHeight = ClientBounds.Height;
             GraphicsDeviceManager.ApplyChanges();

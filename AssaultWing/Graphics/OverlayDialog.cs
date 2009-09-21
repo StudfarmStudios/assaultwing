@@ -86,7 +86,11 @@ namespace AW2.Graphics
         /// </summary>
         protected override void UnloadContent()
         {
-            spriteBatch.Dispose();
+            if (spriteBatch != null)
+            {
+                spriteBatch.Dispose();
+                spriteBatch = null;
+            }
             // Our textures and fonts are disposed by GraphicsEngine.
         }
 

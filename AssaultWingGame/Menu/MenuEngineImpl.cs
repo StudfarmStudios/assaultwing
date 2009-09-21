@@ -151,15 +151,27 @@ namespace AW2.Menu
         /// </summary>
         protected override void UnloadContent()
         {
-            spriteBatch.Dispose();
-            vertexDeclaration.Dispose();
-            effect.Dispose();
+            if (spriteBatch != null)
+            {
+                spriteBatch.Dispose();
+                spriteBatch = null;
+            }
+            if (vertexDeclaration != null)
+            {
+                vertexDeclaration.Dispose();
+                vertexDeclaration = null;
+            }
+            if (effect != null)
+            {
+                effect.Dispose();
+                effect = null;
+            }
             // The textures and font we reference will be disposed by GraphicsEngine.
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
             foreach (MenuComponent component in components)
-                component.UnloadContent();
+                if (component != null) component.UnloadContent();
             AssaultWing.Instance.DataEngine.ProgressBar.UnloadContent();
 
             base.UnloadContent();

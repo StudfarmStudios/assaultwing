@@ -239,6 +239,7 @@ namespace AW2.Game.Gobs
                 if (weapon1 != null)
                 {
                     AssaultWing.Instance.DataEngine.Weapons.Remove(weapon1);
+                    weapon1.Dispose();
                     weapon1 = CreateWeapons(value, 1);
                 }
                 else
@@ -258,6 +259,7 @@ namespace AW2.Game.Gobs
                 if (weapon2 != null)
                 {
                     AssaultWing.Instance.DataEngine.Weapons.Remove(weapon2);
+                    weapon2.Dispose();
                     weapon2 = CreateWeapons(value, 2);
                 }
                 else

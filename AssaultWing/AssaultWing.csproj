@@ -224,6 +224,7 @@
     <Compile Include="Net\Messages\JoinGameRequest.cs" />
     <Compile Include="Net\Messages\PingReplyMessage.cs" />
     <Compile Include="Net\Messages\PingRequestMessage.cs" />
+    <Compile Include="Net\Messages\PlayerBonusMessage.cs" />
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
     <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
     <Compile Include="Net\Messages\StartGameMessage.cs" />

@@ -650,7 +650,17 @@ namespace AW2.Game
         public void AddBonus(PlayerBonusTypes bonus, TimeSpan expiryTime)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
                 MustUpdateToClients = true;
+                if (IsRemote)
+                {
+                    var bonusMessage = new PlayerBonusMessage();
+                    bonusMessage.BonusTypes = bonus;
+                    bonusMessage.ExpiryTime = expiryTime;
+                    bonusMessage.PlayerId = Id;
+                    AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(bonusMessage);
+                }
+            }
             bonuses |= bonus;
             if ((bonus & PlayerBonusTypes.Weapon1LoadTime) != 0)
             {
@@ -681,7 +691,17 @@ namespace AW2.Game
         public void RemoveBonus(PlayerBonusTypes bonus)
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
                 MustUpdateToClients = true;
+                if (IsRemote)
+                {
+                    var bonusMessage = new PlayerBonusMessage();
+                    bonusMessage.BonusTypes = bonus;
+                    bonusMessage.ExpiryTime = TimeSpan.FromHours(-1); // to make sure the client understands to remove the bonuses
+                    bonusMessage.PlayerId = Id;
+                    AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(bonusMessage);
+                }
+            }
             bonuses &= ~bonus;
             if ((bonus & PlayerBonusTypes.Weapon1LoadTime) != 0)
                 DeupgradeWeapon1LoadTime();

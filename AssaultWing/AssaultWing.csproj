@@ -228,6 +228,7 @@
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
     <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
     <Compile Include="Net\Messages\StartGameMessage.cs" />
+    <Compile Include="Net\Messages\WallHoleMessage.cs" />
     <Compile Include="Net\MultiConnection.cs" />
     <Compile Include="Net\NetworkBinaryReader.cs" />
     <Compile Include="Net\NetworkBinaryWriter.cs" />

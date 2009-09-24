@@ -114,7 +114,8 @@ namespace AW2.Game.Gobs
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 wallModelName = new CanonicalString(reader.ReadInt32());
-                Set3DModel();
+                var model = AssaultWing.Instance.Content.Load<Model>(wallModelName);
+                Texture = GetTexture(model);
             }
         }
 
@@ -136,13 +137,7 @@ namespace AW2.Game.Gobs
                 vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
                 vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
             }
-            if (model.Meshes.Count > 1)
-                throw new ArgumentOutOfRangeException("Wall model has more than one mesh");
-            if (model.Meshes[0].Effects.Count > 1)
-                throw new ArgumentOutOfRangeException("Wall model mesh has more than one effect");
-            BasicEffect effect = model.Meshes[0].Effects[0] as BasicEffect;
-            if (effect == null)
-                throw new ArgumentException("Wall model mesh's effect isn't a BasicEffect");
+            BasicEffect effect = GetEffect(model);
 
             // Take a copy of the effect so that we won't mess 
             // with the wall model template in the future.
@@ -150,6 +145,23 @@ namespace AW2.Game.Gobs
             BasicEffect effectCopy = (BasicEffect)effect.Clone(gfx);
 
             Set3DModel(vertexData, indexData, effectCopy.Texture, effectCopy);
+        }
+
+        private static BasicEffect GetEffect(Model model)
+        {
+            if (model.Meshes.Count > 1)
+                throw new ArgumentOutOfRangeException("Model has more than one mesh");
+            if (model.Meshes[0].Effects.Count > 1)
+                throw new ArgumentOutOfRangeException("Model mesh has more than one effect");
+            BasicEffect effect = model.Meshes[0].Effects[0] as BasicEffect;
+            if (effect == null)
+                throw new ArgumentException("Model mesh's effect isn't a BasicEffect");
+            return effect;
+        }
+
+        private static Texture2D GetTexture(Model model)
+        {
+            return GetEffect(model).Texture;
         }
 
         #region IConsistencyCheckable Members

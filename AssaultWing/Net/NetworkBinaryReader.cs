@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 
 namespace AW2.Net
@@ -87,6 +89,82 @@ namespace AW2.Net
         {
             byte[] bytes = base.ReadBytes(byteCount);
             return Encoding.UTF8.GetString(bytes).TrimEnd(nullCharArray);
+        }
+
+        /// <summary>
+        /// Reads a Vector2 value.
+        /// </summary>
+        public Vector2 ReadVector2()
+        {
+            return new Vector2
+            {
+                X = ReadSingle(),
+                Y = ReadSingle()
+            };
+        }
+
+        /// <summary>
+        /// Reads a Vector3 value.
+        /// </summary>
+        public Vector3 ReadVector3()
+        {
+            return new Vector3
+            {
+                X = ReadSingle(),
+                Y = ReadSingle(),
+                Z = ReadSingle()
+            };
+        }
+
+        /// <summary>
+        /// Reads a 3D model vertex.
+        /// </summary>
+        public VertexPositionNormalTexture ReadVertexPositionTextureNormal()
+        {
+            return new VertexPositionNormalTexture
+            {
+                Position = ReadVector3(),
+                Normal = ReadVector3(),
+                TextureCoordinate = ReadVector2()
+            };
+        }
+
+        /// <summary>
+        /// Reads a Vector2 value given in half precision.
+        /// </summary>
+        public Vector2 ReadHalfVector2()
+        {
+            return new Vector2
+            {
+                X = ReadHalf(),
+                Y = ReadHalf()
+            };
+        }
+
+        /// <summary>
+        /// Reads a Vector3 value given in half precision.
+        /// </summary>
+        public Vector3 ReadHalfVector3()
+        {
+            return new Vector3
+            {
+                X = ReadHalf(),
+                Y = ReadHalf(),
+                Z = ReadHalf()
+            };
+        }
+
+        /// <summary>
+        /// Reads a 3D model vertex given in half precision.
+        /// </summary>
+        public VertexPositionNormalTexture ReadHalfVertexPositionTextureNormal()
+        {
+            return new VertexPositionNormalTexture
+            {
+                Position = ReadHalfVector3(),
+                Normal = ReadHalfVector3(),
+                TextureCoordinate = ReadHalfVector2()
+            };
         }
 
 #if DEBUG

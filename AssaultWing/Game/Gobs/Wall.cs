@@ -132,7 +132,8 @@ namespace AW2.Game.Gobs
         /// Creates an uninitialised piece of wall.
         /// </summary>
         /// This constructor is only for serialisation.
-        public Wall() : base() 
+        public Wall()
+            : base()
         {
             Set3DModel(new VertexPositionNormalTexture[] 
                 {
@@ -294,9 +295,14 @@ namespace AW2.Game.Gobs
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return;
-            Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                // TODO: notify clients
+            }
 
             // Eat a round hole.
+            Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
             int indexMapWidth = indexMap.GetLength(1);
             int indexMapHeight = indexMap.GetLength(0);
             AWMathHelper.FillCircle((int)Math.Round(posInIndexMap.X), (int)Math.Round(posInIndexMap.Y),
@@ -323,7 +329,48 @@ namespace AW2.Game.Gobs
             if (TriangleCount == 0)
                 Arena.Gobs.Remove(this);
         }
- 
+
+        #region Methods related to serialisation
+
+        /// <summary>
+        /// Serialises the gob for to a binary writer.
+        /// </summary>
+        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((int)vertexData.Length);
+                foreach (var vertex in vertexData)
+                    writer.WriteHalf((VertexPositionNormalTexture)vertex);
+                writer.Write((int)indexData.Length);
+                foreach (var index in indexData)
+                    writer.Write((short)index);
+            }
+        }
+
+        /// <summary>
+        /// Deserialises the gob from a binary writer.
+        /// </summary>
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            base.Deserialize(reader, mode, messageAge);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                int vertexDataLength = reader.ReadInt32();
+                vertexData = new VertexPositionNormalTexture[vertexDataLength];
+                for (int i = 0; i < vertexDataLength; ++i)
+                    vertexData[i] = reader.ReadHalfVertexPositionTextureNormal();
+                int indexDataLength = reader.ReadInt32();
+                indexData = new short[indexDataLength];
+                for (int i = 0; i < indexDataLength; ++i)
+                    indexData[i] = reader.ReadInt16();
+                CreateCollisionAreas();
+            }
+        }
+
+        #endregion Methods related to serialisation
+
         #region Protected methods
 
         /// <summary>
@@ -341,7 +388,6 @@ namespace AW2.Game.Gobs
             this.Texture = texture;
             this.effect = effect;
         }
-
 
         #endregion Protected methods
 
@@ -368,9 +414,12 @@ namespace AW2.Game.Gobs
             silhouetteEffect = effect == null ? null : (BasicEffect)effect.Clone(gfx);
             FineTriangles();
             TriangleCount = this.indexData.Length / 3;
+            CreateCollisionAreas();
+        }
 
-            // Create collision areas; one for each triangle in the wall's 3D model
-            // and one bounding collision area for making holes in the wall.
+        private void CreateCollisionAreas()
+        {
+            // Create one collision area for each triangle in the wall's 3D model.
             collisionAreas = new CollisionArea[this.indexData.Length / 3 + 1];
             for (int i = 0; i + 2 < this.indexData.Length; i += 3)
             {
@@ -386,7 +435,7 @@ namespace AW2.Game.Gobs
                     CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
             }
 
-            // Create a collision bounding volume for the wall.
+            // Create a collision bounding volume for the whole wall.
             var positions = vertexData.Select(vertex => new Vector2(vertex.Position.X, vertex.Position.Y));
             var min = positions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
             var max = positions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
@@ -513,7 +562,7 @@ namespace AW2.Game.Gobs
                 }
         }
 
-        private void ComputeIndexMapFragment(VertexPositionColor[] colouredVertexData, 
+        private void ComputeIndexMapFragment(VertexPositionColor[] colouredVertexData,
             RenderTarget2D maskTarget, int targetSize, int startY, int startX)
         {
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;

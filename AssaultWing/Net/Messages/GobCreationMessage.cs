@@ -39,13 +39,13 @@ namespace AW2.Net.Messages
             // bool as 1 byte: true=create gob to next arena, false=create gob to current arena
             // byte: arena layer index
             // int: canonical form of gob type name
-            // word: data length N
+            // int: data length N
             // N bytes: serialised data of the gob (content known only by the Gob subclass in question)
             byte[] writeBytes = StreamedData;
             writer.Write((bool)CreateToNextArena);
             writer.Write(checked((byte)LayerIndex));
             writer.Write((int)GobTypeName.Canonical);
-            writer.Write(checked((ushort)writeBytes.Length));
+            writer.Write((int)writeBytes.Length);
             writer.Write(writeBytes, 0, writeBytes.Length);
         }
 
@@ -59,7 +59,7 @@ namespace AW2.Net.Messages
             CreateToNextArena = reader.ReadBoolean();
             LayerIndex = reader.ReadByte();
             GobTypeName = (CanonicalString)reader.ReadInt32();
-            int byteCount = reader.ReadUInt16();
+            int byteCount = reader.ReadInt32();
             StreamedData = reader.ReadBytes(byteCount);
         }
 

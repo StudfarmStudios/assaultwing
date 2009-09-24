@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 
 namespace AW2.Net
@@ -121,6 +123,64 @@ namespace AW2.Net
             // Pad with zero bytes.
             for (int i = bytesNeeded; i < byteCount; ++i)
                 Write((byte)0);
+        }
+
+        /// <summary>
+        /// Writes a Vector2 value.
+        /// </summary>
+        public void Write(Vector2 vector)
+        {
+            Write((float)vector.X);
+            Write((float)vector.Y);
+        }
+
+        /// <summary>
+        /// Writes a Vector3 value.
+        /// </summary>
+        public void Write(Vector3 vector)
+        {
+            Write((float)vector.X);
+            Write((float)vector.Y);
+            Write((float)vector.Z);
+        }
+
+        /// <summary>
+        /// Writes a 3D model vertex.
+        /// </summary>
+        public void Write(VertexPositionNormalTexture vertex)
+        {
+            Write((Vector3)vertex.Position);
+            Write((Vector3)vertex.Normal);
+            Write((Vector2)vertex.TextureCoordinate);
+        }
+
+        /// <summary>
+        /// Writes a Vector2 value using half precision.
+        /// </summary>
+        public void WriteHalf(Vector2 vector)
+        {
+            Write((Half)vector.X);
+            Write((Half)vector.Y);
+        }
+
+        /// <summary>
+        /// Writes a Vector3 value using half precision.
+        /// </summary>
+        public void WriteHalf(Vector3 vector)
+        {
+            Write((Half)vector.X);
+            Write((Half)vector.Y);
+            Write((Half)vector.Z);
+        }
+
+        /// <summary>
+        /// Writes a 3D model vertex using half precision.
+        /// </summary>
+        public void WriteHalf(VertexPositionNormalTexture vertex)
+        {
+            WriteHalf((Vector3)vertex.Position);
+            WriteHalf((Vector3)vertex.Normal);
+            WriteHalf((Vector2)vertex.TextureCoordinate);
         }
 
 #if DEBUG

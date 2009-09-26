@@ -99,7 +99,7 @@ namespace AW2
         LogicEngine logicEngine;
         DataEngine dataEngine;
         PhysicsEngine physicsEngine;
-        SoundEngineImpl soundEngine;
+        SoundEngine soundEngine;
         EventEngineImpl eventEngine;
         IMenuEngine menuEngine;
         int preferredWindowWidth, preferredWindowHeight;
@@ -436,7 +436,7 @@ namespace AW2
             dataEngine.StartArena();
             graphicsEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
-            soundEngine.PlayMusic(dataEngine.Arena);
+            soundEngine.PlayMusic(dataEngine.Arena.BackgroundMusic);
         }
 
         [Conditional("DEBUG")]
@@ -748,7 +748,7 @@ namespace AW2
 
             uiEngine = new UIEngineImpl(this);
             logicEngine = new LogicEngine(this);
-            soundEngine = new SoundEngineImpl(this);
+            soundEngine = new SoundEngine(this);
             graphicsEngine = new GraphicsEngineImpl(this);
             menuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
             networkEngine = new NetworkEngine(this);

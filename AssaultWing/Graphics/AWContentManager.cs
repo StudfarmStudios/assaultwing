@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using AW2.Helpers;
-using AW2.Helpers.Collections;
-using System.Text.RegularExpressions;
 
 namespace AW2.Graphics
 {
@@ -42,6 +42,7 @@ namespace AW2.Graphics
                 else if (type == typeof(Model)) assetPath = Paths.Models;
                 else if (type == typeof(SpriteFont)) assetPath = Paths.Fonts;
                 else if (type == typeof(Effect)) assetPath = Paths.Shaders;
+                else if (type == typeof(Song) || type == typeof(SoundEffect)) assetPath = Paths.Music;
                 else throw new ArgumentException("Cannot load content of unexpected type " + type.Name);
                 assetFullName = Path.Combine(assetPath, assetName);
             }

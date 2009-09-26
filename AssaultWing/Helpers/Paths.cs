@@ -41,6 +41,11 @@ namespace AW2.Helpers
         public static readonly string Models = @"Content\models";
 
         /// <summary>
+        /// Path to music.
+        /// </summary>
+        public static readonly string Music = @"Content\music";
+
+        /// <summary>
         /// Path to particle effects.
         /// </summary>
         public static readonly string Particles = @"Content\particledefs";

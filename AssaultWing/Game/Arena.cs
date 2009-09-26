@@ -584,8 +584,8 @@ namespace AW2.Game
         {
             foreach (CollisionArea area in gob.CollisionAreas)
             {
+                Register(area);
                 int bitIndex = AWMathHelper.LogTwo((int)area.Type);
-                area.CollisionData = collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
                 if (area.CollidesAgainst != CollisionAreaType.None)
                     collisionAreaMayCollide[bitIndex] = true;
             }
@@ -700,8 +700,9 @@ namespace AW2.Game
         /// </summary>
         private void Register(CollisionArea area)
         {
-            area.CollisionData = collisionAreas[AWMathHelper.LogTwo((int)area.Type)]
-                .Add(area, area.Area.BoundingBox);
+            if (area.CollisionData != null) throw new InvalidOperationException("Collision area is already registered");
+            int bitIndex = AWMathHelper.LogTwo((int)area.Type);
+            area.CollisionData = collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
         }
 
         /// <summary>

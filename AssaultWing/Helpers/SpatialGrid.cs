@@ -114,10 +114,10 @@ namespace AW2.Helpers
             ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
 
             if (outOfBounds)
-                outerCell.RemoveAll(delegate(SpatialGridElement<T> element) { return element.Value.Equals(obj); });
+                outerCell.RemoveAll(element => element.Value.Equals(obj));
             for (int y = gridMinY; y < gridMaxY; ++y)
                 for (int x = gridMinX; x < gridMaxX; ++x)
-                    cells[y, x].RemoveAll(delegate(SpatialGridElement<T> element) { return element.Value.Equals(obj); });
+                    cells[y, x].RemoveAll(element => element.Value.Equals(obj));
 
             // We can't update 'boundingBoxMax' effectively to be a tight bound,
             // but it still maintains its invariant.

@@ -318,6 +318,11 @@ namespace AW2.Menu
                         AssaultWing.Instance.PrepareFirstArena,
                         () =>
                         {
+                            net.MessageHandlers.Add(new MessageHandler<WallHoleMessage>(false, net.GameServerConnection, mess =>
+                            {
+                                var wall = (AW2.Game.Gobs.Wall)AssaultWing.Instance.DataEngine.Arena.Gobs.First(gob => gob.Id == mess.GobId);
+                                wall.MakeHole(mess.TriangleIndices);
+                            }));
                             net.MessageHandlers.Add(new GameplayMessageHandler<GobCreationMessage>(false,
                                 (PingedConnection)net.GameServerConnection,
                                 AssaultWing.Instance.DataEngine.ProcessGobCreationMessage));

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Net.Messages;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game.Gobs
@@ -296,38 +297,49 @@ namespace AW2.Game.Gobs
         {
             if (holeRadius <= 0) return;
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-            {
-                // TODO: notify clients
-            }
 
             // Eat a round hole.
             Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
             int indexMapWidth = indexMap.GetLength(1);
             int indexMapHeight = indexMap.GetLength(0);
+            var removeIndices = new List<int>();
             AWMathHelper.FillCircle((int)Math.Round(posInIndexMap.X), (int)Math.Round(posInIndexMap.Y),
-                (int)Math.Round(holeRadius), delegate(int x, int y)
+                (int)Math.Round(holeRadius), (x, y) =>
             {
                 if (x < 0 || y < 0 || x >= indexMapWidth || y >= indexMapHeight) return;
                 if (indexMap[y, x] == null) return;
                 foreach (int index in indexMap[y, x])
-                {
-                    if (--triangleCovers[index] != 0) continue;
-
-                    // Replace the triangle in the 3D model with a trivial one.
-                    indexData[3 * index + 0] = 0;
-                    indexData[3 * index + 1] = 0;
-                    indexData[3 * index + 2] = 0;
-
-                    Arena.Unregister(collisionAreas[index]);
-                    --TriangleCount;
-                }
-                //indexMap[y, x] = null;
+                    if (--triangleCovers[index] == 0)
+                        removeIndices.Add(index);
             });
+            MakeHole(removeIndices);
+
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && removeIndices.Any())
+            {
+                var message = new WallHoleMessage { GobId = Id, TriangleIndices = removeIndices };
+                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+            }
 
             // Remove the wall gob if all its triangles have been removed.
             if (TriangleCount == 0)
-                Arena.Gobs.Remove(this);
+                Die(new DeathCause());
+        }
+
+        /// <summary>
+        /// Removes some triangles from the wall's 3D model.
+        /// </summary>
+        public void MakeHole(IList<int> triangleIndices)
+        {
+            foreach (int index in triangleIndices)
+            {
+                // Replace the triangle in the 3D model with a trivial one.
+                indexData[3 * index + 0] = 0;
+                indexData[3 * index + 1] = 0;
+                indexData[3 * index + 2] = 0;
+
+                Arena.Unregister(collisionAreas[index]);
+            }
+            TriangleCount -= triangleIndices.Count();
         }
 
         #region Methods related to serialisation

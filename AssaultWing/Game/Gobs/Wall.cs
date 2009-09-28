@@ -217,7 +217,8 @@ namespace AW2.Game.Gobs
             base.Activate();
             if (Arena.IsForPlaying)
             {
-                Prepare3DModel();
+                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+                    Prepare3DModel();
                 InitializeIndexMap();
                 drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position));
             }

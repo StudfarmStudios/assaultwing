@@ -560,7 +560,7 @@ namespace AW2.Game
         /// <summary>
         /// Prepares a gob for a game session.
         /// </summary>
-        public void Prepare(Gob gob) // TODO !!! This method should be private
+        private void Prepare(Gob gob)
         {
             gob.Arena = this;
             gob.Activate();

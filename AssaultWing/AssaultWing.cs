@@ -117,7 +117,8 @@ namespace AW2
         bool startingArenaOnServer;
         List<int> startedArenaOnClients = new List<int>();
 
-        // HACK: Fields for frame stepping and configuration reloading
+        // HACK: Debug keys
+        Control musicSwitch;
         Control arenaReload;
         Control frameStepControl;
         Control frameRunControl;
@@ -383,6 +384,7 @@ namespace AW2
             ClientBoundsMin = new Rectangle(0, 0, 1000, 800);
             AllowDialogs = true;
 
+            musicSwitch = new KeyboardKey(Keys.F5);
             arenaReload = new KeyboardKey(Keys.F6);
             frameStepControl = new KeyboardKey(Keys.F8);
             frameRunControl = new KeyboardKey(Keys.F7);
@@ -903,6 +905,12 @@ namespace AW2
                     startingArenaOnServer = false;
                     StartArenaImpl();
                 }
+            }
+
+            // Switch music off
+            if (musicSwitch.Pulse && GameState == GameState.Gameplay)
+            {
+                soundEngine.StopMusic();
             }
 
             // Instant arena reload (simple aid for hand-editing an arena)

@@ -388,15 +388,6 @@ namespace AW2.Game
         public event Action CustomOperations;
 
         /// <summary>
-        /// Sets lighting for the effect.
-        /// </summary>
-        /// <param name="effect">The effect to modify.</param>
-        public void PrepareEffect(BasicEffect effect)
-        {
-            Arena.PrepareEffect(effect);
-        }
-
-        /// <summary>
         /// Commits pending operations. This method should be called at the end of each frame.
         /// </summary>
         public void CommitPending()

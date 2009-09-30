@@ -859,7 +859,7 @@ namespace AW2.Game
 
                 foreach (BasicEffect be in mesh.Effects)
                 {
-                    AssaultWing.Instance.DataEngine.PrepareEffect(be);
+                    Arena.PrepareEffect(be);
                     be.Projection = projection;
                     be.View = view;
                     be.World = ModelPartTransforms[mesh.ParentBone.Index] * world;

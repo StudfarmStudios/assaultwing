@@ -121,6 +121,7 @@ namespace AW2.Game.Gobs
             {
                 wallModelName = new CanonicalString(reader.ReadInt32());
                 var model = AssaultWing.Instance.Content.Load<Model>(wallModelName);
+                Effect = GetEffect(model);
                 Texture = GetTexture(model);
             }
         }

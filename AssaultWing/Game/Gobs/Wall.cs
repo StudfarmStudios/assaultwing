@@ -72,7 +72,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The effect for drawing the wall.
         /// </summary>
-        BasicEffect effect;
+        protected BasicEffect Effect { get; set; }
 
         /// <summary>
         /// The effect for drawing the wall as a silhouette.
@@ -167,7 +167,6 @@ namespace AW2.Game.Gobs
             defaultEffect = defaultEffect ?? new BasicEffect(gfx, null);
             defaultSilhouetteEffect = defaultSilhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
             maskEff = maskEff ?? (BasicEffect)defaultEffect.Clone(gfx);
-            effect = defaultEffect;
             silhouetteEffect = defaultSilhouetteEffect;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             base.LoadContent();
@@ -239,21 +238,21 @@ namespace AW2.Game.Gobs
             }
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.VertexDeclaration = vertexDeclaration;
-            effect.World = Matrix.Identity;
-            effect.Projection = projection;
-            effect.View = view;
-            effect.Texture = Texture;
-            effect.TextureEnabled = true;
-            AssaultWing.Instance.DataEngine.PrepareEffect(effect);
-            effect.Begin();
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            Effect.World = Matrix.Identity;
+            Effect.Projection = projection;
+            Effect.View = view;
+            Effect.Texture = Texture;
+            Effect.TextureEnabled = true;
+            Arena.PrepareEffect(Effect);
+            Effect.Begin();
+            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
             {
                 pass.Begin();
                 gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
                     PrimitiveType.TriangleList, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length / 3);
                 pass.End();
             }
-            effect.End();
+            Effect.End();
         }
 
         /// <summary>
@@ -399,7 +398,7 @@ namespace AW2.Game.Gobs
             this.vertexData = vertexData;
             this.indexData = indexData;
             this.Texture = texture;
-            this.effect = effect;
+            this.Effect = effect;
         }
 
         #endregion Protected methods
@@ -424,7 +423,7 @@ namespace AW2.Game.Gobs
         private void Prepare3DModel()
         {
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            silhouetteEffect = effect == null ? null : (BasicEffect)effect.Clone(gfx);
+            silhouetteEffect = Effect == null ? null : (BasicEffect)Effect.Clone(gfx);
             FineTriangles();
             TriangleCount = this.indexData.Length / 3;
             CreateCollisionAreas();

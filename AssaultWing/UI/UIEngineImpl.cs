@@ -67,31 +67,22 @@ namespace AW2.UI
                         // We silently ignore the controls.
                         continue;
                     }
-                    ((RemoteControl)player.Controls.thrust).SetControlState(
-                        message.GetControlState(PlayerControlType.Thrust).force,
-                        message.GetControlState(PlayerControlType.Thrust).pulse);
-                    ((RemoteControl)player.Controls.left).SetControlState(
-                        message.GetControlState(PlayerControlType.Left).force,
-                        message.GetControlState(PlayerControlType.Left).pulse);
-                    ((RemoteControl)player.Controls.right).SetControlState(
-                        message.GetControlState(PlayerControlType.Right).force,
-                        message.GetControlState(PlayerControlType.Right).pulse);
-                    ((RemoteControl)player.Controls.down).SetControlState(
-                        message.GetControlState(PlayerControlType.Down).force,
-                        message.GetControlState(PlayerControlType.Down).pulse);
-                    ((RemoteControl)player.Controls.fire1).SetControlState(
-                        message.GetControlState(PlayerControlType.Fire1).force,
-                        message.GetControlState(PlayerControlType.Fire1).pulse);
-                    ((RemoteControl)player.Controls.fire2).SetControlState(
-                        message.GetControlState(PlayerControlType.Fire2).force,
-                        message.GetControlState(PlayerControlType.Fire2).pulse);
-                    ((RemoteControl)player.Controls.extra).SetControlState(
-                        message.GetControlState(PlayerControlType.Extra).force,
-                        message.GetControlState(PlayerControlType.Extra).pulse);
+                    SetRemoteControlState((RemoteControl)player.Controls.thrust, message.GetControlState(PlayerControlType.Thrust));
+                    SetRemoteControlState((RemoteControl)player.Controls.left, message.GetControlState(PlayerControlType.Left));
+                    SetRemoteControlState((RemoteControl)player.Controls.right, message.GetControlState(PlayerControlType.Right));
+                    SetRemoteControlState((RemoteControl)player.Controls.down, message.GetControlState(PlayerControlType.Down));
+                    SetRemoteControlState((RemoteControl)player.Controls.fire1, message.GetControlState(PlayerControlType.Fire1));
+                    SetRemoteControlState((RemoteControl)player.Controls.fire2, message.GetControlState(PlayerControlType.Fire2));
+                    SetRemoteControlState((RemoteControl)player.Controls.extra, message.GetControlState(PlayerControlType.Extra));
                 }
             }
 
             oldState = newState;
+        }
+
+        private static void SetRemoteControlState(RemoteControl control, PlayerControlsMessage.ControlState state)
+        {
+            control.SetControlState(state.force, state.pulse);
         }
     }
 }

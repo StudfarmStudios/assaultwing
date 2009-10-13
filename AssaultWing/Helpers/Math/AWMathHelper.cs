@@ -280,6 +280,14 @@ namespace AW2.Helpers
             return TimeSpan.FromTicks(time.Ticks / divisor);
         }
 
+        /// <summary>
+        /// Returns a 2D unit vector pointing towards an angle in radians.
+        /// </summary>
+        public static Vector2 GetUnitVector2(float radians)
+        {
+            return new Vector2((float)Math.Cos(radians), (float)Math.Sin(radians));
+        }
+
         #region Unit tests
 #if DEBUG
         /// <summary>

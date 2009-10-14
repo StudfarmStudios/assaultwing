@@ -242,9 +242,7 @@ namespace AW2.Game.Pengs
                                 continue;
                             }
                             gob.Owner = peng.Owner;
-                            gob.Pos = pos;
-                            gob.Move = move;
-                            gob.Rotation = rotation;
+                            gob.ResetPos(pos, move, rotation);
                             Peng.Arena.Gobs.Add(gob);
                         }
                     }

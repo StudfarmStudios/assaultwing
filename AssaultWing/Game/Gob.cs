@@ -397,6 +397,18 @@ namespace AW2.Game
         public virtual Vector2 Pos { get { return pos; } set { pos = value; } }
 
         /// <summary>
+        /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
+        /// as if the gob appeared there instantaneously
+        /// as opposed to moving there in a continuous fashion.
+        /// </summary>
+        public virtual void ResetPos(Vector2 pos, Vector2 move, float rotation)
+        {
+            Pos = pos;
+            Move = move;
+            Rotation = rotation;
+        }
+
+        /// <summary>
         /// Get or set the gob's movement vector.
         /// </summary>
         public virtual Vector2 Move { get { return move; } set { move = value; } }
@@ -642,9 +654,7 @@ namespace AW2.Game
             gravitating = true;
             SetId();
             owner = null;
-            Pos = Vector2.Zero; // also translates collPrimitives
-            move = Vector2.Zero;
-            rotation = Gob.defaultRotation;
+            ResetPos(Vector2.Zero, Vector2.Zero, Gob.defaultRotation); // also translates collPrimitives
             birthTime = AssaultWing.Instance.GameTime.TotalGameTime;
             modelPartTransforms = null;
             exhaustEngines = new Gob[0];
@@ -1015,7 +1025,7 @@ namespace AW2.Game
         /// Sets the gob's position and movement by computing it from a known position
         /// and movement some time ago.
         /// </summary>
-        protected void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, TimeSpan gameTimeAgo)
+        public void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, TimeSpan gameTimeAgo)
         {
             pos = oldPos;
             move = oldMove;
@@ -1254,8 +1264,7 @@ namespace AW2.Game
             {
                 CreateGob(gobType, gob =>
                 {
-                    gob.Pos = this.Pos;
-                    gob.Rotation = this.Rotation;
+                    gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);
                     gob.owner = this.owner;
                     if (gob is ParticleEngine)
                         ((ParticleEngine)gob).Leader = this;
@@ -1349,8 +1358,7 @@ namespace AW2.Game
             {
                 CreateGob(gobType, gob =>
                 {
-                    gob.Pos = this.Pos;
-                    gob.Rotation = this.Rotation;
+                    gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);
                     gob.owner = this.owner;
                     Arena.Gobs.Add(gob);
                 });

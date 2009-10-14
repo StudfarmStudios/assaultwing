@@ -78,7 +78,7 @@ namespace AW2.Game.Gobs
         /// <param name="ship">The ship to position.</param>
         public void Spawn(Ship ship)
         {
-            ship.Pos = Arena.GetFreePosition(ship, spawnArea);
+            ship.ResetPos(Arena.GetFreePosition(ship, spawnArea), ship.Move, ship.Rotation);
         }
 
         #endregion Public interface

@@ -231,9 +231,8 @@ namespace AW2.Game.Weapons
             Gob.CreateGob(shotTypeName, shot =>
             {
                 shot.Owner = owner.Owner;
-                shot.Pos = owner.GetNamedPosition(boneI);
-                shot.Move = owner.Move + kick;
-                shot.Rotation = owner.Rotation; // could also be 'direction'
+                shot.ResetPos(owner.GetNamedPosition(boneI), owner.Move + kick,
+                    owner.Rotation);  // 'owner.Rotation' could also be 'direction'
                 Arena.Gobs.Add(shot);
                 liveShots.Add(shot);
             });

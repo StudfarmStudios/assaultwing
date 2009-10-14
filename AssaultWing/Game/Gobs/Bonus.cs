@@ -201,7 +201,7 @@ namespace AW2.Game.Gobs
                 case BonusAction.Explode:
                     Gob.CreateGob((CanonicalString)"bomb explosion", explosion =>
                     {
-                        explosion.Pos = this.Pos;
+                        explosion.ResetPos(this.Pos, explosion.Move, explosion.Rotation);
                         Arena.Gobs.Add(explosion);
                     });
                     break;
@@ -233,7 +233,7 @@ namespace AW2.Game.Gobs
                 // Display bonusmessage
                 Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
                 {
-                    gob.Pos = Pos;
+                    gob.ResetPos(Pos, gob.Move, gob.Rotation);
                     var data = ((PlayerBonus)playerBonus).GetData(player);
                     ((BonusMessage)gob).Message = data.message;
                     ((BonusMessage)gob).IconName = data.iconName;

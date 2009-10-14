@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AW2.UI;
 
 namespace AW2.Net.Messages
@@ -9,33 +10,6 @@ namespace AW2.Net.Messages
     /// </summary>
     public class PlayerControlsMessage : GameplayMessage
     {
-        /// <summary>
-        /// State of a control.
-        /// </summary>
-        public struct ControlState
-        {
-            /// <summary>
-            /// Amount of force of the control, between 0 (no force) and 1 (full force).
-            /// </summary>
-            public float force;
-
-            /// <summary>
-            /// Did the control give a pulse.
-            /// </summary>
-            public bool pulse;
-
-            /// <summary>
-            /// Creates a new control state.
-            /// </summary>
-            /// <param name="force">Amount of force of the control.</param>
-            /// <param name="pulse">Did the control give a pulse.</param>
-            public ControlState(float force, bool pulse)
-            {
-                this.force = force;
-                this.pulse = pulse;
-            }
-        }
-
         ControlState[] controlStates = new ControlState[Enum.GetValues(typeof(PlayerControlType)).Length];
 
         /// <summary>
@@ -57,6 +31,11 @@ namespace AW2.Net.Messages
         {
             return controlStates[(int)controlType];
         }
+
+        /// <summary>
+        /// The states of all the controls of the player.
+        /// </summary>
+        public IList<ControlState> ControlStates { get { return controlStates; } }
 
         /// <summary>
         /// Sets the state of a control of the player.

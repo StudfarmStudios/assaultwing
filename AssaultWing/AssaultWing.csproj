@@ -141,6 +141,7 @@
     <Compile Include="Game\PhysicsEngine.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\PlayerBonus.cs" />
+    <Compile Include="Game\ShipLocationPredicter.cs" />
     <Compile Include="Game\Spectator.cs" />
     <Compile Include="Game\TypeLoader.cs" />
     <Compile Include="Game\Weapon.cs" />

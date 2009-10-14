@@ -110,11 +110,11 @@ namespace AW2.Game.Pengs
             // Update particle fields.
             float lifePos = (now - particle.birthTime).Ticks / (float)(particle.timeout - particle.birthTime).Ticks;
             particle.layerDepth = lifePos;
-            particle.move += AssaultWing.Instance.PhysicsEngine.ApplyChange(acceleration.GetValue(lifePos, particle.pengInput, particle.random))
+            particle.move += AssaultWing.Instance.PhysicsEngine.ApplyChange(acceleration.GetValue(lifePos, particle.pengInput, particle.random), AssaultWing.Instance.GameTime.ElapsedGameTime)
                 * new Vector2((float)Math.Cos(particle.direction), (float)Math.Sin(particle.direction));
             particle.move *= (float)Math.Pow(1 - drag, AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds);
-            particle.pos += AssaultWing.Instance.PhysicsEngine.ApplyChange(particle.move);
-            particle.rotation += AssaultWing.Instance.PhysicsEngine.ApplyChange(rotationSpeed.GetValue(lifePos, particle.pengInput, particle.random));
+            particle.pos += AssaultWing.Instance.PhysicsEngine.ApplyChange(particle.move, AssaultWing.Instance.GameTime.ElapsedGameTime);
+            particle.rotation += AssaultWing.Instance.PhysicsEngine.ApplyChange(rotationSpeed.GetValue(lifePos, particle.pengInput, particle.random), AssaultWing.Instance.GameTime.ElapsedGameTime);
             particle.scale = scale.GetValue(lifePos, particle.pengInput, particle.random);
             particle.alpha = alpha.GetValue(lifePos, particle.pengInput, particle.random);
             return false;

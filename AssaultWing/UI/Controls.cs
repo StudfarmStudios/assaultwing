@@ -132,6 +132,38 @@ namespace AW2.UI
         /// Returns the amount of control force; a float between 0 and 1.
         /// </summary>
         public abstract float Force { get; }
+
+        /// <summary>
+        /// Returns the state of the control.
+        /// </summary>
+        public ControlState State { get { return new ControlState(Force, Pulse); } }
+    }
+
+    /// <summary>
+    /// State of a control.
+    /// </summary>
+    public struct ControlState
+    {
+        /// <summary>
+        /// Amount of force of the control, between 0 (no force) and 1 (full force).
+        /// </summary>
+        public float force;
+
+        /// <summary>
+        /// Did the control give a pulse.
+        /// </summary>
+        public bool pulse;
+
+        /// <summary>
+        /// Creates a new control state.
+        /// </summary>
+        /// <param name="force">Amount of force of the control.</param>
+        /// <param name="pulse">Did the control give a pulse.</param>
+        public ControlState(float force, bool pulse)
+        {
+            this.force = force;
+            this.pulse = pulse;
+        }
     }
 
     /// <summary>

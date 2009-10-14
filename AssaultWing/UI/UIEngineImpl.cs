@@ -67,20 +67,18 @@ namespace AW2.UI
                         // We silently ignore the controls.
                         continue;
                     }
-                    SetRemoteControlState((RemoteControl)player.Controls.thrust, message.GetControlState(PlayerControlType.Thrust));
-                    SetRemoteControlState((RemoteControl)player.Controls.left, message.GetControlState(PlayerControlType.Left));
-                    SetRemoteControlState((RemoteControl)player.Controls.right, message.GetControlState(PlayerControlType.Right));
-                    SetRemoteControlState((RemoteControl)player.Controls.down, message.GetControlState(PlayerControlType.Down));
-                    SetRemoteControlState((RemoteControl)player.Controls.fire1, message.GetControlState(PlayerControlType.Fire1));
-                    SetRemoteControlState((RemoteControl)player.Controls.fire2, message.GetControlState(PlayerControlType.Fire2));
-                    SetRemoteControlState((RemoteControl)player.Controls.extra, message.GetControlState(PlayerControlType.Extra));
+                    foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
+                        SetRemoteControlState((RemoteControl)player.Controls[control], message.GetControlState(control));
+                    var playerPlayer = player as Player;
+                    if (playerPlayer != null && playerPlayer.Ship != null)
+                        playerPlayer.Ship.LocationPredicter.StoreControlStates(message.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageAge(message));
                 }
             }
 
             oldState = newState;
         }
 
-        private static void SetRemoteControlState(RemoteControl control, PlayerControlsMessage.ControlState state)
+        private static void SetRemoteControlState(RemoteControl control, ControlState state)
         {
             control.SetControlState(state.force, state.pulse);
         }

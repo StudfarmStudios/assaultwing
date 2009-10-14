@@ -63,12 +63,12 @@ namespace AW2.Game
         /// <param name="gob">The gob to apply the force to.</param>
         /// <param name="force">The force to apply, measured in Newtons.</param>
         /// <param name="maxSpeed">The speed limit beyond which the gob's speed cannot grow.</param>
-        public void ApplyLimitedForce(Gob gob, Vector2 force, float maxSpeed)
+        public void ApplyLimitedForce(Gob gob, Vector2 force, float maxSpeed, TimeSpan duration)
         {
             if (gob.Gravitating)
             {
                 float oldSpeed = gob.Move.Length();
-                gob.Move += force / gob.Mass * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                gob.Move += force / gob.Mass * (float)duration.TotalSeconds;
                 float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
                 gob.Move = gob.Move.Clamp(0, speedLimit);
             }
@@ -93,9 +93,9 @@ namespace AW2.Game
         /// </summary>
         /// <param name="changePerSecond">The speed of change per second.</param>
         /// <returns>The amount of change during the current frame.</returns>
-        public float ApplyChange(float changePerSecond)
+        public float ApplyChange(float changePerSecond, TimeSpan duration)
         {
-            return changePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            return changePerSecond * (float)duration.TotalSeconds;
         }
 
         /// <summary>
@@ -104,9 +104,9 @@ namespace AW2.Game
         /// </summary>
         /// <param name="changePerSecond">The vector of change per second.</param>
         /// <returns>The vector of change during the current frame.</returns>
-        public Vector2 ApplyChange(Vector2 changePerSecond)
+        public Vector2 ApplyChange(Vector2 changePerSecond, TimeSpan duration)
         {
-            return changePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            return changePerSecond * (float)duration.TotalSeconds;
         }
 
         #endregion Public interface

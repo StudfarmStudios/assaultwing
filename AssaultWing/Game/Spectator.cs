@@ -5,6 +5,7 @@ using System.Text;
 using AW2.UI;
 using AW2.Net;
 using Microsoft.Xna.Framework;
+using AW2.Helpers;
 
 namespace AW2.Game
 {

@@ -4,11 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using AW2.Helpers;
-using AW2.Game.Particles;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game.Particles;
+using AW2.Helpers;
+using AW2.UI;
 
 namespace AW2.Game.Gobs
 {
@@ -189,6 +189,17 @@ namespace AW2.Game.Gobs
         #region Ship properties
 
         /// <summary>
+        /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
+        /// as if the gob appeared there instantaneously
+        /// as opposed to moving there in a continuous fashion.
+        /// </summary>
+        public override void ResetPos(Vector2 pos, Vector2 move, float rotation)
+        {
+            base.ResetPos(pos, move, rotation);
+            if (LocationPredicter != null) LocationPredicter.ForgetOldShipLocations();
+        }
+
+        /// <summary>
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
@@ -216,6 +227,10 @@ namespace AW2.Game.Gobs
 #endif
             }
         }
+
+        public float TurnSpeed { get { return turnSpeed; } }
+
+        public float ThrustForce { get { return thrustForce; } }
 
         /// <summary>
         /// The primary weapon of the ship.
@@ -385,6 +400,7 @@ namespace AW2.Game.Gobs
             this.weapon1 = null;
             this.weapon2 = null;
             this.temporarilyDisabledGobs = new List<Gob>();
+            LocationPredicter = new ShipLocationPredicter(this);
         }
 
         #endregion Ship constructors
@@ -488,12 +504,19 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             // Manage turn-related rolling.
-            rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed);
+            rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
             rollAngle.Advance();
             if (!rollAngleGoalUpdated)
                 rollAngle.Target = 0;
             rollAngleGoalUpdated = false;
 
+            LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
+            {
+                GameTime = AssaultWing.Instance.GameTime.TotalGameTime - AssaultWing.Instance.GameTime.ElapsedGameTime,
+                Pos = Pos,
+                Move = Move,
+                Rotation = Rotation
+            });
             base.Update();
             
             // Re-enable temporarily disabled gobs.
@@ -622,7 +645,7 @@ namespace AW2.Game.Gobs
 
                 UpdateWeaponCharges(messageAge);
                 if (thrustForce > 0)
-                    Thrust(thrustForce);
+                    Thrust(thrustForce, AssaultWing.Instance.GameTime.ElapsedGameTime);
                 // TODO: Fire1() and Fire2() are intended to create muzzle pengs
                 // but they don't. Fix this by inheriting Weapon from Gob and serialising
                 // muzzleFireEngine state over the network.
@@ -641,13 +664,12 @@ namespace AW2.Game.Gobs
         /// Thrusts the ship.
         /// </summary>
         /// <param name="force">Force of thrust; between 0 and 1.</param>
-        public void Thrust(float force)
+        public void Thrust(float force, TimeSpan duration)
         {
             if (Disabled) return;
             force = MathHelper.Clamp(force, 0f, 1f);
-            Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
-                * force * thrustForce;
-            AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed);
+            Vector2 forceVector = AWMathHelper.GetUnitVector2(Rotation) * force * thrustForce;
+            AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed, duration);
             visualThrustForce = force;
             Thrusting(force);
 
@@ -660,32 +682,32 @@ namespace AW2.Game.Gobs
         /// Turns the ship left.
         /// </summary>
         /// <param name="force">Force of turn; between 0 and 1.</param>
-        public void TurnLeft(float force)
+        public void TurnLeft(float force, TimeSpan duration)
         {
             if (Disabled) return;
             force = MathHelper.Clamp(force, 0f, 1f);
-            Turn(force);
+            Turn(force, duration);
         }
 
         /// <summary>
         /// Turns the ship right.
         /// </summary>
         /// <param name="force">Force of turn; between 0 and 1.</param>
-        public void TurnRight(float force)
+        public void TurnRight(float force, TimeSpan duration)
         {
             if (Disabled) return;
             force = MathHelper.Clamp(force, 0f, 1f);
-            Turn(-force);
+            Turn(-force, duration);
         }
 
         /// <summary>
         /// Turns the ship right or left.
         /// </summary>
         /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>
-        private void Turn(float force)
+        private void Turn(float force, TimeSpan duration)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            float deltaRotation = AssaultWing.Instance.PhysicsEngine.ApplyChange(force * turnSpeed);
+            float deltaRotation = AssaultWing.Instance.PhysicsEngine.ApplyChange(force * turnSpeed, duration);
             Rotation += deltaRotation;
             Turning(deltaRotation);
 
@@ -809,5 +831,7 @@ namespace AW2.Game.Gobs
                 Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
         }
+
+        public ShipLocationPredicter LocationPredicter { get; private set; }
     }
 }

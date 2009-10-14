@@ -298,6 +298,17 @@ namespace AW2.Net
             return connection.RemoteGameTimeOffset;
         }
 
+        /// <summary>
+        /// Returns the amount of game time elapsed since the message was sent.
+        /// This takes into account the shift in game time between different game instances.
+        /// </summary>
+        public TimeSpan GetMessageAge(GameplayMessage message)
+        {
+            return AssaultWing.Instance.GameTime.TotalGameTime
+                - message.TotalGameTime
+                - ((PingedConnection)GetConnection(message.ConnectionId)).RemoteGameTimeOffset;
+        }
+
         #endregion Public interface
 
         #region GameComponent methods
@@ -388,6 +399,24 @@ namespace AW2.Net
                 action(gameServerConnection);
             if (gameClientConnections != null)
                 action(gameClientConnections);
+        }
+
+        IConnection GetConnection(int connectionId)
+        {
+            IConnection result = null;
+            Action<IConnection> finder = null;
+            finder = conn =>
+            {
+                if (conn is MultiConnection)
+                    foreach (var conn2 in ((MultiConnection)conn).Connections)
+                        finder(conn2);
+                else
+                    if (conn.Id == connectionId)
+                        result = conn;
+            };
+            ForEachConnection(finder);
+            if (result == null) throw new ArgumentException("Connection not found with ID " + connectionId);
+            return result;
         }
 
         #endregion Private methods

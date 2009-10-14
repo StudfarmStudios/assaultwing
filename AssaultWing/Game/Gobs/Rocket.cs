@@ -100,7 +100,7 @@ namespace AW2.Game.Gobs
                 if (Move.Y < 0)
                     rotationGoal = MathHelper.TwoPi - rotationGoal;
                 Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal,
-                    AssaultWing.Instance.PhysicsEngine.ApplyChange(turnSpeed));
+                    AssaultWing.Instance.PhysicsEngine.ApplyChange(turnSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime));
             }
 
             base.Update();

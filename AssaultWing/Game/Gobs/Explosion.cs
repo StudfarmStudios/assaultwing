@@ -133,7 +133,7 @@ namespace AW2.Game.Gobs
             {
                 Gob.CreateGob(particleEngineNames[i], gob =>
                 {
-                    gob.Pos = this.Pos;
+                    gob.ResetPos(this.Pos, gob.Move, gob.Rotation);
                     Arena.Gobs.Add(gob);
                     particleEngineList.Add(gob);
                 });

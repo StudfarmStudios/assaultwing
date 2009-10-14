@@ -860,11 +860,11 @@ namespace AW2.Game
         {
             if (Ship == null) return;
             if (Controls.thrust.Force > 0)
-                Ship.Thrust(Controls.thrust.Force);
+                Ship.Thrust(Controls.thrust.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
             if (Controls.left.Force > 0)
-                Ship.TurnLeft(Controls.left.Force);
+                Ship.TurnLeft(Controls.left.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
             if (Controls.right.Force > 0)
-                Ship.TurnRight(Controls.right.Force);
+                Ship.TurnRight(Controls.right.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
             if (Controls.fire1.Pulse)
                 Ship.Fire1();
             if (Controls.fire2.Pulse)
@@ -881,11 +881,7 @@ namespace AW2.Game
             PlayerControlsMessage message = new PlayerControlsMessage();
             message.PlayerId = Id;
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
-            {
-                Control control = Controls[controlType];
-                message.SetControlState(controlType,
-                    new PlayerControlsMessage.ControlState { force = control.Force, pulse = control.Pulse });
-            }
+                message.SetControlState(controlType, Controls[controlType].State);
             AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(message);
         }
 
@@ -918,8 +914,11 @@ namespace AW2.Game
                     select spawn;
                 var bestSpawn = spawns.FirstOrDefault();
                 if (bestSpawn == null)
-                    newShip.Pos = arena.GetFreePosition(newShip,
+                {
+                    var newShipPos = arena.GetFreePosition(newShip,
                         new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, arena.Dimensions));
+                    newShip.ResetPos(newShipPos, newShip.Move, newShip.Rotation);
+                }
                 else
                     bestSpawn.Spawn(newShip);
 
@@ -933,9 +932,8 @@ namespace AW2.Game
             {
                 if (playerColor is ParticleEngine)
                 {
-                    ParticleEngine particleEngine = (ParticleEngine)playerColor;
-                    particleEngine.Pos = Ship.Pos;
-                    particleEngine.Rotation = Ship.Rotation;
+                    var particleEngine = (ParticleEngine)playerColor;
+                    particleEngine.ResetPos(Ship.Pos, particleEngine.Move, Ship.Rotation);
                     particleEngine.Owner = this;
                     particleEngine.Leader = Ship;
                 }

@@ -746,7 +746,20 @@ namespace AW2
         protected override void Initialize()
         {
             Log.Write("Assault Wing initializing");
-            InitializePerformanceCounters();
+            try
+            {
+                InitializePerformanceCounters();
+            }
+            catch (System.Security.SecurityException)
+            {
+                // User lacks privileges to initialize performance counters.
+                // This may happen on Windows 7 unless you right click on the EXE
+                // and choose "Run as Administrator".
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                // Also this seems to happen on Windows 7 due to lack of user privileges.
+            }
 
             uiEngine = new UIEngineImpl(this);
             logicEngine = new LogicEngine(this);

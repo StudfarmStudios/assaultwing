@@ -65,17 +65,32 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
-    <Compile Include="fonts\MenuFontSmall.spritefont">
+    <Compile Include="fonts\MenuFontSmall.spritefont" Condition="'$(SMALL_FONTS)' != 'YES'">
       <Name>MenuFontSmall</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <Compile Include="fonts\MenuFontHuge.spritefont">
+    <Compile Include="fonts\MenuFontSmall.small.spritefont" Condition="'$(SMALL_FONTS)' == 'YES'">
+      <Name>MenuFontSmall</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+    <Compile Include="fonts\MenuFontHuge.spritefont" Condition="'$(SMALL_FONTS)' != 'YES'">
       <Name>MenuFontHuge</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <Compile Include="fonts\MenuFontBig.spritefont">
+    <Compile Include="fonts\MenuFontHuge.small.spritefont" Condition="'$(SMALL_FONTS)' == 'YES'">
+      <Name>MenuFontHuge</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+    <Compile Include="fonts\MenuFontBig.spritefont" Condition="'$(SMALL_FONTS)' != 'YES'">
+      <Name>MenuFontBig</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+    <Compile Include="fonts\MenuFontBig.small.spritefont" Condition="'$(SMALL_FONTS)' == 'YES'">
       <Name>MenuFontBig</Name>
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>

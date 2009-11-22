@@ -179,7 +179,6 @@ namespace AW2.Game.Weapons
             {
                 // Start a new series.
                 StartFiring();
-                owner.UseCharge(ownerHandle, fireCharge);
                 shotsLeft = shotCount;
                 nextShot = AssaultWing.Instance.GameTime.TotalGameTime;
             }

@@ -343,6 +343,14 @@ namespace AW2.Game
         /// </summary>
         public virtual bool IsRelevant { get { return true; } }
 
+        public bool IsDamageable
+        {
+            get
+            {
+                return CollisionAreas.Any(area => (area.Type & CollisionAreaType.PhysicalDamageable) != 0);
+            }
+        }
+
         /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.
         /// 0 is front, 1 is back.

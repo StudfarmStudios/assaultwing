@@ -22,6 +22,14 @@ namespace AW2.Game
     /// An instance of a subclass of Weapon represents one weapon instance
     /// that is usually attached to a ship and has its own load meters and other
     /// gametime properties.
+    /// 
+    /// HOW TO IMPLEMENT A WEAPON:
+    /// The subclass's implementation should first check <see cref="CanFire"/> if
+    /// the weapon is able to fire at all. When firing really starts, call
+    /// <see cref="StartFiring"/>. When the firing process has stopped, call
+    /// <see cref="DoneFiring"/>. This keeps load times in order. If the weapon has recoil, call
+    /// <see cref="ApplyRecoil"/> to apply recoil at the end of the frame when
+    /// it doesn't have unpleasant side effects.
     ///
     /// There can be several special instances of each subclass of Weapon. Each of
     /// these 'template instances' defines a weapon type by specifying values for the
@@ -90,7 +98,6 @@ namespace AW2.Game
         /// <summary>
         /// What type of gobs the weapon shoots out.
         /// </summary>
-        /// This gob type is assumed to be an instance of class <see cref="AW2.Game.Gobs.Bullet"/>.
         [TypeParameter]
         protected CanonicalString shotTypeName;
         
@@ -356,8 +363,10 @@ namespace AW2.Game
         /// <b>DoneFiring</b>.
         protected void StartFiring()
         {
+            owner.UseCharge(ownerHandle, fireCharge);
+
             // Make the weapon unloaded for eternity until subclass calls DoneFiring().
-            loadedTime = new TimeSpan(long.MaxValue);
+            loadedTime = TimeSpan.MaxValue;
         }
 
         /// <summary>

@@ -288,6 +288,15 @@ namespace AW2.Helpers
             return new Vector2((float)Math.Cos(radians), (float)Math.Sin(radians));
         }
 
+        /// <summary>
+        /// Rotates the vector 90 degrees counter-clockwise. This method is
+        /// much more effective than multiplying the vector with an appropriate matrix.
+        /// </summary>
+        public static Vector2 Rotate90(this Vector2 value)
+        {
+            return new Vector2(-value.Y, value.X);
+        }
+
         #region Unit tests
 #if DEBUG
         /// <summary>
@@ -492,6 +501,18 @@ namespace AW2.Helpers
                     Assert.Fail("Failed to throw exception");
                 }
                 catch { }
+            }
+
+            [Test]
+            public void TestRotate90()
+            {
+                Assert.AreEqual(new Vector2(0, 0), new Vector2(0, 0).Rotate90());
+                Assert.AreEqual(new Vector2(0, 1), new Vector2(1, 0).Rotate90());
+                Assert.AreEqual(new Vector2(-1, 0), new Vector2(0, 1).Rotate90());
+                Assert.AreEqual(new Vector2(0, -1), new Vector2(-1, 0).Rotate90());
+                Assert.AreEqual(new Vector2(1, 0), new Vector2(0, -1).Rotate90());
+                Assert.AreEqual(new Vector2(-40, 90), new Vector2(90, 40).Rotate90());
+                Assert.AreEqual(new Vector2(0.02f, -0.01f), new Vector2(-0.01f, -0.02f).Rotate90());
             }
 
             /// <summary>

@@ -17,6 +17,7 @@ namespace AW2.Graphics
     public class AWContentManager : ContentManager
     {
         IDictionary<string, object> loadedContent = new Dictionary<string, object>();
+        List<IDisposable> disposableContent = new List<IDisposable>();
 
         /// <summary>
         /// Creates a new content manager for Assault Wing.
@@ -49,7 +50,7 @@ namespace AW2.Graphics
             object item;
             loadedContent.TryGetValue(assetFullName, out item);
             if (item != null) return (T)item;
-            item = ReadAsset<T>(assetFullName, null);
+            item = ReadAsset<T>(assetFullName, disposableItem => disposableContent.Add(disposableItem));
             loadedContent.Add(assetFullName, item);
             return (T)item;
         }
@@ -71,14 +72,12 @@ namespace AW2.Graphics
             }
         }
 
-        /// <summary>
-        /// Disposes of allocated resources.
-        /// </summary>
-        protected override void Dispose(bool disposing)
+        public override void Unload()
         {
-            foreach (var value in loadedContent.Values)
-                if (value is IDisposable) ((IDisposable)value).Dispose();
-            base.Dispose(disposing);
+            base.Unload();
+            foreach (var value in disposableContent) value.Dispose();
+            disposableContent.Clear();
+            loadedContent.Clear();
         }
     }
 }

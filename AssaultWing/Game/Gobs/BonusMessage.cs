@@ -137,14 +137,6 @@ namespace AW2.Game.Gobs
             messageFont = AssaultWing.Instance.Content.Load<SpriteFont>("ConsoleFont");
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            base.UnloadContent();
-        }
-
         #endregion Methods related to gobs' functionality in the game world
 
         #region Methods related to serialisation

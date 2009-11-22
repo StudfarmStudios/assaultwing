@@ -168,7 +168,7 @@ namespace AW2.Game.Gobs
             defaultSilhouetteEffect = defaultSilhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
             maskEff = maskEff ?? (BasicEffect)defaultEffect.Clone(gfx);
             silhouetteEffect = defaultSilhouetteEffect;
-            vertexDeclaration = new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
+            vertexDeclaration = vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             base.LoadContent();
         }
 

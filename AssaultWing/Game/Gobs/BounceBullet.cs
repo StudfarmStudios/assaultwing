@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs
@@ -13,27 +10,12 @@ namespace AW2.Game.Gobs
     class BounceBullet : Bullet
     {
         /// <summary>
-        /// Lifetime of the bounce bullet, in game time seconds.
-        /// Death is inevitable when lifetime has passed.
-        /// </summary>
-        [TypeParameter]
-        float lifetime;
-
-        /// <summary>
-        /// Time of certain death of the bounce bullet, in game time.
-        /// </summary>
-        [RuntimeState]
-        TimeSpan deathTime;
-
-        /// <summary>
         /// Creates an uninitialised bounce bullet.
         /// </summary>
         /// This constructor is only for serialisation.
         public BounceBullet()
             : base()
         {
-            lifetime = 5;
-            deathTime = new TimeSpan(0, 1, 2);
         }
 
         /// <summary>
@@ -43,27 +25,6 @@ namespace AW2.Game.Gobs
         public BounceBullet(CanonicalString typeName)
             : base(typeName)
         {
-        }
-
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
-        public override void Activate()
-        {
-            base.Activate();
-            deathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
-        }
-
-        /// <summary>
-        /// Updates the gob according to physical laws.
-        /// </summary>
-        /// Overriden Update methods should explicitly call this method in order to have 
-        /// physical laws apply to the gob and the gob's exhaust engines updated.
-        public override void Update()
-        {
-            if (AssaultWing.Instance.GameTime.TotalGameTime >= deathTime)
-                Die(new DeathCause());
-            base.Update();
         }
 
         /// <summary>

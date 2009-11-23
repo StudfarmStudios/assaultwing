@@ -32,6 +32,18 @@ namespace AW2.Game.Gobs
         CanonicalString[] bulletModelNames;
 
         /// <summary>
+        /// Lifetime of the bounce bullet, in game time seconds.
+        /// Death is inevitable when lifetime has passed.
+        /// </summary>
+        [TypeParameter]
+        float lifetime;
+
+        /// <summary>
+        /// Time of certain death of the bullet, in game time.
+        /// </summary>
+        protected TimeSpan DeathTime { get; set; }
+
+        /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
         public override IEnumerable<CanonicalString> ModelNames
@@ -49,6 +61,8 @@ namespace AW2.Game.Gobs
             impactDamage = 10;
             impactHoleRadius = 10;
             bulletModelNames = new CanonicalString[] { (CanonicalString)"dummymodel" };
+            lifetime = 60;
+            DeathTime = new TimeSpan(0, 1, 2);
         }
 
         /// <summary>
@@ -65,6 +79,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Activate()
         {
+            DeathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
             if (bulletModelNames.Length > 0)
             {
                 int modelNameI = RandomHelper.GetRandomInt(bulletModelNames.Length);
@@ -78,6 +93,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Update()
         {
+            if (AssaultWing.Instance.GameTime.TotalGameTime >= DeathTime)
+                Die(new DeathCause());
+            
             base.Update();
 
             // Fly nose first, but only if we're moving fast enough.
@@ -107,27 +125,5 @@ namespace AW2.Game.Gobs
             Arena.MakeHole(Pos, impactHoleRadius);
             Die(new DeathCause());
         }
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // Make sure there's no null references.
-                if (bulletModelNames == null)
-                    bulletModelNames = new CanonicalString[0];
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
     }
 }

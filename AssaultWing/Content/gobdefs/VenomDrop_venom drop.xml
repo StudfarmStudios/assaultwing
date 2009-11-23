@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GobType type="AW2.Game.Gobs.VenomDrop, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">venom drop</typeName>
+  <lifetime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.7</lifetime>
+  <clingDamagePerSecond type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">5</clingDamagePerSecond>
+  <clingTime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">5</clingTime>
+  <impactDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</impactDamage>
+  <impactHoleRadius type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</impactHoleRadius>
+  <bulletModelNames type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bullet_1</Item>
+    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bullet_2</Item>
+    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bullet_3</Item>
+  </bulletModelNames>
+  <depthLayer2D type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.3</depthLayer2D>
+  <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
+  </drawMode2D>
+  <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
+  <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.1</mass>
+  <modelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummymodel</modelName>
+  <scale type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.15</scale>
+  <birthGobTypes type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <deathGobTypes type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
+  <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <_ticks type="System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</_ticks>
+  </networkUpdatePeriod>
+  <exhaustEngineNames type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+  <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalShot</type>
+      <collidesAgainst type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</collidesAgainst>
+      <cannotOverlap type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial type="AW2.Game.CollisionMaterialType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Regular</collisionMaterial>
+      <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Hit</name>
+      <area type="AW2.Helpers.Geometric.Point, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <location type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+          <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
+          <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
+        </location>
+      </area>
+    </Item>
+  </collisionAreas>
+  <maxDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
+</GobType>

@@ -160,21 +160,12 @@ namespace AW2.Game.Gobs
             if (!firstCollisionChecked)
             {
                 firstCollisionChecked = true;
-
-                // Remove collision areas that only needed to collide once.
-                AssaultWing.Instance.DataEngine.CustomOperations += () =>
-                {
-                    Arena.Unregister(this);
-                    collisionAreas = Array.FindAll(collisionAreas, (collArea) => collArea.Name == "Force");
-                    Arena.Register(this);
-                };
+                RemoveCollisionAreas(area => area.Name != "Force");
             }
 
             // When the flow ends, there's nothing more to do.
             if (AssaultWing.Instance.GameTime.TotalGameTime >= flowEndTime)
-            {
                 Die(new DeathCause());
-            }
         }
 
         /// <summary>

@@ -340,7 +340,7 @@ namespace AW2.Graphics
                     if (bounds.Radius > 0 && Intersects(bounds, layer.Z))
                     {
                         AssaultWing.Instance.GobsDrawnPerFrameAvgPerSecondCounter.Increment();
-                        gob.Draw(view, projection);
+                        if (gob.IsVisible) gob.Draw(view, projection);
                     }
                 }
 
@@ -352,6 +352,7 @@ namespace AW2.Graphics
                 DrawMode2D? drawMode = null;
                 layer.Gobs.ForEachIn2DOrder(gob =>
                 {
+                    if (!gob.IsVisible) return;
                     if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                     {
                         if (drawMode.HasValue)

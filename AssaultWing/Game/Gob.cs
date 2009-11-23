@@ -351,6 +351,8 @@ namespace AW2.Game
             }
         }
 
+        public bool IsVisible { get; set; }
+
         /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.
         /// 0 is front, 1 is back.
@@ -522,7 +524,8 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// The collision areas of the gob.
+        /// The collision areas of the gob. Note: To remove some collision areas
+        /// during gameplay, call <see cref="RemoveCollisionAreas"/>.
         /// </summary>
         public CollisionArea[] CollisionAreas { get { return collisionAreas; } }
 
@@ -777,6 +780,7 @@ namespace AW2.Game
         /// an ongoing play of the game.
         public virtual void Activate()
         {
+            IsVisible = true;
             LoadContent();
             if (Arena.IsForPlaying)
             {
@@ -1214,6 +1218,19 @@ namespace AW2.Game
         /// to resolve the overlap.</param>
         public virtual void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
+        }
+
+        /// <summary>
+        /// Removes collision areas that meet a condition.
+        /// </summary>
+        protected void RemoveCollisionAreas(Predicate<CollisionArea> wantToRemove)
+        {
+            AssaultWing.Instance.DataEngine.CustomOperations += () =>
+            {
+                Arena.Unregister(this);
+                collisionAreas = Array.FindAll(collisionAreas, area => !wantToRemove(area));
+                Arena.Register(this);
+            };
         }
 
         #endregion Collision methods

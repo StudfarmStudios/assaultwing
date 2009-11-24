@@ -21,7 +21,8 @@ namespace AW2.Game
         Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 #endif
 
-        public LogicEngine(Microsoft.Xna.Framework.Game game) : base(game)
+        public LogicEngine(Microsoft.Xna.Framework.Game game)
+            : base(game)
         {
             escapeControl = new KeyboardKey(Keys.Escape);
             fullscreenControl = new KeyboardKey(Keys.F10);
@@ -40,26 +41,24 @@ namespace AW2.Game
             Gob[] gobs = (Gob[])gobLoader.LoadAllTypes();
             foreach (Gob gob in gobs)
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(TypeTemplateType.Gob, gob.TypeName, gob);
-            gobLoader.SaveTemplates();
 
             TypeLoader weaponLoader = new TypeLoader(typeof(Weapon), Helpers.Paths.Weapons);
             Weapon[] weapons = (Weapon[])weaponLoader.LoadAllTypes();
             foreach (Weapon weapon in weapons)
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(TypeTemplateType.Weapon, weapon.TypeName, weapon);
-            weaponLoader.SaveTemplates();
 
             TypeLoader particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
             Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
             foreach (Gob particleEngine in particleEngines)
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(TypeTemplateType.Gob, particleEngine.TypeName, particleEngine);
-            particleLoader.SaveTemplates();
 
             ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
             IEnumerable<Arena> arenas = (Arena[])arenaLoader.LoadAllTypes();
-            arenaLoader.SaveTemplates();
-            Dictionary<string,string> arenaFileNames = new Dictionary<string,string>();
+            Dictionary<string, string> arenaFileNames = new Dictionary<string, string>();
             arenas = arenas.Where(arena => arena.Name != "dummyarena"); // HACK: avoiding the automatically generated arena template
             AssaultWing.Instance.DataEngine.ArenaInfos = arenas.Select(arena => arena.Info).ToList();
+
+            SaveAndDeleteTemplates(new TypeLoader[] { gobLoader, weaponLoader, particleLoader, arenaLoader });
 
             // Freeze CanonicalStrings to enable sharing them over a network.
             // Type names of gobs, weapons and particle engines are registered implicitly
@@ -132,6 +131,23 @@ namespace AW2.Game
                         new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWing.Instance.ResumePlay));
 
                 AssaultWing.Instance.ShowDialog(dialogData);
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        private void SaveAndDeleteTemplates(IEnumerable<TypeLoader> typeLoaders)
+        {
+            if (AssaultWing.Instance.CommandLineArgs.Contains("-deletetemplates"))
+            {
+                Log.Write("Parameter -deletetemplates given, deleting templates now...");
+                foreach (var typeLoader in typeLoaders) typeLoader.DeleteTemplates();
+                Log.Write("...templates deleted");
+            }
+            if (AssaultWing.Instance.CommandLineArgs.Contains("-savetemplates"))
+            {
+                Log.Write("Parameter -savetemplates given, saving templates now...");
+                foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplates();
+                Log.Write("...templates saved");
             }
         }
     }

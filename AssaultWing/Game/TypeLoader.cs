@@ -21,7 +21,7 @@ namespace AW2.Game
         /// <summary>
         /// Suffix for producing a type definition template file from a type name.
         /// </summary>
-        const string typeDefinitionTemplateSuffix = "template";
+        const string TYPE_DEFINITION_TEMPLATE_SUFFIX = "template";
 
         /// <summary>
         /// Creates a type loader.
@@ -80,8 +80,34 @@ namespace AW2.Game
                 Log.Write("Saving template for " + type.Name);
 #endif
                 object instance = Activator.CreateInstance(type);
-                SaveObject(instance, typeof(TypeParameterAttribute), typeDefinitionTemplateSuffix);
+                SaveObject(instance, typeof(TypeParameterAttribute), TYPE_DEFINITION_TEMPLATE_SUFFIX);
             }
+        }
+
+        /// <summary>
+        /// Deletes files that look like they were created by <see cref="SaveTemplates"/>.
+        /// </summary>
+        public void DeleteTemplates()
+        {
+            foreach (var filename in Directory.GetFiles(definitionDir.FullName))
+                if (filename.EndsWith("_" + TYPE_DEFINITION_TEMPLATE_SUFFIX + ".xml"))
+                {
+#if TYPELOADER_DEBUG
+                    Log.Write("Deleting template " + filename);
+#endif
+                    try
+                    {
+                        File.Delete(filename);
+                    }
+                    catch (IOException)
+                    {
+                        // The file is in use, tough luck.
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // We don't have permission or the file is read-only, tough luck.
+                    }
+                }
         }
 
         public void SaveObject(object obj, Type limitationAttribute, string name)
@@ -123,12 +149,12 @@ namespace AW2.Game
         {
             if (!f.Extension.Equals(".xml", StringComparison.CurrentCultureIgnoreCase))
                 return false;
-            if (f.Name.EndsWith(typeDefinitionTemplateSuffix, StringComparison.CurrentCultureIgnoreCase))
+            if (f.Name.EndsWith(TYPE_DEFINITION_TEMPLATE_SUFFIX, StringComparison.CurrentCultureIgnoreCase))
                 return false;
 #if TYPELOADER_DEBUG
             long size = f.Length;
             DateTime creationTime = f.CreationTime;
-            Log.Write("Found " + baseClass.Name + " definition " + name + " " + size + "B " + creationTime);
+            Log.Write("Found " + baseClass.Name + " definition " + f.Name + " " + size + "B " + creationTime);
 #endif
             return true;
         }

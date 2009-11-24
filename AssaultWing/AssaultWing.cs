@@ -187,6 +187,8 @@ namespace AW2
             }
         }
 
+        public string[] CommandLineArgs { get; set; }
+
         /// <summary>
         /// The physics engine of the game instance.
         /// </summary>

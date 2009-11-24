@@ -21,6 +21,7 @@ namespace AW2
                 AssaultWing.WindowInitializing += game => new AWGameWindow(((Microsoft.Xna.Framework.Game)game).Window, game.GraphicsDeviceManager);
                 using (var game = AssaultWing.Instance)
                 {
+                    game.CommandLineArgs = args;
                     game.Run();
                 }
 #if !DEBUG

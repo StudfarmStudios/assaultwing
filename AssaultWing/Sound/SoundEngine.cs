@@ -94,7 +94,10 @@ namespace AW2.Sound
         {
             var music = AssaultWing.Instance.Content.Load<SoundEffect>(trackName);
             StopMusic();
-            musicInstance = music.Play(MusicVolume, 0, 0, true);
+            musicInstance = music.CreateInstance();
+            musicInstance.Volume = MusicVolume;
+            musicInstance.Pitch = 0;
+            musicInstance.Pan = 0;
         }
 
         /// <summary>

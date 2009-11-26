@@ -1,7 +1,7 @@
-Signature = XACT2;
-Version = 16;
-Content Version = 43;
-Release = August 2007;
+Signature = XACT3;
+Version = 17;
+Content Version = 45;
+Release = March 2009;
 
 Options
 {
@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 29958893;
-    Last Modified High = 2929190960;
+    Last Modified Low = 2929190960;
+    Last Modified High = 29958893;
 
     Category
     {
@@ -162,7 +162,7 @@ Global Settings
         Value = 0.000000;
         Initial Value = 0.000000;
         Min = 0.000000;
-        Max = 15.000001;
+        Max = 15000.000000;
     }
 
     Variable
@@ -179,7 +179,7 @@ Global Settings
         Value = 0.000000;
         Initial Value = 0.000000;
         Min = 0.000000;
-        Max = 15.000001;
+        Max = 15000.000000;
     }
 
     Variable
@@ -221,7 +221,7 @@ Global Settings
         Name = Compression Preset;
         Xbox Format Tag = 357;
         Target Sample Rate = 48000;
-        Quality = 60;
+        XMA Quality = 60;
         Find Best Quality = 0;
         High Freq Cut = 0;
         Loop = 0;
@@ -239,6 +239,10 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
+    Xbox Bank Last Modified Low = 0;
+    Xbox Bank Last Modified High = 0;
+    PC Bank Last Modified Low = 0;
+    PC Bank Last Modified High = 0;
     Header Last Modified Low = 0;
     Header Last Modified High = 0;
     Bank Last Revised Low = 252596096;
@@ -638,6 +642,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -684,6 +689,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -730,6 +736,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -776,6 +783,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -822,6 +830,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -868,6 +877,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -914,6 +924,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -960,6 +971,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1006,6 +1018,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1052,6 +1065,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1098,6 +1112,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1144,6 +1159,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1190,6 +1206,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1236,6 +1253,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1282,6 +1300,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {
@@ -1328,6 +1347,7 @@ Sound Bank
         Track
         {
             Volume = 0;
+            Use Filter = 0;
 
             Play Wave Event
             {

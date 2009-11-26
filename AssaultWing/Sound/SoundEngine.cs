@@ -98,6 +98,7 @@ namespace AW2.Sound
             musicInstance.Volume = MusicVolume;
             musicInstance.Pitch = 0;
             musicInstance.Pan = 0;
+            musicInstance.Play();
         }
 
         /// <summary>

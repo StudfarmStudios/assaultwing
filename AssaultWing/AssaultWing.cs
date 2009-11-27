@@ -33,11 +33,6 @@ namespace AW2
         Gameplay,
 
         /// <summary>
-        /// An arena is being loaded in the middle of a gameplay session.
-        /// </summary>
-        ArenaLoading,
-
-        /// <summary>
         /// The game overlay dialog is visible, game is active but paused.
         /// </summary>
         OverlayDialog,
@@ -221,10 +216,6 @@ namespace AW2
                         logicEngine.Enabled = false;
                         graphicsEngine.Visible = false;
                         break;
-                    case GameState.ArenaLoading:
-                        overlayDialog.Enabled = false;
-                        overlayDialog.Visible = false;
-                        break;
                     case GameState.Menu:
                         menuEngine.Enabled = false;
                         menuEngine.Visible = false;
@@ -246,10 +237,6 @@ namespace AW2
                     case GameState.Gameplay:
                         logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                         graphicsEngine.Visible = true;
-                        break;
-                    case GameState.ArenaLoading:
-                        overlayDialog.Enabled = true;
-                        overlayDialog.Visible = true;
                         break;
                     case GameState.Menu:
                         menuEngine.Enabled = true;
@@ -561,8 +548,6 @@ namespace AW2
         /// </summary>
         public void FinishArena()
         {
-            if (GameState == GameState.OverlayDialog)
-                GameState = GameState.ArenaLoading; // HACK !!!
             if (DataEngine.ArenaPlaylist.HasNext)
                 ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
             else
@@ -583,9 +568,6 @@ namespace AW2
         /// idea to make it run in a background thread.
         public void PrepareNextArena()
         {
-            if (GameState == GameState.OverlayDialog)
-                GameState = GameState.ArenaLoading; // HACK !!!
-
             // Disallow window resizing during arena loading.
             // A window resize event may reset the graphics card, fatally
             // screwing up initialisation of walls' index maps.
@@ -621,10 +603,7 @@ namespace AW2
         {
             if (!AllowDialogs) return;
             overlayDialog.Data = dialogData;
-            if (DataEngine.ProgressBar.TaskRunning)
-                GameState = GameState.ArenaLoading; // HACK !!!
-            else
-                GameState = GameState.OverlayDialog;
+            GameState = GameState.OverlayDialog;
         }
 
         /// <summary>

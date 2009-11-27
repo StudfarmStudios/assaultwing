@@ -111,11 +111,6 @@ namespace AW2.Game.Pengs
         /// </summary>
         public void UnloadContent()
         {
-            /* TODO: Dispose unused textures somewhere. Maybe implement per-arena unloading to AWContentManager.
-            for (int i = 0; i < TextureNames.Length; ++i)
-                if (!Textures[i].IsDisposed) Textures[i].Dispose();
-            */
-            Textures = null;
         }
     }
 }

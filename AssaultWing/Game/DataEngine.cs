@@ -181,9 +181,10 @@ namespace AW2.Game
         /// Call this method right before commencing play in the prepared arena.
         public void StartArena()
         {
-            // Reset players.
-            foreach (var player in Spectators)
-                player.Reset();
+            // Clear old stuff from previous arena, if any.
+            Weapons.Clear();
+            foreach (var player in Spectators) player.Reset();
+            if (Arena != null) Arena.Dispose();
 
             Arena = preparedArena;
             preparedArena = null;
@@ -204,9 +205,6 @@ namespace AW2.Game
         /// for playing. If not, some initialisations are skipped.</param>
         public void InitializeFromArena(string name, bool initializeForPlaying)
         {
-            // Clear remaining data from a possible previous arena.
-            if (Arena != null) Arena.Dispose();
-            Weapons.Clear();
             CustomOperations = null;
 
             preparedArena = GetArena(name);

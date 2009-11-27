@@ -41,11 +41,6 @@ namespace AW2
             remove { SizeChanged -= value; }
         }
 
-        public new void Resize(int width, int height)
-        {
-            Size = new System.Drawing.Size(width, height);
-        }
-
         public void ToggleFullscreen()
         {
             // silently ignored

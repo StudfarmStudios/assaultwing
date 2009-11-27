@@ -42,11 +42,6 @@ namespace AW2.Graphics
         event EventHandler ClientSizeChanged;
 
         /// <summary>
-        /// Resizes the window.
-        /// </summary>
-        void Resize(int width, int height);
-
-        /// <summary>
         /// Toggles between fullscreen and windowed mode.
         /// </summary>
         void ToggleFullscreen();

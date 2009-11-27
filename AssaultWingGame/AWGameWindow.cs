@@ -81,14 +81,6 @@ namespace AW2
         }
 
         /// <summary>
-        /// Resizes the area the game can draw on.
-        /// </summary>
-        public void Resize(int width, int height)
-        {
-            windowForm.Size = new System.Drawing.Size(width, height);
-        }
-
-        /// <summary>
         /// Toggles between fullscreen and windowed mode.
         /// </summary>
         public void ToggleFullscreen()

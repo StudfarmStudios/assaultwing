@@ -844,7 +844,7 @@ namespace AW2
 
             dataEngine.GameplayMode = new GameplayMode();
             dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler", "Snake" };
-            dataEngine.GameplayMode.Weapon1Types = new string[] { "peashooter", "shotgun", "lightning gun", "venom spray" };
+            dataEngine.GameplayMode.Weapon1Types = new string[] { "peashooter", "shotgun", "lightning gun", "venom spray", "talon swoop" };
             dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
 
             GameState = GameState.Menu;

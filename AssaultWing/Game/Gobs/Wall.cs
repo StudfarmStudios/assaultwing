@@ -506,12 +506,13 @@ namespace AW2.Game.Gobs
                     {
                         maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, SurfaceFormat.Color);
                     }
+                    catch (OutOfVideoMemoryException)
+                    {
+                        targetSize /= 2;
+                    }
                     catch (Exception e)
                     {
-                        if (e is OutOfVideoMemoryException)
-                            targetSize /= 2;
-                        else
-                            throw new Exception("Cannot create render target for index map creation", e);
+                        throw new ApplicationException("Cannot create render target for index map creation", e);
                     }
             }
 

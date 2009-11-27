@@ -23,6 +23,7 @@ namespace AW2
             var app = new Application();
             AssaultWing.WindowInitializing += g => editor.arenaView;
             var game = AssaultWing.Instance;
+            game.CommandLineArgs = args;
             game.AllowDialogs = false;
             game.ClientBoundsMin = new Microsoft.Xna.Framework.Rectangle(0, 0, 1, 1);
             game.GameStateChanged += GetArenaNames;

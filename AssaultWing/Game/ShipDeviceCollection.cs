@@ -72,7 +72,7 @@ namespace AW2.Game
                 {
                     AssaultWing.Instance.DataEngine.Weapons.Remove(Weapon1);
                     Weapon1.Dispose();
-                    Weapon1 = CreateWeapons(value, 1);
+                    Weapon1 = CreateWeapons(value, Weapon.OwnerHandleType.PrimaryWeapon);
                 }
                 else
                     weapon1Name = value;
@@ -117,7 +117,7 @@ namespace AW2.Game
                 {
                     AssaultWing.Instance.DataEngine.Weapons.Remove(Weapon2);
                     Weapon2.Dispose();
-                    Weapon2 = CreateWeapons(value, 2);
+                    Weapon2 = CreateWeapons(value, Weapon.OwnerHandleType.SecondaryWeapon);
                 }
                 else
                     weapon2Name = value;
@@ -162,8 +162,8 @@ namespace AW2.Game
             Weapon2ChargeMax = weapon2ChargeMax;
             this.weapon1ChargeSpeed = weapon1ChargeSpeed;
             this.weapon2ChargeSpeed = weapon2ChargeSpeed;
-            if (weapon1Name != CanonicalString.Null) Weapon1 = CreateWeapons(weapon1Name, 1);
-            if (weapon2Name != CanonicalString.Null) Weapon2 = CreateWeapons(weapon2Name, 2);
+            if (weapon1Name != CanonicalString.Null) Weapon1 = CreateWeapons(weapon1Name, Weapon.OwnerHandleType.PrimaryWeapon);
+            if (weapon2Name != CanonicalString.Null) Weapon2 = CreateWeapons(weapon2Name, Weapon.OwnerHandleType.SecondaryWeapon);
             Weapon1Charge = Weapon1ChargeMax;
             Weapon2Charge = Weapon2ChargeMax;
         }
@@ -248,12 +248,13 @@ namespace AW2.Game
         /// </summary>
         /// <param name="ownerHandle">The owner handle of the weapon.</param>
         /// <returns>The amount of charge available for the weapon.</returns>
-        public float GetCharge(int ownerHandle)
+        public float GetCharge(Weapon.OwnerHandleType ownerHandle)
         {
             switch (ownerHandle)
             {
-                case 1: return Weapon1Charge;
-                case 2: return Weapon2Charge;
+                case Weapon.OwnerHandleType.PrimaryWeapon: return Weapon1Charge;
+                case Weapon.OwnerHandleType.SecondaryWeapon: return Weapon2Charge;
+                case Weapon.OwnerHandleType.ExtraDevice: throw new NotImplementedException("Extra device charge not implemented");
                 default:
                     Log.Write("Warning: Someone inquired weapon charge for invalid owner handle " + ownerHandle);
                     return 0;
@@ -265,16 +266,18 @@ namespace AW2.Game
         /// </summary>
         /// <param name="ownerHandle">The owner handle of the weapon.</param>
         /// <param name="amount">The amount of charge to use.</param>
-        public void UseCharge(int ownerHandle, float amount)
+        public void UseCharge(Weapon.OwnerHandleType ownerHandle, float amount)
         {
             switch (ownerHandle)
             {
-                case 1:
+                case Weapon.OwnerHandleType.PrimaryWeapon:
                     weapon1Charge = MathHelper.Clamp(weapon1Charge - amount, 0, Weapon1ChargeMax);
                     break;
-                case 2:
+                case Weapon.OwnerHandleType.SecondaryWeapon:
                     weapon2Charge = MathHelper.Clamp(weapon2Charge - amount, 0, Weapon2ChargeMax);
                     break;
+                case Weapon.OwnerHandleType.ExtraDevice:
+                    throw new NotImplementedException("Extra device charge not implemented");
                 default:
                     Log.Write("Warning: Someone tried to use weapon charge for invalid owner handle " + ownerHandle);
                     break;
@@ -320,10 +323,9 @@ namespace AW2.Game
         /// gun barrels on the ship are covered.
         /// </summary>
         /// <param name="weaponName">Name of the weapon type.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
-        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
         /// <returns>The created weapon.</returns>
-        private Weapon CreateWeapons(CanonicalString weaponName, int ownerHandle)
+        private Weapon CreateWeapons(CanonicalString weaponName, Weapon.OwnerHandleType ownerHandle)
         {
             KeyValuePair<string, int>[] boneIs = ship.GetNamedPositions("Gun");
             if (boneIs.Length == 0)

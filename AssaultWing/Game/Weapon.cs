@@ -49,6 +49,8 @@ namespace AW2.Game
     [LimitedSerialization]
     public abstract class Weapon : ShipDevice
     {
+        public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
+
         #region Weapon fields
 
         /// <summary>
@@ -84,10 +86,8 @@ namespace AW2.Game
         /// <summary>
         /// A handle for identifying us at the owner.
         /// </summary>
-        /// In practice this is <b>1</b> for primary weapons and
-        /// <b>2</b> for secondary weapons.
         [RuntimeState]
-        protected int ownerHandle;
+        protected OwnerHandleType ownerHandle;
 
         /// <summary>
         /// Indices of the bones that defines the weapon's barrels' locations 
@@ -167,11 +167,6 @@ namespace AW2.Game
         public Arena Arena { get; set; }
 
         /// <summary>
-        /// A handle for identifying the weapon at the owner.
-        /// </summary>
-        public int OwnerHandle { get { return ownerHandle; } set { ownerHandle = value; } }
-
-        /// <summary>
         /// The player who owns the ship who owns the weapon, or <c>null</c> if none exists.
         /// </summary>
         Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
@@ -186,9 +181,9 @@ namespace AW2.Game
             {
                 if (PlayerOwner != null)
                 {
-                    if (ownerHandle == 1 && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon1LoadTime))
+                    if (ownerHandle == OwnerHandleType.PrimaryWeapon && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon1LoadTime))
                         return loadTime / 2;
-                    if (ownerHandle == 2 && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon2LoadTime))
+                    if (ownerHandle == OwnerHandleType.SecondaryWeapon && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon2LoadTime))
                         return loadTime / 2;
                 }
                 return loadTime;
@@ -235,8 +230,8 @@ namespace AW2.Game
                 if (null == type.GetConstructor(Type.EmptyTypes))
                     throw new Exception("Missing constructor " + type.Name + "()");
                 if (null == type.GetConstructor(new Type[] { 
-                    typeof(CanonicalString), typeof(Ship), typeof(int), typeof(int[]), }))
-                    throw new Exception("Missing constructor " + type.Name + "(CanonicalString, Ship, int, int[])");
+                    typeof(CanonicalString), typeof(Ship), typeof(OwnerHandleType), typeof(int[]), }))
+                    throw new Exception("Missing constructor " + type.Name + "(CanonicalString, Ship, OwnerHandle, int[])");
             }
         }
 
@@ -285,11 +280,10 @@ namespace AW2.Game
         /// </summary>
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
-        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
-        public Weapon(CanonicalString typeName, Ship owner, int ownerHandle, int[] boneIndices)
+        public Weapon(CanonicalString typeName, Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
             : this(typeName)
         {
             this.owner = owner;
@@ -305,13 +299,12 @@ namespace AW2.Game
         /// takes care of finding the correct subclass.
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
-        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
         /// <param name="args">Any arguments to pass to the subclass' constructor.</param>
         /// <returns>The newly created weapon.</returns>
-        public static Weapon CreateWeapon(CanonicalString typeName, Ship owner, int ownerHandle, int[] boneIndices, params object[] args)
+        public static Weapon CreateWeapon(CanonicalString typeName, Ship owner, OwnerHandleType ownerHandle, int[] boneIndices, params object[] args)
         {
             Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, typeName);
             Type type = template.GetType();

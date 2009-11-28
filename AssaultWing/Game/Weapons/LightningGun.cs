@@ -27,11 +27,10 @@ namespace AW2.Game.Weapons
 
         /// <param name="typeName">The type of the weapon.</param>
         /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
-        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
+        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
         /// <param name="boneIndices">Indices of the bones that define the weapon's
         /// barrels' locations on the owning ship.</param>
-        public LightningGun(CanonicalString typeName, Ship owner, int ownerHandle, int[] boneIndices)
+        public LightningGun(CanonicalString typeName, Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
             : base(typeName, owner, ownerHandle, boneIndices)
         {
         }

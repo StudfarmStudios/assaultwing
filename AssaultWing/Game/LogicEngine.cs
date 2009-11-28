@@ -62,10 +62,11 @@ namespace AW2.Game
 
             // Freeze CanonicalStrings to enable sharing them over a network.
             // Type names of gobs, weapons and particle engines are registered implicitly
-            // above while loading the types. Graphics needs separate handling.
+            // above while loading the types. Graphics and ShipDeviceCollection need separate handling.
             // TODO: Loop through all textures and all 3D models available in the ContentManager.
             var content = (AW2.Graphics.AWContentManager)AssaultWing.Instance.Content;
             foreach (var assetName in content.GetAssetNames()) CanonicalString.Register(assetName);
+            var temp = new AW2.Game.ShipDeviceCollection(null);
             CanonicalString.DisableRegistering();
 
             base.Initialize();

@@ -5,10 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Particles;
 using AW2.Helpers;
-using AW2.UI;
 
 namespace AW2.Game.Gobs
 {
@@ -41,23 +39,6 @@ namespace AW2.Game.Gobs
 
         #region Ship fields related to weapons
 
-        static readonly CanonicalString WEAPON_DEFAULT_NAME = (CanonicalString)"no weapon";
-
-        /// <summary>
-        /// Primary weapons of the ship.
-        /// </summary>
-        [RuntimeState]
-        Weapon weapon1;
-
-        /// <summary>
-        /// Secondary weapons of the ship.
-        /// </summary>
-        [RuntimeState]
-        Weapon weapon2;
-
-        // Names of weapons to create when possible.
-        CanonicalString weapon1Name, weapon2Name;
-
         /// <summary>
         /// Maximum amount of charge for primary weapons.
         /// </summary>
@@ -83,20 +64,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         [TypeParameter]
         float weapon2ChargeSpeed;
-
-        /// <summary>
-        /// Amount of charge for primary weapons,
-        /// between <b>0</b> and <b>weapon1ChargeMax</b>.
-        /// </summary>
-        [RuntimeState]
-        float weapon1Charge;
-
-        /// <summary>
-        /// Amount of charge for secondary weapons,
-        /// between <b>0</b> and <b>weapon2ChargeMax</b>.
-        /// </summary>
-        [RuntimeState]
-        float weapon2Charge;
 
         #endregion Ship fields related to weapons
 
@@ -181,8 +148,6 @@ namespace AW2.Game.Gobs
         #region Ship fields for signalling visual things over the network
 
         float visualThrustForce;
-        bool visualWeapon1Fired;
-        bool visualWeapon2Fired;
 
         #endregion Ship fields for signalling visual things over the network
 
@@ -233,104 +198,9 @@ namespace AW2.Game.Gobs
         public float ThrustForce { get { return thrustForce; } }
 
         /// <summary>
-        /// The primary weapon of the ship.
+        /// The primary weapon, secondary weapon, and extra device of the ship.
         /// </summary>
-        public Weapon Weapon1 { get { return weapon1; } }
-
-        /// <summary>
-        /// The secondary weapon of the ship.
-        /// </summary>
-        public Weapon Weapon2 { get { return weapon2; } }
-
-        /// <summary>
-        /// Name of the type of main weapon the ship is using.
-        /// </summary>
-        public CanonicalString Weapon1Name
-        {
-            get { return weapon1 == null ? WEAPON_DEFAULT_NAME : weapon1.TypeName; }
-            set
-            {
-                // Null weapon means we're not yet activated. Then create weapon later.
-                if (weapon1 != null)
-                {
-                    AssaultWing.Instance.DataEngine.Weapons.Remove(weapon1);
-                    weapon1.Dispose();
-                    weapon1 = CreateWeapons(value, 1);
-                }
-                else
-                    weapon1Name = value;
-            }
-        }
-
-        /// <summary>
-        /// Name of the type of secondary weapon the ship is using.
-        /// </summary>
-        public CanonicalString Weapon2Name
-        {
-            get { return weapon2 == null ? WEAPON_DEFAULT_NAME : weapon2.TypeName; }
-            set
-            {
-                // Null weapon means we're not yet activated. Then create weapon later.
-                if (weapon2 != null)
-                {
-                    AssaultWing.Instance.DataEngine.Weapons.Remove(weapon2);
-                    weapon2.Dispose();
-                    weapon2 = CreateWeapons(value, 2);
-                }
-                else
-                    weapon2Name = value;
-            }
-        }
-
-        /// <summary>
-        /// Is any of the primary weapons loaded.
-        /// </summary>
-        public bool Weapon1Loaded
-        {
-            get
-            {
-                return weapon1.Loaded;
-            }
-        }
-
-        /// <summary>
-        /// Is any of the secondary weapons loaded.
-        /// </summary>
-        public bool Weapon2Loaded
-        {
-            get
-            {
-                return weapon2.Loaded;
-            }
-        }
-
-        /// <summary>
-        /// Amount of charge for primary weapons,
-        /// between <b>0</b> and <b>Weapon1ChargeMax</b>.
-        /// </summary>
-        public float Weapon1Charge { 
-            get { return weapon1Charge; }
-            set { weapon1Charge = MathHelper.Clamp(value, 0, weapon1ChargeMax); }
-        }
-
-        /// <summary>
-        /// Maximum amount of charge for primary weapons.
-        /// </summary>
-        public float Weapon1ChargeMax { get { return weapon1ChargeMax; } }
-
-        /// <summary>
-        /// Amount of charge for secondary weapons,
-        /// between <b>0</b> and <b>Weapon2ChargeMax</b>.
-        /// </summary>
-        public float Weapon2Charge { 
-            get { return weapon2Charge; }
-            set { weapon2Charge = MathHelper.Clamp(value, 0, weapon2ChargeMax); }
-        }
-
-        /// <summary>
-        /// Maximum amount of charge for secondary weapons.
-        /// </summary>
-        public float Weapon2ChargeMax { get { return weapon2ChargeMax; } }
+        public ShipDeviceCollection Devices { get; private set; }
 
         /// <summary>
         /// Name of the ship's icon in the equip menu main display.
@@ -363,10 +233,8 @@ namespace AW2.Game.Gobs
             this.rollSpeed = (float)(MathHelper.TwoPi / 2.0);
             this.weapon1ChargeMax = 5000;
             this.weapon1ChargeSpeed = 500;
-            this.weapon1Charge = this.weapon1ChargeMax;
             this.weapon2ChargeMax = 5000;
             this.weapon2ChargeSpeed = 500;
-            this.weapon2Charge = this.weapon2ChargeMax;
             this.armour = new Curve();
             this.armour.PreLoop = CurveLoopType.Linear;
             this.armour.PostLoop = CurveLoopType.Linear;
@@ -397,8 +265,7 @@ namespace AW2.Game.Gobs
         public Ship(CanonicalString typeName)
             : base(typeName)
         {
-            this.weapon1 = null;
-            this.weapon2 = null;
+            Devices = new ShipDeviceCollection(this);
             this.temporarilyDisabledGobs = new List<Gob>();
             LocationPredicter = new ShipLocationPredicter(this);
         }
@@ -421,25 +288,6 @@ namespace AW2.Game.Gobs
         #endregion Protected methods
 
         #region Private methods
-
-        /// <summary>
-        /// Creates a new instance of a named weapon type so that all
-        /// gun barrels on the ship are covered.
-        /// </summary>
-        /// <param name="weaponName">Name of the weapon type.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.
-        /// Use <b>1</b> for primary weapons and <b>2</b> for secondary weapons.</param>
-        /// <returns>The created weapon.</returns>
-        private Weapon CreateWeapons(CanonicalString weaponName, int ownerHandle)
-        {
-            KeyValuePair<string, int>[] boneIs = GetNamedPositions("Gun");
-            if (boneIs.Length == 0)
-                Log.Write("Warning: Ship found no gun barrels in its 3D model");
-            int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs, pair => pair.Value);
-            Weapon weapon = Weapon.CreateWeapon(weaponName, this, ownerHandle, boneIndices);
-            AssaultWing.Instance.DataEngine.Weapons.Add(weapon);
-            return weapon;
-        }
 
         /// <summary>
         /// Creates cough engines for the ship.
@@ -471,14 +319,6 @@ namespace AW2.Game.Gobs
             coughEngines = coughEngineList.ToArray();
         }
 
-        private void UpdateWeaponCharges(TimeSpan elapsedGameTime)
-        {
-            weapon1Charge += weapon1ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
-            weapon1Charge = MathHelper.Clamp(weapon1Charge, 0, weapon1ChargeMax);
-            weapon2Charge += weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
-            weapon2Charge = MathHelper.Clamp(weapon2Charge, 0, weapon2ChargeMax);
-        }
-
         #endregion Private methods
 
         #region Methods related to gobs' functionality in the game world
@@ -489,10 +329,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            if (weapon1Name != CanonicalString.Null) weapon1 = CreateWeapons(weapon1Name, 1);
-            if (weapon2Name != CanonicalString.Null) weapon2 = CreateWeapons(weapon2Name, 2);
-            weapon1Charge = weapon1ChargeMax;
-            weapon2Charge = weapon2ChargeMax;
+            Devices.Activate(weapon1ChargeMax, weapon2ChargeMax, weapon1ChargeSpeed, weapon2ChargeSpeed);
             SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
             CreateCoughEngines();
@@ -544,7 +381,7 @@ namespace AW2.Game.Gobs
                     ((Peng)coughEngine).Paused = coughArgument == 0;
                 }
 
-            UpdateWeaponCharges(AssaultWing.Instance.GameTime.ElapsedGameTime);
+            Devices.Update(AssaultWing.Instance.GameTime.ElapsedGameTime);
 
             // Flash and be disabled if we're just born.
             float age = birthTime.SecondsAgo();
@@ -569,8 +406,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Dispose()
         {
-            AssaultWing.Instance.DataEngine.Weapons.Remove(weapon1);
-            AssaultWing.Instance.DataEngine.Weapons.Remove(weapon2);
+            Devices.Dispose();
             base.Dispose();
         }
 
@@ -596,26 +432,13 @@ namespace AW2.Game.Gobs
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
+            Devices.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)weapon1.TypeName.Canonical);
-                writer.Write((int)weapon2.TypeName.Canonical);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((Half)weapon1Charge);
-                writer.Write((Half)weapon2Charge);
-                writer.Write((Half)visualThrustForce);
-                byte flags = (byte)(
-                    (Weapon1Loaded ? 0x01 : 0x00) |
-                    (Weapon2Loaded ? 0x02 : 0x00) |
-                    (visualWeapon1Fired ? 0x04 : 0x00) |
-                    (visualWeapon2Fired ? 0x08 : 0x00));
-                writer.Write((byte)flags);
-
                 visualThrustForce = 0;
-                visualWeapon1Fired = false;
-                visualWeapon2Fired = false;
             }
         }
 
@@ -627,32 +450,15 @@ namespace AW2.Game.Gobs
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             base.Deserialize(reader, mode, messageAge);
+            Devices.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                Weapon1Name = (CanonicalString)reader.ReadInt32();
-                Weapon2Name = (CanonicalString)reader.ReadInt32();
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                weapon1Charge = reader.ReadHalf();
-                weapon2Charge = reader.ReadHalf();
                 float thrustForce = reader.ReadHalf();
-                byte flags = reader.ReadByte();
-                if (Weapon1 != null) Weapon1.Loaded = (flags & 0x01) != 0;
-                if (Weapon2 != null) Weapon2.Loaded = (flags & 0x02) != 0;
-                bool weapon1Fired = (flags & 0x04) != 0;
-                bool weapon2Fired = (flags & 0x08) != 0;
-
-                UpdateWeaponCharges(messageAge);
                 if (thrustForce > 0)
                     Thrust(thrustForce, AssaultWing.Instance.GameTime.ElapsedGameTime);
-                // TODO: Fire1() and Fire2() are intended to create muzzle pengs
-                // but they don't. Fix this by inheriting Weapon from Gob and serialising
-                // muzzleFireEngine state over the network.
-                if (weapon1Fired)
-                    Fire1();
-                if (weapon2Fired)
-                    Fire2();
             }
         }
 
@@ -720,77 +526,6 @@ namespace AW2.Game.Gobs
             //float headingFactor = 1.0f; // naive roll
             rollAngle.Target = -rollMax * force * headingFactor;
             rollAngleGoalUpdated = true;
-        }
-
-        /// <summary>
-        /// Fires the main weapon.
-        /// </summary>
-        public void Fire1()
-        {
-            if (Disabled) return;
-            weapon1.Fire();
-            visualWeapon1Fired = true;
-        }
-
-        /// <summary>
-        /// Fires the secondary weapon.
-        /// </summary>
-        public void Fire2()
-        {
-            if (Disabled) return;
-            weapon2.Fire();
-            visualWeapon2Fired = true;
-        }
-
-        /// <summary>
-        /// Performs an extra function which depends on the ship state.
-        /// </summary>
-        public void DoExtra()
-        {
-            if (Disabled) return;
-            // !!! not implemented
-        }
-
-        /// <summary>
-        /// Returns the amount of charge available for a weapon with
-        /// a certain handle.
-        /// </summary>
-        /// <param name="ownerHandle">The owner handle of the weapon.</param>
-        /// <returns>The amount of charge available for the weapon.</returns>
-        public float GetCharge(int ownerHandle)
-        {
-            switch (ownerHandle)
-            {
-                case 1: return Weapon1Charge;
-                case 2: return Weapon2Charge;
-                default:
-                    Log.Write("Warning: Someone inquired weapon charge for owner handle "
-                        + ownerHandle);
-                    return 0;
-            }
-        }
-        
-        /// <summary>
-        /// Uses an amount of charge available for a weapon with
-        /// a certain handle.
-        /// </summary>
-        /// <param name="ownerHandle">The owner handle of the weapon.</param>
-        /// <param name="amount">The amount of charge to use.</param>
-        public void UseCharge(int ownerHandle, float amount)
-        {
-            switch (ownerHandle)
-            {
-                case 1:
-                    weapon1Charge = MathHelper.Clamp(weapon1Charge - amount, 0, weapon1ChargeMax);
-                    break;
-                case 2:
-                    weapon2Charge = MathHelper.Clamp(weapon2Charge - amount, 0, weapon2ChargeMax);
-                    break;
-                default:
-                    Log.Write("Warning: Someone tried to use weapon charge for owner handle "
-                        + ownerHandle);
-                    break;
-            }
         }
 
         #endregion Ship public methods

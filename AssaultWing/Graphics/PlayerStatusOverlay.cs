@@ -90,7 +90,7 @@ namespace AW2.Graphics
             if (player.Ship != null)
             {
                 Rectangle charge1BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling(player.Ship.Weapon1Charge / player.Ship.Weapon1ChargeMax
+                    (int)Math.Ceiling(player.Ship.Devices.Weapon1Charge / player.Ship.Devices.Weapon1ChargeMax
                     * barMainTexture.Width),
                     barMainTexture.Height);
                 spriteBatch.Draw(barMainTexture,
@@ -103,9 +103,9 @@ namespace AW2.Graphics
             // Primary weapon loadedness
             if (player.Ship != null)
             {
-                if (player.Ship.Weapon1Loaded)
+                if (player.Ship.Devices.Weapon1Loaded)
                 {
-                    float seconds = player.Ship.Weapon1.LoadedTime.SecondsAgo();
+                    float seconds = player.Ship.Devices.Weapon1.LoadedTime.SecondsAgo();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)
@@ -124,7 +124,7 @@ namespace AW2.Graphics
             if (player.Ship != null)
             {
                 Rectangle charge2BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling(player.Ship.Weapon2Charge / player.Ship.Weapon2ChargeMax
+                    (int)Math.Ceiling(player.Ship.Devices.Weapon2Charge / player.Ship.Devices.Weapon2ChargeMax
                     * barSpecialTexture.Width),
                     barSpecialTexture.Height);
                 spriteBatch.Draw(barSpecialTexture,
@@ -137,9 +137,9 @@ namespace AW2.Graphics
             // Secondary weapon loadedness
             if (player.Ship != null)
             {
-                if (player.Ship.Weapon2Loaded)
+                if (player.Ship.Devices.Weapon2Loaded)
                 {
-                    float seconds = player.Ship.Weapon2.LoadedTime.SecondsAgo();
+                    float seconds = player.Ship.Devices.Weapon2.LoadedTime.SecondsAgo();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)

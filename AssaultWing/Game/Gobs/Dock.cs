@@ -76,8 +76,8 @@ namespace AW2.Game.Gobs
                 Ship ship = theirArea.Owner as Ship;
                 if (ship != null)
                 {
-                    ship.Weapon1Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon1ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
-                    ship.Weapon2Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon2ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
+                    ship.Devices.Weapon1Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon1ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
+                    ship.Devices.Weapon2Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon2ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
                 }
             }
         }

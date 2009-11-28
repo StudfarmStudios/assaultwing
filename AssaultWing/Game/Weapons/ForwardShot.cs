@@ -275,8 +275,8 @@ namespace AW2.Game.Weapons
                         ParticleEngine peng = (ParticleEngine)engine;
                         int boneI = boneIndices[barrel];
                         DotEmitter emitter = (DotEmitter)peng.Emitter;
-                        emitter.Direction = Owner.Rotation;
-                        peng.Pos = Owner.GetNamedPosition(boneI);
+                        emitter.Direction = owner.Rotation;
+                        peng.Pos = owner.GetNamedPosition(boneI);
                         peng.Move = owner.Move;
                     }
         }

@@ -93,7 +93,7 @@ namespace AW2.Game
                 case PlayerBonusTypes.Weapon1Upgrade:
                     {
                         Weapon weapon1 = player.Ship != null
-                            ? player.Ship.Weapon1
+                            ? player.Ship.Devices.Weapon1
                             : (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon1RealName);
                         bonusText = player.Weapon1RealName;
                         bonusIconName = weapon1.IconName;
@@ -103,7 +103,7 @@ namespace AW2.Game
                 case PlayerBonusTypes.Weapon2Upgrade:
                     {
                         Weapon weapon2 = player.Ship != null
-                            ? player.Ship.Weapon2
+                            ? player.Ship.Devices.Weapon2
                             : (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon2RealName);
                         bonusText = player.Weapon2RealName;
                         bonusIconName = weapon2.IconName;

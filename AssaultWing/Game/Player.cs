@@ -866,11 +866,11 @@ namespace AW2.Game
             if (Controls.right.Force > 0)
                 Ship.TurnRight(Controls.right.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
             if (Controls.fire1.Pulse)
-                Ship.Fire1();
+                Ship.Devices.Fire1();
             if (Controls.fire2.Pulse)
-                Ship.Fire2();
+                Ship.Devices.Fire2();
             if (Controls.extra.Pulse)
-                Ship.DoExtra();
+                Ship.Devices.DoExtra();
         }
 
         /// <summary>
@@ -900,8 +900,8 @@ namespace AW2.Game
                 var arena = AssaultWing.Instance.DataEngine.Arena;
                 Ship newShip = (Ship)gob;
                 newShip.Owner = this;
-                newShip.Weapon1Name = weapon1Name;
-                newShip.Weapon2Name = weapon2Name;
+                newShip.Devices.Weapon1Name = weapon1Name;
+                newShip.Devices.Weapon2Name = weapon2Name;
 
                 // Find a starting place for the new ship.
                 // Use player spawn areas if there's any. Otherwise just randomise a position.
@@ -954,10 +954,10 @@ namespace AW2.Game
         void UpdateShipWeapons()
         {
             if (Ship == null) return;
-            if (Ship.Weapon1Name != Weapon1RealName)
-                Ship.Weapon1Name = Weapon1RealName;
-            if (Ship.Weapon2Name != Weapon2RealName)
-                Ship.Weapon2Name = Weapon2RealName;
+            if (Ship.Devices.Weapon1Name != Weapon1RealName)
+                Ship.Devices.Weapon1Name = Weapon1RealName;
+            if (Ship.Devices.Weapon2Name != Weapon2RealName)
+                Ship.Devices.Weapon2Name = Weapon2RealName;
         }
 
         /// <summary>

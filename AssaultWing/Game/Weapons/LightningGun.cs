@@ -44,8 +44,8 @@ namespace AW2.Game.Weapons
             var target = Arena.Gobs.FirstOrDefault(gob =>
             {
                 if (!gob.IsDamageable) return false;
-                if (gob == Owner) return false;
-                if (Vector2.DistanceSquared(gob.Pos, Owner.Pos) > range * range) return false;
+                if (gob == owner) return false;
+                if (Vector2.DistanceSquared(gob.Pos, owner.Pos) > range * range) return false;
                 return true;
             });
             if (target == null) return; // nothing to shoot at
@@ -58,12 +58,12 @@ namespace AW2.Game.Weapons
                 int boneI = boneIndices[barrel];
                 Gob.CreateGob(shotTypeName, shot =>
                 {
-                    shot.Owner = Owner.Owner;
-                    shot.ResetPos(Owner.GetNamedPosition(boneI), Vector2.Zero, Owner.Rotation);
+                    shot.Owner = owner.Owner;
+                    shot.ResetPos(owner.GetNamedPosition(boneI), Vector2.Zero, owner.Rotation);
                     var lightning = shot as Lightning;
                     if (lightning != null)
                     {
-                        lightning.Shooter = Owner;
+                        lightning.Shooter = owner;
                         lightning.ShooterBoneIndex = boneI;
                         lightning.Target = target;
                     }

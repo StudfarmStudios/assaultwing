@@ -47,7 +47,7 @@ namespace AW2.Game
     /// of its type parameters to descriptive and exemplary default values.
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     [LimitedSerialization]
-    public abstract class Weapon
+    public abstract class Weapon : ShipDevice
     {
         #region Weapon fields
 
@@ -162,11 +162,6 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// The ship this weapon is attached to.
-        /// </summary>
-        public Ship Owner { get { return owner; } set { owner = value; } } // !!! hack
-
-        /// <summary>
         /// The arena in which the weapon lives.
         /// </summary>
         public Arena Arena { get; set; }
@@ -226,7 +221,7 @@ namespace AW2.Game
         /// <summary>
         /// <b>true</b> iff there is no obstruction to the weapon being fired.
         /// </summary>
-        public bool CanFire { get { return Loaded && FireCharge <= owner.GetCharge(ownerHandle); } }
+        public bool CanFire { get { return Loaded && FireCharge <= owner.Devices.GetCharge(ownerHandle); } }
 
         #endregion // Weapon properties
 
@@ -363,7 +358,7 @@ namespace AW2.Game
         /// <b>DoneFiring</b>.
         protected void StartFiring()
         {
-            owner.UseCharge(ownerHandle, fireCharge);
+            owner.Devices.UseCharge(ownerHandle, fireCharge);
 
             // Make the weapon unloaded for eternity until subclass calls DoneFiring().
             loadedTime = TimeSpan.MaxValue;
@@ -376,9 +371,9 @@ namespace AW2.Game
         /// </summary>
         protected void ApplyRecoil()
         {
-            Vector2 momentum = new Vector2((float)Math.Cos(Owner.Rotation), (float)Math.Sin(Owner.Rotation))
+            Vector2 momentum = new Vector2((float)Math.Cos(owner.Rotation), (float)Math.Sin(owner.Rotation))
                 * -recoilMomentum;
-            AssaultWing.Instance.DataEngine.CustomOperations += () => { AssaultWing.Instance.PhysicsEngine.ApplyMomentum(Owner, momentum); };
+            AssaultWing.Instance.DataEngine.CustomOperations += () => { AssaultWing.Instance.PhysicsEngine.ApplyMomentum(owner, momentum); };
         }
 
         /// <summary>

@@ -40,17 +40,17 @@ namespace AW2.Game
             TypeLoader gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Gobs);
             Gob[] gobs = (Gob[])gobLoader.LoadAllTypes();
             foreach (Gob gob in gobs)
-                AssaultWing.Instance.DataEngine.AddTypeTemplate(TypeTemplateType.Gob, gob.TypeName, gob);
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(gob.TypeName, gob);
 
             TypeLoader weaponLoader = new TypeLoader(typeof(Weapon), Helpers.Paths.Weapons);
             Weapon[] weapons = (Weapon[])weaponLoader.LoadAllTypes();
             foreach (Weapon weapon in weapons)
-                AssaultWing.Instance.DataEngine.AddTypeTemplate(TypeTemplateType.Weapon, weapon.TypeName, weapon);
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(weapon.TypeName, weapon);
 
             TypeLoader particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
             Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
             foreach (Gob particleEngine in particleEngines)
-                AssaultWing.Instance.DataEngine.AddTypeTemplate(TypeTemplateType.Gob, particleEngine.TypeName, particleEngine);
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
 
             ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
             IEnumerable<Arena> arenas = (Arena[])arenaLoader.LoadAllTypes();

@@ -15,12 +15,77 @@ namespace AW2.Helpers
     /// support cloning.
     public abstract class Clonable
     {
+        [TypeParameter, RuntimeState]
+        CanonicalString typeName;
+
         delegate void CloneDelegate(Clonable clone);
         delegate Clonable ConstructorDelegate();
         static Dictionary<Type, DynamicMethod> cloneMethods = new Dictionary<Type, DynamicMethod>();
         static Dictionary<Type, DynamicMethod> constructors = new Dictionary<Type, DynamicMethod>();
         List<CloneDelegate> cloneDelegates;
         ConstructorDelegate constructorDelegate;
+
+        public CanonicalString TypeName { get { return typeName; } }
+
+        static Clonable()
+        {
+            Log.Write("Checking Clonable subclass constructors...");
+            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+            {
+                if (!typeof(Clonable).IsAssignableFrom(type)) continue;
+                if (type.IsAbstract) continue;
+                var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Instance;
+                if (null == type.GetConstructor(flags, null, Type.EmptyTypes, null))
+                {
+                    string message = "BUG: Missing constructor " + type.Name + "()";
+                    Log.Write(message);
+                    throw new ApplicationException(message);
+                }
+                if (null == type.GetConstructor(flags, null, new Type[] { typeof(CanonicalString) }, null))
+                {
+                    string message = "BUG: Missing constructor " + type.Name + "(CanonicalString)";
+                    Log.Write(message);
+                    throw new ApplicationException(message);
+                }
+            }
+            Log.Write("...Clonable subclass constructors are OK");
+
+            CreateCloneMethods();
+        }
+
+        /// <summary>
+        /// For serialization only.
+        /// </summary>
+        /// In their parameterless constructors, subclasses should initialise
+        /// all their fields marked with any limitation attribute, setting their
+        /// values to representative defaults for XML templates.
+        public Clonable()
+        {
+            typeName = (CanonicalString)"unknown type";
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified type. Common game logic should call
+        /// <see cref="CreateGob(string, Action&lt;Gob&gt;)"/> instead of this method
+        /// to create gobs.
+        /// </summary>
+        public static Clonable Instantiate(CanonicalString typeName)
+        {
+            var template = (Clonable)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeName);
+            return template.Clone();
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified type.
+        /// </summary>
+        /// The object's serialised fields are initialised according to the template instance
+        /// associated with the specified type. This applies also to fields declared
+        /// in subclasses, so a subclass constructor must not initialise its fields
+        /// marked with <see cref="TypeDefinitionAttribute"/>.
+        protected Clonable(CanonicalString typeName)
+        {
+            this.typeName = typeName;
+        }
 
         /// <summary>
         /// Called on a cloned object after the cloning.
@@ -44,11 +109,6 @@ namespace AW2.Helpers
             for (int i = 0; i < cloneDelegates.Count; ++i) cloneDelegates[i](clone);
             clone.Cloned();
             return clone;
-        }
-
-        static Clonable()
-        {
-            CreateCloneMethods();
         }
 
         static void CreateCloneMethods()

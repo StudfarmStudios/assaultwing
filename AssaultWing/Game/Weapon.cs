@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
-using System.Xml.Serialization;
-using Ship = AW2.Game.Gobs.Ship;
-using AW2.Helpers;
 using Microsoft.Xna.Framework;
+using AW2.Helpers;
+using Ship = AW2.Game.Gobs.Ship;
 
 namespace AW2.Game
 {
@@ -54,12 +52,6 @@ namespace AW2.Game
         #region Weapon fields
 
         /// <summary>
-        /// Weapon type name.
-        /// </summary>
-        [TypeParameter]
-        CanonicalString typeName;
-
-        /// <summary>
         /// Names of the weapon type upgrades of the weapon.
         /// </summary>
         [TypeParameter]
@@ -86,7 +78,6 @@ namespace AW2.Game
         /// <summary>
         /// A handle for identifying us at the owner.
         /// </summary>
-        [RuntimeState]
         protected OwnerHandleType ownerHandle;
 
         /// <summary>
@@ -112,7 +103,6 @@ namespace AW2.Game
         /// <summary>
         /// Time from which on the weapon is loaded, in game time.
         /// </summary>
-        [RuntimeState]
         protected TimeSpan loadedTime;
 
         /// <summary>
@@ -131,11 +121,6 @@ namespace AW2.Game
         #endregion // Weapon fields
 
         #region Weapon properties
-
-        /// <summary>
-        /// Get the weapon type name.
-        /// </summary>
-        public CanonicalString TypeName { get { return typeName; } }
         
         /// <summary>
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.
@@ -220,37 +205,16 @@ namespace AW2.Game
 
         #endregion // Weapon properties
 
-        static Weapon()
-        {
-            // Check that important constructors have been declared
-            Helpers.Log.Write("Checking weapon constructors");
-            foreach (Type type in Array.FindAll<Type>(System.Reflection.Assembly.GetExecutingAssembly().GetTypes(),
-                t => typeof(Weapon).IsAssignableFrom(t)))
-            {
-                if (null == type.GetConstructor(Type.EmptyTypes))
-                    throw new Exception("Missing constructor " + type.Name + "()");
-                if (null == type.GetConstructor(new Type[] { 
-                    typeof(CanonicalString), typeof(Ship), typeof(OwnerHandleType), typeof(int[]), }))
-                    throw new Exception("Missing constructor " + type.Name + "(CanonicalString, Ship, OwnerHandle, int[])");
-            }
-        }
-
         /// <summary>
-        /// Creates an uninitialised weapon.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Weapon()
         {
-            this.typeName = (CanonicalString)"unknown weapon type";
-            this.upgradeNames = new CanonicalString[] { (CanonicalString)"dummyweapontype", };
+            this.upgradeNames = new CanonicalString[] { (CanonicalString)"dummyweapontype" };
             this.iconName = (CanonicalString)"dummytexture";
             this.iconEquipName = (CanonicalString)"dummytexture";
-            this.owner = null;
-            this.ownerHandle = 0;
-            this.boneIndices = new int[] { 0 };
             this.shotTypeName = (CanonicalString)"dummygobtype";
             this.loadTime = 0.5f;
-            this.loadedTime = new TimeSpan(1, 2, 3);
             this.fireCharge = 100;
             this.recoilMomentum = 10000;
         }
@@ -260,74 +224,40 @@ namespace AW2.Game
         /// </summary>
         /// <param name="typeName">The type of the weapon.</param>
         protected Weapon(CanonicalString typeName)
+            : base(typeName)
         {
-            // Initialise fields from the weapon type's template.
-            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, typeName);
-            if (template.GetType() != this.GetType())
-                throw new Exception("Silly programmer tries to create a weapon (type " +
-                    typeName + ") using a wrong Weapon subclass (class " + this.GetType().Name);
-            foreach (FieldInfo field in Serialization.GetFields(this, typeof(TypeParameterAttribute)))
-                field.SetValue(this, field.GetValue(template));
-
             this.owner = null;
             this.ownerHandle = 0;
             this.boneIndices = new int[] { 0 };
             this.loadedTime = new TimeSpan(0);
         }
 
+        #region Weapon public methods
+
         /// <summary>
-        /// Creates a new weapon of the specified type.
+        /// Attaches the weapon to a ship.
         /// </summary>
-        /// <param name="typeName">The type of the weapon.</param>
-        /// <param name="owner">The ship that owns this weapon.</param>
+        /// <param name="owner">The ship to attach to.</param>
         /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
-        /// <param name="boneIndices">Indices of the bones that define the weapon's
-        /// barrels' locations on the owning ship.</param>
-        public Weapon(CanonicalString typeName, Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
-            : this(typeName)
+        /// <param name="boneIndices">Indices of the bones that define the locations of the
+        /// barrels of the weapon on the ship.</param>
+        public void AttachTo(Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
         {
             this.owner = owner;
             this.ownerHandle = ownerHandle;
             this.boneIndices = boneIndices;
         }
-  
-        /// <summary>
-        /// Creates a weapon of the given type.
-        /// </summary>
-        /// Note that you cannot call new Weapon(typeName) because then the created object
-        /// won't have the fields of the subclass that 'typeName' requires. This static method
-        /// takes care of finding the correct subclass.
-        /// <param name="typeName">The type of the weapon.</param>
-        /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
-        /// <param name="boneIndices">Indices of the bones that define the weapon's
-        /// barrels' locations on the owning ship.</param>
-        /// <param name="args">Any arguments to pass to the subclass' constructor.</param>
-        /// <returns>The newly created weapon.</returns>
-        public static Weapon CreateWeapon(CanonicalString typeName, Ship owner, OwnerHandleType ownerHandle, int[] boneIndices, params object[] args)
-        {
-            Weapon template = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, typeName);
-            Type type = template.GetType();
-            if (args.Length == 0)
-                return (Weapon)Activator.CreateInstance(type, typeName, owner, ownerHandle, boneIndices);
-            else
-            {
-                object[] newArgs = new object[args.Length + 4];
-                newArgs[0] = typeName;
-                newArgs[1] = owner;
-                newArgs[2] = ownerHandle;
-                newArgs[3] = boneIndices;
-                Array.Copy(args, 0, newArgs, 4, args.Length);
-                return (Weapon)Activator.CreateInstance(type, newArgs);
-            }
-        }
-
-        #region Weapon public methods
 
         /// <summary>
         /// Fires the weapon.
         /// </summary>
         public abstract void Fire();
+
+        /// <summary>
+        /// Called when the weapon is added to game. Subclasses can initialize here things
+        /// that couldn't be initialized in the constructor e.g. due to lack of data.
+        /// </summary>
+        public abstract void Activate();
 
         /// <summary>
         /// Updates the weapon's state and performs actions true to its nature.

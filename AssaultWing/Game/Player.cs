@@ -352,7 +352,7 @@ namespace AW2.Game
             {
                 if (weapon1Upgrades == 0)
                     return weapon1Name;
-                Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon1Name);
+                var weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(weapon1Name);
                 return weapon1.UpgradeNames[weapon1Upgrades - 1];
             }
         }
@@ -366,7 +366,7 @@ namespace AW2.Game
             {
                 if (weapon2Upgrades == 0)
                     return weapon2Name;
-                Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon2Name);
+                var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(weapon2Name);
                 return weapon2.UpgradeNames[weapon2Upgrades - 1];
             }
         }
@@ -728,7 +728,7 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon1()
         {
-            Weapon weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon1Name);
+            var weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(weapon1Name);
             weapon1Upgrades = Math.Min(weapon1Upgrades + 1, weapon1.UpgradeNames.Length + 1);
             UpdateShipWeapons();
         }
@@ -747,7 +747,7 @@ namespace AW2.Game
         /// </summary>
         void UpgradeWeapon2()
         {
-            Weapon weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Weapon, weapon2Name);
+            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(weapon2Name);
             weapon2Upgrades = Math.Min(weapon2Upgrades + 1, weapon2.UpgradeNames.Length);
             UpdateShipWeapons();
         }

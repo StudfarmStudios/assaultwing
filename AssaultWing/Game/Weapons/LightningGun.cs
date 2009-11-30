@@ -25,13 +25,8 @@ namespace AW2.Game.Weapons
             range = 500;
         }
 
-        /// <param name="typeName">The type of the weapon.</param>
-        /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
-        /// <param name="boneIndices">Indices of the bones that define the weapon's
-        /// barrels' locations on the owning ship.</param>
-        public LightningGun(CanonicalString typeName, Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
-            : base(typeName, owner, ownerHandle, boneIndices)
+        public LightningGun(CanonicalString typeName)
+            : base(typeName)
         {
         }
 
@@ -73,6 +68,10 @@ namespace AW2.Game.Weapons
             DoneFiring();
         }
 
+        public override void Activate()
+        {
+        }
+        
         public override void Update()
         {
         }

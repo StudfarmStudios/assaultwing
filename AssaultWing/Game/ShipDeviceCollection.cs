@@ -331,7 +331,8 @@ namespace AW2.Game
             if (boneIs.Length == 0)
                 Log.Write("Warning: Ship found no gun barrels in its 3D model");
             int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs, pair => pair.Value);
-            Weapon weapon = Weapon.CreateWeapon(weaponName, ship, ownerHandle, boneIndices);
+            var weapon = (Weapon)Clonable.Instantiate(weaponName);
+            weapon.AttachTo(ship, ownerHandle, boneIndices);
             AssaultWing.Instance.DataEngine.Weapons.Add(weapon);
             return weapon;
         }

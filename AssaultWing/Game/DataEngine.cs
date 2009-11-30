@@ -14,24 +14,6 @@ using Viewport = AW2.Graphics.AWViewport;
 namespace AW2.Game
 {
     /// <summary>
-    /// Type of type template.
-    /// </summary>
-    /// <seealso cref="DataEngine.AddTypeTemplate"/>
-    /// /// <seealso cref="DataEngine.GetTypeTemplate"/>
-    public enum TypeTemplateType
-    {
-        /// <summary>
-        /// An instance of class <see cref="Gob"/>
-        /// </summary>
-        Gob,
-
-        /// <summary>
-        /// An instance of class <see cref="Weapon"/>
-        /// </summary>
-        Weapon,
-    }
-
-    /// <summary>
     /// Basic implementation of game data.
     /// </summary>
     /// Gobs in an arena are kept on several arena layers. One of the layers
@@ -49,10 +31,9 @@ namespace AW2.Game
         List<ViewportSeparator> viewportSeparators;
 
         /// <summary>
-        /// Type templates, indexed by <see cref="TypeTemplateType"/> and
-        /// <see cref="CanonicalString.Canonical"/> of type template names.
+        /// Type templates, indexed by <see cref="CanonicalString.Canonical"/> of their type name.
         /// </summary>
-        List<List<object>> templates;
+        List<object> templates;
 
         Dictionary<string, Arena> arenas;
         Arena preparedArena;
@@ -105,11 +86,15 @@ namespace AW2.Game
             Spectators.Removed += player => player.Dispose();
 
             Weapons = new IndexedItemCollection<Weapon>();
-            Weapons.Added += weapon => { weapon.Arena = Arena; };
+            Weapons.Added += weapon =>
+            {
+                weapon.Arena = Arena;
+                weapon.Activate();
+            };
 
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();
-            templates = new List<List<object>>();
+            templates = new List<object>();
             arenas = new Dictionary<string, Arena>();
             ArenaPlaylist = new Playlist(new string[] { "dummyarena" });
         }
@@ -230,48 +215,21 @@ namespace AW2.Game
         #region type templates
 
         /// <summary>
-        /// Saves an instance as a template for a user-defined type with the given name.
+        /// Saves an object to be used as a template for a user-defined named type.
         /// </summary>
-        /// User-defined types for some base class are defined by templates that are instances
-        /// of some subclass of the base class. Template instances carry values for certain 
-        /// fields (called 'type parameters') of the subclasses, and the values are used in 
-        /// initialising the fields when an instance of the user-defined type is created 
-        /// during gameplay.
-        /// <param name="type">Type of the template. This signifies the base class of the user-defined type, e.g. Gob or Weapon.</param>
-        /// <param name="typeName">The name of the user-defined type, e.g. "explosion" or "shotgun".</param>
-        /// <param name="template">The instance to save as a template for the user-defined type.</param>
-        public void AddTypeTemplate(TypeTemplateType type, CanonicalString typeName, object template)
+        public void AddTypeTemplate(CanonicalString typeName, object template)
         {
-            while (templates.Count < (int)type + 1)
-                templates.Add(new List<object>());
-            var typeList = templates[(int)type];
-            while (typeList.Count < typeName.Canonical + 1)
-                typeList.Add(null);
-            if (typeList[typeName.Canonical] != null)
-                Log.Write("WARNING: Overwriting user-defined type " + type + "/" + typeName);
-            typeList[typeName.Canonical] = template;
+            while (templates.Count < typeName.Canonical + 1) templates.Add(null);
+            if (templates[typeName.Canonical] != null)
+                Log.Write("WARNING: Overwriting template for user-defined type " + typeName);
+            templates[typeName.Canonical] = template;
         }
 
-        /// <summary>
-        /// Returns the template instance that defines the named user-defined type.
-        /// </summary>
-        /// <seealso cref="DataEngine.AddTypeTemplate"/>
-        /// <param name="type">Type of the template. This signifies the base class of the user-defined type, e.g. Gob or Weapon.</param>
-        /// <param name="typeName">The name of the user-defined type, e.g. "explosion" or "shotgun".</param>
-        /// <returns>The template instance that defines the named user-defined type.</returns>
-        public object GetTypeTemplate(TypeTemplateType type, CanonicalString typeName)
+        public object GetTypeTemplate(CanonicalString typeName)
         {
-            if ((int)type >= templates.Count)
-                throw new Exception("Missing templates for user-defined type " + type + "/" + typeName + " (no templates for the whole base class)");
-            var typeList = templates[(int)type];
-            var item = typeList.ElementAtOrDefault(typeName.Canonical);
-            if (item != null) return item;
-
-            Log.Write("Missing template for user-defined type " + type + "/" + typeName);
-            var fallbackTypeName = new CanonicalString("dummy" + type.ToString().ToLower() + "type");
-            var fallbackItem = typeList.ElementAtOrDefault(fallbackTypeName.Canonical);
-            if (fallbackItem != null) return fallbackItem;
-            throw new Exception("Missing templates for user-defined type " + type + "/" + typeName + " and fallback " + fallbackTypeName);
+            var item = templates.ElementAtOrDefault(typeName.Canonical);
+            if (item == null) throw new ApplicationException("Missing template for user-defined type " + typeName);
+            return item;
         }
 
         /// <summary>
@@ -283,10 +241,8 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each template.</param>
         public void ForEachTypeTemplate<T>(Action<T> action)
         {
-            var typeIndex = Array.IndexOf(Enum.GetNames(typeof(TypeTemplateType)), typeof(T).Name);
-            if (typeIndex < 0) throw new ArgumentException("No template type " + typeof(T) + " found");
-            foreach (var template in templates[typeIndex])
-                if (template != null) action((T)template);
+            foreach (var template in templates)
+                if (template != null && template is T) action((T)template);
         }
 
         #endregion type templates
@@ -474,7 +430,7 @@ namespace AW2.Game
         /// </summary>
         public void ProcessGobCreationMessage(GobCreationMessage message, TimeSpan messageAge)
         {
-            Gob gob = Gob.CreateGob(message.GobTypeName);
+            Gob gob = (Gob)Clonable.Instantiate(message.GobTypeName);
             message.Read(gob, SerializationModeFlags.All, messageAge);
             if (message.CreateToNextArena)
             {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Events;
@@ -129,7 +128,7 @@ namespace AW2.Game.Weapons
             : base()
         {
             this.fireSound = SoundOptions.Action.Pistol;
-            this.muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
+            this.muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine" };
             this.shotSpeed = 300f;
             this.shotCount = 3;
             this.shotSpacing = 0.2f;
@@ -141,22 +140,12 @@ namespace AW2.Game.Weapons
             this.liveShots = new List<Gob>();
         }
 
-        /// <summary>
-        /// Creates a new forward shooting weapon.
-        /// </summary>
-        /// <param name="typeName">The type of the weapon.</param>
-        /// <param name="owner">The ship that owns this weapon.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
-        /// <param name="boneIndices">Indices of the bones that define the weapon's
-        /// barrels' locations on the owning ship.</param>
-        public ForwardShot(CanonicalString typeName, Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
-            : base(typeName, owner, ownerHandle, boneIndices)
+        public ForwardShot(CanonicalString typeName)
+            : base(typeName)
         {
             this.shotsLeft = 0;
             this.nextShot = new TimeSpan(0);
-            muzzleFireEngines = new List<Gob>[boneIndices.Length];
-            for (int i = 0; i < boneIndices.Length; ++i)
-                muzzleFireEngines[i] = new List<Gob>();
+            muzzleFireEngines = new List<Gob>[0];
             this.liveShots = new List<Gob>();
         }
 
@@ -181,6 +170,13 @@ namespace AW2.Game.Weapons
                 shotsLeft = shotCount;
                 nextShot = AssaultWing.Instance.GameTime.TotalGameTime;
             }
+        }
+
+        public override void Activate()
+        {
+            muzzleFireEngines = new List<Gob>[boneIndices.Length];
+            for (int i = 0; i < boneIndices.Length; ++i)
+                muzzleFireEngines[i] = new List<Gob>();
         }
 
         /// <summary>

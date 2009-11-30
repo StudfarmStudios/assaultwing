@@ -388,9 +388,9 @@ namespace AW2.Menu
                 spriteBatch.DrawString(menuSmallFont, player.Name, playerNamePos, Color.White);
 
                 // Draw icons of selected equipment.
-                Game.Gobs.Ship ship = (Game.Gobs.Ship)data.GetTypeTemplate(TypeTemplateType.Gob, player.ShipName);
-                Weapon weapon1 = (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon1Name);
-                Weapon weapon2 = (Weapon)data.GetTypeTemplate(TypeTemplateType.Weapon, player.Weapon2Name);
+                var ship = (Game.Gobs.Ship)data.GetTypeTemplate(player.ShipName);
+                var weapon1 = (Weapon)data.GetTypeTemplate(player.Weapon1Name);
+                var weapon2 = (Weapon)data.GetTypeTemplate(player.Weapon2Name);
                 Texture2D shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.IconEquipName);
                 Texture2D weapon1Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon1.IconEquipName);
                 Texture2D weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconEquipName);

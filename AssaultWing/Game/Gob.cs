@@ -106,12 +106,6 @@ namespace AW2.Game
         static int leastUnusedIrrelevantId = -1;
 
         /// <summary>
-        /// Gob type name.
-        /// </summary>
-        [TypeParameter, RuntimeState]
-        CanonicalString typeName;
-
-        /// <summary>
         /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
         Player owner;
@@ -325,11 +319,6 @@ namespace AW2.Game
         /// The gob's unique identifier.
         /// </summary>
         public int Id { get; set; }
-
-        /// <summary>
-        /// Get the gob type name.
-        /// </summary>
-        public CanonicalString TypeName { get { return typeName; } }
 
         /// <summary>
         /// The arena in which the gob lives.
@@ -580,27 +569,6 @@ namespace AW2.Game
 
         static Gob()
         {
-            // Check that important constructors have been declared
-            Helpers.Log.Write("Checking gob constructors");
-            foreach (Type type in Array.FindAll<Type>(System.Reflection.Assembly.GetExecutingAssembly().GetTypes(),
-                t => typeof(Gob).IsAssignableFrom(t) && !t.IsAbstract))
-            {
-                var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Instance;
-                if (null == type.GetConstructor(flags, null, Type.EmptyTypes, null))
-                {
-                    string message = "Missing constructor " + type.Name + "()";
-                    Log.Write(message);
-                    throw new Exception(message);
-                }
-                if (null == type.GetConstructor(flags, null, new Type[] { typeof(CanonicalString) }, null))
-                {
-                    string message = "Missing constructor " + type.Name + "(CanonicalString)";
-                    Log.Write(message);
-                    throw new Exception(message);
-                }
-            }
-
-            // Initialise bleach curve.
             bleachCurve = new Curve();
             bleachCurve.PreLoop = CurveLoopType.Constant;
             bleachCurve.PostLoop = CurveLoopType.Constant;
@@ -616,17 +584,11 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Creates an uninitialised gob.
+        /// For serialization only.
         /// </summary>
-        /// This constructor is only for serialisation.
-        /// In their parameterless constructors, subclasses should initialise
-        /// all their fields marked with any limitation attribute, setting their
-        /// values to representative defaults for XML templates.
         public Gob()
         {
-            // We initialise the values so that they work as good examples in the XML template.
             Id = -1;
-            typeName = (CanonicalString)"unknown gob type";
             depthLayer2D = 0.5f;
             drawMode2D = new DrawMode2D(DrawModeType2D.None);
             layerPreference = LayerPreferenceType.Front;
@@ -654,14 +616,9 @@ namespace AW2.Game
         /// <summary>
         /// Creates a gob of the specified gob type.
         /// </summary>
-        /// The gob's serialised fields are initialised according to the gob template 
-        /// instance associated with the gob type. This applies also to fields declared
-        /// in subclasses, so a subclass constructor only has to initialise its runtime
-        /// state fields, not the fields that define its gob type.
-        /// <param name="typeName">The type of the gob.</param>
         protected Gob(CanonicalString typeName)
+            : base(typeName)
         {
-            this.typeName = typeName;
             gravitating = true;
             SetId();
             owner = null;
@@ -674,23 +631,6 @@ namespace AW2.Game
             bleach = -1;
             bleachResetTime = new TimeSpan(0);
             LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalGameTime;
-        }
-
-        /// <summary>
-        /// Creates unconditionally a gob of a given type. Don't call this method from 
-        /// common game logic. Call <c>CreateGob(string, Action&lt;Gob&gt;)</c> instead.
-        /// </summary>
-        /// Note that you cannot call new Gob(typeName) because then the created object
-        /// won't have the fields of the subclass that 'typeName' requires. This static method
-        /// takes care of finding the correct subclass.
-        /// <param name="typeName">The type of the gob.</param>
-        /// <returns>The newly created gob.</returns>
-        /// <seealso cref="CreateGob(CanonicalString, Action&lt;Gob&gt;)"/>
-        public static Gob CreateGob(CanonicalString typeName)
-        {
-            AssaultWing.Instance.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
-            Gob template = (Gob)AssaultWing.Instance.DataEngine.GetTypeTemplate(TypeTemplateType.Gob, typeName);
-            return (Gob)template.Clone();
         }
 
         /// <summary>
@@ -708,7 +648,7 @@ namespace AW2.Game
         /// <seealso cref="CreateGob(CanonicalString)"/>
         public static void CreateGob(CanonicalString typeName, Action<Gob> init)
         {
-            Gob gob = CreateGob(typeName);
+            Gob gob = (Gob)Clonable.Instantiate(typeName);
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
@@ -724,10 +664,10 @@ namespace AW2.Game
         /// <seealso cref="CreateGob(Gob, Action&lt;Gob&gt;)"/>
         private static Gob CreateGob(Gob runtimeState)
         {
-            Gob gob = CreateGob(runtimeState.TypeName);
+            Gob gob = (Gob)Clonable.Instantiate(runtimeState.TypeName);
             if (runtimeState.GetType() != gob.GetType())
                 throw new ArgumentException("Runtime gob of class " + runtimeState.GetType().Name +
-                    " has type name \"" + runtimeState.typeName + "\" which is for class " + gob.GetType().Name);
+                    " has type name \"" + runtimeState.TypeName + "\" which is for class " + gob.GetType().Name);
             gob.SetRuntimeState(runtimeState);
             return gob;
         }
@@ -1406,6 +1346,7 @@ namespace AW2.Game
         /// </summary>
         public override void Cloned()
         {
+            AssaultWing.Instance.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
             foreach (var area in collisionAreas) area.Owner = this;
         }
 

@@ -258,8 +258,7 @@ namespace AW2.Game.Weapons
                 shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             float kickSpeed = shotSpeed +
                 shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
-            Vector2 kick = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction))
-                * kickSpeed;
+            Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
             Gob.CreateGob(shotTypeName, shot =>
             {
                 shot.Owner = owner.Owner;

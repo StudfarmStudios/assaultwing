@@ -522,8 +522,18 @@ namespace AW2.Game
             int attempts = 0;
             while (moveTime > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
             {
-                Vector2 oldMove = gob.Move;
-                TryMove(gob, ref moveTime, allowSideEffects);
+                var oldMove = gob.Move;
+                var gobFrameMove = gob.Move * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                int moveChunkCount = (int)Math.Ceiling(gobFrameMove.Length() / MOVE_LENGTH_MAXIMUM);
+                if (moveChunkCount == 0) moveChunkCount = 1;
+                var chunkMoveTime = moveTime.Divide(moveChunkCount);
+                for (int chunk = 0; chunk < moveChunkCount; ++chunk)
+                {
+                    var currentChunkMoveTime = chunkMoveTime;
+                    TryMove(gob, ref currentChunkMoveTime, allowSideEffects);
+                    moveTime -= chunkMoveTime - currentChunkMoveTime;
+                    if (currentChunkMoveTime > TimeSpan.Zero) break; // stop iterating chunks if the gob collided
+                }
                 ++attempts;
 
                 // If we just have to wait for another gob to move out of the way,
@@ -751,18 +761,11 @@ namespace AW2.Game
             TimeSpan moveTry = moveTime;
             TimeSpan lastMoveTry = TimeSpan.Zero;
             float oldMoveLength = oldMove.Length();
-            while (moveBad - moveGood > COLLISION_ACCURACY)
+            bool firstIteration = true;
+            while (firstIteration || moveBad - moveGood > COLLISION_ACCURACY)
             {
-                float posDeltaBetweenTries = oldMoveLength * (float)(moveTry - lastMoveTry).Duration().TotalSeconds;
-                if (posDeltaBetweenTries > MOVE_LENGTH_MAXIMUM)
-                {
-                    var limitFactor = MOVE_LENGTH_MAXIMUM / posDeltaBetweenTries;
-                    long lastMoveTryTicks = lastMoveTry.Ticks;
-                    long moveTryTicksDelta = moveTry.Ticks - lastMoveTryTicks;
-                    long moveTryNewTicks = lastMoveTryTicks + (long)(moveTryTicksDelta * limitFactor);
-                    moveTry = TimeSpan.FromTicks(moveTryNewTicks);
-                }
-                gob.Pos = oldPos + oldMove * (float)moveTry.TotalSeconds;
+                firstIteration = false;
+                gob.Pos = LerpGobPos(oldPos, oldMove, moveTry);
                 bool overlapperFound = gobPhysical == null ? false
                     : ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
                 if (ArenaBoundaryLegal(gob) && !overlapperFound)
@@ -779,27 +782,36 @@ namespace AW2.Game
                 moveTry = TimeSpan.FromTicks((moveGood.Ticks + moveBad.Ticks) / 2);
             }
 
-            // Perform physical collisions.
             if (badFound)
             {
-                gob.Pos = oldPos + oldMove * (float)moveBad.TotalSeconds;
-                if (badDueToOverlappers)
-                    ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
-                    {
-                        if (allowSideEffects)
-                        {
-                            gob.Collide(gobPhysical, area2, false);
-                            area2.Owner.Collide(area2, gobPhysical, false);
-                        }
-                        PerformCollision(gobPhysical, area2, allowSideEffects);
-                        return gob.Dead;
-                    });
-                ArenaBoundaryActions(gob, allowSideEffects);
+                gob.Pos = LerpGobPos(oldPos, oldMove, moveBad);
+                PerformPhysicalCollisions(gob, allowSideEffects, gobPhysical, badDueToOverlappers);
             }
 
             // Return to last non-colliding position.
-            gob.Pos = oldPos + oldMove * (float)moveGood.TotalSeconds;
+            gob.Pos = LerpGobPos(oldPos, oldMove, moveGood);
             moveTime -= moveGood;
+        }
+
+        private static Vector2 LerpGobPos(Vector2 startPos, Vector2 move, TimeSpan moveTime)
+        {
+            return startPos + move * (float)moveTime.TotalSeconds;
+        }
+
+        private void PerformPhysicalCollisions(Gob gob, bool allowSideEffects, CollisionArea gobPhysical, bool badDueToOverlappers)
+        {
+            if (badDueToOverlappers)
+                ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
+                {
+                    if (allowSideEffects)
+                    {
+                        gob.Collide(gobPhysical, area2, false);
+                        area2.Owner.Collide(area2, gobPhysical, false);
+                    }
+                    PerformCollision(gobPhysical, area2, allowSideEffects);
+                    return gob.Dead;
+                });
+            ArenaBoundaryActions(gob, allowSideEffects);
         }
 
         /// <summary>

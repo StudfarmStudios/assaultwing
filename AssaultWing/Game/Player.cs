@@ -865,12 +865,12 @@ namespace AW2.Game
                 Ship.TurnLeft(Controls.left.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
             if (Controls.right.Force > 0)
                 Ship.TurnRight(Controls.right.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
-            if (Controls.fire1.Pulse)
-                Ship.Devices.Fire1();
-            if (Controls.fire2.Pulse)
-                Ship.Devices.Fire2();
-            if (Controls.extra.Pulse)
-                Ship.Devices.DoExtra();
+            if (Controls.fire1.Pulse || Controls.fire1.Force > 0)
+                Ship.Devices.Fire1(Controls.fire1.State);
+            if (Controls.fire2.Pulse || Controls.fire2.Force > 0)
+                Ship.Devices.Fire2(Controls.fire2.State);
+            if (Controls.extra.Pulse || Controls.extra.Force > 0)
+                Ship.Devices.DoExtra(Controls.extra.State);
         }
 
         /// <summary>

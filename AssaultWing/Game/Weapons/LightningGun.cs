@@ -32,7 +32,7 @@ namespace AW2.Game.Weapons
 
         #region Weapon methods
 
-        public override void Fire()
+        public override void Fire(AW2.UI.ControlState triggerState)
         {
             if (!CanFire) return;
             var target = Arena.Gobs.FirstOrDefault(gob =>
@@ -70,6 +70,7 @@ namespace AW2.Game.Weapons
 
         public override void Activate()
         {
+            FireMode = FireModeType.Single;
         }
         
         public override void Update()

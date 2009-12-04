@@ -24,6 +24,11 @@ namespace AW2.Game.Weapons
         /// Otherwise produce new shots.
         /// </summary>
         KillAll,
+
+        /// <summary>
+        /// Always shoot and don't wait for reload. Uses charge per second.
+        /// </summary>
+        ShootContinuously,
     }
 
     /// <summary>
@@ -143,37 +148,54 @@ namespace AW2.Game.Weapons
         public ForwardShot(CanonicalString typeName)
             : base(typeName)
         {
-            this.shotsLeft = 0;
-            this.nextShot = new TimeSpan(0);
+            shotsLeft = 0;
+            nextShot = new TimeSpan(0);
             muzzleFireEngines = new List<Gob>[0];
-            this.liveShots = new List<Gob>();
+            liveShots = new List<Gob>();
         }
 
         /// <summary>
         /// Fires the weapon.
         /// </summary>
-        public override void Fire()
+        public override void Fire(AW2.UI.ControlState triggerState)
         {
-            // Do something with existing shots if any exist and
-            // if there is anything to be done with them.
-            if (fireAction == FireAction.KillAll && liveShots.Count > 0)
+            switch (fireAction)
             {
-                foreach (Gob gob in liveShots)
-                    gob.Die(new DeathCause());
+                case FireAction.KillAll:
+                    if (triggerState.pulse)
+                    {
+                        if (liveShots.Count > 0)
+                            foreach (Gob gob in liveShots)
+                                gob.Die(new DeathCause());
+                        else
+                            TryShoot();
+                    }
+                    break;
+                case FireAction.Shoot:
+                    if (triggerState.pulse) TryShoot();
+                    break;
+                case FireAction.ShootContinuously:
+                    if (triggerState.force > 0) TryShoot();
+                    break;
             }
-            else
-            // Otherwise fire new shots if possible.
-            if (CanFire)
+        }
+
+        private void TryShoot()
+        {
+            if (!CanFire) return;
+            StartFiring();
+            switch (FireMode)
             {
-                // Start a new series.
-                StartFiring();
-                shotsLeft = shotCount;
-                nextShot = AssaultWing.Instance.GameTime.TotalGameTime;
+                case FireModeType.Single: shotsLeft = shotCount; break;
+                case FireModeType.Continuous: shotsLeft = 1; break;
+                default: throw new ApplicationException("Unknown FireMode " + FireMode);
             }
+            nextShot = AssaultWing.Instance.GameTime.TotalGameTime;
         }
 
         public override void Activate()
         {
+            FireMode = fireAction == FireAction.ShootContinuously ? FireModeType.Continuous : FireModeType.Single;
             muzzleFireEngines = new List<Gob>[boneIndices.Length];
             for (int i = 0; i < boneIndices.Length; ++i)
                 muzzleFireEngines[i] = new List<Gob>();
@@ -186,8 +208,7 @@ namespace AW2.Game.Weapons
         {
             flashAndBangCreated = false;
 
-            // Shoot if its time.
-            while (shotsLeft > 0 && nextShot <= AssaultWing.Instance.GameTime.TotalGameTime)
+            while (IsItTimeToShoot())
             {
                 // Every gun barrel shoots.
                 for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
@@ -200,18 +221,35 @@ namespace AW2.Game.Weapons
                 ApplyRecoil();
                 PlayFiringSound();
                 flashAndBangCreated = true;
-
-                // Remember when to shoot again.
-                --shotsLeft;
                 nextShot += TimeSpan.FromSeconds(shotSpacing);
-
-                if (shotsLeft == 0)
-                    DoneFiring();
+                switch (FireMode)
+                {
+                    case FireModeType.Single:
+                        if (shotsLeft == 0) DoneFiring();
+                        --shotsLeft;
+                        break;
+                    case FireModeType.Continuous:
+                        shotsLeft = 1;
+                        break;
+                    default: throw new ApplicationException("Unknown FireMode " + FireMode);
+                }
+            }
+            if (FireMode == FireModeType.Continuous)
+            {
+                shotsLeft = 0;
+                DoneFiring();
             }
 
             UpdateMuzzleFire();
             RemoveOldMuzzleFire();
             RemoveOldShots();
+        }
+
+        private bool IsItTimeToShoot()
+        {
+            if (shotsLeft <= 0) return false;
+            if (nextShot > AssaultWing.Instance.GameTime.TotalGameTime) return false;
+            return true;
         }
 
         private void CreateShot(int boneI)

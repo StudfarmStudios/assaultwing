@@ -238,8 +238,8 @@ namespace AW2.Game
                 // TODO: Fire1() and Fire2() are intended to create muzzle pengs
                 // but they don't. Fix this by inheriting Weapon from Gob and serialising
                 // muzzleFireEngine state over the network.
-                if (weapon1Fired) Fire1();
-                if (weapon2Fired) Fire2();
+                if (weapon1Fired) Fire1(new AW2.UI.ControlState(1, true)); // HACK !!!
+                if (weapon2Fired) Fire2(new AW2.UI.ControlState(1, true)); // HACK !!!
             }
         }
 
@@ -287,30 +287,30 @@ namespace AW2.Game
         /// <summary>
         /// Fires the main weapon.
         /// </summary>
-        public void Fire1()
+        public void Fire1(AW2.UI.ControlState triggerState)
         {
             if (ship.Disabled) return;
-            Weapon1.Fire();
+            Weapon1.Fire(triggerState);
             visualWeapon1Fired = true;
         }
 
         /// <summary>
         /// Fires the secondary weapon.
         /// </summary>
-        public void Fire2()
+        public void Fire2(AW2.UI.ControlState triggerState)
         {
             if (ship.Disabled) return;
-            Weapon2.Fire();
+            Weapon2.Fire(triggerState);
             visualWeapon2Fired = true;
         }
 
         /// <summary>
         /// Uses the extra device of the ship.
         /// </summary>
-        public void DoExtra()
+        public void DoExtra(AW2.UI.ControlState triggerState)
         {
             if (ship.Disabled) return;
-            // !!! not implemented
+            ExtraDevice.Fire(triggerState);
         }
 
         #endregion

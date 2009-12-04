@@ -48,6 +48,7 @@ namespace AW2.Game
     public abstract class Weapon : ShipDevice
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
+        public enum FireModeType { Single, Continuous };
 
         #region Weapon fields
 
@@ -106,10 +107,16 @@ namespace AW2.Game
         protected TimeSpan loadedTime;
 
         /// <summary>
-        /// Amount of charge required to fire the weapon.
+        /// Amount of charge required to fire the weapon once.
         /// </summary>
         [TypeParameter]
-        protected float fireCharge;
+        float fireCharge;
+
+        /// <summary>
+        /// Amount of charge required for one second of rapid firing the weapon.
+        /// </summary>
+        [TypeParameter]
+        float fireChargePerSecond;
 
         /// <summary>
         /// Recoil momentum of the weapon, measured in Newton seconds.
@@ -185,7 +192,7 @@ namespace AW2.Game
         /// </summary>
         public bool Loaded
         {
-            get { return loadedTime <= AssaultWing.Instance.GameTime.TotalGameTime; }
+            get { return FireMode == FireModeType.Continuous || loadedTime <= AssaultWing.Instance.GameTime.TotalGameTime; }
             set
             {
                 if (value && !Loaded) loadedTime = AssaultWing.Instance.GameTime.TotalGameTime;
@@ -194,14 +201,39 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Amount of charge required to fire the weapon.
+        /// Amount of charge required to fire the weapon once.
         /// </summary>
         public float FireCharge { get { return fireCharge; } }
 
         /// <summary>
+        /// Amount of charge required for one second of rapid firing the weapon.
+        /// </summary>
+        public float FireChargePerSecond { get { return fireChargePerSecond; } }
+
+        public FireModeType FireMode { get; protected set; }
+
+        /// <summary>
         /// <b>true</b> iff there is no obstruction to the weapon being fired.
         /// </summary>
-        public bool CanFire { get { return Loaded && FireCharge <= owner.Devices.GetCharge(ownerHandle); } }
+        public bool CanFire
+        {
+            get
+            {
+                float chargeNow = owner.Devices.GetCharge(ownerHandle);
+                float neededCharge;
+                switch (FireMode)
+                {
+                    case FireModeType.Single:
+                        neededCharge = FireCharge;
+                        break;
+                    case FireModeType.Continuous:
+                        neededCharge = FireChargePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                        break;
+                    default: throw new ApplicationException("Unexpected FireModeType: " + FireMode);
+                }
+                return Loaded && neededCharge <= chargeNow;
+            }
+        }
 
         #endregion // Weapon properties
 
@@ -216,6 +248,7 @@ namespace AW2.Game
             this.shotTypeName = (CanonicalString)"dummygobtype";
             this.loadTime = 0.5f;
             this.fireCharge = 100;
+            this.fireChargePerSecond = 500;
             this.recoilMomentum = 10000;
         }
 
@@ -248,27 +281,6 @@ namespace AW2.Game
             this.boneIndices = boneIndices;
         }
 
-        /// <summary>
-        /// Fires the weapon.
-        /// </summary>
-        public abstract void Fire();
-
-        /// <summary>
-        /// Called when the weapon is added to game. Subclasses can initialize here things
-        /// that couldn't be initialized in the constructor e.g. due to lack of data.
-        /// </summary>
-        public abstract void Activate();
-
-        /// <summary>
-        /// Updates the weapon's state and performs actions true to its nature.
-        /// </summary>
-        public abstract void Update();
-
-        /// <summary>
-        /// Releases all resources allocated by the weapon.
-        /// </summary>
-        public abstract void Dispose();
-
         #endregion Weapon public methods
 
         #region Weapon protected methods
@@ -281,10 +293,19 @@ namespace AW2.Game
         /// <b>DoneFiring</b>.
         protected void StartFiring()
         {
-            owner.Devices.UseCharge(ownerHandle, fireCharge);
-
-            // Make the weapon unloaded for eternity until subclass calls DoneFiring().
-            loadedTime = TimeSpan.MaxValue;
+            if (!CanFire) throw new InvalidOperationException("This weapon cannot be fired now");
+            switch (FireMode)
+            {
+                case FireModeType.Single:
+                    owner.Devices.UseCharge(ownerHandle, fireCharge);
+                    // Make the weapon unloaded for eternity until subclass calls DoneFiring().
+                    loadedTime = TimeSpan.MaxValue;
+                    break;
+                case FireModeType.Continuous:
+                    float seconds = (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                    owner.Devices.UseCharge(ownerHandle, fireChargePerSecond * seconds);
+                    break;
+            }
         }
 
         /// <summary>
@@ -307,8 +328,14 @@ namespace AW2.Game
         /// <b>StartFiring</b>.
         protected void DoneFiring()
         {
-            // Reset the weapon's load time counter.
-            loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime);
+            switch (FireMode)
+            {
+                case FireModeType.Single:
+                    loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime);
+                    break;
+                case FireModeType.Continuous:
+                    break;
+            }
         }
 
         #endregion Weapon protected methods

@@ -225,8 +225,8 @@ namespace AW2.Game.Weapons
                 switch (FireMode)
                 {
                     case FireModeType.Single:
-                        if (shotsLeft == 0) DoneFiring();
                         --shotsLeft;
+                        if (shotsLeft == 0) DoneFiring();
                         break;
                     case FireModeType.Continuous:
                         shotsLeft = 1;

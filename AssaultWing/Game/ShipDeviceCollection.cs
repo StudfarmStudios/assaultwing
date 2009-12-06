@@ -22,9 +22,9 @@ namespace AW2.Game
         Ship ship;
 
         /// <summary>
-        /// Amount of charge for primary weapons, between <b>0</b> and <b>weapon1ChargeMax</b>.
+        /// Amount of charge for extra devices, between <b>0</b> and <b>extraDeviceChargeMax</b>.
         /// </summary>
-        float weapon1Charge;
+        float extraDeviceCharge;
 
         /// <summary>
         /// Amount of charge for secondary weapons, between <b>0</b> and <b>weapon2ChargeMax</b>.
@@ -32,9 +32,9 @@ namespace AW2.Game
         float weapon2Charge;
 
         /// <summary>
-        /// Speed of charging for primary weapon charge, measured in charge units per second.
+        /// Speed of charging for extra device charge, measured in charge units per second.
         /// </summary>
-        float weapon1ChargeSpeed;
+        float extraDeviceChargeSpeed;
 
         /// <summary>
         /// Speed of charging for secondary weapon charge, measured in charge units per second.
@@ -70,9 +70,9 @@ namespace AW2.Game
                 // Null weapon means we're not yet activated. Then create weapon later.
                 if (Weapon1 != null)
                 {
-                    AssaultWing.Instance.DataEngine.Weapons.Remove(Weapon1);
+                    AssaultWing.Instance.DataEngine.Devices.Remove(Weapon1);
                     Weapon1.Dispose();
-                    Weapon1 = CreateWeapons(value, Weapon.OwnerHandleType.PrimaryWeapon);
+                    Weapon1 = (Weapon)CreateDevice(value, Weapon.OwnerHandleType.PrimaryWeapon);
                 }
                 else
                     weapon1Name = value;
@@ -80,19 +80,27 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Amount of charge for primary weapons,
-        /// between <b>0</b> and <b>Weapon1ChargeMax</b>.
+        /// Amount of charge for extra devices,
+        /// between <b>0</b> and <b>ExtraDeviceChargeMax</b>.
         /// </summary>
-        public float Weapon1Charge
+        public float ExtraDeviceCharge
         {
-            get { return weapon1Charge; }
-            set { weapon1Charge = MathHelper.Clamp(value, 0, Weapon1ChargeMax); }
+            get { return extraDeviceCharge; }
+            set { extraDeviceCharge = MathHelper.Clamp(value, 0, ExtraDeviceChargeMax); }
         }
 
         /// <summary>
-        /// Maximum amount of charge for primary weapons.
+        /// Maximum amount of charge for extra devices.
         /// </summary>
-        public float Weapon1ChargeMax { get; private set; }
+        public float ExtraDeviceChargeMax { get; private set; }
+
+        /// <summary>
+        /// Is the extra device loaded.
+        /// </summary>
+        public bool ExtraDeviceLoaded { get { return ExtraDevice.Loaded; } }
+
+
+        public CanonicalString ExtraDeviceName { get; set; }
 
         /// <summary>
         /// Is any of the primary weapons loaded.
@@ -115,9 +123,9 @@ namespace AW2.Game
                 // Null weapon means we're not yet activated. Then create weapon later.
                 if (Weapon2 != null)
                 {
-                    AssaultWing.Instance.DataEngine.Weapons.Remove(Weapon2);
+                    AssaultWing.Instance.DataEngine.Devices.Remove(Weapon2);
                     Weapon2.Dispose();
-                    Weapon2 = CreateWeapons(value, Weapon.OwnerHandleType.SecondaryWeapon);
+                    Weapon2 = (Weapon)CreateDevice(value, Weapon.OwnerHandleType.SecondaryWeapon);
                 }
                 else
                     weapon2Name = value;
@@ -155,16 +163,17 @@ namespace AW2.Game
         /// <summary>
         /// To be called from <see cref="Ship.Activate"/>
         /// </summary>
-        public void Activate(float weapon1ChargeMax, float weapon2ChargeMax,
-            float weapon1ChargeSpeed, float weapon2ChargeSpeed)
+        public void Activate(float extraDeviceChargeMax, float weapon2ChargeMax,
+            float extraDeviceChargeSpeed, float weapon2ChargeSpeed)
         {
-            Weapon1ChargeMax = weapon1ChargeMax;
+            ExtraDeviceChargeMax = extraDeviceChargeMax;
             Weapon2ChargeMax = weapon2ChargeMax;
-            this.weapon1ChargeSpeed = weapon1ChargeSpeed;
+            this.extraDeviceChargeSpeed = extraDeviceChargeSpeed;
             this.weapon2ChargeSpeed = weapon2ChargeSpeed;
-            if (weapon1Name != CanonicalString.Null) Weapon1 = CreateWeapons(weapon1Name, Weapon.OwnerHandleType.PrimaryWeapon);
-            if (weapon2Name != CanonicalString.Null) Weapon2 = CreateWeapons(weapon2Name, Weapon.OwnerHandleType.SecondaryWeapon);
-            Weapon1Charge = Weapon1ChargeMax;
+            if (weapon1Name != CanonicalString.Null) Weapon1 = (Weapon)CreateDevice(weapon1Name, Weapon.OwnerHandleType.PrimaryWeapon);
+            if (weapon2Name != CanonicalString.Null) Weapon2 = (Weapon)CreateDevice(weapon2Name, Weapon.OwnerHandleType.SecondaryWeapon);
+            if (ExtraDeviceName != CanonicalString.Null) ExtraDevice = CreateDevice(ExtraDeviceName, Weapon.OwnerHandleType.ExtraDevice);
+            ExtraDeviceCharge = ExtraDeviceChargeMax;
             Weapon2Charge = Weapon2ChargeMax;
         }
 
@@ -173,8 +182,9 @@ namespace AW2.Game
         /// </summary>
         public void Dispose()
         {
-            AssaultWing.Instance.DataEngine.Weapons.Remove(Weapon1);
-            AssaultWing.Instance.DataEngine.Weapons.Remove(Weapon2);
+            AssaultWing.Instance.DataEngine.Devices.Remove(Weapon1);
+            AssaultWing.Instance.DataEngine.Devices.Remove(Weapon2);
+            // TODO: AssaultWing.Instance.DataEngine.Devices.Remove(ExtraDevice);
         }
 
         /// <summary>
@@ -182,8 +192,8 @@ namespace AW2.Game
         /// </summary>
         public void Update(TimeSpan elapsedGameTime)
         {
-            Weapon1Charge += weapon1ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
-            Weapon1Charge = MathHelper.Clamp(Weapon1Charge, 0, Weapon1ChargeMax);
+            ExtraDeviceCharge += extraDeviceChargeSpeed * (float)elapsedGameTime.TotalSeconds;
+            ExtraDeviceCharge = MathHelper.Clamp(ExtraDeviceCharge, 0, ExtraDeviceChargeMax);
             Weapon2Charge += weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
             Weapon2Charge = MathHelper.Clamp(Weapon2Charge, 0, Weapon2ChargeMax);
         }
@@ -200,7 +210,7 @@ namespace AW2.Game
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((Half)Weapon1Charge);
+                writer.Write((Half)ExtraDeviceCharge);
                 writer.Write((Half)Weapon2Charge);
                 byte flags = (byte)(
                     (Weapon1Loaded ? 0x01 : 0x00) |
@@ -226,7 +236,7 @@ namespace AW2.Game
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                Weapon1Charge = reader.ReadHalf();
+                ExtraDeviceCharge = reader.ReadHalf();
                 Weapon2Charge = reader.ReadHalf();
                 byte flags = reader.ReadByte();
                 if (Weapon1 != null) Weapon1.Loaded = (flags & 0x01) != 0;
@@ -252,9 +262,9 @@ namespace AW2.Game
         {
             switch (ownerHandle)
             {
-                case Weapon.OwnerHandleType.PrimaryWeapon: return Weapon1Charge;
+                case Weapon.OwnerHandleType.PrimaryWeapon: return int.MaxValue;
                 case Weapon.OwnerHandleType.SecondaryWeapon: return Weapon2Charge;
-                case Weapon.OwnerHandleType.ExtraDevice: throw new NotImplementedException("Extra device charge not implemented");
+                case Weapon.OwnerHandleType.ExtraDevice: return ExtraDeviceCharge;
                 default:
                     Log.Write("Warning: Someone inquired weapon charge for invalid owner handle " + ownerHandle);
                     return 0;
@@ -271,13 +281,14 @@ namespace AW2.Game
             switch (ownerHandle)
             {
                 case Weapon.OwnerHandleType.PrimaryWeapon:
-                    weapon1Charge = MathHelper.Clamp(weapon1Charge - amount, 0, Weapon1ChargeMax);
+                    // Primary weapon has no charge.
                     break;
                 case Weapon.OwnerHandleType.SecondaryWeapon:
                     weapon2Charge = MathHelper.Clamp(weapon2Charge - amount, 0, Weapon2ChargeMax);
                     break;
                 case Weapon.OwnerHandleType.ExtraDevice:
-                    throw new NotImplementedException("Extra device charge not implemented");
+                    extraDeviceCharge = MathHelper.Clamp(extraDeviceCharge - amount, 0, ExtraDeviceChargeMax);
+                    break;
                 default:
                     Log.Write("Warning: Someone tried to use weapon charge for invalid owner handle " + ownerHandle);
                     break;
@@ -317,24 +328,28 @@ namespace AW2.Game
 
         #region Private methods
 
-
         /// <summary>
-        /// Creates a new instance of a named weapon type so that all
-        /// gun barrels on the ship are covered.
+        /// Creates a new instance of a named ship device type. If the device is a weapon,
+        /// it is instantiated at each gun barrel on the ship's 3D model.
         /// </summary>
-        /// <param name="weaponName">Name of the weapon type.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
-        /// <returns>The created weapon.</returns>
-        private Weapon CreateWeapons(CanonicalString weaponName, Weapon.OwnerHandleType ownerHandle)
+        /// <param name="deviceName">Name of the device type.</param>
+        /// <param name="ownerHandle">A handle for identifying the device at the owner.</param>
+        /// <returns>The created device.</returns>
+        private ShipDevice CreateDevice(CanonicalString deviceName, ShipDevice.OwnerHandleType ownerHandle)
         {
-            KeyValuePair<string, int>[] boneIs = ship.GetNamedPositions("Gun");
-            if (boneIs.Length == 0)
-                Log.Write("Warning: Ship found no gun barrels in its 3D model");
-            int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs, pair => pair.Value);
-            var weapon = (Weapon)Clonable.Instantiate(weaponName);
-            weapon.AttachTo(ship, ownerHandle, boneIndices);
-            AssaultWing.Instance.DataEngine.Weapons.Add(weapon);
-            return weapon;
+            var device = (ShipDevice)Clonable.Instantiate(deviceName);
+            if (ownerHandle == ShipDevice.OwnerHandleType.PrimaryWeapon ||
+                ownerHandle == ShipDevice.OwnerHandleType.SecondaryWeapon)
+            {
+                KeyValuePair<string, int>[] boneIs = ship.GetNamedPositions("Gun");
+                if (boneIs.Length == 0) Log.Write("Warning: Ship found no gun barrels in its 3D model");
+                int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs, pair => pair.Value);
+                ((Weapon)device).AttachTo(ship, ownerHandle, boneIndices);
+            }
+            else
+                device.AttachTo(ship, ownerHandle);
+            AssaultWing.Instance.DataEngine.Devices.Add(device);
+            return device;
         }
 
         #endregion

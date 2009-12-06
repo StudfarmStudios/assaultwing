@@ -84,23 +84,17 @@ namespace AW2.Menu
         }
     }
 
-    /// <summary>
-    /// Selector of the primary weapon of a player.
-    /// </summary>
-    public class Weapon1Selector : EquipmentSelector
+    public class ExtraDeviceSelector : EquipmentSelector
     {
-        /// <summary>
-        /// Creates a primary weapon selector.
-        /// </summary>
         /// <param name="player">The player whose primary weapon we are selecting.</param>
-        public Weapon1Selector(Player player)
+        public ExtraDeviceSelector(Player player)
             : base(player)
         {
             // Find possible values.
-            Values = AssaultWing.Instance.DataEngine.GameplayMode.Weapon1Types;
+            Values = AssaultWing.Instance.DataEngine.GameplayMode.ExtraDeviceTypes;
 
             // Find the value the player currently has.
-            CurrentValue = Values.IndexOf(player.Weapon1Name);
+            CurrentValue = Values.IndexOf(player.ExtraDeviceName);
         }
 
         /// <summary>
@@ -109,7 +103,7 @@ namespace AW2.Menu
         /// <param name="value">The name of the primary weapon.</param>
         protected override void SetValue(string value)
         {
-            Player.Weapon1Name = (CanonicalString)value;
+            Player.ExtraDeviceName = (CanonicalString)value;
         }
     }
 

@@ -27,23 +27,7 @@ namespace AW2.Menu
         /// <summary>
         /// An item in a pane main display in the equip menu.
         /// </summary>
-        enum EquipMenuItem
-        {
-            /// <summary>
-            /// Start a local play session.
-            /// </summary>
-            Ship,
-
-            /// <summary>
-            /// Start a network play session.
-            /// </summary>
-            Weapon1,
-
-            /// <summary>
-            /// Set up Assault Wing's technical thingies.
-            /// </summary>
-            Weapon2,
-        }
+        enum EquipMenuItem { Ship, Extra, Weapon2 }
 
         bool serverIsCreatingGobs; // HACK: for initialising arena on client
         Control controlBack, controlDone;
@@ -173,7 +157,7 @@ namespace AW2.Menu
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
-                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon1] = new Weapon1Selector(player);
+                equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player);
                 equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player);
                 ++playerI;
             }
@@ -279,10 +263,11 @@ namespace AW2.Menu
                             oldPlayer.ShipName = info.shipTypeName;
                             oldPlayer.Weapon1Name = info.weapon1TypeName;
                             oldPlayer.Weapon2Name = info.weapon2TypeName;
+                            oldPlayer.ExtraDeviceName = info.extraDeviceTypeName;
                         }
                         else
                         {
-                            Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, message.ConnectionId);
+                            Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, info.extraDeviceTypeName, message.ConnectionId);
                             AssaultWing.Instance.DataEngine.Spectators.Add(player);
                             playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
                         }
@@ -302,7 +287,7 @@ namespace AW2.Menu
                 {
                     for (int i = 0; i < message.PlayerCount; ++i)
                     {
-                        Player player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
+                        Player player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
                         message.Read(player, SerializationModeFlags.All, TimeSpan.Zero);
 
                         // Only add the player if it is remote.
@@ -370,7 +355,7 @@ namespace AW2.Menu
                 switch (currentItems[playerI])
                 {
                     case EquipMenuItem.Ship: playerItemName = player.ShipName; break;
-                    case EquipMenuItem.Weapon1: playerItemName = player.Weapon1Name; break;
+                    case EquipMenuItem.Extra: playerItemName = player.ExtraDeviceName; break;
                     case EquipMenuItem.Weapon2: playerItemName = player.Weapon2Name; break;
                 }
                 Vector2 playerPanePos = pos - view + player1PanePos + playerI * playerPaneDeltaPos;
@@ -389,13 +374,13 @@ namespace AW2.Menu
 
                 // Draw icons of selected equipment.
                 var ship = (Game.Gobs.Ship)data.GetTypeTemplate(player.ShipName);
-                var weapon1 = (Weapon)data.GetTypeTemplate(player.Weapon1Name);
+                var extraDevice = (ShipDevice)data.GetTypeTemplate(player.ExtraDeviceName);
                 var weapon2 = (Weapon)data.GetTypeTemplate(player.Weapon2Name);
                 Texture2D shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.IconEquipName);
-                Texture2D weapon1Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon1.IconEquipName);
+                Texture2D extraDeviceTexture = AssaultWing.Instance.Content.Load<Texture2D>(extraDevice.IconEquipName);
                 Texture2D weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconEquipName);
                 spriteBatch.Draw(shipTexture, playerPanePos + playerPaneCursorDeltaPos, Color.White);
-                spriteBatch.Draw(weapon1Texture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
+                spriteBatch.Draw(extraDeviceTexture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
                 spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);
 
                 // Draw cursor, highlight and item name.

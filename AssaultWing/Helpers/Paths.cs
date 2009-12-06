@@ -56,9 +56,9 @@ namespace AW2.Helpers
         public static readonly string Textures = @"Content\textures";
 
         /// <summary>
-        /// Path to weapons.
+        /// Path to ship devices.
         /// </summary>
-        public static readonly string Weapons = @"Content\weapondefs";
+        public static readonly string Devices = @"Content\weapondefs";
 
         /// <summary>
         /// Path to sound effects and music.

@@ -67,7 +67,7 @@ namespace AW2.Game
         /// <summary>
         /// Weapons that are active in the game session.
         /// </summary>
-        public IndexedItemCollection<Weapon> Weapons { get; private set; }
+        public IndexedItemCollection<ShipDevice> Devices { get; private set; }
 
         /// <summary>
         /// The currently active arena.
@@ -85,11 +85,11 @@ namespace AW2.Game
             Spectators = new IndexedItemCollection<Spectator>();
             Spectators.Removed += player => player.Dispose();
 
-            Weapons = new IndexedItemCollection<Weapon>();
-            Weapons.Added += weapon =>
+            Devices = new IndexedItemCollection<ShipDevice>();
+            Devices.Added += device =>
             {
-                weapon.Arena = Arena;
-                weapon.Activate();
+                device.Arena = Arena;
+                device.Activate();
             };
 
             viewports = new List<Viewport>();
@@ -167,7 +167,7 @@ namespace AW2.Game
         public void StartArena()
         {
             // Clear old stuff from previous arena, if any.
-            Weapons.Clear();
+            Devices.Clear();
             foreach (var player in Spectators) player.Reset();
             if (Arena != null) Arena.Dispose();
 

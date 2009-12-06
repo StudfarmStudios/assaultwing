@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<WeaponType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">peashooter</typeName>
   <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
   <upgradeNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -20,4 +20,4 @@
   <muzzleFireEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">slugfire</Item>
   </muzzleFireEngineNames>
-</WeaponType>
+</ShipDeviceType>

@@ -37,38 +37,23 @@ namespace AW2.Game
         {
             Helpers.Log.Write("Loading user-defined types");
 
-            TypeLoader gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Gobs);
-            Gob[] gobs = (Gob[])gobLoader.LoadAllTypes();
-            foreach (Gob gob in gobs)
+            var gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Gobs);
+            var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.Devices);
+            var particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
+            var arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
+
+            DeleteTemplates(new TypeLoader[] { gobLoader, deviceLoader, particleLoader, arenaLoader });
+
+            foreach (Gob gob in gobLoader.LoadAllTypes())
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(gob.TypeName, gob);
-
-            TypeLoader weaponLoader = new TypeLoader(typeof(Weapon), Helpers.Paths.Weapons);
-            Weapon[] weapons = (Weapon[])weaponLoader.LoadAllTypes();
-            foreach (Weapon weapon in weapons)
-                AssaultWing.Instance.DataEngine.AddTypeTemplate(weapon.TypeName, weapon);
-
-            TypeLoader particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
-            Gob[] particleEngines = (Gob[])particleLoader.LoadAllTypes();
-            foreach (Gob particleEngine in particleEngines)
+            foreach (ShipDevice device in deviceLoader.LoadAllTypes())
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(device.TypeName, device);
+            foreach (Gob particleEngine in particleLoader.LoadAllTypes())
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
+            AssaultWing.Instance.DataEngine.ArenaInfos = arenaLoader.LoadAllTypes().Cast<Arena>().Select(arena => arena.Info).ToList();
 
-            ArenaTypeLoader arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
-            IEnumerable<Arena> arenas = (Arena[])arenaLoader.LoadAllTypes();
-            Dictionary<string, string> arenaFileNames = new Dictionary<string, string>();
-            arenas = arenas.Where(arena => arena.Name != "dummyarena"); // HACK: avoiding the automatically generated arena template
-            AssaultWing.Instance.DataEngine.ArenaInfos = arenas.Select(arena => arena.Info).ToList();
-
-            SaveAndDeleteTemplates(new TypeLoader[] { gobLoader, weaponLoader, particleLoader, arenaLoader });
-
-            // Freeze CanonicalStrings to enable sharing them over a network.
-            // Type names of gobs, weapons and particle engines are registered implicitly
-            // above while loading the types. Graphics and ShipDeviceCollection need separate handling.
-            // TODO: Loop through all textures and all 3D models available in the ContentManager.
-            var content = (AW2.Graphics.AWContentManager)AssaultWing.Instance.Content;
-            foreach (var assetName in content.GetAssetNames()) CanonicalString.Register(assetName);
-            var temp = new AW2.Game.ShipDeviceCollection(null);
-            CanonicalString.DisableRegistering();
-
+            SaveTemplates(new TypeLoader[] { gobLoader, deviceLoader, particleLoader, arenaLoader });
+            FreezeCanonicalStrings();
             base.Initialize();
         }
 
@@ -83,7 +68,7 @@ namespace AW2.Game
 
             // Update gobs, weapons and players.
             foreach (var gob in data.Arena.Gobs) gob.Update();
-            foreach (var weapon in data.Weapons) weapon.Update();
+            foreach (var device in data.Devices) device.Update();
             foreach (var player in data.Spectators) player.Update();
 
             AssaultWing.Instance.DataEngine.Arena.PerformNonphysicalCollisions();
@@ -135,21 +120,36 @@ namespace AW2.Game
             }
         }
 
-        [System.Diagnostics.Conditional("DEBUG")]
-        private void SaveAndDeleteTemplates(IEnumerable<TypeLoader> typeLoaders)
+        /// <summary>
+        /// Freezes <see cref="CanonicalString"/> instances to enable sharing them over a network.
+        /// </summary>
+        private static void FreezeCanonicalStrings()
         {
-            if (AssaultWing.Instance.CommandLineArgs.Contains("-deletetemplates"))
-            {
-                Log.Write("Parameter -deletetemplates given, deleting templates now...");
-                foreach (var typeLoader in typeLoaders) typeLoader.DeleteTemplates();
-                Log.Write("...templates deleted");
-            }
-            if (AssaultWing.Instance.CommandLineArgs.Contains("-savetemplates"))
-            {
-                Log.Write("Parameter -savetemplates given, saving templates now...");
-                foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplates();
-                Log.Write("...templates saved");
-            }
+            // Type names of gobs, ship devices and particle engines are registered implicitly
+            // above while loading the types. Graphics and ShipDeviceCollection need separate handling.
+            // TODO: Loop through all textures and all 3D models available in the ContentManager.
+            var content = (AW2.Graphics.AWContentManager)AssaultWing.Instance.Content;
+            foreach (var assetName in content.GetAssetNames()) CanonicalString.Register(assetName);
+            var temp = new AW2.Game.ShipDeviceCollection(null);
+            CanonicalString.DisableRegistering();
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        private void DeleteTemplates(IEnumerable<TypeLoader> typeLoaders)
+        {
+            if (!AssaultWing.Instance.CommandLineArgs.Contains("-deletetemplates")) return;
+            Log.Write("Parameter -deletetemplates given, deleting templates now...");
+            foreach (var typeLoader in typeLoaders) typeLoader.DeleteTemplates();
+            Log.Write("...templates deleted");
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        private void SaveTemplates(IEnumerable<TypeLoader> typeLoaders)
+        {
+            if (!AssaultWing.Instance.CommandLineArgs.Contains("-savetemplates")) return;
+            Log.Write("Parameter -savetemplates given, saving templates now...");
+            foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplates();
+            Log.Write("...templates saved");
         }
     }
 }

@@ -344,6 +344,11 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// The name of the extra device as the player has chosen it.
+        /// </summary>
+        public CanonicalString ExtraDeviceName { get; set; }
+
+        /// <summary>
         /// The name of the primary weapon, considering all current bonuses.
         /// </summary>
         public CanonicalString Weapon1RealName
@@ -418,10 +423,11 @@ namespace AW2.Game
         /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
         /// <param name="weapon1Name">Name of the type of main weapon.</param>
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
+        /// <param name="extraDeviceName">Name of the type of extra device.</param>
         /// <param name="controls">Player's in-game controls.</param>
         public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
-            PlayerControls controls)
-            : this(name, shipTypeName, weapon1Name, weapon2Name, controls, -1)
+            CanonicalString extraDeviceName, PlayerControls controls)
+            : this(name, shipTypeName, weapon1Name, weapon2Name, extraDeviceName, controls, -1)
         {
         }
 
@@ -432,12 +438,13 @@ namespace AW2.Game
         /// <param name="shipTypeName">Name of the type of ship the player is flying.</param>
         /// <param name="weapon1Name">Name of the type of main weapon.</param>
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
+        /// <param name="extraDeviceName">Name of the type of extra device.</param>
         /// <param name="connectionId">Identifier of the connection to the remote game instance
         /// at which the player lives.</param>
         /// <see cref="AW2.Net.Connection.Id"/>
         public Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
-            int connectionId)
-            : this(name, shipTypeName, weapon1Name, weapon2Name, new PlayerControls
+            CanonicalString extraDeviceName, int connectionId)
+            : this(name, shipTypeName, weapon1Name, weapon2Name, extraDeviceName, new PlayerControls
             {
                 thrust = new RemoteControl(),
                 left = new RemoteControl(),
@@ -454,7 +461,7 @@ namespace AW2.Game
         /// Creates a new player.
         /// </summary>
         private Player(string name, CanonicalString shipTypeName, CanonicalString weapon1Name, CanonicalString weapon2Name,
-            PlayerControls controls, int connectionId)
+            CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
             : base(controls, connectionId)
         {
             Id = leastUnusedId++;
@@ -462,6 +469,7 @@ namespace AW2.Game
             this.shipTypeName = shipTypeName;
             this.weapon1Name = weapon1Name;
             this.weapon2Name = weapon2Name;
+            ExtraDeviceName = extraDeviceName;
             weapon1Upgrades = 0;
             weapon2Upgrades = 0;
             bonuses = PlayerBonusTypes.None;
@@ -860,7 +868,7 @@ namespace AW2.Game
         {
             if (Ship == null) return;
             if (Controls.thrust.Force > 0)
-                Ship.Thrust(Controls.thrust.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
+                Ship.Thrust(Controls.thrust.Force, AssaultWing.Instance.GameTime.ElapsedGameTime, Ship.Rotation);
             if (Controls.left.Force > 0)
                 Ship.TurnLeft(Controls.left.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
             if (Controls.right.Force > 0)
@@ -902,6 +910,7 @@ namespace AW2.Game
                 newShip.Owner = this;
                 newShip.Devices.Weapon1Name = weapon1Name;
                 newShip.Devices.Weapon2Name = weapon2Name;
+                newShip.Devices.ExtraDeviceName = ExtraDeviceName;
 
                 // Find a starting place for the new ship.
                 // Use player spawn areas if there's any. Otherwise just randomise a position.

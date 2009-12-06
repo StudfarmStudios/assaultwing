@@ -90,7 +90,7 @@ namespace AW2.Graphics
             if (player.Ship != null)
             {
                 Rectangle charge1BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling(player.Ship.Devices.Weapon1Charge / player.Ship.Devices.Weapon1ChargeMax
+                    (int)Math.Ceiling(player.Ship.Devices.ExtraDeviceCharge / player.Ship.Devices.ExtraDeviceChargeMax
                     * barMainTexture.Width),
                     barMainTexture.Height);
                 spriteBatch.Draw(barMainTexture,

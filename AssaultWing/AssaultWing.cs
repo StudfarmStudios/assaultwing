@@ -808,7 +808,7 @@ namespace AW2
             plr1Controls.down = new KeyboardKey(Keys.Down);
             plr1Controls.fire1 = new KeyboardKey(Keys.RightControl);
             plr1Controls.fire2 = new KeyboardKey(Keys.RightShift);
-            plr1Controls.extra = new KeyboardKey(Keys.Enter);
+            plr1Controls.extra = new KeyboardKey(Keys.Down);
 
             PlayerControls plr2Controls;
 #if false // mouse control
@@ -830,12 +830,12 @@ namespace AW2
             plr2Controls.down = new KeyboardKey(Keys.X);
             plr2Controls.fire1 = new KeyboardKey(Keys.LeftControl);
             plr2Controls.fire2 = new KeyboardKey(Keys.LeftShift);
-            plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
+            plr2Controls.extra = new KeyboardKey(Keys.X);
             uiEngine.MouseControlsEnabled = false;
 #endif
 
-            Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Hyperion", (CanonicalString)"peashooter", (CanonicalString)"rockets", plr1Controls);
-            Player player2 = new Player("John Crichton", (CanonicalString)"Prowler", (CanonicalString)"shotgun", (CanonicalString)"bazooka", plr2Controls);
+            Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Hyperion", (CanonicalString)"peashooter", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
+            Player player2 = new Player("John Crichton", (CanonicalString)"Prowler", (CanonicalString)"shotgun", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
             player1.PlayerColor = Color.Blue;
             player2.PlayerColor = Color.DeepPink;
 
@@ -844,8 +844,9 @@ namespace AW2
 
             dataEngine.GameplayMode = new GameplayMode();
             dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler", "Snake" };
-            dataEngine.GameplayMode.Weapon1Types = new string[] { "peashooter", "shotgun", "lightning gun", "venom spray", "talon swoop" };
-            dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
+            dataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster" };
+            dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets",
+                /* TODO, remove these: */ "peashooter", "shotgun", "lightning gun", "venom spray", "talon swoop"};
 
             GameState = GameState.Menu;
 

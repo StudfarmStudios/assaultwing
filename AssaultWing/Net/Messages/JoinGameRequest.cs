@@ -21,20 +21,10 @@ namespace AW2.Net.Messages
         /// </summary>
         public string name;
 
-        /// <summary>
-        /// The player's ship type.
-        /// </summary>
         public CanonicalString shipTypeName;
-
-        /// <summary>
-        /// The player's primary weapon type.
-        /// </summary>
         public CanonicalString weapon1TypeName;
-
-        /// <summary>
-        /// The player's secondary weapon type.
-        /// </summary>
         public CanonicalString weapon2TypeName;
+        public CanonicalString extraDeviceTypeName;
 
         /// <summary>
         /// Creates a new player info based on a player.
@@ -47,6 +37,7 @@ namespace AW2.Net.Messages
             shipTypeName = player.ShipName;
             weapon1TypeName = player.Weapon1Name;
             weapon2TypeName = player.Weapon2Name;
+            extraDeviceTypeName = player.ExtraDeviceName;
         }
     }
 
@@ -81,6 +72,7 @@ namespace AW2.Net.Messages
             //   32-byte-string player ship type
             //   32-byte-string player weapon1 type
             //   32-byte-string player weapon2 type
+            //   32-byte-string player extra device type
             writer.Write((byte)PlayerInfos.Count);
             foreach (PlayerInfo info in PlayerInfos)
             {
@@ -89,6 +81,7 @@ namespace AW2.Net.Messages
                 writer.Write((string)info.shipTypeName, 32, false);
                 writer.Write((string)info.weapon1TypeName, 32, false);
                 writer.Write((string)info.weapon2TypeName, 32, false);
+                writer.Write((string)info.extraDeviceTypeName, 32, false);
             }
         }
 
@@ -108,6 +101,7 @@ namespace AW2.Net.Messages
                 info.shipTypeName = (CanonicalString)reader.ReadString(32);
                 info.weapon1TypeName = (CanonicalString)reader.ReadString(32);
                 info.weapon2TypeName = (CanonicalString)reader.ReadString(32);
+                info.extraDeviceTypeName = (CanonicalString)reader.ReadString(32);
                 PlayerInfos.Add(info);
             }
         }

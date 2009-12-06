@@ -40,10 +40,10 @@ namespace AW2.Game.Gobs
         #region Ship fields related to weapons
 
         /// <summary>
-        /// Maximum amount of charge for primary weapons.
+        /// Maximum amount of charge for extra devices.
         /// </summary>
         [TypeParameter]
-        float weapon1ChargeMax;
+        float extraDeviceChargeMax;
 
         /// <summary>
         /// Maximum amount of charge for secondary weapons.
@@ -52,11 +52,11 @@ namespace AW2.Game.Gobs
         float weapon2ChargeMax;
 
         /// <summary>
-        /// Speed of charging for primary weapon charge,
+        /// Speed of charging for extra device charge,
         /// measured in charge units per second.
         /// </summary>
         [TypeParameter]
-        float weapon1ChargeSpeed;
+        float extraDeviceChargeSpeed;
 
         /// <summary>
         /// Speed of charging for secondary weapon charge,
@@ -231,8 +231,8 @@ namespace AW2.Game.Gobs
             this.maxSpeed = 200;
             this.rollMax = (float)MathHelper.PiOver4;
             this.rollSpeed = (float)(MathHelper.TwoPi / 2.0);
-            this.weapon1ChargeMax = 5000;
-            this.weapon1ChargeSpeed = 500;
+            this.extraDeviceChargeMax = 5000;
+            this.extraDeviceChargeSpeed = 500;
             this.weapon2ChargeMax = 5000;
             this.weapon2ChargeSpeed = 500;
             this.armour = new Curve();
@@ -329,7 +329,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            Devices.Activate(weapon1ChargeMax, weapon2ChargeMax, weapon1ChargeSpeed, weapon2ChargeSpeed);
+            Devices.Activate(extraDeviceChargeMax, weapon2ChargeMax, extraDeviceChargeSpeed, weapon2ChargeSpeed);
             SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
             CreateCoughEngines();
@@ -458,7 +458,7 @@ namespace AW2.Game.Gobs
             {
                 float thrustForce = reader.ReadHalf();
                 if (thrustForce > 0)
-                    Thrust(thrustForce, AssaultWing.Instance.GameTime.ElapsedGameTime);
+                    Thrust(thrustForce, AssaultWing.Instance.GameTime.ElapsedGameTime, Rotation);
             }
         }
 
@@ -470,11 +470,11 @@ namespace AW2.Game.Gobs
         /// Thrusts the ship.
         /// </summary>
         /// <param name="force">Force of thrust; between 0 and 1.</param>
-        public void Thrust(float force, TimeSpan duration)
+        public void Thrust(float force, TimeSpan duration, float direction)
         {
             if (Disabled) return;
             force = MathHelper.Clamp(force, 0f, 1f);
-            Vector2 forceVector = AWMathHelper.GetUnitVector2(Rotation) * force * thrustForce;
+            Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * thrustForce;
             AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed, duration);
             visualThrustForce = force;
             Thrusting(force);

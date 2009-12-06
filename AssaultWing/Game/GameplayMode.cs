@@ -27,9 +27,9 @@ namespace AW2.Game
         public string[] ShipTypes { get; set; }
 
         /// <summary>
-        /// The types of primary weapon available for selection in the gameplay mode.
+        /// The types of extra devices available for selection in the gameplay mode.
         /// </summary>
-        public string[] Weapon1Types { get; set; }
+        public string[] ExtraDeviceTypes { get; set; }
 
         /// <summary>
         /// The types of secondary weapon available for selection in the gameplay mode.

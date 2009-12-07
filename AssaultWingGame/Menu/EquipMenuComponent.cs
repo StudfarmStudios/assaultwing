@@ -261,13 +261,12 @@ namespace AW2.Menu
                         {
                             oldPlayer.Name = info.name;
                             oldPlayer.ShipName = info.shipTypeName;
-                            oldPlayer.Weapon1Name = info.weapon1TypeName;
                             oldPlayer.Weapon2Name = info.weapon2TypeName;
                             oldPlayer.ExtraDeviceName = info.extraDeviceTypeName;
                         }
                         else
                         {
-                            Player player = new Player(info.name, info.shipTypeName, info.weapon1TypeName, info.weapon2TypeName, info.extraDeviceTypeName, message.ConnectionId);
+                            Player player = new Player(info.name, info.shipTypeName, info.weapon2TypeName, info.extraDeviceTypeName, message.ConnectionId);
                             AssaultWing.Instance.DataEngine.Spectators.Add(player);
                             playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
                         }
@@ -287,7 +286,7 @@ namespace AW2.Menu
                 {
                     for (int i = 0; i < message.PlayerCount; ++i)
                     {
-                        Player player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
+                        Player player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
                         message.Read(player, SerializationModeFlags.All, TimeSpan.Zero);
 
                         // Only add the player if it is remote.

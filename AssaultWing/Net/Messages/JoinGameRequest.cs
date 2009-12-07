@@ -22,7 +22,6 @@ namespace AW2.Net.Messages
         public string name;
 
         public CanonicalString shipTypeName;
-        public CanonicalString weapon1TypeName;
         public CanonicalString weapon2TypeName;
         public CanonicalString extraDeviceTypeName;
 
@@ -35,7 +34,6 @@ namespace AW2.Net.Messages
             id = player.Id;
             name = player.Name;
             shipTypeName = player.ShipName;
-            weapon1TypeName = player.Weapon1Name;
             weapon2TypeName = player.Weapon2Name;
             extraDeviceTypeName = player.ExtraDeviceName;
         }
@@ -70,7 +68,6 @@ namespace AW2.Net.Messages
             //   int player ID
             //   32-byte-string player name
             //   32-byte-string player ship type
-            //   32-byte-string player weapon1 type
             //   32-byte-string player weapon2 type
             //   32-byte-string player extra device type
             writer.Write((byte)PlayerInfos.Count);
@@ -79,7 +76,6 @@ namespace AW2.Net.Messages
                 writer.Write((int)info.id);
                 writer.Write((string)info.name, 32, false);
                 writer.Write((string)info.shipTypeName, 32, false);
-                writer.Write((string)info.weapon1TypeName, 32, false);
                 writer.Write((string)info.weapon2TypeName, 32, false);
                 writer.Write((string)info.extraDeviceTypeName, 32, false);
             }
@@ -99,7 +95,6 @@ namespace AW2.Net.Messages
                 info.id = reader.ReadInt32();
                 info.name = reader.ReadString(32);
                 info.shipTypeName = (CanonicalString)reader.ReadString(32);
-                info.weapon1TypeName = (CanonicalString)reader.ReadString(32);
                 info.weapon2TypeName = (CanonicalString)reader.ReadString(32);
                 info.extraDeviceTypeName = (CanonicalString)reader.ReadString(32);
                 PlayerInfos.Add(info);

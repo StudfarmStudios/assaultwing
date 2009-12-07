@@ -40,6 +40,12 @@ namespace AW2.Game.Gobs
         #region Ship fields related to weapons
 
         /// <summary>
+        /// Name of the type of primary weapon the ship type uses.
+        /// </summary>
+        [TypeParameter]
+        CanonicalString weapon1TypeName;
+
+        /// <summary>
         /// Maximum amount of charge for extra devices.
         /// </summary>
         [TypeParameter]
@@ -203,6 +209,11 @@ namespace AW2.Game.Gobs
         public ShipDeviceCollection Devices { get; private set; }
 
         /// <summary>
+        /// Name of the type of primary weapon the ship type uses.
+        /// </summary>
+        public CanonicalString Weapon1TypeName { get { return weapon1TypeName; } }
+
+        /// <summary>
         /// Name of the ship's icon in the equip menu main display.
         /// </summary>
         public CanonicalString IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
@@ -226,36 +237,37 @@ namespace AW2.Game.Gobs
         public Ship()
             : base()
         {
-            this.thrustForce = 100;
-            this.turnSpeed = 3;
-            this.maxSpeed = 200;
-            this.rollMax = (float)MathHelper.PiOver4;
-            this.rollSpeed = (float)(MathHelper.TwoPi / 2.0);
-            this.extraDeviceChargeMax = 5000;
-            this.extraDeviceChargeSpeed = 500;
-            this.weapon2ChargeMax = 5000;
-            this.weapon2ChargeSpeed = 500;
-            this.armour = new Curve();
-            this.armour.PreLoop = CurveLoopType.Linear;
-            this.armour.PostLoop = CurveLoopType.Linear;
-            this.armour.Keys.Add(new CurveKey(-500, -500, 1, 500 * 1, CurveContinuity.Smooth));
-            this.armour.Keys.Add(new CurveKey(0, 0, 500 * 1, 10 * 0.3f, CurveContinuity.Smooth));
-            this.armour.Keys.Add(new CurveKey(10, 7, 10 * 1, 40 * 1, CurveContinuity.Smooth));
-            this.armour.Keys.Add(new CurveKey(50, 50, 40 * 1, 450 * 1, CurveContinuity.Smooth));
-            this.armour.Keys.Add(new CurveKey(500, 500, 450 * 1, 1, CurveContinuity.Smooth));
-            this.birthAlpha = new Curve();
-            this.birthAlpha.PreLoop = CurveLoopType.Constant;
-            this.birthAlpha.PostLoop = CurveLoopType.Constant;
+            thrustForce = 100;
+            turnSpeed = 3;
+            maxSpeed = 200;
+            rollMax = (float)MathHelper.PiOver4;
+            rollSpeed = (float)(MathHelper.TwoPi / 2.0);
+            weapon1TypeName = (CanonicalString)"dummyweapon";
+            extraDeviceChargeMax = 5000;
+            extraDeviceChargeSpeed = 500;
+            weapon2ChargeMax = 5000;
+            weapon2ChargeSpeed = 500;
+            armour = new Curve();
+            armour.PreLoop = CurveLoopType.Linear;
+            armour.PostLoop = CurveLoopType.Linear;
+            armour.Keys.Add(new CurveKey(-500, -500, 1, 500 * 1, CurveContinuity.Smooth));
+            armour.Keys.Add(new CurveKey(0, 0, 500 * 1, 10 * 0.3f, CurveContinuity.Smooth));
+            armour.Keys.Add(new CurveKey(10, 7, 10 * 1, 40 * 1, CurveContinuity.Smooth));
+            armour.Keys.Add(new CurveKey(50, 50, 40 * 1, 450 * 1, CurveContinuity.Smooth));
+            armour.Keys.Add(new CurveKey(500, 500, 450 * 1, 1, CurveContinuity.Smooth));
+            birthAlpha = new Curve();
+            birthAlpha.PreLoop = CurveLoopType.Constant;
+            birthAlpha.PostLoop = CurveLoopType.Constant;
             for (float age = 0; age + 0.2f < 2; age += 0.4f)
             {
-                this.birthAlpha.Keys.Add(new CurveKey(age, 0.2f));
-                this.birthAlpha.Keys.Add(new CurveKey(age + 0.2f, 0.8f));
+                birthAlpha.Keys.Add(new CurveKey(age, 0.2f));
+                birthAlpha.Keys.Add(new CurveKey(age + 0.2f, 0.8f));
             }
-            this.birthAlpha.Keys.Add(new CurveKey(2, 1));
-            this.birthAlpha.ComputeTangents(CurveTangent.Flat);
-            this.coughEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
-            this.temporarilyDisabledGobs = new List<Gob>();
-            this.iconEquipName = (CanonicalString)"dummytexture";
+            birthAlpha.Keys.Add(new CurveKey(2, 1));
+            birthAlpha.ComputeTangents(CurveTangent.Flat);
+            coughEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
+            temporarilyDisabledGobs = new List<Gob>();
+            iconEquipName = (CanonicalString)"dummytexture";
         }
 
         /// <summary>

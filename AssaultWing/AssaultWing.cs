@@ -834,8 +834,8 @@ namespace AW2
             uiEngine.MouseControlsEnabled = false;
 #endif
 
-            Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Hyperion", (CanonicalString)"peashooter", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
-            Player player2 = new Player("John Crichton", (CanonicalString)"Prowler", (CanonicalString)"shotgun", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
+            Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Hyperion", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
+            Player player2 = new Player("John Crichton", (CanonicalString)"Prowler", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
             player1.PlayerColor = Color.Blue;
             player2.PlayerColor = Color.DeepPink;
 

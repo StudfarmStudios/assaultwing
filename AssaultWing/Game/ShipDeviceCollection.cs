@@ -170,7 +170,7 @@ namespace AW2.Game
             Weapon2ChargeMax = weapon2ChargeMax;
             this.extraDeviceChargeSpeed = extraDeviceChargeSpeed;
             this.weapon2ChargeSpeed = weapon2ChargeSpeed;
-            if (weapon1Name != CanonicalString.Null) Weapon1 = (Weapon)CreateDevice(weapon1Name, Weapon.OwnerHandleType.PrimaryWeapon);
+            Weapon1 = (Weapon)CreateDevice(ship.Weapon1TypeName, Weapon.OwnerHandleType.PrimaryWeapon);
             if (weapon2Name != CanonicalString.Null) Weapon2 = (Weapon)CreateDevice(weapon2Name, Weapon.OwnerHandleType.SecondaryWeapon);
             if (ExtraDeviceName != CanonicalString.Null) ExtraDevice = CreateDevice(ExtraDeviceName, Weapon.OwnerHandleType.ExtraDevice);
             ExtraDeviceCharge = ExtraDeviceChargeMax;

@@ -622,7 +622,7 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returns a position in an area of the game world 
+        /// Tries to return a position in an area of the game world 
         /// where a gob is overlap consistent (e.g. not inside a wall).
         /// </summary>
         /// <param name="gob">The gob to position.</param>
@@ -630,15 +630,35 @@ namespace AW2.Game
         /// <returns>A position in the area where the gob is overlap consistent.</returns>
         public Vector2 GetFreePosition(Gob gob, IGeomPrimitive area)
         {
+            Vector2 result;
+            GetFreePosition(gob, area, out result);
+            return result;
+        }
+
+        /// <summary>
+        /// Tries to return a legal position in an area of the game world 
+        /// where a gob is overlap consistent (e.g. not inside a wall).
+        /// </summary>
+        /// <param name="gob">The gob to position.</param>
+        /// <param name="area">The area where to look for a position.</param>
+        /// <param name="result">Best try for a position in the area where the gob is overlap consistent.</param>
+        /// <returns>true if <paramref name="result"/> is legal and overlap consistent,
+        /// false if the search failed.</returns>
+        public bool GetFreePosition(Gob gob, IGeomPrimitive area, out Vector2 result)
+        {
             // Iterate in the area for a while, looking for a free position.
             // Ultimately give up and return something that may be bad.
             for (int attempt = 1; attempt < FREE_POS_MAX_ATTEMPTS; ++attempt)
             {
                 Vector2 tryPos = Geometry.GetRandomLocation(area);
                 if (IsFreePosition(gob, tryPos))
-                    return tryPos;
+                {
+                    result = tryPos;
+                    return true;
+                }
             }
-            return Geometry.GetRandomLocation(area);
+            result = Geometry.GetRandomLocation(area);
+            return false;
         }
 
         /// <summary>

@@ -86,7 +86,7 @@ namespace AW2.Graphics
                     new Vector2(0, iconShipTexture.Height) / 2,
                     1, SpriteEffects.None, 0);
 
-            // Primary weapon charge
+            // Extra device charge
             if (player.Ship != null)
             {
                 Rectangle charge1BarRect = new Rectangle(0, 0,
@@ -100,12 +100,12 @@ namespace AW2.Graphics
                     1, SpriteEffects.None, 0);
             }
 
-            // Primary weapon loadedness
+            // Extra device loadedness
             if (player.Ship != null)
             {
-                if (player.Ship.Devices.Weapon1Loaded)
+                if (player.Ship.Devices.ExtraDeviceLoaded)
                 {
-                    float seconds = player.Ship.Devices.Weapon1.LoadedTime.SecondsAgo();
+                    float seconds = player.Ship.Devices.ExtraDevice.LoadedTime.SecondsAgo();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)

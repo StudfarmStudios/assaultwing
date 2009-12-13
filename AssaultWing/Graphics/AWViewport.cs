@@ -1,7 +1,15 @@
+//#define VIEWPORT_BLUR // Defining this will make viewports blurred
+//#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
+#if !PARALLAX_IN_3D
+  #define PARALLAX_WITH_SPRITE_BATCH
+#endif
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+using AW2.Game;
 
 namespace AW2.Graphics
 {
@@ -19,6 +27,42 @@ namespace AW2.Graphics
     /// <c>LoadContent</c> must be called before a viewport is used.
     public class AWViewport
     {
+        #region Fields that are used only when VIEWPORT_BLUR is #defined
+
+        RenderTarget2D rTarg = null;
+        RenderTarget2D rTarg2 = null;
+        SpriteBatch sprite = null;
+        DepthStencilBuffer depthBuffer = null;
+        DepthStencilBuffer depthBuffer2 = null;
+        DepthStencilBuffer defDepthBuffer = null;
+        Effect bloomatic = null;
+
+        #endregion Fields that are used only when VIEWPORT_BLUR is #defined
+
+        #region Fields that are used only when PARALLAX_IN_3D is #defined
+
+        /// <summary>
+        /// Effect for drawing parallaxes as 3D primitives.
+        /// </summary>
+        BasicEffect effect;
+
+        /// <summary>
+        /// Vertex declaration for drawing parallaxes as 3D primitives.
+        /// </summary>
+        VertexDeclaration vertexDeclaration;
+
+        /// <summary>
+        /// Vertex data scratch buffer for drawing parallaxes as 3D primitives.
+        /// </summary>
+        VertexPositionTexture[] vertexData;
+
+        /// <summary>
+        /// Index data scratch buffer for drawing parallaxes as 3D primitives.
+        /// </summary>
+        short[] indexData; // triangle fan
+
+        #endregion Fields that are used only when PARALLAX_IN_3D is #defined
+
         /// <summary>
         /// Sprite batch to use for drawing sprites.
         /// </summary>
@@ -212,126 +256,23 @@ namespace AW2.Graphics
         /// </summary>
         public void Draw()
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Viewport = Viewport;
-            Matrix view = ViewMatrix;
-
-#if VIEWPORT_BLUR
-            gfx.SetRenderTarget(0, rTarg);
-            gfx.DepthStencilBuffer = depthBuffer;
-            gfx.Clear(ClearOptions.Target, Color.Black, 0, 0);
-#else
+            var view = ViewMatrix;
             gfx.Clear(Color.Black);
-#endif
+            Draw_InitializeBlur();
+            Draw_InitializeParallaxIn3D();
 
-
-#if PARALLAX_IN_3D
-            if (effect == null) // HACK: initialise parallax drawing in 3D, move this to LoadContent and UnloadContent
-            {
-                effect = new BasicEffect(gfx, null);
-                effect.World = Matrix.Identity;
-                effect.Projection = Matrix.Identity;
-                effect.View = Matrix.Identity;
-                effect.TextureEnabled = true;
-                effect.LightingEnabled = false;
-                effect.FogEnabled = false;
-                effect.VertexColorEnabled = false;
-                vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
-                vertexData = new VertexPositionTexture[] {
-                    new VertexPositionTexture(new Vector3(-1, -1, 1), new Vector2(0, 1)),
-                    new VertexPositionTexture(new Vector3(-1, 1, 1), new Vector2(0, 0)),
-                    new VertexPositionTexture(new Vector3(1, 1, 1), new Vector2(1, 0)),
-                    new VertexPositionTexture(new Vector3(1, -1, 1), new Vector2(1, 1)),
-                };
-                indexData = new short[] { 0, 1, 2, 3, };
-            }
-#endif
             foreach (var layer in AssaultWing.Instance.DataEngine.Arena.Layers)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
                 float layerScale = GetScale(layer.Z);
                 var projection = GetProjectionMatrix(layer.Z);
 
-#if PARALLAX_IN_3D // HACK: Alternative implementation, parallax drawing in 3D by two triangles. Perhaps less time lost in RenderState changes.
-                // Modify renderstate for parallax.
-                gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
-                gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
-                gfx.RenderState.AlphaTestEnable = false;
-                gfx.RenderState.AlphaBlendEnable = true;
-                gfx.RenderState.BlendFunction = BlendFunction.Add;
-                gfx.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
-                gfx.RenderState.SourceBlend = Blend.SourceAlpha;
-
-                // Layer parallax
-                if (layer.ParallaxName != null)
-                {
-                    // Render looping parallax as two huge triangles.
-                    gfx.RenderState.DepthBufferEnable = false;
-                    gfx.VertexDeclaration = vertexDeclaration;
-                    effect.Texture = data.Textures[layer.ParallaxName];
-
-                    Vector2 texMin = layerScale * new Vector2(
-                        lookAt.X / effect.Texture.Width,
-                        -lookAt.Y / effect.Texture.Height);
-                    Vector2 texMax = texMin + new Vector2(
-                        viewport.Width / (float)effect.Texture.Width,
-                        -viewport.Height / (float)effect.Texture.Height);
-                    vertexData[0].TextureCoordinate = texMin;
-                    vertexData[1].TextureCoordinate = new Vector2(texMin.X, texMax.Y);
-                    vertexData[2].TextureCoordinate = texMax;
-                    vertexData[3].TextureCoordinate = new Vector2(texMax.X, texMin.Y);
-
-                    effect.Begin();
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                    {
-                        pass.Begin();
-                        gfx.DrawUserIndexedPrimitives<VertexPositionTexture>(
-                            PrimitiveType.TriangleFan, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length - 2);
-                        pass.End();
-                    }
-                    effect.End();
-                }
-
-                // Modify renderstate for 3D graphics.
-                gfx.RenderState.DepthBufferEnable = true;
-#else // HACK: The old way of drawing parallaxes, with several calls to SpriteBatch.Draw
-                // Layer parallax
-                if (layer.ParallaxName != "")
-                {
-                    spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-                    gfx.RenderState.AlphaTestEnable = false;
-                    Vector2 pos = WorldAreaMin(0) * -layerScale;
-                    pos.Y = -pos.Y;
-                    Vector2 fillPos = new Vector2();
-                    Texture2D tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                    int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
-                    pos.X = pos.X - mult * tex.Width;
-                    mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);
-                    pos.Y = pos.Y - mult * tex.Height;
-
-                    int loopX = (int)Math.Ceiling((-pos.X + Viewport.Width) / tex.Width);
-                    int loopY = (int)Math.Ceiling((-pos.Y + Viewport.Height) / tex.Height);
-                    fillPos.Y = pos.Y;
-                    for (int y = 0; y < loopY; y++)
-                    {
-                        fillPos.X = pos.X;
-                        for (int x = 0; x < loopX; x++)
-                        {
-                            spriteBatch.Draw(tex, fillPos, Color.White);
-                            fillPos.X += tex.Width;
-                        }
-                        fillPos.Y += tex.Height;
-                    }
-                    spriteBatch.End();
-                }
-
-                // Modify renderstate for 3D graphics.
-                gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
-                gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
-                gfx.RenderState.DepthBufferEnable = true;
-                gfx.RenderState.AlphaTestEnable = false;
-                gfx.RenderState.AlphaBlendEnable = false;
-#endif
+                // Note: These methods have ConditionalAttribute.
+                // Only one of them will be executed at runtime.
+                Draw_DrawParallaxIn3D(layer);
+                Draw_DrawParallaxWithSpriteBatch(layer);
 
                 // 3D graphics
                 foreach (var gob in layer.Gobs)
@@ -366,56 +307,7 @@ namespace AW2.Graphics
                     drawMode.Value.EndDraw(spriteBatch);
             }
 
-#if VIEWPORT_BLUR
-            // EFFECTS REDRAW
-            bloomatic.Parameters["alpha"].SetValue((float)(0.9));
-            bloomatic.Parameters["maxx"].SetValue((float)viewport.Width);
-            bloomatic.Parameters["maxy"].SetValue((float)viewport.Height);
-
-            bloomatic.Parameters["hirange"].SetValue(false);
-
-            gfx.SetRenderTarget(0, rTarg2);
-            gfx.DepthStencilBuffer = depthBuffer2;
-
-            bloomatic.Begin();
-            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
-                SaveStateMode.SaveState);
-
-            EffectPass pass = bloomatic.CurrentTechnique.Passes[0];
-            pass.Begin();
-    
-            sprite.Draw(rTarg.GetTexture(), new Rectangle(0, 0, viewport.Width, viewport.Height),
-                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
-
-            pass.End();
-            sprite.End();
-            bloomatic.End();
-
-            gfx.SetRenderTarget(0, null);
-            gfx.DepthStencilBuffer = defDepthBuffer;
-
-            bloomatic.Begin();
-            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
-                SaveStateMode.SaveState);
-
-            pass = bloomatic.CurrentTechnique.Passes[1];
-            pass.Begin();
-
-            sprite.Draw(rTarg2.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
-                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
-
-            pass.End();
-            sprite.End();
-            bloomatic.End();
-
-            // actual unblurred image
-            /*
-            sprite.Begin(SpriteBlendMode.Additive);
-            sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
-                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
-            sprite.End();
-            */
-#endif
+            Draw_DrawBlur();
 
             // Overlay components
             gfx.Viewport = Viewport;
@@ -431,6 +323,7 @@ namespace AW2.Graphics
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             foreach (OverlayComponent component in overlayComponents)
                 component.LoadContent();
+            LoadContent_Blur();
         }
 
         /// <summary>
@@ -441,6 +334,7 @@ namespace AW2.Graphics
             foreach (OverlayComponent component in overlayComponents)
                 component.UnloadContent();
             spriteBatch.Dispose();
+            UnloadContent_Blur();
         }
 
         /// <summary>
@@ -452,6 +346,236 @@ namespace AW2.Graphics
         {
             return 1000 / (1000 - z);
         }
+
+        #region Methods that are used only conditionally
+
+        [Conditional("VIEWPORT_BLUR")]
+        private void LoadContent_Blur()
+        {
+            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            defDepthBuffer = gfx.DepthStencilBuffer;
+            if (Viewport.Width > 0)
+            {
+                rTarg = new RenderTarget2D(gfx, Viewport.Width, Viewport.Height,
+                    0, SurfaceFormat.Color);
+                rTarg2 = new RenderTarget2D(gfx, Viewport.Width, Viewport.Height,
+                    0, SurfaceFormat.Color);
+                sprite = new SpriteBatch(gfx);
+                depthBuffer =
+                    new DepthStencilBuffer(
+                        gfx,
+                        Viewport.Width,
+                        Viewport.Height,
+                        gfx.DepthStencilBuffer.Format);
+                depthBuffer2 =
+                    new DepthStencilBuffer(
+                        gfx,
+                        Viewport.Width,
+                        Viewport.Height,
+                        gfx.DepthStencilBuffer.Format);
+            }
+            bloomatic = AssaultWing.Instance.Content.Load<Effect>("bloom");
+        }
+
+        [Conditional("VIEWPORT_BLUR")]
+        private void UnloadContent_Blur()
+        {
+            if (rTarg != null)
+                rTarg.Dispose();
+            if (sprite != null)
+                sprite.Dispose();
+            if (depthBuffer != null)
+                depthBuffer.Dispose();
+            // 'bloomatic' is managed by ContentManager
+        }
+
+        [Conditional("VIEWPORT_BLUR")]
+        private void Draw_InitializeBlur()
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            gfx.SetRenderTarget(0, rTarg);
+            gfx.DepthStencilBuffer = depthBuffer;
+            gfx.Clear(ClearOptions.Target, Color.Black, 0, 0);
+        }
+
+        [Conditional("VIEWPORT_BLUR")]
+        private void Draw_DrawBlur()
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            bloomatic.Parameters["alpha"].SetValue((float)(0.9));
+            bloomatic.Parameters["maxx"].SetValue((float)Viewport.Width);
+            bloomatic.Parameters["maxy"].SetValue((float)Viewport.Height);
+
+            bloomatic.Parameters["hirange"].SetValue(false);
+
+            gfx.SetRenderTarget(0, rTarg2);
+            gfx.DepthStencilBuffer = depthBuffer2;
+
+            bloomatic.Begin();
+            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
+                SaveStateMode.SaveState);
+
+            EffectPass pass2 = bloomatic.CurrentTechnique.Passes[0];
+            pass2.Begin();
+
+            sprite.Draw(rTarg.GetTexture(), new Rectangle(0, 0, Viewport.Width, Viewport.Height),
+                new Rectangle(0, 0, Viewport.Width, Viewport.Height), Color.White);
+
+            pass2.End();
+            sprite.End();
+            bloomatic.End();
+
+            gfx.SetRenderTarget(0, null);
+            gfx.DepthStencilBuffer = defDepthBuffer;
+
+            bloomatic.Begin();
+            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
+                SaveStateMode.SaveState);
+
+            pass2 = bloomatic.CurrentTechnique.Passes[1];
+            pass2.Begin();
+
+            sprite.Draw(rTarg2.GetTexture(), new Rectangle(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height),
+                new Rectangle(0, 0, Viewport.Width, Viewport.Height), Color.White);
+
+            pass2.End();
+            sprite.End();
+            bloomatic.End();
+
+            // actual unblurred image
+            /*
+            sprite.Begin(SpriteBlendMode.Additive);
+            sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
+                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
+            sprite.End();
+            */
+        }
+
+        /// <summary>
+        /// This method is a temporary hack. It initialises parallax drawing
+        /// in 3D. If a final decision is made to do parallax drawing in 3D,
+        /// the contents of this method must be moved to appropriate places in
+        /// LoadContent and UnloadContent. If a final decision is made to do parallax
+        /// drawing in 2D with SpriteBatch, this method should be removed.
+        /// </summary>
+        [Conditional("PARALLAX_IN_3D")]
+        private void Draw_InitializeParallaxIn3D()
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            if (effect != null) return;
+            effect = new BasicEffect(gfx, null);
+            effect.World = Matrix.Identity;
+            effect.Projection = Matrix.Identity;
+            effect.View = Matrix.Identity;
+            effect.TextureEnabled = true;
+            effect.LightingEnabled = false;
+            effect.FogEnabled = false;
+            effect.VertexColorEnabled = false;
+            vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
+            vertexData = new VertexPositionTexture[] {
+                new VertexPositionTexture(new Vector3(-1, -1, 1), new Vector2(0, 1)),
+                new VertexPositionTexture(new Vector3(-1, 1, 1), new Vector2(0, 0)),
+                new VertexPositionTexture(new Vector3(1, 1, 1), new Vector2(1, 0)),
+                new VertexPositionTexture(new Vector3(1, -1, 1), new Vector2(1, 1))
+            };
+            indexData = new short[] { 0, 1, 2, 3 };
+        }
+
+        /// <summary>
+        /// HACK: Alternative implementation, parallax drawing in 3D by two triangles.
+        /// Perhaps less time lost in RenderState changes.
+        /// </summary>
+        [Conditional("PARALLAX_IN_3D")]
+        private void Draw_DrawParallaxIn3D(AW2.Game.ArenaLayer layer)
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            // Modify renderstate for parallax.
+            gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
+            gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
+            gfx.RenderState.AlphaTestEnable = false;
+            gfx.RenderState.AlphaBlendEnable = true;
+            gfx.RenderState.BlendFunction = BlendFunction.Add;
+            gfx.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
+            gfx.RenderState.SourceBlend = Blend.SourceAlpha;
+
+            // Layer parallax
+            if (layer.ParallaxName != "")
+            {
+                // Render looping parallax as two huge triangles.
+                gfx.RenderState.DepthBufferEnable = false;
+                gfx.VertexDeclaration = vertexDeclaration;
+                effect.Texture = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                Vector2 texMin = GetScale(layer.Z) * new Vector2(
+                    LookAt.Position.X / effect.Texture.Width,
+                    -LookAt.Position.Y / effect.Texture.Height);
+                Vector2 texMax = texMin + new Vector2(
+                    Viewport.Width / (float)effect.Texture.Width,
+                    -Viewport.Height / (float)effect.Texture.Height);
+                vertexData[0].TextureCoordinate = texMin;
+                vertexData[1].TextureCoordinate = new Vector2(texMin.X, texMax.Y);
+                vertexData[2].TextureCoordinate = texMax;
+                vertexData[3].TextureCoordinate = new Vector2(texMax.X, texMin.Y);
+
+                effect.Begin();
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Begin();
+                    gfx.DrawUserIndexedPrimitives<VertexPositionTexture>(
+                        PrimitiveType.TriangleFan, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length - 2);
+                    pass.End();
+                }
+                effect.End();
+            }
+
+            // Modify renderstate for 3D graphics.
+            gfx.RenderState.DepthBufferEnable = true;
+        }
+
+        /// <summary>
+        /// HACK: The old way of drawing parallaxes, with several calls to SpriteBatch.Draw.
+        /// </summary>
+        [Conditional("PARALLAX_WITH_SPRITE_BATCH")]
+        private void Draw_DrawParallaxWithSpriteBatch(ArenaLayer layer)
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            if (layer.ParallaxName != "")
+            {
+                spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                gfx.RenderState.AlphaTestEnable = false;
+                Vector2 pos = WorldAreaMin(0) * -GetScale(layer.Z);
+                pos.Y = -pos.Y;
+                Vector2 fillPos = new Vector2();
+                Texture2D tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
+                pos.X = pos.X - mult * tex.Width;
+                mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);
+                pos.Y = pos.Y - mult * tex.Height;
+
+                int loopX = (int)Math.Ceiling((-pos.X + Viewport.Width) / tex.Width);
+                int loopY = (int)Math.Ceiling((-pos.Y + Viewport.Height) / tex.Height);
+                fillPos.Y = pos.Y;
+                for (int y = 0; y < loopY; y++)
+                {
+                    fillPos.X = pos.X;
+                    for (int x = 0; x < loopX; x++)
+                    {
+                        spriteBatch.Draw(tex, fillPos, Color.White);
+                        fillPos.X += tex.Width;
+                    }
+                    fillPos.Y += tex.Height;
+                }
+                spriteBatch.End();
+            }
+
+            // Modify renderstate for 3D graphics.
+            gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
+            gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
+            gfx.RenderState.DepthBufferEnable = true;
+            gfx.RenderState.AlphaTestEnable = false;
+            gfx.RenderState.AlphaBlendEnable = false;
+        }
+
+        #endregion Methods that are used only conditionally
     }
 
     /// <summary>

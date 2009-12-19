@@ -168,6 +168,7 @@ namespace AW2.Game
             IList types = (IList)Activator.CreateInstance(listType);
             foreach (FileInfo fi in list)
             {
+                Log.Write("FileInfo: " + fi.Name);
                 types.Add(ParseAndLoadFile(fi));
             }
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;

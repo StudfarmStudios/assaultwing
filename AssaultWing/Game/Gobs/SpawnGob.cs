@@ -30,7 +30,7 @@ namespace AW2.Game.Gobs
         /// Name of the type of gobs to spawn.
         /// </summary>
         [RuntimeState]
-        CanonicalString spawnTypeName;
+        CanonicalString[] spawnTypeNames;
 
         /// <summary>
         /// Time of next spawn, in game time.
@@ -53,7 +53,7 @@ namespace AW2.Game.Gobs
         {
             spawnArea = new Everything();
             spawnInterval = 20;
-            spawnTypeName = (CanonicalString)"dummygob";
+            spawnTypeNames = new CanonicalString[0];
             nextSpawn = new TimeSpan(0, 1, 2);
         }
 
@@ -84,7 +84,7 @@ namespace AW2.Game.Gobs
             while (nextSpawn <= nowTime)
             {
                 nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
-                Gob.CreateGob(spawnTypeName, newGob =>
+                Gob.CreateGob(spawnTypeNames[1], newGob =>
                 {
                     Vector2 spawnPos = Arena.GetFreePosition(newGob, spawnArea);
                     newGob.Pos = spawnPos;
@@ -108,7 +108,7 @@ namespace AW2.Game.Gobs
             {
                 // TODO: Serialise 'spawnArea'
                 writer.Write((float)spawnInterval);
-                writer.Write((string)spawnTypeName, 32, true);
+                writer.Write((string)spawnTypeNames[0], 32, true);
             }
         }
 
@@ -124,7 +124,7 @@ namespace AW2.Game.Gobs
             {
                 // TODO: Deserialise 'spawnArea'
                 spawnInterval = reader.ReadSingle();
-                spawnTypeName = (CanonicalString)reader.ReadString(32);
+                spawnTypeNames[0] = (CanonicalString)reader.ReadString(32);
             }
         }
 

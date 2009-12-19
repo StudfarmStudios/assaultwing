@@ -101,8 +101,10 @@
     <Compile Include="Game\GameplayMode.cs" />
     <Compile Include="Game\Gob.cs" />
     <Compile Include="Game\GobCollection.cs" />
-    <Compile Include="Game\Gobs\Bonus.cs" />
-    <Compile Include="Game\Gobs\BonusMessage.cs" />
+    <Compile Include="Game\Gobs\Bonus\Bonus.cs" />
+    <Compile Include="Game\Gobs\Bonus\BonusMessage.cs" />
+    <Compile Include="Game\Gobs\Bonus\DefinedBonus.cs" />
+    <Compile Include="Game\Gobs\Bonus\RandomBonus.cs" />
     <Compile Include="Game\Gobs\BounceBullet.cs" />
     <Compile Include="Game\Gobs\Bullet.cs" />
     <Compile Include="Game\Gobs\CollisionTrigger.cs" />

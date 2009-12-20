@@ -13,6 +13,9 @@ namespace AW2.Game.Gobs.Bonus
     {
         #region Bonus fields
 
+        /// <summary>
+        /// Bonus type name (enum).
+        /// </summary>
 
         [TypeParameter]
         PlayerBonusTypes bonusType;

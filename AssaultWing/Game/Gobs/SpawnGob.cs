@@ -25,12 +25,11 @@ namespace AW2.Game.Gobs
         public CanonicalString spawnTypeName;
 
         /// <summary>
-        /// Creates a new bonus action possibility.
+        /// Creates a new spawn type.
         /// </summary>
-        /// <param name="weight">The probability weight of this possibility 
-        /// relative to other possibilities.</param>
-        /// <param name="action">The bonus action to perform in case this possibility is chosen.</param>
-        /// <param name="duration">The duration of the bonus action, in seconds.</param>
+        /// <param name="weight">The probability weight of this spawn type 
+        /// relative to other spawn types.</param>
+        /// <param name="spawnTypeName">Spawn type to be created in case this spawn type is chosen.</param>
         public SpawnType(float weight, CanonicalString spawnTypeName)
         {
             this.weight = weight;
@@ -109,7 +108,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// returns a random SpawnType
         /// </summary>
-        private CanonicalString getRandomSpawnType()
+        private CanonicalString GetRandomSpawnType()
         {
             float massTotal = spawnTypes.Sum(spawnType => spawnType.weight);
             float choice = RandomHelper.GetRandomFloat(0, massTotal);
@@ -132,7 +131,7 @@ namespace AW2.Game.Gobs
             while (nextSpawn <= nowTime)
             {
                 nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
-                Gob.CreateGob(getRandomSpawnType(), newGob =>
+                Gob.CreateGob(GetRandomSpawnType(), newGob =>
                 {
                     Vector2 spawnPos = Arena.GetFreePosition(newGob, spawnArea);
                     newGob.Pos = spawnPos;

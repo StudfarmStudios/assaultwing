@@ -2113,7 +2113,7 @@
                      <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2000</Y>
                   </max>
                </spawnArea>
-               <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">30</spawnInterval>
+               <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">20</spawnInterval>
               <spawnTypes type="AW2.Game.Gobs.SpawnType[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
                 <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
                   <spawnTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">randombonus</spawnTypeName>

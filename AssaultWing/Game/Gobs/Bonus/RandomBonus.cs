@@ -12,19 +12,7 @@ namespace AW2.Game.Gobs.Bonus
     public class RandomBonus : Bonus
     {
         #region Bonus fields
-/*
-        /// <summary>
-        /// Lifetime of the bonus, in seconds.
-        /// </summary>
-        [TypeParameter]
-        float lifetime;
 
-        /// <summary>
-        /// Time at which the bonus dies, in game time.
-        /// </summary>
-        [RuntimeState]
-        TimeSpan deathTime;
-        */
         /// <summary>
         /// The possibile bonus actions that collecting the bonus can activate.
         /// </summary>

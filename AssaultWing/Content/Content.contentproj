@@ -95,14 +95,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bonus_bonus.xmll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Bonus_bonus</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="gobdefs\BonusMessage_bonusmessage.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BonusMessage_bonusmessage</Name>
@@ -2007,6 +1999,14 @@
     <None Include="gobdefs\DefinedBonus_upgradeweapon2.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>DefinedBonus_upgradeweapon2</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gobdefs\DefinedBonus_upgradeweapon1loadtime.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>DefinedBonus_upgradeweapon1loadtime</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>

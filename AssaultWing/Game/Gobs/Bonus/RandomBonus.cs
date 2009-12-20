@@ -98,10 +98,6 @@ namespace AW2.Game.Gobs.Bonus
             float choice = RandomHelper.GetRandomFloat(0, massTotal);
             massTotal = 0;
             BonusActionPossibility poss = new BonusActionPossibility();
-            foreach(BonusActionPossibility possibility in possibilities)
-            {
-                Log.Write("I can do this:" + possibility.action);
-            }
             for (int i = 0; i < possibilities.Length && choice >= massTotal; ++i)
             {
                 poss = possibilities[i];

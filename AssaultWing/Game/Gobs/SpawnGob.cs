@@ -4,9 +4,40 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using System.Linq;
 
 namespace AW2.Game.Gobs
 {
+    /// <summary>
+    /// A spawn type as one of many possible choices.
+    /// </summary>
+    public struct SpawnType
+    {
+        /// <summary>
+        /// The probability weight of this spawn type 
+        /// relative to other spawn type possibilities.
+        /// </summary>
+        public float weight;
+
+        /// <summary>
+        /// Spawn Type that is selected
+        /// </summary>
+        public CanonicalString spawnTypeName;
+
+        /// <summary>
+        /// Creates a new bonus action possibility.
+        /// </summary>
+        /// <param name="weight">The probability weight of this possibility 
+        /// relative to other possibilities.</param>
+        /// <param name="action">The bonus action to perform in case this possibility is chosen.</param>
+        /// <param name="duration">The duration of the bonus action, in seconds.</param>
+        public SpawnType(float weight, CanonicalString spawnTypeName)
+        {
+            this.weight = weight;
+            this.spawnTypeName = spawnTypeName;
+        }
+    }
+
     /// <summary>
     /// An area that creates gobs.
     /// </summary>
@@ -30,7 +61,7 @@ namespace AW2.Game.Gobs
         /// Name of the type of gobs to spawn.
         /// </summary>
         [RuntimeState]
-        CanonicalString[] spawnTypeNames;
+        SpawnType[] spawnTypes;
 
         /// <summary>
         /// Time of next spawn, in game time.
@@ -53,7 +84,7 @@ namespace AW2.Game.Gobs
         {
             spawnArea = new Everything();
             spawnInterval = 20;
-            spawnTypeNames = new CanonicalString[0];
+            spawnTypes = new SpawnType[1]{new SpawnType()};
             nextSpawn = new TimeSpan(0, 1, 2);
         }
 
@@ -76,6 +107,23 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
+        /// returns a random SpawnType
+        /// </summary>
+        private CanonicalString getRandomSpawnType()
+        {
+            float massTotal = spawnTypes.Sum(spawnType => spawnType.weight);
+            float choice = RandomHelper.GetRandomFloat(0, massTotal);
+            massTotal = 0;
+            SpawnType poss = new SpawnType();
+            for (int i = 0; i < spawnTypes.Length && choice >= massTotal; ++i)
+            {
+                poss = spawnTypes[i];
+                massTotal += poss.weight;
+            }
+            return poss.spawnTypeName;
+        }
+
+        /// <summary>
         /// Updates the spawn area, perhaps creating a new gob.
         /// </summary>
         public override void Update()
@@ -84,7 +132,7 @@ namespace AW2.Game.Gobs
             while (nextSpawn <= nowTime)
             {
                 nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
-                Gob.CreateGob(spawnTypeNames[1], newGob =>
+                Gob.CreateGob(getRandomSpawnType(), newGob =>
                 {
                     Vector2 spawnPos = Arena.GetFreePosition(newGob, spawnArea);
                     newGob.Pos = spawnPos;
@@ -108,7 +156,8 @@ namespace AW2.Game.Gobs
             {
                 // TODO: Serialise 'spawnArea'
                 writer.Write((float)spawnInterval);
-                writer.Write((string)spawnTypeNames[0], 32, true);
+                foreach(SpawnType spawnType in spawnTypes)
+                    writer.Write((string)spawnType.spawnTypeName, 32, true);
             }
         }
 
@@ -124,7 +173,8 @@ namespace AW2.Game.Gobs
             {
                 // TODO: Deserialise 'spawnArea'
                 spawnInterval = reader.ReadSingle();
-                spawnTypeNames[0] = (CanonicalString)reader.ReadString(32);
+                //TODO: refactor, this doesn't work correncty
+                //spawnTypes[0].spawnTypeName = (CanonicalString)reader.ReadString(32);
             }
         }
 

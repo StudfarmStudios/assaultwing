@@ -2114,10 +2114,17 @@
                   </max>
                </spawnArea>
                <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">30</spawnInterval>
-              <spawnTypeNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-                <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">randombonus</Item>
-              </spawnTypeNames>
-               <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
+              <spawnTypes type="AW2.Game.Gobs.SpawnType[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+                <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+                  <spawnTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">randombonus</spawnTypeName>
+                  <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</weight>
+                </Item>
+                <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+                  <spawnTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">upgradeweapon2</spawnTypeName>
+                  <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</weight>
+                </Item>
+              </spawnTypes>
+              <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
                   <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
                   <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
                </pos>

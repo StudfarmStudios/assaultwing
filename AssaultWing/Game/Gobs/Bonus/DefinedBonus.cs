@@ -17,25 +17,6 @@ namespace AW2.Game.Gobs.Bonus
         [TypeParameter]
         PlayerBonusTypes bonusType;
         
-        /*
-        /// <summary>
-        /// Lifetime of the bonus, in seconds.
-        /// </summary>
-        [TypeParameter]
-        float lifetime;
-
-        /// <summary>
-        /// Time at which the bonus dies, in game time.
-        /// </summary>
-        [RuntimeState]
-        TimeSpan deathTime;
-
-        /// <summary>
-        /// The possibile bonus actions that collecting the bonus can activate.
-        /// </summary>
-        [TypeParameter, ShallowCopy]
-        BonusActionPossibility[] possibilities;
-        */
         #endregion Bonus fields
 
         /// <summary>
@@ -47,6 +28,7 @@ namespace AW2.Game.Gobs.Bonus
         {
             this.lifetime = 10;
             this.deathTime = new TimeSpan(0, 1, 20);
+            this.bonusType = new PlayerBonusTypes();
         }
 
         /// <summary>

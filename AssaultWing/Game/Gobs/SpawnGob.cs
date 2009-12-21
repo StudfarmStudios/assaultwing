@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
-using System.Linq;
+using AW2.Net;
 
 namespace AW2.Game.Gobs
 {
     /// <summary>
     /// A spawn type as one of many possible choices.
     /// </summary>
-    public struct SpawnType
+    public struct SpawnType : INetworkSerializable
     {
         /// <summary>
         /// The probability weight of this spawn type 
@@ -35,6 +35,28 @@ namespace AW2.Game.Gobs
             this.weight = weight;
             this.spawnTypeName = spawnTypeName;
         }
+
+        #region INetworkSerializable Members
+
+        public void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((float)weight);
+                writer.Write((int)spawnTypeName.Canonical);
+            }
+        }
+
+        public void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                weight = reader.ReadSingle();
+                spawnTypeName = (CanonicalString)reader.ReadInt32();
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -143,28 +165,19 @@ namespace AW2.Game.Gobs
 
         #region Methods related to serialisation
 
-        /// <summary>
-        /// Serialises the gob for to a binary writer.
-        /// </summary>
-        /// <param name="writer">The writer where to write the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to serialise.</param>
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 // TODO: Serialise 'spawnArea'
                 writer.Write((float)spawnInterval);
-                foreach(SpawnType spawnType in spawnTypes)
-                    writer.Write((string)spawnType.spawnTypeName, 32, true);
+                writer.Write((int)spawnTypes.Length);
+                foreach (var spawnType in spawnTypes)
+                    spawnType.Serialize(writer, SerializationModeFlags.ConstantData);
             }
         }
 
-        /// <summary>
-        /// Deserialises the gob from a binary writer.
-        /// </summary>
-        /// <param name="reader">The reader where to read the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to deserialise.</param>
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             base.Deserialize(reader, mode, messageAge);
@@ -172,8 +185,10 @@ namespace AW2.Game.Gobs
             {
                 // TODO: Deserialise 'spawnArea'
                 spawnInterval = reader.ReadSingle();
-                //TODO: refactor, this doesn't work correncty
-                //spawnTypes[0].spawnTypeName = (CanonicalString)reader.ReadString(32);
+                int spawnTypesCount = reader.ReadInt32();
+                spawnTypes = new SpawnType[spawnTypesCount];
+                for (int i = 0; i < spawnTypesCount; ++i)
+                    spawnTypes[i].Deserialize(reader, SerializationModeFlags.ConstantData, messageAge);
             }
         }
 

@@ -52,7 +52,6 @@ namespace AW2.Game.Gobs.Bonus
         public override void Activate()
         {
             base.Activate();
-            Log.Write("A Defined bonus was activated, Type of Bonus: "+bonusType);
             deathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
         }
 

@@ -121,24 +121,7 @@ namespace AW2.Game.Gobs.Bonus
             }
 
             if (playerBonus != PlayerBonusTypes.None)
-            {
-                TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
-                    + TimeSpan.FromSeconds(duration);
-                player.AddBonus(playerBonus, expiryTime);
-                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                    player.MustUpdateToClients = true;
-
-                // Display bonusmessage
-                Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
-                {
-                    gob.ResetPos(Pos, gob.Move, gob.Rotation);
-                    var data = ((PlayerBonus)playerBonus).GetData(player);
-                    ((BonusMessage)gob).Message = data.message;
-                    ((BonusMessage)gob).IconName = data.iconName;
-                    AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
-                });
-
-            }
+                GivePlayerBonus(playerBonus, player);
         }
 
         #region IConsistencyCheckable Members

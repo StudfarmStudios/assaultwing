@@ -164,10 +164,37 @@ namespace AW2.Game.Gobs.Bonus
         }
 
         /// <summary>
-        /// Perform a bonus action on a player.
+        /// Perform on a player a bonus action (either a player bonus or some other thing such as an explosion).
         /// </summary>
         /// <param name="player">The player to receive the bonus action.</param>
         protected abstract void DoBonusAction(Player player);
+
+        /// <summary>
+        /// Give a player bonus to a player.
+        /// </summary>
+        /// <param name="bonusType">The bonus to give.</param>
+        /// <param name="player">The receiving player.</param>
+        protected void GivePlayerBonus(PlayerBonusTypes bonusType, Player player)
+        {
+            if (bonusType == PlayerBonusTypes.None || AWMathHelper.CeilingPowerTwo((int)bonusType) != (int)bonusType)
+                throw new ArgumentException("Argument must be a single bonus action");
+
+            TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
+                + TimeSpan.FromSeconds(duration);
+            player.AddBonus(bonusType, expiryTime);
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                player.MustUpdateToClients = true;
+
+            // Display bonusmessage
+            Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
+            {
+                gob.ResetPos(Pos, gob.Move, gob.Rotation);
+                var data = ((PlayerBonus)bonusType).GetData(player);
+                ((BonusMessage)gob).Message = data.message;
+                ((BonusMessage)gob).IconName = data.iconName;
+                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
+            });
+        }
 
         #region IConsistencyCheckable Members
 

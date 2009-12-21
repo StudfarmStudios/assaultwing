@@ -74,24 +74,7 @@ namespace AW2.Game.Gobs.Bonus
         protected override void DoBonusAction(Player player)
         {
             if (bonusType != PlayerBonusTypes.None)
-            {
-                TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
-                    + TimeSpan.FromSeconds(duration);
-                player.AddBonus(bonusType, expiryTime);
-                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                    player.MustUpdateToClients = true;
-
-                // Display bonusmessage
-                Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
-                {
-                    gob.ResetPos(Pos, gob.Move, gob.Rotation);
-                    var data = ((PlayerBonus)bonusType).GetData(player);
-                    ((BonusMessage)gob).Message = data.message;
-                    ((BonusMessage)gob).IconName = data.iconName;
-                    AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
-                });
-
-            }
+                GivePlayerBonus(bonusType, player);
         }
 
         #region IConsistencyCheckable Members

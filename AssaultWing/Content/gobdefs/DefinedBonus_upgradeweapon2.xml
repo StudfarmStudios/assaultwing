@@ -13,7 +13,10 @@
   <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
   </drawMode2D>
-  <bonusType type="AW2.Game.PlayerBonusTypes, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Weapon2Upgrade</bonusType>
+  <gameAction type="AW2.Game.BonusActions.Weapon2UpgradeBonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">weapon2bonus</typeName>
+    <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">weapon2bonus</name>
+  </gameAction>
   <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">10</duration>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>

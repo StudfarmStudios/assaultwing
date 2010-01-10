@@ -89,12 +89,16 @@
     <Compile Include="Events\NetworkableEvent.cs" />
     <Compile Include="Events\PlayerControlEvent.cs" />
     <Compile Include="Events\SoundEffectEvent.cs" />
+    <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
+    <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
+    <Compile Include="Game\GameAction.cs" />
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\ArenaInfo.cs" />
     <Compile Include="Game\ArenaLayer.cs" />
     <Compile Include="Game\ArenaLayerGobCollection.cs" />
     <Compile Include="Game\ArenaTypeLoader.cs" />
+    <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\CollisionArea.cs" />
     <Compile Include="Game\DataEngine.cs" />
     <Compile Include="Game\DeathCause.cs" />

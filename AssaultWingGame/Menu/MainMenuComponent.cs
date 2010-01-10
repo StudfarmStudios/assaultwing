@@ -275,8 +275,11 @@ namespace AW2.Menu
                     }));
 
                     // Handle PlayerBonusMessages from the game server.
+                    /*
                     net.MessageHandlers.Add(new MessageHandler<PlayerBonusMessage>(false, net.GameServerConnection, message =>
                     {
+                        //TODO: Fix this
+                        
                         var expiryTime = message.ExpiryTime + net.ServerGameTimeOffset;
                         var player = AssaultWing.Instance.DataEngine.Players.First(p => p.Id == message.PlayerId);
                         if (expiryTime <= AssaultWing.Instance.GameTime.ElapsedGameTime)
@@ -284,6 +287,7 @@ namespace AW2.Menu
                         else
                             player.AddBonus(message.BonusTypes, message.ExpiryTime);
                     }));
+                     * */
                 });
             };
         }

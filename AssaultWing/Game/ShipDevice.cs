@@ -106,10 +106,12 @@ namespace AW2.Game
             {
                 if (PlayerOwner != null)
                 {
+                    /*
                     if (ownerHandle == OwnerHandleType.PrimaryWeapon && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon1LoadTime))
                         return loadTime / 2;
                     if (ownerHandle == OwnerHandleType.SecondaryWeapon && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon2LoadTime))
                         return loadTime / 2;
+                     * */
                 }
                 return loadTime;
             }

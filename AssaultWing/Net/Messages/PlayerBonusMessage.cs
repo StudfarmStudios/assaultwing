@@ -15,16 +15,6 @@ namespace AW2.Net.Messages
         protected static MessageType messageType = new MessageType(0x2b, false);
 
         /// <summary>
-        /// The types of bonuses to notify about.
-        /// </summary>
-        public PlayerBonusTypes BonusTypes { get; set; }
-
-        /// <summary>
-        /// Time of expiry of the bonus or bonuses in game time.
-        /// </summary>
-        public TimeSpan ExpiryTime { get; set; }
-
-        /// <summary>
         /// The identifier of the player whose bonuses to notify about.
         /// </summary>
         public int PlayerId { get; set; }
@@ -39,10 +29,10 @@ namespace AW2.Net.Messages
             // int: player ID
             // PlayerBonusTypes as ushort: BonusTypes
             // long: ExpiryTime
+            //TODO: BonusMessages should be Serilized for new bonusHandling
             byte[] writeBytes = StreamedData;
             writer.Write((int)PlayerId);
-            writer.Write((ushort)BonusTypes);
-            writer.Write((long)ExpiryTime.Ticks);
+            //writer.Write((long)ExpiryTime.Ticks);
         }
 
         /// <summary>
@@ -52,8 +42,8 @@ namespace AW2.Net.Messages
         {
             base.Deserialize(reader);
             PlayerId = reader.ReadInt32();
-            BonusTypes = (PlayerBonusTypes)reader.ReadUInt16();
-            ExpiryTime = TimeSpan.FromTicks(reader.ReadInt64());
+            //BonusTypes = (PlayerBonusTypes)reader.ReadUInt16();
+            //ExpiryTime = TimeSpan.FromTicks(reader.ReadInt64());
         }
 
         /// <summary>
@@ -61,7 +51,8 @@ namespace AW2.Net.Messages
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + " [Player " + PlayerId + " Bonuses " + BonusTypes + "]";
+            //TODO: fix this
+            return base.ToString() + " [Player " + PlayerId + ""; // Bonuses " + BonusTypes + "]";
         }
     }
 }

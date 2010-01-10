@@ -7,6 +7,7 @@ using AW2.Helpers;
 
 namespace AW2.Game
 {
+    /*
     /// <summary>
     /// Bonuses that a player can have.
     /// </summary>
@@ -160,5 +161,5 @@ namespace AW2.Game
         /// </summary>
         public string iconName;
     }
-
+    */
 }

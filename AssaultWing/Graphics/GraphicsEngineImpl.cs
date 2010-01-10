@@ -69,7 +69,8 @@ namespace AW2.Graphics
             // contain references to graphics content.
             data.ForEachViewport(viewport => viewport.LoadContent());
             data.LoadContent();
-            PlayerBonus.LoadContent();
+            //TODO: FIX THIS
+            //PlayerBonus.LoadContent();
         }
 
         /// <summary>
@@ -119,7 +120,8 @@ namespace AW2.Graphics
             if (data.Arena != null)
                 foreach (var gob in data.Arena.Gobs) gob.UnloadContent();
             data.UnloadContent();
-            PlayerBonus.UnloadContent();
+            //TODO: FIX THIS
+            //PlayerBonus.UnloadContent();
 
             base.UnloadContent();
         }

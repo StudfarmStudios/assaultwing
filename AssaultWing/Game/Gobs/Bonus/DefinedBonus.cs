@@ -16,9 +16,6 @@ namespace AW2.Game.Gobs.Bonus
         /// <summary>
         /// Bonus type name (enum).
         /// </summary>
-
-        [TypeParameter]
-        PlayerBonusTypes bonusType;
         
         #endregion Bonus fields
 
@@ -31,7 +28,6 @@ namespace AW2.Game.Gobs.Bonus
         {
             this.lifetime = 10;
             this.deathTime = new TimeSpan(0, 1, 20);
-            this.bonusType = new PlayerBonusTypes();
         }
 
         /// <summary>
@@ -73,8 +69,21 @@ namespace AW2.Game.Gobs.Bonus
         /// <param name="player">The player to receive the bonus action.</param>
         protected override void DoBonusAction(Player player)
         {
-            if (bonusType != PlayerBonusTypes.None)
-                GivePlayerBonus(bonusType, player);
+            gameAction.Player = player;
+            String key = gameAction.TypeName;
+            gameAction.DoAction(duration);
+
+            Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
+            {
+                gob.ResetPos(Pos, gob.Move, gob.Rotation);
+                ((BonusMessage)gob).Message = gameAction.BonusText;
+                ((BonusMessage)gob).IconName = gameAction.BonusIconName;
+                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
+            });
+
+            if (player.BonusActions.ContainsKey(key))
+                player.BonusActions.Remove(key);
+            player.BonusActions.Add(key, gameAction);
         }
 
         #region IConsistencyCheckable Members

@@ -64,5 +64,10 @@ namespace AW2.Helpers
         /// Path to sound effects and music.
         /// </summary>
         public static readonly string Sounds = @"Content";
+
+        /// <summary>
+        /// Path to Game Actions.
+        /// </summary>
+        public static readonly string Actions = @"Content\actions";
     }
 }

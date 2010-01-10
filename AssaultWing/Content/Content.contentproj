@@ -2004,6 +2004,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="gobdefs\DefinedBonus_instanthealth.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>DefinedBonus_instanthealth</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="gobdefs\DefinedBonus_upgradeweapon1loadtime.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>DefinedBonus_upgradeweapon1loadtime</Name>

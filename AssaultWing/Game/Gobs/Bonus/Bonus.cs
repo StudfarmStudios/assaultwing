@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using AW2.Helpers;
+using Microsoft.Xna.Framework.Graphics;
+using AW2.Net.Messages;
 
 namespace AW2.Game.Gobs.Bonus
 {
@@ -95,6 +97,18 @@ namespace AW2.Game.Gobs.Bonus
         [TypeParameter]
         protected float duration;
 
+
+        /// <summary>
+        /// GameAction of the bonus
+        /// </summary>
+        [TypeParameter]
+        protected GameAction gameAction;
+
+
+        protected string bonusText;
+        protected string bonusIconName;
+        protected Texture2D bonusIcon;
+
         #endregion Bonus fields
 
         /// <summary>
@@ -170,31 +184,35 @@ namespace AW2.Game.Gobs.Bonus
         protected abstract void DoBonusAction(Player player);
 
         /// <summary>
-        /// Give a player bonus to a player.
+        /// Displays the BonusMessage on BonusGob collision position
         /// </summary>
-        /// <param name="bonusType">The bonus to give.</param>
-        /// <param name="player">The receiving player.</param>
-        protected void GivePlayerBonus(PlayerBonusTypes bonusType, Player player)
+        protected void DisplayMessage()
         {
-            if (bonusType == PlayerBonusTypes.None || AWMathHelper.CeilingPowerTwo((int)bonusType) != (int)bonusType)
-                throw new ArgumentException("Argument must be a single bonus action");
-
-            TimeSpan expiryTime = AssaultWing.Instance.GameTime.TotalGameTime
-                + TimeSpan.FromSeconds(duration);
-            player.AddBonus(bonusType, expiryTime);
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                player.MustUpdateToClients = true;
-
-            // Display bonusmessage
             Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, gob.Move, gob.Rotation);
-                var data = ((PlayerBonus)bonusType).GetData(player);
-                ((BonusMessage)gob).Message = data.message;
-                ((BonusMessage)gob).IconName = data.iconName;
+                ((BonusMessage)gob).Message = bonusText;
+                ((BonusMessage)gob).IconName = bonusIconName;
                 AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
             });
         }
+
+        
+        protected void DisplayRemoteMessage(Player player)
+        {
+            // TODO: Refactor remote BonusHandling
+            /*
+            if (player.IsRemote)
+            {
+                var bonusMessage = new PlayerBonusMessage();
+                bonusMessage.BonusTypes = bonus;
+                bonusMessage.ExpiryTime = expiryTime;
+                bonusMessage.PlayerId = Id;
+                AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(bonusMessage);
+            }
+             */
+        }
+
 
         #region IConsistencyCheckable Members
 

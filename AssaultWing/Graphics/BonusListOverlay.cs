@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,6 +11,37 @@ using AW2.Helpers;
 
 namespace AW2.Graphics
 {
+    public enum DisplayDirection{ENTER,READY_FOR_EXIT,EXIT};
+    
+    public class DisplayObject
+    {
+        /// <summary>
+        /// Times, in game time, at which the player's bonus boxes started
+        /// sliding in to the player's viewport overlay or out of it.
+        /// </summary>
+        public TimeSpan bonusEntryTimeins;
+
+        /// <summary>
+        /// Start position relative X and Y adjustments for sliding bonus boxes, 
+        /// usually between 0 and 1. The adjustment is the relative coordinate
+        /// at which the box was when it started its current movement.
+        /// Normally this is 0 for entering boxes and 1 for exiting boxes.
+        /// </summary>
+        public Vector2 bonusEntryPosAdjustments;
+
+        /// <summary>
+        /// Which directions the player's bonus boxes are moving in.
+        /// <b>true</b> means entry movement;
+        /// <b>false</b> means exit movement.
+        /// </summary>
+        public DisplayDirection bonusEntryDirection;
+
+        /// <summary>
+        /// GameAction which we are displaying.
+        /// </summary>
+        public GameAction gameActionData;
+    }
+
     /// <summary>
     /// Overlay graphics component displaying a player's current bonuses.
     /// </summary>
@@ -17,27 +51,18 @@ namespace AW2.Graphics
         Texture2D bonusBackgroundTexture;
         Texture2D bonusDurationTexture;
         SpriteFont bonusFont;
-        
-        /// <summary>
-        /// Times, in game time, at which the player's bonus boxes started
-        /// sliding in to the player's viewport overlay or out of it.
-        /// </summary>
-        PlayerBonusItems<TimeSpan> bonusEntryTimeins;
 
         /// <summary>
-        /// Start position relative X and Y adjustments for sliding bonus boxes, 
-        /// usually between 0 and 1. The adjustment is the relative coordinate
-        /// at which the box was when it started its current movement.
-        /// Normally this is 0 for entering boxes and 1 for exiting boxes.
+        /// This dictionary stores all objects we need to display
         /// </summary>
-        PlayerBonusItems<Vector2> bonusEntryPosAdjustments;
+        Dictionary<String, DisplayObject> displayObjects = new Dictionary<String, DisplayObject>();
 
         /// <summary>
-        /// Which directions the player's bonus boxes are moving in.
-        /// <b>true</b> means entry movement;
-        /// <b>false</b> means exit movement.
+        /// This list handles the display order. Stores a key reference to the displayable object
         /// </summary>
-        PlayerBonusItems<bool> bonusEntryDirections;
+        /// Same type bonus will stay on the same position. Keys are only removed if the DisplayObject
+        /// is removed. New DisplayObjects are always put to the last position.
+        List<String> displayOrder = new List<String>();
 
         /// <summary>
         /// The X-movement curve of a bonux box that enters a player's
@@ -100,10 +125,6 @@ namespace AW2.Graphics
         {
             this.player = player;
 
-            bonusEntryTimeins = new PlayerBonusItems<TimeSpan>();
-            bonusEntryPosAdjustments = new PlayerBonusItems<Vector2>();
-            bonusEntryDirections = new PlayerBonusItems<bool>();
-
             bonusBoxEntry = new Curve();
             bonusBoxEntry.Keys.Add(new CurveKey(0, 0));
             bonusBoxEntry.Keys.Add(new CurveKey(0.3f, 1));
@@ -130,6 +151,7 @@ namespace AW2.Graphics
             bonusBoxClose.Keys.Add(new CurveKey(1.0f, 0));
             bonusBoxClose.ComputeTangents(CurveTangent.Smooth);
             bonusBoxClose.PostLoop = CurveLoopType.Constant;
+            displayOrder.Add("zero");
         }
 
         /// <summary>
@@ -139,113 +161,12 @@ namespace AW2.Graphics
         /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
         /// to have been called and <c>End</c> is assumed to be called after this
         /// method returns.</param>
-        protected override void DrawContent(SpriteBatch spriteBatch)
+        /// 
+        private void DrawBonusBox(SpriteBatch spriteBatch, Vector2 bonusPos, GameAction bonusAction)
         {
-            // Lists bottom left coordinates of areas reserved for displayed
-            // bonus boxes relative to this overlay component's top right corner,
-            // with the exception that the first coordinates are (0,0).
-            // Bonus boxes are then drawn vertically centered in these areas.
-            // The last Y coordinate will state the height of the whole reserved bonus box area.
-            List<Vector2> bonusPos = new List<Vector2>();
-
-            // Lists the types of bonuses whose coordinates are in 'bonusPos'.
-            List<PlayerBonusTypes> bonusBonus = new List<PlayerBonusTypes>();
-
-            bonusPos.Add(Vector2.Zero);
-            bonusBonus.Add(PlayerBonusTypes.None);
-
-            // Find out which boxes to draw and where.
-            foreach (PlayerBonusTypes bonus in Enum.GetValues(typeof(PlayerBonusTypes)))
-            {
-                if (bonus == PlayerBonusTypes.None) continue;
-
-                // Calculate bonus box position.
-                float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
-                    - bonusEntryTimeins[bonus].TotalSeconds);
-                Vector2 adjustment = bonusEntryPosAdjustments[bonus];
-                Vector2 curvePos, shift, scale;
-                if (bonusEntryDirections[bonus])
-                {
-                    curvePos = new Vector2(bonusBoxEntry.Evaluate(slideTime), bonusBoxAvoid.Evaluate(slideTime));
-                    shift = new Vector2(adjustment.X - bonusBoxEntry.Evaluate(0),
-                        adjustment.Y - bonusBoxAvoid.Evaluate(0));
-                    scale = new Vector2((adjustment.X - bonusBoxEntry.Keys[bonusBoxEntry.Keys.Count - 1].Value)
-                        / (bonusBoxEntry.Evaluate(0) - bonusBoxEntry.Keys[bonusBoxEntry.Keys.Count - 1].Value),
-                        (adjustment.Y - bonusBoxAvoid.Keys[bonusBoxAvoid.Keys.Count - 1].Value)
-                        / (bonusBoxAvoid.Evaluate(0) - bonusBoxAvoid.Keys[bonusBoxAvoid.Keys.Count - 1].Value));
-                }
-                else
-                {
-                    curvePos = new Vector2(bonusBoxExit.Evaluate(slideTime), bonusBoxClose.Evaluate(slideTime));
-                    shift = new Vector2(adjustment.Y - bonusBoxExit.Evaluate(0),
-                        adjustment.Y - bonusBoxClose.Evaluate(0));
-                    scale = new Vector2((adjustment.X - bonusBoxExit.Keys[bonusBoxExit.Keys.Count - 1].Value)
-                        / (bonusBoxExit.Evaluate(0) - bonusBoxExit.Keys[bonusBoxExit.Keys.Count - 1].Value),
-                        (adjustment.Y - bonusBoxClose.Keys[bonusBoxClose.Keys.Count - 1].Value)
-                        / (bonusBoxClose.Evaluate(0) - bonusBoxClose.Keys[bonusBoxClose.Keys.Count - 1].Value));
-                }
-                Vector2 relativePos = new Vector2(
-                    (curvePos.X + shift.X) * scale.X,
-                    (curvePos.Y + shift.Y) * scale.Y);
-                //adjustment.X + (1 - adjustment.X) * curvePos.X,
-                //adjustment.Y + (1 - adjustment.Y) * curvePos.Y);
-                Vector2 newBonusPos = new Vector2(-bonusBackgroundTexture.Width * relativePos.X,
-                        bonusPos[bonusPos.Count - 1].Y + bonusBackgroundTexture.Height * relativePos.Y);
-
-                // React to changes in player's bonuses.
-                if ((player.Bonuses & bonus) != 0 &&
-                    !bonusEntryDirections[bonus])
-                {
-                    bonusEntryDirections[bonus] = true;
-                    bonusEntryPosAdjustments[bonus] = relativePos;
-                    bonusEntryTimeins[bonus] = AssaultWing.Instance.GameTime.TotalGameTime;
-                }
-                if ((player.Bonuses & bonus) == 0 &&
-                    bonusEntryDirections[bonus])
-                {
-                    bonusEntryDirections[bonus] = false;
-                    bonusEntryPosAdjustments[bonus] = relativePos;
-                    bonusEntryTimeins[bonus] = AssaultWing.Instance.GameTime.TotalGameTime;
-                }
-
-                // Draw the box only if it's visible.
-                if (newBonusPos.X < 0)
-                {
-                    bonusBonus.Add(bonus);
-                    bonusPos.Add(newBonusPos);
-                }
-            }
-
-            // Draw the bonus boxes in their places.
-            Point dimensions = Dimensions;
-            Vector2 bonusBoxAreaTopRight = new Vector2(dimensions.X * 2,
-                dimensions.Y - bonusPos[bonusPos.Count - 1].Y) / 2;
-            for (int i = 1; i < bonusBonus.Count; ++i)
-            {
-                Vector2 leftMiddlePoint = new Vector2(bonusPos[i].X + bonusBoxAreaTopRight.X,
-                    bonusBoxAreaTopRight.Y + (bonusPos[i].Y + bonusPos[i - 1].Y) / 2);
-                DrawBonusBox(spriteBatch, leftMiddlePoint, (PlayerBonus)bonusBonus[i]);
-            }
-        }
-
-        /// <summary>
-        /// Draws a player bonus box.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
-        /// to have been called and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
-        /// <param name="bonusPos">The position at which to draw 
-        /// the background's left middle point.</param>
-        /// <param name="playerBonus">Which player bonus it is.</param>
-        private void DrawBonusBox(SpriteBatch spriteBatch, Vector2 bonusPos, PlayerBonus playerBonus)
-        {
-            var data = AssaultWing.Instance.DataEngine;
-
-            var bonusData = playerBonus.GetData(player);
-
             // Figure out what to draw for this bonus.
-            string bonusText = bonusData.message;
-            Texture2D bonusIcon = bonusData.icon;
+            string bonusText = bonusAction.BonusText;
+            Texture2D bonusIcon = bonusAction.BonusIcon;
 
             // Draw bonus box background.
             Vector2 backgroundOrigin = new Vector2(0, bonusBackgroundTexture.Height) / 2;
@@ -256,10 +177,9 @@ namespace AW2.Graphics
             Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(112, 9);
             spriteBatch.Draw(bonusIcon,
                 iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-
             // Draw bonus duration meter.
-            float startSeconds = (float)player.BonusTimeins[playerBonus.Types].TotalSeconds;
-            float endSeconds = (float)player.BonusTimeouts[playerBonus.Types].TotalSeconds;
+            float startSeconds = (float)bonusAction.actionTimeins.TotalSeconds;
+            float endSeconds = (float)bonusAction.actionTimeouts.TotalSeconds;
             float nowSeconds = (float)AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds;
             float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
             int durationHeight = (int)Math.Round(duration * bonusDurationTexture.Height);
@@ -276,6 +196,170 @@ namespace AW2.Graphics
             textPos.X = (float)Math.Round(textPos.X);
             textPos.Y = (float)Math.Round(textPos.Y);
             spriteBatch.DrawString(bonusFont, bonusText, textPos, Color.White);
+        }
+
+        /// <summary>
+        /// Draws the overlay graphics component using the guarantee that the
+        /// graphics device's viewport is set to the exact area needed by the component.
+        /// </summary>
+        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
+        /// to have been called and <c>End</c> is assumed to be called after this
+        /// method returns.</param>
+        protected override void DrawContent(SpriteBatch spriteBatch)
+        {
+            //List that contains the object that are drawed to the players screen
+            List<Vector2> displayQueue = new List<Vector2>();
+            //Contains all keys that need's to be removed from DisplayObject Dictionary and DisplayOrder List
+            List<String> removeKeys = new List<String>();
+            displayQueue.Add(Vector2.Zero);
+            var data = AssaultWing.Instance.DataEngine;
+            //Add new bonuses for display
+            //All GameActions that are not in displayOrder
+            foreach (String key in player.BonusActions.Keys.Except<String>(displayOrder))
+            {
+                displayOrder.Add(key);
+                DisplayObject bonusOverlay = new DisplayObject();
+                bonusOverlay.bonusEntryDirection = DisplayDirection.ENTER;
+                bonusOverlay.bonusEntryPosAdjustments = Vector2.Zero;
+                bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
+                bonusOverlay.gameActionData = player.BonusActions[key];
+                if (displayObjects.ContainsKey(key))
+                    displayObjects.Remove(key);                   
+                displayObjects.Add(key, bonusOverlay);
+            }
+            
+            //Add Bonuses for exitting
+            //All DisplayObjects that are not in GameAction list
+            foreach (String key in displayOrder.Except<String>(player.BonusActions.Keys))
+            {
+                if (key.Equals("zero"))
+                    continue;
+                DisplayObject bonusOverlay = displayObjects[key];
+                if (bonusOverlay.bonusEntryDirection==DisplayDirection.ENTER)
+                {
+                    bonusOverlay.bonusEntryDirection = DisplayDirection.READY_FOR_EXIT;
+                }
+            }
+            
+            //Handle Displayables
+            for (int i = 1; i <displayOrder.Count; i++)
+            {
+                String key = displayOrder[i];
+                
+                DisplayObject bonusOverlay = displayObjects[key];
+                if(bonusOverlay.bonusEntryDirection==DisplayDirection.ENTER)
+                    bonusOverlay.gameActionData = player.BonusActions[key];
+
+                float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
+                - bonusOverlay.bonusEntryTimeins.TotalSeconds);
+
+                Vector2 adjustment = bonusOverlay.bonusEntryPosAdjustments;
+                Vector2 curvePos, shift, scale;
+
+                //Do entry for bonusOverlay
+                if (bonusOverlay.bonusEntryDirection==DisplayDirection.ENTER ||
+                    bonusOverlay.bonusEntryDirection==DisplayDirection.READY_FOR_EXIT)
+                {
+                    curvePos = GetCurvePos(bonusBoxEntry,bonusBoxAvoid,slideTime);
+                    shift = GetEntryShift(bonusBoxEntry,bonusBoxAvoid,adjustment);
+                    scale = GetScale(bonusBoxEntry,bonusBoxAvoid,adjustment);
+                } //do exit for bonusOverlay
+                else
+                {
+                    curvePos = GetCurvePos(bonusBoxExit,bonusBoxClose,slideTime);
+                    shift = GetExitShift(bonusBoxExit,bonusBoxClose,adjustment);
+                    scale = GetScale(bonusBoxExit,bonusBoxClose,adjustment);
+                }
+
+                //get relative position
+                Vector2 relativePos = new Vector2(
+                    (curvePos.X + shift.X) * scale.X,
+                    (curvePos.Y + shift.Y) * scale.Y);
+
+                //calculate position for each displayable
+                if (bonusOverlay.bonusEntryDirection == DisplayDirection.READY_FOR_EXIT)
+                {
+                    bonusOverlay.bonusEntryPosAdjustments = relativePos;
+                    bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
+                    bonusOverlay.bonusEntryDirection = DisplayDirection.EXIT;
+                }
+
+                Vector2 newBonusPos = new Vector2(-bonusBackgroundTexture.Width * relativePos.X,
+                        displayQueue[displayQueue.Count - 1].Y + bonusBackgroundTexture.Height * relativePos.Y);
+
+                //remove elements that are exitting and are not visible
+                if (bonusOverlay.bonusEntryDirection==DisplayDirection.EXIT && newBonusPos.X >= 0)
+                {
+                    removeKeys.Add(key);
+                }
+                if (newBonusPos.X < 0)
+                {
+                    displayQueue.Add(newBonusPos);
+                }
+
+            }
+
+            /*Clean exitted bonusOverlays*/
+            foreach(String key in removeKeys)
+            {
+                displayOrder.Remove(key);
+                displayObjects.Remove(key);
+            }
+            // Draw the bonus boxes in their places.
+            Point dimensions = Dimensions;
+            Vector2 bonusBoxAreaTopRight = new Vector2(dimensions.X * 2,
+                dimensions.Y - displayQueue[displayQueue.Count - 1].Y) / 2;
+
+            for (int i = 1; i < displayQueue.Count; ++i)
+            {
+                Vector2 leftMiddlePoint = new Vector2(displayQueue[i].X + bonusBoxAreaTopRight.X,
+                    bonusBoxAreaTopRight.Y + (displayQueue[i].Y + displayQueue[i - 1].Y) / 2);
+                DrawBonusBox(spriteBatch, leftMiddlePoint, displayObjects[displayOrder[i]].gameActionData);
+            }
+        }
+
+        /// <summary>
+        /// called to get the Curve for position
+        /// </summary>
+        /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
+        /// <param name="bonusBoxEffect"> Avoid or Close</param>
+        /// <param name="slideTime"> Time passed since entry or exit</param>
+        private Vector2 GetCurvePos(Curve bonusBoxDirection,Curve bonusBoxEffect,float slideTime)
+        {
+            return new Vector2(bonusBoxDirection.Evaluate(slideTime), bonusBoxEffect.Evaluate(slideTime));
+        }
+        /// <summary>
+        /// called to get the shift for entry
+        /// </summary>
+        /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
+        /// <param name="bonusBoxEffect"> Avoid or Close</param>
+        /// <param name="adjustment"> Place where the adjustment starts</param>
+        private Vector2 GetEntryShift(Curve bonusBoxDirection,Curve bonusBoxEffect,Vector2 adjustment)
+        {
+             return new Vector2(adjustment.X - bonusBoxDirection.Evaluate(0), adjustment.Y - bonusBoxEffect.Evaluate(0));
+        }
+        /// <summary>
+        /// called to get the shift for exit
+        /// </summary>
+        /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
+        /// <param name="bonusBoxEffect"> Avoid or Close</param>
+        /// <param name="adjustment"> Place where the adjustment starts</param>
+        private Vector2 GetExitShift(Curve bonusBoxDirection,Curve bonusBoxEffect,Vector2 adjustment)
+        {
+             return new Vector2(adjustment.Y - bonusBoxDirection.Evaluate(0), adjustment.Y - bonusBoxEffect.Evaluate(0));
+        }
+        /// <summary>
+        /// called to get the scale
+        /// </summary>
+        /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
+        /// <param name="bonusBoxEffect"> Avoid or Close</param>
+        /// <param name="adjustment"> Place where the adjustment starts</param>
+        private Vector2 GetScale(Curve bonusBoxDirection,Curve bonusBoxEffect,Vector2 adjustment)
+        {
+            return new Vector2((adjustment.X - bonusBoxDirection.Keys[bonusBoxDirection.Keys.Count - 1].Value)
+                        / (bonusBoxDirection.Evaluate(0) - bonusBoxDirection.Keys[bonusBoxDirection.Keys.Count - 1].Value),
+                        (adjustment.Y - bonusBoxEffect.Keys[bonusBoxEffect.Keys.Count - 1].Value)
+                        / (bonusBoxEffect.Evaluate(0) - bonusBoxEffect.Keys[bonusBoxEffect.Keys.Count - 1].Value));
         }
 
         /// <summary>

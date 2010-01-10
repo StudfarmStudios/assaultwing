@@ -41,6 +41,8 @@ namespace AW2.Game
             var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.Devices);
             var particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
             var arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
+            /*action loader should be enabled if game actions are defined in own XML files*/
+            //var actionLoader = new TypeLoader(typeof(GameAction), Helpers.Paths.Actions);
 
             DeleteTemplates(new TypeLoader[] { gobLoader, deviceLoader, particleLoader, arenaLoader });
 
@@ -50,8 +52,10 @@ namespace AW2.Game
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(device.TypeName, device);
             foreach (Gob particleEngine in particleLoader.LoadAllTypes())
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
+            /*foreach (GameAction action in actionLoader.LoadAllTypes())
+                AssaultWing.Instance.DataEngine.AddTypeTemplate(action.TypeName, action);
+            */
             AssaultWing.Instance.DataEngine.ArenaInfos = arenaLoader.LoadAllTypes().Cast<Arena>().Select(arena => arena.Info).ToList();
-
             SaveTemplates(new TypeLoader[] { gobLoader, deviceLoader, particleLoader, arenaLoader });
             FreezeCanonicalStrings();
             base.Initialize();

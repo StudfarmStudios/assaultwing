@@ -94,7 +94,7 @@ namespace AW2.Game.Gobs
         {
             Vector2 backgroundPos = Vector2.Transform(Pos, gameToScreen);
 
-            float timePassed = birthTime.SecondsAgo();
+            float timePassed = birthTime.SecondsAgoGameTime();
             float finalScale = scaleCurve.Evaluate(timePassed) * scale;
             Vector2 origin = new Vector2(iconBackground.Width, iconBackground.Height) / 2;
             Vector2 iconPos = backgroundPos + new Vector2(-origin.X + 6, -icon.Height / 2) * finalScale;
@@ -121,7 +121,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            float timePassed = birthTime.SecondsAgo();
+            float timePassed = birthTime.SecondsAgoGameTime();
             if (alphaCurve.Keys.Last().Position < timePassed)
                 Die(new DeathCause());
         }

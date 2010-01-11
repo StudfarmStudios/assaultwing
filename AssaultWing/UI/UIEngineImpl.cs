@@ -2,7 +2,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
-using AW2.Events;
 using AW2.Net;
 using AW2.Net.Messages;
 
@@ -42,7 +41,6 @@ namespace AW2.UI
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
         public override void Update(GameTime gameTime)
         {
-            EventEngine eventEngine = (EventEngine)Game.Services.GetService(typeof(EventEngine));
             InputState newState = InputState.GetState();
 
             // Reset mouse cursor to the middle of the game window.

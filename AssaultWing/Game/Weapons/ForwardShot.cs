@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
-using AW2.Events;
 using AW2.Helpers;
 using AW2.Sound;
 using AW2.Game.Particles;
@@ -46,7 +45,7 @@ namespace AW2.Game.Weapons
         /// The sound to play when firing.
         /// </summary>
         [TypeParameter]
-        SoundOptions.Action fireSound;
+        string fireSound;
 
         /// <summary>
         /// Names of muzzle fire engine types.
@@ -132,17 +131,17 @@ namespace AW2.Game.Weapons
         public ForwardShot()
             : base()
         {
-            this.fireSound = SoundOptions.Action.Pistol;
-            this.muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine" };
-            this.shotSpeed = 300f;
-            this.shotCount = 3;
-            this.shotSpacing = 0.2f;
-            this.shotAngleVariation = 0.3f;
-            this.shotSpeedVariation = 20f;
-            this.fireAction = FireAction.Shoot;
-            this.shotsLeft = 2;
-            this.nextShot = new TimeSpan(1, 2, 3);
-            this.liveShots = new List<Gob>();
+            fireSound = "Pistol";
+            muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine" };
+            shotSpeed = 300f;
+            shotCount = 3;
+            shotSpacing = 0.2f;
+            shotAngleVariation = 0.3f;
+            shotSpeedVariation = 20f;
+            fireAction = FireAction.Shoot;
+            shotsLeft = 2;
+            nextShot = new TimeSpan(1, 2, 3);
+            liveShots = new List<Gob>();
         }
 
         public ForwardShot(CanonicalString typeName)
@@ -292,10 +291,7 @@ namespace AW2.Game.Weapons
         private void PlayFiringSound()
         {
             if (flashAndBangCreated) return;
-            var eventer = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-            var soundEvent = new SoundEffectEvent();
-            soundEvent.setAction(fireSound);
-            eventer.SendEvent(soundEvent);
+            AssaultWing.Instance.SoundEngine.PlaySound(fireSound.ToString());
         }
 
         private void UpdateMuzzleFire()

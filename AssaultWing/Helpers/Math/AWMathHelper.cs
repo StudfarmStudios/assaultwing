@@ -193,6 +193,24 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns the smallest non-negative value congruent to a value.
+        /// The returned value will be between <c>0</c> and <c>modulus</c>, last point excluded.
+        /// This is different from the expression <c>value % modulus</c> 
+        /// which returns the remainder of the corresponding division.
+        /// </summary>
+        /// <param name="value">The value to modulate.</param>
+        /// <param name="modulus">The modulus.</param>
+        /// <returns>The smallest non-negative value congruent to 
+        /// <paramref name="value"/> modulo <paramref name="modulus"/>.</returns>
+        public static float Modulo(this float value, float modulus)
+        {
+            if (modulus <= 0) throw new InvalidOperationException("Cannot compute " + value + " modulo " + modulus);
+            float result = value % modulus;
+            if (result < 0) result += modulus;
+            return result;
+        }
+
+        /// <summary>
         /// Clamps an integer to an interval.
         /// </summary>
         /// <param name="value">The value to clamp.</param>
@@ -229,12 +247,21 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Returns the number of seconds this <see cref="TimeSpan"/> is ahead of
-        /// the current game time.
+        /// Returns the number of seconds this <see cref="TimeSpan"/> 
+        /// is in the past relative to the current game time.
         /// </summary>
-        public static float SecondsAgo(this TimeSpan time1)
+        public static float SecondsAgoGameTime(this TimeSpan time1)
         {
             return (float)(AssaultWing.Instance.GameTime.TotalGameTime - time1).TotalSeconds;
+        }
+
+        /// <summary>
+        /// Returns the number of seconds this <see cref="TimeSpan"/> 
+        /// is in the past relative to elapsed real time.
+        /// </summary>
+        public static float SecondsAgoRealTime(this TimeSpan time1)
+        {
+            return (float)(AssaultWing.Instance.GameTime.TotalRealTime - time1).TotalSeconds;
         }
 
         /// <summary>

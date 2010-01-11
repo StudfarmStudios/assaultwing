@@ -213,7 +213,11 @@ namespace AW2.Menu
             startContents[0].Name = "Play Local";
             startContents[0].Action = () => menuEngine.ActivateComponent(MenuComponentType.Equip);
             startContents[1].Name = "Play at the Battlefront";
-            startContents[1].Action = () => currentContents = networkContents;
+            startContents[1].Action = () =>
+            {
+                currentContents = networkContents;
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+            };
             startContents[2].Name = "Setup";
             //startContents[2].Action = () => stuff;
             startContents[3].Name = "Quit";
@@ -243,6 +247,7 @@ namespace AW2.Menu
             networkContents[1].Action = () =>
             {
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 AssaultWing.Instance.StartClient(connectAddress.Content, result =>
                 {
                     var net = AssaultWing.Instance.NetworkEngine;
@@ -303,11 +308,13 @@ namespace AW2.Menu
             {
                 if (currentItem > 0)
                     --currentItem;
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             commonCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () =>
             {
                 if (currentItem < currentContents.Count - 1)
                     ++currentItem;
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             commonCallbacks.Callbacks.Add(new TriggeredCallback(controlSelect, () =>
             {

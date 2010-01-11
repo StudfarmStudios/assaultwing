@@ -105,7 +105,7 @@ namespace AW2.Graphics
             {
                 if (player.Ship.Devices.ExtraDeviceLoaded)
                 {
-                    float seconds = player.Ship.Devices.ExtraDevice.LoadedTime.SecondsAgo();
+                    float seconds = player.Ship.Devices.ExtraDevice.LoadedTime.SecondsAgoGameTime();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)
@@ -139,7 +139,7 @@ namespace AW2.Graphics
             {
                 if (player.Ship.Devices.Weapon2Loaded)
                 {
-                    float seconds = player.Ship.Devices.Weapon2.LoadedTime.SecondsAgo();
+                    float seconds = player.Ship.Devices.Weapon2.LoadedTime.SecondsAgoGameTime();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)

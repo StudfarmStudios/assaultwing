@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2929190960;
-    Last Modified High = 29958893;
+    Last Modified Low = 29958893;
+    Last Modified High = 2929190960;
 
     Category
     {
@@ -239,37 +239,8 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Xbox Bank Last Modified Low = 0;
-    Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 0;
-    PC Bank Last Modified High = 0;
-    Header Last Modified Low = 0;
-    Header Last Modified High = 0;
-    Bank Last Revised Low = 252596096;
-    Bank Last Revised High = 30031574;
-
-    Wave
-    {
-        Name = laser2;
-        File = sounds\laser2.wav;
-        Build Settings Last Modified Low = 1393880400;
-        Build Settings Last Modified High = 29912283;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 85644;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 1921346048;
-            Last Modified High = 29896537;
-        }
-    }
+    Bank Last Revised Low = 51844366;
+    Bank Last Revised High = 30052307;
 
     Wave
     {
@@ -336,29 +307,6 @@ Wave Bank
             Loop Region Length = 0;
             File Type = 1;
             Last Modified Low = 2381346048;
-            Last Modified High = 29896537;
-        }
-    }
-
-    Wave
-    {
-        Name = laser1;
-        File = sounds\laser1.wav;
-        Build Settings Last Modified Low = 1394080688;
-        Build Settings Last Modified High = 29912283;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 67032;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 1911346048;
             Last Modified High = 29896537;
         }
     }
@@ -503,29 +451,6 @@ Wave Bank
 
     Wave
     {
-        Name = laser3;
-        File = sounds\laser3.wav;
-        Build Settings Last Modified Low = 1394381120;
-        Build Settings Last Modified High = 29912283;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 44;
-            Play Region Length = 29412;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 1921346048;
-            Last Modified High = 29896537;
-        }
-    }
-
-    Wave
-    {
         Name = missile1;
         File = sounds\missile1.wav;
         Build Settings Last Modified Low = 1394481264;
@@ -615,6 +540,328 @@ Wave Bank
             Last Modified High = 29896537;
         }
     }
+
+    Wave
+    {
+        Name = menuBrowseItem01;
+        File = sounds\menuBrowseItem01.wav;
+        Build Settings Last Modified Low = 4258176592;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 64512;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 141672780;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuBrowseItem02;
+        File = sounds\menuBrowseItem02.wav;
+        Build Settings Last Modified Low = 4258176592;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 82944;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 142492827;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuBrowseItem03;
+        File = sounds\menuBrowseItem03.wav;
+        Build Settings Last Modified Low = 4258186593;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 96768;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 143122863;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeEnd01;
+        File = sounds\menuChangeEnd01.wav;
+        Build Settings Last Modified Low = 4258196594;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 101376;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 143692895;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeEnd02;
+        File = sounds\menuChangeEnd02.wav;
+        Build Settings Last Modified Low = 4258206594;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 87552;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 144262928;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeEnd03;
+        File = sounds\menuChangeEnd03.wav;
+        Build Settings Last Modified Low = 4258216595;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 96768;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 144872963;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeEnd04;
+        File = sounds\menuChangeEnd04.wav;
+        Build Settings Last Modified Low = 4258226595;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 69120;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 145442995;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeEnd05;
+        File = sounds\menuChangeEnd05.wav;
+        Build Settings Last Modified Low = 4258226595;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 92160;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 146023029;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeItem;
+        File = sounds\menuChangeItem.wav;
+        Build Settings Last Modified Low = 4258236596;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 129024;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 146613062;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeStart01;
+        File = sounds\menuChangeStart01.wav;
+        Build Settings Last Modified Low = 4258246596;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 244224;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 147243098;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeStart02;
+        File = sounds\menuChangeStart02.wav;
+        Build Settings Last Modified Low = 4258246596;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 322560;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 147883135;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeStart03;
+        File = sounds\menuChangeStart03.wav;
+        Build Settings Last Modified Low = 4258256597;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 221184;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 148383164;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeStart04;
+        File = sounds\menuChangeStart04.wav;
+        Build Settings Last Modified Low = 4258266598;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 230400;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 148993199;
+            Last Modified High = 30052305;
+        }
+    }
+
+    Wave
+    {
+        Name = menuChangeStart05;
+        File = sounds\menuChangeStart05.wav;
+        Build Settings Last Modified Low = 4258276598;
+        Build Settings Last Modified High = 30052306;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 239616;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 149603233;
+            Last Modified High = 30052305;
+        }
+    }
 }
 
 Sound Bank
@@ -624,55 +871,6 @@ Sound Bank
     Windows File = bin\x86\Debug\Sound Bank.xsb;
     Xbox Bank Path Edited = 1;
     Windows Bank Path Edited = 1;
-    Header Last Modified High = 0;
-    Header Last Modified Low = 0;
-
-    Sound
-    {
-        Name = laser1;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaer Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = effects;
-                    Bank Index = 0;
-                    Entry Name = laser1;
-                    Entry Index = 4;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
 
     Sound
     {
@@ -713,7 +911,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = collision3;
-                    Entry Index = 3;
+                    Entry Index = 2;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -760,7 +958,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = collision2;
-                    Entry Index = 2;
+                    Entry Index = 1;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -807,53 +1005,6 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = collision1;
-                    Entry Index = 1;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = laser2;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaer Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = effects;
-                    Bank Index = 0;
-                    Entry Name = laser2;
                     Entry Index = 0;
                     Weight = 255;
                     Weight Min = 0;
@@ -901,7 +1052,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = ship_col1;
-                    Entry Index = 5;
+                    Entry Index = 3;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -948,7 +1099,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = artillery1;
-                    Entry Index = 6;
+                    Entry Index = 4;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -995,7 +1146,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = artillery2;
-                    Entry Index = 7;
+                    Entry Index = 5;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1042,7 +1193,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = artillery3;
-                    Entry Index = 8;
+                    Entry Index = 6;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1089,7 +1240,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = cannon1;
-                    Entry Index = 9;
+                    Entry Index = 7;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1136,54 +1287,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = explosion1;
-                    Entry Index = 10;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = laser3;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaer Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = effects;
-                    Bank Index = 0;
-                    Entry Name = laser3;
-                    Entry Index = 11;
+                    Entry Index = 8;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1230,7 +1334,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = missile1;
-                    Entry Index = 12;
+                    Entry Index = 9;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1277,7 +1381,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = pistol1;
-                    Entry Index = 13;
+                    Entry Index = 10;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1324,7 +1428,7 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = explosion2;
-                    Entry Index = 14;
+                    Entry Index = 11;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1371,7 +1475,665 @@ Sound Bank
                     Bank Name = effects;
                     Bank Index = 0;
                     Entry Name = missile2;
+                    Entry Index = 12;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuBrowseItem01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuBrowseItem01;
+                    Entry Index = 13;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuBrowseItem02;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuBrowseItem02;
+                    Entry Index = 14;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuBrowseItem03;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuBrowseItem03;
                     Entry Index = 15;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeEnd01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeEnd01;
+                    Entry Index = 16;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeEnd02;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeEnd02;
+                    Entry Index = 17;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeEnd03;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeEnd03;
+                    Entry Index = 18;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeEnd04;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeEnd04;
+                    Entry Index = 19;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeEnd05;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeEnd05;
+                    Entry Index = 20;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeItem;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeItem;
+                    Entry Index = 21;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeStart01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeStart01;
+                    Entry Index = 22;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeStart02;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeStart02;
+                    Entry Index = 23;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeStart03;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeStart03;
+                    Entry Index = 24;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeStart04;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeStart04;
+                    Entry Index = 25;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = menuChangeStart05;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = menuChangeStart05;
+                    Entry Index = 26;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1393,14 +2155,6 @@ Sound Bank
         Sound Entry
         {
             Name = collision1;
-            Index = 3;
-            Weight Min = 0;
-            Weight Max = 255;
-        }
-
-        Sound Entry
-        {
-            Name = collision2;
             Index = 2;
             Weight Min = 0;
             Weight Max = 255;
@@ -1408,48 +2162,16 @@ Sound Bank
 
         Sound Entry
         {
-            Name = collision3;
+            Name = collision2;
             Index = 1;
             Weight Min = 0;
             Weight Max = 255;
         }
-    }
-
-    Cue
-    {
-        Name = Laser1;
-
-        Variation
-        {
-            Variation Type = 3;
-            Variation Table Type = 1;
-            New Variation on Loop = 0;
-        }
 
         Sound Entry
         {
-            Name = laser1;
+            Name = collision3;
             Index = 0;
-            Weight Min = 0;
-            Weight Max = 255;
-        }
-    }
-
-    Cue
-    {
-        Name = Laser2;
-
-        Variation
-        {
-            Variation Type = 3;
-            Variation Table Type = 1;
-            New Variation on Loop = 0;
-        }
-
-        Sound Entry
-        {
-            Name = laser2;
-            Index = 4;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1469,7 +2191,7 @@ Sound Bank
         Sound Entry
         {
             Name = ship_col1;
-            Index = 5;
+            Index = 3;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1489,7 +2211,7 @@ Sound Bank
         Sound Entry
         {
             Name = explosion1;
-            Index = 10;
+            Index = 8;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1497,7 +2219,7 @@ Sound Bank
         Sound Entry
         {
             Name = explosion2;
-            Index = 14;
+            Index = 11;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1517,7 +2239,7 @@ Sound Bank
         Sound Entry
         {
             Name = artillery1;
-            Index = 6;
+            Index = 4;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1525,7 +2247,7 @@ Sound Bank
         Sound Entry
         {
             Name = artillery2;
-            Index = 7;
+            Index = 5;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1533,7 +2255,7 @@ Sound Bank
         Sound Entry
         {
             Name = artillery3;
-            Index = 8;
+            Index = 6;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1553,7 +2275,7 @@ Sound Bank
         Sound Entry
         {
             Name = cannon1;
-            Index = 9;
+            Index = 7;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1573,7 +2295,7 @@ Sound Bank
         Sound Entry
         {
             Name = missile1;
-            Index = 12;
+            Index = 9;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1581,7 +2303,7 @@ Sound Bank
         Sound Entry
         {
             Name = missile2;
-            Index = 15;
+            Index = 12;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -1601,7 +2323,167 @@ Sound Bank
         Sound Entry
         {
             Name = pistol1;
+            Index = 10;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = MenuBrowseItem;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = menuBrowseItem01;
             Index = 13;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuBrowseItem02;
+            Index = 14;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuBrowseItem03;
+            Index = 15;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = MenuChangeEnd;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeEnd01;
+            Index = 16;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeEnd02;
+            Index = 17;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeEnd03;
+            Index = 18;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeEnd04;
+            Index = 19;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeEnd05;
+            Index = 20;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = MenuChangeItem;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeItem;
+            Index = 21;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = MenuChangeStart;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeStart01;
+            Index = 22;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeStart02;
+            Index = 23;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeStart03;
+            Index = 24;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeStart04;
+            Index = 25;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = menuChangeStart05;
+            Index = 26;
             Weight Min = 0;
             Weight Max = 255;
         }

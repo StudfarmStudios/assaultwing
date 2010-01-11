@@ -40,7 +40,6 @@ namespace AW2.Game.BonusActions
             var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Ship.Devices.Weapon2Name);
             if (weapon2.UpgradeNames != null && weapon2.UpgradeNames.Length > 0)
             {
-                Console.WriteLine(weapon2.UpgradeNames[0]);
                 CanonicalString weaponUpgrade = weapon2.UpgradeNames[0];
                 UpgradeWeapon(weaponUpgrade);
             }

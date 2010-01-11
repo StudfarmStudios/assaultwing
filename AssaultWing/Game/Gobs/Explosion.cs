@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
-using AW2.Events;
 using AW2.Helpers;
 using AW2.Sound;
 using AW2.Game.Particles;
@@ -59,7 +58,7 @@ namespace AW2.Game.Gobs
         /// Name of the sound effect to play on creation.
         /// </summary>
         [TypeParameter]
-        SoundOptions.Action sound;
+        string sound;
 
         Gob[] particleEngines;
 
@@ -99,7 +98,7 @@ namespace AW2.Game.Gobs
             flowTime = 0.5f;
             impactHoleRadius = 100;
             particleEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
-            sound = SoundOptions.Action.Explosion;
+            sound = "Explosion";
             firstCollisionChecked = false;
         }
 
@@ -120,12 +119,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Activate()
         {
-            EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-
-            // Play the sound.
-            SoundEffectEvent soundEvent = new SoundEffectEvent();
-            soundEvent.setAction(sound);
-            eventEngine.SendEvent(soundEvent);
+            AssaultWing.Instance.SoundEngine.PlaySound(sound.ToString());
 
             // Create particle engines.
             List<Gob> particleEngineList = new List<Gob>();

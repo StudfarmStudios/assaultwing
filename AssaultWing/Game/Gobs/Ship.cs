@@ -396,7 +396,7 @@ namespace AW2.Game.Gobs
             Devices.Update(AssaultWing.Instance.GameTime.ElapsedGameTime);
 
             // Flash and be disabled if we're just born.
-            float age = birthTime.SecondsAgo();
+            float age = birthTime.SecondsAgoGameTime();
             Alpha = birthAlpha.Evaluate(age);
             Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;
         }

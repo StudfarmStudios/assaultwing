@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.UI;
-using AW2.Events;
 using AW2.Game;
 
 namespace AW2.Graphics

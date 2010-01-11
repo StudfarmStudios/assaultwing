@@ -201,13 +201,19 @@ namespace AW2.Menu
                     menuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
                         AssaultWing.Instance.StartArena);
-
-                    // We don't accept input while an arena is loading.
-                    Active = false;
+                    menuEngine.Deactivate();
                 }
             }));
-            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () => --currentArena));
-            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () => ++currentArena));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () =>
+            {
+                --currentArena;
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+            }));
+            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () =>
+            {
+                ++currentArena;
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+            }));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlSelect, () =>
             {
                 if (currentArena >= 0 && currentArena < ArenaInfos.Count)
@@ -217,6 +223,7 @@ namespace AW2.Menu
                         selectedArenaNames.Remove(name);
                     else
                         selectedArenaNames.Add(name);
+                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 }
             }));
         }

@@ -4,7 +4,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
-using AW2.Events;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.UI;
@@ -48,7 +47,7 @@ namespace AW2.Menu
     {
         MenuComponentType activeComponent;
         MenuComponent[] components;
-        bool activeComponentActivatedOnce;
+        bool activeComponentActivatedOnce, activeComponentSoundPlayedOnce;
         bool showHelpText, showProgressBar;
         string helpText;
         Action finishAction; // what to do when progress bar finishes
@@ -187,7 +186,7 @@ namespace AW2.Menu
             components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
 
             WindowResize();
-            ActivateComponent(MenuComponentType.Main);
+            Activate();
             base.Initialize();
         }
 
@@ -197,6 +196,13 @@ namespace AW2.Menu
         public void Activate()
         {
             ActivateComponent(MenuComponentType.Main);
+            AssaultWing.Instance.SoundEngine.PlayMusic("menu music", 0.5f);
+        }
+
+        public void Deactivate()
+        {
+            AssaultWing.Instance.SoundEngine.StopMusic(TimeSpan.FromSeconds(2));
+            components[(int)activeComponent].Active = false;
         }
 
         /// <summary>
@@ -212,11 +218,14 @@ namespace AW2.Menu
 
             // Make menu view scroll to the new component's position.
             viewTarget = newComponent.Center;
-            viewCurve.SetTarget(viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, 1,
+            float duration = RandomHelper.GetRandomFloat(0.9f, 1.1f);
+            viewCurve.SetTarget(viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, duration,
                 MovementCurve.Curvature.FastSlow);
 
+            AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeStart");
+
             // The new component will be activated in 'Update()' when the view is closer to its center.
-            activeComponentActivatedOnce = false;
+            activeComponentSoundPlayedOnce = activeComponentActivatedOnce = false;
         }
 
         /// <summary>
@@ -261,6 +270,11 @@ namespace AW2.Menu
                 components[(int)activeComponent].Active = true;
                 IsProgressBarVisible = false;
                 IsHelpTextVisible = true;
+            }
+            if (!activeComponentSoundPlayedOnce && Vector2.Distance(view, viewTarget) < 1)
+            {
+                activeComponentSoundPlayedOnce = true;
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeEnd");
             }
 
             // Update menu components.

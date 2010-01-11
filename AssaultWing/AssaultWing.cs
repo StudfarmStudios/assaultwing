@@ -10,7 +10,6 @@ using AW2.Graphics;
 using AW2.Menu;
 using AW2.UI;
 using AW2.Sound;
-using AW2.Events;
 using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
@@ -95,7 +94,6 @@ namespace AW2
         DataEngine dataEngine;
         PhysicsEngine physicsEngine;
         SoundEngine soundEngine;
-        EventEngineImpl eventEngine;
         IMenuEngine menuEngine;
         int preferredWindowWidth, preferredWindowHeight;
         SurfaceFormat preferredWindowFormat;
@@ -183,21 +181,10 @@ namespace AW2
         }
 
         public string[] CommandLineArgs { get; set; }
-
-        /// <summary>
-        /// The physics engine of the game instance.
-        /// </summary>
         public PhysicsEngine PhysicsEngine { get { return physicsEngine; } }
-
-        /// <summary>
-        /// The data engine of the game instance.
-        /// </summary>
         public DataEngine DataEngine { get { return dataEngine; } }
-
-        /// <summary>
-        /// The network engine of the game instance.
-        /// </summary>
         public NetworkEngine NetworkEngine { get { return networkEngine; } }
+        public SoundEngine SoundEngine { get { return soundEngine; } }
 
         /// <summary>
         /// The current state of the game.
@@ -611,7 +598,6 @@ namespace AW2
         /// </summary>
         public void ShowMenu()
         {
-            soundEngine.StopMusic();
             dataEngine.ClearGameState();
             menuEngine.Activate();
             GameState = GameState.Menu;
@@ -751,7 +737,6 @@ namespace AW2
             overlayDialog = new OverlayDialog(this);
             dataEngine = new DataEngine();
             physicsEngine = new PhysicsEngine();
-            eventEngine = new EventEngineImpl();
 
             networkEngine.UpdateOrder = 0;
             uiEngine.UpdateOrder = 1;
@@ -770,7 +755,6 @@ namespace AW2
             Components.Add(networkEngine);
             Services.AddService(typeof(NetworkEngine), networkEngine);
             Services.AddService(typeof(DataEngine), dataEngine);
-            Services.AddService(typeof(EventEngine), eventEngine);
             Services.AddService(typeof(PhysicsEngine), physicsEngine);
 
             // Disable all optional components.
@@ -780,13 +764,6 @@ namespace AW2
             menuEngine.Visible = false;
             overlayDialog.Enabled = false;
             overlayDialog.Visible = false;
-
-#if DEBUG
-            SoundEffectEvent eventti = new SoundEffectEvent();
-            eventti.setAction(SoundOptions.Action.Artillery);
-            eventti.setEffect(SoundOptions.Effect.None);
-            eventEngine.SendEvent(eventti);
-#endif
 
             TargetElapsedTime = TimeSpan.FromSeconds(1 / 60.0); // 60 frames per second
             base.Initialize();
@@ -845,8 +822,9 @@ namespace AW2
             dataEngine.GameplayMode = new GameplayMode();
             dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler", "Snake" };
             dataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
-            dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets",
-                /* TODO, remove these: */ "peashooter", "shotgun", "lightning gun", "venom spray", "talon swoop"};
+            dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
+
+            soundEngine.UserMusicVolume = 1;
 
             GameState = GameState.Menu;
 

@@ -136,7 +136,7 @@ namespace AW2.Game.Gobs
                 Target.InflictDamage(impactDamage, new DeathCause(Target, DeathCauseType.Damage, this));
                 damageDealt = true;
             }
-            float seconds = birthTime.SecondsAgo();
+            float seconds = birthTime.SecondsAgoGameTime();
             Alpha = alphaCurve.Evaluate(seconds);
             if (seconds >= alphaCurve.Keys.Last().Position)
                 Die(new DeathCause());

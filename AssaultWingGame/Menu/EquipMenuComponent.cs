@@ -177,9 +177,7 @@ namespace AW2.Menu
                         menuEngine.ProgressBarAction(
                             AssaultWing.Instance.PrepareFirstArena,
                             AssaultWing.Instance.StartArena);
-
-                        // We don't accept input while an arena is loading.
-                        Active = false;
+                        menuEngine.Deactivate();
                         break;
                     case NetworkMode.Client:
                         // Client advances only when the server says so.
@@ -204,18 +202,26 @@ namespace AW2.Menu
                 {
                     if (currentItems[playerI] > 0)
                         --currentItems[playerI];
+                    AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 });
                 ConditionalPlayerAction(player.Controls.down.Pulse, playerI, () =>
                 {
                     if ((int)currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
                         ++currentItems[playerI];
+                    AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 });
 
                 int selectionChange = 0;
-                ConditionalPlayerAction(player.Controls.left.Pulse, playerI,
-                    () => { selectionChange = -1; });
-                ConditionalPlayerAction(player.Controls.fire1.Pulse || player.Controls.right.Pulse, playerI,
-                    () => { selectionChange = 1; });
+                ConditionalPlayerAction(player.Controls.left.Pulse, playerI, () =>
+                {
+                    selectionChange = -1;
+                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+                });
+                ConditionalPlayerAction(player.Controls.fire1.Pulse || player.Controls.right.Pulse, playerI, () =>
+                {
+                    selectionChange = 1;
+                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+                });
                 if (selectionChange != 0)
                 {
                     equipmentSelectors[playerI, (int)currentItems[playerI]].CurrentValue += selectionChange;
@@ -316,9 +322,7 @@ namespace AW2.Menu
                                 AssaultWing.Instance.StartArena();
                             }));
                         });
-
-                    // We don't accept input while an arena is loading.
-                    Active = false;
+                    menuEngine.Deactivate();
                 }
             }
         }

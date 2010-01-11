@@ -6,6 +6,7 @@ using AW2.Net.Messages;
 
 namespace AW2.Game.Gobs.Bonus
 {
+    //TODO: Refactor this. This is legacy and is used only by RandomBonus!
     /// <summary>
     /// What can happen when a bonus is activated.
     /// </summary>
@@ -39,7 +40,7 @@ namespace AW2.Game.Gobs.Bonus
         /// </summary>
         UpgradeWeapon2,
     }
-
+    //TODO: Refactor this. This is legacy and is used only by RandomBonus!
     /// <summary>
     /// A bonus action as one of many possible choices.
     /// </summary>

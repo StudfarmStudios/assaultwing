@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Events;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Net.Messages;
@@ -971,12 +970,7 @@ namespace AW2.Game
 
                     // Play a sound.
                     if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                    {
-                        EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-                        SoundEffectEvent soundEvent = new SoundEffectEvent();
-                        soundEvent.setAction(AW2.Sound.SoundOptions.Action.Collision);
-                        eventEngine.SendEvent(soundEvent);
-                    }
+                        AssaultWing.Instance.SoundEngine.PlaySound("Collision");
                 }
             }
         }
@@ -1051,12 +1045,7 @@ namespace AW2.Game
 
                     // Play a sound only if actual collision happened!.
                     if (move1Delta.Length() > MINIMUM_COLLISION_DELTA || move2after.Length() > MINIMUM_COLLISION_DELTA)
-                    {
-                        EventEngine eventEngine = (EventEngine)AssaultWing.Instance.Services.GetService(typeof(EventEngine));
-                        SoundEffectEvent soundEvent = new SoundEffectEvent();
-                        soundEvent.setAction(AW2.Sound.SoundOptions.Action.Shipcollision);
-                        eventEngine.SendEvent(soundEvent);
-                    }
+                        AssaultWing.Instance.SoundEngine.PlaySound("Shipcollision");
                 }
             }
         }

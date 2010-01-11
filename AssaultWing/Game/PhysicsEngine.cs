@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Events;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;

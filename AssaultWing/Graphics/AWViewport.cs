@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
+using AW2.Helpers;
 
 namespace AW2.Graphics
 {
@@ -56,11 +57,6 @@ namespace AW2.Graphics
         /// </summary>
         VertexPositionTexture[] vertexData;
 
-        /// <summary>
-        /// Index data scratch buffer for drawing parallaxes as 3D primitives.
-        /// </summary>
-        short[] indexData; // triangle fan
-
         #endregion Fields that are used only when PARALLAX_IN_3D is #defined
 
         /// <summary>
@@ -72,6 +68,11 @@ namespace AW2.Graphics
         /// Overlay graphics components to draw in this viewport.
         /// </summary>
         protected List<OverlayComponent> overlayComponents;
+
+        /// <summary>
+        /// Ratio of screen pixels to game world meters. Default value is 1.
+        /// </summary>
+        float zoomRatio;
 
         /// <summary>
         /// The area of the display to draw on.
@@ -95,7 +96,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMin(float z)
         {
-            return LookAt.Position - new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
+            return LookAt.Position - new Vector2(Viewport.Width, Viewport.Height) / (2 * zoomRatio * GetScale(z));
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMax(float z)
         {
-            return LookAt.Position + new Vector2(Viewport.Width, Viewport.Height) / 2 / GetScale(z);
+            return LookAt.Position + new Vector2(Viewport.Width, Viewport.Height) / (2 * zoomRatio * GetScale(z));
         }
 
         /// <summary>
@@ -115,7 +116,8 @@ namespace AW2.Graphics
         {
             float layerScale = GetScale(z);
             return Matrix.CreateOrthographic(
-                Viewport.Width / layerScale, Viewport.Height / layerScale,
+                Viewport.Width / (zoomRatio * layerScale),
+                Viewport.Height / (zoomRatio * layerScale),
                 1f, 11000f);
         }
 
@@ -148,6 +150,7 @@ namespace AW2.Graphics
                 MaxDepth = 1f
             };
             LookAt = lookAt;
+            zoomRatio = 1;
         }
 
         /// <summary>
@@ -301,7 +304,7 @@ namespace AW2.Graphics
                         drawMode = gob.DrawMode2D;
                         drawMode.Value.BeginDraw(spriteBatch);
                     }
-                    gob.Draw2D(gameToScreen, spriteBatch, layerScale);
+                    gob.Draw2D(gameToScreen, spriteBatch, layerScale * zoomRatio);
                 });
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(spriteBatch);
@@ -461,8 +464,8 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_IN_3D")]
         private void Draw_InitializeParallaxIn3D()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
             if (effect != null) return;
+            var gfx = AssaultWing.Instance.GraphicsDevice;
             effect = new BasicEffect(gfx, null);
             effect.World = Matrix.Identity;
             effect.Projection = Matrix.Identity;
@@ -473,12 +476,11 @@ namespace AW2.Graphics
             effect.VertexColorEnabled = false;
             vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
             vertexData = new VertexPositionTexture[] {
-                new VertexPositionTexture(new Vector3(-1, -1, 1), new Vector2(0, 1)),
-                new VertexPositionTexture(new Vector3(-1, 1, 1), new Vector2(0, 0)),
-                new VertexPositionTexture(new Vector3(1, 1, 1), new Vector2(1, 0)),
-                new VertexPositionTexture(new Vector3(1, -1, 1), new Vector2(1, 1))
+                new VertexPositionTexture(new Vector3(-1, -1, 1), Vector2.UnitY),
+                new VertexPositionTexture(new Vector3(-1, 1, 1), Vector2.Zero),
+                new VertexPositionTexture(new Vector3(1, -1, 1), Vector2.One),
+                new VertexPositionTexture(new Vector3(1, 1, 1), Vector2.UnitX)
             };
-            indexData = new short[] { 0, 1, 2, 3 };
         }
 
         /// <summary>
@@ -505,25 +507,21 @@ namespace AW2.Graphics
                 gfx.RenderState.DepthBufferEnable = false;
                 gfx.VertexDeclaration = vertexDeclaration;
                 effect.Texture = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                Vector2 texMin = GetScale(layer.Z) * new Vector2(
+                var texCenter = GetScale(layer.Z) * new Vector2(
                     LookAt.Position.X / effect.Texture.Width,
                     -LookAt.Position.Y / effect.Texture.Height);
-                Vector2 texMax = texMin + new Vector2(
-                    Viewport.Width / (float)effect.Texture.Width,
-                    -Viewport.Height / (float)effect.Texture.Height);
-                vertexData[0].TextureCoordinate = texMin;
-                vertexData[1].TextureCoordinate = new Vector2(texMin.X, texMax.Y);
-                vertexData[2].TextureCoordinate = texMax;
-                vertexData[3].TextureCoordinate = new Vector2(texMax.X, texMin.Y);
+                var texCornerOffset = new Vector2(
+                    Viewport.Width / (2f * effect.Texture.Width),
+                    -Viewport.Height / (2f * effect.Texture.Height)) / zoomRatio;
+                vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
+                vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
+                vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
+                vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
 
                 effect.Begin();
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Begin();
-                    gfx.DrawUserIndexedPrimitives<VertexPositionTexture>(
-                        PrimitiveType.TriangleFan, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length - 2);
-                    pass.End();
-                }
+                effect.CurrentTechnique.Passes[0].Begin();
+                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vertexData, 0, 2);
+                effect.CurrentTechnique.Passes[0].End();
                 effect.End();
             }
 
@@ -542,28 +540,35 @@ namespace AW2.Graphics
             {
                 spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
                 gfx.RenderState.AlphaTestEnable = false;
+                var tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                float texCenterX = (GetScale(layer.Z) * LookAt.Position.X).Modulo(tex.Width);
+                float texCenterY = (GetScale(layer.Z) * -LookAt.Position.Y).Modulo(tex.Height);
+                float screenStartX = (Viewport.Width / 2f - texCenterX * zoomRatio).Modulo(tex.Width * zoomRatio) - tex.Width * zoomRatio;
+                float screenStartY = (Viewport.Height / 2f - texCenterY * zoomRatio).Modulo(tex.Height * zoomRatio) - tex.Height * zoomRatio;
+                for (float posX = screenStartX; posX <= Viewport.Width; posX += tex.Width * zoomRatio)
+                    for (float posY = screenStartY; posY <= Viewport.Height; posY += tex.Height * zoomRatio)
+                        spriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, zoomRatio, SpriteEffects.None, 1);
+/*
                 Vector2 pos = WorldAreaMin(0) * -GetScale(layer.Z);
                 pos.Y = -pos.Y;
                 Vector2 fillPos = new Vector2();
-                Texture2D tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                int mult = (int)Math.Ceiling(pos.X / (float)tex.Width);
-                pos.X = pos.X - mult * tex.Width;
-                mult = (int)Math.Ceiling(pos.Y / (float)tex.Height);
-                pos.Y = pos.Y - mult * tex.Height;
+                pos.X -= tex.Width * (float)Math.Ceiling(pos.X / (tex.Width * zoomRatio));
+                pos.Y -= tex.Height * (float)Math.Ceiling(pos.Y / (tex.Height * zoomRatio));
+                int loopX = (int)Math.Ceiling((-pos.X + Viewport.Width) / (tex.Width * zoomRatio));
+                int loopY = (int)Math.Ceiling((-pos.Y + Viewport.Height) / (tex.Height * zoomRatio));
 
-                int loopX = (int)Math.Ceiling((-pos.X + Viewport.Width) / tex.Width);
-                int loopY = (int)Math.Ceiling((-pos.Y + Viewport.Height) / tex.Height);
                 fillPos.Y = pos.Y;
                 for (int y = 0; y < loopY; y++)
                 {
                     fillPos.X = pos.X;
                     for (int x = 0; x < loopX; x++)
                     {
-                        spriteBatch.Draw(tex, fillPos, Color.White);
-                        fillPos.X += tex.Width;
+                        spriteBatch.Draw(tex, fillPos, null, Color.White, 0, Vector2.Zero, zoomRatio, SpriteEffects.None, 1);
+                        fillPos.X += tex.Width * zoomRatio;
                     }
-                    fillPos.Y += tex.Height;
+                    fillPos.Y += tex.Height * zoomRatio;
                 }
+*/
                 spriteBatch.End();
             }
 

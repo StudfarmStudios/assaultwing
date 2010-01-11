@@ -415,6 +415,7 @@ namespace AW2.Game
             {
                 String key = BonusActions.Keys.ElementAt(i);
                 GameAction bonusAction = BonusActions[key];
+                bonusAction.update();
                 if (bonusAction.actionTimeouts <= AssaultWing.Instance.GameTime.TotalGameTime)
                 {
                     bonusAction.RemoveAction();

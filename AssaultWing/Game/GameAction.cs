@@ -24,7 +24,6 @@ namespace AW2.Game
         public String BonusText { get { return bonusText; } }
         public String BonusIconName { get { return bonusIconName; } }
         public Texture2D BonusIcon { get { return bonusIcon; } }
-
         /// <summary>
         /// Starting times of the player's GameAction.
         /// </summary>
@@ -71,6 +70,14 @@ namespace AW2.Game
         /// Returs the default state
         /// </summary>
         public virtual void RemoveAction()
+        {
+
+        }
+
+        /// <summary>
+        /// Actions that do something when active
+        /// </summary>
+        public virtual void update()
         {
 
         }

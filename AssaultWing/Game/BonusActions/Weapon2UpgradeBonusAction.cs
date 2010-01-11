@@ -46,6 +46,7 @@ namespace AW2.Game.BonusActions
             SetActionMessage();
         }
 
+
         /// <summary>
         /// Enables the ActionMessage (used in BonusOverlay)
         /// </summary>

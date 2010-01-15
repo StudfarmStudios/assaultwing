@@ -14,8 +14,19 @@ namespace AW2.Graphics
     //Used to tell what the bonus is doing
     public enum DisplayDirection{ENTER,EXIT};
     
-    public class DisplayObject
+    public class BonusOverlay
     {
+        public BonusOverlay(GameAction action)
+        {
+            bonusEntryDirection = DisplayDirection.ENTER;
+            bonusEntryPosAdjustments = Vector2.Zero;
+            bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
+            gameActionData = action;
+        }
+
+        public BonusOverlay()
+        {
+        }
         /// <summary>
         /// Times, in game time, at which the player's bonus boxes started
         /// sliding in to the player's viewport overlay or out of it.
@@ -46,6 +57,8 @@ namespace AW2.Graphics
         /// Stores the displayPosition of the bonusOverlay
         /// </summary>
         public Vector2 displayPosition;
+
+
     }
 
     /// <summary>
@@ -61,7 +74,7 @@ namespace AW2.Graphics
         /// <summary>
         /// This dictionary stores all objects we need to display
         /// </summary>
-        List<DisplayObject> displayQueue = new List<DisplayObject>();
+        List<BonusOverlay> displayQueue = new List<BonusOverlay>();
 
         /// <summary>
         /// The X-movement curve of a bonux box that enters a player's
@@ -150,7 +163,7 @@ namespace AW2.Graphics
             bonusBoxClose.Keys.Add(new CurveKey(1.0f, 0));
             bonusBoxClose.ComputeTangents(CurveTangent.Smooth);
             bonusBoxClose.PostLoop = CurveLoopType.Constant;
-            displayQueue.Add(new DisplayObject
+            displayQueue.Add(new BonusOverlay
             {
                 bonusEntryDirection = DisplayDirection.ENTER,
                 bonusEntryPosAdjustments = Vector2.Zero,
@@ -203,16 +216,6 @@ namespace AW2.Graphics
             spriteBatch.DrawString(bonusFont, bonusText, textPos, Color.White);
         }
 
-        private DisplayObject CreateBonusOverlay(GameAction action)
-        {
-            DisplayObject bonusOverlay = new DisplayObject();
-            bonusOverlay.bonusEntryDirection = DisplayDirection.ENTER;
-            bonusOverlay.bonusEntryPosAdjustments = Vector2.Zero;
-            bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
-            bonusOverlay.gameActionData = action;
-            return bonusOverlay;
-        }
-
         /// <summary>
         /// Draws the overlay graphics component using the guarantee that the
         /// graphics device's viewport is set to the exact area needed by the component.
@@ -226,16 +229,16 @@ namespace AW2.Graphics
             //Remove expired bonusOverlays from the queue
             for (int i = displayQueue.Count-1; i >= 1; i--)
             {
-                DisplayObject bonusOverlay = displayQueue[i];
+                BonusOverlay bonusOverlay = displayQueue[i];
                 if (bonusOverlay.displayPosition.X >= 0 && bonusOverlay.bonusEntryDirection == DisplayDirection.EXIT)
                     displayQueue.RemoveAt(i);
             }
 
             //this dictionary is only used for reduce load from the loop that adds new objects to queue
-            Dictionary<String, DisplayObject> gameActionsInQueue = new Dictionary<String, DisplayObject>();
+            Dictionary<String, BonusOverlay> gameActionsInQueue = new Dictionary<String, BonusOverlay>();
             for (int i=1;i<displayQueue.Count;i++)
             {
-                DisplayObject bonusOverlay = displayQueue[i];
+                BonusOverlay bonusOverlay = displayQueue[i];
                 //if bonus is exitting it doesn't exist. when the same bonus is activated
                 //when the bonusOverlay is exitting, the will be a new bonusOverlay as a last item it the list
                 if(bonusOverlay.bonusEntryDirection != DisplayDirection.EXIT)
@@ -247,11 +250,11 @@ namespace AW2.Graphics
             {
                 if (!gameActionsInQueue.Keys.Contains(action.TypeName))
                 {
-                    displayQueue.Add(CreateBonusOverlay(action));
+                    displayQueue.Add(new BonusOverlay(action));
                 }
                 else
                 {
-                    DisplayObject bonusOverlay = gameActionsInQueue[action.TypeName];
+                    BonusOverlay bonusOverlay = gameActionsInQueue[action.TypeName];
                     bonusOverlay.gameActionData = action;
                 }
             }
@@ -259,7 +262,7 @@ namespace AW2.Graphics
             //Handle Displayables
             for (int i=1;i<displayQueue.Count;i++)
             {
-                DisplayObject bonusOverlay = displayQueue[i];
+                BonusOverlay bonusOverlay = displayQueue[i];
                 float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
                 - bonusOverlay.bonusEntryTimeins.TotalSeconds);
 

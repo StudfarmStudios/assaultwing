@@ -30,13 +30,13 @@ namespace AW2.Graphics
     {
         #region Fields that are used only when VIEWPORT_BLUR is #defined
 
-        RenderTarget2D rTarg = null;
-        RenderTarget2D rTarg2 = null;
-        SpriteBatch sprite = null;
-        DepthStencilBuffer depthBuffer = null;
-        DepthStencilBuffer depthBuffer2 = null;
-        DepthStencilBuffer defDepthBuffer = null;
-        Effect bloomatic = null;
+        [Obsolete] RenderTarget2D rTarg = null;
+        [Obsolete] RenderTarget2D rTarg2 = null;
+        [Obsolete] SpriteBatch sprite = null;
+        [Obsolete] DepthStencilBuffer depthBuffer = null;
+        [Obsolete] DepthStencilBuffer depthBuffer2 = null;
+        [Obsolete] DepthStencilBuffer defDepthBuffer = null;
+        [Obsolete] Effect bloomatic = null;
 
         #endregion Fields that are used only when VIEWPORT_BLUR is #defined
 
@@ -68,6 +68,8 @@ namespace AW2.Graphics
         /// Overlay graphics components to draw in this viewport.
         /// </summary>
         protected List<OverlayComponent> overlayComponents;
+
+        TexturePostprocessor _postprocessor;
 
         /// <summary>
         /// Ratio of screen pixels to game world meters. Default value is 1.
@@ -261,11 +263,27 @@ namespace AW2.Graphics
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Viewport = Viewport;
-            var view = ViewMatrix;
             gfx.Clear(Color.Black);
             Draw_InitializeBlur();
             Draw_InitializeParallaxIn3D();
+            _postprocessor.ProcessToScreen(RenderGameWorld);
+            Draw_DrawBlur();
+            DrawOverlayComponents();
+        }
 
+        private void DrawOverlayComponents()
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            gfx.Viewport = Viewport;
+            foreach (OverlayComponent component in overlayComponents)
+                component.Draw(spriteBatch);
+        }
+
+        private void RenderGameWorld()
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var view = ViewMatrix;
+            gfx.Clear(Color.Black);
             foreach (var layer in AssaultWing.Instance.DataEngine.Arena.Layers)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
@@ -309,13 +327,6 @@ namespace AW2.Graphics
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(spriteBatch);
             }
-
-            Draw_DrawBlur();
-
-            // Overlay components
-            gfx.Viewport = Viewport;
-            foreach (OverlayComponent component in overlayComponents)
-                component.Draw(spriteBatch);
         }
 
         /// <summary>
@@ -324,6 +335,7 @@ namespace AW2.Graphics
         public virtual void LoadContent()
         {
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            _postprocessor = new TexturePostprocessor(AssaultWing.Instance.GraphicsDevice);
             foreach (OverlayComponent component in overlayComponents)
                 component.LoadContent();
             LoadContent_Blur();
@@ -336,6 +348,7 @@ namespace AW2.Graphics
         {
             foreach (OverlayComponent component in overlayComponents)
                 component.UnloadContent();
+            _postprocessor.Dispose();
             spriteBatch.Dispose();
             UnloadContent_Blur();
         }
@@ -353,6 +366,7 @@ namespace AW2.Graphics
         #region Methods that are used only conditionally
 
         [Conditional("VIEWPORT_BLUR")]
+        [Obsolete]
         private void LoadContent_Blur()
         {
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
@@ -381,6 +395,7 @@ namespace AW2.Graphics
         }
 
         [Conditional("VIEWPORT_BLUR")]
+        [Obsolete]
         private void UnloadContent_Blur()
         {
             if (rTarg != null)
@@ -393,6 +408,7 @@ namespace AW2.Graphics
         }
 
         [Conditional("VIEWPORT_BLUR")]
+        [Obsolete]
         private void Draw_InitializeBlur()
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
@@ -402,6 +418,7 @@ namespace AW2.Graphics
         }
 
         [Conditional("VIEWPORT_BLUR")]
+        [Obsolete]
         private void Draw_DrawBlur()
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;

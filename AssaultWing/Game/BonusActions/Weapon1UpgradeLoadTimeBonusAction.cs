@@ -29,7 +29,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         private void UpgradeWeapon(CanonicalString weaponUpgrade)
         {
-            player.Ship.Devices.Weapon1Name = weaponUpgrade;
+            player.Ship.Devices.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, weaponUpgrade);
         }
         /// <summary>
         /// Action method. Contains logic for enabling the action
@@ -68,7 +68,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         public override void RemoveAction()
         {
-            player.Ship.Devices.Weapon1Name = player.Weapon1RealName;
+            player.Ship.Devices.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, player.Weapon1RealName);
         }
     }
 }

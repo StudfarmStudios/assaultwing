@@ -88,6 +88,11 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
+    <Compile Include="effects\basicshaders.fx">
+      <Name>basicshaders</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <Compile Include="assaultwingsounds.xap">
       <Name>assaultwingsounds</Name>
       <Importer>XactImporter</Importer>

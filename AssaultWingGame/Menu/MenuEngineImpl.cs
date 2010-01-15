@@ -8,6 +8,7 @@ using AW2.Game;
 using AW2.Graphics;
 using AW2.UI;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace AW2.Menu
 {
@@ -54,6 +55,7 @@ namespace AW2.Menu
         Vector2 view; // center of menu view in menu system coordinates
         Vector2 viewTarget;
         MovementCurve viewCurve;
+        Cue menuChangeCue;
         int viewWidth, viewHeight; // how many pixels to show scaled down to the screen
         int screenWidth, screenHeight; // last known dimensions of client bounds
 
@@ -196,7 +198,7 @@ namespace AW2.Menu
         public void Activate()
         {
             ActivateComponent(MenuComponentType.Main);
-            AssaultWing.Instance.SoundEngine.PlayMusic("menu music", 0.5f);
+            AssaultWing.Instance.SoundEngine.PlayMusic("menu music", 1);
         }
 
         public void Deactivate()
@@ -222,7 +224,13 @@ namespace AW2.Menu
             viewCurve.SetTarget(viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, duration,
                 MovementCurve.Curvature.FastSlow);
 
-            AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeStart");
+            if (menuChangeCue != null)
+            {
+                menuChangeCue.Stop(AudioStopOptions.Immediate);
+                menuChangeCue.Dispose();
+            }
+            menuChangeCue = AssaultWing.Instance.SoundEngine.GetCue("MenuChangeStart");
+            menuChangeCue.Play();
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             activeComponentSoundPlayedOnce = activeComponentActivatedOnce = false;
@@ -274,6 +282,7 @@ namespace AW2.Menu
             if (!activeComponentSoundPlayedOnce && Vector2.Distance(view, viewTarget) < 1)
             {
                 activeComponentSoundPlayedOnce = true;
+                if (menuChangeCue != null) menuChangeCue.Stop(AudioStopOptions.AsAuthored);
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeEnd");
             }
 

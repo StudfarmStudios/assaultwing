@@ -148,6 +148,7 @@
     <Compile Include="Game\Weapons\LightningGun.cs" />
     <Compile Include="Game\Weapons\Thruster.cs" />
     <Compile Include="Graphics\ArenaOverOverlayDialogData.cs" />
+    <Compile Include="Graphics\AutoRenderTarget2D.cs" />
     <Compile Include="Graphics\AWContentManager.cs" />
     <Compile Include="Graphics\AWViewport.cs" />
     <Compile Include="Graphics\BonusListOverlay.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Graphics\PlayerViewport.cs" />
     <Compile Include="Graphics\ProgressBar.cs" />
     <Compile Include="Graphics\RadarOverlay.cs" />
+    <Compile Include="Graphics\TexturePostprocessor.cs" />
     <Compile Include="Helpers\AbortableThreadPool.cs" />
     <Compile Include="Helpers\AWPerformanceCounter.cs" />
     <Compile Include="Helpers\CanonicalString.cs" />

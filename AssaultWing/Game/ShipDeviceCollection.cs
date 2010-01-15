@@ -41,9 +41,6 @@ namespace AW2.Game
         /// </summary>
         float weapon2ChargeSpeed;
 
-        // Names of weapons to create when possible.
-        CanonicalString weapon1Name, weapon2Name;
-
         // These flags signal visual things over the network.
         bool visualWeapon1Fired;
         bool visualWeapon2Fired;
@@ -60,24 +57,10 @@ namespace AW2.Game
         public Weapon Weapon1 { get; private set; }
 
         /// <summary>
-        /// Name of the type of main weapon the ship is using.
+        /// Name of the type of main weapon the ship is using. Same as
+        /// <c>Weapon1.TypeName</c> but works even when <c>Weapon1 == null</c>.
         /// </summary>
-        public CanonicalString Weapon1Name
-        {
-            get { return Weapon1 == null ? WEAPON_DEFAULT_NAME : Weapon1.TypeName; }
-            set
-            {
-                // Null weapon means we're not yet activated. Then create weapon later.
-                if (Weapon1 != null)
-                {
-                    AssaultWing.Instance.DataEngine.Devices.Remove(Weapon1);
-                    Weapon1.Dispose();
-                    Weapon1 = (Weapon)CreateDevice(value, Weapon.OwnerHandleType.PrimaryWeapon);
-                }
-                else
-                    weapon1Name = value;
-            }
-        }
+        public CanonicalString Weapon1Name { get; private set; }
 
         /// <summary>
         /// Amount of charge for extra devices,
@@ -99,7 +82,6 @@ namespace AW2.Game
         /// </summary>
         public bool ExtraDeviceLoaded { get { return ExtraDevice.Loaded; } }
 
-
         public CanonicalString ExtraDeviceName { get; set; }
 
         /// <summary>
@@ -113,24 +95,10 @@ namespace AW2.Game
         public Weapon Weapon2 { get; private set; }
 
         /// <summary>
-        /// Name of the type of secondary weapon the ship is using.
+        /// Name of the type of secondary weapon the ship is using. Same as
+        /// <c>Weapon2.TypeName</c> but works even when <c>Weapon2 == null</c>.
         /// </summary>
-        public CanonicalString Weapon2Name
-        {
-            get { return Weapon2 == null ? WEAPON_DEFAULT_NAME : Weapon2.TypeName; }
-            set
-            {
-                // Null weapon means we're not yet activated. Then create weapon later.
-                if (Weapon2 != null)
-                {
-                    AssaultWing.Instance.DataEngine.Devices.Remove(Weapon2);
-                    Weapon2.Dispose();
-                    Weapon2 = (Weapon)CreateDevice(value, Weapon.OwnerHandleType.SecondaryWeapon);
-                }
-                else
-                    weapon2Name = value;
-            }
-        }
+        public CanonicalString Weapon2Name { get; private set; }
 
         /// <summary>
         /// Amount of charge for secondary weapons, between <b>0</b> and <b>Weapon2ChargeMax</b>.
@@ -150,6 +118,8 @@ namespace AW2.Game
         /// Is any of the secondary weapons loaded.
         /// </summary>
         public bool Weapon2Loaded { get { return Weapon2.Loaded; } }
+
+        private bool Activated { get { return Weapon1 != null && Weapon2 != null && ExtraDevice != null; } }
 
         #endregion
 
@@ -171,7 +141,7 @@ namespace AW2.Game
             this.extraDeviceChargeSpeed = extraDeviceChargeSpeed;
             this.weapon2ChargeSpeed = weapon2ChargeSpeed;
             Weapon1 = (Weapon)CreateDevice(ship.Weapon1TypeName, Weapon.OwnerHandleType.PrimaryWeapon);
-            if (weapon2Name != CanonicalString.Null) Weapon2 = (Weapon)CreateDevice(weapon2Name, Weapon.OwnerHandleType.SecondaryWeapon);
+            if (Weapon2Name != CanonicalString.Null) Weapon2 = (Weapon)CreateDevice(Weapon2Name, Weapon.OwnerHandleType.SecondaryWeapon);
             if (ExtraDeviceName != CanonicalString.Null) ExtraDevice = CreateDevice(ExtraDeviceName, Weapon.OwnerHandleType.ExtraDevice);
             ExtraDeviceCharge = ExtraDeviceChargeMax;
             Weapon2Charge = Weapon2ChargeMax;
@@ -231,8 +201,8 @@ namespace AW2.Game
         {
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                Weapon1Name = (CanonicalString)reader.ReadInt32();
-                Weapon2Name = (CanonicalString)reader.ReadInt32();
+                SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, (CanonicalString)reader.ReadInt32());
+                SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, (CanonicalString)reader.ReadInt32());
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -250,6 +220,37 @@ namespace AW2.Game
                 // muzzleFireEngine state over the network.
                 if (weapon1Fired) Fire1(new AW2.UI.ControlState(1, true)); // HACK !!!
                 if (weapon2Fired) Fire2(new AW2.UI.ControlState(1, true)); // HACK !!!
+            }
+        }
+
+        public void SetDeviceType(Weapon.OwnerHandleType deviceType, CanonicalString typeName)
+        {
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1Name = typeName; break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2Name = typeName; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDeviceName = typeName; break;
+                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
+            }
+
+            // If we are not activated, the next call to Activate() will create the device.
+            if (!Activated) return;
+
+            ShipDevice oldDevice = null;
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: oldDevice = Weapon1; break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: oldDevice = Weapon2; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: oldDevice = ExtraDevice; break;
+            }
+            AssaultWing.Instance.DataEngine.Devices.Remove(oldDevice);
+            oldDevice.Dispose();
+            var newDevice = CreateDevice(typeName, deviceType);
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1 = (Weapon)newDevice; break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2 = (Weapon)newDevice; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDevice = newDevice; break;
             }
         }
 

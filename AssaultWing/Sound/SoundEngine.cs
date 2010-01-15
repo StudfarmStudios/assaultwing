@@ -141,6 +141,11 @@ namespace AW2.Sound
             soundBank.PlayCue(soundName);
         }
 
+        public Cue GetCue(string soundName)
+        {
+            return soundBank.GetCue(soundName);
+        }
+
         #endregion
     }
 }

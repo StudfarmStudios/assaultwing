@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Gobs;
-using AW2.Helpers;
-using AW2.UI;
 using AW2.Game.Particles;
+using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
+using AW2.UI;
 
 namespace AW2.Game
 {
@@ -56,15 +55,6 @@ namespace AW2.Game
         /// Type of ship the player has chosen to fly.
         /// </summary>
         CanonicalString shipTypeName;
-
-        /// <summary>
-        /// Type of secondary weapon the player has chosen to use.
-        /// Note that the player may be forced to use a weapon different from
-        /// his original choice.
-        /// </summary>
-        /// <seealso cref="Weapon2Name"/>
-        /// <seealso cref="Weapon2RealName"/>
-        CanonicalString weapon2Name;
 
         /// <summary>
         /// Contains all player actions
@@ -243,14 +233,7 @@ namespace AW2.Game
         /// <summary>
         /// The name of the secondary weapon as the player has chosen it.
         /// </summary>
-        public CanonicalString Weapon2Name
-        {
-            get { return weapon2Name; }
-            set
-            {
-                weapon2Name = value;
-            }
-        }
+        public CanonicalString Weapon2Name { get; set; }
 
         /// <summary>
         /// The name of the extra device as the player has chosen it.
@@ -275,11 +258,11 @@ namespace AW2.Game
         {
             set
             {
-                weapon2Name = value;
+                Weapon2Name = value;
             }
             get
             {
-                    return weapon2Name;
+                return Weapon2Name;
             }
         }
 
@@ -356,7 +339,7 @@ namespace AW2.Game
             Id = leastUnusedId++;
             Name = name;
             this.shipTypeName = shipTypeName;
-            this.weapon2Name = weapon2Name;
+            Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
             messages = new List<string>();
             lives = 3;
@@ -577,7 +560,7 @@ namespace AW2.Game
                 writer.Write((int)Id);
                 writer.Write(Name, 32, true);
                 writer.Write(shipTypeName, 32, true);
-                writer.Write(weapon2Name, 32, true);
+                writer.Write(Weapon2Name, 32, true);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -595,7 +578,7 @@ namespace AW2.Game
                 Id = reader.ReadInt32();
                 Name = reader.ReadString(32);
                 shipTypeName = (CanonicalString)reader.ReadString(32);
-                weapon2Name = (CanonicalString)reader.ReadString(32);
+                Weapon2Name = (CanonicalString)reader.ReadString(32);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -660,8 +643,8 @@ namespace AW2.Game
                 var arena = AssaultWing.Instance.DataEngine.Arena;
                 Ship newShip = (Ship)gob;
                 newShip.Owner = this;
-                newShip.Devices.Weapon1Name = Weapon1Name;
-                newShip.Devices.Weapon2Name = weapon2Name;
+                newShip.Devices.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
+                newShip.Devices.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.Devices.ExtraDeviceName = ExtraDeviceName;
 
                 // Find a starting place for the new ship.

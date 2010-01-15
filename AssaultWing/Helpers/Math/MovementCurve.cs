@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace AW2.Helpers
@@ -35,9 +32,14 @@ namespace AW2.Helpers
             /// Movement is linear, constant speed.
             /// </summary>
             Linear,
+
+            /// <summary>
+            /// Movement is almost linear, with mild acceleration and deceleration at the ends.
+            /// </summary>
+            AlmostLinear,
         }
 
-        static readonly Curve slowFastSlowCurve, slowFastCurve, fastSlowCurve, linearCurve;
+        static readonly Curve slowFastSlowCurve, slowFastCurve, fastSlowCurve, linearCurve, almostLinearCurve;
         Curve curve;
         TimeSpan time1;
         Vector2 pos1, pos2;
@@ -68,6 +70,10 @@ namespace AW2.Helpers
             linearCurve.Keys.Add(new CurveKey(1, 1));
             linearCurve.ComputeTangents(CurveTangent.Linear);
             linearCurve.PreLoop = linearCurve.PostLoop = CurveLoopType.Constant;
+            almostLinearCurve = new Curve();
+            almostLinearCurve.Keys.Add(new CurveKey(0, 0, 0, 0.25f, CurveContinuity.Smooth));
+            almostLinearCurve.Keys.Add(new CurveKey(1, 1, 0.25f, 0, CurveContinuity.Smooth));
+            almostLinearCurve.PreLoop = linearCurve.PostLoop = CurveLoopType.Constant;
         }
 
         /// <summary>
@@ -107,6 +113,7 @@ namespace AW2.Helpers
                 case Curvature.SlowFast: curve = slowFastCurve; break;
                 case Curvature.FastSlow: curve = fastSlowCurve; break;
                 case Curvature.Linear: curve = linearCurve; break;
+                case Curvature.AlmostLinear: curve = almostLinearCurve; break;
                 default: throw new Exception("Unexpected curvature " + type);
             }
         }

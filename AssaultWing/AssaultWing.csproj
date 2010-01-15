@@ -136,7 +136,6 @@
     <Compile Include="Game\Pengs\ViewportEmitter.cs" />
     <Compile Include="Game\PhysicsEngine.cs" />
     <Compile Include="Game\Player.cs" />
-    <Compile Include="Game\PlayerBonus.cs" />
     <Compile Include="Game\ShipDevice.cs" />
     <Compile Include="Game\ShipDeviceCollection.cs" />
     <Compile Include="Game\ShipLocationPredicter.cs" />

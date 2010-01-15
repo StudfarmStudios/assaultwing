@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Bonus.RandomBonus, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">randombonus</typeName>
-   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <_ticks type="System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000000</_ticks>
    </networkUpdatePeriod>
   <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">0</duration>
@@ -30,12 +30,12 @@
       <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bonus collect flash</Item>
 	     <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bonus collect</Item>
   </deathGobTypes>
-  <possibilities type="AW2.Game.Gobs.Bonus.BonusActionPossibility[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<!--  <possibilities type="AW2.Game.Gobs.Bonus.BonusActionPossibility[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Item type="AW2.Game.Gobs.Bonus.BonusActionPossibility, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</weight>
          <action type="AW2.Game.Gobs.Bonus.BonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Explode</action>
       </Item>
-      <!--<Item type="AW2.Game.Gobs.Bonus.BonusActionPossibility, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <Item type="AW2.Game.Gobs.Bonus.BonusActionPossibility, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</weight>
          <action type="AW2.Game.Gobs.Bonus.BonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">UpgradeWeapon2</action>
          <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">30</duration>
@@ -44,8 +44,9 @@
          <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.5</weight>
          <action type="AW2.Game.Gobs.Bonus.BonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">UpgradeWeapon1LoadTime</action>
          <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">60</duration>
-      </Item>-->
+      </Item>
   </possibilities>
+  -->
   <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalOtherDamageableMovable</type>

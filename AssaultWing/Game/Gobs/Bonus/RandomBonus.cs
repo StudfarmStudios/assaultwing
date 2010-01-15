@@ -11,14 +11,15 @@ namespace AW2.Game.Gobs.Bonus
     /// </summary>
     public class RandomBonus : Bonus
     {
+        /*TODO: Randon bonus needs to be refactored*/
         #region Bonus fields
-
+/*
         /// <summary>
         /// The possibile bonus actions that collecting the bonus can activate.
         /// </summary>
         [TypeParameter, ShallowCopy]
         BonusActionPossibility[] possibilities;
-        
+*/        
         #endregion Bonus fields
 
         /// <summary>
@@ -30,11 +31,9 @@ namespace AW2.Game.Gobs.Bonus
         {
             this.lifetime = 10;
             this.deathTime = new TimeSpan(0, 1, 20);
-            this.possibilities = new BonusActionPossibility[] {
-                new BonusActionPossibility(1, BonusAction.Explode)
                 /*new BonusActionPossibility(2, BonusAction.UpgradeWeapon2, 10),
                 new BonusActionPossibility(1.5f, BonusAction.UpgradeWeapon1LoadTime, 15)*/
-            };
+            
         }
 
         /// <summary>
@@ -77,21 +76,22 @@ namespace AW2.Game.Gobs.Bonus
         /// <param name="player">The player to receive the bonus action.</param>
         protected override void DoBonusAction(Player player)
         {
-            if (possibilities.Length == 0) 
+            /*if (possibilities.Length == 0) 
                 throw new InvalidOperationException("Bonus has no possible bonus actions");
-
+            */
             // Pick our choice from the combined probability mass 
             // and then find out which possibility we hit.
-            float massTotal = possibilities.Sum(possibility => possibility.weight);
+            /* TODO: Refactor
+             * float massTotal = possibilities.Sum(possibility => possibility.weight);
             float choice = RandomHelper.GetRandomFloat(0, massTotal);
             massTotal = 0;
-            BonusActionPossibility poss = new BonusActionPossibility();
+            //BonusActionPossibility poss = new BonusActionPossibility();
             for (int i = 0; i < possibilities.Length && choice >= massTotal; ++i)
             {
                 poss = possibilities[i];
                 massTotal += poss.weight;
             }
-
+            */
             // Perform the bonus action.
 
         }

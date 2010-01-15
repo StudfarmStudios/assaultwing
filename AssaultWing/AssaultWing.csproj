@@ -144,6 +144,7 @@
     <Compile Include="Game\TypeLoader.cs" />
     <Compile Include="Game\Weapon.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
+    <Compile Include="Game\Weapons\SelfDestruct.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />
     <Compile Include="Game\Weapons\LightningGun.cs" />
     <Compile Include="Game\Weapons\Thruster.cs" />

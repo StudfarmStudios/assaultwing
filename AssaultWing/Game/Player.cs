@@ -70,13 +70,14 @@ namespace AW2.Game
         /// Contains all player actions
         /// </summary>
         /// <seealso cref="PlayerBonus"/>
-        public Dictionary<string,GameAction> BonusActions;
+        private List<GameAction> bonusActions;
+        public List<GameAction> BonusActions { get { return bonusActions; } private set { bonusActions = value; } }
 
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
         /// </summary>
         List<string> messages;
-
+        
         /// <summary>
         /// How many reincarnations the player has left.
         /// </summary>
@@ -385,7 +386,7 @@ namespace AW2.Game
                 shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
             lookAt = new LookAtShip();
-            BonusActions = new Dictionary<string, GameAction>();
+            BonusActions = new List<GameAction>();
         }
 
         #endregion Constructors
@@ -394,7 +395,7 @@ namespace AW2.Game
 
         private void ClearBonusActions()
         {
-            foreach (GameAction bonus in BonusActions.Values)
+            foreach (GameAction bonus in BonusActions)
             {
                 bonus.RemoveAction();
             }
@@ -411,15 +412,15 @@ namespace AW2.Game
             /*We need to use the old fashioned for loop because Dictionary
              In C# you can't remove object from lists while you are iterating them with a foreach
              */
-            for (int i = BonusActions.Values.Count - 1; i >= 0; i--)
+            for (int i = BonusActions.Count - 1; i >= 0; i--)
             {
-                String key = BonusActions.Keys.ElementAt(i);
-                GameAction bonusAction = BonusActions[key];
-                bonusAction.update();
-                if (bonusAction.actionTimeouts <= AssaultWing.Instance.GameTime.TotalGameTime)
+                GameAction action = BonusActions[i];
+                
+                action.Update();
+                if (action.actionTimeouts <= AssaultWing.Instance.GameTime.TotalGameTime)
                 {
-                    bonusAction.RemoveAction();
-                    BonusActions.Remove(key);
+                    action.RemoveAction();
+                    BonusActions.Remove(action);
                 }
             }
 
@@ -455,6 +456,21 @@ namespace AW2.Game
                 message.Write(this, SerializationModeFlags.VaryingData);
                 AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }
+        }
+
+        public void AddBonusAction(GameAction action)
+        {
+            for (int i = 0; i < BonusActions.Count; i++)
+            {
+                GameAction playersBonusAction = BonusActions[i];
+                if (playersBonusAction.TypeName.Equals(action.TypeName))
+                {
+                    BonusActions.RemoveAt(i);
+                    BonusActions.Insert(i, action);
+                    return;
+                }
+            }
+            BonusActions.Add(action);
         }
 
         /// <summary>

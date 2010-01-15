@@ -77,7 +77,7 @@ namespace AW2.Game
         /// <summary>
         /// Actions that do something when active
         /// </summary>
-        public virtual void update()
+        public virtual void Update()
         {
 
         }

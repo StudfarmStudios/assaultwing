@@ -70,7 +70,6 @@ namespace AW2.Game.Gobs.Bonus
         protected override void DoBonusAction(Player player)
         {
             gameAction.Player = player;
-            String key = gameAction.TypeName;
             gameAction.DoAction(duration);
 
             Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
@@ -80,11 +79,10 @@ namespace AW2.Game.Gobs.Bonus
                 ((BonusMessage)gob).IconName = gameAction.BonusIconName;
                 AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
             });
-
-            if (player.BonusActions.ContainsKey(key))
-                player.BonusActions.Remove(key);
-            player.BonusActions.Add(key, gameAction);
+            player.AddBonusAction(gameAction);     
         }
+
+
 
         #region IConsistencyCheckable Members
 

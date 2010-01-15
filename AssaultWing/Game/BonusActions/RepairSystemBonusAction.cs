@@ -50,7 +50,7 @@ namespace AW2.Game.BonusActions
         /// <summary>
         /// Actions that do something when active
         /// </summary>
-        public override void update()
+        public override void Update()
         {
             if (AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds >= (lastActivatedTime + updateCycle))
             {

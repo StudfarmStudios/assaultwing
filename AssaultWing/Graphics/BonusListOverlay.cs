@@ -11,7 +11,8 @@ using AW2.Helpers;
 
 namespace AW2.Graphics
 {
-    public enum DisplayDirection{ENTER,READY_FOR_EXIT,EXIT};
+    //Used to tell what the bonus is doing
+    public enum DisplayDirection{ENTER,EXIT};
     
     public class DisplayObject
     {
@@ -40,6 +41,11 @@ namespace AW2.Graphics
         /// GameAction which we are displaying.
         /// </summary>
         public GameAction gameActionData;
+
+        /// <summary>
+        /// Stores the displayPosition of the bonusOverlay
+        /// </summary>
+        public Vector2 displayPosition;
     }
 
     /// <summary>
@@ -55,14 +61,7 @@ namespace AW2.Graphics
         /// <summary>
         /// This dictionary stores all objects we need to display
         /// </summary>
-        Dictionary<String, DisplayObject> displayObjects = new Dictionary<String, DisplayObject>();
-
-        /// <summary>
-        /// This list handles the display order. Stores a key reference to the displayable object
-        /// </summary>
-        /// Same type bonus will stay on the same position. Keys are only removed if the DisplayObject
-        /// is removed. New DisplayObjects are always put to the last position.
-        List<String> displayOrder = new List<String>();
+        List<DisplayObject> displayQueue = new List<DisplayObject>();
 
         /// <summary>
         /// The X-movement curve of a bonux box that enters a player's
@@ -151,7 +150,13 @@ namespace AW2.Graphics
             bonusBoxClose.Keys.Add(new CurveKey(1.0f, 0));
             bonusBoxClose.ComputeTangents(CurveTangent.Smooth);
             bonusBoxClose.PostLoop = CurveLoopType.Constant;
-            displayOrder.Add("zero");
+            displayQueue.Add(new DisplayObject
+            {
+                bonusEntryDirection = DisplayDirection.ENTER,
+                bonusEntryPosAdjustments = Vector2.Zero,
+            }
+            );
+
         }
 
         /// <summary>
@@ -198,6 +203,16 @@ namespace AW2.Graphics
             spriteBatch.DrawString(bonusFont, bonusText, textPos, Color.White);
         }
 
+        private DisplayObject CreateBonusOverlay(GameAction action)
+        {
+            DisplayObject bonusOverlay = new DisplayObject();
+            bonusOverlay.bonusEntryDirection = DisplayDirection.ENTER;
+            bonusOverlay.bonusEntryPosAdjustments = Vector2.Zero;
+            bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
+            bonusOverlay.gameActionData = action;
+            return bonusOverlay;
+        }
+
         /// <summary>
         /// Draws the overlay graphics component using the guarantee that the
         /// graphics device's viewport is set to the exact area needed by the component.
@@ -207,49 +222,44 @@ namespace AW2.Graphics
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            //List that contains the object that are drawed to the players screen
-            List<Vector2> displayQueue = new List<Vector2>();
-            //Contains all keys that need's to be removed from DisplayObject Dictionary and DisplayOrder List
-            List<String> removeKeys = new List<String>();
-            displayQueue.Add(Vector2.Zero);
             var data = AssaultWing.Instance.DataEngine;
-            //Add new bonuses for display
-            //All GameActions that are not in displayOrder
-            foreach (String key in player.BonusActions.Keys.Except<String>(displayOrder))
+            //Remove expired bonusOverlays from the queue
+            for (int i = displayQueue.Count-1; i >= 1; i--)
             {
-                displayOrder.Add(key);
-                DisplayObject bonusOverlay = new DisplayObject();
-                bonusOverlay.bonusEntryDirection = DisplayDirection.ENTER;
-                bonusOverlay.bonusEntryPosAdjustments = Vector2.Zero;
-                bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
-                bonusOverlay.gameActionData = player.BonusActions[key];
-                if (displayObjects.ContainsKey(key))
-                    displayObjects.Remove(key);                   
-                displayObjects.Add(key, bonusOverlay);
+                DisplayObject bonusOverlay = displayQueue[i];
+                if (bonusOverlay.displayPosition.X >= 0 && bonusOverlay.bonusEntryDirection == DisplayDirection.EXIT)
+                    displayQueue.RemoveAt(i);
             }
-            
-            //Add Bonuses for exitting
-            //All DisplayObjects that are not in GameAction list
-            foreach (String key in displayOrder.Except<String>(player.BonusActions.Keys))
+
+            //this dictionary is only used for reduce load from the loop that adds new objects to queue
+            Dictionary<String, DisplayObject> gameActionsInQueue = new Dictionary<String, DisplayObject>();
+            for (int i=1;i<displayQueue.Count;i++)
             {
-                if (key.Equals("zero"))
-                    continue;
-                DisplayObject bonusOverlay = displayObjects[key];
-                if (bonusOverlay.bonusEntryDirection==DisplayDirection.ENTER)
+                DisplayObject bonusOverlay = displayQueue[i];
+                //if bonus is exitting it doesn't exist. when the same bonus is activated
+                //when the bonusOverlay is exitting, the will be a new bonusOverlay as a last item it the list
+                if(bonusOverlay.bonusEntryDirection != DisplayDirection.EXIT)
+                    gameActionsInQueue.Add(bonusOverlay.gameActionData.TypeName, bonusOverlay);
+            }
+
+            //Loop bonusActions and add them to displayQueue if they don't exist yet
+            foreach (GameAction action in player.BonusActions)
+            {
+                if (!gameActionsInQueue.Keys.Contains(action.TypeName))
                 {
-                    bonusOverlay.bonusEntryDirection = DisplayDirection.READY_FOR_EXIT;
+                    displayQueue.Add(CreateBonusOverlay(action));
+                }
+                else
+                {
+                    DisplayObject bonusOverlay = gameActionsInQueue[action.TypeName];
+                    bonusOverlay.gameActionData = action;
                 }
             }
-            
-            //Handle Displayables
-            for (int i = 1; i <displayOrder.Count; i++)
-            {
-                String key = displayOrder[i];
-                
-                DisplayObject bonusOverlay = displayObjects[key];
-                if(bonusOverlay.bonusEntryDirection==DisplayDirection.ENTER)
-                    bonusOverlay.gameActionData = player.BonusActions[key];
 
+            //Handle Displayables
+            for (int i=1;i<displayQueue.Count;i++)
+            {
+                DisplayObject bonusOverlay = displayQueue[i];
                 float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
                 - bonusOverlay.bonusEntryTimeins.TotalSeconds);
 
@@ -257,64 +267,47 @@ namespace AW2.Graphics
                 Vector2 curvePos, shift, scale;
 
                 //Do entry for bonusOverlay
-                if (bonusOverlay.bonusEntryDirection==DisplayDirection.ENTER ||
-                    bonusOverlay.bonusEntryDirection==DisplayDirection.READY_FOR_EXIT)
+                if (bonusOverlay.bonusEntryDirection == DisplayDirection.ENTER)
                 {
-                    curvePos = GetCurvePos(bonusBoxEntry,bonusBoxAvoid,slideTime);
-                    shift = GetEntryShift(bonusBoxEntry,bonusBoxAvoid,adjustment);
-                    scale = GetScale(bonusBoxEntry,bonusBoxAvoid,adjustment);
+                    curvePos = GetCurvePos(bonusBoxEntry, bonusBoxAvoid, slideTime);
+                    shift = GetEntryShift(bonusBoxEntry, bonusBoxAvoid, adjustment);
+                    scale = GetScale(bonusBoxEntry, bonusBoxAvoid, adjustment);
                 } //do exit for bonusOverlay
                 else
                 {
-                    curvePos = GetCurvePos(bonusBoxExit,bonusBoxClose,slideTime);
-                    shift = GetExitShift(bonusBoxExit,bonusBoxClose,adjustment);
-                    scale = GetScale(bonusBoxExit,bonusBoxClose,adjustment);
+                    curvePos = GetCurvePos(bonusBoxExit, bonusBoxClose, slideTime);
+                    shift = GetExitShift(bonusBoxExit, bonusBoxClose, adjustment);
+                    scale = GetScale(bonusBoxExit, bonusBoxClose, adjustment);
                 }
 
                 //get relative position
                 Vector2 relativePos = new Vector2(
                     (curvePos.X + shift.X) * scale.X,
                     (curvePos.Y + shift.Y) * scale.Y);
-
-                //calculate position for each displayable
-                if (bonusOverlay.bonusEntryDirection == DisplayDirection.READY_FOR_EXIT)
+                
+                /*update bonusOverlay when the bonus in player ceases to be*/
+                if (!player.BonusActions.Contains(bonusOverlay.gameActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.ENTER)
                 {
                     bonusOverlay.bonusEntryPosAdjustments = relativePos;
                     bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
                     bonusOverlay.bonusEntryDirection = DisplayDirection.EXIT;
                 }
-
-                Vector2 newBonusPos = new Vector2(-bonusBackgroundTexture.Width * relativePos.X,
-                        displayQueue[displayQueue.Count - 1].Y + bonusBackgroundTexture.Height * relativePos.Y);
-
-                //remove elements that are exitting and are not visible
-                if (bonusOverlay.bonusEntryDirection==DisplayDirection.EXIT && newBonusPos.X >= 0)
-                {
-                    removeKeys.Add(key);
-                }
-                if (newBonusPos.X < 0)
-                {
-                    displayQueue.Add(newBonusPos);
-                }
-
+                
+                //calculate position for each displayable
+                bonusOverlay.displayPosition = new Vector2(-bonusBackgroundTexture.Width * relativePos.X,
+                        displayQueue[i - 1].displayPosition.Y + bonusBackgroundTexture.Height * relativePos.Y);
             }
 
-            /*Clean exitted bonusOverlays*/
-            foreach(String key in removeKeys)
-            {
-                displayOrder.Remove(key);
-                displayObjects.Remove(key);
-            }
             // Draw the bonus boxes in their places.
             Point dimensions = Dimensions;
             Vector2 bonusBoxAreaTopRight = new Vector2(dimensions.X * 2,
-                dimensions.Y - displayQueue[displayQueue.Count - 1].Y) / 2;
+                dimensions.Y - displayQueue[displayQueue.Count - 1].displayPosition.Y) / 2;
 
             for (int i = 1; i < displayQueue.Count; ++i)
             {
-                Vector2 leftMiddlePoint = new Vector2(displayQueue[i].X + bonusBoxAreaTopRight.X,
-                    bonusBoxAreaTopRight.Y + (displayQueue[i].Y + displayQueue[i - 1].Y) / 2);
-                DrawBonusBox(spriteBatch, leftMiddlePoint, displayObjects[displayOrder[i]].gameActionData);
+                Vector2 leftMiddlePoint = new Vector2(displayQueue[i].displayPosition.X + bonusBoxAreaTopRight.X,
+                    bonusBoxAreaTopRight.Y + (displayQueue[i].displayPosition.Y + displayQueue[i - 1].displayPosition.Y) / 2);
+                DrawBonusBox(spriteBatch, leftMiddlePoint, displayQueue[i].gameActionData);
             }
         }
 

@@ -15,9 +15,12 @@ namespace AW2.Game
 
         protected Player player;
 
-
+        [TypeParameter]
         protected string bonusText;
+
+        [TypeParameter]
         protected string bonusIconName;
+
         protected Texture2D bonusIcon;
 
         public Player Player { get { return player; } set { player = value; } }

@@ -91,6 +91,7 @@ namespace AW2.Game
                 device.Arena = Arena;
                 device.Activate();
             };
+            Devices.Removed += device => device.Dispose();
 
             viewports = new List<Viewport>();
             viewportSeparators = new List<ViewportSeparator>();

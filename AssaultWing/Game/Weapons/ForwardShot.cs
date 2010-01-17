@@ -156,7 +156,7 @@ namespace AW2.Game.Weapons
         /// <summary>
         /// Fires the weapon.
         /// </summary>
-        public override void Fire(AW2.UI.ControlState triggerState)
+        protected override void FireImpl(AW2.UI.ControlState triggerState)
         {
             switch (fireAction)
             {

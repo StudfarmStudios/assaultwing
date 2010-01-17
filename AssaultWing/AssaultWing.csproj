@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssaultWing.cs" />
+    <Compile Include="Game\BonusActions\SelfdestructBonusAction.cs" />
     <Compile Include="Game\BonusActions\RepairSystemBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Game\Gobs\Wall.cs" />
     <Compile Include="Game\Gobs\WallModel.cs" />
     <Compile Include="Game\Gobs\WallPolygon.cs" />
+    <Compile Include="Game\ChargeProvider.cs" />
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Particles\DotEmitter.cs" />
     <Compile Include="Game\Particles\Emitter.cs" />
@@ -137,7 +139,6 @@
     <Compile Include="Game\PhysicsEngine.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\ShipDevice.cs" />
-    <Compile Include="Game\ShipDeviceCollection.cs" />
     <Compile Include="Game\ShipLocationPredicter.cs" />
     <Compile Include="Game\Spectator.cs" />
     <Compile Include="Game\TypeLoader.cs" />

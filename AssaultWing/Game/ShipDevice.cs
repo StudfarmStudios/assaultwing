@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Helpers;
+using AW2.Net;
 
 namespace AW2.Game
 {
@@ -11,7 +13,7 @@ namespace AW2.Game
     /// </summary>
     /// <seealso cref="Weapon"/>
     [LimitedSerialization]
-    public abstract class ShipDevice : Clonable
+    public abstract class ShipDevice : Clonable, INetworkSerializable
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
 
@@ -49,11 +51,6 @@ namespace AW2.Game
         protected float loadTime;
 
         /// <summary>
-        /// Time from which on the weapon is loaded, in game time.
-        /// </summary>
-        protected TimeSpan loadedTime;
-
-        /// <summary>
         /// Bonus Multiplier for loadtime
         /// </summary>
         protected float loadTimeMultiplier;
@@ -69,6 +66,9 @@ namespace AW2.Game
         /// </summary>
         [TypeParameter]
         float fireChargePerSecond;
+
+        ChargeProvider _chargeProvider;
+        float _charge;
 
         #region Properties
 
@@ -132,20 +132,34 @@ namespace AW2.Game
         /// <summary>
         /// Time from which on the weapon is loaded, in game time.
         /// </summary>
-        public TimeSpan LoadedTime { get { return loadedTime; } }
+        public TimeSpan LoadedTime { get; protected set; }
 
         /// <summary>
         /// Is the weapon loaded. The setter is for game clients only.
         /// </summary>
         public bool Loaded
         {
-            get { return FireMode == FireModeType.Continuous || loadedTime <= AssaultWing.Instance.GameTime.TotalGameTime; }
+            get { return FireMode == FireModeType.Continuous || LoadedTime <= AssaultWing.Instance.GameTime.TotalGameTime; }
             set
             {
-                if (value && !Loaded) loadedTime = AssaultWing.Instance.GameTime.TotalGameTime;
-                if (!value && Loaded) loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(1);
+                if (value && !Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalGameTime;
+                if (!value && Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(1);
             }
         }
+
+        /// <summary>
+        /// Current amount of charge.
+        /// </summary>
+        public float Charge
+        {
+            get { return _charge; }
+            set { _charge = MathHelper.Clamp(value, 0, ChargeMax); }
+        }
+
+        /// <summary>
+        /// Maximum amount of charge.
+        /// </summary>
+        public float ChargeMax { get { return _chargeProvider.ChargeMax(); } }
 
         /// <summary>
         /// Amount of charge required to fire the weapon once.
@@ -166,7 +180,6 @@ namespace AW2.Game
         {
             get
             {
-                float chargeNow = owner.Devices.GetCharge(ownerHandle);
                 float neededCharge;
                 switch (FireMode)
                 {
@@ -178,7 +191,7 @@ namespace AW2.Game
                         break;
                     default: throw new ApplicationException("Unexpected FireModeType: " + FireMode);
                 }
-                return Loaded && neededCharge <= chargeNow;
+                return Loaded && neededCharge <= Charge;
             }
         }
 
@@ -201,21 +214,45 @@ namespace AW2.Game
         {
             owner = null;
             ownerHandle = 0;
-            loadedTime = new TimeSpan(0);
+            LoadedTime = new TimeSpan(0);
             loadTimeMultiplier = 1;
+        }
+
+        /// <summary>
+        /// Creates a new instance of a named ship device type. If the device is a weapon,
+        /// it is instantiated at each gun barrel on the ship's 3D model.
+        /// </summary>
+        /// <param name="deviceName">Name of the device type.</param>
+        /// <param name="ownerHandle">A handle for identifying the device at the owner.</param>
+        /// <param name="ship">The ship to own the device.</param>
+        /// <returns>The created device.</returns>
+        public static ShipDevice CreateDevice(CanonicalString deviceName, ShipDevice.OwnerHandleType ownerHandle, Ship ship)
+        {
+            var device = (ShipDevice)Clonable.Instantiate(deviceName);
+            if (ownerHandle == ShipDevice.OwnerHandleType.PrimaryWeapon ||
+                ownerHandle == ShipDevice.OwnerHandleType.SecondaryWeapon)
+            {
+                KeyValuePair<string, int>[] boneIs = ship.GetNamedPositions("Gun");
+                if (boneIs.Length == 0) Log.Write("Warning: Ship found no gun barrels in its 3D model");
+                int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs, pair => pair.Value);
+                ((Weapon)device).AttachTo(ship, ownerHandle, boneIndices);
+            }
+            else
+                device.AttachTo(ship, ownerHandle);
+            AssaultWing.Instance.DataEngine.Devices.Add(device);
+            return device;
         }
 
         #region Public methods
 
-        /// <summary>
-        /// Attaches the device to a ship.
-        /// </summary>
         /// <param name="owner">The ship to attach to.</param>
         /// <param name="ownerHandle">A handle for identifying the device at the owner.</param>
         public void AttachTo(Ship owner, OwnerHandleType ownerHandle)
         {
             this.owner = owner;
             this.ownerHandle = ownerHandle;
+            _chargeProvider = owner.GetChargeProvider(ownerHandle);
+            _charge = ChargeMax;
         }
 
         /// <summary>
@@ -227,7 +264,13 @@ namespace AW2.Game
         /// <summary>
         /// Fires (uses) the device.
         /// </summary>
-        public abstract void Fire(AW2.UI.ControlState triggerState);
+        public void Fire(AW2.UI.ControlState triggerState)
+        {
+            if (owner.Disabled) return;
+            FireImpl(triggerState);
+        }
+
+        protected abstract void FireImpl(AW2.UI.ControlState triggerState);
 
         /// <summary>
         /// Updates the device's state. This method is called regularly.
@@ -255,15 +298,12 @@ namespace AW2.Game
             switch (FireMode)
             {
                 case FireModeType.Single:
-                    owner.Devices.UseCharge(ownerHandle, FireCharge);
+                    Charge -= FireCharge;
                     // Make the weapon unloaded for eternity until subclass calls DoneFiring().
-                    loadedTime = TimeSpan.MaxValue;
+                    LoadedTime = TimeSpan.MaxValue;
                     break;
                 case FireModeType.Continuous:
-                    {
-                        float seconds = (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-                        owner.Devices.UseCharge(ownerHandle, FireChargePerSecond * seconds);
-                    }
+                    Charge -= FireChargePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
                     break;
             }
         }
@@ -279,7 +319,7 @@ namespace AW2.Game
             switch (FireMode)
             {
                 case FireModeType.Single:
-                    loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime*LoadTimeMultiplier);
+                    LoadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime*LoadTimeMultiplier);
                     break;
                 case FireModeType.Continuous:
                     break;
@@ -287,5 +327,19 @@ namespace AW2.Game
         }
 
         #endregion Protected methods
+
+        #region INetworkSerializable Members
+
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

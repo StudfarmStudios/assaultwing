@@ -37,7 +37,7 @@ namespace AW2.Game.Weapons
             FireMode = FireModeType.Single;
         }
 
-        public override void Fire(AW2.UI.ControlState triggerState)
+        protected override void FireImpl(AW2.UI.ControlState triggerState)
         {
             if (!CanFire) return;
             if (triggerState.pulse)

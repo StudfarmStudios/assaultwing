@@ -51,8 +51,6 @@ namespace AW2.Game.BonusActions
         /// </summary>
         private void SetActionMessage()
         {
-            bonusText = "Health";
-            bonusIconName = "b_icon_general";
             bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
         }
     }

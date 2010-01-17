@@ -29,7 +29,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         private void UpgradeWeapon(CanonicalString weaponUpgrade)
         {
-            player.Ship.Devices.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, weaponUpgrade);
+            player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, weaponUpgrade);
         }
         /// <summary>
         /// Action method. Contains logic for enabling the action
@@ -37,8 +37,7 @@ namespace AW2.Game.BonusActions
         public override void DoAction(float duration)
         {
             base.DoAction(duration);
-
-            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Ship.Devices.Weapon2Name);
+            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Ship.Weapon2Name);
             if (weapon2.UpgradeNames != null && weapon2.UpgradeNames.Length > 0)
             {
                 CanonicalString weaponUpgrade = weapon2.UpgradeNames[0];
@@ -55,10 +54,10 @@ namespace AW2.Game.BonusActions
         {
             var data = AssaultWing.Instance.DataEngine;
             /*this if is waste of CPU if action is activated then, ship usually exists*/
-            Weapon weapon2 = player.Ship != null ? player.Ship.Devices.Weapon2
-               : (Weapon)data.GetTypeTemplate(player.Weapon2RealName);
+            Weapon weapon2 = player.Ship != null ? player.Ship.Weapon2
+               : (Weapon)data.GetTypeTemplate(player.Weapon2Name);
 
-            bonusText = player.Ship.Devices.Weapon2Name;
+            bonusText = player.Ship.Weapon2Name;
             bonusIconName = weapon2.IconName;
             bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
         }
@@ -68,7 +67,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         public override void RemoveAction()
         {
-            player.Ship.Devices.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, player.Weapon2RealName);
+            player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, player.Weapon2Name);
         }
     }
 }

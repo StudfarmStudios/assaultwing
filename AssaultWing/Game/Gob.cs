@@ -1328,7 +1328,6 @@ namespace AW2.Game
             // Create death gobs.
             foreach (var gobType in deathGobTypes)
             {
-                Log.Write("Death gob:" + gobType);
                 CreateGob(gobType, gob =>
                 {
                     gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);

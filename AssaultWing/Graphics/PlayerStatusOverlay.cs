@@ -90,7 +90,7 @@ namespace AW2.Graphics
             if (player.Ship != null)
             {
                 Rectangle charge1BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling(player.Ship.Devices.ExtraDeviceCharge / player.Ship.Devices.ExtraDeviceChargeMax
+                    (int)Math.Ceiling(player.Ship.ExtraDevice.Charge / player.Ship.ExtraDevice.ChargeMax
                     * barMainTexture.Width),
                     barMainTexture.Height);
                 spriteBatch.Draw(barMainTexture,
@@ -103,9 +103,9 @@ namespace AW2.Graphics
             // Extra device loadedness
             if (player.Ship != null)
             {
-                if (player.Ship.Devices.ExtraDeviceLoaded)
+                if (player.Ship.ExtraDevice.Loaded)
                 {
-                    float seconds = player.Ship.Devices.ExtraDevice.LoadedTime.SecondsAgoGameTime();
+                    float seconds = player.Ship.ExtraDevice.LoadedTime.SecondsAgoGameTime();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)
@@ -124,7 +124,7 @@ namespace AW2.Graphics
             if (player.Ship != null)
             {
                 Rectangle charge2BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling(player.Ship.Devices.Weapon2Charge / player.Ship.Devices.Weapon2ChargeMax
+                    (int)Math.Ceiling(player.Ship.Weapon2.Charge / player.Ship.Weapon2.ChargeMax
                     * barSpecialTexture.Width),
                     barSpecialTexture.Height);
                 spriteBatch.Draw(barSpecialTexture,
@@ -137,9 +137,9 @@ namespace AW2.Graphics
             // Secondary weapon loadedness
             if (player.Ship != null)
             {
-                if (player.Ship.Devices.Weapon2Loaded)
+                if (player.Ship.Weapon2.Loaded)
                 {
-                    float seconds = player.Ship.Devices.Weapon2.LoadedTime.SecondsAgoGameTime();
+                    float seconds = player.Ship.Weapon2.LoadedTime.SecondsAgoGameTime();
                     float scale = 1;
                     Color color = Color.White;
                     if (seconds < 0.2f)

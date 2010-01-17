@@ -224,9 +224,9 @@ namespace AW2.Game
         {
             get
             {
-                if (ship != null) return ship.Weapon1TypeName;
+                if (ship != null) return ship.Weapon1Name;
                 var shipType = (Ship)AssaultWing.Instance.DataEngine.GetTypeTemplate(ShipName);
-                return shipType.Weapon1TypeName;
+                return shipType.Weapon1Name;
             }
         }
 
@@ -239,32 +239,6 @@ namespace AW2.Game
         /// The name of the extra device as the player has chosen it.
         /// </summary>
         public CanonicalString ExtraDeviceName { get; set; }
-
-        /// <summary>
-        /// The name of the primary weapon, considering all current bonuses.
-        /// </summary>
-        public CanonicalString Weapon1RealName
-        {
-            get
-            {
-                return Weapon1Name;
-            }
-        }
-
-        /// <summary>
-        /// The name of the secondary weapon, considering all current bonuses.
-        /// </summary>
-        public CanonicalString Weapon2RealName
-        {
-            set
-            {
-                Weapon2Name = value;
-            }
-            get
-            {
-                return Weapon2Name;
-            }
-        }
 
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
@@ -610,11 +584,11 @@ namespace AW2.Game
             if (Controls.right.Force > 0)
                 Ship.TurnRight(Controls.right.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
             if (Controls.fire1.Pulse || Controls.fire1.Force > 0)
-                Ship.Devices.Fire1(Controls.fire1.State);
+                Ship.Weapon1.Fire(Controls.fire1.State);
             if (Controls.fire2.Pulse || Controls.fire2.Force > 0)
-                Ship.Devices.Fire2(Controls.fire2.State);
+                Ship.Weapon2.Fire(Controls.fire2.State);
             if (Controls.extra.Pulse || Controls.extra.Force > 0)
-                Ship.Devices.DoExtra(Controls.extra.State);
+                Ship.ExtraDevice.Fire(Controls.extra.State);
         }
 
         /// <summary>
@@ -644,9 +618,9 @@ namespace AW2.Game
                 var arena = AssaultWing.Instance.DataEngine.Arena;
                 Ship newShip = (Ship)gob;
                 newShip.Owner = this;
-                newShip.Devices.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
-                newShip.Devices.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
-                newShip.Devices.ExtraDeviceName = ExtraDeviceName;
+                newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
+                newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
+                newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
 
                 // Find a starting place for the new ship.
                 // Use player spawn areas if there's any. Otherwise just randomise a position.

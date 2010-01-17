@@ -10,6 +10,12 @@ namespace AW2.Game.BonusActions
 {
     class Weapon1UpgradeLoadTimeBonusAction : GameAction
     {
+        [TypeParameter]
+        float multiplier;
+
+        [TypeParameter]
+        float maxMultiplier;
+
         public Weapon1UpgradeLoadTimeBonusAction(CanonicalString typeName)
             : base(typeName)
         {
@@ -25,12 +31,25 @@ namespace AW2.Game.BonusActions
         }
 
         /// <summary>
+        /// This method upgrades the weapon
+        /// </summary>
+        private void UpgradeWeapon()
+        {
+            ShipDevice.OwnerHandleType deviceType = ShipDevice.OwnerHandleType.PrimaryWeapon;
+            float currentMultiplier = player.Ship.GetDeviceLoadMultiplier(deviceType);
+            float newMultiplier = currentMultiplier * multiplier;
+            if (newMultiplier <= maxMultiplier)
+                newMultiplier = maxMultiplier;
+            player.Ship.SetDeviceLoadMultiplier(deviceType, newMultiplier);
+ 
+        }
+        /// <summary>
         /// Action method. Contains logic for enabling the action
         /// </summary>
         public override void DoAction(float duration)
         {
             base.DoAction(duration);
-            player.Ship.Devices.Weapon1.LoadTimeMultiplier = 0.5f;
+            UpgradeWeapon();
             SetActionMessage();
         }
 
@@ -41,10 +60,9 @@ namespace AW2.Game.BonusActions
         {
             var data = AssaultWing.Instance.DataEngine;
             /*this if is waste of CPU if action is activated then, ship usually exists*/
-            Weapon weapon1 = player.Ship != null ? player.Ship.Devices.Weapon1
-               : (Weapon)data.GetTypeTemplate(player.Weapon1RealName);
-            bonusText = player.Weapon1RealName+ "\nspeedloader";
-            bonusIconName = "b_icon_rapid_fire_1";
+            Weapon weapon1 = player.Ship != null ? player.Ship.Weapon1
+               : (Weapon)data.GetTypeTemplate(player.Weapon1Name);
+            bonusText = player.Weapon1Name+"\n"+bonusText;
             bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
         }
 
@@ -53,7 +71,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         public override void RemoveAction()
         {
-            player.Ship.Devices.Weapon1.LoadTimeMultiplier = 1f;
+            player.Ship.SetDeviceLoadMultiplier(ShipDevice.OwnerHandleType.PrimaryWeapon, 1);
         }
     }
 }

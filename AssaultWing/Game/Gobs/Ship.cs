@@ -71,6 +71,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         float weapon2ChargeSpeed;
 
+        bool _isActivated;
+
         #endregion Ship fields related to weapons
 
         #region Ship fields related to rolling
@@ -204,14 +206,26 @@ namespace AW2.Game.Gobs
         public float ThrustForce { get { return thrustForce; } }
 
         /// <summary>
-        /// The primary weapon, secondary weapon, and extra device of the ship.
+        /// Name of the type of main weapon the ship is using. Same as
+        /// <c>Weapon1.TypeName</c> but works even when <see cref="Weapon1"/> is null.
         /// </summary>
-        public ShipDeviceCollection Devices { get; private set; }
+        public CanonicalString Weapon1Name { get { return weapon1TypeName; } }
 
         /// <summary>
-        /// Name of the type of primary weapon the ship type uses.
+        /// Name of the type of secondary weapon the ship is using. Same as
+        /// <c>Weapon2.TypeName</c> but works even when <see cref="Weapon2"/> is null.
         /// </summary>
-        public CanonicalString Weapon1TypeName { get { return weapon1TypeName; } }
+        public CanonicalString Weapon2Name { get; private set; }
+
+        /// <summary>
+        /// Name of the type of extra device the ship is using. Same as
+        /// <c>ExtraDevice.TypeName</c> but works even when <see cref="ExtraDevice"/> is null.
+        /// </summary>
+        public CanonicalString ExtraDeviceName { get; set; }
+
+        public Weapon Weapon1 { get; private set; }
+        public Weapon Weapon2 { get; private set; }
+        public ShipDevice ExtraDevice { get; private set; }
 
         /// <summary>
         /// Name of the ship's icon in the equip menu main display.
@@ -277,7 +291,6 @@ namespace AW2.Game.Gobs
         public Ship(CanonicalString typeName)
             : base(typeName)
         {
-            Devices = new ShipDeviceCollection(this);
             this.temporarilyDisabledGobs = new List<Gob>();
             LocationPredicter = new ShipLocationPredicter(this);
         }
@@ -341,7 +354,13 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            Devices.Activate(extraDeviceChargeMax, weapon2ChargeMax, extraDeviceChargeSpeed, weapon2ChargeSpeed);
+            _isActivated = true;
+
+            // Deferred initialization of ship devices
+            if (Weapon1 == null && Weapon1Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
+            if (Weapon2 == null && Weapon2Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
+            if (ExtraDevice == null && ExtraDeviceName != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
+
             SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
             CreateCoughEngines();
@@ -352,8 +371,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Update()
         {
+            var elapsedGameTime = AssaultWing.Instance.GameTime.ElapsedGameTime;
+
             // Manage turn-related rolling.
-            rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
+            rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed, elapsedGameTime);
             rollAngle.Advance();
             if (!rollAngleGoalUpdated)
                 rollAngle.Target = 0;
@@ -361,7 +382,7 @@ namespace AW2.Game.Gobs
 
             LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
             {
-                GameTime = AssaultWing.Instance.GameTime.TotalGameTime - AssaultWing.Instance.GameTime.ElapsedGameTime,
+                GameTime = AssaultWing.Instance.GameTime.TotalGameTime - elapsedGameTime,
                 Pos = Pos,
                 Move = Move,
                 Rotation = Rotation
@@ -393,7 +414,8 @@ namespace AW2.Game.Gobs
                     ((Peng)coughEngine).Paused = coughArgument == 0;
                 }
 
-            Devices.Update(AssaultWing.Instance.GameTime.ElapsedGameTime);
+            ExtraDevice.Charge += extraDeviceChargeSpeed * (float)elapsedGameTime.TotalSeconds;
+            Weapon2.Charge += weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
 
             // Flash and be disabled if we're just born.
             float age = birthTime.SecondsAgoGameTime();
@@ -418,7 +440,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Dispose()
         {
-            Devices.Dispose();
+            AssaultWing.Instance.DataEngine.Devices.Remove(Weapon1);
+            AssaultWing.Instance.DataEngine.Devices.Remove(Weapon2);
+            AssaultWing.Instance.DataEngine.Devices.Remove(ExtraDevice);
             base.Dispose();
         }
 
@@ -444,7 +468,9 @@ namespace AW2.Game.Gobs
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            Devices.Serialize(writer, mode);
+            Weapon1.Serialize(writer, mode);
+            Weapon2.Serialize(writer, mode);
+            ExtraDevice.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
             }
@@ -462,7 +488,9 @@ namespace AW2.Game.Gobs
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             base.Deserialize(reader, mode, messageAge);
-            Devices.Deserialize(reader, mode, messageAge);
+            Weapon1.Deserialize(reader, mode, messageAge);
+            Weapon2.Deserialize(reader, mode, messageAge);
+            ExtraDevice.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
             }
@@ -580,5 +608,96 @@ namespace AW2.Game.Gobs
         }
 
         public ShipLocationPredicter LocationPredicter { get; private set; }
+
+        public ChargeProvider GetChargeProvider(ShipDevice.OwnerHandleType deviceType)
+        {
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon:
+                    return new ChargeProvider(() => int.MaxValue, () => 0);
+                case ShipDevice.OwnerHandleType.SecondaryWeapon:
+                    return new ChargeProvider(() => weapon2ChargeMax, () => weapon2ChargeSpeed);
+                case ShipDevice.OwnerHandleType.ExtraDevice:
+                    return new ChargeProvider(() => extraDeviceChargeMax, () => extraDeviceChargeSpeed);
+                default: throw new ApplicationException("Unknown ship device type " + deviceType);
+            }
+        }
+        /// <summary>
+        /// Sets the LoadTimeMultiplier to the device
+        /// </summary>
+        /// <param name="g_deviceType"></param>
+        /// <param name="g_multiplier"></param>
+        public void SetDeviceLoadMultiplier(ShipDevice.OwnerHandleType g_deviceType, float g_multiplier)
+        {
+            ShipDevice device = GetDevice(g_deviceType);
+            device.LoadTimeMultiplier = g_multiplier;
+        }
+        
+        /// <summary>
+        /// Return the current Device Loadt Multiplier
+        /// </summary>
+        /// <param name="g_deviceType"></param>
+        public float GetDeviceLoadMultiplier(ShipDevice.OwnerHandleType g_deviceType)
+        {
+            ShipDevice device = GetDevice(g_deviceType);
+            return device.LoadTimeMultiplier;
+        }
+
+
+        /// <summary>
+        /// Return the device of the device type
+        /// </summary>
+        /// <param name="deviceType"></param>
+        /// <returns>ShipDevice of the given deviceType</returns>
+        private ShipDevice GetDevice(ShipDevice.OwnerHandleType deviceType)
+        {
+            ShipDevice device;
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: device=Weapon1; break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: device = Weapon2; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: device = ExtraDevice; break;
+                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
+            }
+            return device;
+        }
+        public void SetDeviceType(ShipDevice.OwnerHandleType deviceType, CanonicalString typeName)
+        {
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon:
+                    if (typeName != weapon1TypeName)
+                        throw new InvalidOperationException("Cannot set Ship primary weapon " + typeName +
+                            ", fixed primary weapon is " + weapon1TypeName);
+                    break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2Name = typeName; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDeviceName = typeName; break;
+                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
+            }
+
+            // If we are not activated, the next call to Activate() will create the device.
+            // Creating weapons is deferred until the ship is activated because it
+            // requires looking at the ship's 3D model which is initialized only when
+            // the arena is played for sure.
+            if (!_isActivated) return;
+
+            ShipDevice oldDevice = null;
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: oldDevice = Weapon1; break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: oldDevice = Weapon2; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: oldDevice = ExtraDevice; break;
+                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
+            }
+            if (oldDevice != null) AssaultWing.Instance.DataEngine.Devices.Remove(oldDevice);
+            var newDevice = ShipDevice.CreateDevice(typeName, deviceType, this);
+            switch (deviceType)
+            {
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1 = (Weapon)newDevice; break;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2 = (Weapon)newDevice; break;
+                case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDevice = newDevice; break;
+                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
+            }
+        }
     }
 }

@@ -44,13 +44,8 @@ namespace AW2.Game.Weapons
         /// <summary>
         /// Fires the weapon.
         /// </summary>
-        public override void Fire(AW2.UI.ControlState triggerState)
+        protected override void FireImpl(AW2.UI.ControlState triggerState)
         {
-            foreach (CanonicalString name in deathGobTypes)
-            {
-                Log.Write(name);
-            }
-
             owner.selfDestruct(deathGobTypes);
             owner.DamageLevel = owner.MaxDamageLevel*10;
             owner.Die(new DeathCause(owner, DeathCauseType.Damage));

@@ -133,7 +133,6 @@ namespace AW2.Game
             // TODO: Loop through all textures and all 3D models available in the ContentManager.
             var content = (AW2.Graphics.AWContentManager)AssaultWing.Instance.Content;
             foreach (var assetName in content.GetAssetNames()) CanonicalString.Register(assetName);
-            var temp = new AW2.Game.ShipDeviceCollection(null);
             CanonicalString.DisableRegistering();
         }
 

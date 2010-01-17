@@ -1305,6 +1305,14 @@ namespace AW2.Game
                 area.AreaGob = area.AreaGob.Transform(WorldMatrix);
         }
 
+        public void selfDestruct(CanonicalString[] g_deathGobTypes)
+        {
+            foreach (var gobType in g_deathGobTypes)
+            {
+                deathGobTypes = g_deathGobTypes;
+            }
+        }
+
         /// <summary>
         /// The core implementation of the public methods <see cref="Die(DeathCause)"/>
         /// and <see cref="DieOnClient()"/>.
@@ -1317,10 +1325,10 @@ namespace AW2.Game
             dead = true;
 
             Arena.Gobs.Remove(this, forceRemove);
-
             // Create death gobs.
             foreach (var gobType in deathGobTypes)
             {
+                Log.Write("Death gob:" + gobType);
                 CreateGob(gobType, gob =>
                 {
                     gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);

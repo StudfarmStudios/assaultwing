@@ -76,7 +76,7 @@ namespace AW2.Game
         #endregion // Weapon fields
 
         #region Weapon properties
-        
+
         /// <summary>
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.
         /// </summary>

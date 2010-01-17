@@ -37,6 +37,7 @@ namespace AW2.Game.BonusActions
         public override void DoAction(float duration)
         {
             base.DoAction(duration);
+
             var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Ship.Devices.Weapon2Name);
             if (weapon2.UpgradeNames != null && weapon2.UpgradeNames.Length > 0)
             {

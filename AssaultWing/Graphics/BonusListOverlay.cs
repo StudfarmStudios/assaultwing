@@ -241,7 +241,7 @@ namespace AW2.Graphics
                 BonusOverlay bonusOverlay = displayQueue[i];
                 //if bonus is exitting it doesn't exist. when the same bonus is activated
                 //when the bonusOverlay is exitting, the will be a new bonusOverlay as a last item it the list
-                if(bonusOverlay.bonusEntryDirection != DisplayDirection.EXIT)
+                if(bonusOverlay.bonusEntryDirection == DisplayDirection.ENTER)
                     gameActionsInQueue.Add(bonusOverlay.gameActionData.TypeName, bonusOverlay);
             }
 

@@ -25,27 +25,12 @@ namespace AW2.Game.BonusActions
         }
 
         /// <summary>
-        /// This method upgrades the weapon
-        /// </summary>
-        private void UpgradeWeapon(CanonicalString weaponUpgrade)
-        {
-            player.Ship.Devices.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, weaponUpgrade);
-        }
-        /// <summary>
         /// Action method. Contains logic for enabling the action
         /// </summary>
         public override void DoAction(float duration)
         {
             base.DoAction(duration);
-            /*
-            var weapon1 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Ship.Devices.Weapon1Name);
-            if (weapon1.UpgradeNames != null && weapon1.UpgradeNames.Length > 0)
-            {
-                Console.WriteLine(weapon1.UpgradeNames[0]);
-                CanonicalString weaponUpgrade = weapon1.UpgradeNames[0];
-                UpgradeWeapon(weaponUpgrade);
-            }
-             */
+            player.Ship.Devices.Weapon1.LoadTimeMultiplier = 0.5f;
             SetActionMessage();
         }
 
@@ -68,7 +53,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         public override void RemoveAction()
         {
-            player.Ship.Devices.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, player.Weapon1RealName);
+            player.Ship.Devices.Weapon1.LoadTimeMultiplier = 1f;
         }
     }
 }

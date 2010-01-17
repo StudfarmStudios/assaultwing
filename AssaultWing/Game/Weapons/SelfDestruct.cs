@@ -20,25 +20,9 @@ namespace AW2.Game.Weapons
     {
         #region ForwardShot fields
 
-        /// <summary>
-        /// The sound to play when firing.
-        /// </summary>
-        [TypeParameter]
-        string fireSound;
-
-        /// <summary>
-        /// How fast the shots leave the weapon barrel,
-        /// in meters per second.
-        /// </summary>
-        [TypeParameter]
-        float shotSpeed;
-
-        /// <summary>
-        /// Shots produced by this weapon that are still alive.
-        /// </summary>
-        [RuntimeState]
-        List<Gob> liveShots;
-
+        [TypeParameter, ShallowCopy]
+        CanonicalString[] deathGobTypes;
+        
         #endregion SelfDestruct fields
 
         /// <summary>
@@ -48,15 +32,13 @@ namespace AW2.Game.Weapons
         public SelfDestruct()
             : base()
         {
-            fireSound = "Pistol";
-            shotSpeed = 300f;
-            liveShots = new List<Gob>();
+ 
         }
 
         public SelfDestruct(CanonicalString typeName)
             : base(typeName)
         {
-            liveShots = new List<Gob>();
+ 
         }
 
         /// <summary>
@@ -64,7 +46,14 @@ namespace AW2.Game.Weapons
         /// </summary>
         public override void Fire(AW2.UI.ControlState triggerState)
         {
-            
+            foreach (CanonicalString name in deathGobTypes)
+            {
+                Log.Write(name);
+            }
+
+            owner.selfDestruct(deathGobTypes);
+            owner.DamageLevel = owner.MaxDamageLevel*10;
+            owner.Die(new DeathCause(owner, DeathCauseType.Damage));
         }
 
         public override void Activate()

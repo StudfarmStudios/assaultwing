@@ -54,6 +54,11 @@ namespace AW2.Game
         protected TimeSpan loadedTime;
 
         /// <summary>
+        /// Bonus Multiplier for loadtime
+        /// </summary>
+        protected float loadTimeMultiplier;
+
+        /// <summary>
         /// Amount of charge required to fire the weapon once.
         /// </summary>
         [TypeParameter]
@@ -96,6 +101,13 @@ namespace AW2.Game
         /// </summary>
         Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
 
+        /// <summary>
+        /// Multiplier for loadtime
+        /// multiplier<1 == bonus
+        /// multiplier>1 == negative
+        /// </summary>
+        public float LoadTimeMultiplier{get{ return loadTimeMultiplier;}set{ loadTimeMultiplier = value;}}
+        
         /// <summary>
         /// The time in seconds that it takes for the weapon to fire again 
         /// after being fired once.
@@ -181,6 +193,7 @@ namespace AW2.Game
             iconEquipName = (CanonicalString)"dummytexture";
             fireCharge = 100;
             fireChargePerSecond = 500;
+            loadTimeMultiplier = 1;
         }
 
         public ShipDevice(CanonicalString typeName)
@@ -189,6 +202,7 @@ namespace AW2.Game
             owner = null;
             ownerHandle = 0;
             loadedTime = new TimeSpan(0);
+            loadTimeMultiplier = 1;
         }
 
         #region Public methods
@@ -265,7 +279,7 @@ namespace AW2.Game
             switch (FireMode)
             {
                 case FireModeType.Single:
-                    loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime);
+                    loadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime*LoadTimeMultiplier);
                     break;
                 case FireModeType.Continuous:
                     break;

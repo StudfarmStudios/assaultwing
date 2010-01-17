@@ -514,6 +514,7 @@ namespace AW2.Game
             shipSpawnTime = new TimeSpan(1);
             relativeShakeDamage = 0;
             Lives = AssaultWing.Instance.DataEngine.GameplayMode.StartLives;
+            ClearBonusActions();
         }
 
         /// <summary>

@@ -484,11 +484,11 @@ namespace AW2.Game
         public override void Reset()
         {
             base.Reset();
-            Ship = null;
             shipSpawnTime = new TimeSpan(1);
             relativeShakeDamage = 0;
             Lives = AssaultWing.Instance.DataEngine.GameplayMode.StartLives;
             ClearBonusActions();
+            Ship = null;
         }
 
         /// <summary>

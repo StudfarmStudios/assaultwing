@@ -66,7 +66,7 @@ namespace AW2.Game
         /// <param name="onScreen">Location of the viewport on screen.</param>
         public virtual AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
-            return new AW2.Graphics.AWViewport(onScreen, LookAt);
+            return new AW2.Graphics.AWViewport(onScreen, LookAt, () => new string[0]);
         }
 
         /// <summary>

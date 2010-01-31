@@ -83,8 +83,8 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
     </Compile>
-    <Compile Include="effects\bloom.fx">
-      <Name>bloom</Name>
+    <Compile Include="effects\gaussian_blur.fx">
+      <Name>gaussian_blur</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
@@ -2072,6 +2072,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="effects\bomber_rage.fx">
+      <Name>bomber_rage</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+    </Compile>
     <None Include="gobdefs\DefinedBonus_kamikaze.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>DefinedBonus_kamikaze</Name>

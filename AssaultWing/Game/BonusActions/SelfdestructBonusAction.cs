@@ -27,13 +27,13 @@ namespace AW2.Game.BonusActions
             name = (CanonicalString)"dummyaction";
         }
 
-        /// <summary>
-        /// This method upgrades the weapon
-        /// </summary>
         private void UpgradeWeapon(CanonicalString g_weaponUpgrade)
         {
             player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, g_weaponUpgrade);
+            if (!player.PostprocessEffectNames.Contains("bomber_rage"))
+                player.PostprocessEffectNames.Add("bomber_rage");
         }
+
         /// <summary>
         /// Action method. Contains logic for enabling the action
         /// </summary>
@@ -44,21 +44,15 @@ namespace AW2.Game.BonusActions
             SetActionMessage();
         }
 
-
-        /// <summary>
-        /// Enables the ActionMessage (used in BonusOverlay)
-        /// </summary>
         private void SetActionMessage()
         {
             bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
         }
 
-        /// <summary>
-        /// Returs the default weapon for player after the Action Expires
-        /// </summary>
         public override void RemoveAction()
         {
             player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, player.Weapon2Name);
+            player.PostprocessEffectNames.Remove("bomber_rage");
         }
     }
 }

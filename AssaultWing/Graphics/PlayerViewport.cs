@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game;
 
@@ -29,8 +30,10 @@ namespace AW2.Graphics
         /// <param name="player">Which player the viewport will follow.</param>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
         /// <param name="lookAt">The point to follow.</param>
-        public PlayerViewport(Player player, Rectangle onScreen, ILookAt lookAt)
-            : base(onScreen, lookAt)
+        /// <param name="getPostprocessEffectNames">Provider of names of postprocess effects.</param>
+        public PlayerViewport(Player player, Rectangle onScreen, ILookAt lookAt,
+            Func<IEnumerable<string>> getPostprocessEffectNames)
+            : base(onScreen, lookAt, getPostprocessEffectNames)
         {
             this.player = player;
             shakeSign = -1;

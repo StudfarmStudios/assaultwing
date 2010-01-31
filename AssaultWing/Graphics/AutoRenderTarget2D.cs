@@ -9,6 +9,7 @@ namespace AW2.Graphics
     /// <summary>
     /// A <see cref="RenderTarget2D"/> that automatically reallocates the target
     /// when its parameters change, such as the required width and height.
+    /// Doesn't support the use of stencil.
     /// </summary>
     class AutoRenderTarget2D : IDisposable
     {
@@ -48,7 +49,13 @@ namespace AW2.Graphics
                 if (data.DepthStencilEnable) _depthStencilBuffer = new DepthStencilBuffer(_graphicsDevice, data.Width, data.Height, DepthFormat.Depth24);
             }
             _graphicsDevice.SetRenderTarget(renderTargetIndex, _target);
-            if (data.DepthStencilEnable) _graphicsDevice.DepthStencilBuffer = _depthStencilBuffer;
+            _graphicsDevice.DepthStencilBuffer = _depthStencilBuffer;
+            _graphicsDevice.RenderState.DepthBufferEnable = data.DepthStencilEnable;
+            _graphicsDevice.RenderState.StencilEnable = data.DepthStencilEnable;
+            var clearOptions = data.DepthStencilEnable
+                ? ClearOptions.Target | ClearOptions.DepthBuffer
+                : ClearOptions.Target;
+            _graphicsDevice.Clear(clearOptions, Color.Black, 1, 0);
         }
 
         #region IDisposable Members

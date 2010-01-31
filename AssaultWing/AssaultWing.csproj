@@ -82,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssaultWing.cs" />
-    <Compile Include="Game\BonusActions\SelfdestructBonusAction.cs" />
+    <Compile Include="Game\BonusActions\SelfDestructBonusAction.cs" />
     <Compile Include="Game\BonusActions\RepairSystemBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />

@@ -1,4 +1,6 @@
+float T;
 texture Texture;
+float TextureWidth, TextureHeight;
 
 sampler TextureSampler = sampler_state
 {

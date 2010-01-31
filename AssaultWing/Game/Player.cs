@@ -245,6 +245,8 @@ namespace AW2.Game
         /// </summary>
         public List<string> Messages { get { return messages; } }
 
+        public List<string> PostprocessEffectNames { get; private set; }
+
         #endregion Player properties
 
         #region Player properties about statistics
@@ -344,6 +346,7 @@ namespace AW2.Game
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
             lookAt = new LookAtShip();
             BonusActions = new List<GameAction>();
+            PostprocessEffectNames = new List<string>();
         }
 
         #endregion Constructors
@@ -467,7 +470,7 @@ namespace AW2.Game
         /// <param name="onScreen">Location of the viewport on screen.</param>
         public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
-            return new AW2.Graphics.PlayerViewport(this, onScreen, lookAt);
+            return new AW2.Graphics.PlayerViewport(this, onScreen, lookAt, () => PostprocessEffectNames);
         }
 
         /// <summary>

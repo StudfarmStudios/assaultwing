@@ -1,4 +1,3 @@
-//#define VIEWPORT_BLUR // Defining this will make viewports blurred
 //#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
 #if !PARALLAX_IN_3D
   #define PARALLAX_WITH_SPRITE_BATCH
@@ -7,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
@@ -28,18 +28,6 @@ namespace AW2.Graphics
     /// <c>LoadContent</c> must be called before a viewport is used.
     public class AWViewport
     {
-        #region Fields that are used only when VIEWPORT_BLUR is #defined
-
-        [Obsolete] RenderTarget2D rTarg = null;
-        [Obsolete] RenderTarget2D rTarg2 = null;
-        [Obsolete] SpriteBatch sprite = null;
-        [Obsolete] DepthStencilBuffer depthBuffer = null;
-        [Obsolete] DepthStencilBuffer depthBuffer2 = null;
-        [Obsolete] DepthStencilBuffer defDepthBuffer = null;
-        [Obsolete] Effect bloomatic = null;
-
-        #endregion Fields that are used only when VIEWPORT_BLUR is #defined
-
         #region Fields that are used only when PARALLAX_IN_3D is #defined
 
         /// <summary>
@@ -70,11 +58,14 @@ namespace AW2.Graphics
         protected List<OverlayComponent> overlayComponents;
 
         TexturePostprocessor _postprocessor;
+        Func<IEnumerable<string>> _getPostprocessEffectNames;
 
         /// <summary>
         /// Ratio of screen pixels to game world meters. Default value is 1.
         /// </summary>
         float zoomRatio;
+
+        #region Properties
 
         /// <summary>
         /// The area of the display to draw on.
@@ -90,6 +81,8 @@ namespace AW2.Graphics
         /// The area of the viewport on the render target surface.
         /// </summary>
         public Rectangle OnScreen { get { return new Rectangle(Viewport.Y, Viewport.Y, Viewport.Width, Viewport.Height); } }
+
+        #endregion
 
         /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport shows
@@ -139,7 +132,7 @@ namespace AW2.Graphics
         /// </summary>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
         /// <param name="lookAt">The point to follow.</param>
-        public AWViewport(Rectangle onScreen, ILookAt lookAt)
+        public AWViewport(Rectangle onScreen, ILookAt lookAt, Func<IEnumerable<string>> getPostprocessEffectNames)
         {
             overlayComponents = new List<OverlayComponent>();
             Viewport = new Viewport
@@ -152,6 +145,7 @@ namespace AW2.Graphics
                 MaxDepth = 1f
             };
             LookAt = lookAt;
+            _getPostprocessEffectNames = getPostprocessEffectNames;
             zoomRatio = 1;
         }
 
@@ -264,10 +258,8 @@ namespace AW2.Graphics
             var gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Viewport = Viewport;
             gfx.Clear(Color.Black);
-            Draw_InitializeBlur();
             Draw_InitializeParallaxIn3D();
             _postprocessor.ProcessToScreen(RenderGameWorld);
-            Draw_DrawBlur();
             DrawOverlayComponents();
         }
 
@@ -335,10 +327,15 @@ namespace AW2.Graphics
         public virtual void LoadContent()
         {
             spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
-            _postprocessor = new TexturePostprocessor(AssaultWing.Instance.GraphicsDevice);
+            Action<ICollection<Effect>> effectContainerUpdater = container =>
+            {
+                container.Clear();
+                foreach (var name in _getPostprocessEffectNames())
+                    container.Add(AssaultWing.Instance.Content.Load<Effect>(name));
+            };
+            _postprocessor = new TexturePostprocessor(AssaultWing.Instance.GraphicsDevice, effectContainerUpdater);
             foreach (OverlayComponent component in overlayComponents)
                 component.LoadContent();
-            LoadContent_Blur();
         }
 
         /// <summary>
@@ -350,7 +347,6 @@ namespace AW2.Graphics
                 component.UnloadContent();
             _postprocessor.Dispose();
             spriteBatch.Dispose();
-            UnloadContent_Blur();
         }
 
         /// <summary>
@@ -364,112 +360,6 @@ namespace AW2.Graphics
         }
 
         #region Methods that are used only conditionally
-
-        [Conditional("VIEWPORT_BLUR")]
-        [Obsolete]
-        private void LoadContent_Blur()
-        {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            defDepthBuffer = gfx.DepthStencilBuffer;
-            if (Viewport.Width > 0)
-            {
-                rTarg = new RenderTarget2D(gfx, Viewport.Width, Viewport.Height,
-                    0, SurfaceFormat.Color);
-                rTarg2 = new RenderTarget2D(gfx, Viewport.Width, Viewport.Height,
-                    0, SurfaceFormat.Color);
-                sprite = new SpriteBatch(gfx);
-                depthBuffer =
-                    new DepthStencilBuffer(
-                        gfx,
-                        Viewport.Width,
-                        Viewport.Height,
-                        gfx.DepthStencilBuffer.Format);
-                depthBuffer2 =
-                    new DepthStencilBuffer(
-                        gfx,
-                        Viewport.Width,
-                        Viewport.Height,
-                        gfx.DepthStencilBuffer.Format);
-            }
-            bloomatic = AssaultWing.Instance.Content.Load<Effect>("bloom");
-        }
-
-        [Conditional("VIEWPORT_BLUR")]
-        [Obsolete]
-        private void UnloadContent_Blur()
-        {
-            if (rTarg != null)
-                rTarg.Dispose();
-            if (sprite != null)
-                sprite.Dispose();
-            if (depthBuffer != null)
-                depthBuffer.Dispose();
-            // 'bloomatic' is managed by ContentManager
-        }
-
-        [Conditional("VIEWPORT_BLUR")]
-        [Obsolete]
-        private void Draw_InitializeBlur()
-        {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-            gfx.SetRenderTarget(0, rTarg);
-            gfx.DepthStencilBuffer = depthBuffer;
-            gfx.Clear(ClearOptions.Target, Color.Black, 0, 0);
-        }
-
-        [Conditional("VIEWPORT_BLUR")]
-        [Obsolete]
-        private void Draw_DrawBlur()
-        {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-            bloomatic.Parameters["alpha"].SetValue((float)(0.9));
-            bloomatic.Parameters["maxx"].SetValue((float)Viewport.Width);
-            bloomatic.Parameters["maxy"].SetValue((float)Viewport.Height);
-
-            bloomatic.Parameters["hirange"].SetValue(false);
-
-            gfx.SetRenderTarget(0, rTarg2);
-            gfx.DepthStencilBuffer = depthBuffer2;
-
-            bloomatic.Begin();
-            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
-                SaveStateMode.SaveState);
-
-            EffectPass pass2 = bloomatic.CurrentTechnique.Passes[0];
-            pass2.Begin();
-
-            sprite.Draw(rTarg.GetTexture(), new Rectangle(0, 0, Viewport.Width, Viewport.Height),
-                new Rectangle(0, 0, Viewport.Width, Viewport.Height), Color.White);
-
-            pass2.End();
-            sprite.End();
-            bloomatic.End();
-
-            gfx.SetRenderTarget(0, null);
-            gfx.DepthStencilBuffer = defDepthBuffer;
-
-            bloomatic.Begin();
-            sprite.Begin(SpriteBlendMode.None, SpriteSortMode.Immediate,
-                SaveStateMode.SaveState);
-
-            pass2 = bloomatic.CurrentTechnique.Passes[1];
-            pass2.Begin();
-
-            sprite.Draw(rTarg2.GetTexture(), new Rectangle(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height),
-                new Rectangle(0, 0, Viewport.Width, Viewport.Height), Color.White);
-
-            pass2.End();
-            sprite.End();
-            bloomatic.End();
-
-            // actual unblurred image
-            /*
-            sprite.Begin(SpriteBlendMode.Additive);
-            sprite.Draw(rTarg.GetTexture(), new Rectangle(viewport.X, viewport.Y, viewport.Width, viewport.Height),
-                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White);
-            sprite.End();
-            */
-        }
 
         /// <summary>
         /// This method is a temporary hack. It initialises parallax drawing

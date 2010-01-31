@@ -7,8 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AW2.Graphics
 {
     /// <summary>
-    /// Works with <see cref="Effect"/> instances that have a parameter called
-    /// "Texture" that takes the input texture to process.
+    /// Works with <see cref="Effect"/> instances that have the following parameters:
+    /// "Texture" takes the input texture to process,
+    /// "TextureWidth" takes the input texture width in texels,
+    /// "TextureHeight" takes the input texture height in texels.
     /// </summary>
     class TexturePostprocessor : IDisposable
     {
@@ -20,10 +22,10 @@ namespace AW2.Graphics
         VertexDeclaration _vertexDeclaration;
         DepthStencilBuffer _oldDepthStencilBuffer;
         Viewport _oldViewport;
+        List<Effect> _effects;
+        Action<ICollection<Effect>> _effectContainerUpdater;
 
-        public List<Effect> Effects { get; private set; }
-
-        public TexturePostprocessor(GraphicsDevice gfx)
+        public TexturePostprocessor(GraphicsDevice gfx, Action<ICollection<Effect>> effectContainerUpdater)
         {
             _basicShaders = AssaultWing.Instance.Content.Load<Effect>("basicshaders");
             _gfx = gfx;
@@ -37,7 +39,8 @@ namespace AW2.Graphics
                 new AutoRenderTarget2D(gfx, getRenderTargetCreationData),
                 new AutoRenderTarget2D(gfx, getRenderTargetCreationData)
             };
-            Effects = new List<Effect>();
+            _effects = new List<Effect>();
+            _effectContainerUpdater = effectContainerUpdater;
             _vertexData = new VertexPositionTexture[] {
                 new VertexPositionTexture(new Vector3(-1, -1, 0), Vector2.UnitY),
                 new VertexPositionTexture(new Vector3(-1, 1, 0), Vector2.Zero),
@@ -49,6 +52,12 @@ namespace AW2.Graphics
 
         public void ProcessToScreen(Action render)
         {
+            _effectContainerUpdater(_effects);
+            if (_effects.Count == 0)
+            {
+                render();
+                return;
+            }
             PrepareFirstPass();
             render();
             Process();
@@ -68,14 +77,12 @@ namespace AW2.Graphics
         private void Process()
         {
             _gfx.VertexDeclaration = _vertexDeclaration;
-            if (Effects.Count == 0) return;
-
             _basicShaders.Begin();
             _basicShaders.CurrentTechnique.Passes["VertexShaderPass"].Begin();
 
-            for (int effectIndex = 0; effectIndex < Effects.Count; ++effectIndex)
+            for (int effectIndex = 0; effectIndex < _effects.Count; ++effectIndex)
             {
-                var effect = Effects[effectIndex];
+                var effect = _effects[effectIndex];
                 effect.Begin();
                 foreach (var pass in effect.CurrentTechnique.Passes)
                 {
@@ -98,9 +105,6 @@ namespace AW2.Graphics
             _oldDepthStencilBuffer = _gfx.DepthStencilBuffer;
             _oldViewport = _gfx.Viewport;
             _targets[_targetIndex].SetAsRenderTarget(0);
-            // Given render method might need depth and stencil buffers.
-            _gfx.RenderState.DepthBufferEnable = true;
-            _gfx.RenderState.StencilEnable = true;
         }
 
         /// <summary>
@@ -111,9 +115,7 @@ namespace AW2.Graphics
             _sourceIndex = _targetIndex;
             _targetIndex = (_targetIndex + 1) % _targets.Length;
             _targets[_targetIndex].SetAsRenderTarget(0);
-            _gfx.RenderState.DepthBufferEnable = false;
-            _gfx.RenderState.StencilEnable = false;
-            SetNextTarget(effect);
+            PrepareEffect(effect);
         }
 
         private void PrepareLastPass(Effect effect)
@@ -125,18 +127,20 @@ namespace AW2.Graphics
             _gfx.SetRenderTarget(0, null);
             _gfx.RenderState.DepthBufferEnable = false;
             _gfx.RenderState.StencilEnable = false;
+            _gfx.RenderState.AlphaTestEnable = false;
             _gfx.RenderState.AlphaBlendEnable = false;
-            _gfx.RenderState.BlendFunction = BlendFunction.Add;
-            _gfx.RenderState.SourceBlend = Blend.SourceAlpha;
-            _gfx.RenderState.DestinationBlend = Blend.DestinationAlpha;
             _gfx.Viewport = _oldViewport;
-            SetNextTarget(effect);
+            _gfx.Clear(Color.Black);
+            PrepareEffect(effect);
         }
 
-        private void SetNextTarget(Effect effect)
+        private void PrepareEffect(Effect effect)
         {
             var tex = _targets[_sourceIndex].GetTexture();
+            effect.Parameters["T"].SetValue((float)AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds);
             effect.Parameters["Texture"].SetValue(tex);
+            effect.Parameters["TextureWidth"].SetValue(tex.Width);
+            effect.Parameters["TextureHeight"].SetValue(tex.Height);
             float halfTexelWidth = 0.5f / tex.Width;
             float halfTexelHeight = 0.5f / tex.Height;
             _vertexData[0].Position = new Vector3(-1 - halfTexelWidth, -1 + halfTexelHeight, 0);

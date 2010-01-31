@@ -101,6 +101,7 @@ namespace AW2.UI
         /// </summary>
         public void Release()
         {
+            // FIXME !!! This may get called on a separate thread while iterating over 'controls' -> uncaught exception
             controls.Remove(this as Control);
         }
 

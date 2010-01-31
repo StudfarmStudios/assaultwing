@@ -200,7 +200,10 @@ namespace AW2.Game
         /// True iff the gob is not regarded in movement and collisions.
         /// </summary>
         [RuntimeState]
+        [Obsolete("Remove this field and remove the corresponding XML elements from arena XML files")]
         bool disabled;
+
+        int _disabledCount;
 
         /// <summary>
         /// True iff the gob moves around by the laws of physics.
@@ -535,8 +538,16 @@ namespace AW2.Game
 
         /// <summary>
         /// Is the gob disabled. A disabled gob is not regarded in movement and collisions.
+        /// There can be multiple overlapping requests to disable a gob. The gob stays
+        /// disabled until all such requests have been removed. For every disabling
+        /// there must be a corresponding enabling.
         /// </summary>
-        public bool Disabled { get { return disabled; } set { disabled = value; } }
+        /// <seealso cref="Enable()"/>
+        /// <seealso cref="Disable()"/>
+        public bool Disabled
+        {
+            get { return _disabledCount > 0; }
+        }
 
         /// <summary>
         /// True iff the gob moves around by the laws of physics.
@@ -607,7 +618,6 @@ namespace AW2.Game
             bleachDamage = 0;
             birthTime = new TimeSpan(23, 59, 59);
             dead = false;
-            disabled = false;
             movable = true;
             modelPartTransforms = null;
             exhaustEngineNames = new CanonicalString[0];
@@ -1030,6 +1040,17 @@ namespace AW2.Game
         public void ClearCollisionAreas()
         {
             collisionAreas = new CollisionArea[0];
+        }
+
+        public void Enable()
+        {
+            if (_disabledCount == 0) throw new InvalidOperationException("Cannot enable a gob that is already enabled");
+            --_disabledCount;
+        }
+
+        public void Disable()
+        {
+            ++_disabledCount;
         }
 
         #endregion Gob public methods

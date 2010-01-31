@@ -35,14 +35,15 @@ namespace AW2.Game.Weapons
         protected override void FireImpl(AW2.UI.ControlState triggerState)
         {
             if (!CanFire) return;
-            var target = Arena.Gobs.FirstOrDefault(gob =>
-            {
-                if (!gob.IsDamageable) return false;
-                if (gob == owner) return false;
-                if (Vector2.DistanceSquared(gob.Pos, owner.Pos) > range * range) return false;
-                return true;
-            });
-            if (target == null) return; // nothing to shoot at
+            var targets =
+                from gob in Arena.Gobs
+                where gob.IsDamageable && !gob.Disabled && gob != owner
+                let distanceSquared = Vector2.DistanceSquared(gob.Pos, owner.Pos)
+                where distanceSquared <= range * range
+                orderby distanceSquared descending
+                select gob;
+            if (!targets.Any()) return;
+            var target = targets.First();
 
             StartFiring();
 

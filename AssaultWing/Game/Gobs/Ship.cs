@@ -151,6 +151,8 @@ namespace AW2.Game.Gobs
         /// </summary>
         List<Gob> temporarilyDisabledGobs;
 
+        bool _isBirthFlashing;
+
         #endregion Ship fields related to other things
 
         #region Ship fields for signalling visual things over the network
@@ -364,6 +366,8 @@ namespace AW2.Game.Gobs
             SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
             CreateCoughEngines();
+            Disable(); // re-enabled in Update()
+            _isBirthFlashing = true;
         }
 
         /// <summary>
@@ -390,8 +394,7 @@ namespace AW2.Game.Gobs
             base.Update();
             
             // Re-enable temporarily disabled gobs.
-            foreach (Gob gob in temporarilyDisabledGobs)
-                gob.Disabled = false;
+            foreach (Gob gob in temporarilyDisabledGobs) gob.Enable();
             temporarilyDisabledGobs.Clear();
 
             // Manage exhaust engines.
@@ -417,10 +420,16 @@ namespace AW2.Game.Gobs
             ExtraDevice.Charge += extraDeviceChargeSpeed * (float)elapsedGameTime.TotalSeconds;
             Weapon2.Charge += weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
 
-            // Flash and be disabled if we're just born.
-            float age = birthTime.SecondsAgoGameTime();
-            Alpha = birthAlpha.Evaluate(age);
-            Disabled = age < birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position;
+            if (_isBirthFlashing)
+            {
+                float age = birthTime.SecondsAgoGameTime();
+                Alpha = birthAlpha.Evaluate(age);
+                if (age >= birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position)
+                {
+                    Enable();
+                    _isBirthFlashing = false;
+                }
+            }
         }
 
         /// <summary>
@@ -588,7 +597,7 @@ namespace AW2.Game.Gobs
             {
                 // Set the other gob as disabled while we move, then enable it after we finish moving.
                 // This works with the assumption that there are at least two moving iterations.
-                theirArea.Owner.Disabled = true;
+                theirArea.Owner.Disable(); // re-enabled in Update()
                 temporarilyDisabledGobs.Add(theirArea.Owner);
             }
         }

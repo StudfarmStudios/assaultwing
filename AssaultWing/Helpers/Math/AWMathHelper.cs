@@ -30,6 +30,20 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Linearly interpolates between two values by stepping at most a constant
+        /// distance from one towards another.
+        /// </summary>
+        /// <param name="step">The maximum value step, a positive value.</param>
+        public static Vector2 InterpolateTowards(Vector2 from, Vector2 to, float step)
+        {
+            var difference = to - from;
+            float distanceSquared = difference.LengthSquared();
+            return distanceSquared <= step * step
+                ? to
+                : from + difference / (float)Math.Sqrt(distanceSquared) * step;
+        }
+
+        /// <summary>
         /// Linearly interpolates between two angles by stepping at most a constant
         /// amount from one towards another in the direction of shortest distance.
         /// All angles are in radians and are treated modulo 2*pi.
@@ -332,6 +346,34 @@ namespace AW2.Helpers
         [TestFixture]
         public class AWMathHelperTest
         {
+            [Test]
+            public void TestInterpolateTowardsFloat()
+            {
+                Assert.AreEqual(0, InterpolateTowards(0, 0, 0));
+                Assert.AreEqual(0, InterpolateTowards(0, 0, 10));
+                Assert.AreEqual(1, InterpolateTowards(0, 1, 10));
+                Assert.AreEqual(-1, InterpolateTowards(0, -1, 10));
+                Assert.AreEqual(10, InterpolateTowards(0, 11, 10));
+                Assert.AreEqual(-10, InterpolateTowards(0, -11, 10));
+            }
+
+            [Test]
+            public void TestInterpolateTowardsVector2()
+            {
+                var p1 = Vector2.Zero;
+                var p2 = Vector2.UnitX;
+                var p3 = Vector2.UnitY;
+                var p4 = new Vector2(3, -4);
+                Assert.AreEqual(p1, InterpolateTowards(p1, p1, 0));
+                Assert.AreEqual(p1, InterpolateTowards(p1, p1, 10));
+                Assert.AreEqual(p2, InterpolateTowards(p1, p2, 10));
+                Assert.AreEqual(p3, InterpolateTowards(p1, p3, 10));
+                Assert.AreEqual(p4, InterpolateTowards(p1, p4, 10));
+                Assert.AreEqual(-p4, InterpolateTowards(p1, -p4, 10));
+                Assert.AreEqual(10 * Vector2.UnitX, InterpolateTowards(p1, 11 * Vector2.UnitX, 10));
+                Assert.AreEqual(-p4, InterpolateTowards(p1, -2 * p4, 5));
+            }
+
             /// <summary>
             /// Tests interpolating angles.
             /// </summary>

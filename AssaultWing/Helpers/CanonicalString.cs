@@ -52,6 +52,8 @@ namespace AW2.Helpers
         /// </summary>
         public int Canonical { get; private set; }
 
+        public bool IsNull { get { return Canonical == 0; } }
+
         /// <summary>
         /// Implicit conversion to <see cref="string"/>.
         /// </summary>

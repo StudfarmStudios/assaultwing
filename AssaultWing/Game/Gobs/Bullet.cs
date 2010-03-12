@@ -39,6 +39,18 @@ namespace AW2.Game.Gobs
         float lifetime;
 
         /// <summary>
+        /// If true, the bullet rotates by <see cref="rotationSpeed"/>.
+        /// </summary>
+        [TypeParameter]
+        bool isRotating;
+
+        /// <summary>
+        /// Rotation speed in radians per second. Has an effect only when <see cref="isRotating"/> is true.
+        /// </summary>
+        [TypeParameter]
+        float rotationSpeed;
+
+        /// <summary>
         /// Time of certain death of the bullet, in game time.
         /// </summary>
         protected TimeSpan DeathTime { get; set; }
@@ -51,9 +63,6 @@ namespace AW2.Game.Gobs
             get { return base.ModelNames.Union(bulletModelNames); }
         }
 
-        /// <summary>
-        /// Creates an uninitialised bullet.
-        /// </summary>
         /// This constructor is only for serialisation.
         public Bullet()
             : base()
@@ -62,21 +71,16 @@ namespace AW2.Game.Gobs
             impactHoleRadius = 10;
             bulletModelNames = new CanonicalString[] { (CanonicalString)"dummymodel" };
             lifetime = 60;
+            isRotating = false;
+            rotationSpeed = 5;
             DeathTime = new TimeSpan(0, 1, 2);
         }
 
-        /// <summary>
-        /// Creates a bullet.
-        /// </summary>
-        /// <param name="typeName">The type of the bullet.</param>
         public Bullet(CanonicalString typeName)
             : base(typeName)
         {
         }
 
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
         public override void Activate()
         {
             DeathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
@@ -88,23 +92,25 @@ namespace AW2.Game.Gobs
             base.Activate();
         }
 
-        /// <summary>
-        /// Updates the gob according to its natural behaviour.
-        /// </summary>
         public override void Update()
         {
             if (AssaultWing.Instance.GameTime.TotalGameTime >= DeathTime)
                 Die(new DeathCause());
             
             base.Update();
-
-            // Fly nose first, but only if we're moving fast enough.
-            if (move.LengthSquared() > 1 * 1)
+            if (isRotating)
             {
-                float rotationGoal = (float)Math.Acos(Move.X / Move.Length());
-                if (Move.Y < 0)
-                    rotationGoal = MathHelper.TwoPi - rotationGoal;
-                Rotation = rotationGoal;
+                Rotation += rotationSpeed * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else
+            {
+                // Fly nose first, but only if we're moving fast enough.
+                if (move.LengthSquared() > 1 * 1) {
+                    float rotationGoal = (float)Math.Acos( Move.X / Move.Length() );
+                    if (Move.Y < 0)
+                        rotationGoal = MathHelper.TwoPi - rotationGoal;
+                    Rotation = rotationGoal;
+                }
             }
         }
 

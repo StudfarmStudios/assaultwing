@@ -106,7 +106,14 @@ namespace AW2.Game
         /// The currently active arena's silhouette, scaled and ready to be 
         /// drawn in a player's viewport's radar display.
         /// </summary>
-        public Texture2D ArenaRadarSilhouette { get { return arenaRadarSilhouette; } }
+        public Texture2D ArenaRadarSilhouette
+        {
+            get
+            {
+                if (arenaRadarSilhouette == null) RefreshArenaRadarSilhouette();
+                return arenaRadarSilhouette;
+            }
+        }
 
         /// <summary>
         /// The transformation to map coordinates in the current arena 
@@ -462,15 +469,6 @@ namespace AW2.Game
             Arena = null;
             ClearViewports();
             foreach (var player in Spectators) player.Reset();
-        }
-
-        /// <summary>
-        /// Loads content needed by the currently active arena.
-        /// </summary>
-        public void LoadContent()
-        {
-            if (Arena != null)
-                RefreshArenaRadarSilhouette();
         }
 
         /// <summary>

@@ -85,6 +85,7 @@ namespace AW2.Sound
         /// </summary>
         public void PlayMusic(IList<BackgroundMusic> musics)
         {
+            if (!Enabled) return;
             if (musics.Count > 0)
             {
                 BackgroundMusic track = musics[RandomHelper.GetRandomInt(musics.Count)];
@@ -97,6 +98,7 @@ namespace AW2.Sound
         /// </summary>
         public void PlayMusic(String trackName, float trackVolume)
         {
+            if (!Enabled) return;
             var music = AssaultWing.Instance.Content.Load<SoundEffect>(trackName);
             StopMusic();
             RelativeMusicVolume = trackVolume;
@@ -114,6 +116,7 @@ namespace AW2.Sound
         /// </summary>
         public void StopMusic()
         {
+            if (!Enabled) return;
             if (musicInstance == null) return;
             musicInstance.Stop();
             musicInstance = null;
@@ -125,6 +128,7 @@ namespace AW2.Sound
         /// </summary>
         public void StopMusic(TimeSpan fadeoutTime)
         {
+            if (!Enabled) return;
             if (musicInstance == null) return;
             var now = AssaultWing.Instance.GameTime.TotalRealTime;
             float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
@@ -138,11 +142,13 @@ namespace AW2.Sound
 
         public void PlaySound(string soundName)
         {
+            if (!Enabled) return;
             soundBank.PlayCue(soundName);
         }
 
         public Cue GetCue(string soundName)
         {
+            if (!Enabled) throw new InvalidOperationException("Sound engine is disabled");
             return soundBank.GetCue(soundName);
         }
 

@@ -68,7 +68,6 @@ namespace AW2.Graphics
             // Propagate LoadContent to other components that are known to
             // contain references to graphics content.
             data.ForEachViewport(viewport => viewport.LoadContent());
-            data.LoadContent();
             //TODO: FIX THIS
             //PlayerBonus.LoadContent();
         }

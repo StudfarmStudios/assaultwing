@@ -339,26 +339,7 @@ namespace AW2
             if (WindowInitializing == null)
                 throw new Exception("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
 
-            // Decide on preferred windowed and fullscreen sizes and formats.
-            DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
-            preferredFullscreenWidth = displayMode.Width;
-            preferredFullscreenHeight = displayMode.Height;
-            preferredFullscreenFormat = displayMode.Format;
-            preferredWindowWidth = 1000;
-            preferredWindowHeight = 800;
-            preferredWindowFormat = displayMode.Format;
-
-            GraphicsDeviceManager = new GraphicsDeviceManager(this);
-            GraphicsDeviceManager.IsFullScreen = false;
-            GraphicsDeviceManager.PreferredBackBufferWidth = preferredWindowWidth;
-            GraphicsDeviceManager.PreferredBackBufferHeight = preferredWindowHeight;
-            GraphicsDeviceManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
-
-            window = WindowInitializing(this);
-            window.AllowUserResizing = true;
-            window.ClientSizeChanged += ClientSizeChanged;
-            ClientBoundsMin = new Rectangle(0, 0, 1000, 800);
-            AllowDialogs = true;
+            InitializeGraphics();
 
             musicSwitch = new KeyboardKey(Keys.F5);
             arenaReload = new KeyboardKey(Keys.F6);
@@ -374,6 +355,8 @@ namespace AW2
             NetworkMode = NetworkMode.Standalone;
             gameTime = new GameTime();
             lastDrawTime = new TimeSpan(0);
+
+            InitializeComponents();
         }
 
         /// <summary>
@@ -415,6 +398,70 @@ namespace AW2
             graphicsEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
             soundEngine.PlayMusic(dataEngine.Arena.BackgroundMusic);
+        }
+
+        private void InitializeGraphics()
+        {
+            // Decide on preferred windowed and fullscreen sizes and formats.
+            DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            preferredFullscreenWidth = displayMode.Width;
+            preferredFullscreenHeight = displayMode.Height;
+            preferredFullscreenFormat = displayMode.Format;
+            preferredWindowWidth = 1000;
+            preferredWindowHeight = 800;
+            preferredWindowFormat = displayMode.Format;
+
+            GraphicsDeviceManager = new GraphicsDeviceManager(this);
+            GraphicsDeviceManager.IsFullScreen = false;
+            GraphicsDeviceManager.PreferredBackBufferWidth = preferredWindowWidth;
+            GraphicsDeviceManager.PreferredBackBufferHeight = preferredWindowHeight;
+            GraphicsDeviceManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
+
+            window = WindowInitializing(this);
+            window.AllowUserResizing = true;
+            window.ClientSizeChanged += ClientSizeChanged;
+            ClientBoundsMin = new Rectangle(0, 0, 1000, 800);
+            AllowDialogs = true;
+        }
+
+        private void InitializeComponents()
+        {
+            uiEngine = new UIEngineImpl(this);
+            logicEngine = new LogicEngine(this);
+            soundEngine = new SoundEngine(this);
+            graphicsEngine = new GraphicsEngineImpl(this);
+            menuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
+            networkEngine = new NetworkEngine(this);
+            overlayDialog = new OverlayDialog(this);
+            dataEngine = new DataEngine();
+            physicsEngine = new PhysicsEngine();
+
+            networkEngine.UpdateOrder = 0;
+            uiEngine.UpdateOrder = 1;
+            logicEngine.UpdateOrder = 2;
+            soundEngine.UpdateOrder = 3;
+            graphicsEngine.UpdateOrder = 4;
+            overlayDialog.UpdateOrder = 5;
+            menuEngine.UpdateOrder = 6;
+
+            Components.Add(logicEngine);
+            Components.Add(graphicsEngine);
+            Components.Add(overlayDialog);
+            Components.Add(uiEngine);
+            Components.Add(soundEngine);
+            Components.Add(menuEngine);
+            Components.Add(networkEngine);
+            Services.AddService(typeof(NetworkEngine), networkEngine);
+            Services.AddService(typeof(DataEngine), dataEngine);
+            Services.AddService(typeof(PhysicsEngine), physicsEngine);
+
+            // Disable all optional components.
+            logicEngine.Enabled = false;
+            graphicsEngine.Visible = false;
+            menuEngine.Enabled = false;
+            menuEngine.Visible = false;
+            overlayDialog.Enabled = false;
+            overlayDialog.Visible = false;
         }
 
         [Conditional("DEBUG")]
@@ -727,44 +774,6 @@ namespace AW2
             {
                 // Also this seems to happen on Windows 7 due to lack of user privileges.
             }
-
-            uiEngine = new UIEngineImpl(this);
-            logicEngine = new LogicEngine(this);
-            soundEngine = new SoundEngine(this);
-            graphicsEngine = new GraphicsEngineImpl(this);
-            menuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
-            networkEngine = new NetworkEngine(this);
-            overlayDialog = new OverlayDialog(this);
-            dataEngine = new DataEngine();
-            physicsEngine = new PhysicsEngine();
-
-            networkEngine.UpdateOrder = 0;
-            uiEngine.UpdateOrder = 1;
-            logicEngine.UpdateOrder = 2;
-            soundEngine.UpdateOrder = 3;
-            graphicsEngine.UpdateOrder = 4;
-            overlayDialog.UpdateOrder = 5;
-            menuEngine.UpdateOrder = 6;
-
-            Components.Add(logicEngine);
-            Components.Add(graphicsEngine);
-            Components.Add(overlayDialog);
-            Components.Add(uiEngine);
-            Components.Add(soundEngine);
-            Components.Add(menuEngine);
-            Components.Add(networkEngine);
-            Services.AddService(typeof(NetworkEngine), networkEngine);
-            Services.AddService(typeof(DataEngine), dataEngine);
-            Services.AddService(typeof(PhysicsEngine), physicsEngine);
-
-            // Disable all optional components.
-            logicEngine.Enabled = false;
-            graphicsEngine.Visible = false;
-            menuEngine.Enabled = false;
-            menuEngine.Visible = false;
-            overlayDialog.Enabled = false;
-            overlayDialog.Visible = false;
-
             TargetElapsedTime = TimeSpan.FromSeconds(1 / 60.0); // 60 frames per second
             base.Initialize();
         }

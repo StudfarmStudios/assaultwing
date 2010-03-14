@@ -112,9 +112,6 @@ namespace AW2.Menu
             // The components are created in Initialize() when other resources are ready.
 
             viewCurve = new MovementCurve(Vector2.Zero);
-            screenWidth = AssaultWing.Instance.ClientBounds.Width;
-            screenHeight = AssaultWing.Instance.ClientBounds.Height;
-
             HelpText = null; // initialises helpText to default value
         }
 
@@ -183,6 +180,9 @@ namespace AW2.Menu
         /// </summary>
         public override void Initialize()
         {
+            screenWidth = AssaultWing.Instance.ClientBounds.Width;
+            screenHeight = AssaultWing.Instance.ClientBounds.Height;
+
             components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
             components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);

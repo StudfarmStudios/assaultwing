@@ -7,6 +7,33 @@ using AW2.Helpers;
 
 namespace AW2.Game.Gobs
 {
+    public class GobProxy
+    {
+        int _id;
+        Arena _arena;
+        Gob _gob;
+
+        public Gob Gob
+        {
+            get
+            {
+                if (_id > 0)
+                {
+                    int id = _id;
+                    _gob = _arena.Gobs.First(gob => gob.Id == id);
+                    _id = 0;
+                }
+                return _gob;
+            }
+        }
+
+        public GobProxy() { }
+        public GobProxy(Gob gob) { _gob = gob; }
+
+        public void SetId(int id) { _id = id; }
+        public void SetArena(Arena arena) { _arena = arena; }
+    }
+
     /// <summary>
     /// A lightning that is shot from a gob into another gob who will get hurt.
     /// </summary>
@@ -71,9 +98,9 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         Curve alphaCurve;
 
-        public Gob Shooter { get; set; }
+        public GobProxy Shooter { get; set; }
         public int ShooterBoneIndex { get; set; }
-        public Gob Target { get; set; }
+        public GobProxy Target { get; set; }
 
         public override IEnumerable<CanonicalString> TextureNames
         {
@@ -101,6 +128,8 @@ namespace AW2.Game.Gobs
         public Lightning(CanonicalString typeName)
             : base(typeName)
         {
+            Shooter = new GobProxy();
+            Target = new GobProxy();
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -123,6 +152,8 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            Shooter.SetArena(Arena);
+            Target.SetArena(Arena);
             CreateMesh();
             damageDealt = false;
         }
@@ -133,7 +164,7 @@ namespace AW2.Game.Gobs
             CreateMesh();
             if (!damageDealt)
             {
-                Target.InflictDamage(impactDamage, new DeathCause(Target, DeathCauseType.Damage, this));
+                Target.Gob.InflictDamage(impactDamage, new DeathCause(Target.Gob, DeathCauseType.Damage, this));
                 damageDealt = true;
             }
             float seconds = birthTime.SecondsAgoGameTime();
@@ -148,7 +179,7 @@ namespace AW2.Game.Gobs
             gfx.VertexDeclaration = vertexDeclaration;
             gfx.RenderState.AlphaBlendEnable = true;
             gfx.RenderState.SourceBlend = Blend.SourceAlpha;
-            gfx.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
+            gfx.RenderState.DestinationBlend = Blend.One;
             effect.Projection = projection;
             effect.View = view;
             effect.Alpha = Alpha;
@@ -164,12 +195,44 @@ namespace AW2.Game.Gobs
 
         #endregion Methods related to gobs' functionality in the game world
 
+        #region Methods related to serialisation
+
+        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write((int)Shooter.Gob.Id);
+                writer.Write((int)ShooterBoneIndex);
+                writer.Write((int)Target.Gob.Id);
+            }
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+            }
+        }
+
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            base.Deserialize(reader, mode, messageAge);
+            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            {
+                Shooter.SetId(reader.ReadInt32());
+                ShooterBoneIndex = reader.ReadInt32();
+                Target.SetId(reader.ReadInt32());
+            }
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+            }
+        }
+
+        #endregion Methods related to serialisation
+
         #region Private methods
 
         void CreateMesh()
         {
-            var start = Shooter.GetNamedPosition(ShooterBoneIndex);
-            var end = Target.Pos;
+            var start = Shooter.Gob.GetNamedPosition(ShooterBoneIndex);
+            var end = Target.Gob.Pos;
             CreateSegments(start, end, wildness, fineness);
             CreateVertexData(thickness);
         }

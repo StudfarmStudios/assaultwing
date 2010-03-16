@@ -477,16 +477,21 @@ namespace AW2.Game.Gobs
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            Weapon1.Serialize(writer, mode);
-            Weapon2.Serialize(writer, mode);
-            ExtraDevice.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
+                if (Weapon2 != null) writer.Write( (int)Weapon2.TypeName.Canonical );
+                else writer.Write( (int)CanonicalString.Null.Canonical );
+                if (ExtraDevice != null) writer.Write( (int)ExtraDevice.TypeName.Canonical );
+                else writer.Write( (int)CanonicalString.Null.Canonical );
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
+                writer.Write( (Half)visualThrustForce );
                 visualThrustForce = 0;
             }
+            Weapon1.Serialize( writer, mode );
+            Weapon2.Serialize( writer, mode );
+            ExtraDevice.Serialize( writer, mode );
         }
 
         /// <summary>
@@ -497,11 +502,12 @@ namespace AW2.Game.Gobs
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             base.Deserialize(reader, mode, messageAge);
-            Weapon1.Deserialize(reader, mode, messageAge);
-            Weapon2.Deserialize(reader, mode, messageAge);
-            ExtraDevice.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
+                var typeName = (CanonicalString)reader.ReadInt32();
+                if (!typeName.IsNull) SetDeviceType( ShipDevice.OwnerHandleType.SecondaryWeapon, typeName );
+                typeName = (CanonicalString)reader.ReadInt32();
+                if (!typeName.IsNull) SetDeviceType( ShipDevice.OwnerHandleType.ExtraDevice, typeName );
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -509,6 +515,9 @@ namespace AW2.Game.Gobs
                 if (thrustForce > 0)
                     Thrust(thrustForce, AssaultWing.Instance.GameTime.ElapsedGameTime, Rotation);
             }
+            if (Weapon1 != null) Weapon1.Deserialize( reader, mode, messageAge );
+            if (Weapon2 != null) Weapon2.Deserialize( reader, mode, messageAge );
+            if (ExtraDevice != null) ExtraDevice.Deserialize( reader, mode, messageAge );
         }
 
         #endregion Methods related to serialisation

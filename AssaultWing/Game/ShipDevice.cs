@@ -332,12 +332,10 @@ namespace AW2.Game
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            throw new NotImplementedException();
         }
 
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
         {
-            throw new NotImplementedException();
         }
 
         #endregion

@@ -40,7 +40,7 @@ namespace AW2.Game.Weapons
                 where gob.IsDamageable && !gob.Disabled && gob != owner
                 let distanceSquared = Vector2.DistanceSquared(gob.Pos, owner.Pos)
                 where distanceSquared <= range * range
-                orderby distanceSquared descending
+                orderby distanceSquared ascending
                 select gob;
             if (!targets.Any()) return;
             var target = targets.First();
@@ -58,9 +58,9 @@ namespace AW2.Game.Weapons
                     var lightning = shot as Lightning;
                     if (lightning != null)
                     {
-                        lightning.Shooter = owner;
+                        lightning.Shooter = new GobProxy(owner);
                         lightning.ShooterBoneIndex = boneI;
-                        lightning.Target = target;
+                        lightning.Target = new GobProxy(target);
                     }
                     Arena.Gobs.Add(shot);
                 });

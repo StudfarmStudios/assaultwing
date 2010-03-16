@@ -13,11 +13,6 @@ namespace AW2.Game.BonusActions
         [TypeParameter]
         CanonicalString weaponUpgrade;
 
-        public SelfDestructBonusAction(CanonicalString typeName)
-            : base(typeName)
-        {
-
-        }
         /// <summary>
         /// Only for serialization.
         /// </summary>
@@ -25,6 +20,12 @@ namespace AW2.Game.BonusActions
             : base()
         {
             name = (CanonicalString)"dummyaction";
+            weaponUpgrade = (CanonicalString)"dummyweapon";
+        }
+
+        public SelfDestructBonusAction(CanonicalString typeName)
+            : base(typeName)
+        {
         }
 
         private void UpgradeWeapon(CanonicalString g_weaponUpgrade)

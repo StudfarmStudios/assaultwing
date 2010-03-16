@@ -25,14 +25,11 @@ namespace AW2.Game.Weapons
         
         #endregion SelfDestruct fields
 
-        /// <summary>
-        /// Creates an uninitialised forward shooting weapon.
-        /// </summary>
         /// This constructor is only for serialisation.
         public SelfDestruct()
             : base()
         {
- 
+            deathGobTypes = new CanonicalString[0];
         }
 
         public SelfDestruct(CanonicalString typeName)

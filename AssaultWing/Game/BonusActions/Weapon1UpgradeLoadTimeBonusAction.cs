@@ -16,11 +16,6 @@ namespace AW2.Game.BonusActions
         [TypeParameter]
         float maxMultiplier;
 
-        public Weapon1UpgradeLoadTimeBonusAction(CanonicalString typeName)
-            : base(typeName)
-        {
-
-        }
         /// <summary>
         /// Only for serialization.
         /// </summary>
@@ -28,6 +23,13 @@ namespace AW2.Game.BonusActions
             : base()
         {
             name = (CanonicalString)"dummyaction";
+            multiplier = 0.5f;
+            maxMultiplier = 0.1f;
+        }
+
+        public Weapon1UpgradeLoadTimeBonusAction(CanonicalString typeName)
+            : base(typeName)
+        {
         }
 
         /// <summary>

@@ -27,11 +27,11 @@ namespace AW2.Game
         {
             var halfFrameTime = AssaultWing.Instance.TargetElapsedTime.Divide(2);
             int entryIndex = shipLocations.FindLastIndex(entry => entry.GameTime - halfFrameTime < gameTime);
-            if (entryIndex == -1) return; // too old controls
+            if (entryIndex == -1) return; // too old controls are useless
+            if (entryIndex == shipLocations.Count - 1) return; // controls appear in the future, cannot apply them :(
 
             // Apply controls to the ship location entry at the time of the controls
             // and propagate the change to newer ship location entries.
-            if (entryIndex == 0) throw new ApplicationException("Cannot apply remote controls to the current frame");
             var frameDurationSeconds = (float)(shipLocations[entryIndex + 1].GameTime - shipLocations[entryIndex].GameTime).TotalSeconds;
             float rotationChange = ship.TurnSpeed * frameDurationSeconds *
                 (state[(int)PlayerControlType.Left].force - state[(int)PlayerControlType.Right].force);

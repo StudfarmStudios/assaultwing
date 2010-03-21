@@ -701,8 +701,8 @@ namespace AW2
         {
             if (NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
-            NetworkMode = NetworkMode.Standalone;
             networkEngine.StopServer();
+            NetworkMode = NetworkMode.Standalone;
         }
 
         /// <summary>

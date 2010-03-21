@@ -26,8 +26,7 @@ namespace AW2.Net
         protected override void DisposeImpl(bool error)
         {
             // On internal error, notify the game instance.
-            if (error)
-                AssaultWing.Instance.NetworkEngine.DropClient(Id);
+            AssaultWing.Instance.NetworkEngine.DropClient(Id, error);
             base.DisposeImpl(error);
         }
     }

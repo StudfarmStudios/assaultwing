@@ -217,7 +217,8 @@ namespace AW2.Net
         /// Drops the connection to a game client. To be called only
         /// as the game server.
         /// </summary>
-        public void DropClient(int connectionId)
+        /// <param name="error">If true, client is being dropped due to an error condition.</param>
+        public void DropClient(int connectionId, bool error)
         {
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
@@ -226,14 +227,17 @@ namespace AW2.Net
             removedClientConnections.Add(connection);
 
             // Remove the client's players.
-            List<string> droppedPlayerNames = new List<string>();
-            foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
-                if (player.ConnectionId == connection.Id)
-                    droppedPlayerNames.Add(player.Name);
-            string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
-            foreach (var player in AssaultWing.Instance.DataEngine.Players)
-                if (!player.IsRemote)
-                    player.SendMessage(message);
+            if (error)
+            {
+                List<string> droppedPlayerNames = new List<string>();
+                foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
+                    if (player.ConnectionId == connection.Id)
+                        droppedPlayerNames.Add(player.Name);
+                string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
+                foreach (var player in AssaultWing.Instance.DataEngine.Players)
+                    if (!player.IsRemote)
+                        player.SendMessage(message);
+            }
             AssaultWing.Instance.DataEngine.Spectators.Remove(player => player.ConnectionId == connection.Id);
         }
 

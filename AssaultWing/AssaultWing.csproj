@@ -205,6 +205,8 @@
     <Compile Include="Helpers\RandomHelper.cs" />
     <Compile Include="Helpers\Serialization.cs" />
     <Compile Include="Helpers\SpatialGrid.cs" />
+    <Compile Include="Helpers\StepwiseAction.cs" />
+    <Compile Include="Helpers\SuspendableThread.cs" />
     <Compile Include="Menu\DummyMenuEngine.cs" />
     <Compile Include="Menu\IMenuEngine.cs" />
     <Compile Include="Net\Connection.cs" />
@@ -216,6 +218,8 @@
     <Compile Include="Net\ManagementServerConnection.cs" />
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\MessageHandler.cs" />
+    <Compile Include="Net\MessageReadThread.cs" />
+    <Compile Include="Net\MessageSendThread.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
     <Compile Include="Net\Messages\ArenaStartReply.cs" />
     <Compile Include="Net\Messages\ArenaStartRequest.cs" />

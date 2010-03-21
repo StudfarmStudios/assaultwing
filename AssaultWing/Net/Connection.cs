@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+using AW2.Helpers;
 using AW2.Helpers.Collections;
 
 namespace AW2.Net
@@ -58,7 +59,7 @@ namespace AW2.Net
         static int leastUnusedId = 0;
 
         /// <summary>
-        /// If greater than zero, then the connection disposed and thus no longer usable.
+        /// If greater than zero, then the connection is disposed and thus no longer usable.
         /// </summary>
         int isDisposed;
 
@@ -74,16 +75,6 @@ namespace AW2.Net
         static Socket serverSocket;
 
         /// <summary>
-        /// Buffer for receiving a message header. Has exactly the correct length.
-        /// </summary>
-        byte[] headerReceiveBuffer;
-
-        /// <summary>
-        /// Buffer for receiving a message body. Has sufficient length, but perhaps more.
-        /// </summary>
-        byte[] bodyReceiveBuffer;
-
-        /// <summary>
         /// Buffer of serialised messages waiting to be sent to the remote host.
         /// </summary>
         ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers;
@@ -91,12 +82,12 @@ namespace AW2.Net
         /// <summary>
         /// The thread that is continuously reading incoming data from the remote host.
         /// </summary>
-        Thread readThread;
+        SuspendableThread readThread;
 
         /// <summary>
         /// The thread that is continuously sending outgoing data to the remote host.
         /// </summary>
-        Thread sendThread;
+        SuspendableThread sendThread;
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
@@ -403,17 +394,17 @@ namespace AW2.Net
         {
             Application.ApplicationExit -= ApplicationExitCallback;
 
-            if (readThread != null && readThread.IsAlive)
+            if (readThread != null)
             {
-                readThread.Abort();
-                if (!readThread.Join(1000))
+                readThread.Terminate();
+                if (!readThread.Join(TimeSpan.FromSeconds(1)))
                     AW2.Helpers.Log.Write("WARNING: Unable to kill read loop of " + Name);
                 readThread = null;
             }
-            if (sendThread != null && sendThread.IsAlive)
+            if (sendThread != null)
             {
-                sendThread.Abort();
-                if (!sendThread.Join(1000))
+                sendThread.Terminate();
+                if (!sendThread.Join(TimeSpan.FromSeconds(1)))
                     AW2.Helpers.Log.Write("WARNING: Unable to kill write loop of " + Name);
                 sendThread = null;
             }
@@ -443,15 +434,12 @@ namespace AW2.Net
             socket.ReceiveTimeout = 0; // don't time out on receiving
             socket.SendTimeout = 1000;
             this.socket = socket;
-            headerReceiveBuffer = new byte[Message.HeaderLength];
             messages = new TypedQueue<Message>();
             sendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
             errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
-            readThread = new Thread(ReadLoop);
-            readThread.Name = "Read Loop";
+            readThread = new MessageReadThread(socket, ThreadExceptionHandler, MessageHandler);
             readThread.Start();
-            sendThread = new Thread(SendLoop);
-            sendThread.Name = "Send Loop";
+            sendThread = new MessageSendThread(socket, sendBuffers, ThreadExceptionHandler);
             sendThread.Start();
         }
 
@@ -465,152 +453,30 @@ namespace AW2.Net
             sendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
         }
 
-        /// <summary>
-        /// Receives a certain number of bytes to a buffer.
-        /// This method blocks until the required number of bytes have been received,
-        /// or until the socket is closed or there is some error condition.
-        /// </summary>
-        /// <param name="buffer">The buffer to store the bytes in.</param>
-        /// <param name="byteCount">The number of bytes to receive.</param>
-        void Receive(byte[] buffer, int byteCount)
-        {
-            if (buffer == null) throw new ArgumentNullException("Cannot receive to null buffer");
-            if (byteCount < 0) throw new ArgumentException("Cannot receive negative number of bytes");
-            int totalReadBytes = 0;
-            while (totalReadBytes < byteCount)
-            {
-                if (socket.Available == 0)
-                {
-                    // See if the socket is still connected. If Poll() shows that there
-                    // is data to read but Available is still zero, the socket must have
-                    // been closed at the remote host.
-                    if (socket.Poll(100, SelectMode.SelectRead) && socket.Available == 0)
-                        throw new SocketException((int)SocketError.NotConnected);
-
-                    // We are still connected but there's no data.
-                    // Let other threads do their stuff while we wait.
-                    Thread.Sleep(2);
-                }
-                else
-                {
-                    int readBytes = socket.Receive(buffer, totalReadBytes, byteCount - totalReadBytes, SocketFlags.None);
-                    totalReadBytes += readBytes;
-                }
-            }
-            if (totalReadBytes > byteCount) 
-                AW2.Helpers.Log.Write("WARNING: Read " + totalReadBytes + " bytes when only " + byteCount + " was requested");
-        }
-
         void ApplicationExitCallback(object caller, EventArgs args)
         {
             Dispose(false);
         }
 
+        private void ThreadExceptionHandler(Exception e)
+        {
+            errors.Do(queue =>
+            {
+                queue.Enqueue(e);
+                if (ErrorCallback != null) ErrorCallback();
+            });
+        }
+
+        private void MessageHandler(byte[] messageHeaderBuffer, byte[] messageBodyBuffer)
+        {
+            Message message = Message.Deserialize(messageHeaderBuffer, messageBodyBuffer, Id);
+            messages.Enqueue(message);
+            lock (messages) if (MessageCallback != null) MessageCallback();
+        }
+
         #endregion Private methods
 
         #region Private callback implementations
-
-        /// <summary>
-        /// Receives data from the remote host endlessly or until the socket
-        /// is closed or there is some other error condition. 
-        /// To be run in a separate thread.
-        /// </summary>
-        /// <seealso cref="System.Threading.ThreadStart"/>
-        void ReadLoop()
-        {
-            try
-            {
-                while (true)
-                {
-                    // Read header.
-                    Receive(headerReceiveBuffer, headerReceiveBuffer.Length);
-                    if (!Message.IsValidHeader(headerReceiveBuffer))
-                    {
-                        string txt = "Connection received an invalid message header [length:" + 
-                            headerReceiveBuffer.Length + " data:" +
-                            string.Join(",", Array.ConvertAll<byte, string>(headerReceiveBuffer, 
-                            a => ((byte)a).ToString("X2"))) + "]";
-                        throw new InvalidDataException(txt);
-                    }
-
-                    // Read body.
-                    int bodyLength = Message.GetBodyLength(headerReceiveBuffer);
-                    if (bodyReceiveBuffer == null || bodyReceiveBuffer.Length < bodyLength)
-                        bodyReceiveBuffer = new byte[bodyLength];
-                    Receive(bodyReceiveBuffer, bodyLength);
-
-                    // Add received message to the message queue.
-                    Message message = Message.Deserialize(headerReceiveBuffer, bodyReceiveBuffer, Id);
-                    messages.Enqueue(message);
-                    lock (messages) if (MessageCallback != null) MessageCallback();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-                // Someone else terminated us, so he is handling the possible error condition.
-            }
-            catch (Exception e)
-            {
-                errors.Do(queue =>
-                {
-                    queue.Enqueue(e);
-                    if (ErrorCallback != null) ErrorCallback();
-                });
-            }
-        }
-
-        /// <summary>
-        /// Sends data to the remote host endlessly or until the socket
-        /// is closed or there is some other error condition. 
-        /// To be run in a separate thread.
-        /// </summary>
-        /// <seealso cref="System.Threading.ThreadStart"/>
-        void SendLoop()
-        {
-            try
-            {
-                List<ArraySegment<byte>> sendSegments = new List<ArraySegment<byte>>();
-                while (true)
-                {
-                    // Gather several messages together to reach a supposedly optimal
-                    // TCP packet size of 1500 bytes minus some space for headers.
-                    sendSegments.Clear();
-                    int totalLength = 0;
-                    sendBuffers.Do(queue =>
-                    {
-                        while (queue.Count > 0)
-                        {
-                            ArraySegment<byte> segment = queue.Peek();
-                            if (sendSegments.Count > 0 && totalLength + segment.Count > 1400)
-                                break;
-                            totalLength += segment.Count;
-                            sendSegments.Add(segment);
-                            queue.Dequeue();
-                        }
-                    });
-                    if (sendSegments.Count > 0)
-                    {
-                        int bytesSent = socket.Send(sendSegments);
-                        if (bytesSent != totalLength)
-                            throw new Exception("Not all data was sent (" + bytesSent + " out of " + totalLength + " bytes)");
-                    }
-                    else
-                        Thread.Sleep(2);
-                }
-            }
-            catch (ThreadAbortException)
-            {
-                // Someone else terminated us, so he is handling the possible error condition.
-            }
-            catch (Exception e)
-            {
-                errors.Do(queue =>
-                {
-                    queue.Enqueue(e);
-                    if (ErrorCallback != null) ErrorCallback();
-                });
-            }
-        }
 
         /// <summary>
         /// Callback implementation for accepting an incoming connection.
@@ -684,6 +550,7 @@ namespace AW2.Net
                 }
             }
         }
+
         #endregion Private callback implementations
     }
 }

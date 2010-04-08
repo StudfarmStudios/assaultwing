@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using Microsoft.Xna.Framework.Audio;
 
 namespace AW2.Game.Gobs
 {
@@ -12,6 +13,8 @@ namespace AW2.Game.Gobs
     public class Dock : Gob
     {
         #region Dock fields
+
+        static readonly TimeSpan DOCK_SOUND_STOP_DELAY = TimeSpan.FromSeconds(0.5);
 
         /// <summary>
         /// Speed of repairing damageable gobs, measured in damage/second.
@@ -32,11 +35,16 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         float weapon2ChargeSpeed;
 
+        TimeSpan _lastDockSoundTime;
+        Cue _dockSoundCue;
+
         #endregion Dock fields
 
-        /// <summary>
-        /// Creates an uninitialised dock.
-        /// </summary>
+        private bool MustBeSilent
+        {
+            get { return _lastDockSoundTime < AssaultWing.Instance.GameTime.TotalGameTime - DOCK_SOUND_STOP_DELAY; }
+        }
+
         /// This constructor is only for serialisation.
         public Dock()
             : base()
@@ -46,32 +54,25 @@ namespace AW2.Game.Gobs
             this.weapon2ChargeSpeed = 100;
         }
 
-        /// <summary>
-        /// Creates a dock.
-        /// </summary>
-        /// <param name="typeName">The type of the dock.</param>
         public Dock(CanonicalString typeName)
             : base(typeName)
         {
             movable = false;
         }
 
-        /// <summary>
-        /// Performs collision operations for the case when one of this gob's collision areas
-        /// is overlapping one of another gob's collision areas.
-        /// </summary>
-        /// <param name="myArea">The collision area of this gob.</param>
-        /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
-        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
-        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
-        /// to resolve the overlap.</param>
+        public override void Update()
+        {
+            base.Update();
+            if (MustBeSilent) EnsureDockSoundStopped();
+        }
+
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             // We assume we have only one Receptor collision area which handles docking.
             // Then 'theirArea.Owner' must be damageable.
             if (myArea.Name == "Dock")
             {
+                EnsureDockSoundPlaying();
                 theirArea.Owner.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(repairSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime), new DeathCause());
                 Ship ship = theirArea.Owner as Ship;
                 if (ship != null)
@@ -80,6 +81,30 @@ namespace AW2.Game.Gobs
                     ship.Weapon2.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon2ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
                 }
             }
+        }
+
+        public override void Dispose()
+        {
+            if (_dockSoundCue != null)
+            {
+                _dockSoundCue.Dispose();
+                _dockSoundCue = null;
+            }
+            base.Dispose();
+        }
+
+        private void EnsureDockSoundPlaying()
+        {
+            _lastDockSoundTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            if (_dockSoundCue != null && _dockSoundCue.IsPlaying) return;
+            if (_dockSoundCue != null) _dockSoundCue.Dispose();
+            _dockSoundCue = AssaultWing.Instance.SoundEngine.GetCue("Docking");
+            _dockSoundCue.Play();
+        }
+
+        private void EnsureDockSoundStopped()
+        {
+            if (_dockSoundCue != null && _dockSoundCue.IsPlaying) _dockSoundCue.Stop(AudioStopOptions.AsAuthored);
         }
     }
 }

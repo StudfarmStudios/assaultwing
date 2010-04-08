@@ -967,10 +967,7 @@ namespace AW2.Game
                             unmovableGob.InflictDamage(CollisionDamage(unmovableGob, move2Delta, damageMultiplier));
                     }
                     */
-
-                    // Play a sound.
-                    if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                        AssaultWing.Instance.SoundEngine.PlaySound("Collision");
+                    PlayWallCollisionSound(movableGob, move1Delta);
                 }
             }
         }
@@ -1042,12 +1039,27 @@ namespace AW2.Game
                             gob2.InflictDamage(CollisionDamage(gob2, move2after, damageMultiplier),
                                 new DeathCause(gob2, DeathCauseType.Collision, gob1));
                     }
-
-                    // Play a sound only if actual collision happened!.
-                    if (move1Delta.Length() > MINIMUM_COLLISION_DELTA || move2after.Length() > MINIMUM_COLLISION_DELTA)
-                        AssaultWing.Instance.SoundEngine.PlaySound("Shipcollision");
+                    PlayGobCollisionSound(gob1, gob2, move1Delta, move2after);
                 }
             }
+        }
+
+        private static void PlayWallCollisionSound(Gob gob, Vector2 moveDelta)
+        {
+            // Be silent on mild collisions.
+            if (moveDelta.Length() < MINIMUM_COLLISION_DELTA) return;
+
+            if (!(gob is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
+            AssaultWing.Instance.SoundEngine.PlaySound("Collision");
+        }
+
+        private static void PlayGobCollisionSound(Gob gob1, Gob gob2, Vector2 move1Delta, Vector2 move2Delta)
+        {
+            // Be silent on mild collisions.
+            if (move1Delta.Length() < MINIMUM_COLLISION_DELTA && move2Delta.Length() < MINIMUM_COLLISION_DELTA) return;
+
+            if (!(gob1 is Gobs.Ship) && !(gob2 is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
+            AssaultWing.Instance.SoundEngine.PlaySound("Shipcollision");
         }
 
         private float CollisionDamage(Gob gob, Vector2 moveDelta, float damageMultiplier)

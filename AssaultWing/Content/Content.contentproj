@@ -260,25 +260,25 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Ship_Hyperion.xml">
+    <None Include="gobdefs\Ship_Windlord.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Ship_Hyperion</Name>
+      <Name>Ship_Windlord</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Ship_Prowler.xml">
+    <None Include="gobdefs\Ship_Bugger.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Ship_Prowler</Name>
+      <Name>Ship_Bugger</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\SnakeShip_Snake.xml">
+    <None Include="gobdefs\SnakeShip_Plissken.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>SnakeShip_Snake</Name>
+      <Name>SnakeShip_Plissken</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>

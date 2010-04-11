@@ -820,8 +820,8 @@ namespace AW2
             uiEngine.MouseControlsEnabled = false;
 #endif
 
-            Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Hyperion", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
-            Player player2 = new Player("John Crichton", (CanonicalString)"Prowler", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
+            Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
+            Player player2 = new Player("John Crichton", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
             player1.PlayerColor = Color.Blue;
             player2.PlayerColor = Color.DeepPink;
 
@@ -829,7 +829,7 @@ namespace AW2
             dataEngine.Spectators.Add(player2);
 
             dataEngine.GameplayMode = new GameplayMode();
-            dataEngine.GameplayMode.ShipTypes = new string[] { "Hyperion", "Prowler", "Snake" };
+            dataEngine.GameplayMode.ShipTypes = new string[] { "Windlord", "Bugger", "Plissken" };
             dataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
             dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
 

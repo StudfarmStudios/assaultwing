@@ -137,6 +137,7 @@ namespace AW2
                         }
                         ++layerIndex;
                     }
+                    if (gobNames.Items.Count == 1) gobNames.SelectedIndex = 0;
                 }
             }
             catch (Exception ex)
@@ -153,6 +154,8 @@ namespace AW2
             try
             {
                 var viewport = GetViewport(dragStartLocation);
+                var mouseCoordinates = viewport.ToPos(e.Location.ToVector2(), 0);
+                CursorCoordinates.Text = string.Format("X:{0} Y:{1}", mouseCoordinates.X, mouseCoordinates.Y);
 
                 // Left mouse button drag moves selected gob.
                 if ((mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0)
@@ -210,6 +213,21 @@ namespace AW2
             float newValue = SelectedGob.Rotation % MathHelper.TwoPi;
             if (newValue < 0) newValue += MathHelper.TwoPi;
             gobRotation.Value = newValue;
+        }
+
+        private void DuplicateGob_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedGob == null) return;
+            var duplicate = (Gob)SelectedGob.CloneWithRuntimeState();
+            duplicate.Layer = SelectedGob.Layer;
+            duplicate.Pos += new Vector2( 50, 50 );
+            SelectedGob.Arena.Gobs.Add(duplicate);
+        }
+
+        private void DeleteGob_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedGob == null) return;
+            SelectedGob.Arena.Gobs.Remove(SelectedGob);
         }
     }
 

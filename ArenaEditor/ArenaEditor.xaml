@@ -42,6 +42,11 @@
                         SmallChange="0.196349541" LargeChange="0.785398163"
                         ValueChanged="GobRotation_ValueChanged"/>
             </DockPanel>
+            <DockPanel x:Name="GobButtons" DockPanel.Dock="Top">
+                <Button Click="DeleteGob_Click" DockPanel.Dock="Right">Delete</Button>
+                <Button Click="DuplicateGob_Click" DockPanel.Dock="Left">Duplicate</Button>
+            </DockPanel>
+            <TextBlock x:Name="CursorCoordinates" DockPanel.Dock="Bottom"/>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">
             <aw:EditorWindow x:Name="arenaView"

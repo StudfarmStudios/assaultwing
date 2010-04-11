@@ -20,10 +20,12 @@ namespace AW2.Helpers
 
         delegate void CloneDelegate(Clonable clone);
         delegate Clonable ConstructorDelegate();
-        static Dictionary<Type, DynamicMethod> cloneMethods = new Dictionary<Type, DynamicMethod>();
-        static Dictionary<Type, DynamicMethod> constructors = new Dictionary<Type, DynamicMethod>();
-        List<CloneDelegate> cloneDelegates;
-        ConstructorDelegate constructorDelegate;
+        static Dictionary<Type, DynamicMethod> g_cloneMethods = new Dictionary<Type, DynamicMethod>();
+        static Dictionary<Type, DynamicMethod> g_cloneMethodsWithRuntimeState = new Dictionary<Type, DynamicMethod>();
+        static Dictionary<Type, DynamicMethod> g_constructors = new Dictionary<Type, DynamicMethod>();
+        List<CloneDelegate> _cloneDelegates;
+        List<CloneDelegate> _cloneDelegatesWithRuntimeState;
+        ConstructorDelegate _constructorDelegate;
 
         public CanonicalString TypeName { get { return typeName; } }
 
@@ -92,10 +94,17 @@ namespace AW2.Helpers
         /// </summary>
         public virtual void Cloned() { }
 
-        /// <summary>
-        /// Returns a clone of the instance.
-        /// </summary>
         public Clonable Clone()
+        {
+            return CloneImpl(ref _cloneDelegates, g_cloneMethods);
+        }
+
+        public Clonable CloneWithRuntimeState()
+        {
+            return CloneImpl(ref _cloneDelegatesWithRuntimeState, g_cloneMethodsWithRuntimeState);
+        }
+
+        private Clonable CloneImpl(ref List<CloneDelegate> cloneDelegates, Dictionary<Type, DynamicMethod> cloneMethods)
         {
             if (cloneDelegates == null)
             {
@@ -103,9 +112,9 @@ namespace AW2.Helpers
                 for (var klass = GetType(); klass != null && cloneMethods.ContainsKey(klass); klass = klass.BaseType)
                     cloneDelegates.Add((CloneDelegate)cloneMethods[klass].CreateDelegate(typeof(CloneDelegate), this));
             }
-            if (constructorDelegate == null)
-                constructorDelegate = (ConstructorDelegate)constructors[GetType()].CreateDelegate(typeof(ConstructorDelegate), this);
-            var clone = constructorDelegate();
+            if (_constructorDelegate == null)
+                _constructorDelegate = (ConstructorDelegate)g_constructors[GetType()].CreateDelegate(typeof(ConstructorDelegate), this);
+            var clone = _constructorDelegate();
             for (int i = 0; i < cloneDelegates.Count; ++i) cloneDelegates[i](clone);
             clone.Cloned();
             return clone;
@@ -116,8 +125,9 @@ namespace AW2.Helpers
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
                 if (!typeof(Clonable).IsAssignableFrom(type) || type == typeof(Clonable)) continue;
-                cloneMethods[type] = CreateCloneMethod(type);
-                constructors[type] = CreateConstructor(type);
+                g_cloneMethods[type] = CreateCloneMethod(type, typeof(TypeParameterAttribute));
+                g_cloneMethodsWithRuntimeState[type] = CreateCloneMethod(type, typeof(TypeParameterAttribute), typeof(RuntimeStateAttribute));
+                g_constructors[type] = CreateConstructor(type);
             }
         }
 
@@ -141,7 +151,7 @@ namespace AW2.Helpers
             return dyna;
         }
 
-        static DynamicMethod CreateCloneMethod(Type type)
+        static DynamicMethod CreateCloneMethod(Type type, params Type[] cloneFieldAttributes)
         {
             Type returnType = null;
             Type[] parameterTypes = { typeof(Clonable), typeof(Clonable) };
@@ -150,28 +160,31 @@ namespace AW2.Helpers
             var deepCopyMethod = typeof(Serialization).GetMethod("DeepCopy");
 
             // copy all fields from this to parameter
-            foreach (var field in Serialization.GetDeclaredFields(type, typeof(TypeParameterAttribute)))
-            {
-                if (field.FieldType.IsValueType || field.IsDefined(typeof(ShallowCopyAttribute), false))
-                {
-                    // shallow copy - copy value by simple assignment
-                    generator.Emit(OpCodes.Ldarg_1);
-                    generator.Emit(OpCodes.Ldarg_0);
-                    generator.Emit(OpCodes.Ldfld, field);
-                    generator.Emit(OpCodes.Stfld, field);
-                }
-                else
-                {
-                    // deep copy - call special method for obtaining a deep copy
-                    generator.Emit(OpCodes.Ldarg_1);
-                    generator.Emit(OpCodes.Ldarg_0);
-                    generator.Emit(OpCodes.Ldfld, field);
-                    generator.Emit(OpCodes.Call, deepCopyMethod);
-                    generator.Emit(OpCodes.Stfld, field);
-                }
-            }
+            var fields = cloneFieldAttributes.SelectMany(att => Serialization.GetDeclaredFields(type, att));
+            foreach (var field in fields) EmitFieldCopyIL(generator, deepCopyMethod, field);
             generator.Emit(OpCodes.Ret);
             return dyna;
+        }
+
+        private static void EmitFieldCopyIL(ILGenerator generator, MethodInfo deepCopyMethod, FieldInfo field)
+        {
+            if (field.FieldType.IsValueType || field.IsDefined(typeof(ShallowCopyAttribute), false))
+            {
+                // shallow copy - copy value by simple assignment
+                generator.Emit(OpCodes.Ldarg_1);
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldfld, field);
+                generator.Emit(OpCodes.Stfld, field);
+            }
+            else
+            {
+                // deep copy - call special method for obtaining a deep copy
+                generator.Emit(OpCodes.Ldarg_1);
+                generator.Emit(OpCodes.Ldarg_0);
+                generator.Emit(OpCodes.Ldfld, field);
+                generator.Emit(OpCodes.Call, deepCopyMethod);
+                generator.Emit(OpCodes.Stfld, field);
+            }
         }
     }
 }

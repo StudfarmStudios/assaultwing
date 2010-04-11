@@ -126,6 +126,12 @@ namespace AW2.Game.Gobs
             }
         }
 
+        public override void Cloned()
+        {
+            wallModelName = ModelName;
+            base.Cloned();
+        }
+
         #endregion Methods related to serialisation
 
         /// <summary>

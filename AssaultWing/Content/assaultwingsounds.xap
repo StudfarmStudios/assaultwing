@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 29958893;
-    Last Modified High = 2929190960;
+    Last Modified Low = 2929190960;
+    Last Modified High = 29958893;
 
     Category
     {
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::bc9b0268-41a2-45fc-a0f1-ed757165878d;
+            Name = 1::6e0bee42-4a3f-4868-a8e7-792cf0407c62;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -272,8 +272,8 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Bank Last Revised Low = 57764046;
-    Bank Last Revised High = 30070610;
+    Bank Last Revised Low = 2497339556;
+    Bank Last Revised High = 30070950;
 
     Wave
     {
@@ -1309,6 +1309,29 @@ Wave Bank
             Last Modified High = 30070408;
         }
     }
+
+    Wave
+    {
+        Name = hisss;
+        File = sounds\hisss.wav;
+        Build Settings Last Modified Low = 2386279556;
+        Build Settings Last Modified High = 30070950;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 141312;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 945000740;
+            Last Modified High = 30070946;
+        }
+    }
 }
 
 Sound Bank
@@ -1318,8 +1341,6 @@ Sound Bank
     Windows File = bin\x86\Debug\Sound Bank.xsb;
     Xbox Bank Path Edited = 1;
     Windows Bank Path Edited = 1;
-    Header Last Modified High = 0;
-    Header Last Modified Low = 0;
 
     Sound
     {
@@ -3122,7 +3143,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = RPC Preset;
-                RPC Curve Name = 1::bc9b0268-41a2-45fc-a0f1-ed757165878d;
+                RPC Curve Name = 1::6e0bee42-4a3f-4868-a8e7-792cf0407c62;
             }
         }
     }
@@ -3189,7 +3210,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = RPC Preset;
-                RPC Curve Name = 1::bc9b0268-41a2-45fc-a0f1-ed757165878d;
+                RPC Curve Name = 1::6e0bee42-4a3f-4868-a8e7-792cf0407c62;
             }
         }
     }
@@ -3469,6 +3490,53 @@ Sound Bank
                     Bank Index = 0;
                     Entry Name = missileHit03;
                     Entry Index = 44;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = hisss;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = hisss;
+                    Entry Index = 45;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -3987,6 +4055,26 @@ Sound Bank
         {
             Name = missileHit03;
             Index = 44;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = VenomSpit;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = hisss;
+            Index = 45;
             Weight Min = 0;
             Weight Max = 255;
         }

@@ -4368,7 +4368,7 @@
               <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2900</Y>
             </max>
           </spawnArea>
-          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">6</spawnInterval>
+          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">60</spawnInterval>
           <spawnTypes type="AW2.Game.Gobs.SpawnType[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
               <spawnTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">upgradeweapon2</spawnTypeName>
@@ -4507,7 +4507,7 @@
               <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2800</Y>
             </max>
           </spawnArea>
-          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">6</spawnInterval>
+          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">60</spawnInterval>
           <spawnTypes type="AW2.Game.Gobs.SpawnType[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
               <spawnTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">upgradeweapon2</spawnTypeName>
@@ -4546,7 +4546,6 @@
           <disabled type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</disabled>
           <damage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</damage>
         </Item>
-
 
         <Item type="AW2.Game.Gobs.SpawnGob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bonus spawn</typeName>
@@ -4560,7 +4559,7 @@
               <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</Y>
             </max>
           </spawnArea>
-          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">6</spawnInterval>
+          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">60</spawnInterval>
           <spawnTypes type="AW2.Game.Gobs.SpawnType[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
               <spawnTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">upgradeweapon2</spawnTypeName>
@@ -4599,9 +4598,9 @@
           <disabled type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</disabled>
           <damage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</damage>
         </Item>
-      </gobs>
-    </Item>
 
+    </gobs>
+    </Item>
     <Item type="AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <isGameplayLayer type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</isGameplayLayer>
       <z type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</z>

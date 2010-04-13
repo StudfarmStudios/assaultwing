@@ -34,19 +34,22 @@ namespace AW2.Game.Weapons
 
         protected override void FireImpl(AW2.UI.ControlState triggerState)
         {
+            if (!triggerState.pulse) return;
             if (!CanFire) return;
             var targets =
-                from gob in Arena.Gobs
+                from gob in Arena.Gobs.GameplayLayer.Gobs
                 where gob.IsDamageable && !gob.Disabled && gob != owner
                 let distanceSquared = Vector2.DistanceSquared(gob.Pos, owner.Pos)
                 where distanceSquared <= range * range
                 orderby distanceSquared ascending
                 select gob;
-            if (!targets.Any()) return;
-            var target = targets.First();
-
             StartFiring();
+            if (targets.Any()) FireAtTarget(targets.First());
+            DoneFiring();
+        }
 
+        private void FireAtTarget(Gob target)
+        {
             // Every gun barrel shoots.
             for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
             {
@@ -65,8 +68,6 @@ namespace AW2.Game.Weapons
                     Arena.Gobs.Add(shot);
                 });
             }
-
-            DoneFiring();
         }
 
         public override void Activate()

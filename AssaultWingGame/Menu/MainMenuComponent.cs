@@ -86,11 +86,7 @@ namespace AW2.Menu
                     currentContents = startContents;
                     currentItem = 0;
 
-                    // Cut network connections.
-                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                        AssaultWing.Instance.StopClient();
-                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                        AssaultWing.Instance.StopServer();
+                    CutNetworkConnections();
                 }
             }
         }
@@ -158,6 +154,7 @@ namespace AW2.Menu
         public override void Update()
         {
             if (!Active) return;
+            if (currentContents != networkContents && AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + AssaultWing.Instance.NetworkMode);
             commonCallbacks.Update();
 
             // Text field editing
@@ -242,7 +239,7 @@ namespace AW2.Menu
                 AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist( new string[] { "Amazonas" });
             };
 
-            connectAddress = new EditableText("192.168.11.2");
+            connectAddress = new EditableText("192.168.1.100");
             networkContents[1].Name = connectItemPrefix + connectAddress.Content;
             networkContents[1].Action = () =>
             {
@@ -322,6 +319,7 @@ namespace AW2.Menu
             }));
             commonCallbacks.Callbacks.Add(new TriggeredCallback(controlBack, () =>
             {
+                CutNetworkConnections();
                 currentContents = startContents;
             }));
         }
@@ -350,6 +348,14 @@ namespace AW2.Menu
                 controlDown.Add(player.Controls.down);
                 controlSelect.Add(player.Controls.fire1);
             }
+        }
+
+        private static void CutNetworkConnections()
+        {
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                AssaultWing.Instance.StopClient();
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+                AssaultWing.Instance.StopServer();
         }
 
         #endregion Private methods

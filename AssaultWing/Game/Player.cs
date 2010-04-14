@@ -245,7 +245,7 @@ namespace AW2.Game
         /// </summary>
         public List<string> Messages { get { return messages; } }
 
-        public List<string> PostprocessEffectNames { get; private set; }
+        public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
 
         #endregion Player properties
 
@@ -346,7 +346,7 @@ namespace AW2.Game
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
             lookAt = new LookAtShip();
             BonusActions = new List<GameAction>();
-            PostprocessEffectNames = new List<string>();
+            PostprocessEffectNames = new PostprocessEffectNameContainer(this);
         }
 
         #endregion Constructors
@@ -546,6 +546,9 @@ namespace AW2.Game
                 writer.Write((short)lives);
                 writer.Write((short)kills);
                 writer.Write((short)suicides);
+                writer.Write((short)PostprocessEffectNames.Count);
+                foreach (var effectName in PostprocessEffectNames)
+                    writer.Write((int)effectName.Canonical);
             }
         }
 
@@ -563,10 +566,14 @@ namespace AW2.Game
                 //TODO: Dezerialize GameActions
                 //RemoveBonus(oldBonuses & (oldBonuses ^ newBonuses));
                 //AddBonus(newBonuses & (oldBonuses ^ newBonuses), 
-                    //AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(999)); // HACK: bonus expiryTime
+                //AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(999)); // HACK: bonus expiryTime
                 lives = reader.ReadInt16();
                 kills = reader.ReadInt16();
                 suicides = reader.ReadInt16();
+                int effectNameCount = reader.ReadInt16();
+                PostprocessEffectNames.Clear();
+                for (int i = 0; i < effectNameCount; ++i)
+                    PostprocessEffectNames.Add(new CanonicalString(reader.ReadInt32()));
             }
         }
 

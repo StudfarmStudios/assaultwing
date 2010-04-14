@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game;
+using AW2.Helpers;
 
 namespace AW2.Graphics
 {
@@ -32,7 +33,7 @@ namespace AW2.Graphics
         /// <param name="lookAt">The point to follow.</param>
         /// <param name="getPostprocessEffectNames">Provider of names of postprocess effects.</param>
         public PlayerViewport(Player player, Rectangle onScreen, ILookAt lookAt,
-            Func<IEnumerable<string>> getPostprocessEffectNames)
+            Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
             : base(onScreen, lookAt, getPostprocessEffectNames)
         {
             this.player = player;

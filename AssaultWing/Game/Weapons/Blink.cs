@@ -57,8 +57,7 @@ namespace AW2.Game.Weapons
                     StartFiring();
                     owner.Disable(); // re-enabled in Update()
                     _targetPos = newPos;
-                    if (!owner.Owner.PostprocessEffectNames.Contains("gaussian_blur"))
-                        owner.Owner.PostprocessEffectNames.Add("gaussian_blur");
+                    owner.Owner.PostprocessEffectNames.EnsureContains((CanonicalString)"gaussian_blur");
                 }
             }
         }
@@ -73,7 +72,7 @@ namespace AW2.Game.Weapons
                 {
                     owner.Enable();
                     _targetPos = null;
-                    owner.Owner.PostprocessEffectNames.Remove("gaussian_blur");
+                    owner.Owner.PostprocessEffectNames.Remove((CanonicalString)"gaussian_blur");
                     DoneFiring();
                 }
             }

@@ -58,7 +58,7 @@ namespace AW2.Graphics
         protected List<OverlayComponent> overlayComponents;
 
         TexturePostprocessor _postprocessor;
-        Func<IEnumerable<string>> _getPostprocessEffectNames;
+        Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
 
         /// <summary>
         /// Ratio of screen pixels to game world meters. Default value is 1.
@@ -132,7 +132,7 @@ namespace AW2.Graphics
         /// </summary>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
         /// <param name="lookAt">The point to follow.</param>
-        public AWViewport(Rectangle onScreen, ILookAt lookAt, Func<IEnumerable<string>> getPostprocessEffectNames)
+        public AWViewport(Rectangle onScreen, ILookAt lookAt, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
         {
             overlayComponents = new List<OverlayComponent>();
             Viewport = new Viewport

@@ -31,8 +31,7 @@ namespace AW2.Game.BonusActions
         private void UpgradeWeapon(CanonicalString g_weaponUpgrade)
         {
             player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, g_weaponUpgrade);
-            if (!player.PostprocessEffectNames.Contains("bomber_rage"))
-                player.PostprocessEffectNames.Add("bomber_rage");
+            player.PostprocessEffectNames.EnsureContains((CanonicalString)"bomber_rage");
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace AW2.Game.BonusActions
         public override void RemoveAction()
         {
             player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, player.Weapon2Name);
-            player.PostprocessEffectNames.Remove("bomber_rage");
+            player.PostprocessEffectNames.Remove((CanonicalString)"bomber_rage");
         }
     }
 }

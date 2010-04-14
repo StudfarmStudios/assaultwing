@@ -62,7 +62,8 @@ namespace AW2.Game.BonusActions
         private void GiveHealth()
         {
             lastActivatedTime = AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds;
-            float healthBonus = player.Ship.MaxDamageLevel * 0.05f;
+            float healthBonus = player.Ship.MaxDamageLevel * -0.05f;
+            player.Ship.InflictDamage(healthBonus, new DeathCause());
             if (healthBonus <= player.Ship.DamageLevel)
                 player.Ship.DamageLevel -= healthBonus;
             else

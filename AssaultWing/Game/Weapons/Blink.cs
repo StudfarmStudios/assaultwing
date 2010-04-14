@@ -41,6 +41,9 @@ namespace AW2.Game.Weapons
 
         protected override void FireImpl(AW2.UI.ControlState triggerState)
         {
+            // Blink effects are too difficult to reverse to do without the server's consent.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+
             if (!CanFire) return;
             if (triggerState.pulse)
             {

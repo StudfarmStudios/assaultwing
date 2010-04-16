@@ -69,6 +69,16 @@ namespace AW2.Helpers
         /// </summary>
         public static explicit operator CanonicalString(int a) { return new CanonicalString(a); }
 
+        public static bool operator ==(CanonicalString a, CanonicalString b)
+        {
+            return a.Canonical == b.Canonical;
+        }
+
+        public static bool operator !=(CanonicalString a, CanonicalString b)
+        {
+            return a.Canonical != b.Canonical;
+        }
+
         /// <summary>
         /// Chooses a canonical form for a string.
         /// </summary>
@@ -117,12 +127,20 @@ namespace AW2.Helpers
             Canonical = canonical;
         }
 
-        /// <summary>
-        /// Returns a string representation of the object.
-        /// </summary>
         public override string ToString()
         {
             return Value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is CanonicalString)) return false;
+            return this == (CanonicalString)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return Canonical;
         }
     }
 }

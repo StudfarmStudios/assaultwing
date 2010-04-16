@@ -10,37 +10,17 @@ namespace AW2.Net
     /// A thread that sends data to the remote host until the socket
     /// is closed or there is some other error condition. 
     /// </summary>
-    class MessageSendThread : SuspendableThread
+    class MessageSendThread : SuspendableStepwiseThread
     {
-        Action<Exception> _exceptionHandler;
         Socket _socket;
         ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
-        StepwiseAction _keepSendingMessages;
 
         public MessageSendThread(Socket socket, ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers, Action<Exception> exceptionHandler)
-            : base("Message Send Thread")
+            : base("Message Send Thread", exceptionHandler)
         {
-            _exceptionHandler = exceptionHandler;
             _socket = socket;
             _sendBuffers = sendBuffers;
-            _keepSendingMessages = new StepwiseAction(KeepSendingMessages());
-        }
-
-        protected override void OnDoWork()
-        {
-            try
-            {
-                while (!HasTerminateRequest())
-                {
-                    bool awokenByTerminate = SuspendIfNeeded();
-                    if (awokenByTerminate) return;
-                    _keepSendingMessages.InvokeStep();
-                }
-            }
-            catch (Exception e)
-            {
-                _exceptionHandler(e);
-            }
+            SetAction(new StepwiseAction(KeepSendingMessages()));
         }
 
         // Stepwise method. Enumerated objects are undefined.

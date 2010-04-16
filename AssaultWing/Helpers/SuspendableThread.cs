@@ -14,7 +14,7 @@ namespace AW2.Helpers
         private ManualResetEvent terminateEvent = new ManualResetEvent(false);
         private long suspended;
         private Thread thread;
-        private System.Threading.ThreadState failsafeThreadState = System.Threading.ThreadState.Unstarted;
+        private ThreadState failsafeThreadState = ThreadState.Unstarted;
 
         #endregion Data
 
@@ -27,7 +27,7 @@ namespace AW2.Helpers
 
         private void ThreadEntry()
         {
-            failsafeThreadState = System.Threading.ThreadState.Stopped;
+            failsafeThreadState = ThreadState.Stopped;
             OnDoWork();
         }
 
@@ -67,7 +67,7 @@ namespace AW2.Helpers
             thread = new Thread(new ThreadStart(ThreadEntry));
             thread.Name = Name;
 
-            // make sure this thread won't be automaticaly
+            // make sure this thread won't be automatically
             // terminated by the runtime when the
             // application exits
             thread.IsBackground = false;
@@ -117,7 +117,7 @@ namespace AW2.Helpers
             suspendChangedEvent.Set();
         }
 
-        public System.Threading.ThreadState ThreadState
+        public ThreadState ThreadState
         {
             get
             {

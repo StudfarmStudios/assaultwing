@@ -11,42 +11,22 @@ namespace AW2.Net
     /// A thread that receives data from a remote host until the socket
     /// is closed or there is some other error condition.
     /// </summary>
-    class MessageReadThread : SuspendableThread
+    class MessageReadThread : SuspendableStepwiseThread
     {
         public delegate void MessageHandler(byte[] messageHeaderBuffer, byte[] messageBodyBuffer);
 
-        Action<Exception> _exceptionHandler;
         MessageHandler _messageHandler;
-        StepwiseAction _keepReadingMessages;
         Socket _socket;
         byte[] _headerReceiveBuffer;
         byte[] _bodyReceiveBuffer;
 
         public MessageReadThread(Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
-            : base("Message Read Thread")
+            : base("Message Read Thread", exceptionHandler)
         {
             _socket = socket;
-            _exceptionHandler = exceptionHandler;
             _messageHandler = messageHandler;
-            _keepReadingMessages = new StepwiseAction(KeepReadingMessages());
             _headerReceiveBuffer = new byte[Message.HeaderLength];
-        }
-
-        protected override void OnDoWork()
-        {
-            try
-            {
-                while (!HasTerminateRequest())
-                {
-                    bool awokenByTerminate = SuspendIfNeeded();
-                    if (awokenByTerminate) return;
-                    _keepReadingMessages.InvokeStep();
-                }
-            }
-            catch (Exception e)
-            {
-                _exceptionHandler(e);
-            }
+            SetAction(new StepwiseAction(KeepReadingMessages()));
         }
 
         // Stepwise method. Enumerated objects are undefined.

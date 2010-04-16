@@ -207,6 +207,7 @@
     <Compile Include="Helpers\Serialization.cs" />
     <Compile Include="Helpers\SpatialGrid.cs" />
     <Compile Include="Helpers\StepwiseAction.cs" />
+    <Compile Include="Helpers\SuspendableStepwiseThread.cs" />
     <Compile Include="Helpers\SuspendableThread.cs" />
     <Compile Include="Menu\DummyMenuEngine.cs" />
     <Compile Include="Menu\IMenuEngine.cs" />

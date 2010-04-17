@@ -2184,6 +2184,31 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
+    <Compile Include="models\junk_valve.X">
+      <Name>junk_valve</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\junk_straightpipe.X">
+      <Name>junk_straightpipe</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\junk_curvedpipe.X">
+      <Name>junk_curvedpipe</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\chainend.X">
+      <Name>chainend</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\uchain.X">
+      <Name>uchain</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <Compile Include="models\straight_chain.X">
       <Name>straight_chain</Name>
       <Importer>XImporter</Importer>

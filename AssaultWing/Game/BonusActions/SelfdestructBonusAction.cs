@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Game.Gobs;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.BonusActions
 {
@@ -14,18 +13,11 @@ namespace AW2.Game.BonusActions
         CanonicalString weaponUpgrade;
 
         /// <summary>
-        /// Only for serialization.
+        /// This constructor is only for serialization.
         /// </summary>
         public SelfDestructBonusAction()
-            : base()
         {
-            name = (CanonicalString)"dummyaction";
             weaponUpgrade = (CanonicalString)"dummyweapon";
-        }
-
-        public SelfDestructBonusAction(CanonicalString typeName)
-            : base(typeName)
-        {
         }
 
         private void UpgradeWeapon(CanonicalString g_weaponUpgrade)

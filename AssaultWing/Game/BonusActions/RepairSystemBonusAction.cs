@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Game.Gobs;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.BonusActions
 {
@@ -12,20 +11,6 @@ namespace AW2.Game.BonusActions
     {
         double updateCycle = 1.000d; //1.0 sec
         double lastActivatedTime;
-
-        public RepairSystemBonusAction(CanonicalString typeName)
-            : base(typeName)
-        {
-
-        }
-        /// <summary>
-        /// Only for serialization.
-        /// </summary>
-        public RepairSystemBonusAction()
-            : base()
-        {
-            name = (CanonicalString)"dummyaction";
-        }
 
         /// <summary>
         /// Action method. Contains logic for enabling the action

@@ -14,8 +14,6 @@
       <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
   </drawMode2D>
   <gameAction type="AW2.Game.BonusActions.SelfDestructBonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">kamikaze</typeName>
-    <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">kamikaze</name>
     <bonusText type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Suicide Bomber</bonusText>
     <bonusIconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_suicide</bonusIconName>
     <weaponUpgrade type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">selfdestructship</weaponUpgrade>

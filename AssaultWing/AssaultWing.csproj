@@ -97,6 +97,7 @@
     <Compile Include="Game\CollisionArea.cs" />
     <Compile Include="Game\DataEngine.cs" />
     <Compile Include="Game\DeathCause.cs" />
+    <Compile Include="Game\GameActionCollection.cs" />
     <Compile Include="Game\GameplayMode.cs" />
     <Compile Include="Game\Gob.cs" />
     <Compile Include="Game\GobCollection.cs" />

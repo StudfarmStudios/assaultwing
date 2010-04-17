@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using AW2.Helpers;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Helpers;
+using AW2.Net;
 
 namespace AW2.Game
 {
     [LimitedSerialization]
-    public class GameAction : Clonable
+    public class GameAction : INetworkSerializable
     {
         [TypeParameter]
-        protected CanonicalString name;
-
-        protected Player player;
-
-        [TypeParameter]
         protected string bonusText;
-
         [TypeParameter]
         protected string bonusIconName;
 
+        protected Player player;
         protected Texture2D bonusIcon;
 
         public Player Player { get { return player; } set { player = value; } }
-        public String BonusText { get { return bonusText; } }
+        public String BonusText { get { return bonusText; } protected set { bonusText = value; } }
         public String BonusIconName { get { return bonusIconName; } }
         public Texture2D BonusIcon { get { return bonusIcon; } }
+
         /// <summary>
         /// Starting times of the player's GameAction.
-        /// </summary>
         /// Starting time is the time when the gameaction was activated.
         /// <seealso cref="PlayerBonus"/>
         public TimeSpan actionTimeins;
@@ -41,20 +36,12 @@ namespace AW2.Game
         public TimeSpan actionTimeouts;
 
         /// <summary>
-        /// Creates an uninitialised bonus.
+        /// This constructor is only for serialization.
         /// </summary>
-        /// This constructor is only for serialisation.
-        public GameAction():base()
+        public GameAction()
         {
-            name = (CanonicalString)"dummyaction";
-        }
-        /// <summary>
-        /// Creates a new gameaction.
-        /// </summary>
-        /// <param name="typeName">Type of the action.</param>
-        public GameAction(CanonicalString typeName)
-            : base(typeName)
-        {
+            bonusText = "unknown bonus";
+            bonusIconName = "dummytexture";
         }
 
         /// <summary>
@@ -70,11 +57,10 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returs the default state
+        /// Returns the default state
         /// </summary>
         public virtual void RemoveAction()
         {
-
         }
 
         /// <summary>
@@ -82,17 +68,20 @@ namespace AW2.Game
         /// </summary>
         public virtual void Update()
         {
-
         }
 
-        /*not used for anything*/
-        /* this should be enabled if Actions are defined in own XML files
-        public GameAction CreateAction()
+        #region INetworkSerializable Members
+
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            GameAction action = (GameAction)Clonable.Instantiate(name);
-            return action;
+            throw new NotImplementedException();
         }
-         * */
 
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

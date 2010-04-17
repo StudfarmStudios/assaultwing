@@ -56,12 +56,7 @@ namespace AW2.Game
         /// </summary>
         CanonicalString shipTypeName;
 
-        /// <summary>
-        /// Contains all player actions
-        /// </summary>
-        /// <seealso cref="PlayerBonus"/>
-        private List<GameAction> bonusActions;
-        public List<GameAction> BonusActions { get { return bonusActions; } private set { bonusActions = value; } }
+        public GameActionCollection BonusActions { get; private set; }
 
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
@@ -345,22 +340,13 @@ namespace AW2.Game
                 shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
             shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
             lookAt = new LookAtShip();
-            BonusActions = new List<GameAction>();
+            BonusActions = new GameActionCollection();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
         }
 
         #endregion Constructors
 
         #region General public methods
-
-        private void ClearBonusActions()
-        {
-            foreach (GameAction bonus in BonusActions)
-            {
-                bonus.RemoveAction();
-            }
-            BonusActions.Clear();
-        }
 
         /// <summary>
         /// Updates the player.
@@ -369,21 +355,13 @@ namespace AW2.Game
         {
             base.Update();
 
-            /*We need to use the old fashioned for loop because Dictionary
-             In C# you can't remove object from lists while you are iterating them with a foreach
-             */
-            for (int i = BonusActions.Count - 1; i >= 0; i--)
+            foreach (var action in BonusActions)
             {
-                GameAction action = BonusActions[i];
-                
                 action.Update();
                 if (action.actionTimeouts <= AssaultWing.Instance.GameTime.TotalGameTime)
-                {
-                    action.RemoveAction();
-                    BonusActions.Remove(action);
-                }
+                    BonusActions.RemoveLater(action);
             }
-
+            BonusActions.CommitRemoves();
 
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
@@ -418,21 +396,6 @@ namespace AW2.Game
             }
         }
 
-        public void AddBonusAction(GameAction action)
-        {
-            for (int i = 0; i < BonusActions.Count; i++)
-            {
-                GameAction playersBonusAction = BonusActions[i];
-                if (playersBonusAction.TypeName.Equals(action.TypeName))
-                {
-                    BonusActions.RemoveAt(i);
-                    BonusActions.Insert(i, action);
-                    return;
-                }
-            }
-            BonusActions.Add(action);
-        }
-
         /// <summary>
         /// Performs necessary operations when the player's ship dies.
         /// </summary>
@@ -449,7 +412,7 @@ namespace AW2.Game
             }
             --lives;
 
-            ClearBonusActions();
+            BonusActions.Clear();
             Ship = null;
 
             // Notify the player about his death and possible killer about his frag.
@@ -490,7 +453,7 @@ namespace AW2.Game
             shipSpawnTime = new TimeSpan(1);
             relativeShakeDamage = 0;
             Lives = AssaultWing.Instance.DataEngine.GameplayMode.StartLives;
-            ClearBonusActions();
+            BonusActions.Clear();
             Ship = null;
         }
 
@@ -518,10 +481,6 @@ namespace AW2.Game
 
         #endregion General public methods
 
-        #region Methods related to bonuses
-
-        #endregion Methods related to bonuses
-
         #region Methods related to serialisation
 
         /// <summary>
@@ -542,13 +501,13 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                //TODO: serialize BonusActions!
                 writer.Write((short)lives);
                 writer.Write((short)kills);
                 writer.Write((short)suicides);
                 writer.Write((short)PostprocessEffectNames.Count);
                 foreach (var effectName in PostprocessEffectNames)
                     writer.Write((int)effectName.Canonical);
+                // TODO!!! BonusActions.Serialize(writer, mode);
             }
         }
 
@@ -563,10 +522,6 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                //TODO: Dezerialize GameActions
-                //RemoveBonus(oldBonuses & (oldBonuses ^ newBonuses));
-                //AddBonus(newBonuses & (oldBonuses ^ newBonuses), 
-                //AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(999)); // HACK: bonus expiryTime
                 lives = reader.ReadInt16();
                 kills = reader.ReadInt16();
                 suicides = reader.ReadInt16();
@@ -574,6 +529,7 @@ namespace AW2.Game
                 PostprocessEffectNames.Clear();
                 for (int i = 0; i < effectNameCount; ++i)
                     PostprocessEffectNames.Add(new CanonicalString(reader.ReadInt32()));
+                // TODO!!! BonusActions.Deserialize(reader, mode, messageAge);
             }
         }
 

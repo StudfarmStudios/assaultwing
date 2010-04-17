@@ -10,23 +10,6 @@ namespace AW2.Game.BonusActions
 {
     class InstantHealthBonusAction : GameAction
     {
-        public InstantHealthBonusAction(CanonicalString typeName)
-            : base(typeName)
-        {
-
-        }
-        /// <summary>
-        /// Only for serialization.
-        /// </summary>
-        public InstantHealthBonusAction()
-            : base()
-        {
-            name = (CanonicalString)"dummyaction";
-        }
-
-        /// <summary>
-        /// This method gives the health to the player
-        /// </summary>
         private void GiveHealth()
         {
             float healthBonus = player.Ship.MaxDamageLevel * 0.20f;

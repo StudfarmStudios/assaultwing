@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Game.Gobs;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.BonusActions
 {
@@ -17,24 +16,14 @@ namespace AW2.Game.BonusActions
         float maxMultiplier;
 
         /// <summary>
-        /// Only for serialization.
+        /// This constructor is only for serialization.
         /// </summary>
         public Weapon1UpgradeLoadTimeBonusAction()
-            : base()
         {
-            name = (CanonicalString)"dummyaction";
-            multiplier = 0.5f;
-            maxMultiplier = 0.1f;
+            multiplier = 0.8f;
+            maxMultiplier = 0.5f;
         }
 
-        public Weapon1UpgradeLoadTimeBonusAction(CanonicalString typeName)
-            : base(typeName)
-        {
-        }
-
-        /// <summary>
-        /// This method upgrades the weapon
-        /// </summary>
         private void UpgradeWeapon()
         {
             ShipDevice.OwnerHandleType deviceType = ShipDevice.OwnerHandleType.PrimaryWeapon;
@@ -45,6 +34,7 @@ namespace AW2.Game.BonusActions
             player.Ship.SetDeviceLoadMultiplier(deviceType, newMultiplier);
  
         }
+
         /// <summary>
         /// Action method. Contains logic for enabling the action
         /// </summary>
@@ -64,7 +54,7 @@ namespace AW2.Game.BonusActions
             /*this if is waste of CPU if action is activated then, ship usually exists*/
             Weapon weapon1 = player.Ship != null ? player.Ship.Weapon1
                : (Weapon)data.GetTypeTemplate(player.Weapon1Name);
-            bonusText = player.Weapon1Name+"\n"+bonusText;
+            BonusText = player.Weapon1Name+"\n"+BonusText;
             bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
         }
 

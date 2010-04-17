@@ -10,27 +10,11 @@ namespace AW2.Game.BonusActions
 {
     class Weapon2UpgradeBonusAction : GameAction
     {
-        public Weapon2UpgradeBonusAction(CanonicalString typeName)
-            : base(typeName)
-        {
-
-        }
-        /// <summary>
-        /// Only for serialization.
-        /// </summary>
-        public Weapon2UpgradeBonusAction()
-            : base()
-        {
-            name = (CanonicalString)"dummyaction";
-        }
-
-        /// <summary>
-        /// This method upgrades the weapon
-        /// </summary>
         private void UpgradeWeapon(CanonicalString weaponUpgrade)
         {
             player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, weaponUpgrade);
         }
+
         /// <summary>
         /// Action method. Contains logic for enabling the action
         /// </summary>
@@ -46,7 +30,6 @@ namespace AW2.Game.BonusActions
             SetActionMessage();
         }
 
-
         /// <summary>
         /// Enables the ActionMessage (used in BonusOverlay)
         /// </summary>
@@ -57,7 +40,7 @@ namespace AW2.Game.BonusActions
             Weapon weapon2 = player.Ship != null ? player.Ship.Weapon2
                : (Weapon)data.GetTypeTemplate(player.Weapon2Name);
 
-            bonusText = player.Ship.Weapon2Name;
+            BonusText = player.Ship.Weapon2Name;
             bonusIconName = weapon2.IconName;
             bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
         }

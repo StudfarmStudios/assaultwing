@@ -10,6 +10,8 @@ using AW2.Helpers;
 using AW2.UI;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
+using System.Windows.Controls;
+using AW2.Graphics;
 
 namespace AW2
 {
@@ -29,18 +31,13 @@ namespace AW2
         }
 
         TypeLoader arenaSaver;
-        Spectator spectator;
+        EditorSpectator spectator;
         System.Windows.Forms.MouseButtons mouseButtons;
         Point lastMouseLocation, dragStartLocation;
         bool isDragging;
 
-        Gob SelectedGob
-        {
-            get
-            {
-                return (Gob)gobNames.SelectedValue;
-            }
-        }
+        private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
+        private Gob SelectedGob { get { return (Gob)gobNames.SelectedValue; } }
 
         public ArenaEditor()
         {
@@ -60,10 +57,13 @@ namespace AW2
                 fire2 = new KeyboardKey(Keys.RightShift),
                 extra = new KeyboardKey(Keys.Enter)
             };
-            spectator = new Spectator(spectatorControls);
+            spectator = new EditorSpectator(spectatorControls);
+            spectator.ViewportCreated += ApplyViewSettings;
             AssaultWing.Instance.DataEngine.Spectators.Add(spectator);
             arenaSaver = new TypeLoader(typeof(Arena), Paths.Arenas);
         }
+
+        #region Control event handlers
 
         private void LoadArena_Click(object sender, RoutedEventArgs e)
         {
@@ -181,30 +181,18 @@ namespace AW2
             }
         }
 
-        /// <summary>
-        /// Returns the viewport that contains a point on the arena view.
-        /// </summary>
-        /// The coordinates are in arena view coordinates, origin at the top left corner,
-        /// positive X pointing right and positive Y pointing down.
-        AW2.Graphics.AWViewport GetViewport(Point location)
-        {
-            var data = AssaultWing.Instance.DataEngine;
-            AW2.Graphics.AWViewport result = null;
-            foreach (var layer in data.Arena.Layers)
-                data.ForEachViewport(viewport =>
-                {
-                    if (viewport.OnScreen.Contains(location.X, location.Y))
-                        result = viewport;
-                });
-            if (result == null)
-                throw new ArgumentException("There is no viewport at render target surface coordinates " + location.ToString());
-            return result;
-        }
-
         private void GobRotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (SelectedGob == null) return;
             SelectedGob.Rotation = (float)e.NewValue;
+        }
+
+        private void Zoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            double screenScale = ZoomRatio > 1 ? ZoomRatio : 1;
+            double originalScale = ZoomRatio > 1 ? 1 : 1 / ZoomRatio;
+            ZoomValue.Content = string.Format("{0:N0}:{1:N0}", screenScale, originalScale);
+            ApplyViewSettingsToAllViewports();
         }
 
         private void GobNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -229,6 +217,59 @@ namespace AW2
             if (SelectedGob == null) return;
             SelectedGob.Arena.Gobs.Remove(SelectedGob);
         }
+
+        private void CircleGobs_Click(object sender, RoutedEventArgs e)
+        {
+            ApplyViewSettingsToAllViewports();
+        }
+
+        #endregion Control event handlers
+
+        #region Helpers
+
+        /// <summary>
+        /// Returns the viewport that contains a point on the arena view.
+        /// </summary>
+        /// The coordinates are in arena view coordinates, origin at the top left corner,
+        /// positive X pointing right and positive Y pointing down.
+        private AWViewport GetViewport(Point location)
+        {
+            AWViewport result = null;
+            AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
+            {
+                if (viewport.OnScreen.Contains(location.X, location.Y))
+                    result = viewport;
+            });
+            if (result == null)
+                throw new ArgumentException("There is no viewport at render target surface coordinates " + location.ToString());
+            return result;
+        }
+
+        private void ForEachEditorViewport(Action<EditorViewport> action)
+        {
+            AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
+            {
+                if (viewport is EditorViewport)
+                    action((EditorViewport)viewport);
+            });
+        }
+
+        private void ApplyViewSettingsToAllViewports()
+        {
+            AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
+            {
+                if (viewport is EditorViewport) ApplyViewSettings((EditorViewport)viewport);
+            });
+        }
+
+        private void ApplyViewSettings(EditorViewport viewport)
+        {
+            if (!CircleGobs.IsChecked.HasValue)
+                viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
+            viewport.ZoomRatio = (float)ZoomRatio;
+        }
+
+        #endregion Helpers
     }
 
     static class ArenaEditorHelpers
@@ -238,7 +279,7 @@ namespace AW2
             return new Vector2(point.X, point.Y);
         }
 
-        public static Vector2 MouseMoveToWorldCoordinates(this AW2.Graphics.AWViewport viewport, Point oldMouseLocation, Point newMouseLocation, float z)
+        public static Vector2 MouseMoveToWorldCoordinates(this AWViewport viewport, Point oldMouseLocation, Point newMouseLocation, float z)
         {
             var oldPos = viewport.ToPos(oldMouseLocation.ToVector2(), z);
             var nowPos = viewport.ToPos(newMouseLocation.ToVector2(), z);

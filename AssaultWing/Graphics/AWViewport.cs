@@ -63,7 +63,7 @@ namespace AW2.Graphics
         /// <summary>
         /// Ratio of screen pixels to game world meters. Default value is 1.
         /// </summary>
-        float zoomRatio;
+        public float ZoomRatio { get; set; }
 
         #region Properties
 
@@ -91,7 +91,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMin(float z)
         {
-            return LookAt.Position - new Vector2(Viewport.Width, Viewport.Height) / (2 * zoomRatio * GetScale(z));
+            return LookAt.Position - new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMax(float z)
         {
-            return LookAt.Position + new Vector2(Viewport.Width, Viewport.Height) / (2 * zoomRatio * GetScale(z));
+            return LookAt.Position + new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace AW2.Graphics
         {
             float layerScale = GetScale(z);
             return Matrix.CreateOrthographic(
-                Viewport.Width / (zoomRatio * layerScale),
-                Viewport.Height / (zoomRatio * layerScale),
+                Viewport.Width / (ZoomRatio * layerScale),
+                Viewport.Height / (ZoomRatio * layerScale),
                 1f, 11000f);
         }
 
@@ -146,7 +146,7 @@ namespace AW2.Graphics
             };
             LookAt = lookAt;
             _getPostprocessEffectNames = getPostprocessEffectNames;
-            zoomRatio = 1;
+            ZoomRatio = 1;
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace AW2.Graphics
                 component.Draw(spriteBatch);
         }
 
-        private void RenderGameWorld()
+        protected virtual void RenderGameWorld()
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
             var view = ViewMatrix;
@@ -314,7 +314,7 @@ namespace AW2.Graphics
                         drawMode = gob.DrawMode2D;
                         drawMode.Value.BeginDraw(spriteBatch);
                     }
-                    gob.Draw2D(gameToScreen, spriteBatch, layerScale * zoomRatio);
+                    gob.Draw2D(gameToScreen, spriteBatch, layerScale * ZoomRatio);
                 });
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(spriteBatch);
@@ -419,7 +419,7 @@ namespace AW2.Graphics
                     -LookAt.Position.Y / effect.Texture.Height);
                 var texCornerOffset = new Vector2(
                     Viewport.Width / (2f * effect.Texture.Width),
-                    -Viewport.Height / (2f * effect.Texture.Height)) / zoomRatio;
+                    -Viewport.Height / (2f * effect.Texture.Height)) / ZoomRatio;
                 vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
                 vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
                 vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
@@ -450,11 +450,11 @@ namespace AW2.Graphics
                 var tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                 float texCenterX = (GetScale(layer.Z) * LookAt.Position.X).Modulo(tex.Width);
                 float texCenterY = (GetScale(layer.Z) * -LookAt.Position.Y).Modulo(tex.Height);
-                float screenStartX = (Viewport.Width / 2f - texCenterX * zoomRatio).Modulo(tex.Width * zoomRatio) - tex.Width * zoomRatio;
-                float screenStartY = (Viewport.Height / 2f - texCenterY * zoomRatio).Modulo(tex.Height * zoomRatio) - tex.Height * zoomRatio;
-                for (float posX = screenStartX; posX <= Viewport.Width; posX += tex.Width * zoomRatio)
-                    for (float posY = screenStartY; posY <= Viewport.Height; posY += tex.Height * zoomRatio)
-                        spriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, zoomRatio, SpriteEffects.None, 1);
+                float screenStartX = (Viewport.Width / 2f - texCenterX * ZoomRatio).Modulo(tex.Width * ZoomRatio) - tex.Width * ZoomRatio;
+                float screenStartY = (Viewport.Height / 2f - texCenterY * ZoomRatio).Modulo(tex.Height * ZoomRatio) - tex.Height * ZoomRatio;
+                for (float posX = screenStartX; posX <= Viewport.Width; posX += tex.Width * ZoomRatio)
+                    for (float posY = screenStartY; posY <= Viewport.Height; posY += tex.Height * ZoomRatio)
+                        spriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, ZoomRatio, SpriteEffects.None, 1);
 /*
                 Vector2 pos = WorldAreaMin(0) * -GetScale(layer.Z);
                 pos.Y = -pos.Y;

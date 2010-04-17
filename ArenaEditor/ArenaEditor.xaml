@@ -15,38 +15,54 @@
     </Window.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Left" LastChildFill="False">
-            <DockPanel DockPanel.Dock="Top">
-                <Label>Arena</Label>
-                <ComboBox Name="arenaName" DockPanel.Dock="Top" IsEditable="False" MinWidth="150"/>
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top" LastChildFill="False">
-                <Button Click="LoadArena_Click">Load</Button>
-                <Button Click="SaveArena_Click">Save</Button>
-            </DockPanel>
-            <Separator DockPanel.Dock="Top"/>
-            <DockPanel DockPanel.Dock="Top">
-                <Label>Layers</Label>
+            <GroupBox DockPanel.Dock="Top" Header="Arenas">
+                <DockPanel LastChildFill="True">
+                    <ComboBox Name="arenaName" DockPanel.Dock="Top" IsEditable="False" MinWidth="150"/>
+                    <Button Click="SaveArena_Click" DockPanel.Dock="Right">Save</Button>
+                    <Button Click="LoadArena_Click">Load</Button>
+                </DockPanel>
+            </GroupBox>
+            <GroupBox DockPanel.Dock="Top" Header="Layers">
                 <ListBox Name="layerNames" MinWidth="100" MaxHeight="200"/>
-            </DockPanel>
-            <Separator DockPanel.Dock="Top"/>
-            <DockPanel DockPanel.Dock="Top">
-                <Label>Gobs</Label>
+            </GroupBox>
+            <GroupBox DockPanel.Dock="Top" Header="Gob selection">
                 <ListBox Name="gobNames" MinWidth="100" MaxHeight="400"
-                         SelectedValuePath="Value"
-                         SelectionChanged="GobNames_SelectionChanged"/>
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top">
-                <Label>Rotation</Label>
-                <Slider Name="gobRotation" DockPanel.Dock="Top"
-                        Minimum="0" Maximum="6.28318531" TickFrequency="0.785398163"
-                        SmallChange="0.196349541" LargeChange="0.785398163"
-                        ValueChanged="GobRotation_ValueChanged"/>
-            </DockPanel>
-            <DockPanel x:Name="GobButtons" DockPanel.Dock="Top">
-                <Button Click="DeleteGob_Click" DockPanel.Dock="Right">Delete</Button>
-                <Button Click="DuplicateGob_Click" DockPanel.Dock="Left">Duplicate</Button>
-            </DockPanel>
-            <TextBlock x:Name="CursorCoordinates" DockPanel.Dock="Bottom"/>
+                        DockPanel.Dock="Top"
+                        SelectedValuePath="Value"
+                        SelectionChanged="GobNames_SelectionChanged"/>
+            </GroupBox>
+            <GroupBox Name="GobEditControls" DockPanel.Dock="Top" Header="Gob editing">
+                <StackPanel Orientation="Vertical">
+                    <DockPanel LastChildFill="True">
+                        <Label>Rotation</Label>
+                        <Slider Name="gobRotation"
+                            Minimum="0" Maximum="6.28318531" TickFrequency="0.785398163"
+                            SmallChange="0.196349541" LargeChange="0.785398163"
+                            ValueChanged="GobRotation_ValueChanged"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True">
+                        <Button Click="DeleteGob_Click" DockPanel.Dock="Right">Delete</Button>
+                        <Button Click="DuplicateGob_Click">Duplicate</Button>
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox x:Name="ZoomControls" DockPanel.Dock="Top" Header="View">
+                <StackPanel Orientation="Vertical">
+                    <DockPanel LastChildFill="True">
+                        <Label DockPanel.Dock="Left">Near</Label>
+                        <Label DockPanel.Dock="Right">Far</Label>
+                        <Slider Name="ZoomSlider" DockPanel.Dock="Right"
+                            ValueChanged="Zoom_ValueChanged"
+                            Value="0" Minimum="-1" Maximum="5" TickFrequency="1"
+                            HorizontalAlignment="Stretch" Orientation="Horizontal"
+                            IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
+                    </DockPanel>
+                    <Label x:Name="ZoomValue" HorizontalAlignment="Center">1:1</Label>
+                    <ToggleButton Name="CircleGobs" Click="CircleGobs_Click" DockPanel.Dock="Top">Circle small/invisible gobs</ToggleButton>
+                </StackPanel>
+            </GroupBox>
+
+            <TextBlock x:Name="CursorCoordinates" DockPanel.Dock="Bottom">X: ??? Y: ???</TextBlock>
         </DockPanel>
         <WindowsFormsHost x:Name="arenaViewHost">
             <aw:EditorWindow x:Name="arenaView"

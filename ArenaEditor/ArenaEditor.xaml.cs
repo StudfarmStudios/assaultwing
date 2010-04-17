@@ -155,7 +155,7 @@ namespace AW2
             {
                 var viewport = GetViewport(dragStartLocation);
                 var mouseCoordinates = viewport.ToPos(e.Location.ToVector2(), 0);
-                CursorCoordinates.Text = string.Format("X:{0} Y:{1}", mouseCoordinates.X, mouseCoordinates.Y);
+                CursorCoordinates.Text = string.Format("X:{0:N1} Y:{1:N1}", mouseCoordinates.X, mouseCoordinates.Y);
 
                 // Left mouse button drag moves selected gob.
                 if ((mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0)
@@ -218,7 +218,7 @@ namespace AW2
             SelectedGob.Arena.Gobs.Remove(SelectedGob);
         }
 
-        private void CircleGobs_Click(object sender, RoutedEventArgs e)
+        private void ApplyViewSettings(object sender, RoutedEventArgs e)
         {
             ApplyViewSettingsToAllViewports();
         }
@@ -256,6 +256,8 @@ namespace AW2
 
         private void ApplyViewSettingsToAllViewports()
         {
+            if (EnableFog.IsChecked.HasValue)
+                AssaultWing.Instance.DataEngine.Arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
             AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
             {
                 if (viewport is EditorViewport) ApplyViewSettings((EditorViewport)viewport);
@@ -264,9 +266,9 @@ namespace AW2
 
         private void ApplyViewSettings(EditorViewport viewport)
         {
-            if (!CircleGobs.IsChecked.HasValue)
-                viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
             viewport.ZoomRatio = (float)ZoomRatio;
+            if (CircleGobs.IsChecked.HasValue)
+                viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
         }
 
         #endregion Helpers

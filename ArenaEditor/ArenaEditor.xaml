@@ -58,7 +58,8 @@
                             IsSnapToTickEnabled="True" TickPlacement="BottomRight"/>
                     </DockPanel>
                     <Label x:Name="ZoomValue" HorizontalAlignment="Center">1:1</Label>
-                    <ToggleButton Name="CircleGobs" Click="CircleGobs_Click" DockPanel.Dock="Top">Circle small/invisible gobs</ToggleButton>
+                    <ToggleButton Name="CircleGobs" IsChecked="True" Click="ApplyViewSettings" DockPanel.Dock="Top">Circle small/invisible gobs</ToggleButton>
+                    <ToggleButton Name="EnableFog" Click="ApplyViewSettings" DockPanel.Dock="Top">Enable arena fog</ToggleButton>
                 </StackPanel>
             </GroupBox>
 

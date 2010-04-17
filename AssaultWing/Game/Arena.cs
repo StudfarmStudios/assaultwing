@@ -341,6 +341,8 @@ namespace AW2.Game
         /// </summary>
         public bool IsForPlaying { get; set; }
 
+        public bool IsFogOverrideDisabled { get; set; }
+
         /// <summary>
         /// Gobs in the arena. Reflects the data in <see cref="Layers"/>.
         /// </summary>
@@ -700,7 +702,6 @@ namespace AW2.Game
         /// <param name="effect">The effect to modify.</param>
         public void PrepareEffect(BasicEffect effect)
         {
-            //effect.TextureEnabled = true;
             effect.DirectionalLight0.DiffuseColor = light0DiffuseColor;
             effect.DirectionalLight0.Direction = light0Direction;
             effect.DirectionalLight0.Enabled = light0Enabled;
@@ -714,7 +715,7 @@ namespace AW2.Game
             effect.DirectionalLight2.Enabled = light2Enabled;
             effect.DirectionalLight2.SpecularColor = light2SpecularColor;
             effect.FogColor = fogColor;
-            effect.FogEnabled = fogEnabled;
+            effect.FogEnabled = IsFogOverrideDisabled ? false : fogEnabled;
             effect.FogEnd = fogEnd;
             effect.FogStart = fogStart;
             effect.LightingEnabled = true;

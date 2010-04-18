@@ -91,7 +91,7 @@ namespace AW2
         {
             var arena = AssaultWing.Instance.DataEngine.Arena;
             if (!arena.Name.EndsWith("_edited")) arena.Name += "_edited";
-            arenaSaver.SaveObject(arena, typeof(TypeParameterAttribute), arena.Name);
+            arenaSaver.SaveTemplate(arena, typeof(TypeParameterAttribute), arena.Name);
         }
 
         private void ArenaView_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)

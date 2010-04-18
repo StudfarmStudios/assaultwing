@@ -1,7 +1,7 @@
-//#define TYPELOADER_DEBUG // print diagnostic messages for type loader
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -15,13 +15,13 @@ namespace AW2.Game
     /// </summary>
     public class TypeLoader
     {
-        DirectoryInfo definitionDir;
-        Type baseClass;
+        DirectoryInfo _definitionDir;
+        Type _baseClass;
 
         /// <summary>
         /// Suffix for producing a type definition template file from a type name.
         /// </summary>
-        const string TYPE_DEFINITION_TEMPLATE_SUFFIX = "template";
+        const string TEMPLATE_FILENAME_SUFFIX = "template";
 
         /// <summary>
         /// Creates a type loader.
@@ -31,56 +31,64 @@ namespace AW2.Game
         /// <seealso cref="AW2.Helpers.Paths"/>
         public TypeLoader(Type baseClass, string definitionDir)
         {
-            this.baseClass = baseClass;
-            this.definitionDir = new DirectoryInfo(definitionDir);
-#if TYPELOADER_DEBUG
-            Log.Write("Checking directory " + this.definitionDir.FullName);
-#endif
-            this.definitionDir.Create(); // does nothing if the dir exists already
+            _baseClass = baseClass;
+            _definitionDir = new DirectoryInfo(definitionDir);
+            _definitionDir.Create(); // does nothing if the dir exists already
         }
 
         #region Public interface
 
-        /// <summary>
-        /// Loads and returns all user-defined types.
-        /// </summary>
-        /// <returns>The loaded types.</returns>
-        public object[] LoadAllTypes()
+        public static object LoadTemplate(string filename, Type baseClass, Type limitationAttribute)
         {
-            return ParseAndLoad(FindTypeDefinitions());
+            var fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            var xmlReader = Serialization.GetXmlReader(fs);
+            object template = null;
+            try
+            {
+                template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type",
+                    baseClass, typeof(TypeParameterAttribute));
+            }
+            catch (MemberSerializationException e)
+            {
+                Log.Write("Error in " + filename + ": " + e.Message + ", " + e.MemberName);
+            }
+            xmlReader.Close();
+            fs.Close();
+            return template;
+        }
+
+        public static void SaveTemplate(object template, string filename, Type baseClass, Type limitationAttribute)
+        {
+            var writer = new StreamWriter(filename);
+            var xmlWriter = Serialization.GetXmlWriter(writer);
+            Serialization.SerializeXml(xmlWriter, baseClass.Name + "Type", template, limitationAttribute);
+            xmlWriter.Close();
+        }
+
+        public IEnumerable<string> GetTemplateFilenames()
+        {
+            // Note: DirectoryInfo.GetFiles("*.xml") also includes suffixes
+            // that extend "xml", for example "blabla.xml~".
+            return
+                from fileInfo in _definitionDir.GetFiles("*.xml")
+                where IsTemplateFile(fileInfo)
+                select fileInfo.FullName;
+        }
+
+        public IEnumerable<object> LoadTemplates()
+        {
+            return GetTemplateFilenames().Select(filename => LoadTemplate(filename));
         }
 
         /// <summary>
-        /// Loads and returns specified user-defined types.
+        /// Creates one example file for each template type.
         /// </summary>
-        /// <returns>The loaded types.</returns>
-        public object LoadSpecifiedTypes(String fileName)
+        public void SaveTemplateExamples()
         {
-#if TYPELOADER_DEBUG
-            Log.Write("Loading type definition from file " + fileName);
-#endif
-            FileInfo[] fil = definitionDir.GetFiles(fileName);
-            if (fil.Length == 1)
+            foreach (var type in GetTemplateTypes())
             {
-                return ParseAndLoadFile(fil[0]);
-            }
-            else
-                throw new InvalidFilterCriteriaException("Ambiguous file name: " + fileName);
-        }
-        
-        /// <summary>
-        /// Creates type file templates for each subclass of 'baseClass'.
-        /// </summary>
-        public void SaveTemplates()
-        {
-            foreach (Type type in Array.FindAll<Type>(Assembly.GetExecutingAssembly().GetTypes(),
-                t => !t.IsAbstract && baseClass.IsAssignableFrom(t)))
-            {
-#if TYPELOADER_DEBUG
-                Log.Write("Saving template for " + type.Name);
-#endif
-                object instance = Activator.CreateInstance(type);
-                SaveObject(instance, typeof(TypeParameterAttribute), TYPE_DEFINITION_TEMPLATE_SUFFIX);
+                var instance = Activator.CreateInstance(type);
+                SaveTemplate(instance, typeof(TypeParameterAttribute), TEMPLATE_FILENAME_SUFFIX);
             }
         }
 
@@ -89,12 +97,9 @@ namespace AW2.Game
         /// </summary>
         public void DeleteTemplates()
         {
-            foreach (var filename in Directory.GetFiles(definitionDir.FullName))
-                if (filename.EndsWith("_" + TYPE_DEFINITION_TEMPLATE_SUFFIX + ".xml"))
+            foreach (var filename in Directory.GetFiles(_definitionDir.FullName))
+                if (filename.EndsWith("_" + TEMPLATE_FILENAME_SUFFIX + ".xml"))
                 {
-#if TYPELOADER_DEBUG
-                    Log.Write("Deleting template " + filename);
-#endif
                     try
                     {
                         File.Delete(filename);
@@ -110,97 +115,36 @@ namespace AW2.Game
                 }
         }
 
-        public void SaveObject(object obj, Type limitationAttribute, string name)
+        public void SaveTemplate(object template, Type limitationAttribute, string templateName)
         {
-            name = Regex.Replace(name, "[^a-z]", "_", RegexOptions.IgnoreCase);
-            string filename = System.IO.Path.Combine(definitionDir.FullName,
-                string.Format("{0}_{1}.xml", obj.GetType().Name, name));
-            TextWriter writer = new StreamWriter(filename);
-            System.Xml.XmlWriter xmlWriter = Serialization.GetXmlWriter(writer);
-            Serialization.SerializeXml(xmlWriter, baseClass.Name + "Type", obj, limitationAttribute);
-            xmlWriter.Close();
+            templateName = Regex.Replace(templateName, "[^a-z]", "_", RegexOptions.IgnoreCase);
+            string filename = System.IO.Path.Combine(_definitionDir.FullName,
+                string.Format("{0}_{1}.xml", template.GetType().Name, templateName));
+            SaveTemplate(template, filename, _baseClass, limitationAttribute);
         }
 
 #endregion
 
         #region Nonpublic parts
 
-        /// <summary>
-        /// Returns the list of type definition files.
-        /// </summary>
-        /// <returns>The list of type definition files.</returns>
-        private List<FileInfo> FindTypeDefinitions()
+        private IEnumerable<Type> GetTemplateTypes()
         {
-            List<FileInfo> defList = new List<FileInfo>();
-            foreach (FileInfo f in definitionDir.GetFiles("*.xml"))
-            {
-                // Note: DirectoryInfo.GetFiles("*.xml") also includes suffixes
-                // that extend "xml", for example "blabla.xml~".
-                if (IsTypeDefinition(f))
-                    defList.Add(f);
-            }
-            return defList;
+            return Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => !t.IsAbstract && _baseClass.IsAssignableFrom(t));
         }
 
-        /// <summary>
-        /// Returns <c>true</c> if and only if a file is an actual type definition.
-        /// </summary>
-        private bool IsTypeDefinition(FileInfo f)
+        private bool IsTemplateFile(FileInfo f)
         {
             if (!f.Extension.Equals(".xml", StringComparison.CurrentCultureIgnoreCase))
                 return false;
-            if (f.Name.EndsWith(TYPE_DEFINITION_TEMPLATE_SUFFIX, StringComparison.CurrentCultureIgnoreCase))
+            if (f.Name.EndsWith(TEMPLATE_FILENAME_SUFFIX, StringComparison.CurrentCultureIgnoreCase))
                 return false;
-#if TYPELOADER_DEBUG
-            long size = f.Length;
-            DateTime creationTime = f.CreationTime;
-            Log.Write("Found " + baseClass.Name + " definition " + f.Name + " " + size + "B " + creationTime);
-#endif
             return true;
         }
 
-        /// <summary>
-        /// Creates type file templates for each subclass of 'baseClass'.
-        /// </summary>
-        private object[] ParseAndLoad(List<FileInfo> list)
+        protected virtual object LoadTemplate(string filename)
         {
-            Type listType = typeof(List<>).MakeGenericType(baseClass);
-            IList types = (IList)Activator.CreateInstance(listType);
-            foreach (FileInfo fi in list)
-            {
-                types.Add(ParseAndLoadFile(fi));
-            }
-            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod;
-            return (object[])listType.InvokeMember("ToArray", flags, null, types, new Object[] { });
-        }
-
-        /// <summary>
-        /// Loads a type template from a file.
-        /// </summary>
-        /// <param name="fi">The file to load from.</param>
-        /// <returns>The loaded type template.</returns>
-        protected virtual object ParseAndLoadFile(FileInfo fi)
-        {
-#if TYPELOADER_DEBUG
-            Log.Write("Loading " + baseClass.Name + " template from " + fi);
-#endif
-            FileStream fs = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read);
-            System.Xml.XmlReader xmlReader = Serialization.GetXmlReader(fs);
-            Type limitationAttribute = typeof(TypeParameterAttribute);
-            object template = null;
-            try
-            {
-                template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type",
-                    baseClass, limitationAttribute);
-            }
-            catch (MemberSerializationException e)
-            {
-                //throw new ArgumentException("Error in " + fi.Name + ": " + e.Message + ", " + e.MemberName);
-                Log.Write("Error in " + fi.Name + ": " + e.Message + ", " + e.MemberName);
-            }
-            xmlReader.Close();
-            fs.Close();
-            return template;
+            return LoadTemplate(filename, _baseClass, typeof(TypeParameterAttribute));
         }
 
         #endregion

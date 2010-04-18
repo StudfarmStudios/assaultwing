@@ -135,15 +135,13 @@ namespace AW2.Game
         /// </summary>
         public List<ArenaInfo> ArenaInfos { get; set; }
 
-        /// <summary>
-        /// Returns a named arena.
-        /// </summary>
         private Arena GetArena(string name)
         {
             if (preparedArena == null || !preparedArena.Name.Equals(name))
             {
-                TypeLoader arenaLoader = new TypeLoader(typeof(Arena), Paths.Arenas);
-                preparedArena = (Arena)arenaLoader.LoadSpecifiedTypes(ArenaInfos.First(info => info.Name == name).FileName);
+                var filename = ArenaInfos.Single(info => info.Name == name).FileName;
+                preparedArena = (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute));
+                preparedArena.FileName = filename;
             }
             return preparedArena;
         }

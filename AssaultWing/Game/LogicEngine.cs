@@ -40,22 +40,20 @@ namespace AW2.Game
             var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.Devices);
             var particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
             var arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
-            /*action loader should be enabled if game actions are defined in own XML files*/
-            //var actionLoader = new TypeLoader(typeof(GameAction), Helpers.Paths.Actions);
 
-            DeleteTemplates(new TypeLoader[] { gobLoader, deviceLoader, particleLoader, arenaLoader });
+            DeleteTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
 
-            foreach (Gob gob in gobLoader.LoadAllTypes())
+            foreach (Gob gob in gobLoader.LoadTemplates())
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(gob.TypeName, gob);
-            foreach (ShipDevice device in deviceLoader.LoadAllTypes())
+            foreach (ShipDevice device in deviceLoader.LoadTemplates())
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(device.TypeName, device);
-            foreach (Gob particleEngine in particleLoader.LoadAllTypes())
+            foreach (Gob particleEngine in particleLoader.LoadTemplates())
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
-            /*foreach (GameAction action in actionLoader.LoadAllTypes())
-                AssaultWing.Instance.DataEngine.AddTypeTemplate(action.TypeName, action);
-            */
-            AssaultWing.Instance.DataEngine.ArenaInfos = arenaLoader.LoadAllTypes().Cast<Arena>().Select(arena => arena.Info).ToList();
-            SaveTemplates(new TypeLoader[] { gobLoader, deviceLoader, particleLoader, arenaLoader });
+            var temp = arenaLoader.LoadTemplates().ToList();
+            var temp2 = arenaLoader.LoadTemplates().ToList();
+            AssaultWing.Instance.DataEngine.ArenaInfos = arenaLoader.LoadTemplates().Cast<Arena>().Select(arena => arena.Info).ToList();
+
+            SaveTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
             FreezeCanonicalStrings();
             base.Initialize();
         }
@@ -137,7 +135,7 @@ namespace AW2.Game
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        private void DeleteTemplates(IEnumerable<TypeLoader> typeLoaders)
+        private void DeleteTemplates(params TypeLoader[] typeLoaders)
         {
             if (!AssaultWing.Instance.CommandLineArgs.Contains("-deletetemplates")) return;
             Log.Write("Parameter -deletetemplates given, deleting templates now...");
@@ -146,11 +144,11 @@ namespace AW2.Game
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        private void SaveTemplates(IEnumerable<TypeLoader> typeLoaders)
+        private void SaveTemplates(params TypeLoader[] typeLoaders)
         {
             if (!AssaultWing.Instance.CommandLineArgs.Contains("-savetemplates")) return;
             Log.Write("Parameter -savetemplates given, saving templates now...");
-            foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplates();
+            foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplateExamples();
             Log.Write("...templates saved");
         }
     }

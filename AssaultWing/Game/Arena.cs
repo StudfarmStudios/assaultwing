@@ -132,11 +132,6 @@ namespace AW2.Game
 
         #region General fields
 
-        /// <summary>
-        /// Arena File name is needed for arena loading.
-        /// </summary>
-        string fileName;
-
         GobCollection gobs;
 
         /// <summary>
@@ -307,7 +302,7 @@ namespace AW2.Game
                 return new ArenaInfo
                 {
                     Name = name,
-                    FileName = fileName,
+                    FileName = FileName,
                     Dimensions = dimensions,
                     PreviewName = name.ToLower() + "_preview"
                 };
@@ -322,7 +317,7 @@ namespace AW2.Game
         /// <summary>
         /// The file name of the arena.
         /// </summary>
-        public string FileName { get { return fileName; } set { fileName = value; } }
+        public string FileName { get; set; }
 
         /// <summary>
         /// The width and height of the arena.

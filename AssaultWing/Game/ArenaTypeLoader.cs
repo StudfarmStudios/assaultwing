@@ -19,16 +19,13 @@ namespace AW2.Game
         public ArenaTypeLoader(Type baseClass, string definitionDir) :
             base(baseClass, definitionDir)
         {
-
         }
 
-        protected override object ParseAndLoadFile(FileInfo fi)
+        protected override object LoadTemplate(string filename)
         {
-            Arena arena = (Arena)base.ParseAndLoadFile(fi);
-            arena.FileName = fi.Name;
+            var arena = (Arena)base.LoadTemplate(filename);
+            arena.FileName = filename;
             return arena;
-            
-
         }
     }
 }

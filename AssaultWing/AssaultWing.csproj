@@ -179,6 +179,7 @@
     <Compile Include="Helpers\Collections\ITypedQueue.cs" />
     <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
     <Compile Include="Helpers\Collections\Playlist.cs" />
+    <Compile Include="Helpers\Collections\Triple.cs" />
     <Compile Include="Helpers\Collections\TypedQueue.cs" />
     <Compile Include="Helpers\Collections\TypedQueueCollection.cs" />
     <Compile Include="Helpers\Converter.cs" />

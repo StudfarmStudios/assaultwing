@@ -55,8 +55,7 @@ namespace AW2.Game.Gobs
         /// Marks peng to have dependency to Player
         /// </summary>
         [TypeParameter]
-        Boolean playerRelated;
-
+        bool playerRelated;
 
         /// <summary>
         /// External input argument of the peng, between 0 and 1.
@@ -73,21 +72,6 @@ namespace AW2.Game.Gobs
         List<Particle> particles;
 
         /// <summary>
-        /// <c>null</c> or the gob that determines the origin of the peng's coordinate system.
-        /// </summary>
-        /// Idiom: follow the leader.
-        /// <seealso cref="leaderBone"/>
-        Gob leader;
-
-        /// <summary>
-        /// The index of the bone on the leader gob that is the origin of the peng's coordinate system,
-        /// or -1 if the leader's center is the origin.
-        /// </summary>
-        /// If <c>leader==null</c> then this field has no effect.
-        /// <seealso cref="leader"/>
-        int leaderBone;
-
-        /// <summary>
         /// Position of the peng in the previous frame, or NaN if unspecified.
         /// </summary>
         Vector2 oldPos;
@@ -101,6 +85,9 @@ namespace AW2.Game.Gobs
         /// Time of last update to field <c>oldPos</c>.
         /// </summary>
         TimeSpan oldPosTimestamp;
+
+        [ExcludeFromDeepCopy]
+        Gob _leader;
 
         #endregion Peng fields
 
@@ -128,11 +115,11 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                if (leader == null) return base.Pos;
-                if (leaderBone == -1)
-                    return leader.Pos;
+                if (Leader == null) return base.Pos;
+                if (LeaderBone == -1)
+                    return Leader.Pos;
                 else
-                    return leader.GetNamedPosition(leaderBone);
+                    return Leader.GetNamedPosition(LeaderBone);
             }
         }
 
@@ -156,8 +143,8 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                if (leader == null) return base.Move;
-                return leader.Move;
+                if (Leader == null) return base.Move;
+                return Leader.Move;
             }
         }
 
@@ -169,8 +156,8 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                if (leader == null) return base.Rotation;
-                return leader.Rotation;
+                if (Leader == null) return base.Rotation;
+                return Leader.Rotation;
             }
         }
 
@@ -195,14 +182,14 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Marks peng to have dependency to Player
         /// </summary>
-        public Boolean PlayerRelated { get { return playerRelated; } set { playerRelated = value; } }
+        public bool PlayerRelated { get { return playerRelated; } set { playerRelated = value; } }
 
         /// <summary>
         /// <c>null</c> or the gob that determines the origin of the peng's coordinate system.
         /// </summary>
         /// Idiom: follow the leader.
         /// <seealso cref="LeaderBone"/>
-        public Gob Leader { get { return leader; } set { leader = value; } }
+        public Gob Leader { get { return _leader; } set { _leader = value; } }
 
         /// <summary>
         /// The index of the bone on the leader gob that is the origin of the peng's coordinate system,
@@ -210,7 +197,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// If <c>Leader == null</c> then this field has no effect.
         /// <seealso cref="Leader"/>
-        public int LeaderBone { get { return leaderBone; } set { leaderBone = value; } }
+        public int LeaderBone { get; set; }
 
         /// <summary>
         /// The world matrix of the peng, i.e. the transformation from
@@ -259,8 +246,8 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             input = 0;
-            leader = null;
-            leaderBone = -1;
+            Leader = null;
+            LeaderBone = -1;
             oldPos = new Vector2(Single.NaN);
             prevPos = new Vector2(Single.NaN);
             oldPosTimestamp = TimeSpan.Zero;
@@ -308,10 +295,10 @@ namespace AW2.Game.Gobs
                     ++i;
 
             // Die by our leader.
-            if (leader != null && leader.Dead)
+            if (Leader != null && Leader.Dead)
             {
                 Die(new DeathCause());
-                leader = null;
+                Leader = null;
             }
 
             // Die if we're finished.

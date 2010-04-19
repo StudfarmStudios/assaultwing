@@ -156,8 +156,8 @@ namespace AW2.Game.Pengs
             // with an even distribution over the circle sector
             // defined by 'radius', the origin and 'sprayAngle'.
 
-            Vector2 startPos = peng.OldPos;
-            Vector2 endPos = peng.Pos;
+            Vector2 startPos = Peng.OldPos;
+            Vector2 endPos = Peng.Pos;
             for (int i = 0; i < createCount; ++i)
             {
                 // Find out type of emitted thing (which gob or particle) and create it.
@@ -179,11 +179,11 @@ namespace AW2.Game.Pengs
                     {
                         bool lastAttempt = attempt == maxAttempts - 1;
                         attemptOk = true;
-                        float pengInput = peng.Input;
+                        float pengInput = Peng.Input;
                         int random = RandomHelper.GetRandomInt();
                         float directionAngle, rotation;
                         Vector2 directionUnit, pos, move;
-                        switch (peng.ParticleCoordinates)
+                        switch (Peng.ParticleCoordinates)
                         {
                             case Peng.CoordinateSystem.Peng:
                                 RandomHelper.GetRandomCirclePoint(radius, -sprayAngle, sprayAngle,
@@ -204,10 +204,10 @@ namespace AW2.Game.Pengs
                                     RandomHelper.GetRandomCirclePoint(radius, -sprayAngle, sprayAngle,
                                         out pos, out directionUnit, out directionAngle);
                                     pos += iPos;
-                                    move = peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                                    move = Peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
                                     switch (facingType)
                                     {
-                                        case FacingType.Directed: rotation = peng.Rotation; break;
+                                        case FacingType.Directed: rotation = Peng.Rotation; break;
                                         case FacingType.Forward: rotation = directionAngle; break;
                                         case FacingType.Random: rotation = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi); break;
                                         default: throw new Exception("SprayEmitter: Unhandled particle facing type " + facingType);
@@ -215,7 +215,7 @@ namespace AW2.Game.Pengs
                                 }
                                 break;
                             default:
-                                throw new Exception("SprayEmitter: Unhandled peng coordinate system " + peng.ParticleCoordinates);
+                                throw new Exception("SprayEmitter: Unhandled peng coordinate system " + Peng.ParticleCoordinates);
                         }
 
                         // Set the thing's parameters.
@@ -241,7 +241,7 @@ namespace AW2.Game.Pengs
                                 attemptOk = false;
                                 continue;
                             }
-                            gob.Owner = peng.Owner;
+                            gob.Owner = Peng.Owner;
                             gob.ResetPos(pos, move, rotation);
                             Peng.Arena.Gobs.Add(gob);
                         }

@@ -919,12 +919,11 @@ namespace AW2.Game
         /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
         protected virtual void SetRuntimeState(Gob runtimeState)
         {
-            FieldInfo[] fields = Serialization.GetFields(this, typeof(RuntimeStateAttribute));
-            foreach (FieldInfo field in fields)
+            var fields = Serialization.GetFields(GetType(), typeof(RuntimeStateAttribute), null);
+            foreach (var field in fields)
             {
-                // TODO: Watch out for shallow copies sharing references.
-                object value = field.GetValue(runtimeState);
-                ICloneable cloneableValue = value as ICloneable;
+                var value = field.GetValue(runtimeState);
+                var cloneableValue = value as ICloneable;
                 if (cloneableValue != null)
                     field.SetValue(this, cloneableValue.Clone());
                 else

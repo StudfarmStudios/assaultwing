@@ -13,6 +13,7 @@ namespace AW2.Game.Pengs
     /// </summary>
     /// A particle emitter is part of a peng.
     /// <see cref="AW2.Game.Gobs.Peng"/>
+    [LimitedSerialization]
     public abstract class ParticleEmitter
     {
         #region ParticleEmitter fields
@@ -35,10 +36,10 @@ namespace AW2.Game.Pengs
         [RuntimeState]
         protected bool paused;
 
-        /// <summary>
-        /// The peng where this emitter belongs to.
-        /// </summary>
-        protected Peng peng;
+        [ExcludeFromDeepCopy]
+        Peng _peng;
+        [ExcludeFromDeepCopy]
+        Texture2D[] _textures;
 
         #endregion ParticleEmitter fields
 
@@ -52,7 +53,7 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// Textures in the same order as in <see cref="textureNames"/>.
         /// </summary>
-        public Texture2D[] Textures { get; private set; }
+        public Texture2D[] Textures { get { return _textures; } private set { _textures = value; } }
 
         /// <summary>
         /// Names of types of gobs to emit.
@@ -65,9 +66,9 @@ namespace AW2.Game.Pengs
         public virtual bool Paused { get { return paused; } set { paused = value; } }
 
         /// <summary>
-        /// The peng where this emitter belongs to.
+        /// The peng this emitter belongs to.
         /// </summary>
-        public Peng Peng { get { return peng; } set { peng = value; } }
+        public Peng Peng { get { return _peng; } set { _peng = value; } }
 
         /// <summary>
         /// <c>true</c> if emitting has finished for good

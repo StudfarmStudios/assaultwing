@@ -160,7 +160,7 @@ namespace AW2.Helpers
             var deepCopyMethod = typeof(Serialization).GetMethod("DeepCopy");
 
             // copy all fields from this to parameter
-            var fields = cloneFieldAttributes.SelectMany(att => Serialization.GetDeclaredFields(type, att));
+            var fields = cloneFieldAttributes.SelectMany(att => Serialization.GetDeclaredFields(type, att, null));
             foreach (var field in fields) EmitFieldCopyIL(generator, deepCopyMethod, field);
             generator.Emit(OpCodes.Ret);
             return dyna;

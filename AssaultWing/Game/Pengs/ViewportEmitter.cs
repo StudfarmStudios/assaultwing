@@ -118,7 +118,7 @@ namespace AW2.Game.Pengs
         public override ICollection<Particle> Emit()
         {
             TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
-            float z = peng.Layer.Z;
+            float z = Peng.Layer.Z;
             List<Particle> particles = null;
 
             // Find out newly exposed areas in viewports.
@@ -177,21 +177,21 @@ namespace AW2.Game.Pengs
             for (int i = 0; i < createCount; ++i)
             {
                 // Find out emission parameters.
-                float pengInput = peng.Input;
+                float pengInput = Peng.Input;
                 int random = RandomHelper.GetRandomInt();
                 float directionAngle, rotation;
                 Vector2 directionUnit, pos, move;
-                switch (peng.ParticleCoordinates)
+                switch (Peng.ParticleCoordinates)
                 {
                     case Peng.CoordinateSystem.Game:
                         {
-                            directionAngle = peng.Rotation + RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
+                            directionAngle = Peng.Rotation + RandomHelper.GetRandomFloat(-sprayAngle, sprayAngle);
                             directionUnit = new Vector2((float)Math.Cos(directionAngle), (float)Math.Sin(directionAngle));
                             pos = Vector2.Zero; // TODO: åarticle pos
-                            move = peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                            move = Peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
                             switch (facingType)
                             {
-                                case FacingType.Directed: rotation = peng.Rotation; break;
+                                case FacingType.Directed: rotation = Peng.Rotation; break;
                                 case FacingType.Forward: rotation = directionAngle; break;
                                 case FacingType.Random: rotation = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi); break;
                                 default: throw new Exception("ViewportEmitter: Unhandled particle facing type " + facingType);
@@ -199,7 +199,7 @@ namespace AW2.Game.Pengs
                         }
                         break;
                     default:
-                        throw new Exception("ViewportEmitter: Unhandled peng coordinate system " + peng.ParticleCoordinates);
+                        throw new Exception("ViewportEmitter: Unhandled peng coordinate system " + Peng.ParticleCoordinates);
                 }
 
                 // Find out type of emitted thing (gob or particle) and create it.
@@ -224,7 +224,7 @@ namespace AW2.Game.Pengs
                     // Emit a gob.
                     Gob.CreateGob(gobTypeNames[emitType - textureNames.Length], gob =>
                     {
-                        gob.Owner = peng.Owner;
+                        gob.Owner = Peng.Owner;
                         gob.Pos = pos;
                         gob.Move = move;
                         gob.Rotation = rotation;
@@ -249,10 +249,10 @@ namespace AW2.Game.Pengs
         {
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                if (peng.ParticleCoordinates == Peng.CoordinateSystem.Peng)
+                if (Peng.ParticleCoordinates == Peng.CoordinateSystem.Peng)
                 {
-                    Log.Write("ViewportEmitter: Correcting unsupported coordinate system " + peng.ParticleCoordinates);
-                    peng.ParticleCoordinates = Peng.CoordinateSystem.Game;
+                    Log.Write("ViewportEmitter: Correcting unsupported coordinate system " + Peng.ParticleCoordinates);
+                    Peng.ParticleCoordinates = Peng.CoordinateSystem.Game;
                 }
                 if (emissionFrequency <= 0 || emissionFrequency > 100000)
                 {

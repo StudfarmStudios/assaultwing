@@ -37,6 +37,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// A lightning that is shot from a gob into another gob who will get hurt.
     /// </summary>
+    [LimitedSerialization]
     public class Lightning : Gob
     {
         class Segment

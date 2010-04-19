@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using System.Collections;
 using Microsoft.Xna.Framework.Graphics;
-using TypePair = AW2.Helpers.Pair<System.Type, System.Type>;
+using TypeTriple = AW2.Helpers.Triple<System.Type, System.Type, System.Type>;
 
 namespace AW2.Helpers
 {
@@ -164,6 +164,14 @@ namespace AW2.Helpers
     }
 
     /// <summary>
+    /// Denotes that the value of a field is to be skipped during <see cref="Serialization.DeepCopy"/>.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field)]
+    public class ExcludeFromDeepCopyAttribute : Attribute
+    {
+    }
+
+    /// <summary>
     /// A type whose instances are consistent only under certain conditions
     /// that concern some fields of the instance.
     /// </summary>
@@ -248,7 +256,7 @@ namespace AW2.Helpers
         /// the fields must have, or <c>null</c> to list all fields.
         /// </summary>
         /// <seealso cref="GetFields(object, Type)"/>
-        static Dictionary<TypePair, FieldInfo[]> typeFields = new Dictionary<TypePair, FieldInfo[]>();
+        static readonly Dictionary<TypeTriple, IEnumerable<FieldInfo>> typeFields = new Dictionary<TypeTriple, IEnumerable<FieldInfo>>();
 
         #region public methods
 
@@ -415,33 +423,15 @@ namespace AW2.Helpers
         /// The search includes the object's public and non-public fields declared in its 
         /// type and all base types. Do not modify the returned array.
         /// <param name="obj">The object whose fields to scan for.</param>
-        /// <param name="limitationAttribute">Return fields with this attribute.
-        /// If set to null, returns all fields.</param>
-        /// <exception cref="ArgumentException"><i>limitationAttribute</i> is not 
-        /// a null reference or an attribute.</exception>
-        public static FieldInfo[] GetFields(object obj, Type limitationAttribute)
+        /// <param name="limitationAttribute">If not <c>null</c>, return only fields with this attribute.</param>
+        /// <param name="exclusionAttribute">If not <c>null</c>, return only fields without this attribute.</param>
+        public static IEnumerable<FieldInfo> GetFields(Type objType, Type limitationAttribute, Type exclusionAttribute)
         {
-            Type objType = obj.GetType();
-            TypePair key = new TypePair(objType, limitationAttribute);
-
-            // Look up the result from the cache.
-            FieldInfo[] result;
-            if (typeFields.TryGetValue(key, out result))
-                return result;
-
-            // Sanity checks
-            if (limitationAttribute != null &&
-                !typeof(Attribute).IsAssignableFrom(limitationAttribute))
-                throw new ArgumentException("Expected an attribute, got " + limitationAttribute.Name);
-
-            // Type.GetFields() only gives out fields that the type itself can see.
-            // Therefore, to reach private members of base classes, we need to check
-            // each base class in turn.
-            List<FieldInfo> fields = new List<FieldInfo>();
-            for (Type type = objType; type != null; type = type.BaseType)
-                fields.AddRange(GetDeclaredFields(type, limitationAttribute));
-            result = fields.ToArray();
-            typeFields[key] = result;
+            var key = new TypeTriple(objType, limitationAttribute, exclusionAttribute);
+            IEnumerable<FieldInfo> result;
+            if (typeFields.TryGetValue(key, out result)) return result;
+            result = GetFieldsImpl(objType, limitationAttribute, exclusionAttribute);
+            typeFields.Add(key, result);
             return result;
         }
 
@@ -451,13 +441,14 @@ namespace AW2.Helpers
         /// The search includes the object's public and non-public fields declared in its 
         /// type (excluding fields declared in any base types). Do not modify the returned array.
         /// <param name="type">The type whose fields to scan for.</param>
-        /// <param name="limitationAttribute">Return fields with this attribute.
-        /// If set to null, returns all fields.</param>
-        public static IEnumerable<FieldInfo> GetDeclaredFields(Type type, Type limitationAttribute)
+        /// <param name="limitationAttribute">If not <c>null</c>, return only fields with this attribute.</param>
+        /// <param name="exclusionAttribute">If not <c>null</c>, return only fields without this attribute.</param>
+        public static IEnumerable<FieldInfo> GetDeclaredFields(Type type, Type limitationAttribute, Type exclusionAttribute)
         {
-            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic);
-            return Array.FindAll<FieldInfo>(fields.ToArray(), 
-                field => limitationAttribute == null || field.IsDefined(limitationAttribute, false));
+            return type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(field =>
+                    (limitationAttribute == null || field.IsDefined(limitationAttribute, false)) &&
+                    (exclusionAttribute == null || !field.IsDefined(exclusionAttribute, false)));
         }
 
         /// <summary>
@@ -546,8 +537,8 @@ namespace AW2.Helpers
 
             // Other class instances are copied field by field.
             object copy = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
-            FieldInfo[] fields = GetFields(obj, null);
-            foreach (FieldInfo field in fields)
+            var fields = GetFields(type, null, typeof(ExcludeFromDeepCopyAttribute));
+            foreach (var field in fields)
             {
                 if (field.IsDefined(typeof(ShallowCopyAttribute), false))
                     field.SetValue(copy, field.GetValue(obj));
@@ -574,22 +565,22 @@ namespace AW2.Helpers
         /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
         private static void SerializeFieldsXml(XmlWriter writer, object obj, Type limitationAttribute)
         {
-            Type type = obj.GetType();
-            FieldInfo[] fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
-                ? GetFields(obj, limitationAttribute)
-                : GetFields(obj, null);
+            var type = obj.GetType();
+            var fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
+                ? GetFields(type, limitationAttribute, null)
+                : GetFields(type, null, null);
 
-            foreach (FieldInfo field in fields)
+            foreach (var field in fields)
             {
                 // React to SerializedNameAttribute
                 string elementName = field.Name;
-                SerializedNameAttribute serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
+                var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
                 if (serializedNameAttribute != null)
                     elementName = serializedNameAttribute.SerializedName;
 
                 // React to LimitationSwitchAttribute
-                Type fieldLimitationAttribute = limitationAttribute;
-                LimitationSwitchAttribute limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
+                var fieldLimitationAttribute = limitationAttribute;
+                var limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
                 if (limitationSwitchAttribute != null)
                 {
                     if (limitationSwitchAttribute.From == limitationAttribute)
@@ -620,10 +611,10 @@ namespace AW2.Helpers
         /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
         private static void DeserializeFieldsXml(XmlReader reader, object obj, Type limitationAttribute)
         {
-            Type type = obj.GetType();
-            FieldInfo[] fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
-                ? GetFields(obj, limitationAttribute)
-                : GetFields(obj, null);
+            var type = obj.GetType();
+            var fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
+                ? GetFields(type, limitationAttribute, null).ToArray()
+                : GetFields(type, null, null).ToArray();
             bool[] fieldFounds = new bool[fields.Length];
 
             // Read in serialised fields of the given object.
@@ -633,11 +624,11 @@ namespace AW2.Helpers
                 bool fieldFound = false;
                 for (int fieldI = 0; fieldI < fields.Length; ++fieldI)
                 {
-                    FieldInfo field = fields[fieldI];
+                    var field = fields[fieldI];
 
                     // React to SerializedNameAttribute
                     string elementName = field.Name;
-                    SerializedNameAttribute serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
+                    var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
                     if (serializedNameAttribute != null)
                         elementName = serializedNameAttribute.SerializedName;
 
@@ -854,6 +845,14 @@ namespace AW2.Helpers
             if (lElementType != null && rElementType != null)
                 return IsAssignableFrom(lElementType, rElementType);
             return CanBeCast(rType, lType);
+        }
+
+        private static IEnumerable<FieldInfo> GetFieldsImpl(Type objType, Type limitationAttribute, Type exclusionAttribute)
+        {
+            var fields = GetDeclaredFields(objType, limitationAttribute, exclusionAttribute);
+            for (var type = objType.BaseType; type != null; type = type.BaseType)
+                fields = fields.Concat(GetDeclaredFields(type, limitationAttribute, exclusionAttribute));
+            return fields;
         }
 
         #endregion // private methods

@@ -256,8 +256,9 @@ namespace AW2
 
         private void ApplyViewSettingsToAllViewports()
         {
-            if (EnableFog.IsChecked.HasValue)
-                AssaultWing.Instance.DataEngine.Arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
+            var arena = AssaultWing.Instance.DataEngine.Arena;
+            if (arena != null && EnableFog.IsChecked.HasValue)
+                arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
             AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
             {
                 if (viewport is EditorViewport) ApplyViewSettings((EditorViewport)viewport);

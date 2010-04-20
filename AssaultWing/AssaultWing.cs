@@ -99,11 +99,11 @@ namespace AW2
         SurfaceFormat preferredWindowFormat;
         int preferredFullscreenWidth, preferredFullscreenHeight;
         SurfaceFormat preferredFullscreenFormat;
-        TimeSpan gameTimeDelay;
         TimeSpan lastFramerateCheck;
         int framesSinceLastCheck;
         GameState gameState;
-        GameTime gameTime;
+        GameTime _gameTime;
+        TimeSpan _gameTimeDelay;
         IWindow window; // use this and not Game.Window
 
         // Fields for game server starting an arena
@@ -194,49 +194,8 @@ namespace AW2
             get { return gameState; }
             private set
             {
-                // Disable current state.
-                switch (gameState)
-                {
-                    case GameState.Initializing:
-                        break;
-                    case GameState.Gameplay:
-                        logicEngine.Enabled = false;
-                        graphicsEngine.Visible = false;
-                        break;
-                    case GameState.Menu:
-                        menuEngine.Enabled = false;
-                        menuEngine.Visible = false;
-                        break;
-                    case GameState.OverlayDialog:
-                        overlayDialog.Enabled = false;
-                        overlayDialog.Visible = false;
-                        graphicsEngine.Visible = false;
-                        break;
-                    default:
-                        throw new Exception("Cannot change away from unexpected game state " + GameState);
-                }
-
-                // Enable new state.
-                switch (value)
-                {
-                    case GameState.Initializing:
-                        break;
-                    case GameState.Gameplay:
-                        logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                        graphicsEngine.Visible = true;
-                        break;
-                    case GameState.Menu:
-                        menuEngine.Enabled = true;
-                        menuEngine.Visible = true;
-                        break;
-                    case GameState.OverlayDialog:
-                        overlayDialog.Enabled = true;
-                        overlayDialog.Visible = true;
-                        graphicsEngine.Visible = true;
-                        break;
-                    default:
-                        throw new Exception("Cannot change to unexpected game state " + value);
-                }
+                DisableCurrentGameState();
+                EnableGameState(value);
                 var oldState = gameState;
                 gameState = value;
                 if (GameStateChanged != null && gameState != oldState)
@@ -252,7 +211,7 @@ namespace AW2
         /// <summary>
         /// The game time on this frame.
         /// </summary>
-        public GameTime GameTime { get { return gameTime; } }
+        public GameTime GameTime { get { return _gameTime; } }
 
         /// <summary>
         /// Time of previously finished call to Draw(), in game time.
@@ -346,14 +305,13 @@ namespace AW2
             frameStepControl = new KeyboardKey(Keys.F8);
             frameRunControl = new KeyboardKey(Keys.F7);
             frameStep = false;
-            gameTimeDelay = new TimeSpan(0);
 
             Content = new AWContentManager(Services);
             lastFramerateCheck = new TimeSpan(0);
             framesSinceLastCheck = 0;
             GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
-            gameTime = new GameTime();
+            _gameTime = new GameTime();
             lastDrawTime = new TimeSpan(0);
 
             InitializeComponents();
@@ -394,6 +352,7 @@ namespace AW2
 
         void StartArenaImpl()
         {
+            _gameTimeDelay += GameTime.TotalGameTime;
             dataEngine.StartArena();
             graphicsEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
@@ -523,6 +482,54 @@ namespace AW2
                 .Replace("/s", "PerSecond")
                 .Replace("/f", "PerFrame")
                 + "Counter";
+        }
+
+        private void EnableGameState(GameState value)
+        {
+            switch (value)
+            {
+                case GameState.Initializing:
+                    break;
+                case GameState.Gameplay:
+                    logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
+                    graphicsEngine.Visible = true;
+                    break;
+                case GameState.Menu:
+                    menuEngine.Enabled = true;
+                    menuEngine.Visible = true;
+                    break;
+                case GameState.OverlayDialog:
+                    overlayDialog.Enabled = true;
+                    overlayDialog.Visible = true;
+                    graphicsEngine.Visible = true;
+                    break;
+                default:
+                    throw new ApplicationException("Cannot change to unexpected game state " + value);
+            }
+        }
+
+        private void DisableCurrentGameState()
+        {
+            switch (gameState)
+            {
+                case GameState.Initializing:
+                    break;
+                case GameState.Gameplay:
+                    logicEngine.Enabled = false;
+                    graphicsEngine.Visible = false;
+                    break;
+                case GameState.Menu:
+                    menuEngine.Enabled = false;
+                    menuEngine.Visible = false;
+                    break;
+                case GameState.OverlayDialog:
+                    overlayDialog.Enabled = false;
+                    overlayDialog.Visible = false;
+                    graphicsEngine.Visible = false;
+                    break;
+                default:
+                    throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
+            }
         }
 
         #endregion AssaultWing private methods
@@ -879,6 +886,8 @@ namespace AW2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            _gameTime = gameTime;
+
             if (startingArenaOnServer)
             {
                 if (networkEngine.GameClientConnections.Connections.All(
@@ -922,18 +931,18 @@ namespace AW2
             }
 
             // Take care of game time freezing if game logic is disabled.
-            if (!logicEngine.Enabled)
-                gameTimeDelay = gameTimeDelay.Add(gameTime.ElapsedGameTime);
-            var totalGameTime = gameTime.TotalGameTime.Subtract(gameTimeDelay);
+            if (!logicEngine.Enabled) _gameTimeDelay += _gameTime.ElapsedGameTime;
+
+            var totalGameTime = _gameTime.TotalGameTime - _gameTimeDelay;
             if (totalGameTime < TimeSpan.Zero) totalGameTime = TimeSpan.Zero;
-            this.gameTime = new GameTime(gameTime.TotalRealTime, gameTime.ElapsedRealTime,
-                totalGameTime, gameTime.ElapsedGameTime);
+            _gameTime = new GameTime(_gameTime.TotalRealTime, _gameTime.ElapsedRealTime,
+                totalGameTime, _gameTime.ElapsedGameTime);
 
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            base.Update(this.gameTime);
+            base.Update(_gameTime);
             if (logicEngine.Enabled)
             {
                 GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
@@ -981,9 +990,8 @@ namespace AW2
                             (int)conn.PingTime.TotalMilliseconds,
                             (int)conn.RemoteGameTimeOffset.TotalMilliseconds);
             }
-            lock (GraphicsDevice)
-                base.Draw(this.gameTime);
-            lastDrawTime = this.gameTime.TotalGameTime;
+            lock (GraphicsDevice) base.Draw(_gameTime);
+            lastDrawTime = _gameTime.TotalGameTime;
         }
 
         /// <summary>

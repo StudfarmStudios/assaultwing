@@ -85,6 +85,8 @@ namespace AW2
                 string.Format("#{0} z={1:f0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
             foreach (var layerName in layerNameList)
                 layerNames.Items.Add(layerName);
+
+            ApplyViewSettingsToAllViewports();
         }
 
         private void SaveArena_Click(object sender, RoutedEventArgs e)

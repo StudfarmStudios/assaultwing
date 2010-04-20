@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:aw="clr-namespace:AW2"
+    MouseWheel="ArenaView_MouseWheel"
     Title="Assault Wing Arena Editor"
     Height="800" Width="1000">
     <Window.Resources>
@@ -65,8 +66,8 @@
 
             <TextBlock x:Name="CursorCoordinates" DockPanel.Dock="Bottom">X: ??? Y: ???</TextBlock>
         </DockPanel>
-        <WindowsFormsHost x:Name="arenaViewHost">
-            <aw:EditorWindow x:Name="arenaView"
+        <WindowsFormsHost x:Name="ArenaViewHost">
+            <aw:EditorWindow x:Name="ArenaView"
                              MouseClick="ArenaView_MouseClick"
                              MouseMove="ArenaView_MouseMove"
                              MouseDown="ArenaView_MouseDown"

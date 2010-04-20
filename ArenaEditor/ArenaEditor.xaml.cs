@@ -144,7 +144,20 @@ namespace AW2
             {
                 Log.Write("NOTE. Exception during mouse click: " + ex.ToString());
             }
+        }
 
+        private void ArenaView_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            try
+            {
+                e.Handled = true;
+                if (e.Delta > 0) ZoomSlider.Value -= ZoomSlider.TickFrequency;
+                if (e.Delta < 0) ZoomSlider.Value += ZoomSlider.TickFrequency;
+            }
+            catch (Exception ex)
+            {
+                Log.Write("NOTE. Exception during mouse wheeling: " + ex.ToString());
+            }
         }
 
         private void ArenaView_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)

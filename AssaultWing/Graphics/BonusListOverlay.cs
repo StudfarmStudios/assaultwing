@@ -19,7 +19,7 @@ namespace AW2.Graphics
         {
             bonusEntryDirection = DisplayDirection.ENTER;
             bonusEntryPosAdjustments = Vector2.Zero;
-            bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
+            bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalArenaTime;
             gameActionData = action;
         }
 
@@ -191,7 +191,7 @@ namespace AW2.Graphics
             // Draw bonus duration meter.
             float startSeconds = (float)bonusAction.actionTimeins.TotalSeconds;
             float endSeconds = (float)bonusAction.actionTimeouts.TotalSeconds;
-            float nowSeconds = (float)AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds;
+            float nowSeconds = (float)AssaultWing.Instance.GameTime.TotalArenaTime.TotalSeconds;
             float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
             int durationHeight = (int)Math.Round(duration * bonusDurationTexture.Height);
             int durationY = bonusDurationTexture.Height - durationHeight;
@@ -254,7 +254,7 @@ namespace AW2.Graphics
             for (int i = 1; i < displayQueue.Count; i++)
             {
                 BonusOverlay bonusOverlay = displayQueue[i];
-                float slideTime = (float)(AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds
+                float slideTime = (float)(AssaultWing.Instance.GameTime.TotalArenaTime.TotalSeconds
                 - bonusOverlay.bonusEntryTimeins.TotalSeconds);
 
                 Vector2 adjustment = bonusOverlay.bonusEntryPosAdjustments;
@@ -283,7 +283,7 @@ namespace AW2.Graphics
                 if (!player.BonusActions.Contains(bonusOverlay.gameActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.ENTER)
                 {
                     bonusOverlay.bonusEntryPosAdjustments = relativePos;
-                    bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
+                    bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.GameTime.TotalArenaTime;
                     bonusOverlay.bonusEntryDirection = DisplayDirection.EXIT;
                 }
 

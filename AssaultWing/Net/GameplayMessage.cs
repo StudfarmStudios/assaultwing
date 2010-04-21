@@ -22,7 +22,7 @@ namespace AW2.Net
         /// </summary>
         public GameplayMessage()
         {
-            TotalGameTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            TotalGameTime = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
         /// <summary>

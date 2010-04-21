@@ -9,8 +9,8 @@ namespace AW2.Game.BonusActions
 {
     class RepairSystemBonusAction : GameAction
     {
-        double updateCycle = 1.000d; //1.0 sec
-        double lastActivatedTime;
+        static readonly TimeSpan updateCycle = TimeSpan.FromSeconds(1);
+        TimeSpan lastActivatedTime;
 
         /// <summary>
         /// Action method. Contains logic for enabling the action
@@ -35,7 +35,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         public override void Update()
         {
-            if (AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds >= (lastActivatedTime + updateCycle))
+            if (AssaultWing.Instance.GameTime.TotalArenaTime >= lastActivatedTime + updateCycle)
             {
                 GiveHealth();
             }
@@ -46,7 +46,7 @@ namespace AW2.Game.BonusActions
         /// </summary>
         private void GiveHealth()
         {
-            lastActivatedTime = AssaultWing.Instance.GameTime.TotalGameTime.TotalSeconds;
+            lastActivatedTime = AssaultWing.Instance.GameTime.TotalArenaTime;
             float healthBonus = player.Ship.MaxDamageLevel * -0.05f;
             player.Ship.InflictDamage(healthBonus, new DeathCause());
             if (healthBonus <= player.Ship.DamageLevel)

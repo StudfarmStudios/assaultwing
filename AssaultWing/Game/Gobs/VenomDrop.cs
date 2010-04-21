@@ -59,7 +59,7 @@ namespace AW2.Game.Gobs
                 IsVisible = false;
                 movable = false;
                 RemoveCollisionAreas(area => true);
-                DeathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(clingTime);
+                DeathTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(clingTime);
             }
             else
                 Die(new DeathCause());

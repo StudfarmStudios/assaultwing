@@ -86,7 +86,7 @@ namespace AW2.Net
             var pingReceive = BaseConnection.Messages.TryDequeue<PingRequestMessage>();
             if (pingReceive != null)
             {
-                var pongSend = pingReceive.GetPingReplyMessage(AssaultWing.Instance.GameTime.TotalGameTime);
+                var pongSend = pingReceive.GetPingReplyMessage(AssaultWing.Instance.GameTime.TotalArenaTime);
                 BaseConnection.Send(pongSend);
             }
 
@@ -97,7 +97,7 @@ namespace AW2.Net
                 var pingTime = now - pongReceive.Timestamp;
                 pingTimes[nextIndex] = pingTime;
                 remoteGameTimeOffsets[nextIndex] =
-                    AssaultWing.Instance.GameTime.TotalGameTime
+                    AssaultWing.Instance.GameTime.TotalArenaTime
                     - pongReceive.TotalGameTimeOnReply
                     - pingTime.Divide(2);
                 nextIndex = (nextIndex + 1) % pingTimes.Length;

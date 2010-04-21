@@ -84,8 +84,8 @@ namespace AW2.Game.Particles
                 {
                     // Forget about creating particles whose creation was due 
                     // while we were dead.
-                    if (nextBirth < AssaultWing.Instance.GameTime.TotalGameTime)
-                        nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
+                    if (nextBirth < AssaultWing.Instance.GameTime.TotalArenaTime)
+                        nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
                 }
                 isAlive = value;
             }
@@ -311,7 +311,7 @@ namespace AW2.Game.Particles
         public override void Activate()
         {
             base.Activate();
-            nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
+            nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace AW2.Game.Particles
             {
                 // Count how many to create.
                 int createCount = 0;
-                while (nextBirth <= gameTime.TotalGameTime)
+                while (nextBirth <= AssaultWing.Instance.GameTime.TotalArenaTime)
                 {
                     ++createCount;
                     float birthRateNow = GetFloatFromFactory(ref birthRate);

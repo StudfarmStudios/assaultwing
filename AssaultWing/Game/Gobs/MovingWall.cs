@@ -81,7 +81,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Act()
         {
-            var now = AssaultWing.Instance.GameTime.TotalGameTime;
+            var now = AssaultWing.Instance.GameTime.TotalArenaTime;
             if ((now - startTime).TotalSeconds < 1) return;
             movingCurve.SetTarget(goingToTarget ? startPos : targetPos,
                 now, movementTime, MovementCurve.Curvature.SlowFastSlow);
@@ -109,7 +109,7 @@ namespace AW2.Game.Gobs
         {
             if (startTime.Ticks >= 0)
             {
-                var nextPos = movingCurve.Evaluate(AssaultWing.Instance.GameTime.TotalGameTime);
+                var nextPos = movingCurve.Evaluate(AssaultWing.Instance.GameTime.TotalArenaTime);
                 move = (nextPos - pos) / (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
                 move = move.Clamp(0, 500); // limit movement speed to reasonable bounds
             }

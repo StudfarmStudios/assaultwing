@@ -70,13 +70,13 @@ namespace AW2.Game.Gobs.Bonus
         public override void Activate()
         {
             base.Activate();
-            deathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
+            deathTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(lifetime);
         }
 
         public override void Update()
         {
             base.Update();
-            if (deathTime <= AssaultWing.Instance.GameTime.TotalGameTime)
+            if (deathTime <= AssaultWing.Instance.GameTime.TotalArenaTime)
                 Die(new DeathCause());
         }
 

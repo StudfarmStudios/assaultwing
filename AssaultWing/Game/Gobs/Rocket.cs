@@ -78,7 +78,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            thrustEndTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(thrustDuration);
+            thrustEndTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(thrustDuration);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Update()
         {
-            if (AssaultWing.Instance.GameTime.TotalGameTime < thrustEndTime)
+            if (AssaultWing.Instance.GameTime.TotalArenaTime < thrustEndTime)
             {
                 // Thrust.
                 Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
@@ -106,7 +106,7 @@ namespace AW2.Game.Gobs
             base.Update();
 
             // Manage exhaust engines.
-            if (AssaultWing.Instance.GameTime.TotalGameTime >= thrustEndTime)
+            if (AssaultWing.Instance.GameTime.TotalArenaTime >= thrustEndTime)
                 SwitchExhaustEngines(false);
         }
 

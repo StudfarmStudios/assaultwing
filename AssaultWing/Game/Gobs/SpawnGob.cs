@@ -123,7 +123,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Activate()
         {
-            nextSpawn = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(spawnInterval);
+            nextSpawn = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(spawnInterval);
             base.Activate();
         }
 
@@ -149,7 +149,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Update()
         {
-            TimeSpan nowTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            TimeSpan nowTime = AssaultWing.Instance.GameTime.TotalArenaTime;
             while (nextSpawn <= nowTime)
             {
                 nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);

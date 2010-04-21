@@ -97,14 +97,13 @@ namespace AW2.Net
         /// <summary>
         /// Receive and handle messages.
         /// </summary>
-        /// <param name="totalGameTime">Total game time at local game instance.</param>
         public void HandleMessages()
         {
             if (Disposed) throw new InvalidOperationException("Cannot use disposed GameplayMessageHandler");
             T message = null;
             while ((message = Source.Messages.TryDequeue<T>()) != null)
             {
-                var messageAge = AssaultWing.Instance.GameTime.TotalGameTime
+                var messageAge = AssaultWing.Instance.GameTime.TotalArenaTime
                     - (message.TotalGameTime + Source.RemoteGameTimeOffset);
                 Action(message, messageAge);
                 if (OnlyOneMessage)

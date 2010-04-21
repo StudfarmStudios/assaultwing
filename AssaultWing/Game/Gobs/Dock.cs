@@ -42,7 +42,7 @@ namespace AW2.Game.Gobs
 
         private bool MustBeSilent
         {
-            get { return _lastDockSoundTime < AssaultWing.Instance.GameTime.TotalGameTime - DOCK_SOUND_STOP_DELAY; }
+            get { return _lastDockSoundTime < AssaultWing.Instance.GameTime.TotalArenaTime - DOCK_SOUND_STOP_DELAY; }
         }
 
         /// This constructor is only for serialisation.
@@ -95,7 +95,7 @@ namespace AW2.Game.Gobs
 
         private void EnsureDockSoundPlaying()
         {
-            _lastDockSoundTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            _lastDockSoundTime = AssaultWing.Instance.GameTime.TotalArenaTime;
             if (_dockSoundCue != null && _dockSoundCue.IsPlaying) return;
             if (_dockSoundCue != null) _dockSoundCue.Dispose();
             _dockSoundCue = AssaultWing.Instance.SoundEngine.GetCue("Docking");

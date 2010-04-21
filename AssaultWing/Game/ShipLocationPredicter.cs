@@ -88,7 +88,7 @@ namespace AW2.Game
             {
                 return new ShipLocationEntry
                 {
-                    GameTime = AssaultWing.Instance.GameTime.TotalGameTime,
+                    GameTime = AssaultWing.Instance.GameTime.TotalArenaTime,
                     Pos = ship.Pos,
                     Move = ship.Move,
                     Rotation = ship.Rotation

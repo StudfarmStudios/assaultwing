@@ -102,8 +102,6 @@ namespace AW2
         TimeSpan lastFramerateCheck;
         int framesSinceLastCheck;
         GameState gameState;
-        GameTime _gameTime;
-        TimeSpan _gameTimeDelay;
         IWindow window; // use this and not Game.Window
 
         // Fields for game server starting an arena
@@ -211,7 +209,7 @@ namespace AW2
         /// <summary>
         /// The game time on this frame.
         /// </summary>
-        public GameTime GameTime { get { return _gameTime; } }
+        public AWGameTime GameTime { get; private set; }
 
         /// <summary>
         /// Time of previously finished call to Draw(), in game time.
@@ -311,7 +309,7 @@ namespace AW2
             framesSinceLastCheck = 0;
             GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
-            _gameTime = new GameTime();
+            GameTime = new AWGameTime();
             lastDrawTime = new TimeSpan(0);
 
             InitializeComponents();
@@ -352,7 +350,6 @@ namespace AW2
 
         void StartArenaImpl()
         {
-            _gameTimeDelay += GameTime.TotalGameTime;
             dataEngine.StartArena();
             graphicsEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
@@ -879,15 +876,8 @@ namespace AW2
             base.EndRun();
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            _gameTime = gameTime;
-
             if (startingArenaOnServer)
             {
                 if (networkEngine.GameClientConnections.Connections.All(
@@ -930,19 +920,9 @@ namespace AW2
                 frameStep = true;
             }
 
-            // Take care of game time freezing if game logic is disabled.
-            if (!logicEngine.Enabled) _gameTimeDelay += _gameTime.ElapsedGameTime;
+            GameTime = GameTime.Update(gameTime, logicEngine.Enabled);
 
-            var totalGameTime = _gameTime.TotalGameTime - _gameTimeDelay;
-            if (totalGameTime < TimeSpan.Zero) totalGameTime = TimeSpan.Zero;
-            _gameTime = new GameTime(_gameTime.TotalRealTime, _gameTime.ElapsedRealTime,
-                totalGameTime, _gameTime.ElapsedGameTime);
-
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-
-            base.Update(_gameTime);
+            base.Update(GameTime);
             if (logicEngine.Enabled)
             {
                 GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
@@ -973,7 +953,7 @@ namespace AW2
                 framesSinceLastCheck = 1;
                 lastFramerateCheck = gameTime.TotalRealTime;
 
-                window.Title += " [gametime: " + GameTime.TotalGameTime + "]"; // !!!
+                window.Title += " [arenatime: " + GameTime.TotalArenaTime + "]"; // !!!
 
                 if (NetworkMode != NetworkMode.Standalone)
                     window.Title += " [" + networkEngine.GetSendQueueSize() + " B send queue]";
@@ -990,8 +970,8 @@ namespace AW2
                             (int)conn.PingTime.TotalMilliseconds,
                             (int)conn.RemoteGameTimeOffset.TotalMilliseconds);
             }
-            lock (GraphicsDevice) base.Draw(_gameTime);
-            lastDrawTime = _gameTime.TotalGameTime;
+            lock (GraphicsDevice) base.Draw(GameTime);
+            lastDrawTime = GameTime.TotalArenaTime;
         }
 
         /// <summary>

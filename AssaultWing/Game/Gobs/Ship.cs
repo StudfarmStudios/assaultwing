@@ -386,7 +386,7 @@ namespace AW2.Game.Gobs
 
             LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
             {
-                GameTime = AssaultWing.Instance.GameTime.TotalGameTime - elapsedGameTime,
+                GameTime = AssaultWing.Instance.GameTime.TotalArenaTime - elapsedGameTime,
                 Pos = Pos,
                 Move = Move,
                 Rotation = Rotation

@@ -463,7 +463,7 @@ namespace AW2.Game
             get
             {
                 // Reset bleach if it's getting old.
-                if (AssaultWing.Instance.GameTime.TotalGameTime >= bleachResetTime)
+                if (AssaultWing.Instance.GameTime.TotalArenaTime >= bleachResetTime)
                     bleach = 0;
 
                 // Set new bleach based on accumulated damage during this frame.
@@ -473,7 +473,7 @@ namespace AW2.Game
                     if (newBleach > bleach)
                     {
                         bleach = newBleach;
-                        bleachResetTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(0.055);
+                        bleachResetTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(0.055);
                     }
                     bleachDamage = 0;
                 }
@@ -505,7 +505,7 @@ namespace AW2.Game
                     modelPartTransforms = new Matrix[Model.Bones.Count];
                     modelPartTransformsUpdated = new TimeSpan(-1);
                 }
-                TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+                var now = AssaultWing.Instance.GameTime.TotalArenaTime;
                 if (modelPartTransformsUpdated < now)
                 {
                     modelPartTransformsUpdated = now;
@@ -633,14 +633,14 @@ namespace AW2.Game
             SetId();
             owner = null;
             ResetPos(Vector2.Zero, Vector2.Zero, Gob.defaultRotation); // also translates collPrimitives
-            birthTime = AssaultWing.Instance.GameTime.TotalGameTime;
+            birthTime = AssaultWing.Instance.GameTime.TotalArenaTime;
             modelPartTransforms = null;
             exhaustEngines = new Gob[0];
             alpha = 1;
             bleachDamage = 0;
             bleach = -1;
             bleachResetTime = new TimeSpan(0);
-            LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalGameTime;
+            LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
         /// <summary>

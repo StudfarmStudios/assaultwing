@@ -50,8 +50,8 @@ namespace AW2.Game
         /// <param name="duration">Time how long the action is active</param>
         public virtual void DoAction(float duration)
         {
-            actionTimeins = AssaultWing.Instance.GameTime.TotalGameTime;
-            actionTimeouts = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(duration);
+            actionTimeins = AssaultWing.Instance.GameTime.TotalArenaTime;
+            actionTimeouts = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(duration);
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 player.MustUpdateToClients = true;
         }

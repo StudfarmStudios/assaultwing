@@ -189,7 +189,7 @@ namespace AW2.Game.Weapons
                 case FireModeType.Continuous: shotsLeft = 1; break;
                 default: throw new ApplicationException("Unknown FireMode " + FireMode);
             }
-            nextShot = AssaultWing.Instance.GameTime.TotalGameTime;
+            nextShot = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
         public override void Activate()
@@ -247,7 +247,7 @@ namespace AW2.Game.Weapons
         private bool IsItTimeToShoot()
         {
             if (shotsLeft <= 0) return false;
-            if (nextShot > AssaultWing.Instance.GameTime.TotalGameTime) return false;
+            if (nextShot > AssaultWing.Instance.GameTime.TotalArenaTime) return false;
             return true;
         }
 

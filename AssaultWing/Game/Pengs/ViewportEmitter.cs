@@ -117,7 +117,7 @@ namespace AW2.Game.Pengs
         /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
         public override ICollection<Particle> Emit()
         {
-            TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+            TimeSpan now = AssaultWing.Instance.GameTime.TotalArenaTime;
             float z = Peng.Layer.Z;
             List<Particle> particles = null;
 
@@ -162,7 +162,7 @@ namespace AW2.Game.Pengs
 
             // Initialise 'nextBirth'.
             if (nextBirth.Ticks < 0)
-                nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
+                nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
 
             // Count how many to create.
             int createCount = Math.Max(0, (int)(1 + emissionFrequency * (now - nextBirth).TotalSeconds));

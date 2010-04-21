@@ -83,7 +83,7 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            DeathTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(lifetime);
+            DeathTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(lifetime);
             if (bulletModelNames.Length > 0)
             {
                 int modelNameI = RandomHelper.GetRandomInt(bulletModelNames.Length);
@@ -94,7 +94,7 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            if (AssaultWing.Instance.GameTime.TotalGameTime >= DeathTime)
+            if (AssaultWing.Instance.GameTime.TotalArenaTime >= DeathTime)
                 Die(new DeathCause());
             
             base.Update();

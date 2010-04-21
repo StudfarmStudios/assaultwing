@@ -413,7 +413,7 @@ namespace AW2.Game
             // Game server sends state updates about gobs to game clients.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
-                TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+                var now = AssaultWing.Instance.GameTime.TotalArenaTime;
                 var message = new GobUpdateMessage();
                 foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
                 {

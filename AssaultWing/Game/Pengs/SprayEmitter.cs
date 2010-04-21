@@ -97,8 +97,8 @@ namespace AW2.Game.Pengs
                 {
                     // Forget about creating particles whose creation was due 
                     // while we were paused.
-                    if (nextBirth < AssaultWing.Instance.GameTime.TotalGameTime)
-                        nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
+                    if (nextBirth < AssaultWing.Instance.GameTime.TotalArenaTime)
+                        nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
                 }
                 base.Paused = value;
             }
@@ -133,12 +133,12 @@ namespace AW2.Game.Pengs
         {
             if (paused) return null;
             if (numberToCreate == 0) return null;
-            TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+            TimeSpan now = AssaultWing.Instance.GameTime.TotalArenaTime;
             List<Particle> particles = null;
 
             // Initialise 'nextBirth'.
             if (nextBirth.Ticks < 0)
-                nextBirth = AssaultWing.Instance.GameTime.TotalGameTime;
+                nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
 
             // Count how many to create.
             int createCount = Math.Max(0, (int)(1 + emissionFrequency * (now - nextBirth).TotalSeconds));

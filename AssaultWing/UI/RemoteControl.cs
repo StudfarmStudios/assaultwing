@@ -80,7 +80,7 @@ namespace AW2.UI
             get
             {
                 // Give one pulse only on one frame.
-                TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+                TimeSpan now = AssaultWing.Instance.GameTime.TotalArenaTime;
                 if (LastStateUpdate < LastPulseRead && LastPulseRead < now)
                     pulse = false;
                 LastPulseRead = now;
@@ -102,7 +102,7 @@ namespace AW2.UI
         {
             // Take the maximum of all state updates during one frame.
             // This gives priority to hard action.
-            TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+            TimeSpan now = AssaultWing.Instance.GameTime.TotalArenaTime;
             if (LastStateUpdate < now)
             {
                 this.pulse = pulse;

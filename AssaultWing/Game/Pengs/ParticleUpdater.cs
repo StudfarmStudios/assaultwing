@@ -98,7 +98,7 @@ namespace AW2.Game.Pengs
         /// <c>false</c> otherwise.</returns>
         public bool Update(Particle particle)
         {
-            TimeSpan now = AssaultWing.Instance.GameTime.TotalGameTime;
+            TimeSpan now = AssaultWing.Instance.GameTime.TotalArenaTime;
 
             // Initialise custom particle fields.
             if (particle.timeout == TimeSpan.Zero)

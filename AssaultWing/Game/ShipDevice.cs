@@ -139,11 +139,11 @@ namespace AW2.Game
         /// </summary>
         public bool Loaded
         {
-            get { return FireMode == FireModeType.Continuous || LoadedTime <= AssaultWing.Instance.GameTime.TotalGameTime; }
+            get { return FireMode == FireModeType.Continuous || LoadedTime <= AssaultWing.Instance.GameTime.TotalArenaTime; }
             set
             {
-                if (value && !Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalGameTime;
-                if (!value && Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(1);
+                if (value && !Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+                if (!value && Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(1);
             }
         }
 
@@ -319,7 +319,7 @@ namespace AW2.Game
             switch (FireMode)
             {
                 case FireModeType.Single:
-                    LoadedTime = AssaultWing.Instance.GameTime.TotalGameTime + TimeSpan.FromSeconds(LoadTime*LoadTimeMultiplier);
+                    LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(LoadTime*LoadTimeMultiplier);
                     break;
                 case FireModeType.Continuous:
                     break;

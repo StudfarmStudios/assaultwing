@@ -266,7 +266,7 @@ namespace AW2.Helpers
         /// </summary>
         public static float SecondsAgoGameTime(this TimeSpan time1)
         {
-            return (float)(AssaultWing.Instance.GameTime.TotalGameTime - time1).TotalSeconds;
+            return (float)(AssaultWing.Instance.GameTime.TotalArenaTime - time1).TotalSeconds;
         }
 
         /// <summary>

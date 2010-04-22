@@ -34,11 +34,13 @@ namespace AW2.Game
 
         #region Player constants
 
+        const int MESSAGE_KEEP_COUNT = 100;
+
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
         /// </summary>
-        float mourningDelay = 3;
+        const float MOURNING_DELAY = 3;
 
         #endregion Player constants
 
@@ -57,11 +59,6 @@ namespace AW2.Game
         CanonicalString shipTypeName;
 
         public GameActionCollection BonusActions { get; private set; }
-
-        /// <summary>
-        /// Messages to display in the player's chat box, oldest first.
-        /// </summary>
-        List<string> messages;
         
         /// <summary>
         /// How many reincarnations the player has left.
@@ -238,7 +235,7 @@ namespace AW2.Game
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
         /// </summary>
-        public List<string> Messages { get { return messages; } }
+        public List<string> Messages { get; private set; }
 
         public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
 
@@ -312,7 +309,7 @@ namespace AW2.Game
             this.shipTypeName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
-            messages = new List<string>();
+            Messages = new List<string>();
             lives = 3;
             shipSpawnTime = new TimeSpan(1);
             relativeShakeDamage = 0;
@@ -421,7 +418,7 @@ namespace AW2.Game
                 cause.Killer.Owner.SendMessage("You nailed " + Name);
             
             // Schedule the making of a new ship, lives permitting.
-            shipSpawnTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(mourningDelay);
+            shipSpawnTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(MOURNING_DELAY);
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 MustUpdateToClients = true;
@@ -464,12 +461,13 @@ namespace AW2.Game
         /// <param name="message">The message.</param>
         public void SendMessage(string message)
         {
-            TimeSpan time = AssaultWing.Instance.GameTime.TotalArenaTime;
-            messages.Add(string.Format("[{0}:{1:d2}] {2}", (int)time.TotalMinutes, time.Seconds, message));
+            var time = AssaultWing.Instance.GameTime.TotalArenaTime;
+            var line = string.Format("[{0}:{1:d2}] {2}", (int)time.TotalMinutes, time.Seconds, message);
+            Messages.Add(line);
 
             // Throw away very old messages.
-            if (messages.Count > 10000)
-                messages.RemoveRange(0, messages.Count - 5000);
+            if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)
+                Messages.RemoveRange(0, Messages.Count - MESSAGE_KEEP_COUNT);
         }
 
         public override void Dispose()

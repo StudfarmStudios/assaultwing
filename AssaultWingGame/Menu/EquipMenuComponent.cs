@@ -321,6 +321,12 @@ namespace AW2.Menu
                                 AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(new ArenaStartReply());
                                 AssaultWing.Instance.StartArena();
                             }));
+                            net.MessageHandlers.Add(new MessageHandler<PlayerMessageMessage>(false, net.GameServerConnection, mess =>
+                            {
+                                var player = AssaultWing.Instance.DataEngine.Spectators.First(spec => spec.Id == mess.PlayerId) as Player;
+                                if (player == null) throw new ApplicationException("Text message for spectator " + mess.PlayerId + " who is not a Player");
+                                player.SendMessage(mess.Text);
+                            }));
                         });
                     menuEngine.Deactivate();
                 }

@@ -75,7 +75,9 @@ namespace AW2.Net
         /// </summary>
         public override string ReadString()
         {
-            throw new InvalidOperationException("Reading length-prefixed strings is not advisable.");
+            int length = ReadInt32();
+            var chars = ReadChars(length);
+            return new string(chars);
         }
 
         /// <summary>

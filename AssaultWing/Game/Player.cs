@@ -455,12 +455,16 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Sends a message to the player. The message will be displayed on the
-        /// player's screen.
+        /// Sends a message to the player. The message will be displayed on the player's screen.
         /// </summary>
-        /// <param name="message">The message.</param>
         public void SendMessage(string message)
         {
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && IsRemote)
+            {
+                var messageMessage = new PlayerMessageMessage { PlayerId = Id, Text = message };
+                AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(messageMessage);
+            }
+
             var time = AssaultWing.Instance.GameTime.TotalArenaTime;
             var line = string.Format("[{0}:{1:d2}] {2}", (int)time.TotalMinutes, time.Seconds, message);
             Messages.Add(line);

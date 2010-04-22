@@ -74,7 +74,8 @@ namespace AW2.Net
         /// <param name="value">The string to write.</param>
         public override void Write(string value)
         {
-            throw new InvalidOperationException("Writing length-prefixed strings is not advisable.");
+            Write((int)value.Length);
+            Write((char[])value.ToCharArray());
         }
 
         /// <summary>

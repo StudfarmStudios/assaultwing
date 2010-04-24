@@ -615,25 +615,6 @@ namespace AW2.Game
                 arena.Gobs.Add(newShip);
                 Ship = newShip;
             });
-
-            // Create a player marker for the ship.
-            Gob.CreateGob((CanonicalString)"playerglow", playerColor =>
-            {
-                if (playerColor is ParticleEngine)
-                {
-                    var particleEngine = (ParticleEngine)playerColor;
-                    particleEngine.ResetPos(Ship.Pos, particleEngine.Move, Ship.Rotation);
-                    particleEngine.Owner = this;
-                    particleEngine.Leader = Ship;
-                }
-                else if (playerColor is Peng)
-                {
-                    Peng peng = (Peng)playerColor;
-                    peng.Owner = this;
-                    peng.Leader = Ship;
-                }
-                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(playerColor);
-            });
         }
 
         /// <summary>

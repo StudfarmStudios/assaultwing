@@ -346,6 +346,28 @@ namespace AW2.Game.Gobs
             coughEngines = coughEngineList.ToArray();
         }
 
+        private void CreateGlow()
+        {
+            if (Owner == null) return;
+            Gob.CreateGob((CanonicalString)"playerglow", gob =>
+            {
+                if (gob is ParticleEngine)
+                {
+                    var particleEngine = (ParticleEngine)gob;
+                    particleEngine.ResetPos(Pos, particleEngine.Move, Rotation);
+                    particleEngine.Owner = Owner;
+                    particleEngine.Leader = this;
+                }
+                else if (gob is Peng)
+                {
+                    var peng = (Peng)gob;
+                    peng.Owner = Owner;
+                    peng.Leader = this;
+                }
+                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
+            });
+        }
+
         #endregion Private methods
 
         #region Methods related to gobs' functionality in the game world
@@ -366,6 +388,7 @@ namespace AW2.Game.Gobs
             SwitchExhaustEngines(false);
             exhaustAmountUpdated = false;
             CreateCoughEngines();
+            CreateGlow();
             Disable(); // re-enabled in Update()
             _isBirthFlashing = true;
         }

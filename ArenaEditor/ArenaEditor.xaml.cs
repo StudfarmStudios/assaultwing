@@ -37,7 +37,7 @@ namespace AW2
         bool isDragging;
 
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
-        private Gob SelectedGob { get { return (Gob)gobNames.SelectedValue; } }
+        private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
 
         public ArenaEditor()
         {
@@ -123,7 +123,7 @@ namespace AW2
                 {
                     var data = AssaultWing.Instance.DataEngine;
                     if (data.Arena == null) return;
-                    gobNames.Items.Clear();
+                    GobNames.Items.Clear();
                     var pointInViewport = new Vector2(e.Location.X, e.Location.Y);
                     var viewport = GetViewport(e.Location);
                     int layerIndex = 0;
@@ -135,11 +135,11 @@ namespace AW2
                             float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z));
                             float? t = gob.DrawBounds.Intersects(ray);
                             if (distance < 20 || t.HasValue)
-                                gobNames.Items.Add(new GobReference { Value = gob, LayerIndex = layerIndex });
+                                GobNames.Items.Add(new GobReference { Value = gob, LayerIndex = layerIndex });
                         }
                         ++layerIndex;
                     }
-                    if (gobNames.Items.Count == 1) gobNames.SelectedIndex = 0;
+                    if (GobNames.Items.Count == 1) GobNames.SelectedIndex = 0;
                 }
             }
             catch (Exception ex)
@@ -212,6 +212,8 @@ namespace AW2
 
         private void GobNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            foreach (GobReference gob in e.RemovedItems) gob.Value.BleachValue = 0;
+            foreach (GobReference gob in e.AddedItems) gob.Value.BleachValue = 0.35f;
             if (SelectedGob == null) return;
             float newValue = SelectedGob.Rotation % MathHelper.TwoPi;
             if (newValue < 0) newValue += MathHelper.TwoPi;

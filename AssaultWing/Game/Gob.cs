@@ -293,26 +293,26 @@ namespace AW2.Game
         #region Fields for bleach
 
         /// <summary>
-        /// Amount of accumulated damage that determines the amount of bleach.
-        /// </summary>
-        float bleachDamage;
-
-        /// <summary>
         /// Function that maps bleach damage to bleach, i.e. degree of whiteness.
         /// </summary>
-        static Curve bleachCurve;
+        static Curve g_bleachCurve;
 
         /// <summary>
-        /// Current level of bleach between 0 and 1. Access this field through the property <c>Bleach</c>.
+        /// Amount of accumulated damage that determines the amount of bleach.
         /// </summary>
-        float bleach;
+        float _bleachDamage;
+
+        /// <summary>
+        /// Previously returned value of <see cref="GetBleach"/>.
+        /// </summary>
+        float _previousBleach;
 
         /// <summary>
         /// Time when bleach will be reset, in game time.
         /// </summary>
         /// When bleach is set to nonzero, this time is set to denote how
         /// long the bleach is supposed to stay on.
-        TimeSpan bleachResetTime;
+        TimeSpan _bleachResetTime;
 
         #endregion Fields for bleach
 
@@ -344,6 +344,11 @@ namespace AW2.Game
         }
 
         public bool IsVisible { get; set; }
+
+        /// <summary>
+        /// Gob drawing bleach override, between 0 and 1. If null, normal bleach behaviour is used.
+        /// </summary>
+        public float? BleachValue { get; set; }
 
         /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.
@@ -452,37 +457,6 @@ namespace AW2.Game
         public float Scale { get { return scale; } set { scale = value; } }
 
         /// <summary>
-        /// Amount of bleach to use when drawing the gob's 3D model, between 0 and 1.
-        /// </summary>
-        /// A bleach of 0 means the 3D model looks normal. 
-        /// A bleach of 1 means the 3D model is drawn totally white.
-        /// Anything in between states the amount of blend from the
-        /// unbleached 3D model towards the totally white 3D model.
-        public float Bleach
-        {
-            get
-            {
-                // Reset bleach if it's getting old.
-                if (AssaultWing.Instance.GameTime.TotalArenaTime >= bleachResetTime)
-                    bleach = 0;
-
-                // Set new bleach based on accumulated damage during this frame.
-                if (bleachDamage > 0)
-                {
-                    float newBleach = bleachCurve.Evaluate(bleachDamage);
-                    if (newBleach > bleach)
-                    {
-                        bleach = newBleach;
-                        bleachResetTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(0.055);
-                    }
-                    bleachDamage = 0;
-                }
-
-                return bleach;
-            }
-        }
-
-        /// <summary>
         /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
         /// </summary>
         public float Alpha { get { return alpha; } set { alpha = value; } }
@@ -580,18 +554,18 @@ namespace AW2.Game
 
         static Gob()
         {
-            bleachCurve = new Curve();
-            bleachCurve.PreLoop = CurveLoopType.Constant;
-            bleachCurve.PostLoop = CurveLoopType.Constant;
-            bleachCurve.Keys.Add(new CurveKey(0, 0));
-            bleachCurve.Keys.Add(new CurveKey(5, 0.1f));
-            bleachCurve.Keys.Add(new CurveKey(30, 0.3f));
-            bleachCurve.Keys.Add(new CurveKey(100, 0.5f));
-            bleachCurve.Keys.Add(new CurveKey(200, 0.65f));
-            bleachCurve.Keys.Add(new CurveKey(500, 0.8f));
-            bleachCurve.Keys.Add(new CurveKey(1000, 0.9f));
-            bleachCurve.Keys.Add(new CurveKey(5000, 1));
-            bleachCurve.ComputeTangents(CurveTangent.Linear);
+            g_bleachCurve = new Curve();
+            g_bleachCurve.PreLoop = CurveLoopType.Constant;
+            g_bleachCurve.PostLoop = CurveLoopType.Constant;
+            g_bleachCurve.Keys.Add(new CurveKey(0, 0));
+            g_bleachCurve.Keys.Add(new CurveKey(5, 0.1f));
+            g_bleachCurve.Keys.Add(new CurveKey(30, 0.3f));
+            g_bleachCurve.Keys.Add(new CurveKey(100, 0.5f));
+            g_bleachCurve.Keys.Add(new CurveKey(200, 0.65f));
+            g_bleachCurve.Keys.Add(new CurveKey(500, 0.8f));
+            g_bleachCurve.Keys.Add(new CurveKey(1000, 0.9f));
+            g_bleachCurve.Keys.Add(new CurveKey(5000, 1));
+            g_bleachCurve.ComputeTangents(CurveTangent.Linear);
         }
 
         /// <summary>
@@ -615,7 +589,7 @@ namespace AW2.Game
             collisionAreas = new CollisionArea[0];
             damage = 0;
             maxDamage = 100;
-            bleachDamage = 0;
+            _bleachDamage = 0;
             birthTime = new TimeSpan(23, 59, 59);
             dead = false;
             movable = true;
@@ -637,9 +611,9 @@ namespace AW2.Game
             modelPartTransforms = null;
             exhaustEngines = new Gob[0];
             alpha = 1;
-            bleachDamage = 0;
-            bleach = -1;
-            bleachResetTime = new TimeSpan(0);
+            _bleachDamage = 0;
+            _previousBleach = -1;
+            _bleachResetTime = new TimeSpan(0);
             LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
@@ -850,7 +824,8 @@ namespace AW2.Game
                 }
 
                 // Blend towards white if required.
-                if (Bleach > 0)
+                float bleachFactor = GetBleach();
+                if (bleachFactor > 0)
                 {
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     if (mesh.Effects.Count > 1)
@@ -874,7 +849,7 @@ namespace AW2.Game
                     be.TextureEnabled = false;
                     be.VertexColorEnabled = false;
                     be.DiffuseColor = Vector3.One;
-                    be.Alpha = Bleach;
+                    be.Alpha = bleachFactor;
 
                     mesh.Draw();
 
@@ -1231,7 +1206,7 @@ namespace AW2.Game
             }
 
             if (damageAmount > 0)
-                bleachDamage += damageAmount;
+                _bleachDamage += damageAmount;
             if (damage == maxDamage)
                 Die(cause);
         }
@@ -1355,6 +1330,36 @@ namespace AW2.Game
                     Arena.Gobs.Add(gob);
                 });
             }
+        }
+
+        /// <summary>
+        /// Returns the amount of bleach to use when drawing the gob's 3D model, between 0 and 1.
+        /// </summary>
+        /// A bleach of 0 means the 3D model looks normal. 
+        /// A bleach of 1 means the 3D model is drawn totally white.
+        /// Anything in between states the amount of blend from the
+        /// unbleached 3D model towards the totally white 3D model.
+        private float GetBleach()
+        {
+            if (BleachValue.HasValue) return BleachValue.Value;
+
+            // Reset bleach if it's getting old.
+            if (AssaultWing.Instance.GameTime.TotalArenaTime >= _bleachResetTime)
+                _previousBleach = 0;
+
+            // Set new bleach based on accumulated damage during this frame.
+            if (_bleachDamage > 0)
+            {
+                float newBleach = g_bleachCurve.Evaluate(_bleachDamage);
+                if (newBleach > _previousBleach)
+                {
+                    _previousBleach = newBleach;
+                    _bleachResetTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(0.055);
+                }
+                _bleachDamage = 0;
+            }
+
+            return _previousBleach;
         }
 
         void SetId()

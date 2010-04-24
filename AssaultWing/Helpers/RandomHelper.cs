@@ -198,6 +198,20 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Finds from a circle sector a random point with an even distribution over the sector's area.
+        /// </summary>
+        /// <param name="radius">Radius of the circle.</param>
+        /// <param name="minAngle">Minimum angle, in radians, for <paramref name="dirAngle"/>.</param>
+        /// <param name="maxAngle">Maximum angle, in radians, for <paramref name="dirAngle"/>.</param>
+        public static Vector2 GetRandomCirclePoint(float radius, float minAngle, float maxAngle)
+        {
+            Vector2 position, dirUnit;
+            float dirAngle;
+            GetRandomCirclePoint(radius, minAngle, maxAngle, out position, out dirUnit, out dirAngle);
+            return position;
+        }
+
+        /// <summary>
         /// Finds from a circle a random point with an even distribution over the circle's area.
         /// </summary>
         /// <param name="radius">Radius of the circle.</param>
@@ -211,7 +225,7 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Finds from a circle a random point with an even distribution over the circle's area.
+        /// Finds from a circle sector a random point with an even distribution over the sector's area.
         /// </summary>
         /// <param name="radius">Radius of the circle.</param>
         /// <param name="minAngle">Minimum angle, in radians, for <paramref name="dirAngle"/>.</param>

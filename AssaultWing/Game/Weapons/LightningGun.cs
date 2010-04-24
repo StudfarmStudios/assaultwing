@@ -44,7 +44,7 @@ namespace AW2.Game.Weapons
                 orderby distanceSquared ascending
                 select gob;
             StartFiring();
-            if (targets.Any()) FireAtTarget(targets.First());
+            FireAtTarget(targets.FirstOrDefault());
             DoneFiring();
         }
 

@@ -4,10 +4,11 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Net;
 
 namespace AW2.Game.Gobs
 {
-    public class GobProxy
+    public class GobProxy : INetworkSerializable
     {
         int _id;
         Arena _arena;
@@ -32,6 +33,29 @@ namespace AW2.Game.Gobs
 
         public void SetId(int id) { _id = id; }
         public void SetArena(Arena arena) { _arena = arena; }
+
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                int gobID = Gob == null ? 0 : Gob.Id;
+                writer.Write((int)gobID);
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+            }
+        }
+
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                SetId(reader.ReadInt32());
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+            }
+        }
     }
 
     /// <summary>
@@ -53,13 +77,13 @@ namespace AW2.Game.Gobs
             }
         }
 
-        List<Segment> segments;
-        Texture2D texture;
-        VertexDeclaration vertexDeclaration;
-        static BasicEffect effect;
-        VertexPositionTexture[] vertexData;
+        List<Segment> _segments;
+        Texture2D _texture;
+        VertexDeclaration _vertexDeclaration;
+        static BasicEffect g_effect;
+        VertexPositionTexture[] _vertexData;
 
-        bool damageDealt;
+        bool _damageDealt;
 
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
@@ -138,16 +162,16 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            texture = AssaultWing.Instance.Content.Load<Texture2D>(textureName);
+            _texture = AssaultWing.Instance.Content.Load<Texture2D>(textureName);
             var gfx = AssaultWing.Instance.GraphicsDevice;
-            vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
-            effect = effect ?? new BasicEffect(gfx, null);
-            effect.World = Matrix.Identity;
-            effect.Texture = texture;
-            effect.TextureEnabled = true;
-            effect.VertexColorEnabled = false;
-            effect.LightingEnabled = false;
-            effect.FogEnabled = false;
+            _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
+            g_effect = g_effect ?? new BasicEffect(gfx, null);
+            g_effect.World = Matrix.Identity;
+            g_effect.Texture = _texture;
+            g_effect.TextureEnabled = true;
+            g_effect.VertexColorEnabled = false;
+            g_effect.LightingEnabled = false;
+            g_effect.FogEnabled = false;
         }
 
         public override void Activate()
@@ -156,17 +180,18 @@ namespace AW2.Game.Gobs
             Shooter.SetArena(Arena);
             Target.SetArena(Arena);
             CreateMesh();
-            damageDealt = false;
+            _damageDealt = false;
         }
 
         public override void Update()
         {
             base.Update();
             CreateMesh();
-            if (!damageDealt)
+            if (!_damageDealt)
             {
-                Target.Gob.InflictDamage(impactDamage, new DeathCause(Target.Gob, DeathCauseType.Damage, this));
-                damageDealt = true;
+                if (Target.Gob != null)
+                    Target.Gob.InflictDamage(impactDamage, new DeathCause(Target.Gob, DeathCauseType.Damage, this));
+                _damageDealt = true;
             }
             float seconds = birthTime.SecondsAgoGameTime();
             Alpha = alphaCurve.Evaluate(seconds);
@@ -177,21 +202,21 @@ namespace AW2.Game.Gobs
         public override void Draw(Matrix view, Matrix projection)
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
-            gfx.VertexDeclaration = vertexDeclaration;
+            gfx.VertexDeclaration = _vertexDeclaration;
             gfx.RenderState.AlphaBlendEnable = true;
             gfx.RenderState.SourceBlend = Blend.SourceAlpha;
             gfx.RenderState.DestinationBlend = Blend.One;
-            effect.Projection = projection;
-            effect.View = view;
-            effect.Alpha = Alpha;
-            effect.Begin();
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            g_effect.Projection = projection;
+            g_effect.View = view;
+            g_effect.Alpha = Alpha;
+            g_effect.Begin();
+            foreach (EffectPass pass in g_effect.CurrentTechnique.Passes)
             {
                 pass.Begin();
-                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vertexData, 0, vertexData.Length - 2);
+                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, _vertexData.Length - 2);
                 pass.End();
             }
-            effect.End();
+            g_effect.End();
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -205,7 +230,7 @@ namespace AW2.Game.Gobs
             {
                 writer.Write((int)Shooter.Gob.Id);
                 writer.Write((int)ShooterBoneIndex);
-                writer.Write((int)Target.Gob.Id);
+                Target.Serialize(writer, mode);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -219,7 +244,7 @@ namespace AW2.Game.Gobs
             {
                 Shooter.SetId(reader.ReadInt32());
                 ShooterBoneIndex = reader.ReadInt32();
-                Target.SetId(reader.ReadInt32());
+                Target.Deserialize(reader, mode, messageAge);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -230,24 +255,37 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        void CreateMesh()
+        private void CreateMesh()
         {
             var start = Shooter.Gob.GetNamedPosition(ShooterBoneIndex);
-            var end = Target.Gob.Pos;
-            CreateSegments(start, end, wildness, fineness);
+            if (Target.Gob != null)
+            {
+                _segments = new List<Segment> { new Segment(start, Target.Gob.Pos) };
+            }
+            else
+            {
+                var middle1 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, Shooter.Gob.Rotation - MathHelper.PiOver4, Shooter.Gob.Rotation);
+                var middle2 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, Shooter.Gob.Rotation, Shooter.Gob.Rotation + MathHelper.PiOver4);
+                _segments = new List<Segment>
+                {
+                    new Segment(start, middle1),
+                    new Segment(middle1, middle2),
+                    new Segment(middle2, start)
+                };
+            }
+            FineSegments(wildness, fineness);
             CreateVertexData(thickness);
         }
 
-        void CreateSegments(Vector2 start, Vector2 end, float wildness, float fineness)
+        private void FineSegments(float wildness, float fineness)
         {
-            segments = new List<Segment> { new Segment(start, end) }; // creates a list with just one element
-            for (int i = 0; i < 7 && Fine(fineness, wildness); ++i) ;
+            for (int i = 0; i < 7 && Fine(fineness, wildness, ref _segments); ++i) ;
         }
 
         /// <summary>
         /// Divides segments longer than given limit. Returns <c>true</c> if divisions were made.
         /// </summary>
-        bool Fine(float fineness, float wildness)
+        private static bool Fine(float fineness, float wildness, ref List<Segment> segments)
         {
             bool divided = false;
             var newSegments = new List<Segment>();
@@ -269,20 +307,20 @@ namespace AW2.Game.Gobs
             return divided;
         }
 
-        void CreateVertexData(float thickness)
+        private void CreateVertexData(float thickness)
         {
-            var vertices = new List<VertexPositionTexture>(segments.Count * 2 + 2);
+            var vertices = new List<VertexPositionTexture>(_segments.Count * 2 + 2);
             float lastX = 0;
             Vector2 lastLeft, lastRight;
-            ComputeExtrusionPoints(segments.First().StartPoint, segments.First().Vector, segments.First().Vector,
+            ComputeExtrusionPoints(_segments.First().StartPoint, _segments.First().Vector, _segments.First().Vector,
                 thickness, out lastLeft, out lastRight);
             vertices.Add(new VertexPositionTexture(new Vector3(lastRight, 0), new Vector2(lastX, 0)));
             vertices.Add(new VertexPositionTexture(new Vector3(lastLeft, 0), new Vector2(lastX, 1)));
-            for (int i = 0; i < segments.Count; ++i)
+            for (int i = 0; i < _segments.Count; ++i)
             {
-                float x = lastX + segments[i].Length / (texture.Width * thickness);
-                var inSegment = segments[i];
-                var outSegment = segments[i < segments.Count - 1 ? i + 1 : i];
+                float x = lastX + _segments[i].Length / (_texture.Width * thickness);
+                var inSegment = _segments[i];
+                var outSegment = _segments[i < _segments.Count - 1 ? i + 1 : i];
                 Vector2 left, right;
                 ComputeExtrusionPoints(inSegment.EndPoint, inSegment.Vector, outSegment.Vector,
                     thickness, out left, out right);
@@ -292,13 +330,13 @@ namespace AW2.Game.Gobs
                 lastLeft = left;
                 lastRight = right;
             }
-            vertexData = vertices.ToArray();
+            _vertexData = vertices.ToArray();
         }
 
-        void ComputeExtrusionPoints(Vector2 middle, Vector2 @in, Vector2 @out, float thickness, out Vector2 left, out Vector2 right)
+        private void ComputeExtrusionPoints(Vector2 middle, Vector2 @in, Vector2 @out, float thickness, out Vector2 left, out Vector2 right)
         {
             var unit = Vector2.Normalize(@in + @out);
-            var extrusion = unit.Rotate90() * thickness * texture.Height / 2;
+            var extrusion = unit.Rotate90() * thickness * _texture.Height / 2;
             left = middle + extrusion;
             right = middle - extrusion;
         }

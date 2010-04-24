@@ -1132,17 +1132,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\Peng_playergreen.xml">
+    <None Include="particledefs\Peng_playerglow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Peng_playergreen</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\Peng_playerred.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Peng_playerred</Name>
+      <Name>Peng_playerglow</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>

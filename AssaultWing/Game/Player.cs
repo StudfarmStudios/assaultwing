@@ -617,8 +617,7 @@ namespace AW2.Game
             });
 
             // Create a player marker for the ship.
-            var particleEngineName = new CanonicalString(Id == 1 ? "playerred" : "playergreen");
-            Gob.CreateGob(particleEngineName, playerColor =>
+            Gob.CreateGob((CanonicalString)"playerglow", playerColor =>
             {
                 if (playerColor is ParticleEngine)
                 {

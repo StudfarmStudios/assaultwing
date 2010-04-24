@@ -290,16 +290,16 @@ namespace AW2.Menu
                 var message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<StartGameMessage>();
                 if (message != null)
                 {
-                    for (int i = 0; i < message.PlayerCount; ++i)
+                    message.DeserializePlayers(playerID =>
                     {
-                        Player player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
-                        message.Read(player, SerializationModeFlags.All, TimeSpan.Zero);
-
-                        // Only add the player if it is remote.
-                        if (!AssaultWing.Instance.DataEngine.Spectators.Any(plr => plr.Id == player.Id))
+                        var player = (Player)AssaultWing.Instance.DataEngine.Spectators.FirstOrDefault(p => p.Id == playerID);
+                        if (player == null)
+                        {
+                            player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
                             AssaultWing.Instance.DataEngine.Spectators.Add(player);
-                    }
-
+                        }
+                        return player;
+                    });
                     AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(message.ArenaPlaylist);
 
                     // Prepare and start playing the game.

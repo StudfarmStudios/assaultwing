@@ -83,6 +83,7 @@ namespace AW2.Game
         public DataEngine()
         {
             Spectators = new IndexedItemCollection<Spectator>();
+            Spectators.Added += SpectatorAdded;
             Spectators.Removed += player => player.Dispose();
 
             Devices = new IndexedItemCollection<ShipDevice>();
@@ -561,7 +562,7 @@ namespace AW2.Game
         /// </summary>
         /// To be called whenever arena (or arena dimensions) change.
         /// <seealso cref="ArenaToRadarTransform"/>
-        void RefreshArenaToRadarTransform()
+        private void RefreshArenaToRadarTransform()
         {
             if (Arena == null)
                 throw new InvalidOperationException("No active arena");
@@ -574,6 +575,32 @@ namespace AW2.Game
             arenaToRadarTransform =
                 Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
                 Matrix.CreateTranslation(0, arenaDimensionsOnRadar.Y, 0);
+        }
+
+        private void SpectatorAdded(Spectator spectator)
+        {
+            var player = spectator as Player;
+            if (player != null)
+            {
+                player.PlayerColor = GetFreePlayerColor();
+            }
+        }
+
+        private Color GetFreePlayerColor()
+        {
+            return GetPlayerColorPalette().Except(Players.Select(p => p.PlayerColor)).First();
+        }
+
+        private static IEnumerable<Color> GetPlayerColorPalette()
+        {
+            yield return Color.CornflowerBlue;
+            yield return Color.DeepPink;
+            yield return Color.Orange;
+            yield return Color.Orchid;
+            yield return Color.YellowGreen;
+            yield return Color.MediumSpringGreen;
+            yield return Color.HotPink;
+            yield return Color.Aquamarine;
         }
 
         #endregion Private methods

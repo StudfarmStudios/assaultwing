@@ -548,13 +548,8 @@ namespace AW2
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new StartGameMessage();
-                int playerCount = 0;
                 foreach (var player in dataEngine.Spectators)
-                {
-                    ++playerCount;
-                    message.Write(player, SerializationModeFlags.All);
-                }
-                message.PlayerCount = playerCount;
+                    message.SerializePlayer((Player)player);
                 message.ArenaPlaylist = dataEngine.ArenaPlaylist;
                 networkEngine.GameClientConnections.Send(message);
             }
@@ -827,9 +822,6 @@ namespace AW2
 
             Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
             Player player2 = new Player("John Crichton", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
-            player1.PlayerColor = Color.Blue;
-            player2.PlayerColor = Color.DeepPink;
-
             dataEngine.Spectators.Add(player1);
             dataEngine.Spectators.Add(player2);
 

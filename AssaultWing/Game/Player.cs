@@ -500,6 +500,7 @@ namespace AW2.Game
                 writer.Write(Name, 32, true);
                 writer.Write(shipTypeName, 32, true);
                 writer.Write(Weapon2Name, 32, true);
+                writer.Write((uint)PlayerColor.PackedValue);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -521,6 +522,8 @@ namespace AW2.Game
                 Name = reader.ReadString(32);
                 shipTypeName = (CanonicalString)reader.ReadString(32);
                 Weapon2Name = (CanonicalString)reader.ReadString(32);
+                var playerColor = new Color { PackedValue = reader.ReadUInt32() };
+                PlayerColor = playerColor;
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {

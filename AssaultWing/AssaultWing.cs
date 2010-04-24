@@ -350,6 +350,7 @@ namespace AW2
 
         void StartArenaImpl()
         {
+            GameTime = GameTime.ResetArenaTime();
             dataEngine.StartArena();
             graphicsEngine.RearrangeViewports();
             GameState = GameState.Gameplay;

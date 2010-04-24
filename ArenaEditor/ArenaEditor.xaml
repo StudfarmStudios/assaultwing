@@ -27,7 +27,7 @@
                 <ListBox Name="layerNames" MinWidth="100" MaxHeight="200"/>
             </GroupBox>
             <GroupBox DockPanel.Dock="Top" Header="Gob selection">
-                <ListBox Name="gobNames" MinWidth="100" MaxHeight="400"
+                <ListBox Name="GobNames" MinWidth="100" MaxHeight="400"
                         DockPanel.Dock="Top"
                         SelectedValuePath="Value"
                         SelectionChanged="GobNames_SelectionChanged"/>

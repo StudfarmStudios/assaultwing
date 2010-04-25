@@ -115,7 +115,7 @@ namespace AW2.Game.Pengs
         /// Returns created particles, adds created gobs to <c>DataEngine</c>.
         /// </summary>
         /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
-        public override ICollection<Particle> Emit()
+        public override IEnumerable<Particle> Emit()
         {
             TimeSpan now = AssaultWing.Instance.GameTime.TotalArenaTime;
             float z = Peng.Layer.Z;
@@ -234,6 +234,11 @@ namespace AW2.Game.Pengs
             }
 
             return particles;
+        }
+
+        public override void Reset()
+        {
+            // nothing need be done
         }
 
         #region IConsistencyCheckable Members

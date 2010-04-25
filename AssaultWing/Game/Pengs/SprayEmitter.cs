@@ -82,13 +82,12 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// Time of next particle birth, in game time.
         /// </summary>
-        TimeSpan nextBirth;
+        TimeSpan _nextBirth;
+
+        int _numberCreated;
 
         #endregion SprayEmitter fields
 
-        /// <summary>
-        /// If <c>true</c>, no particles will be emitted.
-        /// </summary>
         public override bool Paused
         {
             set
@@ -97,22 +96,15 @@ namespace AW2.Game.Pengs
                 {
                     // Forget about creating particles whose creation was due 
                     // while we were paused.
-                    if (nextBirth < AssaultWing.Instance.GameTime.TotalArenaTime)
-                        nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
+                    if (_nextBirth < AssaultWing.Instance.GameTime.TotalArenaTime)
+                        _nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
                 }
                 base.Paused = value;
             }
         }
 
-        /// <summary>
-        /// <c>true</c> if emitting has finished for good
-        /// <c>false</c> otherwise.
-        /// </summary>
-        public override bool Finished { get { return numberToCreate == 0; } }
+        public override bool Finished { get { return numberToCreate > 0 && _numberCreated >= numberToCreate; } }
 
-        /// <summary>
-        /// Creates an uninitialised spray emitter.
-        /// </summary>
         /// This constructor is for serialisation.
         public SprayEmitter()
         {
@@ -122,32 +114,32 @@ namespace AW2.Game.Pengs
             initialVelocity = new CurveLerp();
             emissionFrequency = 10;
             numberToCreate = -1;
-            nextBirth = new TimeSpan(-1);
+            _nextBirth = new TimeSpan(-1);
         }
 
         /// <summary>
         /// Returns created particles, adds created gobs to <c>DataEngine</c>.
         /// </summary>
         /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
-        public override ICollection<Particle> Emit()
+        public override IEnumerable<Particle> Emit()
         {
             if (paused) return null;
-            if (numberToCreate == 0) return null;
+            if (Finished) return null;
             TimeSpan now = AssaultWing.Instance.GameTime.TotalArenaTime;
             List<Particle> particles = null;
 
             // Initialise 'nextBirth'.
-            if (nextBirth.Ticks < 0)
-                nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
+            if (_nextBirth.Ticks < 0)
+                _nextBirth = AssaultWing.Instance.GameTime.TotalArenaTime;
 
             // Count how many to create.
-            int createCount = Math.Max(0, (int)(1 + emissionFrequency * (now - nextBirth).TotalSeconds));
+            int createCount = Math.Max(0, (int)(1 + emissionFrequency * (now - _nextBirth).TotalSeconds));
             if (numberToCreate >= 0)
             {
                 createCount = Math.Min(createCount, numberToCreate);
                 numberToCreate -= createCount;
             }
-            nextBirth += TimeSpan.FromSeconds(createCount / emissionFrequency);
+            _nextBirth += TimeSpan.FromSeconds(createCount / emissionFrequency);
 
             if (createCount > 0 && textureNames.Length > 0)
                 particles = new List<Particle>();
@@ -261,6 +253,11 @@ namespace AW2.Game.Pengs
             return particles;
         }
 
+        public override void Reset()
+        {
+            _numberCreated = 0;
+        }
+
         #region IConsistencyCheckable Members
 
         /// <summary>
@@ -284,7 +281,7 @@ namespace AW2.Game.Pengs
                     emissionFrequency = MathHelper.Clamp(emissionFrequency, 1, 100000);
                 }
             }
-            nextBirth = new TimeSpan(-1);
+            _nextBirth = new TimeSpan(-1);
         }
 
         #endregion

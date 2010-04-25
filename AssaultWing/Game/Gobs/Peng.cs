@@ -174,6 +174,11 @@ namespace AW2.Game.Gobs
         public bool Paused { get { return emitter.Paused; } set { emitter.Paused = value; } }
 
         /// <summary>
+        /// If true, the peng stays alive even when all particles have been emitted and they have died.
+        /// </summary>
+        public bool IsKeptAlive { get; set; }
+
+        /// <summary>
         /// The coordinate system in which to interpret the <c>pos</c> field of
         /// the particles of this peng.
         /// </summary>
@@ -254,6 +259,14 @@ namespace AW2.Game.Gobs
             particles = new List<Particle>();
         }
 
+        /// <summary>
+        /// Restarts the peng's choreography. Does not erase existing particles.
+        /// </summary>
+        public void Restart()
+        {
+            emitter.Reset();
+        }
+
         #region Methods related to gobs' functionality in the game world
 
         /// <summary>
@@ -283,7 +296,7 @@ namespace AW2.Game.Gobs
             UpdateOldPos();
 
             // Create particles.
-            ICollection<Particle> newParticles = emitter.Emit();
+            var newParticles = emitter.Emit();
             if (newParticles != null)
                 particles.AddRange(newParticles);
 
@@ -302,7 +315,7 @@ namespace AW2.Game.Gobs
             }
 
             // Die if we're finished.
-            if (particles.Count == 0 && emitter.Finished)
+            if (!IsKeptAlive && particles.Count == 0 && emitter.Finished)
                 Die(new DeathCause());
         }
 
@@ -354,7 +367,7 @@ namespace AW2.Game.Gobs
         /// Call this method after frame update has finished.
         /// Calling this method more than once after one frame update
         /// has no further effects.
-        void UpdateOldPos()
+        private void UpdateOldPos()
         {
             if (oldPosTimestamp >= AssaultWing.Instance.GameTime.TotalArenaTime) return;
             if (float.IsNaN(prevPos.X))

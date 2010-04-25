@@ -79,14 +79,6 @@ namespace AW2.Game.Pengs
         #endregion ParticleEmitter properties
 
         /// <summary>
-        /// Returns created particles, adds created gobs to <c>DataEngine</c>.
-        /// </summary>
-        /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
-        /// Base classes should remember to not create anything if
-        /// <c>paused == true</c>.
-        public abstract ICollection<Particle> Emit();
-
-        /// <summary>
         /// Creates an uninitialised particle emitter.
         /// </summary>
         /// This constructor is for serialisation.
@@ -98,8 +90,15 @@ namespace AW2.Game.Pengs
         }
 
         /// <summary>
-        /// Called when graphics resources need to be loaded.
+        /// Returns created particles, adds created gobs to <c>DataEngine</c>.
         /// </summary>
+        /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
+        /// Base classes should remember to not create anything if
+        /// <c>paused == true</c>.
+        public abstract IEnumerable<Particle> Emit();
+
+        public abstract void Reset();
+
         public void LoadContent()
         {
             Textures = new Texture2D[TextureNames.Length];
@@ -107,9 +106,6 @@ namespace AW2.Game.Pengs
                 Textures[i] = AssaultWing.Instance.Content.Load<Texture2D>(TextureNames[i]);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         public void UnloadContent()
         {
         }

@@ -330,11 +330,11 @@ namespace AW2.Game
 
         #region INetworkSerializable Members
 
-        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
         }
 
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
         {
         }
 

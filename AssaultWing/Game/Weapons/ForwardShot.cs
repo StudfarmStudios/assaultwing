@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
-using AW2.Helpers;
-using AW2.Sound;
 using AW2.Game.Particles;
+using AW2.Helpers;
+using AW2.Net;
+using AW2.Sound;
 
 namespace AW2.Game.Weapons
 {
@@ -120,7 +121,7 @@ namespace AW2.Game.Weapons
         /// <summary>
         /// Have all shooting-related muzzle fire engines and sound effects been created this frame.
         /// </summary>
-        bool flashAndBangCreated;
+        bool _flashAndBangCreated;
 
         #endregion ForwardShot fields
 
@@ -131,7 +132,7 @@ namespace AW2.Game.Weapons
         public ForwardShot()
             : base()
         {
-            fireSound = "Pistol";
+            fireSound = "dummysound";
             muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine" };
             shotSpeed = 300f;
             shotCount = 3;
@@ -205,21 +206,12 @@ namespace AW2.Game.Weapons
         /// </summary>
         public override void Update()
         {
-            flashAndBangCreated = false;
-
+            _flashAndBangCreated = false;
             while (IsItTimeToShoot())
             {
-                // Every gun barrel shoots.
-                for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
-                {
-                    int boneI = boneIndices[barrel];
-                    CreateShot(boneI);
-                    CreateMuzzleFire(barrel, boneI);
-                }
-
+                CreateFlashAndBang();
+                for (int barrel = 0; barrel < boneIndices.Length; ++barrel) CreateShot(barrel);
                 ApplyRecoil();
-                PlayFiringSound();
-                flashAndBangCreated = true;
                 nextShot += TimeSpan.FromSeconds(shotSpacing);
                 switch (FireMode)
                 {
@@ -238,7 +230,6 @@ namespace AW2.Game.Weapons
                 shotsLeft = 0;
                 DoneFiring();
             }
-
             UpdateMuzzleFire();
             RemoveOldMuzzleFire();
             RemoveOldShots();
@@ -251,26 +242,33 @@ namespace AW2.Game.Weapons
             return true;
         }
 
-        private void CreateShot(int boneI)
+        private void CreateShot(int barrel)
         {
-            float direction = owner.Rotation +
-                shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
-            float kickSpeed = shotSpeed +
-                shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            int boneIndex = boneIndices[barrel];
+            float direction = owner.Rotation + shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            float kickSpeed = shotSpeed + shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
             Gob.CreateGob(shotTypeName, shot =>
             {
                 shot.Owner = owner.Owner;
-                shot.ResetPos(owner.GetNamedPosition(boneI), owner.Move + kick,
+                shot.ResetPos(owner.GetNamedPosition(boneIndex), owner.Move + kick,
                     owner.Rotation);  // 'owner.Rotation' could also be 'direction'
                 Arena.Gobs.Add(shot);
                 liveShots.Add(shot);
             });
         }
 
-        private void CreateMuzzleFire(int barrel, int boneI)
+        private void CreateFlashAndBang()
         {
-            if (flashAndBangCreated) return;
+            PlayFiringSound();
+            for (int barrel = 0; barrel < boneIndices.Length; ++barrel) CreateMuzzleFire(barrel);
+            _flashAndBangCreated = true;
+        }
+
+        private void CreateMuzzleFire(int barrel)
+        {
+            if (_flashAndBangCreated) return;
+            int boneIndex = boneIndices[barrel];
             foreach (var engineName in muzzleFireEngineNames)
             {
                 Gob.CreateGob(engineName, fireEngine =>
@@ -280,7 +278,7 @@ namespace AW2.Game.Weapons
                         Peng peng = (Peng)fireEngine;
                         peng.Owner = owner.Owner;
                         peng.Leader = owner;
-                        peng.LeaderBone = boneI;
+                        peng.LeaderBone = boneIndex;
                     }
                     muzzleFireEngines[barrel].Add(fireEngine);
                     Arena.Gobs.Add(fireEngine);
@@ -290,8 +288,8 @@ namespace AW2.Game.Weapons
 
         private void PlayFiringSound()
         {
-            if (flashAndBangCreated) return;
-            AssaultWing.Instance.SoundEngine.PlaySound(fireSound.ToString());
+            if (_flashAndBangCreated) return;
+            AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
         }
 
         private void UpdateMuzzleFire()
@@ -344,15 +342,37 @@ namespace AW2.Game.Weapons
             }
         }
 
+        #region INetworkSerializable Members
+
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((bool)_flashAndBangCreated);
+            }
+        }
+
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            base.Deserialize(reader, mode, messageAge);
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                bool mustCreateFlashAndBang = reader.ReadBoolean();
+                if (mustCreateFlashAndBang) CreateFlashAndBang();
+            }
+        }
+
+        #endregion
+
         #region IConsistencyCheckable Members
 
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
         public void MakeConsistent(Type limitationAttribute)
         {
             if (limitationAttribute == typeof(TypeParameterAttribute))

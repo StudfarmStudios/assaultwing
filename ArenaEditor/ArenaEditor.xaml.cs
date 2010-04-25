@@ -86,7 +86,7 @@ namespace AW2
 
         private void ArenaView_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            _mouseButtons = e.Button;
+            _mouseButtons |= e.Button;
             _dragStartLocation = e.Location;
         }
 
@@ -219,8 +219,9 @@ namespace AW2
 
         private void DragViewport(AWViewport viewport, Point newMouseLocation)
         {
-            // Left mouse button drag moves selected gob.
-            if ((_mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0)
+            // Left mouse button drag moves selected gob, except when also right mouse drag is active.
+            if ((_mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0 &&
+                (_mouseButtons & System.Windows.Forms.MouseButtons.Right) == 0)
             {
                 if (SelectedGob != null)
                 {
@@ -235,6 +236,7 @@ namespace AW2
                 var move = viewport.MouseMoveToWorldCoordinates(_lastMouseLocation, newMouseLocation, 0);
                 Spectator.LookAt.Position -= move;
             }
+
             _lastMouseLocation = newMouseLocation;
         }
 

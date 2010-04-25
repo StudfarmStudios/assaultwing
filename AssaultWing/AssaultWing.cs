@@ -73,7 +73,7 @@ namespace AW2
         /// Wraps <see cref="CounterCreationDataCollection"/>, adding to it an implementation
         /// of <see cref="IEnumerable&lt;CounterCreationData&gt;"/>.
         /// </summary>
-        class AWCounterCreationDataCollection : CounterCreationDataCollection, IEnumerable<CounterCreationData>
+        private class AWCounterCreationDataCollection : CounterCreationDataCollection, IEnumerable<CounterCreationData>
         {
             /// <summary>
             /// Returns an enumerator for the collection.
@@ -86,34 +86,34 @@ namespace AW2
 
         #region AssaultWing fields
 
-        UIEngineImpl uiEngine;
-        GraphicsEngineImpl graphicsEngine;
-        OverlayDialog overlayDialog;
-        NetworkEngine networkEngine;
-        LogicEngine logicEngine;
-        DataEngine dataEngine;
-        PhysicsEngine physicsEngine;
-        SoundEngine soundEngine;
-        IMenuEngine menuEngine;
-        int preferredWindowWidth, preferredWindowHeight;
-        SurfaceFormat preferredWindowFormat;
-        int preferredFullscreenWidth, preferredFullscreenHeight;
-        SurfaceFormat preferredFullscreenFormat;
-        TimeSpan lastFramerateCheck;
-        int framesSinceLastCheck;
-        GameState gameState;
-        IWindow window; // use this and not Game.Window
+        private UIEngineImpl uiEngine;
+        private GraphicsEngineImpl graphicsEngine;
+        private OverlayDialog overlayDialog;
+        private NetworkEngine networkEngine;
+        private LogicEngine logicEngine;
+        private DataEngine dataEngine;
+        private PhysicsEngine physicsEngine;
+        private SoundEngine soundEngine;
+        private IMenuEngine menuEngine;
+        private int preferredWindowWidth, preferredWindowHeight;
+        private SurfaceFormat preferredWindowFormat;
+        private int preferredFullscreenWidth, preferredFullscreenHeight;
+        private SurfaceFormat preferredFullscreenFormat;
+        private TimeSpan lastFramerateCheck;
+        private int framesSinceLastCheck;
+        private GameState gameState;
+        private IWindow window; // use this and not Game.Window
 
         // Fields for game server starting an arena
-        bool startingArenaOnServer;
-        List<int> startedArenaOnClients = new List<int>();
+        private bool startingArenaOnServer;
+        private List<int> startedArenaOnClients = new List<int>();
 
         // HACK: Debug keys
-        Control musicSwitch;
-        Control arenaReload;
-        Control frameStepControl;
-        Control frameRunControl;
-        bool frameStep;
+        private Control musicSwitch;
+        private Control arenaReload;
+        private Control frameStepControl;
+        private Control frameRunControl;
+        private bool frameStep;
 
 #if DEBUG_PROFILE
         /// <summary>
@@ -124,20 +124,20 @@ namespace AW2
         /// Collision count for the current frame.
         /// </summary>
         public int collisionCount;
-        List<int> frameCounts = new List<int>();
-        List<int> gobCounts = new List<int>();
-        List<int> collisionCounts = new List<int>();
+        private List<int> frameCounts = new List<int>();
+        private List<int> gobCounts = new List<int>();
+        private List<int> collisionCounts = new List<int>();
 #endif
 
         /// <summary>
         /// Time of previously finished call to Draw(), in game time.
         /// </summary>
-        TimeSpan lastDrawTime;
+        private TimeSpan lastDrawTime;
 
         /// <summary>
         /// The only existing instance of this class.
         /// </summary>
-        static AssaultWing instance;
+        private static AssaultWing instance;
 
         #endregion AssaultWing fields
 
@@ -160,6 +160,11 @@ namespace AW2
         /// Called when <see cref="GameState"/> has changed.
         /// </summary>
         public event Action<GameState> GameStateChanged;
+
+        /// <summary>
+        /// Called when <see cref="BeginRun"/> is complete.
+        /// </summary>
+        public event Action RunBegan;
 
         #endregion Callbacks
 
@@ -833,8 +838,8 @@ namespace AW2
             soundEngine.UserMusicVolume = 1;
 
             GameState = GameState.Menu;
-
             base.BeginRun();
+            if (RunBegan != null) RunBegan();
         }
 
         /// <summary>

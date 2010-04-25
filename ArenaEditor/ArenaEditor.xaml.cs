@@ -20,7 +20,7 @@ namespace AW2
     /// </summary>
     public partial class ArenaEditor : Window
     {
-        class GobReference
+        private class GobReference
         {
             public Gob Value { get; set; }
             public int LayerIndex { get; set; }
@@ -30,12 +30,11 @@ namespace AW2
             }
         }
 
-        TypeLoader arenaSaver;
-        EditorSpectator spectator;
-        System.Windows.Forms.MouseButtons mouseButtons;
-        Point lastMouseLocation, dragStartLocation;
-        bool isDragging;
+        private System.Windows.Forms.MouseButtons _mouseButtons;
+        private Point _lastMouseLocation, _dragStartLocation;
+        private bool _isDragging;
 
+        private EditorSpectator Spectator { get { return (EditorSpectator)AssaultWing.Instance.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
 
@@ -44,31 +43,10 @@ namespace AW2
             InitializeComponent();
         }
 
-        void Initialize()
-        {
-            AssaultWing.Instance.DataEngine.Spectators.Clear();
-            var spectatorControls = new PlayerControls
-            {
-                thrust = new KeyboardKey(Keys.Up),
-                left = new KeyboardKey(Keys.Left),
-                right = new KeyboardKey(Keys.Right),
-                down = new KeyboardKey(Keys.Down),
-                fire1 = new KeyboardKey(Keys.RightControl),
-                fire2 = new KeyboardKey(Keys.RightShift),
-                extra = new KeyboardKey(Keys.Enter)
-            };
-            spectator = new EditorSpectator(spectatorControls);
-            spectator.ViewportCreated += ApplyViewSettings;
-            AssaultWing.Instance.DataEngine.Spectators.Add(spectator);
-            arenaSaver = new TypeLoader(typeof(Arena), Paths.Arenas);
-        }
-
         #region Control event handlers
 
         private void LoadArena_Click(object sender, RoutedEventArgs e)
         {
-            Initialize(); // TODO: Move Initialize() to be called once after AssaultWing has started running
-
             // Load the selected arena.
             var arenaToLoad = arenaName.Text;
             if (arenaToLoad == "") return;
@@ -92,26 +70,29 @@ namespace AW2
         private void SaveArena_Click(object sender, RoutedEventArgs e)
         {
             var arena = AssaultWing.Instance.DataEngine.Arena;
+            if (arena == null) return;
             if (!arena.Name.EndsWith("_edited")) arena.Name += "_edited";
-            arenaSaver.SaveTemplate(arena, typeof(TypeParameterAttribute), arena.Name);
+            var filename = TypeLoader.GetFilename(arena, arena.Name);
+            var path = System.IO.Path.Combine(Paths.Arenas, filename);
+            TypeLoader.SaveTemplate(arena, path, typeof(Arena), typeof(TypeParameterAttribute));
         }
 
         private void ArenaView_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            mouseButtons &= ~e.Button;
-            if (mouseButtons == System.Windows.Forms.MouseButtons.None)
-                isDragging = false;
+            _mouseButtons &= ~e.Button;
+            if (_mouseButtons == System.Windows.Forms.MouseButtons.None)
+                _isDragging = false;
         }
 
         private void ArenaView_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            mouseButtons = e.Button;
-            dragStartLocation = e.Location;
+            _mouseButtons = e.Button;
+            _dragStartLocation = e.Location;
         }
 
         private void ArenaView_MouseEnterOrLeave(object sender, EventArgs e)
         {
-            mouseButtons = System.Windows.Forms.MouseButtons.None;
+            _mouseButtons = System.Windows.Forms.MouseButtons.None;
         }
 
         private void ArenaView_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -119,27 +100,13 @@ namespace AW2
             try
             {
                 // Left mouse button click selects gobs.
-                if (!isDragging && e.Button == System.Windows.Forms.MouseButtons.Left)
+                if (!_isDragging && e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    var data = AssaultWing.Instance.DataEngine;
-                    if (data.Arena == null) return;
+                    if (AssaultWing.Instance.DataEngine.Arena == null) return;
                     GobNames.Items.Clear();
                     var pointInViewport = new Vector2(e.Location.X, e.Location.Y);
                     var viewport = GetViewport(e.Location);
-                    int layerIndex = 0;
-                    foreach (var layer in data.Arena.Layers)
-                    {
-                        var ray = viewport.ToRay(pointInViewport, layer.Z);
-                        foreach (var gob in layer.Gobs)
-                        {
-                            float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z));
-                            float? t = gob.DrawBounds.Intersects(ray);
-                            if (distance < 20 || t.HasValue)
-                                GobNames.Items.Add(new GobReference { Value = gob, LayerIndex = layerIndex });
-                        }
-                        ++layerIndex;
-                    }
-                    if (GobNames.Items.Count == 1) GobNames.SelectedIndex = 0;
+                    if (viewport != null) ClickViewport(viewport, pointInViewport);
                 }
             }
             catch (Exception ex)
@@ -164,31 +131,19 @@ namespace AW2
 
         private void ArenaView_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (mouseButtons != System.Windows.Forms.MouseButtons.None)
-                isDragging = true;
+            if (_mouseButtons != System.Windows.Forms.MouseButtons.None)
+                _isDragging = true;
             try
             {
-                var viewport = GetViewport(dragStartLocation);
-                var mouseCoordinates = viewport.ToPos(e.Location.ToVector2(), 0);
-                CursorCoordinates.Text = string.Format("X:{0:N1} Y:{1:N1}", mouseCoordinates.X, mouseCoordinates.Y);
-
-                // Left mouse button drag moves selected gob.
-                if ((mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0)
+                var cursorCoordinateText = "X:??? Y:???";
+                var viewport = GetViewport(_dragStartLocation);
+                if (viewport != null)
                 {
-                    if (SelectedGob != null)
-                    {
-                        var move = viewport.MouseMoveToWorldCoordinates(lastMouseLocation, e.Location, SelectedGob.Layer.Z);
-                        SelectedGob.Pos += move;
-                    }
+                    var mouseCoordinates = viewport.ToPos(e.Location.ToVector2(), 0);
+                    cursorCoordinateText = string.Format("X:{0:N1} Y:{1:N1}", mouseCoordinates.X, mouseCoordinates.Y);
+                    DragViewport(viewport, e.Location);
                 }
-
-                // Right mouse button drag moves view.
-                if ((mouseButtons & System.Windows.Forms.MouseButtons.Right) != 0)
-                {
-                    var move = viewport.MouseMoveToWorldCoordinates(lastMouseLocation, e.Location, 0);
-                    spectator.LookAt.Position -= move;
-                }
-                lastMouseLocation = e.Location;
+                CursorCoordinates.Text = cursorCoordinateText;
             }
             catch (Exception ex)
             {
@@ -244,6 +199,45 @@ namespace AW2
 
         #region Helpers
 
+        private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
+        {
+            int layerIndex = 0;
+            foreach (var layer in AssaultWing.Instance.DataEngine.Arena.Layers)
+            {
+                var ray = viewport.ToRay(pointInViewport, layer.Z);
+                foreach (var gob in layer.Gobs)
+                {
+                    float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z));
+                    float? t = gob.DrawBounds.Intersects(ray);
+                    if (distance < 20 || t.HasValue)
+                        GobNames.Items.Add(new GobReference { Value = gob, LayerIndex = layerIndex });
+                }
+                ++layerIndex;
+            }
+            if (GobNames.Items.Count == 1) GobNames.SelectedIndex = 0;
+        }
+
+        private void DragViewport(AWViewport viewport, Point newMouseLocation)
+        {
+            // Left mouse button drag moves selected gob.
+            if ((_mouseButtons & System.Windows.Forms.MouseButtons.Left) != 0)
+            {
+                if (SelectedGob != null)
+                {
+                    var move = viewport.MouseMoveToWorldCoordinates(_lastMouseLocation, newMouseLocation, SelectedGob.Layer.Z);
+                    SelectedGob.Pos += move;
+                }
+            }
+
+            // Right mouse button drag moves view.
+            if ((_mouseButtons & System.Windows.Forms.MouseButtons.Right) != 0)
+            {
+                var move = viewport.MouseMoveToWorldCoordinates(_lastMouseLocation, newMouseLocation, 0);
+                Spectator.LookAt.Position -= move;
+            }
+            _lastMouseLocation = newMouseLocation;
+        }
+
         /// <summary>
         /// Returns the viewport that contains a point on the arena view.
         /// </summary>
@@ -257,8 +251,6 @@ namespace AW2
                 if (viewport.OnScreen.Contains(location.X, location.Y))
                     result = viewport;
             });
-            if (result == null)
-                throw new ArgumentException("There is no viewport at render target surface coordinates " + location.ToString());
             return result;
         }
 

@@ -65,6 +65,12 @@ namespace AW2.Game
             xmlWriter.Close();
         }
 
+        public static string GetFilename(object template, string templateName)
+        {
+            var safeTemplateName = Regex.Replace(templateName, "[^a-z]", "_", RegexOptions.IgnoreCase);
+            return string.Format("{0}_{1}.xml", template.GetType().Name, safeTemplateName);
+        }
+
         public IEnumerable<string> GetTemplateFilenames()
         {
             // Note: DirectoryInfo.GetFiles("*.xml") also includes suffixes
@@ -117,10 +123,9 @@ namespace AW2.Game
 
         public void SaveTemplate(object template, Type limitationAttribute, string templateName)
         {
-            templateName = Regex.Replace(templateName, "[^a-z]", "_", RegexOptions.IgnoreCase);
-            string filename = System.IO.Path.Combine(_definitionDir.FullName,
-                string.Format("{0}_{1}.xml", template.GetType().Name, templateName));
-            SaveTemplate(template, filename, _baseClass, limitationAttribute);
+            var filename = GetFilename(template, templateName);
+            string path = System.IO.Path.Combine(_definitionDir.FullName, filename);
+            SaveTemplate(template, path, _baseClass, limitationAttribute);
         }
 
 #endregion

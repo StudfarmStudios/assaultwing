@@ -94,10 +94,38 @@ namespace AW2.Helpers
         /// </summary>
         private static string GetLogFilename(int rotation)
         {
-            if (rotation == 0)
-                return string.Format("{0}{1}", LogFilenameBase, LogFilenameExtension);
-            else
-                return string.Format("{0}.{1}{2}", LogFilenameBase, rotation, LogFilenameExtension);
+            var filename = string.Format("{0}{1}{2}", LogFilenameBase, rotation == 0 ? "" : "." + rotation, LogFilenameExtension);
+            return Path.Combine(LogPath, filename);
+        }
+
+        private static string LogPath
+        {
+            get
+            {
+#if DEBUG
+                // Debug build uses always exe directory to avoid several running
+                // Assault Wing instances messing up each others' log files.
+                return ExeDirectory;
+#else
+                try
+                {
+                    var tempDir = Environment.GetEnvironmentVariable("TEMP");
+                    if (tempDir == null) return ExeDirectory;
+                    var path = Path.Combine(tempDir, "AssaultWing");
+                    Directory.CreateDirectory(path);
+                    return path;
+                }
+                catch (Exception)
+                {
+                    return ExeDirectory;
+                }
+#endif
+            }
+        }
+
+        private static string ExeDirectory
+        {
+            get { return Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location); }
         }
     }
 }

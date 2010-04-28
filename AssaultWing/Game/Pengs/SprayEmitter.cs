@@ -137,7 +137,7 @@ namespace AW2.Game.Pengs
             if (numberToCreate >= 0)
             {
                 createCount = Math.Min(createCount, numberToCreate);
-                numberToCreate -= createCount;
+                _numberCreated += createCount;
             }
             _nextBirth += TimeSpan.FromSeconds(createCount / emissionFrequency);
 

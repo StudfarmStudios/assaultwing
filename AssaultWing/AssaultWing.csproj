@@ -150,6 +150,7 @@
     <Compile Include="Game\Weapons\SelfDestruct.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />
     <Compile Include="Game\Weapons\LightningGun.cs" />
+    <Compile Include="Game\Weapons\ShipBarrelTypes.cs" />
     <Compile Include="Game\Weapons\Thruster.cs" />
     <Compile Include="Graphics\ArenaOverOverlayDialogData.cs" />
     <Compile Include="Graphics\AutoRenderTarget2D.cs" />

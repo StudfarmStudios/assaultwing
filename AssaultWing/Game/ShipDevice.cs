@@ -232,9 +232,12 @@ namespace AW2.Game
             if (ownerHandle == ShipDevice.OwnerHandleType.PrimaryWeapon ||
                 ownerHandle == ShipDevice.OwnerHandleType.SecondaryWeapon)
             {
-                KeyValuePair<string, int>[] boneIs = ship.GetNamedPositions("Gun");
+                var boneIs = ship.GetNamedPositions("Gun");
                 if (boneIs.Length == 0) Log.Write("Warning: Ship found no gun barrels in its 3D model");
-                int[] boneIndices = Array.ConvertAll<KeyValuePair<string, int>, int>(boneIs, pair => pair.Value);
+                var boneIndices =
+                    (from pair in boneIs
+                    orderby pair.Key
+                    select pair.Value).ToArray();
                 ((Weapon)device).AttachTo(ship, ownerHandle, boneIndices);
             }
             else

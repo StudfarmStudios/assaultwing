@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">venom spray</typeName>
-  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
+  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right</gunBarrels>
+  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">ShootContinuously</fireAction>
   <upgradeNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
   </upgradeNames>
   <iconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_berserkers</iconName>
@@ -9,7 +10,7 @@
   <shotSpeed type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">650</shotSpeed>
   <fireSound type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">VenomSpit</fireSound>
   <shotCount type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</shotCount>
-  <shotSpacing type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</shotSpacing>
+  <shotSpacing type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.1</shotSpacing>
   <shotTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">venom drop</shotTypeName>
   <loadTime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.25</loadTime>
   <fireCharge type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">200</fireCharge>

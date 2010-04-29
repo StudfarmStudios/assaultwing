@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using Ship = AW2.Game.Gobs.Ship;
+using AW2.Game.Weapons;
 
 namespace AW2.Game
 {
@@ -46,19 +47,21 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     public abstract class Weapon : ShipDevice
     {
+        protected delegate void ShipBarrelAction(int barrelBoneIndex, float barrelRotation);
+
         #region Weapon fields
 
         /// <summary>
         /// Names of the weapon type upgrades of the weapon.
         /// </summary>
         [TypeParameter]
-        CanonicalString[] upgradeNames;
+        private CanonicalString[] upgradeNames;
 
         /// <summary>
         /// Indices of the bones that defines the weapon's barrels' locations 
         /// on the owning ship.
         /// </summary>
-        protected int[] boneIndices;
+        protected int[] _boneIndices;
 
         /// <summary>
         /// What type of gobs the weapon shoots out.
@@ -71,7 +74,7 @@ namespace AW2.Game
         /// Recoil pushes the shooter to the opposite direction.
         /// </summary>
         [TypeParameter]
-        float recoilMomentum;
+        private float recoilMomentum;
 
         #endregion // Weapon fields
 
@@ -102,7 +105,7 @@ namespace AW2.Game
         protected Weapon(CanonicalString typeName)
             : base(typeName)
         {
-            boneIndices = new int[] { 0 };
+            _boneIndices = new int[] { 0 };
         }
 
         #region Weapon public methods
@@ -117,7 +120,7 @@ namespace AW2.Game
         public void AttachTo(Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
         {
             base.AttachTo(owner, ownerHandle);
-            this.boneIndices = boneIndices;
+            _boneIndices = boneIndices;
         }
 
         #endregion Weapon public methods
@@ -134,6 +137,20 @@ namespace AW2.Game
             Vector2 momentum = new Vector2((float)Math.Cos(owner.Rotation), (float)Math.Sin(owner.Rotation))
                 * -recoilMomentum;
             AssaultWing.Instance.DataEngine.CustomOperations += () => { AssaultWing.Instance.PhysicsEngine.ApplyMomentum(owner, momentum); };
+        }
+
+        protected void ForEachShipBarrel(ShipBarrelTypes barrelTypes, ShipBarrelAction action)
+        {
+            if ((barrelTypes &
+                ~(ShipBarrelTypes.Middle |
+                  ShipBarrelTypes.Left |
+                  ShipBarrelTypes.Right |
+                  ShipBarrelTypes.Rear)) != 0)
+                throw new ApplicationException("Unknown ShipBarrelTypes " + barrelTypes);
+            if ((barrelTypes & ShipBarrelTypes.Middle) != 0) action(_boneIndices[0], 0);
+            if ((barrelTypes & ShipBarrelTypes.Left) != 0) action(_boneIndices[1], 0);
+            if ((barrelTypes & ShipBarrelTypes.Right) != 0) action(_boneIndices[2], 0);
+            if ((barrelTypes & ShipBarrelTypes.Rear) != 0) action(_boneIndices[3], MathHelper.Pi);
         }
 
         #endregion Weapon protected methods

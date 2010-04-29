@@ -50,24 +50,7 @@ namespace AW2.Game.Weapons
 
         private void FireAtTarget(Gob target)
         {
-            // Every gun barrel shoots.
-            for (int barrel = 0; barrel < boneIndices.Length; ++barrel)
-            {
-                int boneI = boneIndices[barrel];
-                Gob.CreateGob(shotTypeName, shot =>
-                {
-                    shot.Owner = owner.Owner;
-                    shot.ResetPos(owner.GetNamedPosition(boneI), Vector2.Zero, owner.Rotation);
-                    var lightning = shot as Lightning;
-                    if (lightning != null)
-                    {
-                        lightning.Shooter = new GobProxy(owner);
-                        lightning.ShooterBoneIndex = boneI;
-                        lightning.Target = new GobProxy(target);
-                    }
-                    Arena.Gobs.Add(shot);
-                });
-            }
+            ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(target, index));
         }
 
         public override void Activate()
@@ -84,5 +67,23 @@ namespace AW2.Game.Weapons
         }
 
         #endregion
+
+
+        private void CreateShot(Gob target, int boneIndex)
+        {
+            Gob.CreateGob(shotTypeName, shot =>
+            {
+                shot.Owner = owner.Owner;
+                shot.ResetPos(owner.GetNamedPosition(boneIndex), Vector2.Zero, owner.Rotation);
+                var lightning = shot as Lightning;
+                if (lightning != null)
+                {
+                    lightning.Shooter = new GobProxy(owner);
+                    lightning.ShooterBoneIndex = boneIndex;
+                    lightning.Target = new GobProxy(target);
+                }
+                Arena.Gobs.Add(shot);
+            });
+        }
     }
 }

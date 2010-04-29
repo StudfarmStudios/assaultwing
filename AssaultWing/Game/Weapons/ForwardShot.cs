@@ -42,6 +42,12 @@ namespace AW2.Game.Weapons
         #region ForwardShot fields
 
         /// <summary>
+        /// The ship gun barrels this weapon uses.
+        /// </summary>
+        [TypeParameter]
+        ShipBarrelTypes gunBarrels;
+
+        /// <summary>
         /// The sound to play when firing.
         /// </summary>
         [TypeParameter]
@@ -118,13 +124,11 @@ namespace AW2.Game.Weapons
 
         #endregion ForwardShot fields
 
-        /// <summary>
-        /// Creates an uninitialised forward shooting weapon.
-        /// </summary>
         /// This constructor is only for serialisation.
         public ForwardShot()
             : base()
         {
+            gunBarrels = ShipBarrelTypes.Middle | ShipBarrelTypes.Left | ShipBarrelTypes.Right | ShipBarrelTypes.Rear;
             fireSound = "dummysound";
             muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine" };
             shotSpeed = 300f;
@@ -169,6 +173,7 @@ namespace AW2.Game.Weapons
                 case FireAction.ShootContinuously:
                     if (triggerState.force > 0) TryShoot();
                     break;
+                default: throw new ApplicationException("Unknown FireAction " + fireAction);
             }
         }
 
@@ -182,7 +187,8 @@ namespace AW2.Game.Weapons
                 case FireModeType.Continuous: shotsLeft = 1; break;
                 default: throw new ApplicationException("Unknown FireMode " + FireMode);
             }
-            nextShot = AssaultWing.Instance.GameTime.TotalArenaTime;
+            if (nextShot < AssaultWing.Instance.GameTime.TotalArenaTime)
+                nextShot = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
         public override void Activate()
@@ -199,7 +205,7 @@ namespace AW2.Game.Weapons
             while (IsItTimeToShoot())
             {
                 CreateFlashAndBang();
-                for (int barrel = 0; barrel < boneIndices.Length; ++barrel) CreateShot(barrel);
+                ForEachShipBarrel(gunBarrels, CreateShot);
                 ApplyRecoil();
                 nextShot += TimeSpan.FromSeconds(shotSpacing);
                 switch (FireMode)
@@ -229,10 +235,9 @@ namespace AW2.Game.Weapons
             return true;
         }
 
-        private void CreateShot(int barrel)
+        private void CreateShot(int boneIndex, float barrelRotation)
         {
-            int boneIndex = boneIndices[barrel];
-            float direction = owner.Rotation + shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            float direction = barrelRotation + owner.Rotation + shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             float kickSpeed = shotSpeed + shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
             Gob.CreateGob(shotTypeName, shot =>
@@ -248,14 +253,13 @@ namespace AW2.Game.Weapons
         private void CreateFlashAndBang()
         {
             PlayFiringSound();
-            for (int barrel = 0; barrel < boneIndices.Length; ++barrel) CreateMuzzleFire(barrel);
+            ForEachShipBarrel(gunBarrels, CreateMuzzleFire);
             _flashAndBangCreated = true;
         }
 
-        private void CreateMuzzleFire(int barrel)
+        private void CreateMuzzleFire(int barrelBoneIndex, float barrelRotation)
         {
             if (_flashAndBangCreated) return;
-            int boneIndex = boneIndices[barrel];
             foreach (var engineName in muzzleFireEngineNames)
             {
                 Gob.CreateGob(engineName, fireEngine =>
@@ -265,7 +269,7 @@ namespace AW2.Game.Weapons
                         Peng peng = (Peng)fireEngine;
                         peng.Owner = owner.Owner;
                         peng.Leader = owner;
-                        peng.LeaderBone = boneIndex;
+                        peng.LeaderBone = barrelBoneIndex;
                     }
                     Arena.Gobs.Add(fireEngine);
                 });

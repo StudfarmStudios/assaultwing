@@ -177,34 +177,26 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void UnloadContent()
         {
+            // Must not dispose 'defaultSilhouetteEffect' because others may be using it.
+            // Must not dispose 'silhouetteEffect' because it may refer to 'defaultSilhouetteEffect'.
+            // 'texture' will be disposed by the graphics engine.
+            // 'effect' is managed by other objects
+            silhouetteEffect = null;
             if (defaultEffect != null)
             {
                 defaultEffect.Dispose();
                 defaultEffect = null;
-            }
-            if (defaultSilhouetteEffect != null)
-            {
-                defaultSilhouetteEffect.Dispose();
-                defaultSilhouetteEffect = null;
             }
             if (maskEff != null)
             {
                 maskEff.Dispose();
                 maskEff = null;
             }
-            if (silhouetteEffect != null)
-            {
-                if (!silhouetteEffect.IsDisposed)
-                    silhouetteEffect.Dispose();
-                silhouetteEffect = null;
-            }
             if (vertexDeclaration != null)
             {
                 vertexDeclaration.Dispose();
                 vertexDeclaration = null;
             }
-            // 'texture' will be disposed by the graphics engine.
-            // 'effect' and 'silhouetteEffect' are managed by other objects
             base.UnloadContent();
         }
 

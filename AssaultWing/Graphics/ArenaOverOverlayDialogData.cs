@@ -31,14 +31,17 @@ namespace AW2.Graphics
             var data = AssaultWing.Instance.DataEngine;
             this.arenaName = arenaName;
 
-            Actions = new TriggeredCallback[] 
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
-                new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() 
+                Actions = new TriggeredCallback[] 
                 {
-                    if (arenaLoaded)
-                        AssaultWing.Instance.StartArena();
-                })
-            };
+                    new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() 
+                    {
+                        if (arenaLoaded)
+                            AssaultWing.Instance.StartArena();
+                    })
+                };
+            }
 
             // Find out the winner.
             var standings = data.GameplayMode.GetStandings(data.Players);

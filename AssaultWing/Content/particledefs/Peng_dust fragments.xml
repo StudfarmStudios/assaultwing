@@ -13,7 +13,7 @@
   <playerRelated type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">false</playerRelated>
   <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <emissionFrequency type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">150</emissionFrequency>
-      <numberToCreate type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">7</numberToCreate>
+      <numberToCreate type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</numberToCreate>
       <radius type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">20</radius>
       <sprayAngle type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.14</sprayAngle>
       <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Random</facingType>

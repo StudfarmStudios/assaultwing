@@ -357,7 +357,7 @@ namespace AW2
         {
             GameTime = GameTime.ResetArenaTime();
             dataEngine.StartArena();
-            graphicsEngine.RearrangeViewports();
+            dataEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
             soundEngine.PlayMusic(dataEngine.Arena.BackgroundMusic);
         }
@@ -672,9 +672,9 @@ namespace AW2
         public void ShowOnlyPlayer(int player)
         {
             if (player < 0)
-                graphicsEngine.RearrangeViewports();
+                dataEngine.RearrangeViewports();
             else
-                graphicsEngine.RearrangeViewports(player);
+                dataEngine.RearrangeViewports(player);
         }
 
         /// <summary>

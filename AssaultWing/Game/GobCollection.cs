@@ -16,17 +16,17 @@ namespace AW2.Game
         /// <summary>
         /// Number of simultaneous iterations over the collection.
         /// </summary>
-        private int isEnumerating;
+        private int _isEnumerating;
 
         /// <summary>
         /// Gobs that were scheduled for removal while enumeration was in progress.
         /// </summary>
-        private List<Gob> removedGobs = new List<Gob>();
+        private List<Gob> _removedGobs = new List<Gob>();
 
         /// <summary>
         /// Gobs that were scheduled for addition while enumeration was in progress.
         /// </summary>
-        private List<Gob> addedGobs = new List<Gob>();
+        private List<Gob> _addedGobs = new List<Gob>();
 
         /// <summary>
         /// The arena layers that contain the gobs.
@@ -61,8 +61,8 @@ namespace AW2.Game
         public void Remove(Predicate<Gob> condition)
         {
             foreach (var layer in ArenaLayers)
-                if (isEnumerating > 0)
-                    removedGobs.AddRange(layer.Gobs.Where(new Func<Gob, bool>(condition)));
+                if (_isEnumerating > 0)
+                    _removedGobs.AddRange(layer.Gobs.Where(new Func<Gob, bool>(condition)));
                 else
                     layer.Gobs.Remove(condition);
         }
@@ -77,9 +77,9 @@ namespace AW2.Game
         {
             if (gob.Layer == null) return false;
             if (Removing != null && !Removing(gob) && !force) return false;
-            if (isEnumerating > 0)
+            if (_isEnumerating > 0)
             {
-                removedGobs.Add(gob);
+                _removedGobs.Add(gob);
                 return gob.Layer.Gobs.Contains(gob);
             }
             else
@@ -99,24 +99,13 @@ namespace AW2.Game
 
         #region IObservableCollection<object, Gob> Members
 
-        /// <summary>
-        /// Called when an item has been added to the collection.
-        /// The argument is the added item.
-        /// </summary>
         public event Action<Gob> Added;
-
-        /// <summary>
-        /// Called when a signel item has been removed from the collection.
-        /// The argument is the removed item. Not called when the whole collection is cleared.
-        /// </summary>
         public event Action<Gob> Removed;
-
-        /// <summary>
-        /// Called when an item was not found from the collection,
-        /// in place of throwing an exception.
-        /// The argument describes which item was looked for.
-        /// The expected return value is a substitute item.
-        /// </summary>
+        public event Action<IEnumerable<Gob>> Cleared
+        {
+            add { throw new NotImplementedException("GobCollection.Cleared event is not in use"); }
+            remove { throw new NotImplementedException("GobCollection.Cleared event is not in use"); }
+        }
         public event Func<object, Gob> NotFound
         {
             add { throw new NotImplementedException("GobCollection.NotFound event is not in use"); }
@@ -136,8 +125,8 @@ namespace AW2.Game
                 gob.Layer = gob.LayerPreference == Gob.LayerPreferenceType.Front
                     ? GameplayLayer
                     : GameplayBackLayer;
-            if (isEnumerating > 0)
-                addedGobs.Add(gob);
+            if (_isEnumerating > 0)
+                _addedGobs.Add(gob);
             else
             {
                 gob.Layer.Gobs.Add(gob);
@@ -151,8 +140,8 @@ namespace AW2.Game
         public void Clear()
         {
             foreach (var layer in ArenaLayers)
-                if (isEnumerating > 0)
-                    removedGobs.AddRange(layer.Gobs);
+                if (_isEnumerating > 0)
+                    _removedGobs.AddRange(layer.Gobs);
                 else
                     layer.Gobs.Clear();
         }
@@ -206,18 +195,18 @@ namespace AW2.Game
         {
             try
             {
-                ++isEnumerating;
+                ++_isEnumerating;
                 foreach (var layer in ArenaLayers)
                     foreach (var gob in layer.Gobs)
                         yield return gob;
             }
             finally
             {
-                --isEnumerating;
-                foreach (var gob in addedGobs) Add(gob);
-                foreach (var gob in removedGobs) Remove(gob, true);
-                addedGobs.Clear();
-                removedGobs.Clear();
+                --_isEnumerating;
+                foreach (var gob in _addedGobs) Add(gob);
+                foreach (var gob in _removedGobs) Remove(gob, true);
+                _addedGobs.Clear();
+                _removedGobs.Clear();
             }
         }
 

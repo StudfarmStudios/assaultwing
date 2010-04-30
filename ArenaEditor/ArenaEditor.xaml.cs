@@ -247,22 +247,15 @@ namespace AW2
         /// positive X pointing right and positive Y pointing down.
         private AWViewport GetViewport(Point location)
         {
-            AWViewport result = null;
-            AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
-            {
-                if (viewport.OnScreen.Contains(location.X, location.Y))
-                    result = viewport;
-            });
-            return result;
+            var viewports = AssaultWing.Instance.DataEngine.Viewports;
+            return viewports.FirstOrDefault(vp => vp.OnScreen.Contains(location.X, location.Y));
         }
 
         private void ForEachEditorViewport(Action<EditorViewport> action)
         {
-            AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
-            {
+            foreach (var viewport in AssaultWing.Instance.DataEngine.Viewports)
                 if (viewport is EditorViewport)
                     action((EditorViewport)viewport);
-            });
         }
 
         private void ApplyViewSettingsToAllViewports()
@@ -270,10 +263,7 @@ namespace AW2
             var arena = AssaultWing.Instance.DataEngine.Arena;
             if (arena != null && EnableFog.IsChecked.HasValue)
                 arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
-            AssaultWing.Instance.DataEngine.ForEachViewport(viewport =>
-            {
-                if (viewport is EditorViewport) ApplyViewSettings((EditorViewport)viewport);
-            });
+            ForEachEditorViewport(viewport => ApplyViewSettings(viewport));
         }
 
         private void ApplyViewSettings(EditorViewport viewport)

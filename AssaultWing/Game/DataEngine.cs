@@ -27,25 +27,16 @@ namespace AW2.Game
     {
         #region Fields
 
-        List<Viewport> viewports;
-        List<ViewportSeparator> viewportSeparators;
-
         /// <summary>
         /// Type templates, indexed by <see cref="CanonicalString.Canonical"/> of their type name.
         /// </summary>
         List<object> templates;
 
-        Dictionary<string, Arena> arenas;
         Arena preparedArena;
         Texture2D arenaRadarSilhouette;
         Vector2 arenaDimensionsOnRadar;
         Matrix arenaToRadarTransform;
         ProgressBar progressBar;
-
-        /// <summary>
-        /// The viewport we are currently drawing into.
-        /// </summary>
-        Viewport activeViewport;
 
         #endregion Fields
 
@@ -94,11 +85,9 @@ namespace AW2.Game
             };
             Devices.Removed += device => device.Dispose();
 
-            viewports = new List<Viewport>();
-            viewportSeparators = new List<ViewportSeparator>();
+            Viewports = new AWViewportCollection(0, null);
             templates = new List<object>();
-            arenas = new Dictionary<string, Arena>();
-            ArenaPlaylist = new Playlist(new string[] { "dummyarena" });
+            ArenaPlaylist = new Playlist(new string[] { "Amazonas" });
         }
 
         #region arenas
@@ -207,16 +196,6 @@ namespace AW2.Game
             preparedArena.Reset(); // this usually takes several seconds
         }
 
-        /// <summary>
-        /// Performs the specified action on each arena.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each arena.</param>
-        public void ForEachArena(Action<Arena> action)
-        {
-            foreach (Arena arena in arenas.Values)
-                action(arena);
-        }
-
         #endregion arenas
 
         #region type templates
@@ -256,64 +235,28 @@ namespace AW2.Game
 
         #region viewports
 
-        /// <summary>
-        /// The viewport we are currently drawing into.
-        /// </summary>
-        public Viewport Viewport { get { return activeViewport; } }
+        public AWViewportCollection Viewports { get; private set; }
 
-        /// <summary>
-        /// Adds a viewport.
-        /// </summary>
-        /// <param name="viewport">Viewport to add.</param>
-        public void AddViewport(Viewport viewport)
+        public void RearrangeViewports()
         {
-            viewport.LoadContent();
-            viewports.Add(viewport);
-        }
-
-        /// <summary>
-        /// Adds a viewport separator to be displayed.
-        /// </summary>
-        /// <param name="separator">The viewport separator.</param>
-        public void AddViewportSeparator(ViewportSeparator separator)
-        {
-            viewportSeparators.Add(separator);
-        }
-
-        /// <summary>
-        /// Removes all viewports and viewport separators.
-        /// </summary>
-        public void ClearViewports()
-        {
-            foreach (AWViewport viewport in viewports)
-                viewport.UnloadContent();
-            viewports.Clear();
-            viewportSeparators.Clear();
-        }
-
-        /// <summary>
-        /// Performs the specified action on each viewport.
-        /// </summary>
-        /// <param name="action">The Action delegate to perform on each viewport.</param>
-        public void ForEachViewport(Action<Viewport> action)
-        {
-            foreach (Viewport viewport in viewports)
+            var localPlayers = AssaultWing.Instance.DataEngine.Spectators.Where(player => player.NeedsViewport);
+            var playerEnumerator = localPlayers.GetEnumerator();
+            AssaultWing.Instance.DataEngine.Viewports = new AWViewportCollection(localPlayers.Count(), rectangle =>
             {
-                activeViewport = viewport;
-                action(viewport);
-            }
+                if (!playerEnumerator.MoveNext()) throw new ApplicationException("Ran out of players when assigning viewports");
+                return playerEnumerator.Current.CreateViewport(rectangle);
+            });
+            playerEnumerator.Dispose();
         }
 
         /// <summary>
-        /// Performs the specified action on each viewport separator.
+        /// Rearranges player viewports so that one player gets all screen space
+        /// and the others get nothing.
         /// </summary>
-        /// <param name="action">The Action delegate to perform on each viewport separator.</param>
-        public void ForEachViewportSeparator(Action<ViewportSeparator> action)
+        public void RearrangeViewports(int privilegedPlayer)
         {
-            foreach (ViewportSeparator separator in viewportSeparators)
-            {
-                action(separator);
-            }
+            var player = AssaultWing.Instance.DataEngine.Spectators[privilegedPlayer];
+            AssaultWing.Instance.DataEngine.Viewports = new AWViewportCollection(1, viewport => player.CreateViewport(viewport));
         }
 
         #endregion viewports
@@ -466,7 +409,7 @@ namespace AW2.Game
         {
             if (Arena != null) Arena.Dispose();
             Arena = null;
-            ClearViewports();
+            Viewports = new AWViewportCollection(0, null);
             foreach (var player in Spectators) player.Reset();
         }
 

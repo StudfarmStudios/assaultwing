@@ -11,28 +11,12 @@ namespace AW2.Helpers.Collections
     public class NamedItemCollection<T> : IDictionary<CanonicalString, T>, IObservableCollection<CanonicalString, T>
         where T : class
     {
-        List<T> items = new List<T>();
+        private List<T> _items = new List<T>();
 
         #region IObservableCollection<CanonicalString, T> Members
 
-        /// <summary>
-        /// Called when an item has been added to the collection.
-        /// The argument is the added item.
-        /// </summary>
         public event Action<T> Added;
-
-        /// <summary>
-        /// Called when an item has been removed from the collection.
-        /// The argument is the removed item. Not called when the whole collection is cleared.
-        /// </summary>
         public event Action<T> Removed;
-
-        /// <summary>
-        /// Called when an item was not found from the collection,
-        /// in place of throwing an exception.
-        /// The argument describes which item was looked for.
-        /// The expected return value is a substitute item.
-        /// </summary>
         public event Func<CanonicalString, T> NotFound;
 
         #endregion
@@ -46,9 +30,9 @@ namespace AW2.Helpers.Collections
         public void Add(CanonicalString key, T value)
         {
             if (value == null) throw new InvalidOperationException("Cannot add null value to a NamedItemCollection");
-            while (items.Count <= key.Canonical) items.Add(null);
-            if (items[key.Canonical] != null) throw new ArgumentException("An element with key " + key + " already exists");
-            items[key.Canonical] = value;
+            while (_items.Count <= key.Canonical) _items.Add(null);
+            if (_items[key.Canonical] != null) throw new ArgumentException("An element with key " + key + " already exists");
+            _items[key.Canonical] = value;
             if (Added != null) Added(value);
         }
 
@@ -57,7 +41,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public bool ContainsKey(CanonicalString key)
         {
-            return items.Count > key.Canonical && items[key.Canonical] != null;
+            return _items.Count > key.Canonical && _items[key.Canonical] != null;
         }
 
         /// <summary>
@@ -68,8 +52,8 @@ namespace AW2.Helpers.Collections
             get
             {
                 var keys = new List<CanonicalString>();
-                for (int i = 0; i < items.Count; ++i)
-                    if (items[i] != null) keys.Add(new CanonicalString(i));
+                for (int i = 0; i < _items.Count; ++i)
+                    if (_items[i] != null) keys.Add(new CanonicalString(i));
                 return keys;
             }
         }
@@ -81,10 +65,10 @@ namespace AW2.Helpers.Collections
         /// <c>false</c> if key was not found or could not be removed.</returns>
         public bool Remove(CanonicalString key)
         {
-            if (key.Canonical < 0 || key.Canonical >= items.Count) return false;
-            T value = items[key.Canonical];
+            if (key.Canonical < 0 || key.Canonical >= _items.Count) return false;
+            T value = _items[key.Canonical];
             if (value == null) return false;
-            items.RemoveAt(key.Canonical);
+            _items.RemoveAt(key.Canonical);
             if (Removed != null) Removed(value);
             return true;
         }
@@ -96,19 +80,19 @@ namespace AW2.Helpers.Collections
         /// otherwise <c>false</c>.</returns>
         public bool TryGetValue(CanonicalString key, out T value)
         {
-            if (key.Canonical < 0 || key.Canonical >= items.Count)
+            if (key.Canonical < 0 || key.Canonical >= _items.Count)
             {
                 value = null;
                 return false;
             }
-            value = items[key.Canonical];
+            value = _items[key.Canonical];
             return value != null;
         }
 
         /// <summary>
         /// The values in the dictionary.
         /// </summary>
-        public ICollection<T> Values { get { return items.FindAll(item => item != null); } }
+        public ICollection<T> Values { get { return _items.FindAll(item => item != null); } }
 
         /// <summary>
         /// The element with the specified key.
@@ -128,8 +112,8 @@ namespace AW2.Helpers.Collections
             set
             {
                 if (value == null) throw new InvalidOperationException("Cannot add null value to a NamedItemCollection");
-                while (items.Count <= key.Canonical) items.Add(null);
-                items[key.Canonical] = value;
+                while (_items.Count <= key.Canonical) _items.Add(null);
+                _items[key.Canonical] = value;
                 if (Added != null) Added(value);
             }
         }
@@ -152,7 +136,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void Clear()
         {
-            items.Clear();
+            _items.Clear();
         }
 
         /// <summary>
@@ -160,7 +144,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         bool ICollection<KeyValuePair<CanonicalString, T>>.Contains(KeyValuePair<CanonicalString, T> item)
         {
-            return ContainsKey(item.Key) && items[item.Key.Canonical] == item.Value;
+            return ContainsKey(item.Key) && _items[item.Key.Canonical] == item.Value;
         }
 
         /// <summary>
@@ -173,15 +157,15 @@ namespace AW2.Helpers.Collections
             if (array.Rank != 1) throw new ArgumentException("Cannot copy to a multidimensional array");
             if (arrayIndex + Count > array.Length) throw new ArgumentException("Not enough space on array");
             int writeI = arrayIndex;
-            for (int i = 0; i < items.Count; ++i)
-                if (items[i] != null)
-                    array[writeI++] = new KeyValuePair<CanonicalString, T>(new CanonicalString(i), items[i]);
+            for (int i = 0; i < _items.Count; ++i)
+                if (_items[i] != null)
+                    array[writeI++] = new KeyValuePair<CanonicalString, T>(new CanonicalString(i), _items[i]);
         }
 
         /// <summary>
         /// The number of elements contained in the collection.
         /// </summary>
-        public int Count { get { return items.Count(item => item != null); } }
+        public int Count { get { return _items.Count(item => item != null); } }
 
         /// <summary>
         /// Is the collection read-only.

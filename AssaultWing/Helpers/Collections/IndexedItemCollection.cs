@@ -11,28 +11,12 @@ namespace AW2.Helpers.Collections
     /// <typeparam name="T">The element type of the collection.</typeparam>
     public class IndexedItemCollection<T> : IList<T>, IObservableCollection<int, T>
     {
-        List<T> items = new List<T>();
+        private List<T> _items = new List<T>();
 
         #region IObservableCollection<int, T> Members
 
-        /// <summary>
-        /// Called when an item has been added to the collection.
-        /// The argument is the added item.
-        /// </summary>
         public event Action<T> Added;
-
-        /// <summary>
-        /// Called when an item has been removed from the collection.
-        /// The argument is the removed item. Not called when the whole collection is cleared.
-        /// </summary>
         public event Action<T> Removed;
-
-        /// <summary>
-        /// Called when an item was not found from the collection,
-        /// in place of throwing an exception.
-        /// The argument describes which item was looked for.
-        /// The expected return value is a substitute item.
-        /// </summary>
         public event Func<int, T> NotFound;
 
         #endregion
@@ -43,8 +27,8 @@ namespace AW2.Helpers.Collections
         /// <param name="condition">The condition by which to remove items.</param>
         public void Remove(Predicate<T> condition)
         {
-            for (int index = items.Count - 1; index >= 0; --index)
-                if (condition(items[index]))
+            for (int index = _items.Count - 1; index >= 0; --index)
+                if (condition(_items[index]))
                     RemoveAt(index);
         }
 
@@ -55,7 +39,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public int IndexOf(T item)
         {
-            return items.IndexOf(item);
+            return _items.IndexOf(item);
         }
 
         /// <summary>
@@ -63,7 +47,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void Insert(int index, T item)
         {
-            items.Insert(index, item);
+            _items.Insert(index, item);
             if (Added != null) Added(item);
         }
 
@@ -72,8 +56,8 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void RemoveAt(int index)
         {
-            T removed = items[index];
-            items.RemoveAt(index);
+            T removed = _items[index];
+            _items.RemoveAt(index);
             if (Removed != null) Removed(removed);
         }
 
@@ -84,8 +68,8 @@ namespace AW2.Helpers.Collections
         {
             get
             {
-                if (index >= 0 && index < items.Count)
-                    return items[index];
+                if (index >= 0 && index < _items.Count)
+                    return _items[index];
                 else if (NotFound != null)
                     return NotFound(index);
                 else
@@ -93,7 +77,7 @@ namespace AW2.Helpers.Collections
             }
             set
             {
-                items[index] = value;
+                _items[index] = value;
                 if (Added != null) Added(value);
             }
         }
@@ -107,7 +91,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void Add(T item)
         {
-            items.Add(item);
+            _items.Add(item);
             if (Added != null) Added(item);
         }
 
@@ -116,7 +100,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void Clear()
         {
-            items.Clear();
+            _items.Clear();
         }
 
         /// <summary>
@@ -124,7 +108,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public bool Contains(T item)
         {
-            return items.Contains(item);
+            return _items.Contains(item);
         }
 
         /// <summary>
@@ -132,13 +116,13 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            items.CopyTo(array, arrayIndex);
+            _items.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
         /// The number of elements contained in the collection.
         /// </summary>
-        public int Count { get { return items.Count; } }
+        public int Count { get { return _items.Count; } }
 
         /// <summary>
         /// Is the collection read-only.
@@ -150,11 +134,11 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public bool Remove(T item)
         {
-            int index = items.IndexOf(item);
+            int index = _items.IndexOf(item);
             if (index >= 0)
             {
-                var removed = items[index];
-                items.RemoveAt(index);
+                var removed = _items[index];
+                _items.RemoveAt(index);
                 if (Removed != null) Removed(removed);
                 return true;
             }
@@ -171,7 +155,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         public IEnumerator<T> GetEnumerator()
         {
-            return items.GetEnumerator();
+            return _items.GetEnumerator();
         }
 
         #endregion
@@ -183,7 +167,7 @@ namespace AW2.Helpers.Collections
         /// </summary>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return ((System.Collections.IEnumerable)items).GetEnumerator();
+            return ((System.Collections.IEnumerable)_items).GetEnumerator();
         }
 
         #endregion

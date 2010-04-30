@@ -10,14 +10,13 @@ namespace AW2.Game
 {
     public class ShipLocationPredicter
     {
-        ShipLocations shipLocations;
-
-        Ship ship;
+        private ShipLocations _shipLocations;
+        private Ship _ship;
 
         public ShipLocationPredicter(Ship ship)
         {
-            this.ship = ship;
-            shipLocations = new ShipLocations(ship);
+            _ship = ship;
+            _shipLocations = new ShipLocations(ship);
         }
 
         /// <summary>
@@ -26,30 +25,30 @@ namespace AW2.Game
         public void StoreControlStates(IList<ControlState> state, TimeSpan gameTime)
         {
             var halfFrameTime = AssaultWing.Instance.TargetElapsedTime.Divide(2);
-            int entryIndex = shipLocations.FindLastIndex(entry => entry.GameTime - halfFrameTime < gameTime);
+            int entryIndex = _shipLocations.FindLastIndex(entry => entry.GameTime - halfFrameTime < gameTime);
             if (entryIndex == -1) return; // too old controls are useless
-            if (entryIndex == shipLocations.Count - 1) return; // controls appear in the future, cannot apply them :(
+            if (entryIndex == _shipLocations.Count - 1) return; // controls appear in the future, cannot apply them :(
 
             // Apply controls to the ship location entry at the time of the controls
             // and propagate the change to newer ship location entries.
-            var frameDurationSeconds = (float)(shipLocations[entryIndex + 1].GameTime - shipLocations[entryIndex].GameTime).TotalSeconds;
-            float rotationChange = ship.TurnSpeed * frameDurationSeconds *
+            var frameDurationSeconds = (float)(_shipLocations[entryIndex + 1].GameTime - _shipLocations[entryIndex].GameTime).TotalSeconds;
+            float rotationChange = _ship.TurnSpeed * frameDurationSeconds *
                 (state[(int)PlayerControlType.Left].force - state[(int)PlayerControlType.Right].force);
-            var moveChange = AWMathHelper.GetUnitVector2(ship.Rotation) * ship.ThrustForce / ship.Mass * frameDurationSeconds;
-            for (int i = entryIndex + 1; i < shipLocations.Count; ++i)
-                shipLocations[i].ApplyChange(rotationChange, moveChange, shipLocations[entryIndex].GameTime);
+            var moveChange = AWMathHelper.GetUnitVector2(_ship.Rotation) * _ship.ThrustForce / _ship.Mass * frameDurationSeconds;
+            for (int i = entryIndex + 1; i < _shipLocations.Count; ++i)
+                _shipLocations[i].ApplyChange(rotationChange, moveChange, _shipLocations[entryIndex].GameTime);
 
-            shipLocations.RemoveRange(0, entryIndex + 1);
+            _shipLocations.RemoveRange(0, entryIndex + 1);
         }
 
         public void ForgetOldShipLocations()
         {
-            shipLocations.Clear();
+            _shipLocations.Clear();
         }
 
         public void StoreOldShipLocation(ShipLocationEntry entry)
         {
-            shipLocations.Add(entry);
+            _shipLocations.Add(entry);
         }
     }
 
@@ -73,39 +72,44 @@ namespace AW2.Game
     /// </summary>
     public class ShipLocations : IList<ShipLocationEntry>
     {
-        static readonly TimeSpan ENTRY_AGE_MAX = TimeSpan.FromMilliseconds(200);
+        private static readonly TimeSpan ENTRY_AGE_MAX = TimeSpan.FromMilliseconds(500);
 
         /// <summary>
         /// A short history of the player's ship datas, stored by increasing game time.
         /// </summary>
-        List<ShipLocationEntry> oldShipLocations;
+        private List<ShipLocationEntry> _oldShipLocations;
 
-        Ship ship;
+        private Ship _ship;
 
-        ShipLocationEntry LatestEntry
+        private ShipLocationEntry LatestEntry
         {
             get
             {
                 return new ShipLocationEntry
                 {
                     GameTime = AssaultWing.Instance.GameTime.TotalArenaTime,
-                    Pos = ship.Pos,
-                    Move = ship.Move,
-                    Rotation = ship.Rotation
+                    Pos = _ship.Pos,
+                    Move = _ship.Move,
+                    Rotation = _ship.Rotation
                 };
             }
         }
 
         public ShipLocations(Ship ship)
         {
-            this.ship = ship;
-            oldShipLocations = new List<ShipLocationEntry>();
+            _ship = ship;
+            _oldShipLocations = new List<ShipLocationEntry>();
+        }
+
+        public ShipLocationEntry Predict(TimeSpan gameTime)
+        {
+            throw new NotImplementedException("TODO");
         }
 
         public void CropOlderThan(TimeSpan gameTime)
         {
-            int cropCount = oldShipLocations.FindLastIndex(entry => entry.GameTime < gameTime);
-            oldShipLocations.RemoveRange(0, cropCount + 1);
+            int cropCount = _oldShipLocations.FindLastIndex(entry => entry.GameTime < gameTime);
+            _oldShipLocations.RemoveRange(0, cropCount + 1);
         }
 
         #region List<ShipLocationEntry>'ish Members
@@ -121,7 +125,7 @@ namespace AW2.Game
         {
             if (index < 0 || index >= Count || count < 0) throw new ArgumentException("Invalid arguments to RemoveRange");
             if (index + count >= Count) throw new ArgumentException("Cannot remove the latest ship location");
-            oldShipLocations.RemoveRange(index, count);
+            _oldShipLocations.RemoveRange(index, count);
         }
 
         #endregion
@@ -147,8 +151,8 @@ namespace AW2.Game
         {
             get
             {
-                if (index == oldShipLocations.Count) return LatestEntry;
-                return oldShipLocations[index];
+                if (index == _oldShipLocations.Count) return LatestEntry;
+                return _oldShipLocations[index];
             }
             set
             {
@@ -162,14 +166,14 @@ namespace AW2.Game
 
         public void Add(ShipLocationEntry item)
         {
-            if (oldShipLocations.Count > 0 && item.GameTime < oldShipLocations.Last().GameTime) throw new ArgumentException("Cannot add an old ship location entry");
+            if (_oldShipLocations.Count > 0 && item.GameTime < _oldShipLocations.Last().GameTime) throw new ArgumentException("Cannot add an old ship location entry");
             CropOlderThan(item.GameTime - ENTRY_AGE_MAX);
-            oldShipLocations.Add(item);
+            _oldShipLocations.Add(item);
         }
 
         public void Clear()
         {
-            oldShipLocations.Clear();
+            _oldShipLocations.Clear();
         }
 
         public bool Contains(ShipLocationEntry item)
@@ -184,7 +188,7 @@ namespace AW2.Game
 
         public int Count
         {
-            get { return oldShipLocations.Count + 1; }
+            get { return _oldShipLocations.Count + 1; }
         }
 
         public bool IsReadOnly

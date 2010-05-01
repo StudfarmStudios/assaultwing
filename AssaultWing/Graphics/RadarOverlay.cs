@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
-
-using System.Linq;
 using AW2.Game.Gobs;
-
-
-
 
 namespace AW2.Graphics
 {
@@ -18,97 +13,65 @@ namespace AW2.Graphics
     /// </summary>
     class RadarOverlay : OverlayComponent
     {
-        Player player;
-        Texture2D radarDisplayTexture;
-        Texture2D shipOnRadarTexture;
-        Texture2D dockOnRadarTexture;
+        private static readonly Color ARENA_RADAR_SILHOUETTE_COLOR = new Color(190, 190, 190, 100);
+        private Player _player;
+        private Texture2D _radarDisplayTexture;
+        private Texture2D _shipOnRadarTexture;
+        private Texture2D _dockOnRadarTexture;
 
-        /// <summary>
-        /// The dimensions of the component in pixels.
-        /// </summary>
-        /// The return value field <c>Point.X</c> is the width of the component,
-        /// and the field <c>Point.Y</c> is the height of the component,
         public override Point Dimensions
         {
-            get { return new Point(radarDisplayTexture.Width, radarDisplayTexture.Height); }
+            get { return new Point(_radarDisplayTexture.Width, _radarDisplayTexture.Height); }
         }
 
-        /// <summary>
-        /// Creates a player status display.
-        /// </summary>
         /// <param name="player">The player whose status to display.</param>
         public RadarOverlay(Player player)
             : base(HorizontalAlignment.Left, VerticalAlignment.Top)
         {
-            this.player = player;
+            _player = player;
         }
 
-        /// <summary>
-        /// Draws the overlay graphics component using the guarantee that the
-        /// graphics device's viewport is set to the exact area needed by the component.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
-        /// to have been called and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             // Radar background
-            spriteBatch.Draw(radarDisplayTexture, Vector2.Zero, Color.White);
+            spriteBatch.Draw(_radarDisplayTexture, Vector2.Zero, Color.White);
 
             // Arena walls on radar
-            Vector2 radarDisplayTopLeft = new Vector2(10, 10); // TODO: Make this constant configurable
-            
-            // Define arena silhouette color on map (Pekka)
-            Color arenaRadarSilhouetteColor = new Color();
-            arenaRadarSilhouetteColor.A = 100;
-            arenaRadarSilhouetteColor.R = 190;
-            arenaRadarSilhouetteColor.G = 190;
-            arenaRadarSilhouetteColor.B = 190;
-
-            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, arenaRadarSilhouetteColor);
+            Vector2 radarDisplayTopLeft = new Vector2(10, 10);
+            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, ARENA_RADAR_SILHOUETTE_COLOR);
 
             // Ships on radar
-            Matrix arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
-
+            var arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
-                if (player.Ship == null) return;
-                Vector2 posInArena = player.Ship.Pos;
-                Vector2 posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
-                spriteBatch.Draw(shipOnRadarTexture, posOnRadar, null, player.PlayerColor, 0,
-                    calculateTextureCenter(shipOnRadarTexture), 0.4f, SpriteEffects.None, 0);
+                if (player.Ship == null) continue;
+                var posInArena = player.Ship.Pos;
+                var posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
+                spriteBatch.Draw(_shipOnRadarTexture, posOnRadar, null, player.PlayerColor, 0,
+                    GetTextureCenter(_shipOnRadarTexture), 0.4f, SpriteEffects.None, 0);
             }
-            
+
             foreach (var dock in AssaultWing.Instance.DataEngine.Arena.Gobs.OfType<Dock>())
             {
-                Vector2 posInArena = dock.Pos;
-                Vector2 posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
-                spriteBatch.Draw(dockOnRadarTexture, posOnRadar, null, Color.White, 0,
-                    calculateTextureCenter(dockOnRadarTexture), 0.1f, SpriteEffects.None, 0);
-
+                var posInArena = dock.Pos;
+                var posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
+                spriteBatch.Draw(_dockOnRadarTexture, posOnRadar, null, Color.White, 0,
+                    GetTextureCenter(_dockOnRadarTexture), 0.1f, SpriteEffects.None, 0);
             }
-            
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
-            radarDisplayTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_radar_bg");
-            shipOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
-            dockOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("p_green_box");
+            _radarDisplayTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_radar_bg");
+            _shipOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
+            _dockOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("p_green_box");
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         public override void UnloadContent()
         {
-            // Our textures and fonts are disposed by the graphics engine.
         }
 
-        private Vector2 calculateTextureCenter(Texture2D texture)
+        private Vector2 GetTextureCenter(Texture2D texture)
         {
             return new Vector2(texture.Width, texture.Height) / 2;
         }

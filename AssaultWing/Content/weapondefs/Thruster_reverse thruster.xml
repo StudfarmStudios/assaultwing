@@ -2,6 +2,9 @@
 <ShipDeviceType type="AW2.Game.Weapons.Thruster, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">reverse thruster</typeName>
   <reverse type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</reverse>
+  <thrustForceFactor type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1.0</thrustForceFactor>
+  <extraForceChargeDelay type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3</extraForceChargeDelay>
+  <extraForceChargeSeconds type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</extraForceChargeSeconds>
   <iconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_mod_revthrust</iconName>
   <iconEquipName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_mod_revthrust</iconEquipName>
   <loadTime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</loadTime>

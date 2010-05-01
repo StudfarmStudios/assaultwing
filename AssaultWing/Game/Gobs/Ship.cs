@@ -550,11 +550,10 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Thrusts the ship.
         /// </summary>
-        /// <param name="force">Force of thrust; between 0 and 1.</param>
+        /// <param name="force">Thrust force factor relative to ship's maximum thrust.</param>
         public void Thrust(float force, TimeSpan duration, float direction)
         {
             if (Disabled) return;
-            force = MathHelper.Clamp(force, 0f, 1f);
             Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * thrustForce;
             AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed, duration);
             visualThrustForce = force;

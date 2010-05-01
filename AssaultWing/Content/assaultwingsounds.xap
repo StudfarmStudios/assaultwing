@@ -312,8 +312,8 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Bank Last Revised Low = 3310396523;
-    Bank Last Revised High = 30075233;
+    Bank Last Revised Low = 3177795663;
+    Bank Last Revised High = 30075235;
 
     Wave
     {
@@ -1464,6 +1464,213 @@ Wave Bank
             Last Modified High = 30075233;
         }
     }
+
+    Wave
+    {
+        Name = bad01;
+        File = sounds\bad01.wav;
+        Build Settings Last Modified Low = 2096483816;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 59186;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2911706624;
+            Last Modified High = 30075231;
+        }
+    }
+
+    Wave
+    {
+        Name = bad02;
+        File = sounds\bad02.wav;
+        Build Settings Last Modified Low = 2096493816;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 131148;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 831989328;
+            Last Modified High = 30075232;
+        }
+    }
+
+    Wave
+    {
+        Name = bad03;
+        File = sounds\bad03.wav;
+        Build Settings Last Modified Low = 2096503817;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 129390;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3189059328;
+            Last Modified High = 30075232;
+        }
+    }
+
+    Wave
+    {
+        Name = good01;
+        File = sounds\good01.wav;
+        Build Settings Last Modified Low = 2096513817;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 122060;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 559252032;
+            Last Modified High = 30075233;
+        }
+    }
+
+    Wave
+    {
+        Name = newCraft01;
+        File = sounds\newCraft01.wav;
+        Build Settings Last Modified Low = 2096523818;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 190638;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 191326624;
+            Last Modified High = 30075231;
+        }
+    }
+
+    Wave
+    {
+        Name = newCraft02;
+        File = sounds\newCraft02.wav;
+        Build Settings Last Modified Low = 2096533819;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 156344;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1913006624;
+            Last Modified High = 30075231;
+        }
+    }
+
+    Wave
+    {
+        Name = newCraft03;
+        File = sounds\newCraft03.wav;
+        Build Settings Last Modified Low = 2096543819;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 167310;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3533176624;
+            Last Modified High = 30075231;
+        }
+    }
+
+    Wave
+    {
+        Name = newCraft04;
+        File = sounds\newCraft04.wav;
+        Build Settings Last Modified Low = 2096553820;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 198248;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2020359328;
+            Last Modified High = 30075232;
+        }
+    }
+
+    Wave
+    {
+        Name = newCraft05;
+        File = sounds\newCraft05.wav;
+        Build Settings Last Modified Low = 2096563820;
+        Build Settings Last Modified High = 30075235;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 221910;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2564309328;
+            Last Modified High = 30075232;
+        }
+    }
 }
 
 Sound Bank
@@ -2370,7 +2577,7 @@ Sound Bank
     Sound
     {
         Name = blink01;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2417,7 +2624,7 @@ Sound Bank
     Sound
     {
         Name = blink02;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2464,7 +2671,7 @@ Sound Bank
     Sound
     {
         Name = blink03;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2511,7 +2718,7 @@ Sound Bank
     Sound
     {
         Name = blink04;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2558,7 +2765,7 @@ Sound Bank
     Sound
     {
         Name = blink05;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2605,7 +2812,7 @@ Sound Bank
     Sound
     {
         Name = blink06;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2652,7 +2859,7 @@ Sound Bank
     Sound
     {
         Name = blink07;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2699,7 +2906,7 @@ Sound Bank
     Sound
     {
         Name = blink08;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2746,7 +2953,7 @@ Sound Bank
     Sound
     {
         Name = blink09;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -2793,7 +3000,7 @@ Sound Bank
     Sound
     {
         Name = blink10;
-        Volume = -1730;
+        Volume = -2090;
         Pitch = 0;
         Priority = 0;
 
@@ -3875,6 +4082,429 @@ Sound Bank
         }
     }
 
+    Sound
+    {
+        Name = bad01;
+        Volume = -910;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = bad01;
+                    Entry Index = 50;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = bad02;
+        Volume = -970;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = bad02;
+                    Entry Index = 51;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = bad03;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = bad03;
+                    Entry Index = 52;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = newCraft01;
+        Volume = -520;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = newCraft01;
+                    Entry Index = 54;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = newCraft02;
+        Volume = -1260;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = newCraft02;
+                    Entry Index = 55;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = newCraft03;
+        Volume = -600;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = newCraft03;
+                    Entry Index = 56;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = newCraft04;
+        Volume = -790;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = newCraft04;
+                    Entry Index = 57;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = newCraft05;
+        Volume = -1140;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = newCraft05;
+                    Entry Index = 58;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = good01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaer Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = good01;
+                    Entry Index = 53;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
     Cue
     {
         Name = Collision;
@@ -4487,6 +5117,114 @@ Sound Bank
         {
             Name = blink2;
             Index = 49;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = BadBonusCollection;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = bad01;
+            Index = 50;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = bad02;
+            Index = 51;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = bad03;
+            Index = 52;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = ShipBirth;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = newCraft01;
+            Index = 53;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = newCraft02;
+            Index = 54;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = newCraft03;
+            Index = 55;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = newCraft04;
+            Index = 56;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = newCraft05;
+            Index = 57;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = GoodBonusCollection;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = good01;
+            Index = 58;
             Weight Min = 0;
             Weight Max = 255;
         }

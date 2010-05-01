@@ -18,15 +18,15 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("Id:{Id} name:{Name} shipType:{shipTypeName}")]
     public class Player : Spectator
     {
-        class LookAtShip : AW2.Graphics.ILookAt
+        private class LookAtShip : AW2.Graphics.ILookAt
         {
-            Vector2 oldPos;
+            private Vector2 _oldPos;
             public Vector2 Position
             {
                 get
                 {
-                    if (Ship != null) oldPos = Ship.Pos;
-                    return oldPos;
+                    if (Ship != null) _oldPos = Ship.Pos;
+                    return _oldPos;
                 }
             }
             public Ship Ship { get; set; }
@@ -34,13 +34,15 @@ namespace AW2.Game
 
         #region Player constants
 
-        const int MESSAGE_KEEP_COUNT = 100;
+        private const int MESSAGE_KEEP_COUNT = 100;
 
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
         /// </summary>
-        const float MOURNING_DELAY = 3;
+        private const float MOURNING_DELAY = 3;
+
+        private const string SHIP_BIRTH_SOUND = "ShipBirth";
 
         #endregion Player constants
 
@@ -51,24 +53,24 @@ namespace AW2.Game
         /// on this game instance.
         /// </summary>
         /// <see cref="Player.Id"/>
-        static int leastUnusedId = 0;
+        private static int g_leastUnusedID = 0;
 
         /// <summary>
         /// Type of ship the player has chosen to fly.
         /// </summary>
-        CanonicalString shipTypeName;
+        private CanonicalString _shipTypeName;
 
         public GameActionCollection BonusActions { get; private set; }
         
         /// <summary>
         /// How many reincarnations the player has left.
         /// </summary>
-        protected int lives;
+        protected int _lives;
 
         /// <summary>
         /// Time at which the player's ship is born, measured in game time.
         /// </summary>
-        TimeSpan shipSpawnTime;
+        private TimeSpan _shipSpawnTime;
 
         /// <summary>
         /// Amount of accumulated damage that determines the amount of shake 
@@ -77,39 +79,38 @@ namespace AW2.Game
         /// </summary>
         /// Shaking affects the player's viewport and is caused by
         /// the player's ship receiving damage.
-        float relativeShakeDamage;
+        private float _relativeShakeDamage;
 
         /// <summary>
         /// Function that maps relative shake damage to radians that the player's
         /// viewport will tilt to produce sufficient shake.
         /// </summary>
-        Curve shakeCurve;
+        private Curve _shakeCurve;
 
         /// <summary>
         /// Function that maps a parameter to relative shake damage.
         /// </summary>
         /// Used in attenuating shake.
-        Curve shakeAttenuationCurve;
+        private Curve _shakeAttenuationCurve;
 
         /// <summary>
         /// Inverse of <c>shakeAttenuationCurve</c>.
         /// </summary>
         /// Used in attenuating shake.
-        Curve shakeAttenuationInverseCurve;
+        private Curve _shakeAttenuationInverseCurve;
 
         /// <summary>
         /// Current amount of shake. Access this field through property <c>Shake</c>.
         /// </summary>
-        float shake;
+        private float _shake;
 
         /// <summary>
         /// Time when field <c>shake</c> was calculated, in game time.
         /// </summary>
-        TimeSpan shakeUpdateTime;
+        private TimeSpan _shakeUpdateTime;
 
-        LookAtShip lookAt;
-
-        Ship ship;
+        private LookAtShip _lookAt;
+        private Ship _ship;
 
         #endregion Player fields about general things
 
@@ -118,13 +119,13 @@ namespace AW2.Game
         /// <summary>
         /// Number of opposing players' ships this player has killed.
         /// </summary>
-        int kills;
+        private int _kills;
 
         /// <summary>
         /// Number of times this player has died for some other reason
         /// than another player killing him.
         /// </summary>
-        int suicides;
+        private int _suicides;
 
         #endregion Player fields about statistics
 
@@ -155,14 +156,14 @@ namespace AW2.Game
         /// <summary>
         /// The ship the player is controlling in the game arena.
         /// </summary>
-        public Ship Ship { get { return ship; } set { lookAt.Ship = ship = value; } }
+        public Ship Ship { get { return _ship; } set { _lookAt.Ship = _ship = value; } }
 
         /// <summary>
         /// If positive, how many reincarnations the player has left.
         /// If negative, the player has infinite lives.
         /// If zero, the player cannot play.
         /// </summary>
-        public int Lives { get { return lives; } set { lives = value; } }
+        public int Lives { get { return _lives; } set { _lives = value; } }
 
         /// <summary>
         /// Amount of shake the player is suffering right now, in radians.
@@ -173,20 +174,20 @@ namespace AW2.Game
         {
             get
             {
-                if (AssaultWing.Instance.GameTime.TotalArenaTime > shakeUpdateTime)
+                if (AssaultWing.Instance.GameTime.TotalArenaTime > _shakeUpdateTime)
                 {
                     // Attenuate shake damage for any skipped frames.
-                    float skippedTime = (float)(AssaultWing.Instance.GameTime.TotalArenaTime - AssaultWing.Instance.GameTime.ElapsedGameTime - shakeUpdateTime).TotalSeconds;
+                    float skippedTime = (float)(AssaultWing.Instance.GameTime.TotalArenaTime - AssaultWing.Instance.GameTime.ElapsedGameTime - _shakeUpdateTime).TotalSeconds;
                     AttenuateShake(skippedTime);
 
                     // Calculate new shake.
-                    shake = shakeCurve.Evaluate(relativeShakeDamage);
-                    shakeUpdateTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+                    _shake = _shakeCurve.Evaluate(_relativeShakeDamage);
+                    _shakeUpdateTime = AssaultWing.Instance.GameTime.TotalArenaTime;
 
                     // Attenuate shake damage for the current frame.
                     AttenuateShake((float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds);
                 }
-                return shake;
+                return _shake;
             }
         }
 
@@ -201,13 +202,13 @@ namespace AW2.Game
         public void IncreaseShake(float damageAmount)
         {
             if (Ship == null) return;
-            relativeShakeDamage = Math.Max(0, relativeShakeDamage + damageAmount / Ship.MaxDamageLevel);
+            _relativeShakeDamage = Math.Max(0, _relativeShakeDamage + damageAmount / Ship.MaxDamageLevel);
         }
 
         /// <summary>
         /// The name of the type of ship the player has chosen to fly.
         /// </summary>
-        public CanonicalString ShipName { get { return shipTypeName; } set { shipTypeName = value; } }
+        public CanonicalString ShipName { get { return _shipTypeName; } set { _shipTypeName = value; } }
 
         /// <summary>
         /// The name of the primary weapon as the player has chosen it.
@@ -216,7 +217,7 @@ namespace AW2.Game
         {
             get
             {
-                if (ship != null) return ship.Weapon1Name;
+                if (_ship != null) return _ship.Weapon1Name;
                 var shipType = (Ship)AssaultWing.Instance.DataEngine.GetTypeTemplate(ShipName);
                 return shipType.Weapon1Name;
             }
@@ -246,13 +247,13 @@ namespace AW2.Game
         /// <summary>
         /// Number of opposing players' ships this player has killed.
         /// </summary>
-        public int Kills { get { return kills; } set { kills = value; } }
+        public int Kills { get { return _kills; } set { _kills = value; } }
 
         /// <summary>
         /// Number of times this player has died for some other reason
         /// than another player killing him.
         /// </summary>
-        public int Suicides { get { return suicides; } set { suicides = value; } }
+        public int Suicides { get { return _suicides; } set { _suicides = value; } }
 
         #endregion Player properties about statistics
 
@@ -304,39 +305,39 @@ namespace AW2.Game
             CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
             : base(controls, connectionId)
         {
-            Id = leastUnusedId++;
+            Id = g_leastUnusedID++;
             Name = name;
-            this.shipTypeName = shipTypeName;
+            this._shipTypeName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
             Messages = new List<string>();
-            lives = 3;
-            shipSpawnTime = new TimeSpan(1);
-            relativeShakeDamage = 0;
+            _lives = 3;
+            _shipSpawnTime = new TimeSpan(1);
+            _relativeShakeDamage = 0;
             PlayerColor = Color.Gray;
-            shakeCurve = new Curve();
-            shakeCurve.PreLoop = CurveLoopType.Constant;
-            shakeCurve.PostLoop = CurveLoopType.Constant;
-            shakeCurve.Keys.Add(new CurveKey(0, 0));
-            shakeCurve.Keys.Add(new CurveKey(0.15f, 0.0f * MathHelper.PiOver4));
-            shakeCurve.Keys.Add(new CurveKey(0.3f, 0.4f * MathHelper.PiOver4));
-            shakeCurve.Keys.Add(new CurveKey(0.6f, 0.6f * MathHelper.PiOver4));
-            shakeCurve.Keys.Add(new CurveKey(1, MathHelper.PiOver4));
-            shakeCurve.ComputeTangents(CurveTangent.Linear);
-            shakeAttenuationCurve = new Curve();
-            shakeAttenuationCurve.PreLoop = CurveLoopType.Constant;
-            shakeAttenuationCurve.PostLoop = CurveLoopType.Linear;
-            shakeAttenuationCurve.Keys.Add(new CurveKey(0, 0));
-            shakeAttenuationCurve.Keys.Add(new CurveKey(0.05f, 0.01f));
-            shakeAttenuationCurve.Keys.Add(new CurveKey(1.0f, 1));
-            shakeAttenuationCurve.ComputeTangents(CurveTangent.Linear);
-            shakeAttenuationInverseCurve = new Curve();
-            shakeAttenuationInverseCurve.PreLoop = CurveLoopType.Constant;
-            shakeAttenuationInverseCurve.PostLoop = CurveLoopType.Linear;
-            foreach (CurveKey key in shakeAttenuationCurve.Keys)
-                shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
-            shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
-            lookAt = new LookAtShip();
+            _shakeCurve = new Curve();
+            _shakeCurve.PreLoop = CurveLoopType.Constant;
+            _shakeCurve.PostLoop = CurveLoopType.Constant;
+            _shakeCurve.Keys.Add(new CurveKey(0, 0));
+            _shakeCurve.Keys.Add(new CurveKey(0.15f, 0.0f * MathHelper.PiOver4));
+            _shakeCurve.Keys.Add(new CurveKey(0.3f, 0.4f * MathHelper.PiOver4));
+            _shakeCurve.Keys.Add(new CurveKey(0.6f, 0.6f * MathHelper.PiOver4));
+            _shakeCurve.Keys.Add(new CurveKey(1, MathHelper.PiOver4));
+            _shakeCurve.ComputeTangents(CurveTangent.Linear);
+            _shakeAttenuationCurve = new Curve();
+            _shakeAttenuationCurve.PreLoop = CurveLoopType.Constant;
+            _shakeAttenuationCurve.PostLoop = CurveLoopType.Linear;
+            _shakeAttenuationCurve.Keys.Add(new CurveKey(0, 0));
+            _shakeAttenuationCurve.Keys.Add(new CurveKey(0.05f, 0.01f));
+            _shakeAttenuationCurve.Keys.Add(new CurveKey(1.0f, 1));
+            _shakeAttenuationCurve.ComputeTangents(CurveTangent.Linear);
+            _shakeAttenuationInverseCurve = new Curve();
+            _shakeAttenuationInverseCurve.PreLoop = CurveLoopType.Constant;
+            _shakeAttenuationInverseCurve.PostLoop = CurveLoopType.Linear;
+            foreach (CurveKey key in _shakeAttenuationCurve.Keys)
+                _shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
+            _shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
+            _lookAt = new LookAtShip();
             BonusActions = new GameActionCollection();
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
         }
@@ -363,8 +364,8 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
                 // Give birth to a new ship if it's time.
-                if (Ship == null && lives != 0 &&
-                    shipSpawnTime <= AssaultWing.Instance.GameTime.TotalArenaTime)
+                if (Ship == null && _lives != 0 &&
+                    _shipSpawnTime <= AssaultWing.Instance.GameTime.TotalArenaTime)
                 {
                     CreateShip();
                 }
@@ -400,14 +401,14 @@ namespace AW2.Game
         public void Die(DeathCause cause)
         {
             // Dying has some consequences.
-            if (cause.IsSuicide) ++suicides;
+            if (cause.IsSuicide) ++_suicides;
             if (cause.IsKill)
             {
-                ++cause.Killer.Owner.kills;
+                ++cause.Killer.Owner._kills;
                 if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                     cause.Killer.Owner.MustUpdateToClients = true;
             }
-            --lives;
+            --_lives;
 
             BonusActions.Clear();
             Ship = null;
@@ -418,7 +419,7 @@ namespace AW2.Game
                 cause.Killer.Owner.SendMessage("You nailed " + Name);
             
             // Schedule the making of a new ship, lives permitting.
-            shipSpawnTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(MOURNING_DELAY);
+            _shipSpawnTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(MOURNING_DELAY);
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 MustUpdateToClients = true;
@@ -430,7 +431,7 @@ namespace AW2.Game
         /// <param name="onScreen">Location of the viewport on screen.</param>
         public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
-            return new AW2.Graphics.PlayerViewport(this, onScreen, lookAt, () => PostprocessEffectNames);
+            return new AW2.Graphics.PlayerViewport(this, onScreen, _lookAt, () => PostprocessEffectNames);
         }
 
         /// <summary>
@@ -447,8 +448,9 @@ namespace AW2.Game
         public override void Reset()
         {
             base.Reset();
-            shipSpawnTime = new TimeSpan(1);
-            relativeShakeDamage = 0;
+            _shipSpawnTime = TimeSpan.Zero;
+            _shakeUpdateTime = TimeSpan.Zero;
+            _relativeShakeDamage = 0;
             Lives = AssaultWing.Instance.DataEngine.GameplayMode.StartLives;
             BonusActions.Clear();
             Ship = null;
@@ -498,15 +500,15 @@ namespace AW2.Game
             {
                 writer.Write((int)Id);
                 writer.Write(Name, 32, true);
-                writer.Write(shipTypeName, 32, true);
+                writer.Write(_shipTypeName, 32, true);
                 writer.Write(Weapon2Name, 32, true);
                 writer.Write((uint)PlayerColor.PackedValue);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((short)lives);
-                writer.Write((short)kills);
-                writer.Write((short)suicides);
+                writer.Write((short)_lives);
+                writer.Write((short)_kills);
+                writer.Write((short)_suicides);
                 writer.Write((short)PostprocessEffectNames.Count);
                 foreach (var effectName in PostprocessEffectNames)
                     writer.Write((int)effectName.Canonical);
@@ -520,16 +522,16 @@ namespace AW2.Game
             {
                 Id = reader.ReadInt32();
                 Name = reader.ReadString(32);
-                shipTypeName = (CanonicalString)reader.ReadString(32);
+                _shipTypeName = (CanonicalString)reader.ReadString(32);
                 Weapon2Name = (CanonicalString)reader.ReadString(32);
                 var playerColor = new Color { PackedValue = reader.ReadUInt32() };
                 PlayerColor = playerColor;
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                lives = reader.ReadInt16();
-                kills = reader.ReadInt16();
-                suicides = reader.ReadInt16();
+                _lives = reader.ReadInt16();
+                _kills = reader.ReadInt16();
+                _suicides = reader.ReadInt16();
                 int effectNameCount = reader.ReadInt16();
                 PostprocessEffectNames.Clear();
                 for (int i = 0; i < effectNameCount; ++i)
@@ -545,7 +547,7 @@ namespace AW2.Game
         /// <summary>
         /// Applies the player's controls to his ship, if there is any.
         /// </summary>
-        void ApplyControlsToShip()
+        private void ApplyControlsToShip()
         {
             if (Ship == null) return;
             if (Controls.thrust.Force > 0)
@@ -565,7 +567,7 @@ namespace AW2.Game
         /// <summary>
         /// Sends the player's controls to the game server.
         /// </summary>
-        void SendControlsToServer()
+        private void SendControlsToServer()
         {
             PlayerControlsMessage message = new PlayerControlsMessage();
             message.PlayerId = Id;
@@ -577,12 +579,12 @@ namespace AW2.Game
         /// <summary>
         /// Creates a ship for the player.
         /// </summary>
-        void CreateShip()
+        private void CreateShip()
         {
             // Gain ownership over the ship only after its position has been set.
             // This way the ship won't be affecting its own spawn position.
             Ship = null;
-            Gob.CreateGob(shipTypeName, gob =>
+            Gob.CreateGob(_shipTypeName, gob =>
             {
                 if (!(gob is Ship))
                     throw new Exception("Cannot create non-ship ship for player (" + gob.GetType().Name + ")");
@@ -614,6 +616,7 @@ namespace AW2.Game
 
                 arena.Gobs.Add(newShip);
                 Ship = newShip;
+                AssaultWing.Instance.SoundEngine.PlaySound(SHIP_BIRTH_SOUND);
             });
         }
 
@@ -622,7 +625,7 @@ namespace AW2.Game
         /// </summary>
         /// This method should be called regularly. It decreases <c>relativeShakeDamage</c>.
         /// <param name="seconds">Passed time in seconds.</param>
-        void AttenuateShake(float seconds)
+        private void AttenuateShake(float seconds)
         {
             // Attenuation is done along a steepening curve;
             // the higher the shake damage the faster the attenuation.
@@ -630,9 +633,9 @@ namespace AW2.Game
             // for some parameter x which represents time to wait for the shake to stop.
             // In effect, this ensures that it won't take too long for
             // even very big shakes to stop.
-            float shakeTime = shakeAttenuationInverseCurve.Evaluate(relativeShakeDamage);
+            float shakeTime = _shakeAttenuationInverseCurve.Evaluate(_relativeShakeDamage);
             shakeTime = Math.Max(0, shakeTime - seconds);
-            relativeShakeDamage = shakeAttenuationCurve.Evaluate(shakeTime);
+            _relativeShakeDamage = _shakeAttenuationCurve.Evaluate(shakeTime);
         }
 
         #endregion Private methods

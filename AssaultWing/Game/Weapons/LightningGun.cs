@@ -18,11 +18,18 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         float range;
 
+        /// <summary>
+        /// The sound to play when firing.
+        /// </summary>
+        [TypeParameter]
+        string fireSound;
+
         /// This constructor is only for serialisation.
         public LightningGun()
             : base()
         {
             range = 500;
+            fireSound = "dummysound";
         }
 
         public LightningGun(CanonicalString typeName)
@@ -50,6 +57,7 @@ namespace AW2.Game.Weapons
 
         private void FireAtTarget(Gob target)
         {
+            AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
             ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(target, index));
         }
 
@@ -67,7 +75,6 @@ namespace AW2.Game.Weapons
         }
 
         #endregion
-
 
         private void CreateShot(Gob target, int boneIndex)
         {

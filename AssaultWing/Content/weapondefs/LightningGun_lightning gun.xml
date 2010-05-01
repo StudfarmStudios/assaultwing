@@ -2,6 +2,7 @@
 <ShipDeviceType type="AW2.Game.Weapons.LightningGun, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">lightning gun</typeName>
   <range type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">300</range>
+  <fireSound type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">LightningWeapon</fireSound>
   <upgradeNames type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   </upgradeNames>
   <iconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</iconName>

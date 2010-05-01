@@ -18,15 +18,21 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         IGeomPrimitive blinkArea;
 
+        /// <summary>
+        /// The sound to play when firing.
+        /// </summary>
+        [TypeParameter]
+        string fireSound;
+
         Vector2? _targetPos;
 
         /// <summary>
         /// Only for serialization.
         /// </summary>
         public Blink()
-            : base()
         {
             blinkArea = new Circle(Vector2.UnitX * 500, 50);
+            fireSound = "dummysound";
         }
 
         public Blink(CanonicalString typeName)
@@ -58,6 +64,7 @@ namespace AW2.Game.Weapons
                     owner.Disable(); // re-enabled in Update()
                     _targetPos = newPos;
                     owner.Owner.PostprocessEffectNames.EnsureContains((CanonicalString)"gaussian_blur");
+                    AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
                 }
             }
         }

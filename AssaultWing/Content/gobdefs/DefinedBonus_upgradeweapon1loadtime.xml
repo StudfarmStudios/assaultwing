@@ -19,7 +19,7 @@
     <multiplier type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.8</multiplier>
     <maxMultiplier type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</maxMultiplier>
   </gameAction>
-  <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">10</duration>
+  <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">60</duration>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
   <exhaustEngineNames type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>

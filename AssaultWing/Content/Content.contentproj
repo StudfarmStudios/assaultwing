@@ -756,14 +756,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine_dock effect.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_dock effect</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="particledefs\ParticleEngine_dumbfirethrust1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ParticleEngine_dumbfirethrust1</Name>

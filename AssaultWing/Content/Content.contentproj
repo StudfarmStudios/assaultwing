@@ -708,14 +708,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine_amazon rain.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_amazon rain</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="particledefs\ParticleEngine_amazon steam.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ParticleEngine_amazon steam</Name>

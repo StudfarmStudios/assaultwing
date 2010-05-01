@@ -269,6 +269,11 @@ namespace AW2.Game
         const int FREE_POS_MAX_ATTEMPTS = 50;
 
         /// <summary>
+        /// Radius in meters to check when determining if a position is free for a gob.
+        /// </summary>
+        const float FREE_POS_CHECK_RADIUS_MIN = 20;
+
+        /// <summary>
         /// Multiplier for collision damage.
         /// </summary>
         const float COLLISION_DAMAGE_DOWNGRADE = 0.0006f;
@@ -665,10 +670,15 @@ namespace AW2.Game
         /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
         public bool IsFreePosition(Gob gob, Vector2 position)
         {
-            Vector2 oldPos = gob.Pos;
+            var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
+            float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN, 
+                3 * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
+            float checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
+            var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
+                gob.PhysicalArea.Type, gob.PhysicalArea.CollidesAgainst, gob.PhysicalArea.CannotOverlap, CollisionMaterialType.Regular);
+            var oldPos = gob.Pos;
             gob.Pos = position;
-            CollisionArea gobPhysical = gob.PhysicalArea;
-            bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
+            bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(wallCheckArea, wallCheckArea.CannotOverlap, null);
             gob.Pos = oldPos;
             return result;
         }

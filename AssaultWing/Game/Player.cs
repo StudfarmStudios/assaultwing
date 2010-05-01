@@ -453,6 +453,7 @@ namespace AW2.Game
             _relativeShakeDamage = 0;
             Lives = AssaultWing.Instance.DataEngine.GameplayMode.StartLives;
             BonusActions.Clear();
+            Messages.Clear();
             Ship = null;
         }
 

@@ -8935,7 +8935,7 @@
               <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3600</Y>
             </max>
           </spawnArea>
-          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">35</spawnInterval>
+          <spawnInterval type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">25</spawnInterval>
           <spawnTypes type="AW2.Game.Gobs.SpawnType[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
               <weight type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</weight>

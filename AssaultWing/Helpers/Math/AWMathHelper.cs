@@ -189,6 +189,17 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns the angle of the vector. The X unit vector has angle zero and
+        /// the positive winding direction is counter-clockwise.
+        /// </summary>
+        public static float Angle(this Vector2 v)
+        {
+            float asin = (float)Math.Asin(v.Y);
+            if (v.X < 0) return MathHelper.Pi - asin;
+            return asin;
+        }
+
+        /// <summary>
         /// Returns the smallest non-negative value congruent to a value.
         /// The returned value will be between <c>0</c> and <c>modulus - 1</c>, inclusive.
         /// This is different from the expression <c>value % modulus</c> 
@@ -513,6 +524,16 @@ namespace AW2.Helpers
                 Assert.AreEqual(new Vector2(-1, -1), Round(new Vector2(-1.000001f, -1.499999f)));
                 Assert.AreEqual(new Vector2(-2, -2), Round(new Vector2(-1.500001f, -1.999999f)));
                 Assert.AreEqual(new Vector2(-1234567, 1234567), Round(new Vector2(-1234566.7f, 1234567.3f)));
+            }
+
+            [Test]
+            public void TestAngle()
+            {
+                Assert.AreEqual(0, new Vector2(0, 0).Angle());
+                Assert.AreEqual(0, new Vector2(1, 0).Angle());
+                Assert.AreEqual(MathHelper.PiOver2, new Vector2(0, 1).Angle());
+                Assert.AreEqual(-MathHelper.PiOver2, new Vector2(0, -1).Angle());
+                Assert.AreEqual(MathHelper.Pi, new Vector2(-1, 0).Angle());
             }
 
             /// <summary>

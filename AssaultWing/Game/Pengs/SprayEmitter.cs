@@ -193,7 +193,7 @@ namespace AW2.Game.Pengs
                                 {
                                     float posWeight = (i + 1) / (float)createCount;
                                     Vector2 iPos = Vector2.Lerp(startPos, endPos, posWeight);
-                                    RandomHelper.GetRandomCirclePoint(radius, -sprayAngle, sprayAngle,
+                                    RandomHelper.GetRandomCirclePoint(radius, Peng.Rotation - sprayAngle, Peng.Rotation + sprayAngle,
                                         out pos, out directionUnit, out directionAngle);
                                     pos += iPos;
                                     move = Peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;

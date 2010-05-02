@@ -157,7 +157,10 @@ namespace AW2.Game.Gobs
             get
             {
                 if (Leader == null) return base.Rotation;
-                return Leader.Rotation;
+                if (LeaderBone == -1)
+                    return Leader.Rotation;
+                else
+                    return Leader.GetBoneRotation(LeaderBone);
             }
         }
 

@@ -983,9 +983,21 @@ namespace AW2.Game
         /// <see cref="GetNamedPositions(string)"/>
         /// <param name="boneIndex">The bone index of the named position.</param>
         /// <returns>The game world location of the named position.</returns>
+        /// <seealso cref="GetBoneRotation(int)"/>
         public Vector2 GetNamedPosition(int boneIndex)
         {
             return Vector2.Transform(Vector2.Zero, ModelPartTransforms[boneIndex] * WorldMatrix);
+        }
+
+        /// <summary>
+        /// Returns the game world rotation of a named positino on the gob's 3D model.
+        /// </summary>
+        /// <seealso cref="GetNamedPosition(int)"/>
+        public float GetBoneRotation(int boneIndex)
+        {
+            var transformed = Vector2.TransformNormal(Vector2.UnitX, ModelPartTransforms[boneIndex]);
+            float boneRotation = transformed.Angle();
+            return Rotation + boneRotation;
         }
 
         /// <summary>

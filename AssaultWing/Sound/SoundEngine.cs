@@ -14,11 +14,12 @@ namespace AW2.Sound
     {
         #region Private fields
 
-        AudioEngine audioEngine;
-        WaveBank waveBank;
-        SoundBank soundBank;
-        SoundEffectInstance musicInstance;
-        Action volumeFadeAction;
+        AudioEngine _audioEngine;
+        WaveBank _waveBank;
+        SoundBank _soundBank;
+        AudioCategory _soundEffectCategory;
+        SoundEffectInstance _musicInstance;
+        Action _volumeFadeAction;
 
         #endregion
 
@@ -34,39 +35,24 @@ namespace AW2.Sound
 
         public override void Initialize()
         {
-            audioEngine = new AudioEngine(System.IO.Path.Combine(Paths.Sounds, "assaultwingsounds.xgs"));
-            waveBank = new WaveBank(audioEngine, System.IO.Path.Combine(Paths.Sounds, "Wave Bank.xwb"));
-            soundBank = new SoundBank(audioEngine, System.IO.Path.Combine(Paths.Sounds, "Sound Bank.xsb"));
+            _audioEngine = new AudioEngine(System.IO.Path.Combine(Paths.Sounds, "assaultwingsounds.xgs"));
+            _waveBank = new WaveBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Wave Bank.xwb"));
+            _soundBank = new SoundBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Sound Bank.xsb"));
+            _soundEffectCategory = _audioEngine.GetCategory("Default");
             Log.Write("Sound engine initialized.");
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (volumeFadeAction != null) volumeFadeAction();
-            if (musicInstance != null) musicInstance.Volume = ActualMusicVolume;
-            audioEngine.Update();
+            if (_volumeFadeAction != null) _volumeFadeAction();
+            if (_musicInstance != null) _musicInstance.Volume = ActualMusicVolume;
+            _audioEngine.Update();
+            _soundEffectCategory.SetVolume(AssaultWing.Instance.Settings.Sound.SoundVolume);
         }
 
         #endregion
 
         #region Public interface
-
-        /// <summary>
-        /// Sound effect volume, between 0 and 1.
-        /// </summary>
-        public float SoundVolume
-        {
-            set
-            {
-                value = MathHelper.Clamp(value, 0, 1);
-                audioEngine.GetCategory("Default").SetVolume(value);
-            }
-        }
-
-        /// <summary>
-        /// General music volume as set by player, between 0 and 1.
-        /// </summary>
-        public float UserMusicVolume { get; set; }
 
         /// <summary>
         /// Music volume of current track relative to other tracks, as set by sound engineer, between 0 and 1.
@@ -78,7 +64,14 @@ namespace AW2.Sound
         /// </summary>
         private float InternalMusicVolume { get; set; }
 
-        private float ActualMusicVolume { get { return UserMusicVolume * RelativeMusicVolume * InternalMusicVolume; } }
+        private float ActualMusicVolume
+        {
+            get
+            {
+                float userMusicVolume = AssaultWing.Instance.Settings.Sound.MusicVolume;
+                return userMusicVolume * RelativeMusicVolume * InternalMusicVolume;
+            }
+        }
 
         /// <summary>
         /// Starts playing a random track from a tracklist.
@@ -103,12 +96,12 @@ namespace AW2.Sound
             StopMusic();
             RelativeMusicVolume = trackVolume;
             InternalMusicVolume = 1;
-            musicInstance = music.CreateInstance();
-            musicInstance.Volume = ActualMusicVolume;
-            musicInstance.Pitch = 0;
-            musicInstance.Pan = 0;
-            musicInstance.IsLooped = true;
-            musicInstance.Play();
+            _musicInstance = music.CreateInstance();
+            _musicInstance.Volume = ActualMusicVolume;
+            _musicInstance.Pitch = 0;
+            _musicInstance.Pan = 0;
+            _musicInstance.IsLooped = true;
+            _musicInstance.Play();
         }
 
         /// <summary>
@@ -117,10 +110,10 @@ namespace AW2.Sound
         public void StopMusic()
         {
             if (!Enabled) return;
-            if (musicInstance == null) return;
-            musicInstance.Stop();
-            musicInstance = null;
-            volumeFadeAction = null;
+            if (_musicInstance == null) return;
+            _musicInstance.Stop();
+            _musicInstance = null;
+            _volumeFadeAction = null;
         }
 
         /// <summary>
@@ -129,10 +122,10 @@ namespace AW2.Sound
         public void StopMusic(TimeSpan fadeoutTime)
         {
             if (!Enabled) return;
-            if (musicInstance == null) return;
+            if (_musicInstance == null) return;
             var now = AssaultWing.Instance.GameTime.TotalRealTime;
             float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
-            volumeFadeAction = () =>
+            _volumeFadeAction = () =>
             {
                 float volume = MathHelper.Clamp(1 - now.SecondsAgoRealTime() / fadeoutSeconds, 0, 1);
                 InternalMusicVolume = volume;
@@ -143,13 +136,13 @@ namespace AW2.Sound
         public void PlaySound(string soundName)
         {
             if (!Enabled) return;
-            soundBank.PlayCue(soundName);
+            _soundBank.PlayCue(soundName);
         }
 
         public Cue GetCue(string soundName)
         {
             if (!Enabled) throw new InvalidOperationException("Sound engine is disabled");
-            return soundBank.GetCue(soundName);
+            return _soundBank.GetCue(soundName);
         }
 
         #endregion

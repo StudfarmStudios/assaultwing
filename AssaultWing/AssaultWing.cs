@@ -7,12 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Graphics;
-using AW2.Menu;
-using AW2.UI;
-using AW2.Sound;
 using AW2.Helpers;
+using AW2.Menu;
 using AW2.Net;
 using AW2.Net.Messages;
+using AW2.Settings;
+using AW2.Sound;
+using AW2.UI;
 
 namespace AW2
 {
@@ -183,6 +184,7 @@ namespace AW2
             }
         }
 
+        public AWSettings Settings { get; private set; }
         public string[] CommandLineArgs { get; set; }
         public PhysicsEngine PhysicsEngine { get { return physicsEngine; } }
         public DataEngine DataEngine { get { return dataEngine; } }
@@ -301,6 +303,7 @@ namespace AW2
             if (WindowInitializing == null)
                 throw new Exception("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
 
+            LoadSettings();
             InitializeGraphics();
 
             musicSwitch = new KeyboardKey(Keys.F5);
@@ -320,11 +323,16 @@ namespace AW2
             InitializeComponents();
         }
 
+        private void LoadSettings()
+        {
+            Settings = new AWSettings();
+        }
+
         /// <summary>
         /// If there is an NVIDIA PerfHUD adapter, sets the GraphicsDeviceManager 
         /// to use that adapter and a reference device.
         /// </summary>
-        void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs args)
+        private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs args)
         {
 #if DEBUG
             var adapter = GraphicsAdapter.Adapters.FirstOrDefault(ada => ada.Description == "NVIDIA PerfHUD");
@@ -343,7 +351,7 @@ namespace AW2
         /// <summary>
         /// Reacts to a client window resize event.
         /// </summary>
-        void ClientSizeChanged(object sender, EventArgs e)
+        private void ClientSizeChanged(object sender, EventArgs e)
         {
             if (ClientBounds.Width == 0 || ClientBounds.Height == 0) return;
             GraphicsDeviceManager.PreferredBackBufferWidth = ClientBounds.Width;
@@ -353,7 +361,7 @@ namespace AW2
             if (menuEngine != null) menuEngine.WindowResize();
         }
 
-        void StartArenaImpl()
+        private void StartArenaImpl()
         {
             GameTime = GameTime.ResetArenaTime();
             dataEngine.StartArena();
@@ -427,7 +435,7 @@ namespace AW2
         }
 
         [Conditional("DEBUG")]
-        void InitializePerformanceCounters()
+        private void InitializePerformanceCounters()
         {
             var categoryName = "Assault Wing";
             var instanceName = "AW Instance " + Process.GetCurrentProcess().Id;
@@ -478,7 +486,7 @@ namespace AW2
                 throw new Exception("Some performance counters don't have corresponding public properties in class AssaultWing and thus won't have meaningful values");
         }
 
-        string CounterNameToPropertyName(string counterName)
+        private string CounterNameToPropertyName(string counterName)
         {
             return counterName
                 .Replace(" ", "")
@@ -826,16 +834,14 @@ namespace AW2
 #endif
 
             Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
-            Player player2 = new Player("John Crichton", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
+            Player player2 = new Player("John Crichton", (CanonicalString)"Bugger", (CanonicalString)"bouncegun", (CanonicalString)"reverse thruster", plr2Controls);
             dataEngine.Spectators.Add(player1);
             dataEngine.Spectators.Add(player2);
 
             dataEngine.GameplayMode = new GameplayMode();
             dataEngine.GameplayMode.ShipTypes = new string[] { "Windlord", "Bugger", "Plissken" };
             dataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
-            dataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets" };
-
-            soundEngine.UserMusicVolume = 1;
+            dataEngine.GameplayMode.Weapon2Types = new string[] { "bouncegun", "rockets" };
 
             GameState = GameState.Menu;
             base.BeginRun();

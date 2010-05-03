@@ -188,14 +188,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Explosion_bonus collection.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Explosion_bonus collection</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="gobdefs\Explosion_ship explosion.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Explosion_ship explosion</Name>

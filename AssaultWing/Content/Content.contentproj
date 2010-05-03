@@ -692,14 +692,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine_bombfire.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_bombfire</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="particledefs\ParticleEngine_bonusengine.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ParticleEngine_bonusengine</Name>
@@ -743,38 +735,6 @@
     <None Include="particledefs\ParticleEngine_fusionengine3.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ParticleEngine_fusionengine3</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine_rocket glow.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_rocket glow</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine_rocketthrust1.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_rocketthrust1</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine_rocketthrust2.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_rocketthrust2</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine_rocketthrust3.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_rocketthrust3</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>

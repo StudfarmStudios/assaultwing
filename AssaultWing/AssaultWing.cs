@@ -303,7 +303,7 @@ namespace AW2
             if (WindowInitializing == null)
                 throw new Exception("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
 
-            LoadSettings();
+            Settings = AWSettings.FromFile();
             InitializeGraphics();
 
             musicSwitch = new KeyboardKey(Keys.F5);
@@ -321,11 +321,6 @@ namespace AW2
             lastDrawTime = new TimeSpan(0);
 
             InitializeComponents();
-        }
-
-        private void LoadSettings()
-        {
-            Settings = new AWSettings();
         }
 
         /// <summary>

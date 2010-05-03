@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using AW2.Helpers;
 
-namespace AW2.Game
+namespace AW2.Helpers
 {
     /// <summary>
     /// Handles loading and saving template instances that represent user-defined types
@@ -15,13 +15,13 @@ namespace AW2.Game
     /// </summary>
     public class TypeLoader
     {
-        DirectoryInfo _definitionDir;
-        Type _baseClass;
+        private DirectoryInfo _definitionDir;
+        private Type _baseClass;
 
         /// <summary>
         /// Suffix for producing a type definition template file from a type name.
         /// </summary>
-        const string TEMPLATE_FILENAME_SUFFIX = "template";
+        private const string TEMPLATE_FILENAME_SUFFIX = "template";
 
         /// <summary>
         /// Creates a type loader.

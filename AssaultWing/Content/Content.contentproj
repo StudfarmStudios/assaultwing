@@ -692,22 +692,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine_beamer.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_beamer</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine_beamer2.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_beamer2</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="particledefs\ParticleEngine_bombfire.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ParticleEngine_bombfire</Name>
@@ -735,14 +719,6 @@
     <None Include="particledefs\ParticleEngine_dummyparticleengine.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ParticleEngine_dummyparticleengine</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="particledefs\ParticleEngine_enginesmoke.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_enginesmoke</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>

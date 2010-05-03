@@ -255,6 +255,7 @@
     <Compile Include="Net\ThreadSafeWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AWSettings.cs" />
+    <Compile Include="Settings\NetSettings.cs" />
     <Compile Include="Settings\SoundSettings.cs" />
     <Compile Include="Sound\BackgroundMusic.cs" />
     <Compile Include="Sound\SoundEngine.cs" />

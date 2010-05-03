@@ -8,8 +8,10 @@ namespace AW2.Settings
     {
         private static readonly string SETTINGS_FILENAME = "AssaultWing.config";
         private SoundSettings _sound;
+        private NetSettings _net;
 
         public SoundSettings Sound { get { return _sound; } private set { _sound = value; } }
+        public NetSettings Net { get { return _net; } private set { _net = value; } }
 
         public static AWSettings FromFile()
         {
@@ -18,13 +20,19 @@ namespace AW2.Settings
 
             // Create a new settings file
             var settings = new AWSettings();
-            TypeLoader.SaveTemplate(settings, SETTINGS_FILENAME, typeof(AWSettings), null);
+            settings.ToFile();
             return settings;
         }
 
         public AWSettings()
         {
             Sound = new SoundSettings();
+            Net = new NetSettings();
+        }
+
+        public void ToFile()
+        {
+            TypeLoader.SaveTemplate(this, SETTINGS_FILENAME, typeof(AWSettings), null);
         }
     }
 }

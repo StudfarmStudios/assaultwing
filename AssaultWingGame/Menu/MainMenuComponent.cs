@@ -239,11 +239,12 @@ namespace AW2.Menu
                 AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist( new string[] { "Amazonas", "Junk" });
             };
 
-            connectAddress = new EditableText("192.168.1.100");
+            connectAddress = new EditableText(AssaultWing.Instance.Settings.Net.ConnectAddress);
             networkContents[1].Name = connectItemPrefix + connectAddress.Content;
             networkContents[1].Action = () =>
             {
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
+                AssaultWing.Instance.Settings.Net.ConnectAddress = connectAddress.Content;
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 AssaultWing.Instance.StartClient(connectAddress.Content, result =>
                 {

@@ -301,8 +301,9 @@ namespace AW2
         {
             Log.Write("Creating an Assault Wing instance");
             if (WindowInitializing == null)
-                throw new Exception("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
+                throw new ApplicationException("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
 
+            Log.Write("Loading settings from file");
             Settings = AWSettings.FromFile();
             InitializeGraphics();
 
@@ -497,6 +498,8 @@ namespace AW2
                 case GameState.Initializing:
                     break;
                 case GameState.Gameplay:
+                    Log.Write("Saving settings to file");
+                    Settings.ToFile();
                     logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     graphicsEngine.Visible = true;
                     break;
@@ -849,6 +852,9 @@ namespace AW2
         protected override void EndRun()
         {
             Log.Write("Assault Wing ends the run");
+
+            Log.Write("Saving settings to file");
+            Settings.ToFile();
 
 #if DEBUG_PROFILE
             // HACK: profiling printout for gnuplot

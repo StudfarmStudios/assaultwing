@@ -684,14 +684,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine_dumbfirethrust1.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_dumbfirethrust1</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="particledefs\ParticleEngine_dummyparticleengine.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ParticleEngine_dummyparticleengine</Name>

@@ -804,14 +804,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="particledefs\ParticleEngine_snakeengine.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ParticleEngine_snakeengine</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="particledefs\Peng_airstreaks.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Peng_airstreaks</Name>

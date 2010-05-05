@@ -14,29 +14,29 @@ namespace AW2.Game.Gobs
     {
         #region Dock fields
 
-        static readonly TimeSpan DOCK_SOUND_STOP_DELAY = TimeSpan.FromSeconds(0.5);
+        private static readonly TimeSpan DOCK_SOUND_STOP_DELAY = TimeSpan.FromSeconds(0.5);
 
         /// <summary>
         /// Speed of repairing damageable gobs, measured in damage/second.
         /// Use a negative value for repairing, positive for damaging.
         /// </summary>
         [TypeParameter]
-        float repairSpeed;
+        private float repairSpeed;
 
         /// <summary>
         /// Speed of charging primary weapons of ships, measured in charge/second.
         /// </summary>
         [TypeParameter]
-        float weapon1ChargeSpeed;
+        private float weapon1ChargeSpeed;
 
         /// <summary>
         /// Speed of charging secondary weapons of ships, measured in charge/second.
         /// </summary>
         [TypeParameter]
-        float weapon2ChargeSpeed;
+        private float weapon2ChargeSpeed;
 
-        TimeSpan _lastDockSoundTime;
-        Cue _dockSoundCue;
+        private TimeSpan _lastDockSoundTime;
+        private Cue _dockSoundCue;
 
         #endregion Dock fields
 
@@ -47,7 +47,6 @@ namespace AW2.Game.Gobs
 
         /// This constructor is only for serialisation.
         public Dock()
-            : base()
         {
             this.repairSpeed = -10;
             this.weapon1ChargeSpeed = 100;

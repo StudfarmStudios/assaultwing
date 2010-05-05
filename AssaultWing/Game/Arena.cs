@@ -478,6 +478,7 @@ namespace AW2.Game
             for (int i = 0; i < collisionAreas.Length; ++i)
                 collisionAreas[i] = null;
             UnloadContent();
+            foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
         }
 

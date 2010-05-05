@@ -297,7 +297,6 @@ namespace AW2
         /// This constructor is not meant to be called from outside this class.
         /// To obtain an AssaultWing instance, use <b>AssaultWing.Instance</b>.
         private AssaultWing()
-            : base()
         {
             Log.Write("Creating an Assault Wing instance");
             if (WindowInitializing == null)
@@ -449,7 +448,17 @@ namespace AW2
             {
                 var category = new PerformanceCounterCategory(categoryName).ReadCategory();
                 if (counters.Any(counter => !category.Contains(counter.CounterName)))
-                    PerformanceCounterCategory.Delete(categoryName);
+                    try
+                    {
+                        PerformanceCounterCategory.Delete(categoryName);
+                    }
+                    catch (System.ComponentModel.Win32Exception e)
+                    {
+                        if (e.NativeErrorCode == 5)
+                            Log.Write("Note: Performance monitoring not available due to lack of user rights. Try 'Run as administrator'");
+                        else
+                            Log.Write("Note: Performance monitoring not available, native error " + e);
+                    }
             }
 
             // Create the category if it's missing

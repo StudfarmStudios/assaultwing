@@ -175,6 +175,7 @@ namespace AW2.Game.Pengs
         {
             // Rewrite our curve by linear interpolation between keys.
             // This is a temporary hack to simplify curve editing in serialised XML.
+#warning CurveLerpKey tangents are always linear
             curve.ComputeTangents(CurveTangent.Linear);
         }
 

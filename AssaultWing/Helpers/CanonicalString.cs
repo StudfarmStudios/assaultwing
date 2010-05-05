@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AW2.Helpers
 {
@@ -18,13 +19,14 @@ namespace AW2.Helpers
     [SerializedType(typeof(string))]
     public struct CanonicalString
     {
-        static IList<string> canonicalForms = new List<string> { null };
-        static bool canRegister = true;
+        private static List<string> g_canonicalForms;
+        private static Dictionary<string, int> g_canonicalFormsIndices;
+        private static bool g_canRegister;
 
         /// <summary>
         /// The <see cref="CanonicalString"/> instance corresponding to the null <see cref="string"/>.
         /// </summary>
-        public static readonly CanonicalString Null = new CanonicalString(0);
+        public static readonly CanonicalString Null;
 
         /// <summary>
         /// The index of a string in this list is its canonical form.
@@ -32,13 +34,15 @@ namespace AW2.Helpers
         /// </summary>
         public static IList<string> CanonicalForms
         {
-            get { return canonicalForms; }
+            get { return g_canonicalForms; }
             set
             {
                 if (value == null) throw new ArgumentNullException("Cannot set null list as canonical forms");
-                canonicalForms = new List<string>(value);
-                if (canonicalForms.Count == 0 || canonicalForms[0] != null)
-                    throw new ArgumentException("First canonical form must be null");
+                if (value.Count == 0 || value[0] != null) throw new ArgumentException("First canonical form must be null");
+                g_canonicalForms = value.ToList();
+                g_canonicalFormsIndices.Clear();
+                for (int i = 1; i < g_canonicalForms.Count; ++i)
+                    g_canonicalFormsIndices.Add(g_canonicalForms[i], i);
             }
         }
 
@@ -53,6 +57,14 @@ namespace AW2.Helpers
         public int Canonical { get; private set; }
 
         public bool IsNull { get { return Canonical == 0; } }
+
+        static CanonicalString()
+        {
+            g_canonicalForms = new List<string> { null };
+            g_canonicalFormsIndices = new Dictionary<string, int>(); // 'null' not added here but handled as a special case
+            g_canRegister = true;
+            Null = new CanonicalString(null);
+        }
 
         /// <summary>
         /// Implicit conversion to <see cref="string"/>.
@@ -94,7 +106,7 @@ namespace AW2.Helpers
         /// </summary>
         public static void DisableRegistering()
         {
-            canRegister = false;
+            g_canRegister = false;
         }
 
         /// <summary>
@@ -103,16 +115,13 @@ namespace AW2.Helpers
         public CanonicalString(string value)
             : this()
         {
-            Canonical = CanonicalForms.IndexOf(value);
+            Canonical = GetCanonicalValue(value);
             if (Canonical < 0)
             {
-                if (!canRegister) throw new InvalidOperationException("Registering previously unseen CanonicalString instances has been disabled");
+                if (!g_canRegister) throw new InvalidOperationException("Registering previously unseen CanonicalString instances has been disabled");
                 Canonical = CanonicalForms.Count;
                 CanonicalForms.Add(value);
-#if DEBUG
-                if ((CanonicalForms.Count % 100) == 0)
-                    Log.Write("WARNING: " + CanonicalForms.Count + " distinct CanonicalString values and counting... Consider using a Dictionary");
-#endif
+                g_canonicalFormsIndices.Add(value, Canonical);
             }
         }
 
@@ -141,6 +150,15 @@ namespace AW2.Helpers
         public override int GetHashCode()
         {
             return Canonical;
+        }
+
+        private static int GetCanonicalValue(string value)
+        {
+            if (value == null) return 0; // 'null' handled separately because Dictionary cannot store it
+            int canonical;
+            if (g_canonicalFormsIndices.TryGetValue(value, out canonical))
+                return canonical;
+            return -1;
         }
     }
 }

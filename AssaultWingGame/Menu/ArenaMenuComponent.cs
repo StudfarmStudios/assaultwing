@@ -99,7 +99,7 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = (AWContentManager)AssaultWing.Instance.Content;
             menuBigFont = content.Load<SpriteFont>("MenuFontBig");
             menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
             backgroundTexture = content.Load<Texture2D>("menu_levels_bg");
@@ -108,14 +108,8 @@ namespace AW2.Menu
             tagTexture = content.Load<Texture2D>("menu_levels_tag");
             arenaPreviews = ArenaInfos.Select(info =>
             {
-                try
-                {
-                    return content.Load<Texture2D>(info.PreviewName);
-                }
-                catch (Microsoft.Xna.Framework.Content.ContentLoadException)
-                {
-                    return content.Load<Texture2D>("no_preview");
-                }
+                var previewName = content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
+                return content.Load<Texture2D>(previewName);
             }).ToList();
         }
 

@@ -26,27 +26,18 @@ namespace AW2.Graphics
             : base(serviceProvider)
         { }
 
+        public bool Exists<T>(string assetName)
+        {
+            return File.Exists(GetAssetFullName<T>(assetName) + ".xnb");
+        }
+
         /// <summary>
         /// Loads an asset that has been processed by the Content Pipeline.
         /// </summary>
         /// Repeated calls to load the same asset will return the same object instance.
         public override T Load<T>(string assetName)
         {
-            string assetFullName;
-            if (assetName.Contains('\\'))
-                assetFullName = assetName;
-            else
-            {
-                string assetPath = null;
-                var type = typeof(T);
-                if (typeof(Texture).IsAssignableFrom(type)) assetPath = Paths.Textures;
-                else if (type == typeof(Model)) assetPath = Paths.Models;
-                else if (type == typeof(SpriteFont)) assetPath = Paths.Fonts;
-                else if (type == typeof(Effect)) assetPath = Paths.Shaders;
-                else if (type == typeof(Song) || type == typeof(SoundEffect)) assetPath = Paths.Music;
-                else throw new ArgumentException("Cannot load content of unexpected type " + type.Name);
-                assetFullName = Path.Combine(assetPath, assetName);
-            }
+            var assetFullName = GetAssetFullName<T>(assetName);
             object item;
             loadedContent.TryGetValue(assetFullName, out item);
             if (item != null) return (T)item;
@@ -78,6 +69,26 @@ namespace AW2.Graphics
             foreach (var value in disposableContent) value.Dispose();
             disposableContent.Clear();
             loadedContent.Clear();
+        }
+
+        private static string GetAssetFullName<T>(string assetName)
+        {
+            string assetFullName;
+            if (assetName.Contains('\\'))
+                assetFullName = assetName;
+            else
+            {
+                string assetPath = null;
+                var type = typeof(T);
+                if (typeof(Texture).IsAssignableFrom(type)) assetPath = Paths.Textures;
+                else if (type == typeof(Model)) assetPath = Paths.Models;
+                else if (type == typeof(SpriteFont)) assetPath = Paths.Fonts;
+                else if (type == typeof(Effect)) assetPath = Paths.Shaders;
+                else if (type == typeof(Song) || type == typeof(SoundEffect)) assetPath = Paths.Music;
+                else throw new ArgumentException("Cannot load content of unexpected type " + type.Name);
+                assetFullName = Path.Combine(assetPath, assetName);
+            }
+            return assetFullName;
         }
     }
 }

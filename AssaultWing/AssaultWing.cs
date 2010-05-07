@@ -358,11 +358,13 @@ namespace AW2
 
         private void StartArenaImpl()
         {
+            Log.Write("Starting arena");
             GameTime = GameTime.ResetArenaTime();
             dataEngine.StartArena();
             dataEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
             soundEngine.PlayMusic(dataEngine.Arena.BackgroundMusic);
+            Log.Write("...started arena " + dataEngine.Arena.Name);
         }
 
         private void InitializeGraphics()
@@ -665,6 +667,7 @@ namespace AW2
         /// </summary>
         public void ShowMenu()
         {
+            Log.Write("Entering menus");
             dataEngine.ClearGameState();
             menuEngine.Activate();
             GameState = GameState.Menu;

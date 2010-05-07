@@ -236,7 +236,7 @@ namespace AW2.Menu
 
                 // HACK: Force one local player and Amazonas as the only arena.
                 AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
-                AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist( new string[] { "Amazonas", "Junk" });
+                AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist( new string[] { "Amazonas" });
             };
 
             connectAddress = new EditableText(AssaultWing.Instance.Settings.Net.ConnectAddress);

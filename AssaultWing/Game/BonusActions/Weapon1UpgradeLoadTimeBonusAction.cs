@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Helpers;
 using AW2.Game.Gobs;
+using AW2.Helpers;
 
 namespace AW2.Game.BonusActions
 {
-    class Weapon1UpgradeLoadTimeBonusAction : GameAction
+    public class Weapon1UpgradeLoadTimeBonusAction : GameAction
     {
         [TypeParameter]
-        float multiplier;
+        private float multiplier;
 
         [TypeParameter]
-        float maxMultiplier;
+        private float maxMultiplier;
 
         /// <summary>
         /// This constructor is only for serialization.

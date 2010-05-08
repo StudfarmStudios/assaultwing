@@ -130,7 +130,7 @@ namespace AW2.Game.Weapons
         {
             gunBarrels = ShipBarrelTypes.Middle | ShipBarrelTypes.Left | ShipBarrelTypes.Right | ShipBarrelTypes.Rear;
             fireSound = "dummysound";
-            muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine" };
+            muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
             shotSpeed = 300f;
             shotCount = 3;
             shotSpacing = 0.2f;

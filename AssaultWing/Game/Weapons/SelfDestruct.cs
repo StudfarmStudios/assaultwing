@@ -7,15 +7,7 @@ using AW2.Sound;
 
 namespace AW2.Game.Weapons
 {
-
-    /// <summary>
-    /// A weapon that shoots gobs forward.
-    /// Each firing can consist of a number of shots being fired.
-    /// The shots are shot at even temporal intervals in a random
-    /// angle. The shot angles distribute evenly in an angular fan
-    /// whose center is directed at the direction of the weapon's owner.
-    /// </summary>
-    public class SelfDestruct : Weapon, IConsistencyCheckable
+    public class SelfDestruct : Weapon
     {
         #region ForwardShot fields
 
@@ -40,8 +32,8 @@ namespace AW2.Game.Weapons
         /// </summary>
         protected override void FireImpl(AW2.UI.ControlState triggerState)
         {
-            owner.selfDestruct(deathGobTypes);
-            owner.DamageLevel = owner.MaxDamageLevel*10;
+            owner.SelfDestruct(deathGobTypes);
+            owner.DamageLevel = owner.MaxDamageLevel * 10;
             owner.Die(new DeathCause(owner, DeathCauseType.Damage));
         }
 
@@ -52,7 +44,6 @@ namespace AW2.Game.Weapons
 
         public override void Update()
         {
-
         }
 
         /// <summary>
@@ -61,27 +52,5 @@ namespace AW2.Game.Weapons
         public override void Dispose()
         {
         }
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public void MakeConsistent(Type limitationAttribute)
-        {
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                /*
-                shotCount = Math.Max(1, shotCount);
-                shotSpacing = Math.Max(0, shotSpacing);
-                 * */
-            }
-        }
-
-        #endregion
     }
 }

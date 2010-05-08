@@ -10,9 +10,9 @@ namespace AW2.Graphics
     /// <summary>
     /// Basic graphics engine.
     /// </summary>
-    class GraphicsEngineImpl : DrawableGameComponent
+    public class GraphicsEngineImpl : DrawableGameComponent
     {
-        SpriteBatch spriteBatch;
+        private SpriteBatch _spriteBatch;
 
         /// <summary>
         /// Creates a new graphics engine.
@@ -30,7 +30,7 @@ namespace AW2.Graphics
         {
             Log.Write("Graphics engine loading graphics content.");
             var data = AssaultWing.Instance.DataEngine;
-            spriteBatch = new SpriteBatch(this.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(this.GraphicsDevice);
 
             // Loop through gob types and load all the 3D models and textures they need.
             // The purpose of this is to load from disk here and cache the content for fast access later.
@@ -103,10 +103,10 @@ namespace AW2.Graphics
             Log.Write("Graphics engine unloading graphics content.");
             var data = AssaultWing.Instance.DataEngine;
 
-            if (spriteBatch != null)
+            if (_spriteBatch != null)
             {
-                spriteBatch.Dispose();
-                spriteBatch = null;
+                _spriteBatch.Dispose();
+                _spriteBatch = null;
             }
 
             // Propagate UnloadContent to other components that are known to
@@ -144,21 +144,21 @@ namespace AW2.Graphics
             gfx.Viewport = screen;
 
             // Draw viewport separators.
-            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
             foreach (var separator in AssaultWing.Instance.DataEngine.Viewports.Separators)
             {
                 Texture2D separatorTexture = AssaultWing.Instance.Content.Load<Texture2D>("viewport_border_vertical");
                 Vector2 separatorOrigin = new Vector2(separatorTexture.Width, 0) / 2;
-                if (separator.vertical)
+                if (separator.Vertical)
                 {
                     // Loop the texture vertically, centered on the screen.
                     // 'extraLength' is how many pixels more is the least sufficiently long 
                     // multiple of a pair of the separator texture than the screen height;
                     // it helps us center the looping separator texture.
                     int extraLength = 2 * separatorTexture.Height - screen.Height % (2 * separatorTexture.Height);
-                    for (Vector2 pos = new Vector2(separator.coordinate, -extraLength / 2);
+                    for (Vector2 pos = new Vector2(separator.Coordinate, -extraLength / 2);
                         pos.Y < screen.Height; pos.Y += separatorTexture.Height)
-                        spriteBatch.Draw(separatorTexture, pos, null, Color.White, 0,
+                        _spriteBatch.Draw(separatorTexture, pos, null, Color.White, 0,
                             separatorOrigin, 1, SpriteEffects.None, 0);
                 }
                 else
@@ -169,13 +169,13 @@ namespace AW2.Graphics
                     // multiple of a pair of the separator texture than the screen width;
                     // it helps us center the looping separator texture.
                     int extraLength = 2 * separatorTexture.Height - screen.Width % (2 * separatorTexture.Height);
-                    for (Vector2 pos = new Vector2(-extraLength / 2, separator.coordinate);
+                    for (Vector2 pos = new Vector2(-extraLength / 2, separator.Coordinate);
                         pos.X < screen.Width; pos.X += separatorTexture.Height)
-                        spriteBatch.Draw(separatorTexture, pos, null, Color.White, -MathHelper.PiOver2,
+                        _spriteBatch.Draw(separatorTexture, pos, null, Color.White, -MathHelper.PiOver2,
                             separatorOrigin, 1, SpriteEffects.None, 0);
                 }
             }
-            spriteBatch.End();
+            _spriteBatch.End();
         }
 
         /// <summary>

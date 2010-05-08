@@ -33,32 +33,32 @@ namespace AW2.Graphics
         /// <summary>
         /// Effect for drawing parallaxes as 3D primitives.
         /// </summary>
-        BasicEffect effect;
+        private BasicEffect _effect;
 
         /// <summary>
         /// Vertex declaration for drawing parallaxes as 3D primitives.
         /// </summary>
-        VertexDeclaration vertexDeclaration;
+        private VertexDeclaration _vertexDeclaration;
 
         /// <summary>
         /// Vertex data scratch buffer for drawing parallaxes as 3D primitives.
         /// </summary>
-        VertexPositionTexture[] vertexData;
+        private VertexPositionTexture[] _vertexData;
 
         #endregion Fields that are used only when PARALLAX_IN_3D is #defined
 
         /// <summary>
         /// Sprite batch to use for drawing sprites.
         /// </summary>
-        protected SpriteBatch spriteBatch;
+        protected SpriteBatch _spriteBatch;
 
         /// <summary>
         /// Overlay graphics components to draw in this viewport.
         /// </summary>
-        protected List<OverlayComponent> overlayComponents;
+        protected List<OverlayComponent> _overlayComponents;
 
-        TexturePostprocessor _postprocessor;
-        Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
+        private TexturePostprocessor _postprocessor;
+        private Func<IEnumerable<CanonicalString>> _getPostprocessEffectNames;
 
         /// <summary>
         /// Ratio of screen pixels to game world meters. Default value is 1.
@@ -134,7 +134,7 @@ namespace AW2.Graphics
         /// <param name="lookAt">The point to follow.</param>
         public AWViewport(Rectangle onScreen, ILookAt lookAt, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
         {
-            overlayComponents = new List<OverlayComponent>();
+            _overlayComponents = new List<OverlayComponent>();
             Viewport = new Viewport
             {
                 X = onScreen.X,
@@ -155,7 +155,7 @@ namespace AW2.Graphics
         /// <param name="component">The component to add.</param>
         public void AddOverlayComponent(OverlayComponent component)
         {
-            overlayComponents.Add(component);
+            _overlayComponents.Add(component);
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace AW2.Graphics
         /// </summary>
         public void ClearOverlayComponents()
         {
-            overlayComponents.Clear();
+            _overlayComponents.Clear();
         }
 
         /// <summary>
@@ -267,8 +267,8 @@ namespace AW2.Graphics
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Viewport = Viewport;
-            foreach (OverlayComponent component in overlayComponents)
-                component.Draw(spriteBatch);
+            foreach (OverlayComponent component in _overlayComponents)
+                component.Draw(_spriteBatch);
         }
 
         protected virtual void RenderGameWorld()
@@ -310,14 +310,14 @@ namespace AW2.Graphics
                     if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                     {
                         if (drawMode.HasValue)
-                            drawMode.Value.EndDraw(spriteBatch);
+                            drawMode.Value.EndDraw(_spriteBatch);
                         drawMode = gob.DrawMode2D;
-                        drawMode.Value.BeginDraw(spriteBatch);
+                        drawMode.Value.BeginDraw(_spriteBatch);
                     }
-                    gob.Draw2D(gameToScreen, spriteBatch, layerScale * ZoomRatio);
+                    gob.Draw2D(gameToScreen, _spriteBatch, layerScale * ZoomRatio);
                 });
                 if (drawMode.HasValue)
-                    drawMode.Value.EndDraw(spriteBatch);
+                    drawMode.Value.EndDraw(_spriteBatch);
             }
         }
 
@@ -326,7 +326,7 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void LoadContent()
         {
-            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
             Action<ICollection<Effect>> effectContainerUpdater = container =>
             {
                 container.Clear();
@@ -334,7 +334,7 @@ namespace AW2.Graphics
                     container.Add(AssaultWing.Instance.Content.Load<Effect>(name));
             };
             _postprocessor = new TexturePostprocessor(AssaultWing.Instance.GraphicsDevice, effectContainerUpdater);
-            foreach (OverlayComponent component in overlayComponents)
+            foreach (OverlayComponent component in _overlayComponents)
                 component.LoadContent();
         }
 
@@ -343,10 +343,10 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void UnloadContent()
         {
-            foreach (OverlayComponent component in overlayComponents)
+            foreach (OverlayComponent component in _overlayComponents)
                 component.UnloadContent();
             _postprocessor.Dispose();
-            spriteBatch.Dispose();
+            _spriteBatch.Dispose();
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace AW2.Graphics
         /// </summary>
         /// <param name="z">The depth, in game coordinates.</param>
         /// <returns>The scaling factor at the depth.</returns>
-        float GetScale(float z)
+        private float GetScale(float z)
         {
             return 1000 / (1000 - z);
         }
@@ -371,18 +371,18 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_IN_3D")]
         private void Draw_InitializeParallaxIn3D()
         {
-            if (effect != null) return;
+            if (_effect != null) return;
             var gfx = AssaultWing.Instance.GraphicsDevice;
-            effect = new BasicEffect(gfx, null);
-            effect.World = Matrix.Identity;
-            effect.Projection = Matrix.Identity;
-            effect.View = Matrix.Identity;
-            effect.TextureEnabled = true;
-            effect.LightingEnabled = false;
-            effect.FogEnabled = false;
-            effect.VertexColorEnabled = false;
-            vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
-            vertexData = new VertexPositionTexture[] {
+            _effect = new BasicEffect(gfx, null);
+            _effect.World = Matrix.Identity;
+            _effect.Projection = Matrix.Identity;
+            _effect.View = Matrix.Identity;
+            _effect.TextureEnabled = true;
+            _effect.LightingEnabled = false;
+            _effect.FogEnabled = false;
+            _effect.VertexColorEnabled = false;
+            _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
+            _vertexData = new VertexPositionTexture[] {
                 new VertexPositionTexture(new Vector3(-1, -1, 1), Vector2.UnitY),
                 new VertexPositionTexture(new Vector3(-1, 1, 1), Vector2.Zero),
                 new VertexPositionTexture(new Vector3(1, -1, 1), Vector2.One),
@@ -412,24 +412,24 @@ namespace AW2.Graphics
             {
                 // Render looping parallax as two huge triangles.
                 gfx.RenderState.DepthBufferEnable = false;
-                gfx.VertexDeclaration = vertexDeclaration;
-                effect.Texture = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                gfx.VertexDeclaration = _vertexDeclaration;
+                _effect.Texture = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                 var texCenter = GetScale(layer.Z) * new Vector2(
-                    LookAt.Position.X / effect.Texture.Width,
-                    -LookAt.Position.Y / effect.Texture.Height);
+                    LookAt.Position.X / _effect.Texture.Width,
+                    -LookAt.Position.Y / _effect.Texture.Height);
                 var texCornerOffset = new Vector2(
-                    Viewport.Width / (2f * effect.Texture.Width),
-                    -Viewport.Height / (2f * effect.Texture.Height)) / ZoomRatio;
-                vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
-                vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
-                vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
-                vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
+                    Viewport.Width / (2f * _effect.Texture.Width),
+                    -Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;
+                _vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
+                _vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
+                _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
+                _vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
 
-                effect.Begin();
-                effect.CurrentTechnique.Passes[0].Begin();
-                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, vertexData, 0, 2);
-                effect.CurrentTechnique.Passes[0].End();
-                effect.End();
+                _effect.Begin();
+                _effect.CurrentTechnique.Passes[0].Begin();
+                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
+                _effect.CurrentTechnique.Passes[0].End();
+                _effect.End();
             }
 
             // Modify renderstate for 3D graphics.
@@ -445,7 +445,7 @@ namespace AW2.Graphics
             var gfx = AssaultWing.Instance.GraphicsDevice;
             if (layer.ParallaxName != "")
             {
-                spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+                _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
                 gfx.RenderState.AlphaTestEnable = false;
                 var tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                 float texCenterX = (GetScale(layer.Z) * LookAt.Position.X).Modulo(tex.Width);
@@ -454,7 +454,7 @@ namespace AW2.Graphics
                 float screenStartY = (Viewport.Height / 2f - texCenterY * ZoomRatio).Modulo(tex.Height * ZoomRatio) - tex.Height * ZoomRatio;
                 for (float posX = screenStartX; posX <= Viewport.Width; posX += tex.Width * ZoomRatio)
                     for (float posY = screenStartY; posY <= Viewport.Height; posY += tex.Height * ZoomRatio)
-                        spriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, ZoomRatio, SpriteEffects.None, 1);
+                        _spriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, ZoomRatio, SpriteEffects.None, 1);
 /*
                 Vector2 pos = WorldAreaMin(0) * -GetScale(layer.Z);
                 pos.Y = -pos.Y;
@@ -476,7 +476,7 @@ namespace AW2.Graphics
                     fillPos.Y += tex.Height * zoomRatio;
                 }
 */
-                spriteBatch.End();
+                _spriteBatch.End();
             }
 
             // Modify renderstate for 3D graphics.
@@ -499,13 +499,13 @@ namespace AW2.Graphics
         /// If <b>true</b>, the separator is vertical;
         /// if <b>false</b>, the separator is horizontal.
         /// </summary>
-        public bool vertical;
+        public bool Vertical;
 
         /// <summary>
         /// The X coordinate of a vertical separator, or
         /// the Y coordinate of a horizontal separator.
         /// </summary>
-        public int coordinate;
+        public int Coordinate;
 
         /// <summary>
         /// Creates a new viewport separator.
@@ -514,8 +514,8 @@ namespace AW2.Graphics
         /// <param name="coordinate">The X or Y coordinate of the separator.</param>
         public ViewportSeparator(bool vertical, int coordinate)
         {
-            this.vertical = vertical;
-            this.coordinate = coordinate;
+            Vertical = vertical;
+            Coordinate = coordinate;
         }
     }
 }

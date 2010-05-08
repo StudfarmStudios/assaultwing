@@ -59,8 +59,6 @@ namespace AW2.Game
         /// </summary>
         private CanonicalString _shipTypeName;
 
-        public GameActionCollection BonusActions { get; private set; }
-        
         /// <summary>
         /// How many reincarnations the player has left.
         /// </summary>
@@ -231,6 +229,8 @@ namespace AW2.Game
         /// The name of the extra device as the player has chosen it.
         /// </summary>
         public CanonicalString ExtraDeviceName { get; set; }
+
+        public GameActionCollection BonusActions { get; private set; }
 
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.

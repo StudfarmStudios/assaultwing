@@ -11,8 +11,8 @@ namespace AW2.Graphics
 {
     public class AWViewportCollection : IEnumerable<Viewport>
     {
-        List<Viewport> _items;
-        List<ViewportSeparator> _separators;
+        private List<Viewport> _items;
+        private List<ViewportSeparator> _separators;
 
         public IEnumerable<ViewportSeparator> Separators { get { return _separators; } }
 

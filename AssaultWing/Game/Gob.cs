@@ -79,7 +79,7 @@ namespace AW2.Game
         /// Time, in seconds, for a gob to stop being cold.
         /// </summary>
         /// <see cref="Gob.Cold"/>
-        const float warmUpTime = 0.2f;
+        private const float WARM_UP_TIME = 0.2f;
 
         /// <summary>
         /// Least int that is known not to have been used as a gob identifier
@@ -91,7 +91,7 @@ namespace AW2.Game
         /// Such identifiers are positive.
         /// <seealso cref="Gob.Id"/>
         /// <seealso cref="Gob.leastUnusedIrrelevantId"/>
-        static int leastUnusedId = 1;
+        private static int g_leastUnusedId = 1;
 
         /// <summary>
         /// Greatest int that is known not to have been used as a gob identifier
@@ -102,31 +102,31 @@ namespace AW2.Game
         /// are negative.
         /// <seealso cref="Gob.Id"/>
         /// <seealso cref="Gob.leastUnusedId"/>
-        static int leastUnusedIrrelevantId = -1;
+        private static int g_leastUnusedIrrelevantId = -1;
 
         /// <summary>
         /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
-        Player owner;
+        private Player _owner;
 
         /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.
         /// 0 is front, 1 is back.
         /// </summary>
         [TypeParameter]
-        float depthLayer2D;
+        private float depthLayer2D;
 
         /// <summary>
         /// Drawing mode of 2D graphics of the gob.
         /// </summary>
         [TypeParameter]
-        DrawMode2D drawMode2D;
+        private DrawMode2D drawMode2D;
 
         /// <summary>
         /// Preferred placement of gob to arena layers.
         /// </summary>
         [TypeParameter]
-        LayerPreferenceType layerPreference;
+        private LayerPreferenceType layerPreference;
 
         /// <summary>
         /// Position of the gob in the game world.
@@ -144,44 +144,44 @@ namespace AW2.Game
         /// Gob rotation around the Z-axis in radians.
         /// </summary>
         [RuntimeState]
-        float rotation;
+        private float rotation;
 
         /// <summary>
         /// Mass of the gob, measured in kilograms.
         /// </summary>
         /// Larger mass needs more force to be put in motion. 
         [TypeParameter]
-        float mass;
+        private float mass;
 
         /// <summary>
         /// Name of the 3D model of the gob. The name indexes the model database in GraphicsEngine.
         /// </summary>
         [TypeParameter]
-        CanonicalString modelName;
+        private CanonicalString modelName;
 
         /// <summary>
         /// Scaling factor of the 3D model.
         /// </summary>
         [TypeParameter]
-        float scale;
+        private float scale;
 
         /// <summary>
         /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
         /// </summary>
-        float alpha;
+        private float _alpha;
 
         /// <summary>
         /// Types of gobs to create on birth.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        CanonicalString[] birthGobTypes;
+        private CanonicalString[] birthGobTypes;
 
         /// <summary>
         /// Types of gobs to create on death.
         /// </summary>
         /// You might want to put some gob types of subclass Explosion here.
         [TypeParameter, ShallowCopy]
-        CanonicalString[] deathGobTypes;
+        private CanonicalString[] deathGobTypes;
 
         /// <summary>
         /// Time of birth of the gob, in game time.
@@ -193,16 +193,16 @@ namespace AW2.Game
         /// True iff the Die() has been called for this gob.
         /// </summary>
         [RuntimeState]
-        bool dead;
+        private bool dead;
 
         /// <summary>
         /// True iff the gob is not regarded in movement and collisions.
         /// </summary>
         [RuntimeState]
         [Obsolete("Remove this field and remove the corresponding XML elements from arena XML files")]
-        bool disabled;
+        private bool disabled;
 
-        int _disabledCount;
+        private int _disabledCount;
 
         /// <summary>
         /// True iff the gob moves around by the laws of physics.
@@ -215,7 +215,7 @@ namespace AW2.Game
         /// True iff the gob's movement is affected by gravity and other forces.
         /// </summary>
         /// Subclasses should set this according to their needs.
-        protected bool gravitating;
+        protected bool _gravitating;
 
         /// <summary>
         /// Preferred maximum time between the gob's state updates
@@ -227,12 +227,12 @@ namespace AW2.Game
         /// <summary>
         /// Access only through <see cref="ModelPartTransforms"/>.
         /// </summary>
-        Matrix[] modelPartTransforms;
+        private Matrix[] _modelPartTransforms;
 
         /// <summary>
         /// Last time of update of <see cref="modelPartTransforms"/>, in game time.
         /// </summary>
-        TimeSpan modelPartTransformsUpdated;
+        private TimeSpan _modelPartTransformsUpdated;
 
         /// <summary>
         /// Bounding volume of the visuals of the gob, in gob coordinates.
@@ -247,7 +247,7 @@ namespace AW2.Game
         /// Names of exhaust engine types.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        CanonicalString[] exhaustEngineNames;
+        private CanonicalString[] exhaustEngineNames;
 
         /// <summary>
         /// Indices of bones that indicate exhaust engine locations
@@ -279,13 +279,13 @@ namespace AW2.Game
         /// <b>maxDamage</b> means totally destroyed.
         /// </summary>
         [RuntimeState]
-        float damage;
+        private float damage;
 
         /// <summary>
         /// Maximum amount of sustainable damage.
         /// </summary>
         [TypeParameter]
-        float maxDamage;
+        private float maxDamage;
 
         #endregion Fields for damage
 
@@ -294,24 +294,24 @@ namespace AW2.Game
         /// <summary>
         /// Function that maps bleach damage to bleach, i.e. degree of whiteness.
         /// </summary>
-        static Curve g_bleachCurve;
+        private static Curve g_bleachCurve;
 
         /// <summary>
         /// Amount of accumulated damage that determines the amount of bleach.
         /// </summary>
-        float _bleachDamage;
+        private float _bleachDamage;
 
         /// <summary>
         /// Previously returned value of <see cref="GetBleach"/>.
         /// </summary>
-        float _previousBleach;
+        private float _previousBleach;
 
         /// <summary>
         /// Time when bleach will be reset, in game time.
         /// </summary>
         /// When bleach is set to nonzero, this time is set to denote how
         /// long the bleach is supposed to stay on.
-        TimeSpan _bleachResetTime;
+        private TimeSpan _bleachResetTime;
 
         #endregion Fields for bleach
 
@@ -436,7 +436,7 @@ namespace AW2.Game
         /// <summary>
         /// Get the owner of the gob.
         /// </summary>
-        public Player Owner { get { return owner; } set { owner = value; } }
+        public Player Owner { get { return _owner; } set { _owner = value; } }
 
         /// <summary>
         /// Arena layer of the gob, or <c>null</c> if uninitialised. Set by <see cref="Arena"/>.
@@ -458,7 +458,7 @@ namespace AW2.Game
         /// <summary>
         /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
         /// </summary>
-        public float Alpha { get { return alpha; } set { alpha = value; } }
+        public float Alpha { get { return _alpha; } set { _alpha = value; } }
 
         /// <summary>
         /// Returns the world matrix of the gob, i.e., the translation from
@@ -469,22 +469,22 @@ namespace AW2.Game
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.
         /// </summary>
-        Matrix[] ModelPartTransforms
+        private Matrix[] ModelPartTransforms
         {
             get
             {
-                if (modelPartTransforms == null || modelPartTransforms.Length != Model.Bones.Count)
+                if (_modelPartTransforms == null || _modelPartTransforms.Length != Model.Bones.Count)
                 {
-                    modelPartTransforms = new Matrix[Model.Bones.Count];
-                    modelPartTransformsUpdated = new TimeSpan(-1);
+                    _modelPartTransforms = new Matrix[Model.Bones.Count];
+                    _modelPartTransformsUpdated = new TimeSpan(-1);
                 }
                 var now = AssaultWing.Instance.GameTime.TotalArenaTime;
-                if (modelPartTransformsUpdated < now)
+                if (_modelPartTransformsUpdated < now)
                 {
-                    modelPartTransformsUpdated = now;
-                    CopyAbsoluteBoneTransformsTo(Model, modelPartTransforms);
+                    _modelPartTransformsUpdated = now;
+                    CopyAbsoluteBoneTransformsTo(Model, _modelPartTransforms);
                 }
-                return modelPartTransforms;
+                return _modelPartTransforms;
             }
         }
 
@@ -500,7 +500,7 @@ namespace AW2.Game
         /// All gobs are born <b>cold</b>. If a gob is cold, it won't
         /// collide with other gobs that have the same owner. This works around
         /// the problem of bullets hitting the firing ship immediately at birth.
-        public virtual bool Cold { get { return birthTime.SecondsAgoGameTime() < warmUpTime; } }
+        public virtual bool Cold { get { return birthTime.SecondsAgoGameTime() < WARM_UP_TIME; } }
 
         /// <summary>
         /// Is the gob dead, i.e. has Die been called for this gob.
@@ -530,7 +530,7 @@ namespace AW2.Game
         /// <summary>
         /// True iff the gob's movement is affected by gravity and other forces.
         /// </summary>
-        public bool Gravitating { get { return gravitating; } }
+        public bool Gravitating { get { return _gravitating; } }
 
         #endregion Gob Properties
 
@@ -576,7 +576,7 @@ namespace AW2.Game
             depthLayer2D = 0.5f;
             drawMode2D = new DrawMode2D(DrawModeType2D.None);
             layerPreference = LayerPreferenceType.Front;
-            owner = null;
+            _owner = null;
             pos = Vector2.Zero;
             move = Vector2.Zero;
             rotation = 0;
@@ -592,7 +592,7 @@ namespace AW2.Game
             birthTime = new TimeSpan(23, 59, 59);
             dead = false;
             movable = true;
-            modelPartTransforms = null;
+            _modelPartTransforms = null;
             exhaustEngineNames = new CanonicalString[0];
         }
 
@@ -602,14 +602,14 @@ namespace AW2.Game
         protected Gob(CanonicalString typeName)
             : base(typeName)
         {
-            gravitating = true;
+            _gravitating = true;
             SetId();
-            owner = null;
+            _owner = null;
             ResetPos(Vector2.Zero, Vector2.Zero, Gob.defaultRotation); // also translates collPrimitives
             birthTime = AssaultWing.Instance.GameTime.TotalArenaTime;
-            modelPartTransforms = null;
+            _modelPartTransforms = null;
             exhaustEngines = new Gob[0];
-            alpha = 1;
+            _alpha = 1;
             _bleachDamage = 0;
             _previousBleach = -1;
             _bleachResetTime = new TimeSpan(0);
@@ -788,14 +788,14 @@ namespace AW2.Game
 
                 // Apply alpha.
                 float oldAlpha = 1;
-                if (alpha < 1)
+                if (_alpha < 1)
                 {
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     if (mesh.Effects.Count > 1)
                         throw new Exception("Error: Several effects on a gob with alpha effect. Programmer must use arrays for saving BasicEffect state.");
                     BasicEffect be = (BasicEffect)mesh.Effects[0];
                     oldAlpha = be.Alpha;
-                    be.Alpha = alpha;
+                    be.Alpha = _alpha;
 
                     // Modify render state.
                     AssaultWing.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = true;
@@ -811,7 +811,7 @@ namespace AW2.Game
                 mesh.Draw();
 
                 // Undo alpha application.
-                if (alpha < 1)
+                if (_alpha < 1)
                 {
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     BasicEffect be = (BasicEffect)mesh.Effects[0];
@@ -916,8 +916,8 @@ namespace AW2.Game
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)Id);
-                if (owner != null)
-                    writer.Write((int)owner.Id);
+                if (_owner != null)
+                    writer.Write((int)_owner.Id);
                 else
                     writer.Write((int)-1);
             }
@@ -944,7 +944,7 @@ namespace AW2.Game
             {
                 Id = reader.ReadInt32();
                 int ownerId = reader.ReadInt32();
-                owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
+                _owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1200,14 +1200,14 @@ namespace AW2.Game
         /// <summary>
         /// Creates birth gobs for the gob.
         /// </summary>
-        void CreateBirthGobs()
+        private void CreateBirthGobs()
         {
             foreach (var gobType in birthGobTypes)
             {
                 CreateGob(gobType, gob =>
                 {
                     gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);
-                    gob.owner = this.owner;
+                    gob._owner = this._owner;
                     var peng = gob as Gobs.Peng;
                     if (peng != null) peng.Leader = this;
                     Arena.Gobs.Add(gob);
@@ -1218,7 +1218,7 @@ namespace AW2.Game
         /// <summary>
         /// Creates birth gobs for the gob from specially named meshes in the gob's 3D model.
         /// </summary>
-        void CreateModelBirthGobs()
+        private void CreateModelBirthGobs()
         {
             KeyValuePair<string, int>[] poses = GetNamedPositions("Peng_");
             foreach (KeyValuePair<string, int> pos in poses)
@@ -1249,7 +1249,7 @@ namespace AW2.Game
         /// <summary>
         /// Creates collision areas from specially named 3D model meshes.
         /// </summary>
-        void InitializeModelCollisionAreas()
+        private void InitializeModelCollisionAreas()
         {
             foreach (ModelMesh mesh in Model.Meshes)
             {
@@ -1270,19 +1270,16 @@ namespace AW2.Game
         /// <summary>
         /// Pretransforms the gob's collision areas if the gob is unmovable.
         /// </summary>
-        void TransformUnmovableCollisionAreas()
+        private void TransformUnmovableCollisionAreas()
         {
             if (Movable) return;
             foreach (var area in collisionAreas)
                 area.AreaGob = area.AreaGob.Transform(WorldMatrix);
         }
 
-        public void selfDestruct(CanonicalString[] g_deathGobTypes)
+        public void SelfDestruct(CanonicalString[] deathGobTypes)
         {
-            foreach (var gobType in g_deathGobTypes)
-            {
-                deathGobTypes = g_deathGobTypes;
-            }
+            this.deathGobTypes = deathGobTypes;
         }
 
         /// <summary>
@@ -1291,7 +1288,7 @@ namespace AW2.Game
         /// </summary>
         /// <param name="cause">The cause of death.</param>
         /// <param name="forceRemove">Force removal of the dead gob. Useful for clients.</param>
-        void DieImpl(DeathCause cause, bool forceRemove)
+        private void DieImpl(DeathCause cause, bool forceRemove)
         {
             if (Dead) return;
             dead = true;
@@ -1303,7 +1300,7 @@ namespace AW2.Game
                 CreateGob(gobType, gob =>
                 {
                     gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);
-                    gob.owner = this.owner;
+                    gob._owner = this._owner;
                     Arena.Gobs.Add(gob);
                 });
             }
@@ -1339,11 +1336,11 @@ namespace AW2.Game
             return _previousBleach;
         }
 
-        void SetId()
+        private void SetId()
         {
             Id = AssaultWing.Instance.NetworkMode == NetworkMode.Client
-                ? leastUnusedIrrelevantId--
-                : leastUnusedId++;
+                ? g_leastUnusedIrrelevantId--
+                : g_leastUnusedId++;
         }
 
         #endregion

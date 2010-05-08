@@ -96,7 +96,7 @@ namespace AW2.Game.Gobs
             flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
             flowTime = 0.5f;
             impactHoleRadius = 100;
-            particleEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
+            particleEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
             sound = "Explosion";
             firstCollisionChecked = false;
         }

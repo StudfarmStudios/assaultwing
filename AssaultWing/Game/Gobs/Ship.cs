@@ -280,7 +280,7 @@ namespace AW2.Game.Gobs
             }
             birthAlpha.Keys.Add(new CurveKey(2, 1));
             birthAlpha.ComputeTangents(CurveTangent.Flat);
-            coughEngineNames = new CanonicalString[] { (CanonicalString)"dummyparticleengine", };
+            coughEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
             temporarilyDisabledGobs = new List<Gob>();
             iconEquipName = (CanonicalString)"dummytexture";
         }

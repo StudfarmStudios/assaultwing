@@ -127,11 +127,6 @@
     <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\ChargeProvider.cs" />
     <Compile Include="Game\LogicEngine.cs" />
-    <Compile Include="Game\Particles\DotEmitter.cs" />
-    <Compile Include="Game\Particles\Emitter.cs" />
-    <Compile Include="Game\Particles\ExplodeEmitter.cs" />
-    <Compile Include="Game\Particles\Particle.cs" />
-    <Compile Include="Game\Particles\ParticleEngine.cs" />
     <Compile Include="Game\Pengs\Particle.cs" />
     <Compile Include="Game\Pengs\ParticleEmitter.cs" />
     <Compile Include="Game\Pengs\ParticleUpdater.cs" />

@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.Sound;
-using AW2.Game.Particles;
 
 namespace AW2.Game.Weapons
 {
@@ -27,7 +26,6 @@ namespace AW2.Game.Weapons
 
         /// This constructor is only for serialisation.
         public SelfDestruct()
-            : base()
         {
             deathGobTypes = new CanonicalString[0];
         }
@@ -35,7 +33,6 @@ namespace AW2.Game.Weapons
         public SelfDestruct(CanonicalString typeName)
             : base(typeName)
         {
- 
         }
 
         /// <summary>

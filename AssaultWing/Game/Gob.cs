@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Game.Particles;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Graphics;
@@ -730,7 +729,6 @@ namespace AW2.Game
         public virtual void Update()
         {
             Arena.Move(this, AssaultWing.Instance.GameTime.ElapsedGameTime, true);
-            UpdateExhaustEngines();
         }
 
         /// <summary>
@@ -1063,18 +1061,9 @@ namespace AW2.Game
                 {
                     Gob.CreateGob(exhaustEngineNames[tempI], gob =>
                     {
-                        if (gob is ParticleEngine)
+                        var peng = gob as Gobs.Peng;
+                        if (peng != null)
                         {
-                            ParticleEngine peng = (ParticleEngine)gob;
-                            peng.Loop = true;
-                            peng.IsAlive = true;
-                            DotEmitter exhaustEmitter = peng.Emitter as DotEmitter;
-                            if (exhaustEmitter != null)
-                                exhaustEmitter.Direction = Rotation + MathHelper.Pi;
-                        }
-                        else if (gob is Gobs.Peng)
-                        {
-                            Gobs.Peng peng = (Gobs.Peng)gob;
                             peng.Leader = this;
                             peng.LeaderBone = boneIs[thrustI].Value;
                         }
@@ -1087,23 +1076,6 @@ namespace AW2.Game
             exhaustEngines = exhaustEngineList.ToArray();
         }
 
-        /// <summary>
-        /// Updates the gob's exhaust engines.
-        /// </summary>
-        /// This method should be called after the gob's position and direction
-        /// have been updated so that the exhaust engines have an up-to-date location.
-        private void UpdateExhaustEngines()
-        {
-            for (int i = 0; i < exhaustEngines.Length; ++i)
-                if (exhaustEngines[i] is ParticleEngine)
-                {
-                    exhaustEngines[i].Pos = GetNamedPosition(exhaustBoneIs[i]);
-                    DotEmitter dotEmitter = ((ParticleEngine)exhaustEngines[i]).Emitter as DotEmitter;
-                    if (dotEmitter != null)
-                        dotEmitter.Direction = Rotation + MathHelper.Pi;
-                }
-        }
-
         #endregion Gob methods related to thrusters
 
         #region Gob miscellaneous protected methods
@@ -1114,12 +1086,10 @@ namespace AW2.Game
         /// <param name="active">If <c>true</c>, switches exhaust engines on, otherwise off.</param>
         protected void SwitchExhaustEngines(bool active)
         {
-            foreach (Gob exhaustEngine in exhaustEngines)
+            foreach (var exhaustEngine in exhaustEngines)
             {
-                if (exhaustEngine is ParticleEngine)
-                    ((ParticleEngine)exhaustEngine).IsAlive = active;
-                else if (exhaustEngine is Gobs.Peng)
-                    ((Gobs.Peng)exhaustEngine).Paused = !active;
+                var peng = exhaustEngine as Gobs.Peng;
+                if (peng != null) peng.Paused = !active;
             }
         }
 
@@ -1238,10 +1208,8 @@ namespace AW2.Game
                 {
                     gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);
                     gob.owner = this.owner;
-                    if (gob is ParticleEngine)
-                        ((ParticleEngine)gob).Leader = this;
-                    if (gob is Gobs.Peng)
-                        ((Gobs.Peng)gob).Leader = this;
+                    var peng = gob as Gobs.Peng;
+                    if (peng != null) peng.Leader = this;
                     Arena.Gobs.Add(gob);
                 });
             }
@@ -1267,15 +1235,12 @@ namespace AW2.Game
                 }
                 Gob.CreateGob((CanonicalString)tokens[1], gob =>
                 {
-                    Gobs.Peng peng = gob as Gobs.Peng;
+                    var peng = gob as Gobs.Peng;
                     if (peng != null)
                     {
                         peng.Leader = this;
                         peng.LeaderBone = pos.Value;
                     }
-                    ParticleEngine particleEngine = gob as ParticleEngine;
-                    if (particleEngine != null)
-                        particleEngine.Leader = this;
                     Arena.Gobs.Add(gob);
                 });
             }

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using AW2.Game.Particles;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs
@@ -326,14 +325,7 @@ namespace AW2.Game.Gobs
             {
                 Gob.CreateGob(coughEngineNames[i], gob =>
                 {
-                    if (gob is ParticleEngine)
-                    {
-                        ParticleEngine peng = (ParticleEngine)gob;
-                        peng.Loop = true;
-                        peng.IsAlive = false;
-                        peng.Leader = this;
-                    }
-                    else if (gob is Peng)
+                    if (gob is Peng)
                     {
                         Peng peng = (Peng)gob;
                         peng.Paused = true;
@@ -351,14 +343,7 @@ namespace AW2.Game.Gobs
             if (Owner == null) return;
             Gob.CreateGob((CanonicalString)"playerglow", gob =>
             {
-                if (gob is ParticleEngine)
-                {
-                    var particleEngine = (ParticleEngine)gob;
-                    particleEngine.ResetPos(Pos, particleEngine.Move, Rotation);
-                    particleEngine.Owner = Owner;
-                    particleEngine.Leader = this;
-                }
-                else if (gob is Peng)
+                if (gob is Peng)
                 {
                     var peng = (Peng)gob;
                     peng.Owner = Owner;
@@ -428,17 +413,15 @@ namespace AW2.Game.Gobs
             // Manage cough engines.
             float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
             coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
-            foreach (Gob coughEngine in coughEngines)
-                if (coughEngine is ParticleEngine)
+            foreach (var coughEngine in coughEngines)
+            {
+                var peng = coughEngine as Peng;
+                if (peng != null)
                 {
-                    ((ParticleEngine)coughEngine).Argument = coughArgument;
-                    ((ParticleEngine)coughEngine).IsAlive = coughArgument > 0;
+                    peng.Input = coughArgument;
+                    peng.Paused = coughArgument == 0;
                 }
-                else if (coughEngine is Peng)
-                {
-                    ((Peng)coughEngine).Input = coughArgument;
-                    ((Peng)coughEngine).Paused = coughArgument == 0;
-                }
+            }
 
             ExtraDevice.Charge += extraDeviceChargeSpeed * (float)elapsedGameTime.TotalSeconds;
             Weapon2.Charge += weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;

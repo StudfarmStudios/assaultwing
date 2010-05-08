@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
-using AW2.Game.Particles;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.Gobs

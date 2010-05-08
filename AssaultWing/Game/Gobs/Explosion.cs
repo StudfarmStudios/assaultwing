@@ -4,7 +4,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Sound;
-using AW2.Game.Particles;
 
 namespace AW2.Game.Gobs
 {

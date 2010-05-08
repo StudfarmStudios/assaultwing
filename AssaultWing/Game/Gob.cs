@@ -195,13 +195,6 @@ namespace AW2.Game
         [RuntimeState]
         private bool dead;
 
-        /// <summary>
-        /// True iff the gob is not regarded in movement and collisions.
-        /// </summary>
-        [RuntimeState]
-        [Obsolete("Remove this field and remove the corresponding XML elements from arena XML files")]
-        private bool disabled;
-
         private int _disabledCount;
 
         /// <summary>

@@ -11,10 +11,7 @@ namespace AW2.Game.Gobs.Bonus
     {
         /// This constructor is only for serialisation.
         public DefinedBonus()
-            : base()
         {
-            this.lifetime = 10;
-            this.deathTime = new TimeSpan(0, 1, 20);
         }
 
         public DefinedBonus(CanonicalString typeName)
@@ -25,7 +22,8 @@ namespace AW2.Game.Gobs.Bonus
         protected override void DoBonusAction(Player player)
         {
             gameAction.Player = player;
-            gameAction.DoAction(duration);
+            gameAction.SetDuration(duration);
+            gameAction.DoAction();
 
             Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
             {

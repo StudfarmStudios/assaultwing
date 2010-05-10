@@ -22,18 +22,11 @@ namespace AW2.Game.Gobs.Bonus
 */        
         #endregion Bonus fields
 
-        /// <summary>
-        /// Creates an uninitialised bonus.
-        /// </summary>
         /// This constructor is only for serialisation.
         public RandomBonus()
-            : base()
         {
-            this.lifetime = 10;
-            this.deathTime = new TimeSpan(0, 1, 20);
-                /*new BonusActionPossibility(2, BonusAction.UpgradeWeapon2, 10),
-                new BonusActionPossibility(1.5f, BonusAction.UpgradeWeapon1LoadTime, 15)*/
-            
+            lifetime = 10;
+            deathTime = new TimeSpan(0, 1, 20);
         }
 
         /// <summary>
@@ -43,24 +36,14 @@ namespace AW2.Game.Gobs.Bonus
         public RandomBonus(CanonicalString typeName)
             : base(typeName)
         {
-
         }
 
-        #region Methods related to gobs' functionality in the game world
-
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
         public override void Activate()
         {
             base.Activate();
-            Log.Write("A Random type bonus was activated");
             deathTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(lifetime);
         }
 
-        /// <summary>
-        /// Updates the bonus's internal state.
-        /// </summary>
         public override void Update()
         {
             base.Update();
@@ -68,12 +51,6 @@ namespace AW2.Game.Gobs.Bonus
                 Die(new DeathCause());
         }
 
-        #endregion Methods related to gobs' functionality in the game world
-
-        /// <summary>
-        /// Perform a bonus action on a player.
-        /// </summary>
-        /// <param name="player">The player to receive the bonus action.</param>
         protected override void DoBonusAction(Player player)
         {
             /*if (possibilities.Length == 0) 

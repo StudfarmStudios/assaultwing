@@ -1,27 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
-using AW2.Game.Gobs;
-using AW2.Helpers;
 
 namespace AW2.Game.BonusActions
 {
-    class RepairSystemBonusAction : GameAction
+    [GameActionType(2)]
+    public class RepairSystemBonusAction : GameAction
     {
         private static readonly TimeSpan UPDATE_CYCLE = TimeSpan.FromSeconds(1);
         private TimeSpan _lastActivatedTime;
 
-        public override void DoAction(float duration)
+        public override void DoAction()
         {
-            base.DoAction(duration);
             GiveHealth();
             SetActionMessage();
-        }
-
-        private void SetActionMessage()
-        {
-            bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
+            base.DoAction();
         }
 
         public override void Update()
@@ -33,8 +24,14 @@ namespace AW2.Game.BonusActions
         private void GiveHealth()
         {
             _lastActivatedTime = AssaultWing.Instance.GameTime.TotalArenaTime;
-            float healthBonus = player.Ship.MaxDamageLevel * -0.05f;
-            player.Ship.InflictDamage(healthBonus, new DeathCause());
+            float healthBonus = Player.Ship.MaxDamageLevel * -0.05f;
+            Player.Ship.InflictDamage(healthBonus, new DeathCause());
+        }
+
+        private void SetActionMessage()
+        {
+            BonusText = "repair system";
+            BonusIconName = "b_icon_general";
         }
     }
 }

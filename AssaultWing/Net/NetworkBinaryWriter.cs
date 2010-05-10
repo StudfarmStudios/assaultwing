@@ -155,6 +155,11 @@ namespace AW2.Net
             Write((Vector2)vertex.TextureCoordinate);
         }
 
+        public void Write(TimeSpan timeSpan)
+        {
+            Write((long)timeSpan.Ticks);
+        }
+
         /// <summary>
         /// Writes a Vector2 value using half precision.
         /// </summary>

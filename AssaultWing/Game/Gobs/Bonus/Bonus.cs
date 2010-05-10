@@ -45,15 +45,11 @@ namespace AW2.Game.Gobs.Bonus
 
         #endregion Bonus fields
 
-        /// <summary>
-        /// Creates an uninitialised bonus.
-        /// </summary>
         /// This constructor is only for serialisation.
         public Bonus()
-            : base()
         {
-            this.lifetime = 10;
-            this.deathTime = new TimeSpan(0, 1, 20);
+            lifetime = 10;
+            deathTime = new TimeSpan(0, 1, 20);
         }
 
         /// <summary>

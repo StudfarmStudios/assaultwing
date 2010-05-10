@@ -189,8 +189,8 @@ namespace AW2.Graphics
                 iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus duration meter.
-            float startSeconds = (float)bonusAction.actionTimeins.TotalSeconds;
-            float endSeconds = (float)bonusAction.actionTimeouts.TotalSeconds;
+            float startSeconds = (float)bonusAction.BeginTime.TotalSeconds;
+            float endSeconds = (float)bonusAction.EndTime.TotalSeconds;
             float nowSeconds = (float)AssaultWing.Instance.GameTime.TotalArenaTime.TotalSeconds;
             float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
             int durationHeight = (int)Math.Round(duration * bonusDurationTexture.Height);

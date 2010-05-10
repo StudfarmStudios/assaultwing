@@ -39,104 +39,6 @@ namespace AW2.Net
     }
 
     /// <summary>
-    /// Message type identifier. Each <c>Message</c> subclass
-    /// must specify their identifier as a static instance of
-    /// this type.
-    /// </summary>
-    public class MessageType
-    {
-        /// <summary>
-        /// Topic of the message.
-        /// </summary>
-        public byte topicIdentifier;
-
-        /// <summary>
-        /// Is the message a reply to a previous message.
-        /// </summary>
-        public bool isReply;
-
-        /// <summary>
-        /// A mapping of message type identifier hash codes to message types.
-        /// </summary>
-        /// <c>GetMessageTypeIndex</c> produces valid indices for this array.
-        /// <seealso cref="GetMessageTypeIndex"/>
-        static Type[] messageTypes = new Type[256 * 2];
-
-        /// <summary>
-        /// The subclass of Message that this message type identifier represents,
-        /// or <c>null</c> if no such subclass exists.
-        /// </summary>
-        public Type MessageSubclass
-        {
-            get
-            {
-                int hashCode = GetHashCode();
-                if (hashCode < 0 || hashCode >= messageTypes.Length)
-                    return null;
-                return messageTypes[hashCode];
-            }
-        }
-
-        /// <summary>
-        /// Registers a message type identifier to refer to a type.
-        /// </summary>
-        /// <param name="messageType">The message type identifier</param>
-        /// <param name="type">The type</param>
-        public static void Register(MessageType messageType, Type type)
-        {
-            int hashCode = messageType.GetHashCode();
-            if (messageTypes[hashCode] != null)
-                throw new Exception("Two message types have the same identifier: " + type.Name + " and " + messageTypes[hashCode].Name);
-            messageTypes[hashCode] = type;
-        }
-
-        /// <summary>
-        /// Returns the message type (i.e. a nonabstract subclass of Message)
-        /// corresponding to a topic and reply status.
-        /// </summary>
-        public static Type GetMessageSubclass(byte topicIdentifier, bool isReply)
-        {
-            return messageTypes[GetMessageTypeIndex(topicIdentifier, isReply)];
-        }
-
-        /// <summary>
-        /// Returns the hash code for this object.
-        /// </summary>
-        /// <returns>This object's hash code.</returns>
-        public override int GetHashCode()
-        {
-            return GetMessageTypeIndex(topicIdentifier, isReply);
-        }
-
-        private static int GetMessageTypeIndex(byte topicIdentifier, bool isReply)
-        {
-            return isReply ? byte.MaxValue + 1 + topicIdentifier : topicIdentifier;
-        }
-
-        /// <summary>
-        /// Returns a textural, human readable description of this object.
-        /// </summary>
-        /// <returns>A textural, human readable description of this object.</returns>
-        public override string ToString()
-        {
-            Type messageSubclass = MessageSubclass;
-            return (messageSubclass == null ? "unknown" : messageSubclass.Name)
-                + (isReply ? "-reply" : "-request");
-        }
-
-        /// <summary>
-        /// Creates a message type.
-        /// </summary>
-        /// <param name="topicIdentifier">Topic of the message.</param>
-        /// <param name="isReply">Is the message a reply.</param>
-        public MessageType(byte topicIdentifier, bool isReply)
-        {
-            this.topicIdentifier = topicIdentifier;
-            this.isReply = isReply;
-        }
-    }
-
-    /// <summary>
     /// A message to send over a connection.
     /// </summary>
     /// <remarks>Subclasses should use the protected serialisation interface
@@ -259,8 +161,8 @@ namespace AW2.Net
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.Static;
             MessageType messageType = (MessageType)GetType().GetField("messageType", bindingFlags).GetValue(null);
-            writer.Write((byte)messageType.topicIdentifier);
-            if (messageType.isReply) headerFlags |= MessageHeaderFlags.Reply;
+            writer.Write((byte)messageType.TopicIdentifier);
+            if (messageType.IsReply) headerFlags |= MessageHeaderFlags.Reply;
             writer.Write((byte)headerFlags); // flags
             writer.Write((byte)versionIdentifier);
             writer.Write((ushort)0); // body length

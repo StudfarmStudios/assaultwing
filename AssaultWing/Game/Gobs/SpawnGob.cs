@@ -62,7 +62,7 @@ namespace AW2.Game.Gobs
     /// <summary>
     /// An area that creates gobs.
     /// </summary>
-    class SpawnGob : Gob
+    public class SpawnGob : Gob
     {
         #region SpawnGob fields
 
@@ -70,24 +70,24 @@ namespace AW2.Game.Gobs
         /// Area in which spawning takes place.
         /// </summary>
         [RuntimeState]
-        IGeomPrimitive spawnArea;
+        private IGeomPrimitive spawnArea;
 
         /// <summary>
         /// Time between spawns, in seconds of game time.
         /// </summary>
         [RuntimeState]
-        float spawnInterval;
+        private float spawnInterval;
 
         /// <summary>
         /// Name of the type of gobs to spawn.
         /// </summary>
         [RuntimeState]
-        SpawnType[] spawnTypes;
+        private SpawnType[] spawnTypes;
 
         /// <summary>
         /// Time of next spawn, in game time.
         /// </summary>
-        TimeSpan nextSpawn;
+        private TimeSpan _nextSpawn;
 
         #endregion SpawnGob fields
 
@@ -106,7 +106,7 @@ namespace AW2.Game.Gobs
             spawnArea = new Everything();
             spawnInterval = 20;
             spawnTypes = new SpawnType[1]{new SpawnType()};
-            nextSpawn = new TimeSpan(0, 1, 2);
+            _nextSpawn = new TimeSpan(0, 1, 2);
         }
 
         /// <summary>
@@ -118,18 +118,12 @@ namespace AW2.Game.Gobs
         {
         }
 
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
         public override void Activate()
         {
-            nextSpawn = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(spawnInterval);
+            _nextSpawn = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(spawnInterval);
             base.Activate();
         }
 
-        /// <summary>
-        /// returns a random SpawnType
-        /// </summary>
         private CanonicalString GetRandomSpawnType()
         {
             float massTotal = spawnTypes.Sum(spawnType => spawnType.weight);
@@ -150,9 +144,9 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             TimeSpan nowTime = AssaultWing.Instance.GameTime.TotalArenaTime;
-            while (nextSpawn <= nowTime)
+            while (_nextSpawn <= nowTime)
             {
-                nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
+                _nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
                 Gob.CreateGob(GetRandomSpawnType(), newGob =>
                 {
                     Vector2 spawnPos = Arena.GetFreePosition(newGob, spawnArea);

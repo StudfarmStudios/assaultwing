@@ -1,50 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
-using AW2.Game.Gobs;
 using AW2.Helpers;
 
 namespace AW2.Game.BonusActions
 {
+    [GameActionType(3)]
     public class SelfDestructBonusAction : GameAction
     {
-        [TypeParameter]
-        private CanonicalString weaponUpgrade;
-
-        /// <summary>
-        /// This constructor is only for serialization.
-        /// </summary>
-        public SelfDestructBonusAction()
+        public override void RemoveAction()
         {
-            weaponUpgrade = (CanonicalString)"dummyweapon";
+            Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Player.Weapon2Name);
+            Player.PostprocessEffectNames.Remove((CanonicalString)"bomber_rage");
         }
 
-        private void UpgradeWeapon(CanonicalString g_weaponUpgrade)
+        public override void DoAction()
         {
-            player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, g_weaponUpgrade);
-            player.PostprocessEffectNames.EnsureContains((CanonicalString)"bomber_rage");
-        }
-
-        /// <summary>
-        /// Action method. Contains logic for enabling the action
-        /// </summary>
-        public override void DoAction(float duration)
-        {
-            base.DoAction(duration);                
-            UpgradeWeapon(weaponUpgrade);
+            UpgradeWeapon();
             SetActionMessage();
+            base.DoAction();
+        }
+
+        private void UpgradeWeapon()
+        {
+            Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, (CanonicalString)"selfdestructship");
+            Player.PostprocessEffectNames.EnsureContains((CanonicalString)"bomber_rage");
         }
 
         private void SetActionMessage()
         {
-            bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
-        }
-
-        public override void RemoveAction()
-        {
-            player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, player.Weapon2Name);
-            player.PostprocessEffectNames.Remove((CanonicalString)"bomber_rage");
+            BonusText = "suicide bomber";
+            BonusIconName = "b_icon_suicide";
         }
     }
 }

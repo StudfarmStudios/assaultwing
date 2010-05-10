@@ -1,56 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using AW2.Helpers;
-using AW2.Game.Gobs;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.BonusActions
 {
-    class Weapon2UpgradeBonusAction : GameAction
+    [GameActionType(5)]
+    public class Weapon2UpgradeBonusAction : GameAction
     {
-        private void UpgradeWeapon(CanonicalString weaponUpgrade)
+        public override void DoAction()
         {
-            player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, weaponUpgrade);
-        }
-
-        /// <summary>
-        /// Action method. Contains logic for enabling the action
-        /// </summary>
-        public override void DoAction(float duration)
-        {
-            base.DoAction(duration);
-            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Ship.Weapon2Name);
+            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.Ship.Weapon2Name);
             if (weapon2.UpgradeNames != null && weapon2.UpgradeNames.Length > 0)
             {
-                CanonicalString weaponUpgrade = weapon2.UpgradeNames[0];
+                var weaponUpgrade = weapon2.UpgradeNames[0];
                 UpgradeWeapon(weaponUpgrade);
             }
             SetActionMessage();
+            base.DoAction();
         }
 
-        /// <summary>
-        /// Enables the ActionMessage (used in BonusOverlay)
-        /// </summary>
-        private void SetActionMessage()
-        {
-            var data = AssaultWing.Instance.DataEngine;
-            /*this if is waste of CPU if action is activated then, ship usually exists*/
-            Weapon weapon2 = player.Ship != null ? player.Ship.Weapon2
-               : (Weapon)data.GetTypeTemplate(player.Weapon2Name);
-
-            BonusText = player.Ship.Weapon2Name;
-            bonusIconName = weapon2.IconName;
-            bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
-        }
-
-        /// <summary>
-        /// Returs the default weapon for player after the Action Expires
-        /// </summary>
         public override void RemoveAction()
         {
-            player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, player.Weapon2Name);
+            Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Player.Weapon2Name);
+        }
+
+        private void UpgradeWeapon(CanonicalString weaponUpgrade)
+        {
+            Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, weaponUpgrade);
+        }
+
+        private void SetActionMessage()
+        {
+            BonusText = Player.Ship.Weapon2Name;
+            BonusIconName = Player.Ship.Weapon2.IconName;
         }
     }
 }

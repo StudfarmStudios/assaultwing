@@ -1,87 +1,108 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Net;
 
 namespace AW2.Game
 {
+    public class GameActionTypeAttribute : Attribute
+    {
+        public int ID { get; private set; }
+        public GameActionTypeAttribute(int id)
+        {
+            ID = id;
+        }
+    }
+
     [LimitedSerialization]
     public class GameAction : INetworkSerializable
     {
-        [TypeParameter]
-        protected string bonusText;
-        [TypeParameter]
-        protected string bonusIconName;
+        private const int GAME_ACTION_TYPES_MAX = 256;
+        private static Type[] g_gameActionTypes = new Type[GAME_ACTION_TYPES_MAX];
 
-        protected Player player;
-        protected Texture2D bonusIcon;
-
-        public Player Player { get { return player; } set { player = value; } }
-        public String BonusText { get { return bonusText; } protected set { bonusText = value; } }
-        public String BonusIconName { get { return bonusIconName; } }
-        public Texture2D BonusIcon { get { return bonusIcon; } }
-
-        /// <summary>
-        /// Starting times of the player's GameAction.
-        /// Starting time is the time when the gameaction was activated.
-        /// <seealso cref="PlayerBonus"/>
-        public TimeSpan actionTimeins;
-
-        /// <summary>
-        /// Ending times of the player's GameAction.
-        /// </summary>
-        /// <seealso cref="PlayerBonus"/>
-        public TimeSpan actionTimeouts;
-
-        /// <summary>
-        /// This constructor is only for serialization.
-        /// </summary>
-        public GameAction()
+        public Player Player { get; set; }
+        public string BonusText { get; protected set; }
+        public string BonusIconName { get; protected set; }
+        public Texture2D BonusIcon { get; private set; }
+        public TimeSpan BeginTime { get; private set; }
+        public TimeSpan EndTime { get; private set; }
+        public int TypeID
         {
-            bonusText = "unknown bonus";
-            bonusIconName = "dummytexture";
+            get
+            {
+                return GetType()
+                    .GetCustomAttributes(typeof(GameActionTypeAttribute), false)
+                    .Cast<GameActionTypeAttribute>()
+                    .Single().ID;
+            }
         }
 
-        /// <summary>
-        /// Action method. Contains logic for enabling the action
-        /// </summary>
-        /// <param name="duration">Time how long the action is active</param>
-        public virtual void DoAction(float duration)
+        static GameAction()
         {
-            actionTimeins = AssaultWing.Instance.GameTime.TotalArenaTime;
-            actionTimeouts = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(duration);
+            var types =
+                from type in Assembly.GetExecutingAssembly().GetTypes()
+                where typeof(GameAction).IsAssignableFrom(type) && type != typeof(GameAction)
+                select type;
+            foreach (var type in types)
+            {
+                var attributes = type.GetCustomAttributes(typeof(GameActionTypeAttribute), false);
+                if (attributes.Length != 1) throw new ApplicationException("Each GameAction subclass must have GameActionTypeAttribute");
+                var typeAttribute = (GameActionTypeAttribute)attributes[0];
+                int id = typeAttribute.ID;
+                if (id < 0 || id >= GAME_ACTION_TYPES_MAX) throw new ApplicationException("Invalid GameAction ID + " + id);
+                if (g_gameActionTypes[id] != null) throw new ApplicationException(string.Format("GameAction ID " + id + " used by two types, {0} and {1}", g_gameActionTypes[id].Name, type.Name));
+                g_gameActionTypes[id] = type;
+            }
+        }
+
+        public static GameAction CreateGameAction(int typeID)
+        {
+            if (typeID < 0 || typeID >= GAME_ACTION_TYPES_MAX) throw new ApplicationException("Invalid GameAction ID " + typeID);
+            if (g_gameActionTypes[typeID] == null) throw new ArgumentException("GameAction not defined for ID " + typeID);
+            return (GameAction)Activator.CreateInstance(g_gameActionTypes[typeID]);
+        }
+
+        public void SetDuration(float duration)
+        {
+            BeginTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+            EndTime = BeginTime + TimeSpan.FromSeconds(duration);
+        }
+
+        public virtual void DoAction()
+        {
+            BonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(BonusIconName);
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                player.MustUpdateToClients = true;
+                Player.MustUpdateToClients = true;
         }
 
-        /// <summary>
-        /// Returns the default state
-        /// </summary>
         public virtual void RemoveAction()
         {
         }
 
-        /// <summary>
-        /// Actions that do something when active
-        /// </summary>
         public virtual void Update()
         {
         }
 
-        #region INetworkSerializable Members
-
-        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            throw new NotImplementedException();
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                var duration = EndTime - BeginTime;
+                writer.Write(duration);
+            }
         }
 
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
         {
-            throw new NotImplementedException();
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                var duration = reader.ReadTimeSpan();
+                BeginTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+                EndTime = BeginTime + duration;
+            }
         }
-
-        #endregion
     }
 }

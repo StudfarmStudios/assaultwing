@@ -970,22 +970,18 @@ namespace AW2
                 framesSinceLastCheck = 1;
                 lastFramerateCheck = gameTime.TotalRealTime;
 
-                window.Title += " [arenatime: " + GameTime.TotalArenaTime + "]"; // !!!
-
                 if (NetworkMode != NetworkMode.Standalone)
                     window.Title += " [" + networkEngine.GetSendQueueSize() + " B send queue]";
 
                 if (NetworkMode == NetworkMode.Client && networkEngine.IsConnectedToGameServer)
-                    window.Title += string.Format(" [{0} ms lag, {1} ms offset]",
-                        (int)networkEngine.ServerPingTime.TotalMilliseconds,
-                        (int)networkEngine.ServerGameTimeOffset.TotalMilliseconds);
+                    window.Title += string.Format(" [{0} ms lag]",
+                        (int)networkEngine.ServerPingTime.TotalMilliseconds);
 
                 if (NetworkMode == NetworkMode.Server)
                     foreach (PingedConnection conn in networkEngine.GameClientConnections.Connections)
-                        window.Title += string.Format(" [#{0}: {1} ms lag, {2} ms offset]",
+                        window.Title += string.Format(" [#{0}: {1} ms lag]",
                             conn.Id,
-                            (int)conn.PingTime.TotalMilliseconds,
-                            (int)conn.RemoteGameTimeOffset.TotalMilliseconds);
+                            (int)conn.PingTime.TotalMilliseconds);
             }
             lock (GraphicsDevice) base.Draw(GameTime);
             lastDrawTime = GameTime.TotalArenaTime;

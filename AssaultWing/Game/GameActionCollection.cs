@@ -10,11 +10,13 @@ namespace AW2.Game
     {
         List<GameAction> _items;
         List<GameAction> _toRemove;
+        Player _owner;
 
-        public GameActionCollection()
+        public GameActionCollection(Player owner)
         {
             _items = new List<GameAction>();
             _toRemove = new List<GameAction>();
+            _owner = owner;
         }
 
         public void AddOrReplace(GameAction item)
@@ -60,7 +62,11 @@ namespace AW2.Game
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((short)_items.Count);
-                foreach (var item in _items) item.Serialize(writer, mode);
+                foreach (var item in _items)
+                {
+                    writer.Write((int)item.TypeID);
+                    item.Serialize(writer, SerializationModeFlags.All);
+                }
             }
         }
 
@@ -69,14 +75,35 @@ namespace AW2.Game
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 int count = reader.ReadInt16();
-                _items.Clear();
+                var currentItems = new List<GameAction>();
                 for (int i = 0; i < count; ++i)
                 {
-                    var itemTypeName = (CanonicalString)reader.ReadInt32();
-                    var item = new GameAction(); // !!! must find the correct subclass
-                    item.Deserialize(reader, mode, messageAge);
+                    var typeID = reader.ReadInt32();
+                    var item = GameAction.CreateGameAction(typeID);
+                    item.Deserialize(reader, SerializationModeFlags.All, messageAge);
+                    item.Player = _owner;
+                    currentItems.Add(item);
                 }
+                UpdateItems(currentItems);
             }
+        }
+
+        private void UpdateItems(List<GameAction> currentItems)
+        {
+            // Remove missing items
+            for (int i = _items.Count - 1; i >= 0 ; i--)
+			{
+                if (!currentItems.Any(x => x.TypeID == _items[i].TypeID))
+                    _items.RemoveAt(i);
+            }
+
+            // Add new items
+            foreach (var item in currentItems)
+                if (!_items.Any(x => x.TypeID == item.TypeID))
+                {
+                    item.DoAction();
+                    _items.Add(item);
+                }
         }
     }
 }

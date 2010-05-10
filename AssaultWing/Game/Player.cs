@@ -337,7 +337,7 @@ namespace AW2.Game
                 _shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
             _shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
             _lookAt = new LookAtShip();
-            BonusActions = new GameActionCollection();
+            BonusActions = new GameActionCollection(this);
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
         }
 
@@ -355,7 +355,7 @@ namespace AW2.Game
             foreach (var action in BonusActions)
             {
                 action.Update();
-                if (action.actionTimeouts <= AssaultWing.Instance.GameTime.TotalArenaTime)
+                if (action.EndTime <= AssaultWing.Instance.GameTime.TotalArenaTime)
                     BonusActions.RemoveLater(action);
             }
             BonusActions.CommitRemoves();
@@ -512,7 +512,7 @@ namespace AW2.Game
                 writer.Write((short)PostprocessEffectNames.Count);
                 foreach (var effectName in PostprocessEffectNames)
                     writer.Write((int)effectName.Canonical);
-                // TODO!!! BonusActions.Serialize(writer, mode);
+                BonusActions.Serialize(writer, mode);
             }
         }
 
@@ -536,7 +536,7 @@ namespace AW2.Game
                 PostprocessEffectNames.Clear();
                 for (int i = 0; i < effectNameCount; ++i)
                     PostprocessEffectNames.Add(new CanonicalString(reader.ReadInt32()));
-                // TODO!!! BonusActions.Deserialize(reader, mode, messageAge);
+                BonusActions.Deserialize(reader, mode, messageAge);
             }
         }
 

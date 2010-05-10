@@ -131,6 +131,11 @@ namespace AW2.Net
             };
         }
 
+        public TimeSpan ReadTimeSpan()
+        {
+            return new TimeSpan(ReadInt64());
+        }
+
         /// <summary>
         /// Reads a Vector2 value given in half precision.
         /// </summary>

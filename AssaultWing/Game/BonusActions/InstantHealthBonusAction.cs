@@ -1,40 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AW2.Helpers;
-using AW2.Game.Gobs;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.BonusActions
 {
-    class InstantHealthBonusAction : GameAction
+    [GameActionType(1)]
+    public class InstantHealthBonusAction : GameAction
     {
-        private void GiveHealth()
+        public override void DoAction()
         {
-            float healthBonus = player.Ship.MaxDamageLevel * 0.20f;
-            if (healthBonus <= player.Ship.DamageLevel)
-                player.Ship.DamageLevel -= healthBonus;
-            else
-                player.Ship.DamageLevel = 0.0f;
-        }   
-
-        /// <summary>
-        /// Action method. Contains logic for enabling the action
-        /// </summary>
-        public override void DoAction(float duration)
-        {
-            base.DoAction(duration);
             GiveHealth();
             SetActionMessage();
+            base.DoAction();
         }
 
-        /// <summary>
-        /// Enables the ActionMessage (used in BonusOverlay)
-        /// </summary>
+        private void GiveHealth()
+        {
+            float healthBonus = Player.Ship.MaxDamageLevel * 0.20f;
+            if (healthBonus <= Player.Ship.DamageLevel)
+                Player.Ship.DamageLevel -= healthBonus;
+            else
+                Player.Ship.DamageLevel = 0.0f;
+        }
+
         private void SetActionMessage()
         {
-            bonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(bonusIconName);
+            BonusText = "instant repair";
+            BonusIconName = "b_icon_general";
         }
     }
 }

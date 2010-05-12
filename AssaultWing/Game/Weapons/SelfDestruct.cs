@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Helpers;
+using AW2.Net;
 using AW2.Sound;
 
 namespace AW2.Game.Weapons
 {
     public class SelfDestruct : Weapon
     {
-        #region ForwardShot fields
-
         [TypeParameter, ShallowCopy]
         CanonicalString[] deathGobTypes;
-        
-        #endregion SelfDestruct fields
 
         /// This constructor is only for serialisation.
         public SelfDestruct()
@@ -52,5 +49,27 @@ namespace AW2.Game.Weapons
         public override void Dispose()
         {
         }
+
+        #region INetworkSerializable Members
+
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((bool)false); // HACK: write dummy boolean to imitate ForwardShot, this works around a bug
+            }
+        }
+
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            base.Deserialize(reader, mode, messageAge);
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                reader.ReadBoolean(); // HACK: read dummy boolean to imitate ForwardShot, this works around a bug
+            }
+        }
+
+        #endregion
     }
 }

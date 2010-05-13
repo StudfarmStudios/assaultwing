@@ -169,15 +169,15 @@ namespace AW2.Game
         {
             get
             {
-                if (AssaultWing.Instance.GameTime.TotalArenaTime > _shakeUpdateTime)
+                if (AssaultWing.Instance.DataEngine.ArenaTotalTime > _shakeUpdateTime)
                 {
                     // Attenuate shake damage for any skipped frames.
-                    float skippedTime = (float)(AssaultWing.Instance.GameTime.TotalArenaTime - AssaultWing.Instance.GameTime.ElapsedGameTime - _shakeUpdateTime).TotalSeconds;
+                    float skippedTime = (float)(AssaultWing.Instance.DataEngine.ArenaTotalTime - AssaultWing.Instance.GameTime.ElapsedGameTime - _shakeUpdateTime).TotalSeconds;
                     AttenuateShake(skippedTime);
 
                     // Calculate new shake.
                     _shake = _shakeCurve.Evaluate(_relativeShakeDamage);
-                    _shakeUpdateTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+                    _shakeUpdateTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
 
                     // Attenuate shake damage for the current frame.
                     AttenuateShake((float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds);
@@ -353,7 +353,7 @@ namespace AW2.Game
             foreach (var action in BonusActions)
             {
                 action.Update();
-                if (action.EndTime <= AssaultWing.Instance.GameTime.TotalArenaTime)
+                if (action.EndTime <= AssaultWing.Instance.DataEngine.ArenaTotalTime)
                     BonusActions.RemoveLater(action);
             }
             BonusActions.CommitRemoves();
@@ -362,7 +362,7 @@ namespace AW2.Game
             {
                 // Give birth to a new ship if it's time.
                 if (Ship == null && _lives != 0 &&
-                    _shipSpawnTime <= AssaultWing.Instance.GameTime.TotalArenaTime)
+                    _shipSpawnTime <= AssaultWing.Instance.DataEngine.ArenaTotalTime)
                 {
                     CreateShip();
                 }
@@ -416,7 +416,7 @@ namespace AW2.Game
                 cause.Killer.Owner.SendMessage("You nailed " + Name);
             
             // Schedule the making of a new ship, lives permitting.
-            _shipSpawnTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(MOURNING_DELAY);
+            _shipSpawnTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 MustUpdateToClients = true;
@@ -465,7 +465,7 @@ namespace AW2.Game
                 AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(messageMessage);
             }
 
-            var time = AssaultWing.Instance.GameTime.TotalArenaTime;
+            var time = AssaultWing.Instance.DataEngine.ArenaTotalTime;
             var line = string.Format("[{0}:{1:d2}] {2}", (int)time.TotalMinutes, time.Seconds, message);
             Messages.Add(line);
 

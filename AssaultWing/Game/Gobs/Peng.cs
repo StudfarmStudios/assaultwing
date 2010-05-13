@@ -130,7 +130,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                // TODO: Update oldPos from pos when AssaultWing.Instance.GameTime.TotalArenaTime has advanced
+                // TODO: Update oldPos from pos when Arena.TotalTime has advanced
                 if (float.IsNaN(oldPos.X)) return pos;
                 return oldPos;
             }
@@ -372,13 +372,13 @@ namespace AW2.Game.Gobs
         /// has no further effects.
         private void UpdateOldPos()
         {
-            if (oldPosTimestamp >= AssaultWing.Instance.GameTime.TotalArenaTime) return;
+            if (oldPosTimestamp >= Arena.TotalTime) return;
             if (float.IsNaN(prevPos.X))
                 oldPos = Pos;
             else
                 oldPos = prevPos;
             prevPos = Pos;
-            oldPosTimestamp = AssaultWing.Instance.GameTime.TotalArenaTime;
+            oldPosTimestamp = Arena.TotalTime;
         }
 
         #region IConsistencyCheckable and Clonable Members

@@ -17,13 +17,13 @@ namespace AW2.Game.BonusActions
 
         public override void Update()
         {
-            if (AssaultWing.Instance.GameTime.TotalArenaTime >= _lastActivatedTime + UPDATE_CYCLE)
+            if (AssaultWing.Instance.DataEngine.ArenaTotalTime >= _lastActivatedTime + UPDATE_CYCLE)
                 GiveHealth();
         }
 
         private void GiveHealth()
         {
-            _lastActivatedTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+            _lastActivatedTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
             float healthBonus = Player.Ship.MaxDamageLevel * -0.05f;
             Player.Ship.InflictDamage(healthBonus, new DeathCause());
         }

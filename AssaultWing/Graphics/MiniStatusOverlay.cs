@@ -57,11 +57,11 @@ namespace AW2.Graphics
             float relativeHealth = 1 - player.Ship.DamageLevel / player.Ship.MaxDamageLevel;
             if (lastRelativeHealth != relativeHealth)
             {
-                fadeoutFinishTime = AssaultWing.Instance.GameTime.TotalArenaTime + 
+                fadeoutFinishTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + 
                     TimeSpan.FromSeconds(opaqueDuration + fadeoutDuration);
                 lastRelativeHealth = relativeHealth;
             }
-            float alpha = MathHelper.Clamp((float)(fadeoutFinishTime - AssaultWing.Instance.GameTime.TotalArenaTime).TotalSeconds / fadeoutDuration, 0, 1);
+            float alpha = MathHelper.Clamp((float)(fadeoutFinishTime - AssaultWing.Instance.DataEngine.ArenaTotalTime).TotalSeconds / fadeoutDuration, 0, 1);
             Color color = new Color(new Vector4(1, 1, 1, alpha));
             Color halfColor = new Color(new Vector4(1, 1, 1, alpha * 0.5f));
 

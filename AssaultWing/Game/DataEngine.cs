@@ -66,6 +66,8 @@ namespace AW2.Game
         /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
         public Arena Arena { get; private set; }
 
+        public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
+
         #endregion Properties
 
         /// <summary>
@@ -357,7 +359,7 @@ namespace AW2.Game
             // Game server sends state updates about gobs to game clients.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
-                var now = AssaultWing.Instance.GameTime.TotalArenaTime;
+                var now = ArenaTotalTime;
                 var message = new GobUpdateMessage();
                 foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
                 {

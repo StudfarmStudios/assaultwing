@@ -17,11 +17,11 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Returns a ping reply message corresponding to this received message.
         /// </summary>
-        public PingReplyMessage GetPingReplyMessage(TimeSpan elapsedGameTime)
+        public PingReplyMessage GetPingReplyMessage(TimeSpan totalGameTime)
         {
             var reply = new PingReplyMessage();
             reply.Timestamp = Timestamp;
-            reply.TotalGameTimeOnReply = elapsedGameTime;
+            reply.TotalGameTimeOnReply = totalGameTime;
             return reply;
         }
 

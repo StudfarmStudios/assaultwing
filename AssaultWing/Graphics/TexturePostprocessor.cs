@@ -137,7 +137,7 @@ namespace AW2.Graphics
         private void PrepareEffect(Effect effect)
         {
             var tex = _targets[_sourceIndex].GetTexture();
-            effect.Parameters["T"].SetValue((float)AssaultWing.Instance.GameTime.TotalArenaTime.TotalSeconds);
+            effect.Parameters["T"].SetValue((float)AssaultWing.Instance.DataEngine.ArenaTotalTime.TotalSeconds);
             effect.Parameters["Texture"].SetValue(tex);
             effect.Parameters["TextureWidth"].SetValue(tex.Width);
             effect.Parameters["TextureHeight"].SetValue(tex.Height);

@@ -1,13 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
-using System.Collections;
 using Microsoft.Xna.Framework.Graphics;
 using TypeTriple = AW2.Helpers.Triple<System.Type, System.Type, System.Type>;
 
@@ -359,7 +358,7 @@ namespace AW2.Helpers
                     returnValue = DeserializeXmlIEnumerable(reader, objType, limitationAttribute, writtenType);
                 else
                     returnValue = DeserializeXmlOther(reader, limitationAttribute, writtenType);
-                
+
                 if (!emptyXmlElement)
                     reader.ReadEndElement();
                 if (writtenType != objType)
@@ -572,11 +571,13 @@ namespace AW2.Helpers
 
             foreach (var field in fields)
             {
-                // React to SerializedNameAttribute
+                // React to SerializedNameAttribute and remove leading underscore from field name.
                 string elementName = field.Name;
                 var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
                 if (serializedNameAttribute != null)
                     elementName = serializedNameAttribute.SerializedName;
+                else if (elementName.StartsWith("_"))
+                    elementName = elementName.Substring(1);
 
                 // React to LimitationSwitchAttribute
                 var fieldLimitationAttribute = limitationAttribute;
@@ -631,18 +632,13 @@ namespace AW2.Helpers
                     var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
                     if (serializedNameAttribute != null)
                         elementName = serializedNameAttribute.SerializedName;
+                    else if (elementName.StartsWith("_"))
+                        elementName = elementName.Substring(1);
 
                     if (reader.Name.Equals(elementName))
                     {
                         if (fieldFounds[fieldI])
-                        {
-                            int lineNumber = -1;
-                            try { reader.ReadEndElement(); } // This is only to get the XML line number.
-                            catch (XmlException e) { lineNumber = e.LineNumber; }
-                            string errorText = "Field deserialised twice";
-                            if (lineNumber >= 0) errorText += " (line " + lineNumber + ")";
-                            throw new MemberSerializationException(errorText, field.Name);
-                        }
+                            throw new MemberSerializationException(GetXmlReaderErrorText("Field deserialised twice", reader), field.Name);
                         Type fieldLimitationAttribute = limitationAttribute;
 
                         // React to LimitationSwitchAttribute
@@ -661,25 +657,21 @@ namespace AW2.Helpers
                     }
                 }
                 if (!fieldFound)
-                {
-                    int lineNumber = -1;
-                    try { reader.ReadEndElement(); } // This is only to get the XML line number.
-                    catch (XmlException e) { lineNumber = e.LineNumber; }
-                    string errorText = "Cannot deserialise unknown field";
-                    if (lineNumber >= 0) errorText += " (line " + lineNumber + ")";
-                    throw new MemberSerializationException(errorText, "???");
-                }
+                    throw new MemberSerializationException(GetXmlReaderErrorText("Cannot deserialise unknown field", reader), reader.Name);
             }
             for (int fieldI = 0; fieldI < fields.Length; ++fieldI)
                 if (!fieldFounds[fieldI])
-                {
-                    int lineNumber = -1;
-                    try { reader.ReadStartElement(); } // This is only to get the XML line number.
-                    catch (XmlException e) { lineNumber = e.LineNumber; }
-                    string errorText = "Value not found";
-                    if (lineNumber >= 0) errorText += " (line " + lineNumber + ")";
-                    throw new MemberSerializationException(errorText, fields[fieldI].Name);
-                }
+                    throw new MemberSerializationException(GetXmlReaderErrorText("Value not found", reader), fields[fieldI].Name);
+        }
+
+        private static string GetXmlReaderErrorText(string baseText, XmlReader reader)
+        {
+            int lineNumber = -1;
+            try { reader.ReadEndElement(); }
+            catch (XmlException e) { lineNumber = e.LineNumber; }
+            return lineNumber >= 0
+                ? baseText + " (line " + lineNumber + ")"
+                : baseText;
         }
 
         /// <summary>

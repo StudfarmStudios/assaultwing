@@ -63,9 +63,9 @@ namespace AW2.Game.Weapons
 
         protected override bool PermissionToFire(bool canFire)
         {
-            if (_extraForceReady <= AssaultWing.Instance.GameTime.TotalArenaTime)
-                _extraForceEnd = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(extraForceChargeSeconds);
-            _extraForceReady = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(extraForceChargeDelay);
+            if (_extraForceReady <= Arena.TotalTime)
+                _extraForceEnd = Arena.TotalTime + TimeSpan.FromSeconds(extraForceChargeSeconds);
+            _extraForceReady = Arena.TotalTime + TimeSpan.FromSeconds(extraForceChargeDelay);
             return true;
         }
 
@@ -73,7 +73,7 @@ namespace AW2.Game.Weapons
         {
             var duration = AssaultWing.Instance.GameTime.ElapsedGameTime;
             float direction = reverse ? owner.Rotation + MathHelper.Pi : owner.Rotation;
-            float thrustForce = _extraForceEnd > AssaultWing.Instance.GameTime.TotalArenaTime
+            float thrustForce = _extraForceEnd > Arena.TotalTime
                 ? thrustForceFactor * 2
                 : thrustForceFactor;
             owner.Thrust(thrustForce, duration, direction);

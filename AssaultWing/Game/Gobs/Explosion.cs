@@ -134,7 +134,7 @@ namespace AW2.Game.Gobs
             particleEngines = particleEngineList.ToArray();
 
             // Count end time of gas flow.
-            flowEndTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(flowTime);
+            flowEndTime = Arena.TotalTime + TimeSpan.FromSeconds(flowTime);
 
             // Make a hole in the arena walls.
             Arena.MakeHole(Pos, impactHoleRadius);
@@ -157,7 +157,7 @@ namespace AW2.Game.Gobs
             }
 
             // When the flow ends, there's nothing more to do.
-            if (AssaultWing.Instance.GameTime.TotalArenaTime >= flowEndTime)
+            if (Arena.TotalTime >= flowEndTime)
                 Die(new DeathCause());
         }
 

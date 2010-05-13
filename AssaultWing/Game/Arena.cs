@@ -132,84 +132,84 @@ namespace AW2.Game
 
         #region General fields
 
-        GobCollection gobs;
+        private GobCollection _gobs;
 
         /// <summary>
         /// Layers of the arena.
         /// </summary>
         [TypeParameter]
-        List<ArenaLayer> layers;
+        private List<ArenaLayer> layers;
 
         /// <summary>
         /// Human-readable name of the arena.
         /// </summary>
         [TypeParameter]
-        string name;
+        private string _name;
 
         /// <summary>
         /// Dimensions of the arena, i.e. maximum coordinates for gobs.
         /// </summary>
         /// Minimum coordinates are always (0,0).
         [TypeParameter]
-        Vector2 dimensions;
+        private Vector2 dimensions;
 
         /// <summary>
         /// Tunes to play in the background while playing this arena.
         /// </summary>
         [TypeParameter]
-        List<BackgroundMusic> backgroundMusic;
+        private List<BackgroundMusic> backgroundMusic;
 
         #endregion General fields
 
         #region Lighting related fields
 
         [TypeParameter]
-        Vector3 light0DiffuseColor;
+        private Vector3 light0DiffuseColor;
 
         [TypeParameter]
-        Vector3 light0Direction;
+        private Vector3 light0Direction;
 
         [TypeParameter]
-        bool light0Enabled;
+        private bool light0Enabled;
 
         [TypeParameter]
-        Vector3 light0SpecularColor;
+        private Vector3 light0SpecularColor;
 
         [TypeParameter]
-        Vector3 light1DiffuseColor;
+        private Vector3 light1DiffuseColor;
 
         [TypeParameter]
-        Vector3 light1Direction;
+        private Vector3 light1Direction;
 
         [TypeParameter]
-        bool light1Enabled;
+        private bool light1Enabled;
 
         [TypeParameter]
-        Vector3 light1SpecularColor;
+        private Vector3 light1SpecularColor;
 
         [TypeParameter]
-        Vector3 light2DiffuseColor;
+        private Vector3 light2DiffuseColor;
 
         [TypeParameter]
-        Vector3 light2Direction;
+        private Vector3 light2Direction;
 
         [TypeParameter]
-        bool light2Enabled;
+        private bool light2Enabled;
 
         [TypeParameter]
-        Vector3 light2SpecularColor;
+        private Vector3 light2SpecularColor;
 
         [TypeParameter]
-        Vector3 fogColor;
+        private Vector3 fogColor;
 
         [TypeParameter]
-        bool fogEnabled;
+        private bool fogEnabled;
 
         [TypeParameter]
-        float fogEnd;
+        private float fogEnd;
 
         [TypeParameter]
-        float fogStart;
+        private float fogStart;
 
         #endregion Lighting related fields
 
@@ -219,19 +219,19 @@ namespace AW2.Game
         /// Registered collision areas by type. The array element for index <c>i</c>
         /// holds the collision areas for <c>(CollisionAreaType)(2 &lt;&lt; i)</c>.
         /// </summary>
-        SpatialGrid<CollisionArea>[] collisionAreas;
+        private SpatialGrid<CollisionArea>[] _collisionAreas;
 
         /// <summary>
         /// Marks which collision area types may collide, i.e.
         /// have <see cref="CollisionArea.CollidesAgainst"/> set to something
         /// else than <see cref="CollisionAreaType.None"/>.
         /// </summary>
-        bool[] collisionAreaMayCollide;
+        private bool[] _collisionAreaMayCollide;
 
         /// <summary>
         /// Distance outside the arena boundaries that we still allow some gobs to stay alive.
         /// </summary>
-        const float ARENA_OUTER_BOUNDARY_THICKNESS = 1000;
+        private const float ARENA_OUTER_BOUNDARY_THICKNESS = 1000;
 
         /// <summary>
         /// Accuracy of finding the point of collision. Measured in game time.
@@ -239,14 +239,14 @@ namespace AW2.Game
         /// Exactly, when a collision occurs, the moving gob's point of collision
         /// will be no more than <see cref="COLLISION_ACCURACY"/>'s time of movement
         /// away from the actual point of collision.
-        readonly TimeSpan COLLISION_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.01));
+        private readonly TimeSpan COLLISION_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.01));
 
         /// <summary>
         /// Accuracy to which movement of a gob in a frame is done. 
         /// Measured in game time.
         /// </summary>
         /// This constant is to work around rounding errors.
-        readonly TimeSpan MOVEMENT_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.00001666));
+        private readonly TimeSpan MOVEMENT_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.00001666));
 
         /// <summary>
         /// The maximum number of times to try to move a gob in one frame.
@@ -255,46 +255,46 @@ namespace AW2.Game
         /// Higher number means more accurate and responsive collisions
         /// but requires more CPU power in complex situations.
         /// Low numbers may result in "lazy" collisions.
-        const int MOVE_TRY_MAXIMUM = 4;
+        private const int MOVE_TRY_MAXIMUM = 4;
 
         /// <summary>
         /// Maximum length to move a gob at one time, in meters.
         /// </summary>
         /// Small values give better collision precision but require more computation.
-        const float MOVE_LENGTH_MAXIMUM = 10;
+        private const float MOVE_LENGTH_MAXIMUM = 10;
 
         /// <summary>
         /// The maximum number of attempts to find a free position for a gob.
         /// </summary>
-        const int FREE_POS_MAX_ATTEMPTS = 50;
+        private const int FREE_POS_MAX_ATTEMPTS = 50;
 
         /// <summary>
         /// Radius in meters to check when determining if a position is free for a gob.
         /// </summary>
-        const float FREE_POS_CHECK_RADIUS_MIN = 20;
+        private const float FREE_POS_CHECK_RADIUS_MIN = 20;
 
         /// <summary>
         /// Multiplier for collision damage.
         /// </summary>
-        const float COLLISION_DAMAGE_DOWNGRADE = 0.0006f;
+        private const float COLLISION_DAMAGE_DOWNGRADE = 0.0006f;
 
         /// <summary>
         /// Minimum change of gob speed in a collision to cause damage and a sound effect.
         /// </summary>
-        const float MINIMUM_COLLISION_DELTA = 20;
+        private const float MINIMUM_COLLISION_DELTA = 20;
 
         /// <summary>
         /// Excess area to cover by the spatial index of wall triangles,
         /// in addition to arena boundaries.
         /// </summary>
-        const float WALL_TRIANGLE_ARENA_EXCESS = 1000;
+        private const float WALL_TRIANGLE_ARENA_EXCESS = 1000;
 
         /// <summary>
         /// Cell sizes of each type of collision area, or 
         /// a negative value if the type is not in use.
         /// </summary>
         /// Indexed by bit indices of <see cref="CollisionAreaType"/>.
-        static readonly float[] COLLISION_AREA_CELL_SIZE;
+        private static readonly float[] COLLISION_AREA_CELL_SIZE;
 
         #endregion Collision related fields
 
@@ -306,10 +306,10 @@ namespace AW2.Game
             {
                 return new ArenaInfo
                 {
-                    Name = name,
+                    Name = _name,
                     FileName = FileName,
                     Dimensions = dimensions,
-                    PreviewName = name.ToLower() + "_preview"
+                    PreviewName = _name.ToLower() + "_preview"
                 };
             }
         }
@@ -317,7 +317,7 @@ namespace AW2.Game
         /// <summary>
         /// The name of the arena.
         /// </summary>
-        public string Name { get { return name; } set { name = value; } }
+        public string Name { get { return _name; } set { _name = value; } }
 
         /// <summary>
         /// The file name of the arena.
@@ -330,6 +330,11 @@ namespace AW2.Game
         /// The allowed range of gob X-coordinates is from 0 to arena width.
         /// The allowed range of gob Y-coordinates is from 0 to arena height.
         public Vector2 Dimensions { get { return dimensions; } set { dimensions = value; } }
+
+        /// <summary>
+        /// Total time the arena has been running.
+        /// </summary>
+        public TimeSpan TotalTime { get; set; }
 
         /// <summary>
         /// Layers of the arena.
@@ -348,10 +353,10 @@ namespace AW2.Game
         /// </summary>
         public GobCollection Gobs
         {
-            get { return gobs; }
+            get { return _gobs; }
             private set
             {
-                gobs = value;
+                _gobs = value;
                 Gobs.Added += gob =>
                 {
                     if (IsActive) AssaultWing.Instance.GobsCounter.Increment();
@@ -427,7 +432,7 @@ namespace AW2.Game
         /// This constructor is only for serialisation.
         public Arena()
         {
-            name = "dummyarena";
+            _name = "dummyarena";
             dimensions = new Vector2(4000, 4000);
             layers = new List<ArenaLayer>();
             layers.Add(new ArenaLayer());
@@ -475,8 +480,8 @@ namespace AW2.Game
         /// </summary>
         public void Dispose()
         {
-            for (int i = 0; i < collisionAreas.Length; ++i)
-                collisionAreas[i] = null;
+            for (int i = 0; i < _collisionAreas.Length; ++i)
+                _collisionAreas[i] = null;
             UnloadContent();
             foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
@@ -487,6 +492,7 @@ namespace AW2.Game
         /// </summary>
         public void Reset()
         {
+            TotalTime = TimeSpan.Zero;
             InitializeCollisionAreas();
             InitializeGobs();
         }
@@ -553,10 +559,10 @@ namespace AW2.Game
         /// </summary>
         public void PerformNonphysicalCollisions()
         {
-            for (int bitIndex = 0; bitIndex < collisionAreas.Length; ++bitIndex)
+            for (int bitIndex = 0; bitIndex < _collisionAreas.Length; ++bitIndex)
             {
-                var container = collisionAreas[bitIndex];
-                if (container != null && collisionAreaMayCollide[bitIndex])
+                var container = _collisionAreas[bitIndex];
+                if (container != null && _collisionAreaMayCollide[bitIndex])
                     container.ForEachElement(area =>
                     {
                         ForEachOverlapper(area, area.CollidesAgainst, area2 =>
@@ -599,7 +605,7 @@ namespace AW2.Game
                 Register(area);
                 int bitIndex = AWMathHelper.LogTwo((int)area.Type);
                 if (area.CollidesAgainst != CollisionAreaType.None)
-                    collisionAreaMayCollide[bitIndex] = true;
+                    _collisionAreaMayCollide[bitIndex] = true;
             }
         }
 
@@ -619,7 +625,7 @@ namespace AW2.Game
         {
             SpatialGridElement<CollisionArea> element = (SpatialGridElement<CollisionArea>)area.CollisionData;
             if (element == null) return;
-            collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Remove(element);
+            _collisionAreas[AWMathHelper.LogTwo((int)area.Type)].Remove(element);
             area.CollisionData = null;
         }
 
@@ -695,7 +701,7 @@ namespace AW2.Game
             var boundingBox = new Rectangle(holePos.X - holeRadius, holePos.Y - holeRadius,
                 holePos.X + holeRadius, holePos.Y + holeRadius);
             int wallBoundsIndex = AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds);
-            collisionAreas[wallBoundsIndex].ForEachElement(boundingBox, area =>
+            _collisionAreas[wallBoundsIndex].ForEachElement(boundingBox, area =>
             {
                 ((Gobs.Wall)area.Owner).MakeHole(holePos, holeRadius);
                 return false;
@@ -738,7 +744,7 @@ namespace AW2.Game
         {
             if (area.CollisionData != null) throw new InvalidOperationException("Collision area is already registered");
             int bitIndex = AWMathHelper.LogTwo((int)area.Type);
-            area.CollisionData = collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
+            area.CollisionData = _collisionAreas[bitIndex].Add(area, area.Area.BoundingBox);
         }
 
         /// <summary>
@@ -860,10 +866,10 @@ namespace AW2.Game
             bool areaOwnerCold = areaOwner.Cold;
             Player areaOwnerOwner = areaOwner.Owner;
             bool breakOut = false;
-            for (int typeBit = 0; typeBit < collisionAreas.Length; ++typeBit)
+            for (int typeBit = 0; typeBit < _collisionAreas.Length; ++typeBit)
             {
                 if (((1 << typeBit) & (int)types) == 0) continue;
-                collisionAreas[typeBit].ForEachElement(boundingBox, delegate(CollisionArea area2)
+                _collisionAreas[typeBit].ForEachElement(boundingBox, delegate(CollisionArea area2)
                 {
                     if (!Geometry.Intersect(areaArea, area2.Area)) return false;
                     Gob area2Owner = area2.Owner;
@@ -1212,15 +1218,15 @@ namespace AW2.Game
         /// </summary>
         private void InitializeCollisionAreas()
         {
-            collisionAreas = new SpatialGrid<CollisionArea>[CollisionArea.COLLISION_AREA_TYPE_COUNT];
-            collisionAreaMayCollide = new bool[CollisionArea.COLLISION_AREA_TYPE_COUNT];
+            _collisionAreas = new SpatialGrid<CollisionArea>[CollisionArea.COLLISION_AREA_TYPE_COUNT];
+            _collisionAreaMayCollide = new bool[CollisionArea.COLLISION_AREA_TYPE_COUNT];
             Vector2 areaExcess = new Vector2(WALL_TRIANGLE_ARENA_EXCESS);
             Vector2 arrayDimensions = Dimensions + 2 * areaExcess;
-            for (int i = 0; i < collisionAreas.Length; ++i)
+            for (int i = 0; i < _collisionAreas.Length; ++i)
                 if (COLLISION_AREA_CELL_SIZE[i] >= 0)
-                    collisionAreas[i] = new SpatialGrid<CollisionArea>(COLLISION_AREA_CELL_SIZE[i],
+                    _collisionAreas[i] = new SpatialGrid<CollisionArea>(COLLISION_AREA_CELL_SIZE[i],
                         -areaExcess, arrayDimensions - areaExcess);
-            collisionAreaMayCollide.Initialize();
+            _collisionAreaMayCollide.Initialize();
         }
 
         /// <summary>

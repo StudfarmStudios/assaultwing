@@ -471,10 +471,9 @@ namespace AW2.Game
                     _modelPartTransforms = new Matrix[Model.Bones.Count];
                     _modelPartTransformsUpdated = new TimeSpan(-1);
                 }
-                var now = AssaultWing.Instance.GameTime.TotalArenaTime;
-                if (_modelPartTransformsUpdated < now)
+                if (_modelPartTransformsUpdated < Arena.TotalTime)
                 {
-                    _modelPartTransformsUpdated = now;
+                    _modelPartTransformsUpdated = Arena.TotalTime;
                     CopyAbsoluteBoneTransformsTo(Model, _modelPartTransforms);
                 }
                 return _modelPartTransforms;
@@ -599,14 +598,12 @@ namespace AW2.Game
             SetId();
             _owner = null;
             ResetPos(Vector2.Zero, Vector2.Zero, Gob.defaultRotation); // also translates collPrimitives
-            birthTime = AssaultWing.Instance.GameTime.TotalArenaTime;
             _modelPartTransforms = null;
             exhaustEngines = new Gob[0];
             _alpha = 1;
             _bleachDamage = 0;
             _previousBleach = -1;
             _bleachResetTime = new TimeSpan(0);
-            LastNetworkUpdate = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
         /// <summary>
@@ -696,6 +693,8 @@ namespace AW2.Game
         /// an ongoing play of the game.
         public virtual void Activate()
         {
+            birthTime = Arena.TotalTime;
+            LastNetworkUpdate = Arena.TotalTime;
             IsVisible = true;
             LoadContent();
             if (Arena.IsForPlaying)
@@ -1311,7 +1310,7 @@ namespace AW2.Game
             if (BleachValue.HasValue) return BleachValue.Value;
 
             // Reset bleach if it's getting old.
-            if (AssaultWing.Instance.GameTime.TotalArenaTime >= _bleachResetTime)
+            if (Arena.TotalTime >= _bleachResetTime)
                 _previousBleach = 0;
 
             // Set new bleach based on accumulated damage during this frame.
@@ -1321,7 +1320,7 @@ namespace AW2.Game
                 if (newBleach > _previousBleach)
                 {
                     _previousBleach = newBleach;
-                    _bleachResetTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(0.055);
+                    _bleachResetTime = Arena.TotalTime + TimeSpan.FromSeconds(0.055);
                 }
                 _bleachDamage = 0;
             }

@@ -103,7 +103,7 @@ namespace AW2.Net
             T message = null;
             while ((message = Source.Messages.TryDequeue<T>()) != null)
             {
-                var messageAge = AssaultWing.Instance.GameTime.TotalArenaTime
+                var messageAge = AssaultWing.Instance.DataEngine.ArenaTotalTime
                     - (message.TotalGameTime + Source.RemoteGameTimeOffset);
                 Action(message, messageAge);
                 if (OnlyOneMessage)

@@ -120,7 +120,7 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            _nextSpawn = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(spawnInterval);
+            _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(spawnInterval);
             base.Activate();
         }
 
@@ -143,10 +143,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void Update()
         {
-            TimeSpan nowTime = AssaultWing.Instance.GameTime.TotalArenaTime;
-            while (_nextSpawn <= nowTime)
+            while (_nextSpawn <= Arena.TotalTime)
             {
-                _nextSpawn = nowTime + TimeSpan.FromSeconds(spawnInterval);
+                _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(spawnInterval);
                 Gob.CreateGob(GetRandomSpawnType(), newGob =>
                 {
                     Vector2 spawnPos = Arena.GetFreePosition(newGob, spawnArea);

@@ -67,7 +67,7 @@ namespace AW2.Game
 
         public void SetDuration(float duration)
         {
-            BeginTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+            BeginTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
             EndTime = BeginTime + TimeSpan.FromSeconds(duration);
         }
 
@@ -100,7 +100,7 @@ namespace AW2.Game
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 var duration = reader.ReadTimeSpan();
-                BeginTime = AssaultWing.Instance.GameTime.TotalArenaTime;
+                BeginTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
                 EndTime = BeginTime + duration;
             }
         }

@@ -131,11 +131,6 @@ namespace AW2
 #endif
 
         /// <summary>
-        /// Time of previously finished call to Draw(), in game time.
-        /// </summary>
-        private TimeSpan lastDrawTime;
-
-        /// <summary>
         /// The only existing instance of this class.
         /// </summary>
         private static AssaultWing instance;
@@ -216,12 +211,7 @@ namespace AW2
         /// <summary>
         /// The game time on this frame.
         /// </summary>
-        public AWGameTime GameTime { get; private set; }
-
-        /// <summary>
-        /// Time of previously finished call to Draw(), in game time.
-        /// </summary>
-        public TimeSpan LastDrawTime { get { return lastDrawTime; } }
+        public GameTime GameTime { get; private set; }
 
         /// <summary>
         /// The screen dimensions of the game window's client rectangle.
@@ -317,8 +307,7 @@ namespace AW2
             framesSinceLastCheck = 0;
             GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
-            GameTime = new AWGameTime();
-            lastDrawTime = new TimeSpan(0);
+            GameTime = new GameTime();
 
             InitializeComponents();
         }
@@ -359,7 +348,6 @@ namespace AW2
         private void StartArenaImpl()
         {
             Log.Write("Starting arena");
-            GameTime = GameTime.ResetArenaTime();
             dataEngine.StartArena();
             dataEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
@@ -937,7 +925,8 @@ namespace AW2
                 frameStep = true;
             }
 
-            GameTime = GameTime.Update(gameTime, logicEngine.Enabled);
+            GameTime = gameTime;
+            if (logicEngine.Enabled) DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
 
             base.Update(GameTime);
             if (logicEngine.Enabled)
@@ -984,7 +973,6 @@ namespace AW2
                             (int)conn.PingTime.TotalMilliseconds);
             }
             lock (GraphicsDevice) base.Draw(GameTime);
-            lastDrawTime = GameTime.TotalArenaTime;
         }
 
         /// <summary>

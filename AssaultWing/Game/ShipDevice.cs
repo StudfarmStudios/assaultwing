@@ -145,11 +145,11 @@ namespace AW2.Game
         /// </summary>
         public bool Loaded
         {
-            get { return FireMode == FireModeType.Continuous || LoadedTime <= AssaultWing.Instance.GameTime.TotalArenaTime; }
+            get { return FireMode == FireModeType.Continuous || LoadedTime <= Arena.TotalTime; }
             set
             {
-                if (value && !Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime;
-                if (!value && Loaded) LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(1);
+                if (value && !Loaded) LoadedTime = Arena.TotalTime;
+                if (!value && Loaded) LoadedTime = Arena.TotalTime + TimeSpan.FromSeconds(1);
             }
         }
 
@@ -351,7 +351,7 @@ namespace AW2.Game
         private bool IsItTimeToShoot()
         {
             if (shotsLeft <= 0) return false;
-            if (nextShot > AssaultWing.Instance.GameTime.TotalArenaTime) return false;
+            if (nextShot > Arena.TotalTime) return false;
             return true;
         }
 
@@ -374,8 +374,8 @@ namespace AW2.Game
             }
 
             // Load time doesn't pile up
-            if (nextShot < AssaultWing.Instance.GameTime.TotalArenaTime)
-                nextShot = AssaultWing.Instance.GameTime.TotalArenaTime;
+            if (nextShot < Arena.TotalTime)
+                nextShot = Arena.TotalTime;
         }
 
         private void DoneFiring()
@@ -383,7 +383,7 @@ namespace AW2.Game
             switch (FireMode)
             {
                 case FireModeType.Single:
-                    LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(LoadTime * LoadTimeMultiplier);
+                    LoadedTime = Arena.TotalTime + TimeSpan.FromSeconds(LoadTime * LoadTimeMultiplier);
                     break;
                 case FireModeType.Continuous:
                     break;

@@ -13,7 +13,7 @@
   <deathGobTypes type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</movable>
   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <_ticks type="System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</_ticks>
+    <ticks type="System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</ticks>
   </networkUpdatePeriod>
   <exhaustEngineNames type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
   <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />

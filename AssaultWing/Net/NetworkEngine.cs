@@ -308,7 +308,7 @@ namespace AW2.Net
         /// </summary>
         public TimeSpan GetMessageAge(GameplayMessage message)
         {
-            return AssaultWing.Instance.GameTime.TotalArenaTime
+            return AssaultWing.Instance.DataEngine.ArenaTotalTime
                 - message.TotalGameTime
                 - ((PingedConnection)GetConnection(message.ConnectionId)).RemoteGameTimeOffset;
         }

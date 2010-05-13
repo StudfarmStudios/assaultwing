@@ -173,8 +173,8 @@ namespace AW2.Game.Gobs
 #if OPTIMIZED_CODE
                 float scale = Scale;
                 float rotation = Rotation;
-                float scaledCosRoll = scale * (float)Math.Cos(rollAngle.Current);
-                float scaledSinRoll = scale * (float)Math.Sin(rollAngle.Current);
+                float scaledCosRoll = scale * (float)Math.Cos(_rollAngle.Current);
+                float scaledSinRoll = scale * (float)Math.Sin(_rollAngle.Current);
                 float cosRota = (float)Math.Cos(rotation);
                 float sinRota = (float)Math.Sin(rotation);
                 return new Matrix(

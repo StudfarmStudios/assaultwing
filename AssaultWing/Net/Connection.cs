@@ -37,14 +37,14 @@ namespace AW2.Net
         /// <summary>
         /// State information for an asynchronous connection attempt.
         /// </summary>
-        class ConnectAsyncState
+        private class ConnectAsyncState
         {
-            public Socket socket;
-            public string id;
+            public Socket Socket { get; set; }
+            public string ID { get; set; }
             public ConnectAsyncState(Socket socket, string id)
             {
-                this.socket = socket;
-                this.id = id;
+                Socket = socket;
+                ID = id;
             }
         }
 
@@ -56,62 +56,62 @@ namespace AW2.Net
         /// Least int that is known not to have been used as a connection identifier.
         /// </summary>
         /// <see cref="Connection.Id"/>
-        static int leastUnusedId = 0;
+        private static int _leastUnusedID = 0;
 
         /// <summary>
         /// If greater than zero, then the connection is disposed and thus no longer usable.
         /// </summary>
-        int isDisposed;
+        private int _isDisposed;
 
         /// <summary>
         /// TCP socket to the connected remote host.
         /// </summary>
-        Socket socket;
+        private Socket _socket;
 
         /// <summary>
         /// Server socket for listening to incoming connection attempts.
         /// <c>null</c> if not in use.
         /// </summary>
-        static Socket serverSocket;
+        private static Socket _serverSocket;
 
         /// <summary>
         /// Buffer of serialised messages waiting to be sent to the remote host.
         /// </summary>
-        ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers;
+        private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
 
         /// <summary>
         /// The thread that is continuously reading incoming data from the remote host.
         /// </summary>
-        SuspendableThread readThread;
+        private SuspendableThread _readThread;
 
         /// <summary>
         /// The thread that is continuously sending outgoing data to the remote host.
         /// </summary>
-        SuspendableThread sendThread;
+        private SuspendableThread _sendThread;
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
-        TypedQueue<Message> messages;
+        private TypedQueue<Message> _messages;
 
         /// <summary>
         /// Results of connection attempts.
         /// </summary>
-        static ThreadSafeWrapper<Queue<Result<Connection>>> connectionResults = new ThreadSafeWrapper<Queue<Result<Connection>>>(new Queue<Result<Connection>>());
+        private static ThreadSafeWrapper<Queue<Result<Connection>>> _connectionResults = new ThreadSafeWrapper<Queue<Result<Connection>>>(new Queue<Result<Connection>>());
 
         /// <summary>
         /// Information on general error situations.
         /// </summary>
-        ThreadSafeWrapper<Queue<Exception>> errors;
+        private ThreadSafeWrapper<Queue<Exception>> _errors;
 
 #if DEBUG_SENT_BYTE_COUNT
-        static TimeSpan lastPrintTime = new TimeSpan(-1);
-        static Dictionary<Type, int> messageSizes = new Dictionary<Type, int>();
+        private static TimeSpan _lastPrintTime = new TimeSpan(-1);
+        private static Dictionary<Type, int> _messageSizes = new Dictionary<Type, int>();
 #endif
 
 #if DEBUG_MESSAGE_DELAY
         // TimeSpan is the time to send the message
-        Queue<AW2.Helpers.Pair<Message, TimeSpan>> messagesToSend = new Queue<AW2.Helpers.Pair<Message, TimeSpan>>();
+        private Queue<AW2.Helpers.Pair<Message, TimeSpan>> _messagesToSend = new Queue<AW2.Helpers.Pair<Message, TimeSpan>>();
 #endif
 
         #endregion Fields
@@ -138,11 +138,11 @@ namespace AW2.Net
             {
                 try
                 {
-                    return (IPEndPoint)socket.LocalEndPoint;
+                    return (IPEndPoint)_socket.LocalEndPoint;
                 }
                 catch (Exception e)
                 {
-                    errors.Do(queue => queue.Enqueue(e));
+                    _errors.Do(queue => queue.Enqueue(e));
                 }
                 return new IPEndPoint(IPAddress.None, 0);
             }
@@ -158,11 +158,11 @@ namespace AW2.Net
             {
                 try
                 {
-                    return (IPEndPoint)socket.RemoteEndPoint;
+                    return (IPEndPoint)_socket.RemoteEndPoint;
                 }
                 catch (Exception e)
                 {
-                    errors.Do(queue => queue.Enqueue(e));
+                    _errors.Do(queue => queue.Enqueue(e));
                 }
                 return new IPEndPoint(IPAddress.None, 0);
             }
@@ -171,7 +171,7 @@ namespace AW2.Net
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
-        public ITypedQueue<Message> Messages { get { return messages; } }
+        public ITypedQueue<Message> Messages { get { return _messages; } }
 
         /// <summary>
         /// Called after a new element has been added to <c>Messages</c>.
@@ -186,19 +186,19 @@ namespace AW2.Net
             get
             {
                 if (!IsListening) throw new InvalidOperationException("Not listening for connections, therefore no listening port exists");
-                lock (connectionResults) return ((IPEndPoint)serverSocket.LocalEndPoint).Port;
+                lock (_connectionResults) return ((IPEndPoint)_serverSocket.LocalEndPoint).Port;
             }
         }
 
         /// <summary>
         /// Are we listening for connection attempts from remote hosts.
         /// </summary>
-        public static bool IsListening { get { lock (connectionResults) return serverSocket != null; } }
+        public static bool IsListening { get { lock (_connectionResults) return _serverSocket != null; } }
 
         /// <summary>
         /// Results of connection attempts.
         /// </summary>
-        public static ThreadSafeWrapper<Queue<Result<Connection>>> ConnectionResults { get { return connectionResults; } }
+        public static ThreadSafeWrapper<Queue<Result<Connection>>> ConnectionResults { get { return _connectionResults; } }
 
         /// <summary>
         /// Called after a new element has been added to <c>ConnectionResults</c>.
@@ -208,7 +208,7 @@ namespace AW2.Net
         /// <summary>
         /// Information about general error situations.
         /// </summary>
-        public ThreadSafeWrapper<Queue<Exception>> Errors { get { return errors; } }
+        public ThreadSafeWrapper<Queue<Exception>> Errors { get { return _errors; } }
 
         /// <summary>
         /// Called after a new element has been added to <c>Errors</c>.
@@ -226,21 +226,21 @@ namespace AW2.Net
         /// <param name="id">Identifier for distinguishing incoming connection attempts from others.</param>
         public static void StartListening(int port, string id)
         {
-            lock (connectionResults)
+            lock (_connectionResults)
             {
-                if (serverSocket != null)
+                if (_serverSocket != null)
                     throw new InvalidOperationException("Already listening for incoming connections");
                 try
                 {
-                    serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, port);
-                    serverSocket.Bind(serverEndPoint);
-                    serverSocket.Listen(64);
-                    serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(serverSocket, id));
+                    _serverSocket.Bind(serverEndPoint);
+                    _serverSocket.Listen(64);
+                    _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(_serverSocket, id));
                 }
                 catch (SocketException e)
                 {
-                    connectionResults.Do(queue =>
+                    _connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(e, id));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();
@@ -254,12 +254,12 @@ namespace AW2.Net
         /// </summary>
         public static void StopListening()
         {
-            lock (connectionResults)
+            lock (_connectionResults)
             {
-                if (serverSocket == null)
+                if (_serverSocket == null)
                     throw new Exception("Already not listening for incoming connections");
-                serverSocket.Close();
-                serverSocket = null;
+                _serverSocket.Close();
+                _serverSocket = null;
             }
         }
 
@@ -303,18 +303,19 @@ namespace AW2.Net
                 Send(data);
 #endif
 #if DEBUG_SENT_BYTE_COUNT
-                if (lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
+                if (_lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
                 {
-                    lastPrintTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                    _lastPrintTime = AssaultWing.Instance.GameTime.TotalRealTime;
                     AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
-                    foreach (var pair in messageSizes)
+                    foreach (var pair in _messageSizes)
                         AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");
-                    messageSizes.Clear();
+                    AW2.Helpers.Log.Write("Total " + _messageSizes.Sum(pair => pair.Value) + " bytes");
+                    _messageSizes.Clear();
                 }
-                if (!messageSizes.ContainsKey(message.GetType()))
-                    messageSizes.Add(message.GetType(), data.Length);
+                if (!_messageSizes.ContainsKey(message.GetType()))
+                    _messageSizes.Add(message.GetType(), data.Length);
                 else
-                    messageSizes[message.GetType()] += data.Length;
+                    _messageSizes[message.GetType()] += data.Length;
 #endif
             }
             catch (SocketException e)
@@ -361,7 +362,7 @@ namespace AW2.Net
         public int GetSendQueueSize()
         {
             int count = 0;
-            sendBuffers.Do(queue =>
+            _sendBuffers.Do(queue =>
             {
                 foreach (ArraySegment<byte> segment in queue)
                     count += segment.Count;
@@ -380,7 +381,7 @@ namespace AW2.Net
         /// has occurred.</param>
         protected void Dispose(bool error)
         {
-            if (Interlocked.Exchange(ref isDisposed, 1) > 0) return;
+            if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
             DisposeImpl(error);
         }
 
@@ -394,23 +395,23 @@ namespace AW2.Net
         {
             Application.ApplicationExit -= ApplicationExitCallback;
 
-            if (readThread != null)
+            if (_readThread != null)
             {
-                readThread.Terminate();
-                if (!readThread.Join(TimeSpan.FromSeconds(1)))
+                _readThread.Terminate();
+                if (!_readThread.Join(TimeSpan.FromSeconds(1)))
                     AW2.Helpers.Log.Write("WARNING: Unable to kill read loop of " + Name);
-                readThread = null;
+                _readThread = null;
             }
-            if (sendThread != null)
+            if (_sendThread != null)
             {
-                sendThread.Terminate();
-                if (!sendThread.Join(TimeSpan.FromSeconds(1)))
+                _sendThread.Terminate();
+                if (!_sendThread.Join(TimeSpan.FromSeconds(1)))
                     AW2.Helpers.Log.Write("WARNING: Unable to kill write loop of " + Name);
-                sendThread = null;
+                _sendThread = null;
             }
             if (!error)
-                socket.Shutdown(SocketShutdown.Both);
-            socket.Close();
+                _socket.Shutdown(SocketShutdown.Both);
+            _socket.Close();
         }
 
         /// <summary>
@@ -427,20 +428,20 @@ namespace AW2.Net
                 throw new ArgumentNullException("Null socket argument");
             if (!socket.Connected)
                 throw new ArgumentException("Socket not connected");
-            Id = leastUnusedId++;
+            Id = _leastUnusedID++;
             Name = "Connection " + Id;
             Application.ApplicationExit += ApplicationExitCallback;
             socket.Blocking = true;
             socket.ReceiveTimeout = 0; // don't time out on receiving
             socket.SendTimeout = 1000;
-            this.socket = socket;
-            messages = new TypedQueue<Message>();
-            sendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
-            errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
-            readThread = new MessageReadThread(socket, ThreadExceptionHandler, MessageHandler);
-            readThread.Start();
-            sendThread = new MessageSendThread(socket, sendBuffers, ThreadExceptionHandler);
-            sendThread.Start();
+            _socket = socket;
+            _messages = new TypedQueue<Message>();
+            _sendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
+            _errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
+            _readThread = new MessageReadThread(socket, ThreadExceptionHandler, MessageHandler);
+            _readThread.Start();
+            _sendThread = new MessageSendThread(socket, _sendBuffers, ThreadExceptionHandler);
+            _sendThread.Start();
         }
 
         /// <summary>
@@ -448,19 +449,19 @@ namespace AW2.Net
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
         /// <param name="data">The data to send.</param>
-        void Send(byte[] data)
+        private void Send(byte[] data)
         {
-            sendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
+            _sendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
         }
 
-        void ApplicationExitCallback(object caller, EventArgs args)
+        private void ApplicationExitCallback(object caller, EventArgs args)
         {
             Dispose(false);
         }
 
         private void ThreadExceptionHandler(Exception e)
         {
-            errors.Do(queue =>
+            _errors.Do(queue =>
             {
                 queue.Enqueue(e);
                 if (ErrorCallback != null) ErrorCallback();
@@ -469,9 +470,9 @@ namespace AW2.Net
 
         private void MessageHandler(byte[] messageHeaderBuffer, byte[] messageBodyBuffer)
         {
-            Message message = Message.Deserialize(messageHeaderBuffer, messageBodyBuffer, Id);
-            messages.Enqueue(message);
-            lock (messages) if (MessageCallback != null) MessageCallback();
+            var message = Message.Deserialize(messageHeaderBuffer, messageBodyBuffer, Id);
+            _messages.Enqueue(message);
+            lock (_messages) if (MessageCallback != null) MessageCallback();
         }
 
         #endregion Private methods
@@ -482,25 +483,25 @@ namespace AW2.Net
         /// Callback implementation for accepting an incoming connection.
         /// </summary>
         /// <param name="asyncResult">The result of the asynchronous operation.</param>
-        static void AcceptCallback(IAsyncResult asyncResult)
+        private static void AcceptCallback(IAsyncResult asyncResult)
         {
             ConnectAsyncState state = (ConnectAsyncState)asyncResult.AsyncState;
-            lock (connectionResults)
+            lock (_connectionResults)
             {
                 try
                 {
-                    Socket socketToNewHost = state.socket.EndAccept(asyncResult);
+                    Socket socketToNewHost = state.Socket.EndAccept(asyncResult);
                     socketToNewHost.NoDelay = true;
                     var newConnection = new GameClientConnection(socketToNewHost);
-                    connectionResults.Do(queue =>
+                    _connectionResults.Do(queue =>
                     {
-                        queue.Enqueue(new Result<Connection>(newConnection, state.id));
+                        queue.Enqueue(new Result<Connection>(newConnection, state.ID));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();
                     });
 
                     // Resume listening for connections.
-                    if (serverSocket != null)
-                        serverSocket.BeginAccept(AcceptCallback, state);
+                    if (_serverSocket != null)
+                        _serverSocket.BeginAccept(AcceptCallback, state);
                 }
                 catch (Exception e)
                 {
@@ -510,9 +511,9 @@ namespace AW2.Net
                     }
                     else
                     {
-                        connectionResults.Do(queue =>
+                        _connectionResults.Do(queue =>
                         {
-                            queue.Enqueue(new Result<Connection>(e, state.id));
+                            queue.Enqueue(new Result<Connection>(e, state.ID));
                             if (ConnectionResultCallback != null) ConnectionResultCallback();
                         });
                     }
@@ -524,27 +525,27 @@ namespace AW2.Net
         /// Callback implementation for finishing an outgoing connection attempt.
         /// </summary>
         /// <param name="asyncResult">The result of the asynchronous operation.</param>
-        static void ConnectCallback(IAsyncResult asyncResult)
+        private static void ConnectCallback(IAsyncResult asyncResult)
         {
             ConnectAsyncState state = (ConnectAsyncState)asyncResult.AsyncState;
-            lock (connectionResults)
+            lock (_connectionResults)
             {
                 try
                 {
-                    state.socket.EndConnect(asyncResult);
-                    state.socket.NoDelay = true;
-                    var newConnection = new GameServerConnection(state.socket);
-                    connectionResults.Do(queue =>
+                    state.Socket.EndConnect(asyncResult);
+                    state.Socket.NoDelay = true;
+                    var newConnection = new GameServerConnection(state.Socket);
+                    _connectionResults.Do(queue =>
                     {
-                        queue.Enqueue(new Result<Connection>(newConnection, state.id));
+                        queue.Enqueue(new Result<Connection>(newConnection, state.ID));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();
                     });
                 }
                 catch (Exception e)
                 {
-                    connectionResults.Do(queue =>
+                    _connectionResults.Do(queue =>
                     {
-                        queue.Enqueue(new Result<Connection>(e, state.id));
+                        queue.Enqueue(new Result<Connection>(e, state.ID));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();
                     });
                 }

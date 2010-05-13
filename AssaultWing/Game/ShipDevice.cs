@@ -19,18 +19,39 @@ namespace AW2.Game
 
         public enum FireModeType { Single, Continuous };
 
+        #region Fields
+
         /// <summary>
         /// Name of the icon of the weapon, to be displayed in weapon selection 
         /// and bonus display.
         /// </summary>
         [TypeParameter]
-        CanonicalString iconName;
+        private CanonicalString iconName;
 
         /// <summary>
         /// Name of the weapon's icon in the equip menu main display.
         /// </summary>
         [TypeParameter]
-        CanonicalString iconEquipName;
+        private CanonicalString iconEquipName;
+
+        /// <summary>
+        /// The sound to play when firing.
+        /// </summary>
+        [TypeParameter]
+        private string fireSound;
+
+        /// <summary>
+        /// Number of shots to shoot in a series.
+        /// </summary>
+        [TypeParameter]
+        private int shotCount;
+
+        /// <summary>
+        /// Temporal spacing between successive shots in a series, in seconds.
+        /// Zero or less means once each frame.
+        /// </summary>
+        [TypeParameter]
+        private float shotSpacing;
 
         /// <summary>
         /// The ship this weapon is attached to.
@@ -59,16 +80,21 @@ namespace AW2.Game
         /// Amount of charge required to fire the weapon once.
         /// </summary>
         [TypeParameter]
-        float fireCharge;
+        private float fireCharge;
 
         /// <summary>
         /// Amount of charge required for one second of rapid firing the weapon.
         /// </summary>
         [TypeParameter]
-        float fireChargePerSecond;
+        private float fireChargePerSecond;
 
-        ChargeProvider _chargeProvider;
-        float _charge;
+        private ChargeProvider _chargeProvider;
+        private float _charge;
+        private bool _flashAndBangCreated;
+        private TimeSpan nextShot;
+        private int shotsLeft;
+
+        #endregion
 
         #region Properties
 
@@ -99,35 +125,15 @@ namespace AW2.Game
         /// <summary>
         /// The player who owns the ship who owns the weapon, or <c>null</c> if none exists.
         /// </summary>
-        Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
+        private Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
 
-        /// <summary>
-        /// Multiplier for loadtime
-        /// multiplier<1 == bonus
-        /// multiplier>1 == negative
-        /// </summary>
-        public float LoadTimeMultiplier{get{ return loadTimeMultiplier;}set{ loadTimeMultiplier = value;}}
+        public float LoadTimeMultiplier { get { return loadTimeMultiplier; } set { loadTimeMultiplier = value; } }
         
         /// <summary>
         /// The time in seconds that it takes for the weapon to fire again 
         /// after being fired once.
         /// </summary>
-        public float LoadTime
-        {
-            get
-            {
-                if (PlayerOwner != null)
-                {
-                    /*
-                    if (ownerHandle == OwnerHandleType.PrimaryWeapon && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon1LoadTime))
-                        return loadTime / 2;
-                    if (ownerHandle == OwnerHandleType.SecondaryWeapon && PlayerOwner.HasBonus(PlayerBonusTypes.Weapon2LoadTime))
-                        return loadTime / 2;
-                     * */
-                }
-                return loadTime;
-            }
-        }
+        public float LoadTime { get { return loadTime; } }
 
         /// <summary>
         /// Time from which on the weapon is loaded, in game time.
@@ -204,6 +210,10 @@ namespace AW2.Game
         {
             iconName = (CanonicalString)"dummytexture";
             iconEquipName = (CanonicalString)"dummytexture";
+            fireSound = "dummysound";
+            shotCount = 3;
+            shotSpacing = 0.2f;
+            loadTime = 0.5f;
             fireCharge = 100;
             fireChargePerSecond = 500;
             loadTimeMultiplier = 1;
@@ -262,7 +272,10 @@ namespace AW2.Game
         /// Called when the device is added to a game. Subclasses can initialize here things
         /// that couldn't be initialized in the constructor e.g. due to lack of data.
         /// </summary>
-        public abstract void Activate();
+        public virtual void Activate()
+        {
+            FireMode = FireModeType.Single;
+        }
 
         /// <summary>
         /// Fires (uses) the device.
@@ -270,75 +283,151 @@ namespace AW2.Game
         public void Fire(AW2.UI.ControlState triggerState)
         {
             if (owner.Disabled) return;
-            FireImpl(triggerState);
+            switch (FireMode)
+            {
+                case FireModeType.Single:
+                    if (triggerState.pulse)
+                    {
+                        if (PermissionToFire(CanFire) && CanFire) StartFiring();
+                    }
+                    break;
+                case FireModeType.Continuous:
+                    if (triggerState.force > 0)
+                    {
+                        if (PermissionToFire(CanFire) && CanFire) StartFiring();
+                    }
+                    break;
+                default: throw new ApplicationException("Unknown FireMode " + FireMode);
+            }
         }
 
-        protected abstract void FireImpl(AW2.UI.ControlState triggerState);
-
-        /// <summary>
-        /// Updates the device's state. This method is called regularly.
-        /// </summary>
-        public abstract void Update();
+        public virtual void Update()
+        {
+            _flashAndBangCreated = false;
+            bool shootOnceAFrame = shotSpacing <= 0;
+            bool shotThisFrame = false;
+            while (IsItTimeToShoot() && !(shootOnceAFrame && shotThisFrame))
+            {
+                shotThisFrame = true;
+                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client) CreateFlashAndBang();
+                ShootImpl();
+                nextShot += TimeSpan.FromSeconds(shotSpacing);
+                switch (FireMode)
+                {
+                    case FireModeType.Single:
+                        --shotsLeft;
+                        if (shotsLeft == 0) DoneFiring();
+                        break;
+                    case FireModeType.Continuous:
+                        shotsLeft = 1;
+                        break;
+                    default: throw new ApplicationException("Unknown FireMode " + FireMode);
+                }
+            }
+            if (FireMode == FireModeType.Continuous)
+            {
+                shotsLeft = 0;
+                DoneFiring();
+            }
+        }
 
         /// <summary>
         /// Releases all resources allocated by the device.
         /// </summary>
-        public abstract void Dispose();
+        public virtual void Dispose() { }
 
         #endregion Public methods
 
         #region Protected methods
 
-        /// <summary>
-        /// Prepares the device for firing/using.
-        /// Subclasses should call this method when they start a new firing action.
-        /// </summary>
-        /// A call to <b>StartFiring</b> must be matched by a later call to
-        /// <b>DoneFiring</b>.
-        protected void StartFiring()
+        protected abstract void CreateVisuals();
+        protected abstract void ShootImpl();
+        protected virtual bool PermissionToFire(bool canFire) { return true; }
+
+        #endregion Protected methods
+
+        #region Private methods
+
+        private bool IsItTimeToShoot()
         {
-            if (!CanFire) throw new InvalidOperationException("This weapon cannot be fired now");
+            if (shotsLeft <= 0) return false;
+            if (nextShot > AssaultWing.Instance.GameTime.TotalArenaTime) return false;
+            return true;
+        }
+
+        private void StartFiring()
+        {
+            if (!CanFire) return;
             switch (FireMode)
             {
                 case FireModeType.Single:
                     Charge -= FireCharge;
-                    // Make the weapon unloaded for eternity until subclass calls DoneFiring().
+                    // Make the weapon unloaded for eternity until someone calls DoneFiring()
                     LoadedTime = TimeSpan.MaxValue;
+                    shotsLeft = shotCount;
                     break;
                 case FireModeType.Continuous:
                     Charge -= FireChargePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                    shotsLeft = 1;
                     break;
+                default: throw new ApplicationException("Unknown FireMode " + FireMode);
             }
+
+            // Load time doesn't pile up
+            if (nextShot < AssaultWing.Instance.GameTime.TotalArenaTime)
+                nextShot = AssaultWing.Instance.GameTime.TotalArenaTime;
         }
 
-        /// <summary>
-        /// Wraps up a finished firing/using of the device.
-        /// Subclasses should call this method when their firing action has stopped.
-        /// </summary>
-        /// A call to <b>DoneFiring</b> must be matched by an earlier call to
-        /// <b>StartFiring</b>.
-        protected void DoneFiring()
+        private void DoneFiring()
         {
             switch (FireMode)
             {
                 case FireModeType.Single:
-                    LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(LoadTime*LoadTimeMultiplier);
+                    LoadedTime = AssaultWing.Instance.GameTime.TotalArenaTime + TimeSpan.FromSeconds(LoadTime * LoadTimeMultiplier);
                     break;
                 case FireModeType.Continuous:
                     break;
             }
         }
 
-        #endregion Protected methods
+        private void CreateFlashAndBang()
+        {
+            PlayFiringSound();
+            CreateVisuals();
+            _flashAndBangCreated = true;
+        }
+
+        private void PlayFiringSound()
+        {
+            if (_flashAndBangCreated) return;
+            if (fireSound != "") AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
+        }
+
+        #endregion
 
         #region INetworkSerializable Members
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((bool)_flashAndBangCreated);
+            }
         }
 
         public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
         {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+            }
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                bool mustCreateFlashAndBang = reader.ReadBoolean();
+                if (mustCreateFlashAndBang) CreateFlashAndBang();
+            }
         }
 
         #endregion

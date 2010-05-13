@@ -10,26 +10,18 @@ namespace AW2.Game.Weapons
     /// <summary>
     /// A weapon that shoots auto-targeting lightnings.
     /// </summary>
-    class LightningGun : Weapon
+    public class LightningGun : Weapon
     {
         /// <summary>
         /// Maximum distance the lightning can carry, in meters.
         /// </summary>
         [TypeParameter]
-        float range;
-
-        /// <summary>
-        /// The sound to play when firing.
-        /// </summary>
-        [TypeParameter]
-        string fireSound;
+        private float range;
 
         /// This constructor is only for serialisation.
         public LightningGun()
-            : base()
         {
             range = 500;
-            fireSound = "dummysound";
         }
 
         public LightningGun(CanonicalString typeName)
@@ -37,12 +29,8 @@ namespace AW2.Game.Weapons
         {
         }
 
-        #region Weapon methods
-
-        protected override void FireImpl(AW2.UI.ControlState triggerState)
+        protected override void ShootImpl()
         {
-            if (!triggerState.pulse) return;
-            if (!CanFire) return;
             var targets =
                 from gob in Arena.Gobs.GameplayLayer.Gobs
                 where gob.IsDamageable && !gob.Disabled && gob != owner
@@ -50,31 +38,17 @@ namespace AW2.Game.Weapons
                 where distanceSquared <= range * range
                 orderby distanceSquared ascending
                 select gob;
-            StartFiring();
             FireAtTarget(targets.FirstOrDefault());
-            DoneFiring();
+        }
+
+        protected override void CreateVisuals()
+        {
         }
 
         private void FireAtTarget(Gob target)
         {
-            AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
             ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(target, index));
         }
-
-        public override void Activate()
-        {
-            FireMode = FireModeType.Single;
-        }
-        
-        public override void Update()
-        {
-        }
-
-        public override void Dispose()
-        {
-        }
-
-        #endregion
 
         private void CreateShot(Gob target, int boneIndex)
         {

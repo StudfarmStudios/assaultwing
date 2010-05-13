@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using AW2.Game.Gobs;
 using AW2.Helpers;
-using AW2.Net;
-using AW2.Sound;
 
 namespace AW2.Game.Weapons
 {
@@ -24,52 +20,20 @@ namespace AW2.Game.Weapons
         {
         }
 
-        /// <summary>
-        /// Fires the weapon.
-        /// </summary>
-        protected override void FireImpl(AW2.UI.ControlState triggerState)
+        protected override void ShootImpl()
         {
-            owner.SelfDestruct(deathGobTypes);
-            owner.DamageLevel = owner.MaxDamageLevel * 10;
-            owner.Die(new DeathCause(owner, DeathCauseType.Damage));
+            owner.InflictDamage(owner.MaxDamageLevel - owner.DamageLevel - 1, new DeathCause(owner, DeathCauseType.Damage, owner));
+            foreach (var gobType in deathGobTypes)
+                Gob.CreateGob(gobType, gob =>
+                {
+                    gob.ResetPos(owner.Pos, Vector2.Zero, owner.Rotation);
+                    gob.Owner = owner.Owner;
+                    Arena.Gobs.Add(gob);
+                });
         }
 
-        public override void Activate()
-        {
-            FireMode = FireModeType.Single;
-        }
-
-        public override void Update()
+        protected override void CreateVisuals()
         {
         }
-
-        /// <summary>
-        /// Releases all resources allocated by the weapon.
-        /// </summary>
-        public override void Dispose()
-        {
-        }
-
-        #region INetworkSerializable Members
-
-        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                writer.Write((bool)false); // HACK: write dummy boolean to imitate ForwardShot, this works around a bug
-            }
-        }
-
-        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
-        {
-            base.Deserialize(reader, mode, messageAge);
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                reader.ReadBoolean(); // HACK: read dummy boolean to imitate ForwardShot, this works around a bug
-            }
-        }
-
-        #endregion
     }
 }

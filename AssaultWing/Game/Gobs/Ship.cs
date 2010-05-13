@@ -645,33 +645,19 @@ namespace AW2.Game.Gobs
                 default: throw new ApplicationException("Unknown ship device type " + deviceType);
             }
         }
-        /// <summary>
-        /// Sets the LoadTimeMultiplier to the device
-        /// </summary>
-        /// <param name="g_deviceType"></param>
-        /// <param name="g_multiplier"></param>
+
         public void SetDeviceLoadMultiplier(ShipDevice.OwnerHandleType g_deviceType, float g_multiplier)
         {
-            ShipDevice device = GetDevice(g_deviceType);
+            var device = GetDevice(g_deviceType);
             device.LoadTimeMultiplier = g_multiplier;
         }
         
-        /// <summary>
-        /// Return the current Device Loadt Multiplier
-        /// </summary>
-        /// <param name="g_deviceType"></param>
         public float GetDeviceLoadMultiplier(ShipDevice.OwnerHandleType g_deviceType)
         {
-            ShipDevice device = GetDevice(g_deviceType);
+            var device = GetDevice(g_deviceType);
             return device.LoadTimeMultiplier;
         }
 
-
-        /// <summary>
-        /// Return the device of the device type
-        /// </summary>
-        /// <param name="deviceType"></param>
-        /// <returns>ShipDevice of the given deviceType</returns>
         private ShipDevice GetDevice(ShipDevice.OwnerHandleType deviceType)
         {
             ShipDevice device;
@@ -684,6 +670,7 @@ namespace AW2.Game.Gobs
             }
             return device;
         }
+
         public void SetDeviceType(ShipDevice.OwnerHandleType deviceType, CanonicalString typeName)
         {
             switch (deviceType)

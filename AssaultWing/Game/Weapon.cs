@@ -92,10 +92,9 @@ namespace AW2.Game
         /// </summary>
         public Weapon()
         {
-            this.upgradeNames = new CanonicalString[] { (CanonicalString)"dummyweapontype" };
-            this.shotTypeName = (CanonicalString)"dummygobtype";
-            this.loadTime = 0.5f;
-            this.recoilMomentum = 10000;
+            upgradeNames = new CanonicalString[] { (CanonicalString)"dummyweapontype" };
+            shotTypeName = (CanonicalString)"dummygobtype";
+            recoilMomentum = 10000;
         }
 
         /// <summary>

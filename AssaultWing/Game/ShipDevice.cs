@@ -414,6 +414,7 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
+                writer.Write((Half)_charge);
                 writer.Write((bool)_flashAndBangCreated);
             }
         }
@@ -425,6 +426,7 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
+                _charge = reader.ReadHalf();
                 bool mustCreateFlashAndBang = reader.ReadBoolean();
                 if (mustCreateFlashAndBang) CreateFlashAndBang();
             }

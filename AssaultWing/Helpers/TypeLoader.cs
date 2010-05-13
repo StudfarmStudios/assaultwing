@@ -52,6 +52,10 @@ namespace AW2.Helpers
             {
                 Log.Write("Error in " + filename + ": " + e.Message + ", " + e.MemberName);
             }
+            catch (System.Xml.XmlException e)
+            {
+                Log.Write("Error in " + filename + ": " + e.Message);
+            }
             xmlReader.Close();
             fs.Close();
             return template;
@@ -83,7 +87,10 @@ namespace AW2.Helpers
 
         public IEnumerable<object> LoadTemplates()
         {
-            return GetTemplateFilenames().Select(filename => LoadTemplate(filename));
+            var templates = GetTemplateFilenames().Select(filename => LoadTemplate(filename));
+            templates = templates.ToList(); // immediate evaluation
+            if (templates.Contains(null)) throw new ApplicationException("Error: Some templates failed to load");
+            return templates;
         }
 
         /// <summary>

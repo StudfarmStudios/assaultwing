@@ -14,25 +14,27 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Ship : Gob
     {
+        private const string SHIP_BIRTH_SOUND = "ShipBirth";
+
         #region Ship fields related to flying
 
         /// <summary>
         /// Maximum force of thrust of the ship, measured in Newtons.
         /// </summary>
         [TypeParameter]
-        float thrustForce;
+        private float thrustForce;
 
         /// <summary>
         /// Maximum turning speed of the ship, measured in radians per second.
         /// </summary>
         [TypeParameter]
-        float turnSpeed;
+        private float turnSpeed;
 
         /// <summary>
         /// Ship's maximum speed reachable by thrust, measured in meters per second.
         /// </summary>
         [TypeParameter]
-        float maxSpeed;
+        private float maxSpeed;
 
         #endregion Ship fields related to flying
 
@@ -42,77 +44,64 @@ namespace AW2.Game.Gobs
         /// Name of the type of primary weapon the ship type uses.
         /// </summary>
         [TypeParameter]
-        CanonicalString weapon1TypeName;
+        private CanonicalString weapon1TypeName;
 
         /// <summary>
         /// Maximum amount of charge for extra devices.
         /// </summary>
         [TypeParameter]
-        float extraDeviceChargeMax;
+        private float extraDeviceChargeMax;
 
         /// <summary>
         /// Maximum amount of charge for secondary weapons.
         /// </summary>
         [TypeParameter]
-        float weapon2ChargeMax;
+        private float weapon2ChargeMax;
 
         /// <summary>
         /// Speed of charging for extra device charge,
         /// measured in charge units per second.
         /// </summary>
         [TypeParameter]
-        float extraDeviceChargeSpeed;
+        private float extraDeviceChargeSpeed;
 
         /// <summary>
         /// Speed of charging for secondary weapon charge,
         /// measured in charge units per second.
         /// </summary>
         [TypeParameter]
-        float weapon2ChargeSpeed;
+        private float weapon2ChargeSpeed;
 
-        bool _isActivated;
+        private bool _isActivated;
 
         #endregion Ship fields related to weapons
 
         #region Ship fields related to rolling
 
-        /// <summary>
-        /// Current rotation of the ship around its tail-to-head axis.
-        /// </summary>
-        InterpolatingValue rollAngle;
+        private InterpolatingValue _rollAngle;
+        private bool _rollAngleGoalUpdated;
 
         /// <summary>
-        /// True iff <b>rollAngleGoal</b> has been set by ship turning this frame.
-        /// </summary>
-        bool rollAngleGoalUpdated;
-
-        /// <summary>
-        /// Maximum roll angle.
-        /// </summary>
+        /// Maximum angle of rotation of the ship around its tail-to-head axis
         /// Minimum roll angle will be the additive inverse.
+        /// </summary>
         [TypeParameter]
-        float rollMax;
+        private float rollMax;
 
         /// <summary>
         /// Roll angle change speed in radians per second.
         /// </summary>
         [TypeParameter]
-        float rollSpeed;
+        private float rollSpeed;
 
         #endregion Ship fields related to rolling
 
         #region Ship fields related to coughing
 
-        /// <summary>
-        /// Names of cough engine types.
-        /// </summary>
         [TypeParameter, ShallowCopy]
-        CanonicalString[] coughEngineNames;
+        private CanonicalString[] coughEngineNames;
 
-        /// <summary>
-        /// Particle engines that manage coughing.
-        /// </summary>
-        Gob[] coughEngines;
+        private Gob[] _coughEngines;
 
         #endregion Ship fields related to coughing
 
@@ -124,7 +113,7 @@ namespace AW2.Game.Gobs
         /// to the amount of damage the ship actually receives.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        Curve armour;
+        private Curve armour;
 
         /// <summary>
         /// Alpha of the ship as a function that maps the age of the
@@ -132,31 +121,31 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Use this to implement alpha flashing on ship birth.
         [TypeParameter, ShallowCopy]
-        Curve birthAlpha;
+        private Curve birthAlpha;
 
         /// <summary>
         /// Name of the ship's icon in the equip menu main display.
         /// </summary>
         [TypeParameter]
-        CanonicalString iconEquipName;
+        private CanonicalString iconEquipName;
 
         /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
         /// </summary>
-        bool exhaustAmountUpdated;
+        private bool _exhaustAmountUpdated;
 
         /// <summary>
         /// Gobs that we have temporarily disabled while we move through them.
         /// </summary>
-        List<Gob> temporarilyDisabledGobs;
+        private List<Gob> _temporarilyDisabledGobs;
 
-        bool _isBirthFlashing;
+        private bool _isBirthFlashing;
 
         #endregion Ship fields related to other things
 
         #region Ship fields for signalling visual things over the network
 
-        float visualThrustForce;
+        private float _visualThrustForce;
 
         #endregion Ship fields for signalling visual things over the network
 
@@ -195,7 +184,7 @@ namespace AW2.Game.Gobs
                     pos.X, pos.Y, 0, 1);
 #else
                 return Matrix.CreateScale(Scale)
-                     * Matrix.CreateRotationX(rollAngle.Current)
+                     * Matrix.CreateRotationX(_rollAngle.Current)
                      * Matrix.CreateRotationZ(Rotation)
                      * Matrix.CreateTranslation(new Vector3(Pos, 0));
 #endif
@@ -246,11 +235,9 @@ namespace AW2.Game.Gobs
         #region Ship constructors
 
         /// <summary>
-        /// Creates an uninitialised ship.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Ship()
-            : base()
         {
             thrustForce = 100;
             turnSpeed = 3;
@@ -281,18 +268,14 @@ namespace AW2.Game.Gobs
             birthAlpha.Keys.Add(new CurveKey(2, 1));
             birthAlpha.ComputeTangents(CurveTangent.Flat);
             coughEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
-            temporarilyDisabledGobs = new List<Gob>();
+            _temporarilyDisabledGobs = new List<Gob>();
             iconEquipName = (CanonicalString)"dummytexture";
         }
 
-        /// <summary>
-        /// Creates a new ship.
-        /// </summary>
-        /// <param name="typeName">Type of the ship.</param>
         public Ship(CanonicalString typeName)
             : base(typeName)
         {
-            this.temporarilyDisabledGobs = new List<Gob>();
+            _temporarilyDisabledGobs = new List<Gob>();
             LocationPredicter = new ShipLocationPredicter(this);
         }
 
@@ -303,7 +286,6 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Called when the ship is thrusting.
         /// </summary>
-        /// <param name="thrustForce">Thrusting force</param>
         protected virtual void Thrusting(float thrustForce) { }
 
         /// <summary>
@@ -315,12 +297,9 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        /// <summary>
-        /// Creates cough engines for the ship.
-        /// </summary>
         private void CreateCoughEngines()
         {
-            List<Gob> coughEngineList = new List<Gob>();
+            var coughEngineList = new List<Gob>();
             for (int i = 0; i < coughEngineNames.Length; ++i)
             {
                 Gob.CreateGob(coughEngineNames[i], gob =>
@@ -335,7 +314,7 @@ namespace AW2.Game.Gobs
                     coughEngineList.Add(gob);
                 });
             }
-            coughEngines = coughEngineList.ToArray();
+            _coughEngines = coughEngineList.ToArray();
         }
 
         private void CreateGlow()
@@ -357,9 +336,6 @@ namespace AW2.Game.Gobs
 
         #region Methods related to gobs' functionality in the game world
 
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
         public override void Activate()
         {
             base.Activate();
@@ -371,26 +347,24 @@ namespace AW2.Game.Gobs
             if (ExtraDevice == null && ExtraDeviceName != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
 
             SwitchExhaustEngines(false);
-            exhaustAmountUpdated = false;
+            _exhaustAmountUpdated = false;
             CreateCoughEngines();
             CreateGlow();
             Disable(); // re-enabled in Update()
             _isBirthFlashing = true;
+            AssaultWing.Instance.SoundEngine.PlaySound(SHIP_BIRTH_SOUND);
         }
 
-        /// <summary>
-        /// Updates the ship's internal state.
-        /// </summary>
         public override void Update()
         {
             var elapsedGameTime = AssaultWing.Instance.GameTime.ElapsedGameTime;
 
             // Manage turn-related rolling.
-            rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed, elapsedGameTime);
-            rollAngle.Advance();
-            if (!rollAngleGoalUpdated)
-                rollAngle.Target = 0;
-            rollAngleGoalUpdated = false;
+            _rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed, elapsedGameTime);
+            _rollAngle.Advance();
+            if (!_rollAngleGoalUpdated)
+                _rollAngle.Target = 0;
+            _rollAngleGoalUpdated = false;
 
             LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
             {
@@ -402,18 +376,18 @@ namespace AW2.Game.Gobs
             base.Update();
             
             // Re-enable temporarily disabled gobs.
-            foreach (Gob gob in temporarilyDisabledGobs) gob.Enable();
-            temporarilyDisabledGobs.Clear();
+            foreach (Gob gob in _temporarilyDisabledGobs) gob.Enable();
+            _temporarilyDisabledGobs.Clear();
 
             // Manage exhaust engines.
-            if (!exhaustAmountUpdated)
+            if (!_exhaustAmountUpdated)
                 SwitchExhaustEngines(false);
-            exhaustAmountUpdated = false;
+            _exhaustAmountUpdated = false;
 
             // Manage cough engines.
             float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
             coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
-            foreach (var coughEngine in coughEngines)
+            foreach (var coughEngine in _coughEngines)
             {
                 var peng = coughEngine as Peng;
                 if (peng != null)
@@ -438,10 +412,6 @@ namespace AW2.Game.Gobs
             }
         }
 
-        /// <summary>
-        /// Kills the gob, i.e. performs a death ritual and removes the gob from the game world.
-        /// </summary>
-        /// <param name="cause">The cause of death.</param>
         public override void Die(DeathCause cause)
         {
             if (Dead) return;
@@ -450,9 +420,6 @@ namespace AW2.Game.Gobs
             base.Die(cause);
         }
 
-        /// <summary>
-        /// Releases all resources allocated by the gob.
-        /// </summary>
         public override void Dispose()
         {
             AssaultWing.Instance.DataEngine.Devices.Remove(Weapon1);
@@ -465,21 +432,12 @@ namespace AW2.Game.Gobs
 
         #region Methods related to serialisation
 
-        /// <summary>
-        /// Copies the gob's runtime state from another gob.
-        /// </summary>
-        /// <param name="runtimeState">The gob whose runtime state to imitate.</param>
         protected override void SetRuntimeState(Gob runtimeState)
         {
             base.SetRuntimeState(runtimeState);
-            exhaustAmountUpdated = false;
+            _exhaustAmountUpdated = false;
         }
 
-        /// <summary>
-        /// Serialises the gob for to a binary writer.
-        /// </summary>
-        /// <param name="writer">The writer where to write the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to serialise.</param>
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
@@ -492,19 +450,14 @@ namespace AW2.Game.Gobs
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((Half)visualThrustForce);
-                visualThrustForce = 0;
+                writer.Write((Half)_visualThrustForce);
+                _visualThrustForce = 0;
             }
             Weapon1.Serialize(writer, mode);
             Weapon2.Serialize(writer, mode);
             ExtraDevice.Serialize(writer, mode);
         }
 
-        /// <summary>
-        /// Deserialises the gob from a binary writer.
-        /// </summary>
-        /// <param name="reader">The reader where to read the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to deserialise.</param>
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             base.Deserialize(reader, mode, messageAge);
@@ -539,17 +492,14 @@ namespace AW2.Game.Gobs
             if (Disabled) return;
             Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * thrustForce;
             AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed, duration);
-            visualThrustForce = force;
+            _visualThrustForce = force;
             Thrusting(force);
 
             // Manage exhaust engines.
             SwitchExhaustEngines(true);
-            exhaustAmountUpdated = true;
+            _exhaustAmountUpdated = true;
         }
 
-        /// <summary>
-        /// Turns the ship left.
-        /// </summary>
         /// <param name="force">Force of turn; between 0 and 1.</param>
         public void TurnLeft(float force, TimeSpan duration)
         {
@@ -558,9 +508,6 @@ namespace AW2.Game.Gobs
             Turn(force, duration);
         }
 
-        /// <summary>
-        /// Turns the ship right.
-        /// </summary>
         /// <param name="force">Force of turn; between 0 and 1.</param>
         public void TurnRight(float force, TimeSpan duration)
         {
@@ -569,9 +516,6 @@ namespace AW2.Game.Gobs
             Turn(-force, duration);
         }
 
-        /// <summary>
-        /// Turns the ship right or left.
-        /// </summary>
         /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>
         private void Turn(float force, TimeSpan duration)
         {
@@ -587,24 +531,12 @@ namespace AW2.Game.Gobs
                 moveLength <= maxSpeed ? Vector2.Dot(headingNormal, Move / maxSpeed) :
                 Vector2.Dot(headingNormal, Move / moveLength);
             //float headingFactor = 1.0f; // naive roll
-            rollAngle.Target = -rollMax * force * headingFactor;
-            rollAngleGoalUpdated = true;
+            _rollAngle.Target = -rollMax * force * headingFactor;
+            _rollAngleGoalUpdated = true;
         }
 
         #endregion Ship public methods
 
-        /// <summary>
-        /// Performs collision operations for the case when one of this gob's collision areas
-        /// is overlapping one of another gob's collision areas.
-        /// </summary>
-        /// Called only when <b>theirArea.Type</b> matches either <b>myArea.CollidesAgainst</b> or
-        /// <b>myArea.CannotOverlap</b>.
-        /// <param name="myArea">The collision area of this gob.</param>
-        /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
-        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
-        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
-        /// to resolve the overlap.</param>
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             if (stuck)
@@ -612,16 +544,10 @@ namespace AW2.Game.Gobs
                 // Set the other gob as disabled while we move, then enable it after we finish moving.
                 // This works with the assumption that there are at least two moving iterations.
                 theirArea.Owner.Disable(); // re-enabled in Update()
-                temporarilyDisabledGobs.Add(theirArea.Owner);
+                _temporarilyDisabledGobs.Add(theirArea.Owner);
             }
         }
 
-        /// <summary>
-        /// Inflicts damage on the entity.
-        /// </summary>
-        /// <param name="damageAmount">If positive, amount of damage;
-        /// if negative, amount of repair.</param>
-        /// <param name="cause">The cause of death.</param>
         public override void InflictDamage(float damageAmount, DeathCause cause)
         {
             float realDamage = armour.Evaluate(damageAmount);

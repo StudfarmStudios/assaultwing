@@ -41,8 +41,6 @@ namespace AW2.Game
         /// </summary>
         private const float MOURNING_DELAY = 3;
 
-        private const string SHIP_BIRTH_SOUND = "ShipBirth";
-
         #endregion Player constants
 
         #region Player fields about general things
@@ -616,7 +614,6 @@ namespace AW2.Game
 
                 arena.Gobs.Add(newShip);
                 Ship = newShip;
-                AssaultWing.Instance.SoundEngine.PlaySound(SHIP_BIRTH_SOUND);
             });
         }
 

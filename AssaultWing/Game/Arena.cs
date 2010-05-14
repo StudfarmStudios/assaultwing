@@ -677,6 +677,7 @@ namespace AW2.Game
         /// <returns><b>true</b> iff the gob is overlap consistent at the position.</returns>
         public bool IsFreePosition(Gob gob, Vector2 position)
         {
+            if (gob.PhysicalArea == null) return true;
             var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
             float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN, 
                 3 * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));

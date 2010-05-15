@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
@@ -11,62 +9,38 @@ namespace AW2.Graphics
     /// Overlay graphics component displaying a box with a player's chat and gameplay messages.
     /// The messages are stored in <c>DataEngine</c> from where this component reads them.
     /// </summary>
-    class ChatBoxOverlay : OverlayComponent
+    public class ChatBoxOverlay : OverlayComponent
     {
-        Player player;
-        Texture2D chatBoxTexture;
-        SpriteFont chatBoxFont;
+        private const int VISIBLE_LINES = 5;
+        private Player _player;
+        private SpriteFont _chatBoxFont;
 
-        /// <summary>
-        /// The dimensions of the component in pixels.
-        /// </summary>
-        /// The return value field <c>Point.X</c> is the width of the component,
-        /// and the field <c>Point.Y</c> is the height of the component,
         public override Point Dimensions
         {
-            get { return new Point(chatBoxTexture.Width, chatBoxTexture.Height); }
+            get { return new Point(500, _chatBoxFont.LineSpacing * VISIBLE_LINES); }
         }
 
-        /// <summary>
-        /// Creates a chat box.
-        /// </summary>
         /// <param name="player">The player whose chat messages to display.</param>
         public ChatBoxOverlay(Player player)
-            : base(HorizontalAlignment.Left, VerticalAlignment.Bottom)
+            : base(HorizontalAlignment.Center, VerticalAlignment.Center)
         {
-            this.player = player;
+            CustomAlignment = new Vector2(0, 200);
+            _player = player;
         }
 
-        /// <summary>
-        /// Draws the overlay graphics component using the guarantee that the
-        /// graphics device's viewport is set to the exact area needed by the component.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
-        /// to have been called and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            // Chat box background
-            spriteBatch.Draw(chatBoxTexture, Vector2.Zero, Color.White);
-
             // Chat messages
-            Vector2 messagePos = new Vector2(8, chatBoxTexture.Height - chatBoxFont.LineSpacing - 8);
-            for (int i = player.Messages.Count - 1; i >= 0 && messagePos.Y > 16; --i, messagePos.Y -= chatBoxFont.LineSpacing)
-                spriteBatch.DrawString(chatBoxFont, player.Messages[i], messagePos, Color.White);
+            var messagePos = Vector2.Zero;
+            for (int i = 0, messageI = _player.Messages.Count - 1; i < VISIBLE_LINES && messageI >= 0; ++i, --messageI, messagePos += new Vector2(0, _chatBoxFont.LineSpacing))
+                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI], messagePos, new Color(1f, 1f, 1f, 1f - i / (float)VISIBLE_LINES));
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
-            chatBoxTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_console_bg");
-            chatBoxFont = AssaultWing.Instance.Content.Load<SpriteFont>("ConsoleFont");
+            _chatBoxFont = AssaultWing.Instance.Content.Load<SpriteFont>("ConsoleFont");
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         public override void UnloadContent()
         {
             // Our textures and fonts are disposed by the graphics engine.

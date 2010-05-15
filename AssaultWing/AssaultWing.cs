@@ -363,7 +363,7 @@ namespace AW2
             preferredFullscreenHeight = displayMode.Height;
             preferredFullscreenFormat = displayMode.Format;
             preferredWindowWidth = 1000;
-            preferredWindowHeight = 800;
+            preferredWindowHeight = 700;
             preferredWindowFormat = displayMode.Format;
 
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -375,7 +375,7 @@ namespace AW2
             window = WindowInitializing(this);
             window.AllowUserResizing = true;
             window.ClientSizeChanged += ClientSizeChanged;
-            ClientBoundsMin = new Rectangle(0, 0, 1000, 800);
+            ClientBoundsMin = new Rectangle(0, 0, preferredWindowWidth, preferredWindowHeight);
             AllowDialogs = true;
         }
 

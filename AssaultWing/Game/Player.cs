@@ -466,7 +466,7 @@ namespace AW2.Game
             }
 
             var time = AssaultWing.Instance.DataEngine.ArenaTotalTime;
-            var line = string.Format("({0}:{1:d2}) {2}", (int)time.TotalMinutes, time.Seconds, message);
+            var line = string.Format("<{0}:{1:d2}> {2}", (int)time.TotalMinutes, time.Seconds, message);
             Messages.Add(line);
 
             // Throw away very old messages.

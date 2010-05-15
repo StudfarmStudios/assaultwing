@@ -1040,13 +1040,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\gui_console_bg.png">
-      <Name>gui_console_bg</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\gui_playerinfo_bar_main.png">
       <Name>gui_playerinfo_bar_main</Name>
       <Importer>TextureImporter</Importer>
@@ -2008,38 +2001,6 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\gui_console_tab_chat_off.png">
-      <Name>gui_console_tab_chat_off</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\gui_console_tab_chat_on.png">
-      <Name>gui_console_tab_chat_on</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\gui_console_tab_combat_off.png">
-      <Name>gui_console_tab_combat_off</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\gui_console_tab_combat_on.png">
-      <Name>gui_console_tab_combat_on</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\gui_console_tab_score_off.png">
-      <Name>gui_console_tab_score_off</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="textures\gui_console_tab_score_on.png">
-      <Name>gui_console_tab_score_on</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="textures\gui_1kill.png">

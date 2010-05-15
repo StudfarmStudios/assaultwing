@@ -17,7 +17,7 @@ namespace AW2.Graphics
 
         public override Point Dimensions
         {
-            get { return new Point(500, _chatBoxFont.LineSpacing * VISIBLE_LINES); }
+            get { return new Point(450, _chatBoxFont.LineSpacing * VISIBLE_LINES); }
         }
 
         /// <param name="player">The player whose chat messages to display.</param>

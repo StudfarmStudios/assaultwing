@@ -411,8 +411,17 @@ namespace AW2.Menu
                 string textContent = AssaultWing.Instance.NetworkMode == NetworkMode.Client
                     ? "Connected to game server"
                     : "Hosting a game as server";
-                textContent += "\n\n" + data.Spectators.Count + (data.Spectators.Count == 1 ? " player" : " players");
-                textContent += "\n\nArena: " + data.ArenaPlaylist[0];
+                bool unsureData = data.Spectators.Count == 1 && AssaultWing.Instance.NetworkMode == NetworkMode.Client;
+                if (unsureData)
+                {
+                    textContent += "\n\n2 or more players";
+                    textContent += "\n\nArena: to be announced";
+                }
+                else
+                {
+                    textContent += "\n\n" + data.Spectators.Count + (data.Spectators.Count == 1 ? " player" : " players");
+                    textContent += "\n\nArena: " + data.ArenaPlaylist[0];
+                }
                 spriteBatch.DrawString(menuBigFont, textContent, textPos, Color.White);
             }
         }

@@ -352,7 +352,7 @@ namespace AW2.Menu
             Vector2 playerPaneCursorDeltaPos = playerPaneMainDeltaPos + new Vector2(22, 3);
             Vector2 playerPaneIconDeltaPos = playerPaneMainDeltaPos + new Vector2(21, 1);
             Vector2 playerPaneRowDeltaPos = new Vector2(0, 91);
-            Vector2 playerPaneNamePos = new Vector2(104, 30);
+            Vector2 playerPaneNamePos = new Vector2(104, 38);
             int playerI = -1;
             foreach (var player in data.Players)
             {
@@ -371,9 +371,9 @@ namespace AW2.Menu
                 Vector2 playerCursorPos = playerPanePos + playerPaneCursorDeltaPos
                     + (int)currentItems[playerI] * playerPaneRowDeltaPos;
                 Vector2 playerNamePos = playerPanePos
-                    + new Vector2((int)(104 - menuSmallFont.MeasureString(player.Name).X / 2), 30);
+                    + new Vector2((int)(104 - menuSmallFont.MeasureString(player.Name).X / 2), 38);
                 Vector2 playerItemNamePos = playerPanePos
-                    + new Vector2((int)(104 - menuSmallFont.MeasureString(playerItemName).X / 2), 346);
+                    + new Vector2((int)(104 - menuSmallFont.MeasureString(playerItemName).X / 2), 355);
                 Texture2D playerPaneTopTexture = playerI == 1 ? player2PaneTopTexture : player1PaneTopTexture;
 
                 // Draw pane background.

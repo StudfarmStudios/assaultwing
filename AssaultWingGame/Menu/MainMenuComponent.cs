@@ -179,7 +179,7 @@ namespace AW2.Menu
         {
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
             Vector2 textPos = pos - view + new Vector2(585, 355);
-            Vector2 cursorPos = pos - view + new Vector2(551, 358 + (int)currentItem * menuBigFont.LineSpacing);
+            Vector2 cursorPos = pos - view + new Vector2(551, 354 + (int)currentItem * menuBigFont.LineSpacing);
             Vector2 highlightPos = cursorPos;
             float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
 

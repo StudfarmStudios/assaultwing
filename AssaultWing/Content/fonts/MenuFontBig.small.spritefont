@@ -20,7 +20,7 @@ with.
     Modify this string to change the font that will be imported. Redistributable sample
     fonts are available at http://go.microsoft.com/fwlink/?LinkId=104778&clcid=0x409.
     -->
-    <FontName>Vrinda</FontName>
+    <FontName>Hotel Coral Essex</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change

@@ -87,53 +87,49 @@ namespace AW2
 
         #region AssaultWing fields
 
-        private UIEngineImpl uiEngine;
-        private GraphicsEngineImpl graphicsEngine;
-        private OverlayDialog overlayDialog;
-        private NetworkEngine networkEngine;
-        private LogicEngine logicEngine;
-        private DataEngine dataEngine;
-        private PhysicsEngine physicsEngine;
-        private SoundEngine soundEngine;
-        private IMenuEngine menuEngine;
-        private int preferredWindowWidth, preferredWindowHeight;
-        private SurfaceFormat preferredWindowFormat;
-        private int preferredFullscreenWidth, preferredFullscreenHeight;
-        private SurfaceFormat preferredFullscreenFormat;
-        private TimeSpan lastFramerateCheck;
-        private int framesSinceLastCheck;
-        private GameState gameState;
-        private IWindow window; // use this and not Game.Window
+        private UIEngineImpl _uiEngine;
+        private GraphicsEngineImpl _graphicsEngine;
+        private OverlayDialog _overlayDialog;
+        private LogicEngine _logicEngine;
+        private IMenuEngine _menuEngine;
+        private int _preferredWindowWidth, _preferredWindowHeight;
+        private SurfaceFormat _preferredWindowFormat;
+        private int _preferredFullscreenWidth, _preferredFullscreenHeight;
+        private SurfaceFormat _preferredFullscreenFormat;
+        private TimeSpan _lastFramerateCheck;
+        private int _framesSinceLastCheck;
+        private GameState _gameState;
+        private IWindow _window; // use this and not Game.Window
 
         // Fields for game server starting an arena
-        private bool startingArenaOnServer;
-        private List<int> startedArenaOnClients = new List<int>();
+        private bool _startingArenaOnServer;
+        private List<int> _startedArenaOnClients = new List<int>();
 
         // HACK: Debug keys
-        private Control musicSwitch;
-        private Control arenaReload;
-        private Control frameStepControl;
-        private Control frameRunControl;
-        private bool frameStep;
+        private Control _musicSwitch;
+        private Control _arenaReload;
+        private Control _frameStepControl;
+        private Control _frameRunControl;
+        private bool _frameStep;
 
 #if DEBUG_PROFILE
         /// <summary>
         /// Gob count for the current frame.
         /// </summary>
-        public int gobCount;
+        public int GobCount { get; set; }
         /// <summary>
         /// Collision count for the current frame.
         /// </summary>
-        public int collisionCount;
-        private List<int> frameCounts = new List<int>();
-        private List<int> gobCounts = new List<int>();
-        private List<int> collisionCounts = new List<int>();
+        public int CollisionCount { get; set; }
+        private List<int> _frameCounts = new List<int>();
+        private List<int> _gobCounts = new List<int>();
+        private List<int> _collisionCounts = new List<int>();
 #endif
 
         /// <summary>
         /// The only existing instance of this class.
         /// </summary>
-        private static AssaultWing instance;
+        private static AssaultWing g_instance;
 
         #endregion AssaultWing fields
 
@@ -173,33 +169,33 @@ namespace AW2
         {
             get
             {
-                if (instance == null)
-                    instance = new AssaultWing();
-                return instance;
+                if (g_instance == null)
+                    g_instance = new AssaultWing();
+                return g_instance;
             }
         }
 
         public AWSettings Settings { get; private set; }
         public string[] CommandLineArgs { get; set; }
-        public PhysicsEngine PhysicsEngine { get { return physicsEngine; } }
-        public DataEngine DataEngine { get { return dataEngine; } }
-        public NetworkEngine NetworkEngine { get { return networkEngine; } }
-        public SoundEngine SoundEngine { get { return soundEngine; } }
+        public PhysicsEngine PhysicsEngine { get; private set; }
+        public DataEngine DataEngine { get; private set; }
+        public NetworkEngine NetworkEngine { get; private set; }
+        public SoundEngine SoundEngine { get; private set; }
 
         /// <summary>
         /// The current state of the game.
         /// </summary>
         public GameState GameState
         {
-            get { return gameState; }
+            get { return _gameState; }
             private set
             {
                 DisableCurrentGameState();
                 EnableGameState(value);
-                var oldState = gameState;
-                gameState = value;
-                if (GameStateChanged != null && gameState != oldState)
-                    GameStateChanged(gameState);
+                var oldState = _gameState;
+                _gameState = value;
+                if (GameStateChanged != null && _gameState != oldState)
+                    GameStateChanged(_gameState);
             }
         }
 
@@ -216,15 +212,15 @@ namespace AW2
         /// <summary>
         /// The screen dimensions of the game window's client rectangle.
         /// </summary>
-        public Rectangle ClientBounds { get { return window.ClientBounds; } }
+        public Rectangle ClientBounds { get { return _window.ClientBounds; } }
 
         /// <summary>
         /// The minimum allowed screen dimensions of the game window's client rectangle.
         /// </summary>
         public Rectangle ClientBoundsMin
         {
-            get { return window.ClientBoundsMin; }
-            set { window.ClientBoundsMin = value; }
+            get { return _window.ClientBoundsMin; }
+            set { _window.ClientBoundsMin = value; }
         }
 
         /// <summary>
@@ -296,15 +292,15 @@ namespace AW2
             Settings = AWSettings.FromFile();
             InitializeGraphics();
 
-            musicSwitch = new KeyboardKey(Keys.F5);
-            arenaReload = new KeyboardKey(Keys.F6);
-            frameStepControl = new KeyboardKey(Keys.F8);
-            frameRunControl = new KeyboardKey(Keys.F7);
-            frameStep = false;
+            _musicSwitch = new KeyboardKey(Keys.F5);
+            _arenaReload = new KeyboardKey(Keys.F6);
+            _frameStepControl = new KeyboardKey(Keys.F8);
+            _frameRunControl = new KeyboardKey(Keys.F7);
+            _frameStep = false;
 
             Content = new AWContentManager(Services);
-            lastFramerateCheck = new TimeSpan(0);
-            framesSinceLastCheck = 0;
+            _lastFramerateCheck = new TimeSpan(0);
+            _framesSinceLastCheck = 0;
             GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
             GameTime = new GameTime();
@@ -328,7 +324,7 @@ namespace AW2
             }
             else
 #endif
-                args.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = window.Handle;
+                args.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = _window.Handle;
 
         }
 
@@ -341,82 +337,82 @@ namespace AW2
             GraphicsDeviceManager.PreferredBackBufferWidth = ClientBounds.Width;
             GraphicsDeviceManager.PreferredBackBufferHeight = ClientBounds.Height;
             GraphicsDeviceManager.ApplyChanges();
-            if (graphicsEngine != null) graphicsEngine.WindowResize();
-            if (menuEngine != null) menuEngine.WindowResize();
+            if (_graphicsEngine != null) _graphicsEngine.WindowResize();
+            if (_menuEngine != null) _menuEngine.WindowResize();
         }
 
         private void StartArenaImpl()
         {
             Log.Write("Starting arena");
-            dataEngine.StartArena();
-            dataEngine.RearrangeViewports();
+            DataEngine.StartArena();
+            DataEngine.RearrangeViewports();
             GameState = GameState.Gameplay;
-            soundEngine.PlayMusic(dataEngine.Arena.BackgroundMusic);
-            Log.Write("...started arena " + dataEngine.Arena.Name);
+            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
+            Log.Write("...started arena " + DataEngine.Arena.Name);
         }
 
         private void InitializeGraphics()
         {
             // Decide on preferred windowed and fullscreen sizes and formats.
             DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
-            preferredFullscreenWidth = displayMode.Width;
-            preferredFullscreenHeight = displayMode.Height;
-            preferredFullscreenFormat = displayMode.Format;
-            preferredWindowWidth = 1000;
-            preferredWindowHeight = 700;
-            preferredWindowFormat = displayMode.Format;
+            _preferredFullscreenWidth = displayMode.Width;
+            _preferredFullscreenHeight = displayMode.Height;
+            _preferredFullscreenFormat = displayMode.Format;
+            _preferredWindowWidth = 1000;
+            _preferredWindowHeight = 700;
+            _preferredWindowFormat = displayMode.Format;
 
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
             GraphicsDeviceManager.IsFullScreen = false;
-            GraphicsDeviceManager.PreferredBackBufferWidth = preferredWindowWidth;
-            GraphicsDeviceManager.PreferredBackBufferHeight = preferredWindowHeight;
+            GraphicsDeviceManager.PreferredBackBufferWidth = _preferredWindowWidth;
+            GraphicsDeviceManager.PreferredBackBufferHeight = _preferredWindowHeight;
             GraphicsDeviceManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
 
-            window = WindowInitializing(this);
-            window.AllowUserResizing = true;
-            window.ClientSizeChanged += ClientSizeChanged;
-            ClientBoundsMin = new Rectangle(0, 0, preferredWindowWidth, preferredWindowHeight);
+            _window = WindowInitializing(this);
+            _window.AllowUserResizing = true;
+            _window.ClientSizeChanged += ClientSizeChanged;
+            ClientBoundsMin = new Rectangle(0, 0, _preferredWindowWidth, _preferredWindowHeight);
             AllowDialogs = true;
         }
 
         private void InitializeComponents()
         {
-            uiEngine = new UIEngineImpl(this);
-            logicEngine = new LogicEngine(this);
-            soundEngine = new SoundEngine(this);
-            graphicsEngine = new GraphicsEngineImpl(this);
-            menuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
-            networkEngine = new NetworkEngine(this);
-            overlayDialog = new OverlayDialog(this);
-            dataEngine = new DataEngine();
-            physicsEngine = new PhysicsEngine();
+            _uiEngine = new UIEngineImpl(this);
+            _logicEngine = new LogicEngine(this);
+            SoundEngine = new SoundEngine(this);
+            _graphicsEngine = new GraphicsEngineImpl(this);
+            _menuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
+            NetworkEngine = new NetworkEngine(this);
+            _overlayDialog = new OverlayDialog(this);
+            DataEngine = new DataEngine();
+            PhysicsEngine = new PhysicsEngine();
 
-            networkEngine.UpdateOrder = 0;
-            uiEngine.UpdateOrder = 1;
-            logicEngine.UpdateOrder = 2;
-            soundEngine.UpdateOrder = 3;
-            graphicsEngine.UpdateOrder = 4;
-            overlayDialog.UpdateOrder = 5;
-            menuEngine.UpdateOrder = 6;
+            NetworkEngine.UpdateOrder = 0;
+            _uiEngine.UpdateOrder = 1;
+            _logicEngine.UpdateOrder = 2;
+            SoundEngine.UpdateOrder = 3;
+            _graphicsEngine.UpdateOrder = 4;
+            _overlayDialog.UpdateOrder = 5;
+            _menuEngine.UpdateOrder = 6;
 
-            Components.Add(logicEngine);
-            Components.Add(graphicsEngine);
-            Components.Add(overlayDialog);
-            Components.Add(uiEngine);
-            Components.Add(soundEngine);
-            Components.Add(menuEngine);
-            Components.Add(networkEngine);
-            Services.AddService(typeof(NetworkEngine), networkEngine);
-            Services.AddService(typeof(DataEngine), dataEngine);
-            Services.AddService(typeof(PhysicsEngine), physicsEngine);
+            Components.Add(_logicEngine);
+            Components.Add(_graphicsEngine);
+            Components.Add(_overlayDialog);
+            Components.Add(_uiEngine);
+            Components.Add(SoundEngine);
+            Components.Add(_menuEngine);
+            Components.Add(NetworkEngine);
+            Services.AddService(typeof(NetworkEngine), NetworkEngine);
+            Services.AddService(typeof(DataEngine), DataEngine);
+            Services.AddService(typeof(PhysicsEngine), PhysicsEngine);
 
             // Disable all optional components.
-            logicEngine.Enabled = false;
-            graphicsEngine.Visible = false;
-            menuEngine.Enabled = false;
-            menuEngine.Visible = false;
-            overlayDialog.Enabled = false;
-            overlayDialog.Visible = false;
+            _logicEngine.Enabled = false;
+            _graphicsEngine.Visible = false;
+            _menuEngine.Enabled = false;
+            _menuEngine.Visible = false;
+            _overlayDialog.Enabled = false;
+            _overlayDialog.Visible = false;
         }
 
         [Conditional("DEBUG")]
@@ -499,17 +495,17 @@ namespace AW2
                 case GameState.Gameplay:
                     Log.Write("Saving settings to file");
                     Settings.ToFile();
-                    logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    graphicsEngine.Visible = true;
+                    _logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
+                    _graphicsEngine.Visible = true;
                     break;
                 case GameState.Menu:
-                    menuEngine.Enabled = true;
-                    menuEngine.Visible = true;
+                    _menuEngine.Enabled = true;
+                    _menuEngine.Visible = true;
                     break;
                 case GameState.OverlayDialog:
-                    overlayDialog.Enabled = true;
-                    overlayDialog.Visible = true;
-                    graphicsEngine.Visible = true;
+                    _overlayDialog.Enabled = true;
+                    _overlayDialog.Visible = true;
+                    _graphicsEngine.Visible = true;
                     break;
                 default:
                     throw new ApplicationException("Cannot change to unexpected game state " + value);
@@ -518,22 +514,22 @@ namespace AW2
 
         private void DisableCurrentGameState()
         {
-            switch (gameState)
+            switch (_gameState)
             {
                 case GameState.Initializing:
                     break;
                 case GameState.Gameplay:
-                    logicEngine.Enabled = false;
-                    graphicsEngine.Visible = false;
+                    _logicEngine.Enabled = false;
+                    _graphicsEngine.Visible = false;
                     break;
                 case GameState.Menu:
-                    menuEngine.Enabled = false;
-                    menuEngine.Visible = false;
+                    _menuEngine.Enabled = false;
+                    _menuEngine.Visible = false;
                     break;
                 case GameState.OverlayDialog:
-                    overlayDialog.Enabled = false;
-                    overlayDialog.Visible = false;
-                    graphicsEngine.Visible = false;
+                    _overlayDialog.Enabled = false;
+                    _overlayDialog.Visible = false;
+                    _graphicsEngine.Visible = false;
                     break;
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
@@ -551,20 +547,20 @@ namespace AW2
         /// </summary>
         public void PrepareFirstArena()
         {
-            foreach (var player in dataEngine.Spectators)
+            foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
 
             // Notify game clients if we are the game server.
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new StartGameMessage();
-                foreach (var player in dataEngine.Spectators)
+                foreach (var player in DataEngine.Spectators)
                     message.SerializePlayer((Player)player);
-                message.ArenaPlaylist = dataEngine.ArenaPlaylist;
-                networkEngine.GameClientConnections.Send(message);
+                message.ArenaPlaylist = DataEngine.ArenaPlaylist;
+                NetworkEngine.GameClientConnections.Send(message);
             }
 
-            dataEngine.ArenaPlaylist.Reset();
+            DataEngine.ArenaPlaylist.Reset();
             PrepareNextArena();
         }
 
@@ -575,12 +571,12 @@ namespace AW2
         {
             if (NetworkMode == NetworkMode.Server)
             {
-                startingArenaOnServer = true;
-                startedArenaOnClients.Clear();
-                networkEngine.GameClientConnections.Send(new ArenaStartRequest());
-                networkEngine.MessageHandlers.Add(new MessageHandler<ArenaStartReply>(false, networkEngine.GameClientConnections, mess =>
+                _startingArenaOnServer = true;
+                _startedArenaOnClients.Clear();
+                NetworkEngine.GameClientConnections.Send(new ArenaStartRequest());
+                NetworkEngine.MessageHandlers.Add(new MessageHandler<ArenaStartReply>(false, NetworkEngine.GameClientConnections, mess =>
                 {
-                    startedArenaOnClients.Add(mess.ConnectionId);
+                    _startedArenaOnClients.Add(mess.ConnectionId);
                 }));
             }
             else
@@ -599,7 +595,7 @@ namespace AW2
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new ArenaFinishMessage();
-                networkEngine.GameClientConnections.Send(message);
+                NetworkEngine.GameClientConnections.Send(message);
             }
         }
 
@@ -615,9 +611,9 @@ namespace AW2
             // Disallow window resizing during arena loading.
             // A window resize event may reset the graphics card, fatally
             // screwing up initialisation of walls' index maps.
-            bool oldAllowUserResizing = window.AllowUserResizing;
+            bool oldAllowUserResizing = _window.AllowUserResizing;
             if (oldAllowUserResizing)
-                window.AllowUserResizing = false;
+                _window.AllowUserResizing = false;
 
             try
             {
@@ -627,7 +623,7 @@ namespace AW2
             finally
             {
                 if (oldAllowUserResizing)
-                    window.AllowUserResizing = true;
+                    _window.AllowUserResizing = true;
             }
         }
 
@@ -646,7 +642,7 @@ namespace AW2
         public void ShowDialog(OverlayDialogData dialogData)
         {
             if (!AllowDialogs) return;
-            overlayDialog.Data = dialogData;
+            _overlayDialog.Data = dialogData;
             GameState = GameState.OverlayDialog;
         }
 
@@ -656,8 +652,8 @@ namespace AW2
         public void ShowMenu()
         {
             Log.Write("Entering menus");
-            dataEngine.ClearGameState();
-            menuEngine.Activate();
+            DataEngine.ClearGameState();
+            _menuEngine.Activate();
             GameState = GameState.Menu;
         }
 
@@ -666,7 +662,7 @@ namespace AW2
         /// </summary>
         public void ToggleFullscreen()
         {
-            window.ToggleFullscreen();
+            _window.ToggleFullscreen();
         }
 
         /// <summary>
@@ -678,9 +674,9 @@ namespace AW2
         public void ShowOnlyPlayer(int player)
         {
             if (player < 0)
-                dataEngine.RearrangeViewports();
+                DataEngine.RearrangeViewports();
             else
-                dataEngine.RearrangeViewports(player);
+                DataEngine.RearrangeViewports(player);
         }
 
         /// <summary>
@@ -695,7 +691,7 @@ namespace AW2
             NetworkMode = NetworkMode.Server;
             try
             {
-                networkEngine.StartServer(connectionHandler);
+                NetworkEngine.StartServer(connectionHandler);
             }
             catch (Exception e)
             {
@@ -712,7 +708,7 @@ namespace AW2
         {
             if (NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
-            networkEngine.StopServer();
+            NetworkEngine.StopServer();
             NetworkMode = NetworkMode.Standalone;
         }
 
@@ -728,7 +724,7 @@ namespace AW2
             NetworkMode = NetworkMode.Client;
             try
             {
-                networkEngine.StartClient(serverAddress, connectionHandler);
+                NetworkEngine.StartClient(serverAddress, connectionHandler);
             }
             catch (Exception e)
             {
@@ -746,7 +742,7 @@ namespace AW2
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Standalone;
-            networkEngine.StopClient();
+            NetworkEngine.StopClient();
         }
 
         /// <summary>
@@ -755,7 +751,7 @@ namespace AW2
         /// <param name="arena"></param>
         public void LoadArenaContent(Arena arena)
         {
-            graphicsEngine.LoadArenaContent(arena);
+            _graphicsEngine.LoadArenaContent(arena);
         }
 
         #endregion Methods for game components
@@ -828,18 +824,18 @@ namespace AW2
             plr2Controls.fire1 = new KeyboardKey(Keys.LeftControl);
             plr2Controls.fire2 = new KeyboardKey(Keys.LeftShift);
             plr2Controls.extra = new KeyboardKey(Keys.X);
-            uiEngine.MouseControlsEnabled = false;
+            _uiEngine.MouseControlsEnabled = false;
 #endif
 
             Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
             Player player2 = new Player("John Crichton", (CanonicalString)"Bugger", (CanonicalString)"bouncegun", (CanonicalString)"reverse thruster", plr2Controls);
-            dataEngine.Spectators.Add(player1);
-            dataEngine.Spectators.Add(player2);
+            DataEngine.Spectators.Add(player1);
+            DataEngine.Spectators.Add(player2);
 
-            dataEngine.GameplayMode = new GameplayMode();
-            dataEngine.GameplayMode.ShipTypes = new string[] { "Windlord", "Bugger", "Plissken" };
-            dataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
-            dataEngine.GameplayMode.Weapon2Types = new string[] { "bouncegun", "rockets" };
+            DataEngine.GameplayMode = new GameplayMode();
+            DataEngine.GameplayMode.ShipTypes = new string[] { "Windlord", "Bugger", "Plissken" };
+            DataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
+            DataEngine.GameplayMode.Weapon2Types = new string[] { "bouncegun", "rockets" };
 
             GameState = GameState.Menu;
             base.BeginRun();
@@ -860,19 +856,19 @@ namespace AW2
             // HACK: profiling printout for gnuplot
             using (System.IO.StreamWriter sw = System.IO.File.CreateText("framecounts.txt"))
             {
-                foreach (int x in frameCounts)
+                foreach (int x in _frameCounts)
                     sw.WriteLine(x);
                 sw.Close();
             }
             using (System.IO.StreamWriter sw = System.IO.File.CreateText("gobcounts.txt"))
             {
-                foreach (int x in gobCounts)
+                foreach (int x in _gobCounts)
                     sw.WriteLine(x);
                 sw.Close();
             }
             using (System.IO.StreamWriter sw = System.IO.File.CreateText("collisioncounts.txt"))
             {
-                foreach (int x in collisionCounts)
+                foreach (int x in _collisionCounts)
                     sw.WriteLine(x);
                 sw.Close();
             }
@@ -883,56 +879,56 @@ namespace AW2
 
         protected override void Update(GameTime gameTime)
         {
-            if (startingArenaOnServer)
+            if (_startingArenaOnServer)
             {
-                if (networkEngine.GameClientConnections.Connections.All(
-                    conn => startedArenaOnClients.Contains(conn.Id)))
+                if (NetworkEngine.GameClientConnections.Connections.All(
+                    conn => _startedArenaOnClients.Contains(conn.Id)))
                 {
-                    startingArenaOnServer = false;
+                    _startingArenaOnServer = false;
                     StartArenaImpl();
                 }
             }
 
             // Switch music off
-            if (musicSwitch.Pulse && GameState == GameState.Gameplay)
+            if (_musicSwitch.Pulse && GameState == GameState.Gameplay)
             {
-                soundEngine.StopMusic();
+                SoundEngine.StopMusic();
             }
 
             // Instant arena reload (simple aid for hand-editing an arena)
-            if (arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
+            if (_arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
             {
-                dataEngine.InitializeFromArena(dataEngine.ArenaPlaylist.Current, true);
+                DataEngine.InitializeFromArena(DataEngine.ArenaPlaylist.Current, true);
                 StartArena();
             }
 
             // Frame stepping (for debugging)
-            if (frameRunControl.Pulse)
+            if (_frameRunControl.Pulse)
             {
-                logicEngine.Enabled = true;
-                frameStep = false;
+                _logicEngine.Enabled = true;
+                _frameStep = false;
             }
-            if (frameStep)
+            if (_frameStep)
             {
-                if (frameStepControl.Pulse)
-                    logicEngine.Enabled = true;
+                if (_frameStepControl.Pulse)
+                    _logicEngine.Enabled = true;
                 else
-                    logicEngine.Enabled = false;
+                    _logicEngine.Enabled = false;
             }
-            else if (frameStepControl.Pulse)
+            else if (_frameStepControl.Pulse)
             {
-                logicEngine.Enabled = false;
-                frameStep = true;
+                _logicEngine.Enabled = false;
+                _frameStep = true;
             }
 
             GameTime = gameTime;
-            if (logicEngine.Enabled) DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
+            if (_logicEngine.Enabled) DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
 
             base.Update(GameTime);
-            if (logicEngine.Enabled)
+            if (_logicEngine.Enabled)
             {
                 GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
-                dataEngine.CommitPending();
+                DataEngine.CommitPending();
             }
         }
 
@@ -942,33 +938,33 @@ namespace AW2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            if ((gameTime.TotalRealTime - lastFramerateCheck).TotalSeconds < 1)
+            if ((gameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds < 1)
             {
                 FramesDrawnPerSecondCounter.Increment();
-                ++framesSinceLastCheck;
+                ++_framesSinceLastCheck;
             }
             else
             {
 #if DEBUG_PROFILE
-                frameCounts.Add(framesSinceLastCheck);
-                gobCounts.Add(gobCount);
-                collisionCounts.Add(collisionCount);
-                gobCount = collisionCount = 0;
+                _frameCounts.Add(_framesSinceLastCheck);
+                _gobCounts.Add(GobCount);
+                _collisionCounts.Add(CollisionCount);
+                GobCount = CollisionCount = 0;
 #endif
-                window.Title = "Assault Wing [~" + framesSinceLastCheck + " fps]";
-                framesSinceLastCheck = 1;
-                lastFramerateCheck = gameTime.TotalRealTime;
+                _window.Title = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
+                _framesSinceLastCheck = 1;
+                _lastFramerateCheck = gameTime.TotalRealTime;
 
                 if (NetworkMode != NetworkMode.Standalone)
-                    window.Title += " [" + networkEngine.GetSendQueueSize() + " B send queue]";
+                    _window.Title += " [" + NetworkEngine.GetSendQueueSize() + " B send queue]";
 
-                if (NetworkMode == NetworkMode.Client && networkEngine.IsConnectedToGameServer)
-                    window.Title += string.Format(" [{0} ms lag]",
-                        (int)networkEngine.ServerPingTime.TotalMilliseconds);
+                if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
+                    _window.Title += string.Format(" [{0} ms lag]",
+                        (int)NetworkEngine.ServerPingTime.TotalMilliseconds);
 
                 if (NetworkMode == NetworkMode.Server)
-                    foreach (PingedConnection conn in networkEngine.GameClientConnections.Connections)
-                        window.Title += string.Format(" [#{0}: {1} ms lag]",
+                    foreach (PingedConnection conn in NetworkEngine.GameClientConnections.Connections)
+                        _window.Title += string.Format(" [#{0}: {1} ms lag]",
                             conn.Id,
                             (int)conn.PingTime.TotalMilliseconds);
             }
@@ -984,8 +980,8 @@ namespace AW2
         protected override void OnExiting(object sender, EventArgs args)
         {
             // If progress bar is running, kill its thread.
-            if (dataEngine.ProgressBar.TaskRunning)
-                dataEngine.ProgressBar.AbortTask();
+            if (DataEngine.ProgressBar.TaskRunning)
+                DataEngine.ProgressBar.AbortTask();
 
             base.OnExiting(sender, args);
         }

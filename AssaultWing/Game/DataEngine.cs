@@ -373,7 +373,7 @@ namespace AW2.Game
             }
 
 #if DEBUG_PROFILE
-            AssaultWing.Instance.gobCount = Arena.Gobs.Count;
+            AssaultWing.Instance.GobCount = Arena.Gobs.Count;
 #endif
         }
 

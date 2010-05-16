@@ -904,7 +904,7 @@ namespace AW2.Game
         public void PerformCollision(CollisionArea area1, CollisionArea area2, bool allowSideEffects)
         {
 #if DEBUG_PROFILE
-            ++AssaultWing.Instance.collisionCount;
+            ++AssaultWing.Instance.CollisionCount;
 #endif
             // At least one area must be from a movable gob, lest there be no collision.
             bool area1Movable = (area1.Type & CollisionAreaType.PhysicalMovable) != 0;

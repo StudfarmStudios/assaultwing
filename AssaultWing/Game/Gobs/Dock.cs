@@ -98,7 +98,7 @@ namespace AW2.Game.Gobs
             if (_dockSoundCue != null && _dockSoundCue.IsPlaying) return;
             if (_dockSoundCue != null) _dockSoundCue.Dispose();
             _dockSoundCue = AssaultWing.Instance.SoundEngine.GetCue("Docking");
-            _dockSoundCue.Play();
+            if (_dockSoundCue != null) _dockSoundCue.Play();
         }
 
         private void EnsureDockSoundStopped()

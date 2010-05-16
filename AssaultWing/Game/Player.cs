@@ -17,6 +17,20 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("Id:{Id} name:{Name} shipType:{shipTypeName}")]
     public class Player : Spectator
     {
+        public class Message
+        {
+            public TimeSpan GameTime { get; private set; }
+            public string Text { get; private set; }
+            public Message(string text)
+            {
+                GameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                if (GameTime.TotalHours >= 1)
+                    Text = string.Format("<{0}:{1:d2}:{2:d2}> {3}", (int)GameTime.TotalHours, GameTime.Minutes, GameTime.Seconds, text);
+                else
+                    Text = string.Format("<{0}:{1:d2}> {2}", (int)GameTime.TotalMinutes, GameTime.Seconds, text);
+            }
+        }
+
         private class LookAtShip : AW2.Graphics.ILookAt
         {
             private Vector2 _oldPos;
@@ -233,7 +247,7 @@ namespace AW2.Game
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
         /// </summary>
-        public List<string> Messages { get; private set; }
+        public List<Message> Messages { get; private set; }
 
         public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
 
@@ -307,7 +321,7 @@ namespace AW2.Game
             this._shipTypeName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
-            Messages = new List<string>();
+            Messages = new List<Message>();
             _lives = 3;
             _shipSpawnTime = new TimeSpan(1);
             _relativeShakeDamage = 0;
@@ -464,10 +478,7 @@ namespace AW2.Game
                 var messageMessage = new PlayerMessageMessage { PlayerId = Id, Text = message };
                 AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(messageMessage);
             }
-
-            var time = AssaultWing.Instance.DataEngine.ArenaTotalTime;
-            var line = string.Format("<{0}:{1:d2}> {2}", (int)time.TotalMinutes, time.Seconds, message);
-            Messages.Add(line);
+            Messages.Add(new Message(message));
 
             // Throw away very old messages.
             if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)

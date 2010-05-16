@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
+using AW2.Helpers;
 
 namespace AW2.Graphics
 {
@@ -12,12 +13,22 @@ namespace AW2.Graphics
     public class ChatBoxOverlay : OverlayComponent
     {
         private const int VISIBLE_LINES = 5;
+        private static Curve g_messageFadeoutCurve;
         private Player _player;
         private SpriteFont _chatBoxFont;
 
         public override Point Dimensions
         {
             get { return new Point(450, _chatBoxFont.LineSpacing * VISIBLE_LINES); }
+        }
+
+        static ChatBoxOverlay()
+        {
+            g_messageFadeoutCurve = new Curve();
+            g_messageFadeoutCurve.Keys.Add(new CurveKey(0, 1));
+            g_messageFadeoutCurve.Keys.Add(new CurveKey(2, 1));
+            g_messageFadeoutCurve.Keys.Add(new CurveKey(4, 0));
+            g_messageFadeoutCurve.ComputeTangents(CurveTangent.Linear);
         }
 
         /// <param name="player">The player whose chat messages to display.</param>
@@ -33,7 +44,11 @@ namespace AW2.Graphics
             // Chat messages
             var messagePos = Vector2.Zero;
             for (int i = 0, messageI = _player.Messages.Count - 1; i < VISIBLE_LINES && messageI >= 0; ++i, --messageI, messagePos += new Vector2(0, _chatBoxFont.LineSpacing))
-                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI], messagePos, new Color(1f, 1f, 1f, 1f - i / (float)VISIBLE_LINES));
+            {
+                float alpha = g_messageFadeoutCurve.Evaluate(_player.Messages[messageI].GameTime.SecondsAgoGameTime());
+                if (alpha == 0) continue;
+                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Text, messagePos, new Color(1f, 1f, 1f, alpha));
+            }
         }
 
         public override void LoadContent()

@@ -35,11 +35,19 @@ namespace AW2.Sound
 
         public override void Initialize()
         {
-            _audioEngine = new AudioEngine(System.IO.Path.Combine(Paths.Sounds, "assaultwingsounds.xgs"));
-            _waveBank = new WaveBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Wave Bank.xwb"));
-            _soundBank = new SoundBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Sound Bank.xsb"));
-            _soundEffectCategory = _audioEngine.GetCategory("Default");
-            Log.Write("Sound engine initialized.");
+            try
+            {
+                _audioEngine = new AudioEngine(System.IO.Path.Combine(Paths.Sounds, "assaultwingsounds.xgs"));
+                _waveBank = new WaveBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Wave Bank.xwb"));
+                _soundBank = new SoundBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Sound Bank.xsb"));
+                _soundEffectCategory = _audioEngine.GetCategory("Default");
+                Log.Write("Sound engine initialized.");
+            }
+            catch (InvalidOperationException e)
+            {
+                Log.Write("ERROR: There will be no sound. Sound engine initialization failed. Exception details: " + e.ToString());
+                Enabled = false;
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -141,7 +149,7 @@ namespace AW2.Sound
 
         public Cue GetCue(string soundName)
         {
-            if (!Enabled) throw new InvalidOperationException("Sound engine is disabled");
+            if (!Enabled) return null;
             return _soundBank.GetCue(soundName);
         }
 

@@ -230,7 +230,7 @@ namespace AW2.Menu
                 menuChangeCue.Dispose();
             }
             menuChangeCue = AssaultWing.Instance.SoundEngine.GetCue("MenuChangeStart");
-            menuChangeCue.Play();
+            if (menuChangeCue != null) menuChangeCue.Play();
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             activeComponentSoundPlayedOnce = activeComponentActivatedOnce = false;

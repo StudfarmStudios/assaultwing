@@ -104,10 +104,50 @@ template TextureFilename {
  STRING filename;
 }
 
+template AnimTicksPerSecond {
+ <9e415a43-7ba6-4a73-8743-b73d47e88476>
+ DWORD AnimTicksPerSecond;
+}
+
+template Animation {
+ <3d82ab4f-62da-11cf-ab39-0020af71e433>
+ [...]
+}
+
+template AnimationSet {
+ <3d82ab50-62da-11cf-ab39-0020af71e433>
+ [Animation <3d82ab4f-62da-11cf-ab39-0020af71e433>]
+}
+
+template AnimationOptions {
+ <e2bf56c0-840f-11cf-8f52-0040333594a3>
+ DWORD openclosed;
+ DWORD positionquality;
+}
+
+template FloatKeys {
+ <10dd46a9-775b-11cf-8f52-0040333594a3>
+ DWORD nValues;
+ array FLOAT values[nValues];
+}
+
+template TimedFloatKeys {
+ <f406b180-7b3b-11cf-8f52-0040333594a3>
+ DWORD time;
+ FloatKeys tfkeys;
+}
+
+template AnimationKey {
+ <10dd46a8-775b-11cf-8f52-0040333594a3>
+ DWORD keyType;
+ DWORD nKeys;
+ array TimedFloatKeys keys[nKeys];
+}
+
 
 KeyValuePair {
  "Date";
- "2010-05-02 13:01:31";
+ "2010-05-16 19:09:39";
 }
 
 KeyValuePair {
@@ -5517,6 +5557,30 @@ Frame Box01 {
    1.000000,-0.000000,-0.000000,0.000000,0.000000,1.000000,-0.000000,0.000000,-0.000000,0.000000,1.000000,0.000000,41.149353,-37.883625,0.000049,1.000000;;
   }
  }
+
+ Frame Peng_airstreaks_03 {
+  
+
+  FrameTransformMatrix relative {
+   -0.000000,1.000000,0.000000,0.000000,-1.000000,-0.000000,-0.000000,0.000000,-0.000000,-0.000000,1.000000,0.000000,-662.01544,76.128395,-127.330299,1.000000;;
+  }
+
+  ObjectMatrixComment object {
+   1.000000,-0.000000,-0.000000,0.000000,0.000000,1.000000,-0.000000,0.000000,-0.000000,0.000000,1.000000,0.000000,41.149353,-37.883625,0.000050,1.000000;;
+  }
+ }
+
+ Frame Peng_airstreaks_04 {
+  
+
+  FrameTransformMatrix relative {
+   -0.000000,1.000000,0.000000,0.000000,-1.000000,-0.000000,-0.000000,0.000000,-0.000000,-0.000000,1.000000,0.000000,668.06970,76.128448,-127.330231,1.000000;;
+  }
+
+  ObjectMatrixComment object {
+   1.000000,-0.000000,-0.000000,0.000000,0.000000,1.000000,-0.000000,0.000000,-0.000000,0.000000,1.000000,0.000000,41.149353,-37.883625,0.000049,1.000000;;
+  }
+ }
 }
 
 Frame Omni01 {
@@ -5540,5 +5604,433 @@ Frame Omni02 {
 
  ObjectMatrixComment object {
   1.000000,0.000000,0.000000,0.000000,0.000000,1.000000,0.000000,0.000000,0.000000,0.000000,1.000000,0.000000,0.000000,0.000000,0.000000,1.000000;;
+ }
+}
+
+AnimTicksPerSecond fps {
+ 4800;
+}
+
+AnimationSet Windlord {
+ 
+
+ Animation Anim-Windlord-Box01 {
+  
+  { Box01 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,0.000000,-0.000000,0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;0.877299,0.877299,0.877299;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;25.438522,-0.073410,0.784424;;;
+  }
+ }
+
+ Animation Anim-Windlord-Gun1 {
+  
+  { Gun1 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;0.072174,283.328888,-47.035912;;;
+  }
+ }
+
+ Animation Anim-Windlord-Gun2 {
+  
+  { Gun2 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;-240.461395,283.328918,-127.330284;;;
+  }
+ }
+
+ Animation Anim-Windlord-Gun3 {
+  
+  { Gun3 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;238.728073,283.328918,-127.330254;;;
+  }
+ }
+
+ Animation Anim-Windlord-Gun4 {
+  
+  { Gun4 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;1.607575,-473.02832,-127.330299;;;
+  }
+ }
+
+ Animation Anim-Windlord-Thruster1 {
+  
+  { Thruster1 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,0.000000,0.000000,0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;-482.07550,-49.493298,-127.330292;;;
+  }
+ }
+
+ Animation Anim-Windlord-Thruster2 {
+  
+  { Thruster2 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,0.000000,0.000000,0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;-241.909607,-118.068848,-127.330292;;;
+  }
+ }
+
+ Animation Anim-Windlord-Thruster3 {
+  
+  { Thruster3 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,0.000000,0.000000,0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;482.28287,-49.493263,-127.330231;;;
+  }
+ }
+
+ Animation Anim-Windlord-Thruster4 {
+  
+  { Thruster4 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,0.000000,0.000000,0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;242.441391,-118.068832,-127.330269;;;
+  }
+ }
+
+ Animation Anim-Windlord-Peng_airstreaks_01 {
+  
+  { Peng_airstreaks_01 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;-130.600189,-506.33206,-127.330299;;;
+  }
+ }
+
+ Animation Anim-Windlord-Peng_airstreaks_02 {
+  
+  { Peng_airstreaks_02 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;136.797607,-506.33206,-127.330276;;;
+  }
+ }
+
+ Animation Anim-Windlord-Peng_airstreaks_03 {
+  
+  { Peng_airstreaks_03 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;-662.01550,76.128395,-127.330299;;;
+  }
+ }
+
+ Animation Anim-Windlord-Peng_airstreaks_04 {
+  
+  { Peng_airstreaks_04 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.000000,0.000000,-0.707107;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;668.06970,76.128448,-127.330238;;;
+  }
+ }
+
+ Animation Anim-Windlord-Omni01 {
+  
+  { Omni01 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.707107,0.000000,0.000000;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;758.98834,940.59412,832.56702;;;
+  }
+ }
+
+ Animation Anim-Windlord-Omni02 {
+  
+  { Omni02 }
+
+  AnimationOptions {
+   1;
+   0;
+  }
+
+  AnimationKey rot {
+   0;
+   1;
+   0;4;0.707107,-0.707107,0.000000,0.000000;;;
+  }
+
+  AnimationKey scale {
+   1;
+   1;
+   0;3;1.000000,1.000000,1.000000;;;
+  }
+
+  AnimationKey pos {
+   2;
+   1;
+   0;3;-892.65509,716.59808,-1889.39429;;;
+  }
  }
 }

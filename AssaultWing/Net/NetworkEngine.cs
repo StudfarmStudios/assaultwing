@@ -203,6 +203,7 @@ namespace AW2.Net
         public void StopClient()
         {
             Log.Write("Client closes connection");
+            MessageHandlers.Clear();
             if (_gameServerConnection != null)
             {
                 _gameServerConnection.BaseConnection.Dispose();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Game;
+using AW2.Helpers;
 using AW2.Net.Messages;
 
 namespace AW2.Net
@@ -27,8 +28,11 @@ namespace AW2.Net
 
         private static void HandleWallHoleMessage(WallHoleMessage mess)
         {
-            var wall = (AW2.Game.Gobs.Wall)AssaultWing.Instance.DataEngine.Arena.Gobs.First(gob => gob.Id == mess.GobId);
-            wall.MakeHole(mess.TriangleIndices);
+            var wall = (AW2.Game.Gobs.Wall)AssaultWing.Instance.DataEngine.Arena.Gobs.FirstOrDefault(gob => gob.Id == mess.GobId);
+            if (wall == null)
+                Log.Write("WARNING: Cannot find wall ID " + mess.GobId + " for WallHoleMessage");
+            else
+                wall.MakeHole(mess.TriangleIndices);
         }
 
         private static void HandleArenaStartRequest(ArenaStartRequest mess)

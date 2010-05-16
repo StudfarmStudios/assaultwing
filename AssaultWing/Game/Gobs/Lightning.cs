@@ -21,7 +21,8 @@ namespace AW2.Game.Gobs
                 if (_id > 0)
                 {
                     int id = _id;
-                    _gob = _arena.Gobs.First(gob => gob.Id == id);
+                    _gob = _arena.Gobs.FirstOrDefault(gob => gob.Id == id);
+                    if (_gob == null) Log.Write("ERROR: GobProxy cannot find gob by the ID " + id);
                     _id = 0;
                 }
                 return _gob;
@@ -257,6 +258,7 @@ namespace AW2.Game.Gobs
 
         private void CreateMesh()
         {
+            if (Shooter.Gob == null) return;
             var start = Shooter.Gob.GetNamedPosition(ShooterBoneIndex);
             if (Target.Gob != null)
             {

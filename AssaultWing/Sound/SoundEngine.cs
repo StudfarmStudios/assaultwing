@@ -147,6 +147,9 @@ namespace AW2.Sound
             _soundBank.PlayCue(soundName);
         }
 
+        /// <summary>
+        /// Returns the named cue or <code>null</code> if sounds are disabled.
+        /// </summary>
         public Cue GetCue(string soundName)
         {
             if (!Enabled) return null;

@@ -511,7 +511,7 @@ namespace AW2.Game
         {
             if (Arena == null)
                 throw new InvalidOperationException("No active arena");
-            Vector2 radarDisplayDimensions = new Vector2(162, 150); // TODO: Make this constant configurable
+            Vector2 radarDisplayDimensions = new Vector2(200, 200); // TODO: Make this constant configurable
             Vector2 arenaDimensions = Arena.Dimensions;
             float arenaToRadarScale = Math.Min(
                 radarDisplayDimensions.X / arenaDimensions.X,

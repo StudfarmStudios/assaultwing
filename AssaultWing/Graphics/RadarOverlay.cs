@@ -13,7 +13,7 @@ namespace AW2.Graphics
     /// </summary>
     class RadarOverlay : OverlayComponent
     {
-        private static readonly Color ARENA_RADAR_SILHOUETTE_COLOR = new Color(190, 190, 190, 100);
+        private static readonly Color ARENA_RADAR_SILHOUETTE_COLOR = new Color(190, 190, 190, 85);
         private Player _player;
         private Texture2D _radarDisplayTexture;
         private Texture2D _shipOnRadarTexture;
@@ -37,7 +37,7 @@ namespace AW2.Graphics
             spriteBatch.Draw(_radarDisplayTexture, Vector2.Zero, Color.White);
 
             // Arena walls on radar
-            Vector2 radarDisplayTopLeft = new Vector2(10, 10);
+            Vector2 radarDisplayTopLeft = new Vector2(7, 7);
             spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, ARENA_RADAR_SILHOUETTE_COLOR);
 
             // Ships on radar

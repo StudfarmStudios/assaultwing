@@ -303,31 +303,8 @@ namespace AW2.Menu
                     AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(message.ArenaPlaylist);
 
                     // Prepare and start playing the game.
-                    var net = AssaultWing.Instance.NetworkEngine;
-                    menuEngine.ProgressBarAction(
-                        AssaultWing.Instance.PrepareFirstArena,
-                        () =>
-                        {
-                            net.MessageHandlers.Add(new MessageHandler<WallHoleMessage>(false, net.GameServerConnection, mess =>
-                            {
-                                var wall = (AW2.Game.Gobs.Wall)AssaultWing.Instance.DataEngine.Arena.Gobs.First(gob => gob.Id == mess.GobId);
-                                wall.MakeHole(mess.TriangleIndices);
-                            }));
-                            net.MessageHandlers.Add(new GameplayMessageHandler<GobCreationMessage>(false,
-                                (PingedConnection)net.GameServerConnection,
-                                AssaultWing.Instance.DataEngine.ProcessGobCreationMessage));
-                            net.MessageHandlers.Add(new MessageHandler<ArenaStartRequest>(false, net.GameServerConnection, mess =>
-                            {
-                                AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(new ArenaStartReply());
-                                AssaultWing.Instance.StartArena();
-                            }));
-                            net.MessageHandlers.Add(new MessageHandler<PlayerMessageMessage>(false, net.GameServerConnection, mess =>
-                            {
-                                var player = AssaultWing.Instance.DataEngine.Spectators.First(spec => spec.Id == mess.PlayerId) as Player;
-                                if (player == null) throw new ApplicationException("Text message for spectator " + mess.PlayerId + " who is not a Player");
-                                player.SendMessage(mess.Text);
-                            }));
-                        });
+                    menuEngine.ProgressBarAction(AssaultWing.Instance.PrepareFirstArena,
+                        () => AssaultWing.Instance.NetworkEngine.MessageHandlers.AddRange(MessageHandlers.GetGameplayHandlers((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection)));
                     menuEngine.Deactivate();
                 }
             }

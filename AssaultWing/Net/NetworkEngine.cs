@@ -39,7 +39,7 @@ namespace AW2.Net
     {
         #region Type definitions
 
-        enum ConnectionType
+        private enum ConnectionType
         {
             ManagementServer,
             GameServer,
@@ -50,43 +50,40 @@ namespace AW2.Net
 
         #region Fields
 
-        /// <summary>
-        /// TCP connection port.
-        /// </summary>
-        int port = 'A' * 256 + 'W';
+        private const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
 
         /// <summary>
         /// Network connection to the management server, 
         /// or <c>null</c> if no such live connection exists.
         /// </summary>
-        PingedConnection managementServerConnection = null; // HACK: assignment to avoid compiler warning
+        private PingedConnection _managementServerConnection = null; // HACK: assignment to avoid compiler warning
 
         /// <summary>
         /// Network connection to the game server of the current game session, 
         /// or <c>null</c> if no such live connection exists 
         /// (including the case that we are the game server).
         /// </summary>
-        PingedConnection gameServerConnection;
+        private PingedConnection _gameServerConnection;
 
         /// <summary>
         /// Network connections to game clients. Nonempty only on a game server.
         /// </summary>
-        MultiConnection gameClientConnections;
+        private MultiConnection _gameClientConnections;
 
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
         /// </summary>
-        List<IConnection> removedClientConnections;
+        private List<IConnection> _removedClientConnections;
 
         /// <summary>
         /// Handler of connection results for client that is connecting to a game server.
         /// </summary>
-        Action<Result<Connection>> startClientConnectionHandler;
+        private Action<Result<Connection>> _startClientConnectionHandler;
 
         /// <summary>
         /// Handler of connection results for server that is listening for game client connections.
         /// </summary>
-        Action<Result<Connection>> startServerConnectionHandler;
+        private Action<Result<Connection>> _startServerConnectionHandler;
 
         #endregion Fields
 
@@ -99,8 +96,8 @@ namespace AW2.Net
         public NetworkEngine(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            gameClientConnections = new MultiConnection { Name = "Game Client Connections" };
-            removedClientConnections = new List<IConnection>();
+            _gameClientConnections = new MultiConnection { Name = "Game Client Connections" };
+            _removedClientConnections = new List<IConnection>();
             MessageHandlers = new List<IMessageHandler>();
         }
 
@@ -111,17 +108,17 @@ namespace AW2.Net
         /// <summary>
         /// The handlers of network messages.
         /// </summary>
-        public IList<IMessageHandler> MessageHandlers { get; private set; }
+        public List<IMessageHandler> MessageHandlers { get; private set; }
 
         /// <summary>
         /// Are we connected to a game server.
         /// </summary>
-        public bool IsConnectedToGameServer { get { return gameServerConnection != null; } }
+        public bool IsConnectedToGameServer { get { return _gameServerConnection != null; } }
 
         /// <summary>
         /// Are we connected to the management server.
         /// </summary>
-        public bool IsConnectedToManagementServer { get { return managementServerConnection != null; } }
+        public bool IsConnectedToManagementServer { get { return _managementServerConnection != null; } }
 
         /// <summary>
         /// Connections to game clients.
@@ -130,8 +127,8 @@ namespace AW2.Net
         {
             get
             {
-                if (gameClientConnections == null) throw new InvalidOperationException("No connections to game clients");
-                return gameClientConnections;
+                if (_gameClientConnections == null) throw new InvalidOperationException("No connections to game clients");
+                return _gameClientConnections;
             }
         }
 
@@ -142,8 +139,8 @@ namespace AW2.Net
         {
             get
             {
-                if (gameServerConnection == null) throw new InvalidOperationException("No connection to game server");
-                return gameServerConnection;
+                if (_gameServerConnection == null) throw new InvalidOperationException("No connection to game server");
+                return _gameServerConnection;
             }
         }
 
@@ -154,8 +151,8 @@ namespace AW2.Net
         {
             get
             {
-                if (managementServerConnection == null) throw new InvalidOperationException("No connection to management server");
-                return managementServerConnection;
+                if (_managementServerConnection == null) throw new InvalidOperationException("No connection to management server");
+                return _managementServerConnection;
             }
         }
 
@@ -167,8 +164,8 @@ namespace AW2.Net
         public void StartServer(Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Server starts listening");
-            startServerConnectionHandler = connectionHandler;
-            Connection.StartListening(port, "I listen");
+            _startServerConnectionHandler = connectionHandler;
+            Connection.StartListening(TCP_CONNECTION_PORT, "I listen");
         }
 
         /// <summary>
@@ -179,7 +176,7 @@ namespace AW2.Net
         {
             Log.Write("Server stops listening");
             Connection.StopListening();
-            gameClientConnections.Dispose();
+            _gameClientConnections.Dispose();
         }
 
         /// <summary>
@@ -192,11 +189,11 @@ namespace AW2.Net
         public void StartClient(string serverAddress, Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Client starts connecting");
-            startClientConnectionHandler = connectionHandler;
+            _startClientConnectionHandler = connectionHandler;
             IPAddress serverIp;
             if (!System.Net.IPAddress.TryParse(serverAddress, out serverIp))
                 throw new ArgumentException("Not a valid IP address: " + serverAddress);
-            Connection.Connect(serverIp, port, "I connect");
+            Connection.Connect(serverIp, TCP_CONNECTION_PORT, "I connect");
         }
 
         /// <summary>
@@ -206,10 +203,10 @@ namespace AW2.Net
         public void StopClient()
         {
             Log.Write("Client closes connection");
-            if (gameServerConnection != null)
+            if (_gameServerConnection != null)
             {
-                gameServerConnection.BaseConnection.Dispose();
-                gameServerConnection = null;
+                _gameServerConnection.BaseConnection.Dispose();
+                _gameServerConnection = null;
             }
         }
 
@@ -224,7 +221,7 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
 
             var connection = GameClientConnections[connectionId];
-            removedClientConnections.Add(connection);
+            _removedClientConnections.Add(connection);
 
             // Remove the client's players.
             if (error)
@@ -261,9 +258,9 @@ namespace AW2.Net
         {
             get
             {
-                if (gameServerConnection == null)
+                if (_gameServerConnection == null)
                     throw new InvalidOperationException("Cannot ping server without connection");
-                return gameServerConnection.PingTime;
+                return _gameServerConnection.PingTime;
             }
         }
 
@@ -275,9 +272,9 @@ namespace AW2.Net
         {
             get
             {
-                if (gameServerConnection == null)
+                if (_gameServerConnection == null)
                     throw new InvalidOperationException("Cannot count server game time offset without connection");
-                return gameServerConnection.RemoteGameTimeOffset;
+                return _gameServerConnection.RemoteGameTimeOffset;
             }
         }
 
@@ -332,14 +329,14 @@ namespace AW2.Net
                     if (result.Id == "I connect")
                     {
                         if (result.Successful)
-                            gameServerConnection = new PingedConnection(result.Value);
-                        startClientConnectionHandler(result);
+                            _gameServerConnection = new PingedConnection(result.Value);
+                        _startClientConnectionHandler(result);
                     }
                     if (result.Id == "I listen")
                     {
                         if (result.Successful)
-                            gameClientConnections.Connections.Add(new PingedConnection(result.Value));
-                        startServerConnectionHandler(result);
+                            _gameClientConnections.Connections.Add(new PingedConnection(result.Value));
+                        _startServerConnectionHandler(result);
                     }
                 }
             });
@@ -347,23 +344,22 @@ namespace AW2.Net
             // Update ping time measurements.
             ForEachConnection(connection => connection.Update());
 
-            foreach (var handler in MessageHandlers)
-                handler.HandleMessages();
-            for (int i = MessageHandlers.Count - 1; i >= 0; --i)
-                if (MessageHandlers[i].Disposed) MessageHandlers.RemoveAt(i);
+            RemoveDisposedMessageHandlers();
+            foreach (var handler in MessageHandlers) handler.HandleMessages();
+            RemoveDisposedMessageHandlers();
 
             // Handle occurred errors.
             ForEachConnection(connection => connection.HandleErrors());
 
             // Finish removing dropped client connections.
-            foreach (PingedConnection connection in removedClientConnections)
-                gameClientConnections.Connections.Remove(connection);
+            foreach (PingedConnection connection in _removedClientConnections)
+                _gameClientConnections.Connections.Remove(connection);
 
 #if DEBUG
             // Look for unhandled messages.
             Type lastMessageType = null; // to avoid flooding log messages
             IConnection lastConnection = null;
-            ForEachConnection(connection => connection.Messages.Prune(TimeSpan.FromSeconds(10), message =>
+            ForEachConnection(connection => connection.Messages.Prune(TimeSpan.FromSeconds(30), message =>
             {
                 if (lastMessageType != message.GetType() || lastConnection != connection)
                 {
@@ -383,7 +379,7 @@ namespace AW2.Net
         /// <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
-            gameClientConnections.Dispose();
+            _gameClientConnections.Dispose();
             base.Dispose(disposing);
         }
 
@@ -391,21 +387,22 @@ namespace AW2.Net
 
         #region Private methods
 
-        /// <summary>
-        /// Performs an operation on each established connection.
-        /// </summary>
-        /// <param name="action">The action to perform.</param>
-        void ForEachConnection(Action<IConnection> action)
+        private void RemoveDisposedMessageHandlers()
         {
-            if (managementServerConnection != null)
-                action(managementServerConnection);
-            if (gameServerConnection != null)
-                action(gameServerConnection);
-            if (gameClientConnections != null)
-                action(gameClientConnections);
+            MessageHandlers = MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
         }
 
-        IConnection GetConnection(int connectionId)
+        private void ForEachConnection(Action<IConnection> action)
+        {
+            if (_managementServerConnection != null)
+                action(_managementServerConnection);
+            if (_gameServerConnection != null)
+                action(_gameServerConnection);
+            if (_gameClientConnections != null)
+                action(_gameClientConnections);
+        }
+
+        private IConnection GetConnection(int connectionId)
         {
             IConnection result = null;
             Action<IConnection> finder = null;

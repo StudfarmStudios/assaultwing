@@ -5,19 +5,10 @@ using System.Text;
 
 namespace AW2.Net
 {
-    /// <summary>
-    /// A handler of network messages.
-    /// </summary>
     public interface IMessageHandler
     {
-        /// <summary>
-        /// Is the handler not active.
-        /// </summary>
         bool Disposed { get; }
-
-        /// <summary>
-        /// Receive and handle messages.
-        /// </summary>
+        void Dispose();
         void HandleMessages();
     }
 
@@ -30,9 +21,6 @@ namespace AW2.Net
         private Action<T> Action { get; set; }
         private IConnection Source { get; set; }
 
-        /// <summary>
-        /// Is the handler not active.
-        /// </summary>
         public bool Disposed { get; private set; }
 
         /// <summary>
@@ -48,9 +36,11 @@ namespace AW2.Net
             Action = action;
         }
 
-        /// <summary>
-        /// Receive and handle messages.
-        /// </summary>
+        public void Dispose()
+        {
+            Disposed = true;
+        }
+
         public void HandleMessages()
         {
             if (Disposed) throw new InvalidOperationException("Cannot use disposed MessageHandler");
@@ -76,9 +66,6 @@ namespace AW2.Net
         private Action<T, TimeSpan> Action { get; set; }
         private PingedConnection Source { get; set; }
 
-        /// <summary>
-        /// Is the handler not active.
-        /// </summary>
         public bool Disposed { get; private set; }
 
         /// <summary>
@@ -94,9 +81,11 @@ namespace AW2.Net
             Action = action;
         }
 
-        /// <summary>
-        /// Receive and handle messages.
-        /// </summary>
+        public void Dispose()
+        {
+            Disposed = true;
+        }
+
         public void HandleMessages()
         {
             if (Disposed) throw new InvalidOperationException("Cannot use disposed GameplayMessageHandler");

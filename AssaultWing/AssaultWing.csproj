@@ -218,6 +218,7 @@
     <Compile Include="Net\ManagementServerConnection.cs" />
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\MessageHandler.cs" />
+    <Compile Include="Net\MessageHandlers.cs" />
     <Compile Include="Net\MessageReadThread.cs" />
     <Compile Include="Net\MessageSendThread.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />

@@ -377,9 +377,6 @@ namespace AW2.Game
 #endif
         }
 
-        /// <summary>
-        /// Reacts to one received <see cref="GobCreationMessage"/>.
-        /// </summary>
         public void ProcessGobCreationMessage(GobCreationMessage message, TimeSpan messageAge)
         {
             Gob gob = (Gob)Clonable.Instantiate(message.GobTypeName);

@@ -1215,7 +1215,7 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Initialises <see cref="collisionAreas"/> for playing the arena.
+        /// Initialises <see cref="_collisionAreas"/> for playing the arena.
         /// </summary>
         private void InitializeCollisionAreas()
         {

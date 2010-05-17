@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
@@ -25,13 +23,13 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The location of the wall's vertices in the game world.
         /// </summary>
-        protected VertexPositionNormalTexture[] vertexData;
+        protected VertexPositionNormalTexture[] _vertexData;
 
         /// <summary>
         /// The index data where every consequtive index triplet signifies
         /// one triangle. The indices index 'vertexData'.
         /// </summary>
-        protected short[] indexData;
+        protected short[] _indexData;
 
         /// <summary>
         /// Triangle index map of the wall's 3D model in the X-Y plane.
@@ -42,12 +40,12 @@ namespace AW2.Game.Gobs
         /// 3n, 3n+1 and 3n+2 covers the index map point (x,y).
         /// The index map has its own coordinate system that can be obtained from
         /// the 3D model's coordinate system by <b>indexMapTransform</b>.
-        int[,][] indexMap;
+        private int[,][] _indexMap;
 
         /// <summary>
         /// Transformation matrix from wall's 3D model's coordinates to index map coordinates.
         /// </summary>
-        Matrix indexMapTransform;
+        private Matrix _indexMapTransform;
 
         /// <summary>
         /// Triangle cover counts of the wall's 3D model.
@@ -57,7 +55,7 @@ namespace AW2.Game.Gobs
         /// the number of index map points covered by the triangle that still 
         /// need to be deleted before the triangle is erased from the 3D model.
         /// A negative cover count marks a deleted triangle.
-        int[] triangleCovers;
+        private int[] _triangleCovers;
 
         /// <summary>
         /// The number of triangles in the wall's 3D model not yet removed.
@@ -77,24 +75,24 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The effect for drawing the wall as a silhouette.
         /// </summary>
-        BasicEffect silhouetteEffect;
+        private BasicEffect _silhouetteEffect;
 
         /// <summary>
         /// The default effect for drawing the wall.
         /// </summary>
-        static BasicEffect defaultEffect;
+        private static BasicEffect g_defaultEffect;
 
         /// <summary>
         /// The default effect for drawing the wall as a silhouette.
         /// </summary>
-        static BasicEffect defaultSilhouetteEffect;
+        private static BasicEffect g_defaultSilhouetteEffect;
 
         /// <summary>
         /// Effect for drawing data for index maps.
         /// </summary>
-        static BasicEffect maskEff;
+        private static BasicEffect g_maskEff;
 
-        VertexDeclaration vertexDeclaration;
+        private VertexDeclaration _vertexDeclaration;
 
         #endregion // Wall Fields
 
@@ -130,11 +128,9 @@ namespace AW2.Game.Gobs
         #endregion Properties
 
         /// <summary>
-        /// Creates an uninitialised piece of wall.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Wall()
-            : base()
         {
             Set3DModel(new VertexPositionNormalTexture[] 
                 {
@@ -158,51 +154,42 @@ namespace AW2.Game.Gobs
 
         #region Methods related to gobs' functionality in the game world
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            defaultEffect = defaultEffect ?? new BasicEffect(gfx, null);
-            defaultSilhouetteEffect = defaultSilhouetteEffect ?? (BasicEffect)defaultEffect.Clone(gfx);
-            maskEff = maskEff ?? (BasicEffect)defaultEffect.Clone(gfx);
-            silhouetteEffect = defaultSilhouetteEffect;
-            vertexDeclaration = vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            g_defaultEffect = g_defaultEffect ?? new BasicEffect(gfx, null);
+            g_defaultSilhouetteEffect = g_defaultSilhouetteEffect ?? (BasicEffect)g_defaultEffect.Clone(gfx);
+            g_maskEff = g_maskEff ?? (BasicEffect)g_defaultEffect.Clone(gfx);
+            _silhouetteEffect = g_defaultSilhouetteEffect;
+            _vertexDeclaration = _vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             base.LoadContent();
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         public override void UnloadContent()
         {
             // Must not dispose 'defaultSilhouetteEffect' because others may be using it.
             // Must not dispose 'silhouetteEffect' because it may refer to 'defaultSilhouetteEffect'.
             // 'texture' will be disposed by the graphics engine.
             // 'effect' is managed by other objects
-            silhouetteEffect = null;
-            if (defaultEffect != null)
+            _silhouetteEffect = null;
+            if (g_defaultEffect != null)
             {
-                defaultEffect.Dispose();
-                defaultEffect = null;
+                g_defaultEffect.Dispose();
+                g_defaultEffect = null;
             }
-            if (maskEff != null)
+            if (g_maskEff != null)
             {
-                maskEff.Dispose();
-                maskEff = null;
+                g_maskEff.Dispose();
+                g_maskEff = null;
             }
-            if (vertexDeclaration != null)
+            if (_vertexDeclaration != null)
             {
-                vertexDeclaration.Dispose();
-                vertexDeclaration = null;
+                _vertexDeclaration.Dispose();
+                _vertexDeclaration = null;
             }
             base.UnloadContent();
         }
 
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
         public override void Activate()
         {
             base.Activate();
@@ -211,16 +198,11 @@ namespace AW2.Game.Gobs
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
                     Prepare3DModel();
                 InitializeIndexMap();
-                drawBounds = BoundingSphere.CreateFromPoints(vertexData.Select(v => v.Position));
+                drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
             AssaultWing.Instance.DataEngine.ProgressBar.SubtaskCompleted();
         }
 
-        /// <summary>
-        /// Draws the gob's 3D graphics.
-        /// </summary>
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
         public override void Draw(Matrix view, Matrix projection)
         {
             if (!Arena.IsForPlaying)
@@ -229,7 +211,7 @@ namespace AW2.Game.Gobs
                 return;
             }
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            gfx.VertexDeclaration = vertexDeclaration;
+            gfx.VertexDeclaration = _vertexDeclaration;
             Effect.World = Matrix.Identity;
             Effect.Projection = projection;
             Effect.View = view;
@@ -241,7 +223,7 @@ namespace AW2.Game.Gobs
             {
                 pass.Begin();
                 gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
-                    PrimitiveType.TriangleList, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length / 3);
+                    PrimitiveType.TriangleList, _vertexData, 0, _vertexData.Length, _indexData, 0, _indexData.Length / 3);
                 pass.End();
             }
             Effect.End();
@@ -258,24 +240,24 @@ namespace AW2.Game.Gobs
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            gfx.VertexDeclaration = vertexDeclaration;
-            silhouetteEffect.World = Matrix.Identity;
-            silhouetteEffect.Projection = projection;
-            silhouetteEffect.View = view;
-            silhouetteEffect.Texture = Texture;
-            silhouetteEffect.VertexColorEnabled = false;
-            silhouetteEffect.LightingEnabled = false;
-            silhouetteEffect.TextureEnabled = false;
-            silhouetteEffect.FogEnabled = false;
-            silhouetteEffect.Begin();
-            foreach (EffectPass pass in silhouetteEffect.CurrentTechnique.Passes)
+            gfx.VertexDeclaration = _vertexDeclaration;
+            _silhouetteEffect.World = Matrix.Identity;
+            _silhouetteEffect.Projection = projection;
+            _silhouetteEffect.View = view;
+            _silhouetteEffect.Texture = Texture;
+            _silhouetteEffect.VertexColorEnabled = false;
+            _silhouetteEffect.LightingEnabled = false;
+            _silhouetteEffect.TextureEnabled = false;
+            _silhouetteEffect.FogEnabled = false;
+            _silhouetteEffect.Begin();
+            foreach (EffectPass pass in _silhouetteEffect.CurrentTechnique.Passes)
             {
                 pass.Begin();
                 gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
-                    PrimitiveType.TriangleList, vertexData, 0, vertexData.Length, indexData, 0, indexData.Length / 3);
+                    PrimitiveType.TriangleList, _vertexData, 0, _vertexData.Length, _indexData, 0, _indexData.Length / 3);
                 pass.End();
             }
-            silhouetteEffect.End();
+            _silhouetteEffect.End();
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -291,17 +273,17 @@ namespace AW2.Game.Gobs
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
 
             // Eat a round hole.
-            Vector2 posInIndexMap = Vector2.Transform(holePos, indexMapTransform);
-            int indexMapWidth = indexMap.GetLength(1);
-            int indexMapHeight = indexMap.GetLength(0);
+            Vector2 posInIndexMap = Vector2.Transform(holePos, _indexMapTransform);
+            int indexMapWidth = _indexMap.GetLength(1);
+            int indexMapHeight = _indexMap.GetLength(0);
             var removeIndices = new List<int>();
             AWMathHelper.FillCircle((int)Math.Round(posInIndexMap.X), (int)Math.Round(posInIndexMap.Y),
                 (int)Math.Round(holeRadius), (x, y) =>
             {
                 if (x < 0 || y < 0 || x >= indexMapWidth || y >= indexMapHeight) return;
-                if (indexMap[y, x] == null) return;
-                foreach (int index in indexMap[y, x])
-                    if (--triangleCovers[index] == 0)
+                if (_indexMap[y, x] == null) return;
+                foreach (int index in _indexMap[y, x])
+                    if (--_triangleCovers[index] == 0)
                         removeIndices.Add(index);
             });
             MakeHole(removeIndices);
@@ -325,9 +307,9 @@ namespace AW2.Game.Gobs
             foreach (int index in triangleIndices)
             {
                 // Replace the triangle in the 3D model with a trivial one.
-                indexData[3 * index + 0] = 0;
-                indexData[3 * index + 1] = 0;
-                indexData[3 * index + 2] = 0;
+                _indexData[3 * index + 0] = 0;
+                _indexData[3 * index + 1] = 0;
+                _indexData[3 * index + 2] = 0;
 
                 Arena.Unregister(collisionAreas[index]);
             }
@@ -336,39 +318,33 @@ namespace AW2.Game.Gobs
 
         #region Methods related to serialisation
 
-        /// <summary>
-        /// Serialises the gob for to a binary writer.
-        /// </summary>
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)vertexData.Length);
-                foreach (var vertex in vertexData)
+                writer.Write((int)_vertexData.Length);
+                foreach (var vertex in _vertexData)
                     writer.WriteHalf((VertexPositionNormalTexture)vertex);
-                writer.Write((int)indexData.Length);
-                foreach (var index in indexData)
+                writer.Write((int)_indexData.Length);
+                foreach (var index in _indexData)
                     writer.Write((short)index);
             }
         }
 
-        /// <summary>
-        /// Deserialises the gob from a binary writer.
-        /// </summary>
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
             base.Deserialize(reader, mode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 int vertexDataLength = reader.ReadInt32();
-                vertexData = new VertexPositionNormalTexture[vertexDataLength];
+                _vertexData = new VertexPositionNormalTexture[vertexDataLength];
                 for (int i = 0; i < vertexDataLength; ++i)
-                    vertexData[i] = reader.ReadHalfVertexPositionTextureNormal();
+                    _vertexData[i] = reader.ReadHalfVertexPositionTextureNormal();
                 int indexDataLength = reader.ReadInt32();
-                indexData = new short[indexDataLength];
+                _indexData = new short[indexDataLength];
                 for (int i = 0; i < indexDataLength; ++i)
-                    indexData[i] = reader.ReadInt16();
+                    _indexData[i] = reader.ReadInt16();
                 CreateCollisionAreas();
             }
         }
@@ -380,17 +356,12 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Sets the wall's 3D model. To be called before the wall is Activate()d.
         /// </summary>
-        /// <param name="vertexData">Vertex data of the 3D model.</param>
-        /// <param name="indexData">Index data of the 3D model as triangle list.</param>
-        /// <param name="texture">Texture of the 3D model.</param>
-        /// <param name="effect">Effect of the 3D model.</param>
-        protected void Set3DModel(VertexPositionNormalTexture[] vertexData, short[] indexData,
-            Texture2D texture, BasicEffect effect)
+        protected void Set3DModel(VertexPositionNormalTexture[] vertexData, short[] indexData, Texture2D texture, BasicEffect effect)
         {
-            this.vertexData = vertexData;
-            this.indexData = indexData;
-            this.Texture = texture;
-            this.Effect = effect;
+            _vertexData = vertexData;
+            _indexData = indexData;
+            Texture = texture;
+            Effect = effect;
         }
 
         #endregion Protected methods
@@ -404,9 +375,9 @@ namespace AW2.Game.Gobs
         {
             VertexPositionNormalTexture[] fineVertexData;
             short[] fineIndexData;
-            Graphics3D.FineTriangles(50, vertexData, indexData, out fineVertexData, out fineIndexData);
-            indexData = fineIndexData;
-            vertexData = fineVertexData;
+            Graphics3D.FineTriangles(50, _vertexData, _indexData, out fineVertexData, out fineIndexData);
+            _indexData = fineIndexData;
+            _vertexData = fineVertexData;
         }
 
         /// <summary>
@@ -414,23 +385,23 @@ namespace AW2.Game.Gobs
         /// </summary>
         private void Prepare3DModel()
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            silhouetteEffect = Effect == null ? null : (BasicEffect)Effect.Clone(gfx);
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            _silhouetteEffect = Effect == null ? null : (BasicEffect)Effect.Clone(gfx);
             FineTriangles();
-            TriangleCount = this.indexData.Length / 3;
+            TriangleCount = this._indexData.Length / 3;
             CreateCollisionAreas();
         }
 
         private void CreateCollisionAreas()
         {
             // Create one collision area for each triangle in the wall's 3D model.
-            collisionAreas = new CollisionArea[this.indexData.Length / 3 + 1];
-            for (int i = 0; i + 2 < this.indexData.Length; i += 3)
+            collisionAreas = new CollisionArea[this._indexData.Length / 3 + 1];
+            for (int i = 0; i + 2 < this._indexData.Length; i += 3)
             {
                 // Create a physical collision area for this triangle.
-                Vector3 v1 = this.vertexData[this.indexData[i + 0]].Position;
-                Vector3 v2 = this.vertexData[this.indexData[i + 1]].Position;
-                Vector3 v3 = this.vertexData[this.indexData[i + 2]].Position;
+                Vector3 v1 = this._vertexData[this._indexData[i + 0]].Position;
+                Vector3 v2 = this._vertexData[this._indexData[i + 1]].Position;
+                Vector3 v3 = this._vertexData[this._indexData[i + 2]].Position;
                 IGeomPrimitive triangleArea = new Triangle(
                     new Vector2(v1.X, v1.Y),
                     new Vector2(v2.X, v2.Y),
@@ -440,7 +411,7 @@ namespace AW2.Game.Gobs
             }
 
             // Create a collision bounding volume for the whole wall.
-            var positions = vertexData.Select(vertex => new Vector2(vertex.Position.X, vertex.Position.Y));
+            var positions = _vertexData.Select(vertex => new Vector2(vertex.Position.X, vertex.Position.Y));
             var min = positions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
             var max = positions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
             var boundingArea = new Rectangle(min, max);
@@ -459,17 +430,23 @@ namespace AW2.Game.Gobs
 
             // Create an index map for the model.
             // The mask is initialised by a render of the 3D model by the graphics card.
-            indexMap = new int[(int)Math.Ceiling(modelDim.Y) + 1, (int)Math.Ceiling(modelDim.X) + 1][];
-            indexMapTransform = Matrix.CreateTranslation(-modelMin.X, -modelMin.Y, 0);
+            _indexMap = new int[(int)Math.Ceiling(modelDim.Y) + 1, (int)Math.Ceiling(modelDim.X) + 1][];
+            _indexMapTransform = Matrix.CreateTranslation(-modelMin.X, -modelMin.Y, 0);
 
             // Create colour-coded vertices for each triangle.
-            VertexPositionColor[] colouredVertexData = new VertexPositionColor[indexData.Length];
-            for (int indexI = 0; indexI < indexData.Length; ++indexI)
+            VertexPositionColor[] colouredVertexData = new VertexPositionColor[_indexData.Length];
+            for (int indexI = 0; indexI < _indexData.Length; ++indexI)
             {
-                VertexPositionNormalTexture originalVertex = vertexData[indexData[indexI]];
+                VertexPositionNormalTexture originalVertex = _vertexData[_indexData[indexI]];
                 Color color = new Color((byte)((indexI / 3) % 256), (byte)((indexI / 3 / 256) % 256), (byte)((indexI / 3 / 256 / 256) % 256));
                 colouredVertexData[indexI] = new VertexPositionColor(originalVertex.Position, color);
             }
+
+            // Draw the colour-coded triangles on our own render target for
+            // index map initialisation. Render target will be a square with
+            // size ('targetSize') a power of two to meet the demands of some
+            // graphics devices. If the model dimensions are larger than 
+            // 'targetSize', we will have to render the coloured triangles in pieces.
 
             // This method is run usually in a background thread -- during arena initialisation.
             // Therefore we have to tell the main draw routines to let us use the device in peace.
@@ -477,55 +454,25 @@ namespace AW2.Game.Gobs
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             RenderTarget2D maskTarget = null;
             int targetSize = -1;
-            lock (gfx)
-            {
-
-                // Draw the colour-coded triangles on our own render target for
-                // index map initialisation. Render target will be a square with
-                // size ('targetSize') a power of two to meet the demands of some
-                // graphics devices. If the model dimensions are larger than 
-                // 'targetSize', we will have to render the coloured triangles in pieces.
-                GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
-                GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
-                if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
-                    TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
-                    throw new Exception("Cannot create render target of type SurfaceFormat.Color");
-                targetSize = Math.Min(
-                    AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
-                    AWMathHelper.CeilingPowerTwo(Math.Max(indexMap.GetLength(1), indexMap.GetLength(0))));
-                while (maskTarget == null)
-                    try
-                    {
-                        maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, SurfaceFormat.Color);
-                    }
-                    catch (OutOfVideoMemoryException)
-                    {
-                        targetSize /= 2;
-                    }
-                    catch (Exception e)
-                    {
-                        throw new ApplicationException("Cannot create render target for index map creation", e);
-                    }
-            }
+            lock (gfx) CreateMaskTarget(out maskTarget, out targetSize);
 
             // Set up the effect.
-            maskEff.VertexColorEnabled = true;
-            maskEff.LightingEnabled = false;
-            maskEff.TextureEnabled = false;
-            maskEff.View = Matrix.CreateLookAt(new Vector3(0, 0, 1000), Vector3.Zero, Vector3.Up);
-            maskEff.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1,
+            g_maskEff.VertexColorEnabled = true;
+            g_maskEff.LightingEnabled = false;
+            g_maskEff.TextureEnabled = false;
+            g_maskEff.View = Matrix.CreateLookAt(new Vector3(0, 0, 1000), Vector3.Zero, Vector3.Up);
+            g_maskEff.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1,
                 0, targetSize - 1, 10, 1000);
-            maskEff.World = indexMapTransform;
+            g_maskEff.World = _indexMapTransform;
 
             // Draw the coloured triangles in as many parts as necessary to cover 
             // the whole model with one unit in world coordinates corresponding to
             // one pixel width in the render target.
-            for (int startY = 0; startY < indexMap.GetLength(0); startY += targetSize)
-                for (int startX = 0; startX < indexMap.GetLength(1); )
+            for (int startY = 0; startY < _indexMap.GetLength(0); startY += targetSize)
+                for (int startX = 0; startX < _indexMap.GetLength(1); )
                     try
                     {
-                        lock (gfx)
-                            ComputeIndexMapFragment(colouredVertexData, maskTarget, targetSize, startY, startX);
+                        lock (gfx) ComputeIndexMapFragment(colouredVertexData, maskTarget, targetSize, startY, startX);
                         startX += targetSize;
                         System.Threading.Thread.Sleep(0);
                     }
@@ -535,24 +482,24 @@ namespace AW2.Game.Gobs
                     catch (InvalidOperationException) { }
 
             // Initialise triangle cover counts.
-            triangleCovers = new int[indexData.Length / 3];
-            foreach (int[] indices in indexMap)
+            _triangleCovers = new int[_indexData.Length / 3];
+            foreach (int[] indices in _indexMap)
                 if (indices != null)
                     foreach (int index in indices)
-                        ++triangleCovers[index];
+                        ++_triangleCovers[index];
 
             // If some triangle isn't mentioned in the index map, force it there.
-            for (int i = 0; i < triangleCovers.Length; ++i)
-                if (triangleCovers[i] == 0)
+            for (int i = 0; i < _triangleCovers.Length; ++i)
+                if (_triangleCovers[i] == 0)
                 {
-                    Vector3 vert0 = vertexData[indexData[3 * i + 0]].Position;
-                    Vector3 vert1 = vertexData[indexData[3 * i + 1]].Position;
-                    Vector3 vert2 = vertexData[indexData[3 * i + 2]].Position;
+                    Vector3 vert0 = _vertexData[_indexData[3 * i + 0]].Position;
+                    Vector3 vert1 = _vertexData[_indexData[3 * i + 1]].Position;
+                    Vector3 vert2 = _vertexData[_indexData[3 * i + 2]].Position;
                     Vector3 triangleCenter = (vert0 + vert1 + vert2) / 3;
-                    Vector3 centerInIndexMap = Vector3.Transform(triangleCenter, indexMapTransform);
+                    Vector3 centerInIndexMap = Vector3.Transform(triangleCenter, _indexMapTransform);
                     int centerInIndexMapX = (int)(Math.Round(centerInIndexMap.X) + 0.1);
                     int centerInIndexMapY = (int)(Math.Round(centerInIndexMap.Y) + 0.1);
-                    int[] oldIndices = indexMap[centerInIndexMapY, centerInIndexMapX];
+                    int[] oldIndices = _indexMap[centerInIndexMapY, centerInIndexMapX];
                     int[] newIndices = null;
                     if (oldIndices != null)
                     {
@@ -562,39 +509,66 @@ namespace AW2.Game.Gobs
                     }
                     else
                         newIndices = new int[] { i };
-                    indexMap[centerInIndexMapY, centerInIndexMapX] = newIndices;
-                    ++triangleCovers[i];
+                    _indexMap[centerInIndexMapY, centerInIndexMapX] = newIndices;
+                    ++_triangleCovers[i];
+                }
+        }
+
+        private void CreateMaskTarget(out RenderTarget2D maskTarget, out int targetSize)
+        {
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfxCaps = gfx.GraphicsDeviceCapabilities;
+            var gfxAdapter = gfx.CreationParameters.Adapter;
+            if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
+                TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
+                throw new ApplicationException("Cannot create render target of type SurfaceFormat.Color");
+            targetSize = Math.Min(
+                AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
+                AWMathHelper.CeilingPowerTwo(Math.Max(_indexMap.GetLength(1), _indexMap.GetLength(0))));
+            maskTarget = null;
+            while (maskTarget == null)
+                try
+                {
+                    maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, SurfaceFormat.Color);
+                }
+                catch (OutOfVideoMemoryException)
+                {
+                    targetSize /= 2;
+                }
+                catch (Exception e)
+                {
+                    throw new ApplicationException("Cannot create render target for index map creation", e);
                 }
         }
 
         private void ComputeIndexMapFragment(VertexPositionColor[] colouredVertexData,
             RenderTarget2D maskTarget, int targetSize, int startY, int startX)
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWing.Instance.GraphicsDevice;
 
             // Set up graphics device.
-            VertexDeclaration oldVertexDeclaration = gfx.VertexDeclaration;
-            DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+            var oldVertexDeclaration = gfx.VertexDeclaration;
+            var oldDepthStencilBuffer = gfx.DepthStencilBuffer;
             gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
             gfx.DepthStencilBuffer = null;
 
             // Move view to current start coordinates.
-            maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 1000), new Vector3(startX, startY, 0), Vector3.Up);
+            g_maskEff.View = Matrix.CreateLookAt(new Vector3(startX, startY, 1000), new Vector3(startX, startY, 0), Vector3.Up);
 
             // Set and clear our own render target.
             gfx.SetRenderTarget(0, maskTarget);
             gfx.Clear(ClearOptions.Target, Color.White, 0, 0);
 
             // Draw the coloured triangles.
-            maskEff.Begin();
-            foreach (EffectPass pass in maskEff.CurrentTechnique.Passes)
+            g_maskEff.Begin();
+            foreach (EffectPass pass in g_maskEff.CurrentTechnique.Passes)
             {
                 pass.Begin();
                 gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
                     colouredVertexData, 0, colouredVertexData.Length / 3);
                 pass.End();
             }
-            maskEff.End();
+            g_maskEff.End();
 
             // Restore render target so what we can extract drawn pixels.
             gfx.SetRenderTarget(0, null);
@@ -610,10 +584,10 @@ namespace AW2.Game.Gobs
                     if (color == Color.White) continue;
                     int indexMapY = startY + targetSize - 1 - y;
                     int indexMapX = startX + x;
-                    if (indexMapY >= indexMap.GetLength(0) || indexMapX >= indexMap.GetLength(1))
+                    if (indexMapY >= _indexMap.GetLength(0) || indexMapX >= _indexMap.GetLength(1))
                         throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
                     int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
-                    indexMap[indexMapY, indexMapX] = new int[] { maskValue };
+                    _indexMap[indexMapY, indexMapX] = new int[] { maskValue };
                 }
 
             // Restore graphics device's old settings.

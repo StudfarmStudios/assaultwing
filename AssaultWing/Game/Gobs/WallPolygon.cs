@@ -66,7 +66,7 @@ namespace AW2.Game.Gobs
         protected override void SetRuntimeState(Gob runtimeState)
         {
             base.SetRuntimeState(runtimeState);
-            TriangleCount = indexData.Length / 3;
+            TriangleCount = _indexData.Length / 3;
         }
 
         #endregion Methods related to serialisation

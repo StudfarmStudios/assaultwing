@@ -127,6 +127,7 @@
     <Compile Include="Game\Gobs\WallModel.cs" />
     <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\GobUtils\ChargeProvider.cs" />
+    <Compile Include="Game\GobUtils\WallIndexMap.cs" />
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Pengs\Particle.cs" />
     <Compile Include="Game\Pengs\ParticleEmitter.cs" />

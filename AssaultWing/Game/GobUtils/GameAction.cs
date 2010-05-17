@@ -6,17 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Net;
 
-namespace AW2.Game
+namespace AW2.Game.GobUtils
 {
-    public class GameActionTypeAttribute : Attribute
-    {
-        public int ID { get; private set; }
-        public GameActionTypeAttribute(int id)
-        {
-            ID = id;
-        }
-    }
-
     [LimitedSerialization]
     public class GameAction : INetworkSerializable
     {

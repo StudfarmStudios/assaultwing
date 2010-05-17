@@ -14,7 +14,7 @@
   <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
   </drawMode2D>
-  <gameAction type="AW2.Game.GameAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <gameAction type="AW2.Game.GobUtils.GameAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   </gameAction>
   <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>

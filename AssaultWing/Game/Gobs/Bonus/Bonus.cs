@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
-using AW2.Helpers;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game.GobUtils;
+using AW2.Helpers;
 using AW2.Net.Messages;
 
 namespace AW2.Game.Gobs.Bonus

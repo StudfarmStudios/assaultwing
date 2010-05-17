@@ -67,6 +67,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
@@ -86,7 +87,7 @@
     <Compile Include="Game\BonusActions\RepairSystemBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
-    <Compile Include="Game\GameAction.cs" />
+    <Compile Include="Game\GobUtils\GameAction.cs" />
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\ArenaInfo.cs" />
@@ -97,7 +98,8 @@
     <Compile Include="Game\CollisionArea.cs" />
     <Compile Include="Game\DataEngine.cs" />
     <Compile Include="Game\DeathCause.cs" />
-    <Compile Include="Game\GameActionCollection.cs" />
+    <Compile Include="Game\GobUtils\GameActionAttribute.cs" />
+    <Compile Include="Game\GobUtils\GameActionCollection.cs" />
     <Compile Include="Game\GameplayMode.cs" />
     <Compile Include="Game\Gob.cs" />
     <Compile Include="Game\GobCollection.cs" />
@@ -124,7 +126,7 @@
     <Compile Include="Game\Gobs\Wall.cs" />
     <Compile Include="Game\Gobs\WallModel.cs" />
     <Compile Include="Game\Gobs\WallPolygon.cs" />
-    <Compile Include="Game\ChargeProvider.cs" />
+    <Compile Include="Game\GobUtils\ChargeProvider.cs" />
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Pengs\Particle.cs" />
     <Compile Include="Game\Pengs\ParticleEmitter.cs" />
@@ -134,11 +136,11 @@
     <Compile Include="Game\PhysicsEngine.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\PostprocessEffectNameContainer.cs" />
-    <Compile Include="Game\ShipDevice.cs" />
-    <Compile Include="Game\ShipLocationPredicter.cs" />
+    <Compile Include="Game\GobUtils\ShipDevice.cs" />
+    <Compile Include="Game\GobUtils\ShipLocationPredicter.cs" />
     <Compile Include="Game\Spectator.cs" />
     <Compile Include="Helpers\TypeLoader.cs" />
-    <Compile Include="Game\Weapon.cs" />
+    <Compile Include="Game\GobUtils\Weapon.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
     <Compile Include="Game\Weapons\SelfDestruct.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />

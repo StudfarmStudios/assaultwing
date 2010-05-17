@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs

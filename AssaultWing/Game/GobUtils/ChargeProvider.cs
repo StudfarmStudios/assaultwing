@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AW2.Game
+namespace AW2.Game.GobUtils
 {
     /// <summary>
     /// Provider of charge-related data for a ship device. Produced separately

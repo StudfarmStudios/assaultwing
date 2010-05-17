@@ -4,7 +4,7 @@ using System.Linq;
 using AW2.Net;
 using AW2.Helpers;
 
-namespace AW2.Game
+namespace AW2.Game.GobUtils
 {
     public class GameActionCollection : IEnumerable<GameAction>, INetworkSerializable
     {

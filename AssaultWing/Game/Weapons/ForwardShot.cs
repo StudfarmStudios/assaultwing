@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Net;
 using AW2.Sound;

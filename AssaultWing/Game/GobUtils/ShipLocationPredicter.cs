@@ -6,7 +6,7 @@ using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.UI;
 
-namespace AW2.Game
+namespace AW2.Game.GobUtils
 {
     public class ShipLocationPredicter
     {

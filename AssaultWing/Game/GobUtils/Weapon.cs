@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Microsoft.Xna.Framework;
+using AW2.Game.Weapons;
 using AW2.Helpers;
 using Ship = AW2.Game.Gobs.Ship;
-using AW2.Game.Weapons;
 
-namespace AW2.Game
+namespace AW2.Game.GobUtils
 {
     /// <summary>
     /// A weapon, usually used by a ship it is attached to.

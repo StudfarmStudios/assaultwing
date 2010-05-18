@@ -39,6 +39,7 @@ namespace AW2.Menu
         Texture2D playerPaneTexture, player1PaneTopTexture, player2PaneTopTexture;
         Texture2D statusPaneTexture;
         Texture2D tabEquipmentTexture, tabPlayersTexture;
+        Texture2D buttonReadyTexture;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -125,6 +126,8 @@ namespace AW2.Menu
             statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
             tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
             tabPlayersTexture = content.Load<Texture2D>("menu_equip_tab_players");
+
+            buttonReadyTexture = content.Load<Texture2D>("menu_equip_btn_ready");
         }
 
         /// <summary>
@@ -327,10 +330,13 @@ namespace AW2.Menu
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
 
             // Draw common tabs for both modes (network, standalone)
-            Vector2 tab1Pos = pos - view + new Vector2(341, 125);
-            Vector2 tabWidth = new Vector2(104, 0);
+            Vector2 tab1Pos = pos - view + new Vector2(341, 123);
+            Vector2 tabWidth = new Vector2(97, 0);
             spriteBatch.Draw(tabEquipmentTexture, tab1Pos, Color.White);
             spriteBatch.Draw(tabPlayersTexture, tab1Pos + tabWidth, Color.White);
+
+            // Draw ready button
+            spriteBatch.Draw(buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
 
             // Draw player panes.
             Vector2 player1PanePos = new Vector2(334, 164);

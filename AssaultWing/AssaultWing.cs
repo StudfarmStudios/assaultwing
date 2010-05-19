@@ -358,8 +358,8 @@ namespace AW2
             _preferredFullscreenWidth = displayMode.Width;
             _preferredFullscreenHeight = displayMode.Height;
             _preferredFullscreenFormat = displayMode.Format;
-            _preferredWindowWidth = 1000;
-            _preferredWindowHeight = 700;
+            _preferredWindowWidth = Math.Min(1000, displayMode.Width);
+            _preferredWindowHeight = Math.Min(800, displayMode.Height);
             _preferredWindowFormat = displayMode.Format;
 
             GraphicsDeviceManager = new GraphicsDeviceManager(this);

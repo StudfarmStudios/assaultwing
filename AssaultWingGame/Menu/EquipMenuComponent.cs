@@ -38,8 +38,8 @@ namespace AW2.Menu
         Texture2D cursorMainTexture, highlightMainTexture;
         Texture2D playerPaneTexture, player1PaneTopTexture, player2PaneTopTexture;
         Texture2D statusPaneTexture;
-        Texture2D tabEquipmentTexture, tabPlayersTexture;
-        Texture2D buttonReadyTexture;
+        Texture2D tabEquipmentTexture, tabPlayersTexture, tabGameSettingsTexture, tabChatTexture, tabHilite;
+        Texture2D buttonReadyTexture, buttonReadyHiliteTexture;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -86,7 +86,7 @@ namespace AW2.Menu
         /// </summary>
         /// This is a good place to center the menu view to when the menu component
         /// is to be seen well on the screen.
-        public override Vector2 Center { get { return pos + new Vector2(750, 480); } }
+        public override Vector2 Center { get { return pos + new Vector2(750, 460); } }
 
         /// <summary>
         /// Creates an equip menu component for a menu system.
@@ -124,10 +124,15 @@ namespace AW2.Menu
             player1PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_green");
             player2PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_red");
             statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
+            
             tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
             tabPlayersTexture = content.Load<Texture2D>("menu_equip_tab_players");
+            tabGameSettingsTexture = content.Load<Texture2D>("menu_equip_tab_gamesettings");
+            tabChatTexture = content.Load<Texture2D>("menu_equip_tab_chat");
+            tabHilite = content.Load<Texture2D>("menu_equip_tab_hilite");
 
             buttonReadyTexture = content.Load<Texture2D>("menu_equip_btn_ready");
+            buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
         }
 
         /// <summary>
@@ -334,9 +339,29 @@ namespace AW2.Menu
             Vector2 tabWidth = new Vector2(97, 0);
             spriteBatch.Draw(tabEquipmentTexture, tab1Pos, Color.White);
             spriteBatch.Draw(tabPlayersTexture, tab1Pos + tabWidth, Color.White);
+            
+            // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
+            spriteBatch.Draw(tabHilite, tab1Pos, Color.White);
 
+            // Draw chat tab
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client || AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                spriteBatch.Draw(tabChatTexture, tab1Pos + (tabWidth * 2), Color.White);
+            }
+            // Draw game settings tab
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone || AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                Vector2 tabGameSettingsPos = AssaultWing.Instance.NetworkMode == NetworkMode.Server
+                    ? tab1Pos + (tabWidth * 3)
+                    : tab1Pos + (tabWidth * 2);
+
+                spriteBatch.Draw(tabGameSettingsTexture, tabGameSettingsPos, Color.White);
+            }
+            
             // Draw ready button
             spriteBatch.Draw(buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
+            // Draw ready buttom hilite (same size than button)
+            spriteBatch.Draw(buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), Color.White);
 
             // Draw player panes.
             Vector2 player1PanePos = new Vector2(334, 164);

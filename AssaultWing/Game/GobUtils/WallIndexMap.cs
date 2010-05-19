@@ -53,6 +53,14 @@ namespace AW2.Game.GobUtils
             return effect;
         }
 
+        public WallIndexMap(int[,][] indexMap)
+        {
+            _indexMap = indexMap;
+            var subArrays = indexMap.Cast<int[]>().Where(arr => arr != null);
+            int triangleCount = subArrays.Any() ? subArrays.Max(arr => arr.Max()) + 1 : 0;
+            _triangleCovers = CreateTriangleCovers(triangleCount, indexMap);
+        }
+
         public WallIndexMap(RemoveTriangleDelegate removeTriangle, BasicEffect indexMapEffect,
             VertexPositionNormalTexture[] vertexData, short[] indexData, AWRectangle boundingBox)
         {
@@ -67,6 +75,15 @@ namespace AW2.Game.GobUtils
                 if (--_triangleCovers[index] == 0) _removeTriangle(index);
         }
 
+        private static int[] CreateTriangleCovers(int triangleCount, int[,][] indexMap)
+        {
+            var triangleCovers = new int[triangleCount];
+            foreach (int[] indices in indexMap)
+                if (indices != null)
+                    foreach (int index in indices) ++triangleCovers[index];
+            return triangleCovers;
+        }
+
         private void Initialize(BasicEffect indexMapEffect, VertexPositionNormalTexture[] vertexData,
             short[] indexData, AWRectangle boundingArea)
         {
@@ -79,11 +96,11 @@ namespace AW2.Game.GobUtils
             WallToIndexMapTransform = Matrix.CreateTranslation(-modelMin.X, -modelMin.Y, 0);
 
             // Create colour-coded vertices for each triangle.
-            VertexPositionColor[] colouredVertexData = new VertexPositionColor[indexData.Length];
+            var colouredVertexData = new VertexPositionColor[indexData.Length];
             for (int indexI = 0; indexI < indexData.Length; ++indexI)
             {
-                VertexPositionNormalTexture originalVertex = vertexData[indexData[indexI]];
-                Color color = new Color((byte)((indexI / 3) % 256), (byte)((indexI / 3 / 256) % 256), (byte)((indexI / 3 / 256 / 256) % 256));
+                var originalVertex = vertexData[indexData[indexI]];
+                var color = new Color((byte)((indexI / 3) % 256), (byte)((indexI / 3 / 256) % 256), (byte)((indexI / 3 / 256 / 256) % 256));
                 colouredVertexData[indexI] = new VertexPositionColor(originalVertex.Position, color);
             }
 
@@ -96,7 +113,7 @@ namespace AW2.Game.GobUtils
             // This method is run usually in a background thread -- during arena initialisation.
             // Therefore we have to tell the main draw routines to let us use the device in peace.
             // We break out of the lock regularly to allow others use the device, too.
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWing.Instance.GraphicsDevice;
             RenderTarget2D maskTarget = null;
             int targetSize = -1;
             lock (gfx) CreateMaskTarget(out maskTarget, out targetSize);
@@ -108,8 +125,8 @@ namespace AW2.Game.GobUtils
             // Draw the coloured triangles in as many parts as necessary to cover 
             // the whole model with one unit in world coordinates corresponding to
             // one pixel width in the render target.
-            for (int startY = 0; startY < _indexMap.GetLength(0); startY += targetSize)
-                for (int startX = 0; startX < _indexMap.GetLength(1); )
+            for (int startY = 0; startY < Height; startY += targetSize)
+                for (int startX = 0; startX < Width; )
                     try
                     {
                         lock (gfx) ComputeIndexMapFragment(indexMapEffect, colouredVertexData, maskTarget, targetSize, startY, startX);
@@ -121,25 +138,25 @@ namespace AW2.Game.GobUtils
                     catch (NullReferenceException) { }
                     catch (InvalidOperationException) { }
 
-            // Initialise triangle cover counts.
-            _triangleCovers = new int[indexData.Length / 3];
-            foreach (int[] indices in _indexMap)
-                if (indices != null)
-                    foreach (int index in indices)
-                        ++_triangleCovers[index];
+            _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _indexMap);
+            ForceVerySmallTrianglesIntoIndexMap(vertexData, indexData);
+        }
 
-            // If some triangle isn't mentioned in the index map, force it there.
+        private void ForceVerySmallTrianglesIntoIndexMap(VertexPositionNormalTexture[] vertexData, short[] indexData)
+        {
+            bool indexMapChanged = false;
             for (int i = 0; i < _triangleCovers.Length; ++i)
                 if (_triangleCovers[i] == 0)
                 {
-                    Vector3 vert0 = vertexData[indexData[3 * i + 0]].Position;
-                    Vector3 vert1 = vertexData[indexData[3 * i + 1]].Position;
-                    Vector3 vert2 = vertexData[indexData[3 * i + 2]].Position;
-                    Vector3 triangleCenter = (vert0 + vert1 + vert2) / 3;
-                    Vector3 centerInIndexMap = Vector3.Transform(triangleCenter, WallToIndexMapTransform);
+                    indexMapChanged = true;
+                    var vert0 = vertexData[indexData[3 * i + 0]].Position;
+                    var vert1 = vertexData[indexData[3 * i + 1]].Position;
+                    var vert2 = vertexData[indexData[3 * i + 2]].Position;
+                    var triangleCenter = (vert0 + vert1 + vert2) / 3;
+                    var centerInIndexMap = Vector3.Transform(triangleCenter, WallToIndexMapTransform);
                     int centerInIndexMapX = (int)(Math.Round(centerInIndexMap.X) + 0.1);
                     int centerInIndexMapY = (int)(Math.Round(centerInIndexMap.Y) + 0.1);
-                    int[] oldIndices = _indexMap[centerInIndexMapY, centerInIndexMapX];
+                    var oldIndices = _indexMap[centerInIndexMapY, centerInIndexMapX];
                     int[] newIndices = null;
                     if (oldIndices != null)
                     {
@@ -150,8 +167,8 @@ namespace AW2.Game.GobUtils
                     else
                         newIndices = new int[] { i };
                     _indexMap[centerInIndexMapY, centerInIndexMapX] = newIndices;
-                    ++_triangleCovers[i];
                 }
+            if (indexMapChanged) _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _indexMap);
         }
 
         private void CreateMaskTarget(out RenderTarget2D maskTarget, out int targetSize)
@@ -164,7 +181,7 @@ namespace AW2.Game.GobUtils
                 throw new ApplicationException("Cannot create render target of type SurfaceFormat.Color");
             targetSize = Math.Min(
                 AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
-                AWMathHelper.CeilingPowerTwo(Math.Max(_indexMap.GetLength(1), _indexMap.GetLength(0))));
+                AWMathHelper.CeilingPowerTwo(Math.Max(Width, Height)));
             maskTarget = null;
             while (maskTarget == null)
                 try
@@ -224,7 +241,7 @@ namespace AW2.Game.GobUtils
                     if (color == Color.White) continue;
                     int indexMapY = startY + targetSize - 1 - y;
                     int indexMapX = startX + x;
-                    if (indexMapY >= _indexMap.GetLength(0) || indexMapX >= _indexMap.GetLength(1))
+                    if (indexMapY >= Height || indexMapX >= Width)
                         throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
                     int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
                     _indexMap[indexMapY, indexMapX] = new int[] { maskValue };

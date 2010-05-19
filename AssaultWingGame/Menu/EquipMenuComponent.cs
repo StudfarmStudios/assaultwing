@@ -344,7 +344,7 @@ namespace AW2.Menu
             spriteBatch.Draw(tabHilite, tab1Pos, Color.White);
 
             // Draw chat tab
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client || AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
             {
                 spriteBatch.Draw(tabChatTexture, tab1Pos + (tabWidth * 2), Color.White);
             }
@@ -363,18 +363,52 @@ namespace AW2.Menu
             // Draw ready buttom hilite (same size than button)
             spriteBatch.Draw(buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), Color.White);
 
-            // Draw statusdisplay texts
+            // Setup positions for statusdisplay texts
             Vector2 statusDisplayTextPos = pos - view + new Vector2(885, 618);
             Vector2 statusDisplayRowHeight = new Vector2(0, 12);
             Vector2 statusDisplayColumnWidth = new Vector2(75, 0);
-            spriteBatch.DrawString(menuSmallFont, "Players", statusDisplayTextPos, Color.White);
-            spriteBatch.DrawString(menuSmallFont, "2 - 8", statusDisplayTextPos + statusDisplayColumnWidth, Color.GreenYellow);
-            spriteBatch.DrawString(menuSmallFont, "Status", statusDisplayTextPos + statusDisplayRowHeight, Color.White);
-            spriteBatch.DrawString(menuSmallFont, "Connected", statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight, Color.GreenYellow);
-            spriteBatch.DrawString(menuSmallFont, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
-            spriteBatch.DrawString(menuSmallFont, "AVERAGE", statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, Color.Orange);
+
+            // Setup statusdisplay texts
+            string statusDisplayPlayerAmount = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
+                ? "" + data.Players.Count()
+                : "2-8";
+            string statusDisplayArenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
+                ? data.ArenaPlaylist[0]
+                : "to be announced";
+            string statusDisplayStatus = AssaultWing.Instance.NetworkMode == NetworkMode.Server
+                ? "server"
+                : "connected";
+            string statusDisplayPing = "good";
+
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
+            {
+                bool unsureData = data.Spectators.Count == 1 && AssaultWing.Instance.NetworkMode == NetworkMode.Client;
+                if (!unsureData)
+                {
+                    statusDisplayPlayerAmount = "" + data.Spectators.Count;
+                    statusDisplayArenaName = "" + data.ArenaPlaylist[0];
+                }
+            }
+
+            // Draw common statusdisplay texts for all modes
+            spriteBatch.DrawString(menuSmallFont, "Players", statusDisplayTextPos, Color.White);          
+            spriteBatch.DrawString(menuSmallFont, statusDisplayPlayerAmount, statusDisplayTextPos + statusDisplayColumnWidth, Color.GreenYellow);
             spriteBatch.DrawString(menuSmallFont, "Arena", statusDisplayTextPos + statusDisplayRowHeight * 4, Color.White);
-            spriteBatch.DrawString(menuSmallFont, "Amazonas", statusDisplayTextPos + statusDisplayRowHeight * 5, Color.GreenYellow);
+            spriteBatch.DrawString(menuSmallFont, statusDisplayArenaName, statusDisplayTextPos + statusDisplayRowHeight * 5, Color.GreenYellow);
+
+            // Draw network game statusdisplay texts
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
+            {
+                spriteBatch.DrawString(menuSmallFont, "Status", statusDisplayTextPos + statusDisplayRowHeight, Color.White);
+                spriteBatch.DrawString(menuSmallFont, statusDisplayStatus, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight, Color.GreenYellow);
+            }
+
+            // Draw client statusdisplay texts
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            {
+                spriteBatch.DrawString(menuSmallFont, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
+                spriteBatch.DrawString(menuSmallFont, statusDisplayPing, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, Color.GreenYellow);
+            }
 
             // Draw player panes.
             Vector2 player1PanePos = new Vector2(334, 164);

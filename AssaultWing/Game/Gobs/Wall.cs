@@ -175,6 +175,15 @@ namespace AW2.Game.Gobs
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Client) Prepare3DModel();
                 var boundingBox = collisionAreas.First(area => area.Name == "Bounding").Area.BoundingBox;
                 _indexMap = new WallIndexMap(RemoveTriangle, g_maskEff, _vertexData, _indexData, boundingBox);
+#if true
+                _indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
+#else
+                foreach (int index in _indexMap.GetVerySmallTriangles())
+                {
+                    collisionAreas[index] = null;
+                    --TriangleCount;
+                }
+#endif
                 drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
             AssaultWing.Instance.DataEngine.ProgressBar.SubtaskCompleted();
@@ -359,24 +368,23 @@ namespace AW2.Game.Gobs
         /// </summary>
         private void Prepare3DModel()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-            _silhouetteEffect = Effect == null ? null : (BasicEffect)Effect.Clone(gfx);
+            _silhouetteEffect = Effect == null ? null : (BasicEffect)Effect.Clone(AssaultWing.Instance.GraphicsDevice);
             FineTriangles();
-            TriangleCount = this._indexData.Length / 3;
+            TriangleCount = _indexData.Length / 3;
             CreateCollisionAreas();
         }
 
         private void CreateCollisionAreas()
         {
             // Create one collision area for each triangle in the wall's 3D model.
-            collisionAreas = new CollisionArea[this._indexData.Length / 3 + 1];
-            for (int i = 0; i + 2 < this._indexData.Length; i += 3)
+            collisionAreas = new CollisionArea[_indexData.Length / 3 + 1];
+            for (int i = 0; i + 2 < _indexData.Length; i += 3)
             {
                 // Create a physical collision area for this triangle.
-                Vector3 v1 = this._vertexData[this._indexData[i + 0]].Position;
-                Vector3 v2 = this._vertexData[this._indexData[i + 1]].Position;
-                Vector3 v3 = this._vertexData[this._indexData[i + 2]].Position;
-                IGeomPrimitive triangleArea = new Triangle(
+                var v1 = _vertexData[_indexData[i + 0]].Position;
+                var v2 = _vertexData[_indexData[i + 1]].Position;
+                var v3 = _vertexData[_indexData[i + 2]].Position;
+                var triangleArea = new Triangle(
                     new Vector2(v1.X, v1.Y),
                     new Vector2(v2.X, v2.Y),
                     new Vector2(v3.X, v3.Y));

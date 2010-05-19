@@ -75,6 +75,43 @@ namespace AW2.Game.GobUtils
                 if (--_triangleCovers[index] == 0) _removeTriangle(index);
         }
 
+        /// <summary>
+        /// Returns the indices of triangles that are too small to show up in the index map.
+        /// Triangle index * 3 = the index of the first vertex of the triangle in the 3D model index data.
+        /// </summary>
+        public IEnumerable<int> GetVerySmallTriangles()
+        {
+            for (int index = 0; index < _triangleCovers.Length; ++index)
+                if (_triangleCovers[index] == 0) yield return index;
+        }
+
+        public void ForceVerySmallTrianglesIntoIndexMap(VertexPositionNormalTexture[] vertexData, short[] indexData)
+        {
+            bool indexMapChanged = GetVerySmallTriangles().Any();
+            foreach (int index in GetVerySmallTriangles())
+            {
+                var vert0 = vertexData[indexData[3 * index + 0]].Position;
+                var vert1 = vertexData[indexData[3 * index + 1]].Position;
+                var vert2 = vertexData[indexData[3 * index + 2]].Position;
+                var triangleCenter = (vert0 + vert1 + vert2) / 3;
+                var centerInIndexMap = Vector3.Transform(triangleCenter, WallToIndexMapTransform);
+                int centerInIndexMapX = (int)(Math.Round(centerInIndexMap.X) + 0.1);
+                int centerInIndexMapY = (int)(Math.Round(centerInIndexMap.Y) + 0.1);
+                var oldIndices = _indexMap[centerInIndexMapY, centerInIndexMapX];
+                int[] newIndices = null;
+                if (oldIndices != null)
+                {
+                    newIndices = new int[oldIndices.Length + 1];
+                    Array.Copy(oldIndices, newIndices, oldIndices.Length);
+                    newIndices[oldIndices.Length] = index;
+                }
+                else
+                    newIndices = new int[] { index };
+                _indexMap[centerInIndexMapY, centerInIndexMapX] = newIndices;
+            }
+            if (indexMapChanged) _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _indexMap);
+        }
+
         private static int[] CreateTriangleCovers(int triangleCount, int[,][] indexMap)
         {
             var triangleCovers = new int[triangleCount];
@@ -139,36 +176,6 @@ namespace AW2.Game.GobUtils
                     catch (InvalidOperationException) { }
 
             _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _indexMap);
-            ForceVerySmallTrianglesIntoIndexMap(vertexData, indexData);
-        }
-
-        private void ForceVerySmallTrianglesIntoIndexMap(VertexPositionNormalTexture[] vertexData, short[] indexData)
-        {
-            bool indexMapChanged = false;
-            for (int i = 0; i < _triangleCovers.Length; ++i)
-                if (_triangleCovers[i] == 0)
-                {
-                    indexMapChanged = true;
-                    var vert0 = vertexData[indexData[3 * i + 0]].Position;
-                    var vert1 = vertexData[indexData[3 * i + 1]].Position;
-                    var vert2 = vertexData[indexData[3 * i + 2]].Position;
-                    var triangleCenter = (vert0 + vert1 + vert2) / 3;
-                    var centerInIndexMap = Vector3.Transform(triangleCenter, WallToIndexMapTransform);
-                    int centerInIndexMapX = (int)(Math.Round(centerInIndexMap.X) + 0.1);
-                    int centerInIndexMapY = (int)(Math.Round(centerInIndexMap.Y) + 0.1);
-                    var oldIndices = _indexMap[centerInIndexMapY, centerInIndexMapX];
-                    int[] newIndices = null;
-                    if (oldIndices != null)
-                    {
-                        newIndices = new int[oldIndices.Length + 1];
-                        Array.Copy(oldIndices, newIndices, oldIndices.Length);
-                        newIndices[oldIndices.Length] = i;
-                    }
-                    else
-                        newIndices = new int[] { i };
-                    _indexMap[centerInIndexMapY, centerInIndexMapX] = newIndices;
-                }
-            if (indexMapChanged) _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _indexMap);
         }
 
         private void CreateMaskTarget(out RenderTarget2D maskTarget, out int targetSize)

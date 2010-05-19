@@ -484,7 +484,7 @@ namespace AW2.Game
         /// The collision areas of the gob. Note: To remove some collision areas
         /// during gameplay, call <see cref="RemoveCollisionAreas"/>.
         /// </summary>
-        public CollisionArea[] CollisionAreas { get { return collisionAreas; } }
+        public IEnumerable<CollisionArea> CollisionAreas { get { return collisionAreas.Where(area => area != null); } }
 
         /// <summary>
         /// Is the gob cold.

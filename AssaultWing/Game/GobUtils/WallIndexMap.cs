@@ -137,6 +137,7 @@ namespace AW2.Game.GobUtils
             for (int indexI = 0; indexI < indexData.Length; ++indexI)
             {
                 var originalVertex = vertexData[indexData[indexI]];
+                originalVertex.Position.Z = 0;
                 var color = new Color((byte)((indexI / 3) % 256), (byte)((indexI / 3 / 256) % 256), (byte)((indexI / 3 / 256 / 256) % 256));
                 colouredVertexData[indexI] = new VertexPositionColor(originalVertex.Position, color);
             }
@@ -156,7 +157,7 @@ namespace AW2.Game.GobUtils
             lock (gfx) CreateMaskTarget(out maskTarget, out targetSize);
 
             // Set up the effect.
-            indexMapEffect.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1, 0, targetSize - 1, 10, 1000);
+            indexMapEffect.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1, 0, targetSize - 1, 10, 2000);
             indexMapEffect.World = WallToIndexMapTransform;
 
             // Draw the coloured triangles in as many parts as necessary to cover 

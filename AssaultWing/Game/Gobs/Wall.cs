@@ -178,11 +178,7 @@ namespace AW2.Game.Gobs
 #if true
                 _indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
 #else
-                foreach (int index in _indexMap.GetVerySmallTriangles())
-                {
-                    collisionAreas[index] = null;
-                    --TriangleCount;
-                }
+                RemoveVerySmallTrianglesFromCollisionAreas();
 #endif
                 drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
@@ -339,6 +335,12 @@ namespace AW2.Game.Gobs
         #endregion Protected methods
 
         #region Private methods
+
+        private void RemoveVerySmallTrianglesFromCollisionAreas()
+        {
+            foreach (int index in _indexMap.GetVerySmallTriangles()) collisionAreas[index] = null;
+            TriangleCount -= _indexMap.GetVerySmallTriangles().Count();
+        }
 
         private void RemoveTriangle(int index)
         {

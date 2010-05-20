@@ -13,15 +13,72 @@ namespace AW2.Game.GobUtils
         public delegate void RemoveTriangleDelegate(int index);
 
         /// <summary>
-        /// Triangle index map of the wall's 3D model in the X-Y plane.
+        /// Interface for different data models of wall index data. Each model has its
+        /// benefits, hence the possibility to easily switch between them.
         /// </summary>
-        /// If indexMap[y,x] == null then no triangle covers index map point (x,y).
-        /// Otherwise indexMap[y,x] is an array of indices n such that 
-        /// the triangle that is defined by the 3D model's index map elements 
-        /// 3n, 3n+1 and 3n+2 covers the index map point (x,y).
-        /// The index map has its own coordinate system that can be obtained from
-        /// the 3D model's coordinate system by <see cref="IndexMapTransform"/>.
-        private int[,][] _indexMap;
+        private interface IData
+        {
+            int Width { get; }
+            int Height { get; }
+            void Add(int x, int y, int index);
+            IEnumerable<int> Get(int x, int y);
+        }
+
+        private class ArrayOfArraysData : IData
+        {
+            private static int[] g_emptyArray = new int[0];
+
+            /// <summary>
+            /// Triangle index map of the wall's 3D model in the X-Y plane.
+            /// </summary>
+            /// If _indexMap[y,x] == null then no triangle covers index map point (x,y).
+            /// Otherwise _indexMap[y,x] is an array of indices n such that 
+            /// the triangle that is defined by the 3D model's index map elements 
+            /// 3n, 3n+1 and 3n+2 covers the index map point (x,y).
+            /// The index map has its own coordinate system that can be obtained from
+            /// the 3D model's coordinate system by <see cref="IndexMapTransform"/>.
+            private int[,][] _indexMap;
+
+            public int Width { get; private set; }
+            public int Height { get; private set; }
+
+            public ArrayOfArraysData(int width, int height)
+            {
+                _indexMap = new int[height, width][];
+                Width = width;
+                Height = height;
+            }
+
+            public ArrayOfArraysData(int[,][] data)
+            {
+                _indexMap = data;
+                Width = _indexMap.GetLength(1);
+                Height = _indexMap.GetLength(0);
+            }
+
+            public void Add(int x, int y, int index)
+            {
+                var oldIndices = _indexMap[y, x];
+                int[] newIndices = null;
+                if (oldIndices != null)
+                {
+                    newIndices = new int[oldIndices.Length + 1];
+                    Array.Copy(oldIndices, newIndices, oldIndices.Length);
+                    newIndices[oldIndices.Length] = index;
+                }
+                else
+                    newIndices = new int[] { index };
+                _indexMap[y, x] = newIndices;
+            }
+
+            public IEnumerable<int> Get(int x, int y)
+            {
+                if (_indexMap[y, x] == null) return g_emptyArray;
+                return _indexMap[y, x];
+            }
+        }
+
+        private IData _data;
 
         /// <summary>
         /// Transformation matrix from wall's 3D model's coordinates to index map coordinates.
@@ -40,8 +97,8 @@ namespace AW2.Game.GobUtils
 
         private RemoveTriangleDelegate _removeTriangle;
 
-        public int Width { get { return _indexMap.GetLength(1); } }
-        public int Height { get { return _indexMap.GetLength(0); } }
+        public int Width { get { return _data.Width; } }
+        public int Height { get { return _data.Height; } }
 
         public static BasicEffect CreateIndexMapEffect(GraphicsDevice gfx)
         {
@@ -53,12 +110,12 @@ namespace AW2.Game.GobUtils
             return effect;
         }
 
-        public WallIndexMap(int[,][] indexMap)
+        public WallIndexMap(int[,][] data)
         {
-            _indexMap = indexMap;
-            var subArrays = indexMap.Cast<int[]>().Where(arr => arr != null);
+            _data = new ArrayOfArraysData(data);
+            var subArrays = data.Cast<int[]>().Where(arr => arr != null);
             int triangleCount = subArrays.Any() ? subArrays.Max(arr => arr.Max()) + 1 : 0;
-            _triangleCovers = CreateTriangleCovers(triangleCount, indexMap);
+            _triangleCovers = CreateTriangleCovers(triangleCount, _data);
         }
 
         public WallIndexMap(RemoveTriangleDelegate removeTriangle, BasicEffect indexMapEffect,
@@ -70,8 +127,7 @@ namespace AW2.Game.GobUtils
 
         public void Remove(int x, int y)
         {
-            if (_indexMap[y, x] == null) return;
-            foreach (int index in _indexMap[y, x])
+            foreach (int index in _data.Get(x, y))
                 if (--_triangleCovers[index] == 0) _removeTriangle(index);
         }
 
@@ -97,27 +153,18 @@ namespace AW2.Game.GobUtils
                 var centerInIndexMap = Vector3.Transform(triangleCenter, WallToIndexMapTransform);
                 int centerInIndexMapX = (int)(Math.Round(centerInIndexMap.X) + 0.1);
                 int centerInIndexMapY = (int)(Math.Round(centerInIndexMap.Y) + 0.1);
-                var oldIndices = _indexMap[centerInIndexMapY, centerInIndexMapX];
-                int[] newIndices = null;
-                if (oldIndices != null)
-                {
-                    newIndices = new int[oldIndices.Length + 1];
-                    Array.Copy(oldIndices, newIndices, oldIndices.Length);
-                    newIndices[oldIndices.Length] = index;
-                }
-                else
-                    newIndices = new int[] { index };
-                _indexMap[centerInIndexMapY, centerInIndexMapX] = newIndices;
+                _data.Add(centerInIndexMapX, centerInIndexMapY, index);
             }
-            if (indexMapChanged) _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _indexMap);
+            if (indexMapChanged) _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _data);
         }
 
-        private static int[] CreateTriangleCovers(int triangleCount, int[,][] indexMap)
+        private static int[] CreateTriangleCovers(int triangleCount, IData indexMap)
         {
             var triangleCovers = new int[triangleCount];
-            foreach (int[] indices in indexMap)
-                if (indices != null)
-                    foreach (int index in indices) ++triangleCovers[index];
+            for (int y = 0; y < indexMap.Height; ++y)
+                for (int x = 0; x < indexMap.Width; ++x)
+                    foreach (int index in indexMap.Get(x, y))
+                        ++triangleCovers[index];
             return triangleCovers;
         }
 
@@ -129,7 +176,7 @@ namespace AW2.Game.GobUtils
 
             // Create an index map for the model.
             // The mask is initialised by a render of the 3D model by the graphics card.
-            _indexMap = new int[(int)Math.Ceiling(modelDim.Y) + 1, (int)Math.Ceiling(modelDim.X) + 1][];
+            _data = new ArrayOfArraysData((int)Math.Ceiling(modelDim.X) + 1, (int)Math.Ceiling(modelDim.Y) + 1);
             WallToIndexMapTransform = Matrix.CreateTranslation(-modelMin.X, -modelMin.Y, 0);
 
             // Create colour-coded vertices for each triangle.
@@ -176,7 +223,7 @@ namespace AW2.Game.GobUtils
                     catch (NullReferenceException) { }
                     catch (InvalidOperationException) { }
 
-            _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _indexMap);
+            _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _data);
         }
 
         private void CreateMaskTarget(out RenderTarget2D maskTarget, out int targetSize)
@@ -252,7 +299,7 @@ namespace AW2.Game.GobUtils
                     if (indexMapY >= Height || indexMapX >= Width)
                         throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
                     int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
-                    _indexMap[indexMapY, indexMapX] = new int[] { maskValue };
+                    _data.Add(indexMapX, indexMapY, maskValue);
                 }
 
             // Restore graphics device's old settings.

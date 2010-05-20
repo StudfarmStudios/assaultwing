@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AWRectangle = AW2.Helpers.Geometric.Rectangle;
+using IndexMapData = AW2.Game.GobUtils.WallIndexMap.ArrayPlusArrayOfArraysData;
 
 namespace AW2.Game.GobUtils
 {
@@ -16,15 +17,32 @@ namespace AW2.Game.GobUtils
         /// Interface for different data models of wall index data. Each model has its
         /// benefits, hence the possibility to easily switch between them.
         /// </summary>
-        private interface IData
+        internal abstract class IData
         {
-            int Width { get; }
-            int Height { get; }
-            void Add(int x, int y, int index);
-            IEnumerable<int> Get(int x, int y);
+            public abstract int Width { get; protected set; }
+            public abstract int Height { get; protected set; }
+            public abstract void Add(int x, int y, int index);
+            public abstract IEnumerable<int> Get(int x, int y);
+
+            protected static void ListAppend(ref int[] list, int index)
+            {
+                int[] newList = null;
+                if (list != null)
+                {
+                    newList = new int[list.Length + 1];
+                    Array.Copy(list, newList, list.Length);
+                    newList[list.Length] = index;
+                }
+                else
+                    newList = new int[] { index };
+                list = newList;
+            }
         }
 
-        private class ArrayOfArraysData : IData
+        /// <summary>
+        /// Simple implementation.
+        /// </summary>
+        internal class ArrayOfArraysData : IData
         {
             private static int[] g_emptyArray = new int[0];
 
@@ -39,8 +57,8 @@ namespace AW2.Game.GobUtils
             /// the 3D model's coordinate system by <see cref="IndexMapTransform"/>.
             private int[,][] _indexMap;
 
-            public int Width { get; private set; }
-            public int Height { get; private set; }
+            public override int Width { get; protected set; }
+            public override int Height { get; protected set; }
 
             public ArrayOfArraysData(int width, int height)
             {
@@ -52,29 +70,80 @@ namespace AW2.Game.GobUtils
             public ArrayOfArraysData(int[,][] data)
             {
                 _indexMap = data;
-                Width = _indexMap.GetLength(1);
-                Height = _indexMap.GetLength(0);
+                Width = data.GetLength(1);
+                Height = data.GetLength(0);
             }
 
-            public void Add(int x, int y, int index)
+            public override void Add(int x, int y, int index)
             {
-                var oldIndices = _indexMap[y, x];
-                int[] newIndices = null;
-                if (oldIndices != null)
-                {
-                    newIndices = new int[oldIndices.Length + 1];
-                    Array.Copy(oldIndices, newIndices, oldIndices.Length);
-                    newIndices[oldIndices.Length] = index;
-                }
-                else
-                    newIndices = new int[] { index };
-                _indexMap[y, x] = newIndices;
+                ListAppend(ref _indexMap[y, x], index);
             }
 
-            public IEnumerable<int> Get(int x, int y)
+            public override IEnumerable<int> Get(int x, int y)
             {
                 if (_indexMap[y, x] == null) return g_emptyArray;
                 return _indexMap[y, x];
+            }
+        }
+
+        /// <summary>
+        /// Seems to use less memory than <see cref="ArrayOfArraysData"/>.
+        /// </summary>
+        internal class ArrayPlusArrayOfArraysData : IData
+        {
+            private const int NO_TRIANGLE = -1;
+
+            /// <summary>
+            /// Indexed as [y, x]. Contains one triangle index
+            /// or NO_TRIANGLE if no triangles overlap the pixel.
+            /// </summary>
+            private int[,] _baseIndexMap;
+
+            /// <summary>
+            /// Indexed as [y, x]. Contains the remaining triangle indices
+            /// or null if less than two triangles overlap the pixel.
+            /// </summary>
+            private int[,][] _extraIndexMap;
+
+            public override int Width { get; protected set; }
+            public override int Height { get; protected set; }
+
+            public ArrayPlusArrayOfArraysData(int width, int height)
+            {
+                _baseIndexMap = new int[height, width];
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
+                        _baseIndexMap[y, x] = NO_TRIANGLE;
+                _extraIndexMap = new int[height, width][];
+                Width = width;
+                Height = height;
+            }
+
+            public ArrayPlusArrayOfArraysData(int[,][] data)
+                : this(data.GetLength(1), data.GetLength(0))
+            {
+                for (int y = 0; y < Height; y++)
+                    for (int x = 0; x < Width; x++)
+                        foreach (int index in data[y, x])
+                            Add(x, y, index);
+            }
+
+            public override void Add(int x, int y, int index)
+            {
+                if (_baseIndexMap[y, x] == NO_TRIANGLE)
+                    _baseIndexMap[y, x] = index;
+                else
+                    ListAppend(ref _extraIndexMap[y, x], index);
+            }
+
+            public override IEnumerable<int> Get(int x, int y)
+            {
+                int baseIndex = _baseIndexMap[y,x];
+                if (baseIndex == NO_TRIANGLE) yield break;
+                yield return baseIndex;
+                var extraIndices = _extraIndexMap[y, x];
+                if (extraIndices == null) yield break;
+                foreach (int index in extraIndices) yield return index;
             }
         }
 
@@ -112,7 +181,7 @@ namespace AW2.Game.GobUtils
 
         public WallIndexMap(int[,][] data)
         {
-            _data = new ArrayOfArraysData(data);
+            _data = new IndexMapData(data);
             var subArrays = data.Cast<int[]>().Where(arr => arr != null);
             int triangleCount = subArrays.Any() ? subArrays.Max(arr => arr.Max()) + 1 : 0;
             _triangleCovers = CreateTriangleCovers(triangleCount, _data);
@@ -176,7 +245,7 @@ namespace AW2.Game.GobUtils
 
             // Create an index map for the model.
             // The mask is initialised by a render of the 3D model by the graphics card.
-            _data = new ArrayOfArraysData((int)Math.Ceiling(modelDim.X) + 1, (int)Math.Ceiling(modelDim.Y) + 1);
+            _data = new IndexMapData((int)Math.Ceiling(modelDim.X) + 1, (int)Math.Ceiling(modelDim.Y) + 1);
             WallToIndexMapTransform = Matrix.CreateTranslation(-modelMin.X, -modelMin.Y, 0);
 
             // Create colour-coded vertices for each triangle.

@@ -101,7 +101,7 @@ namespace AW2.Game.Gobs
                 Rotation += rotationSpeed * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            Move *= 0.2f;
+            Move *= 0.957f;
             /*
             else
             {

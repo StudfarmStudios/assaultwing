@@ -4,6 +4,7 @@
   <isRotating type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</isRotating>
   <rotationSpeed type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.0</rotationSpeed>
   <lifetime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</lifetime>
+  <damageOverTimeBonusIconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_general</damageOverTimeBonusIconName>
   <clingDamagePerSecond type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10</clingDamagePerSecond>
   <clingTime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">5</clingTime>
   <impactDamage type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">20</impactDamage>
@@ -21,8 +22,8 @@
   <scale type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.057</scale>
   <birthGobTypes type="AW2.Helpers.CanonicalString[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
   <deathGobTypes type="System.String[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">venom fragments</Item>
-	  <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">venom explo</Item>
+    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">venom fragments</Item>
+    <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">venom explo</Item>
   </deathGobTypes>
   <movable type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

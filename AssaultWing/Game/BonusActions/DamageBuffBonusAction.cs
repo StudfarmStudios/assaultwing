@@ -12,6 +12,9 @@ namespace AW2.Game.BonusActions
         private string _buffName;
 
         [TypeParameter]
+        private string _bonusIconName;
+
+        [TypeParameter]
         private float _damagePerSecond;
 
         /// <summary>
@@ -20,7 +23,15 @@ namespace AW2.Game.BonusActions
         public DamageBuffBonusAction()
         {
             _buffName = "dummy damage buff";
+            _bonusIconName = "dummytexture";
             _damagePerSecond = 500;
+        }
+
+        public DamageBuffBonusAction(string buffName, string bonusIconName, float damagePerSecond)
+        {
+            _buffName = buffName;
+            _bonusIconName = bonusIconName;
+            _damagePerSecond = damagePerSecond;
         }
 
         public override void DoAction()
@@ -38,7 +49,7 @@ namespace AW2.Game.BonusActions
         private void SetActionMessage()
         {
             BonusText = _buffName;
-            BonusIconName = "b_icon_general";
+            BonusIconName = _bonusIconName;
         }
     }
 }

@@ -15,6 +15,7 @@
   </drawMode2D>
   <gameAction type="AW2.Game.BonusActions.DamageBuffBonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <buffName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">nanobot repair</buffName>
+    <bonusIconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_general</bonusIconName>
     <damagePerSecond type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-30</damagePerSecond>
   </gameAction>
   <duration type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">60</duration>

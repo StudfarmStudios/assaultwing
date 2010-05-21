@@ -1,35 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using AW2.Game.BonusActions;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs
 {
     /// <summary>
-    /// A drop of venom. Has a limited lifetime and clings to target on collision.
+    /// A drop of venom. Has a limited lifetime and causes damage over time on collision.
     /// </summary>
-    class VenomDrop : Bullet
+    public class VenomDrop : Bullet
     {
-        /// <summary>
-        /// How much damage to do in a second when clung to a target.
-        /// </summary>
         [TypeParameter]
-        float clingDamagePerSecond;
+        private string _damageOverTimeBonusIconName;
 
-        /// <summary>
-        /// How many seconds the drop clings before it dies.
-        /// </summary>
         [TypeParameter]
-        float clingTime;
+        private float _clingDamagePerSecond;
 
-        Gob clungTo;
+        [TypeParameter]
+        private float _clingTime;
 
         /// This constructor is only for serialisation.
         public VenomDrop()
-            : base()
         {
-            clingDamagePerSecond = 10;
-            clingTime = 5;
+            _damageOverTimeBonusIconName = "dummytexture";
+            _clingDamagePerSecond = 10;
+            _clingTime = 5;
         }
 
         /// <param name="typeName">The type of the venom drop.</param>
@@ -38,31 +32,25 @@ namespace AW2.Game.Gobs
         {
         }
 
-        public override void Update()
-        {
-            base.Update();
-            if (clungTo != null)
-            {
-                if (clungTo.Dead) Die(new DeathCause());
-                float seconds = (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-                float damage = clingDamagePerSecond * seconds;
-                clungTo.InflictDamage(damage, new DeathCause(clungTo, DeathCauseType.Damage));
-            }
-        }
-
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {
                 theirArea.Owner.InflictDamage(impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
-                clungTo = theirArea.Owner;
-                IsVisible = false;
-                movable = false;
-                RemoveCollisionAreas(area => true);
-                DeathTime = Arena.TotalTime + TimeSpan.FromSeconds(clingTime);
+                DoDamageOverTime(theirArea.Owner);
             }
-            else
-                Die(new DeathCause());
+            Die(new DeathCause());
+        }
+
+        private void DoDamageOverTime(Gob target)
+        {
+            var player = target.Owner;
+            if (!(target is Ship) || player == null) return; // TODO: damage over time for all gobs
+            var dot = new DamageBuffBonusAction(TypeName, _damageOverTimeBonusIconName, _clingDamagePerSecond);
+            dot.Player = player;
+            dot.SetDuration(_clingTime);
+            dot.DoAction();
+            player.BonusActions.AddOrReplace(dot);
         }
     }
 }

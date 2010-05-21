@@ -87,6 +87,9 @@
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
+    <Compile Include="Game\Gobs\FloatingBullet.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Game\GobUtils\GameAction.cs" />
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />

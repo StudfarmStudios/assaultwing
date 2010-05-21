@@ -835,7 +835,7 @@ namespace AW2
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new string[] { "Windlord", "Bugger", "Plissken" };
             DataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
-            DataEngine.GameplayMode.Weapon2Types = new string[] { "bouncegun", "rockets" };
+            DataEngine.GameplayMode.Weapon2Types = new string[] { "bouncegun", "rockets", "mines" };
 
             GameState = GameState.Menu;
             base.BeginRun();

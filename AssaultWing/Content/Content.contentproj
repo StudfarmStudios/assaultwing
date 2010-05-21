@@ -2194,6 +2194,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="models\mine.X">
+      <Name>mine</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="weapondefs\ForwardShot_mine.xml">
       <Name>ForwardShot_mine</Name>
       <Importer>XmlImporter</Importer>

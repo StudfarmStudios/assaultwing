@@ -128,6 +128,9 @@ namespace AW2.Game
         [TypeParameter]
         private LayerPreferenceType layerPreference;
 
+        [RuntimeState]
+        private int _staticID;
+
         /// <summary>
         /// Position of the gob in the game world.
         /// </summary>
@@ -311,9 +314,15 @@ namespace AW2.Game
         #region Gob properties
 
         /// <summary>
-        /// The gob's unique identifier.
+        /// The gob's unique runtime identifier.
         /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// The gob's unique identifier while serialized as part of an arena, or zero.
+        /// Not to be confused with <see cref="Id"/>.
+        /// </summary>
+        public int StaticID { get { return _staticID; } set { _staticID = value; } }
 
         /// <summary>
         /// The arena in which the gob lives.

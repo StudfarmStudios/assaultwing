@@ -233,6 +233,23 @@ namespace AW2.Game.GobUtils
             _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _data);
         }
 
+        public void Serialize(System.IO.BinaryWriter writer)
+        {
+            checked
+            {
+                writer.Write(System.Text.Encoding.ASCII.GetBytes("AW10")); // header
+                writer.Write((short)Width);
+                writer.Write((short)Height);
+                for (int y = 0; y < Height; y++)
+                    for (int x = 0; x < Width; x++)
+                    {
+                        var values = _data.Get(x, y);
+                        writer.Write((byte)values.Count());
+                        foreach (TriInt value in values) writer.Write(value);
+                    }
+            }
+        }
+
         private static int[] CreateTriangleCovers(int triangleCount, IData indexMap)
         {
             var triangleCovers = new int[triangleCount];

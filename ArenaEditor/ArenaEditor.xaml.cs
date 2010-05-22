@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
+using AW2.Game.Gobs;
+using AW2.Graphics;
 using AW2.Helpers;
 using AW2.UI;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
-using System.Windows.Controls;
-using AW2.Graphics;
+using System.IO;
+using System.IO.Compression;
 
 namespace AW2
 {
@@ -74,6 +76,8 @@ namespace AW2
             if (!arena.Name.EndsWith("_edited")) arena.Name += "_edited";
             var filename = TypeLoader.GetFilename(arena, arena.Name);
             var path = System.IO.Path.Combine(Paths.Arenas, filename);
+            var binPath = System.IO.Path.ChangeExtension(path, ".bin");
+            SaveArenaBinaryData(arena, binPath);
             TypeLoader.SaveTemplate(arena, path, typeof(Arena), typeof(TypeParameterAttribute));
         }
 
@@ -271,6 +275,36 @@ namespace AW2
             viewport.ZoomRatio = (float)ZoomRatio;
             if (CircleGobs.IsChecked.HasValue)
                 viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
+        }
+
+        private static void SaveArenaBinaryData(Arena arena, string path)
+        {
+            // Create file and write header without compression
+            var file = File.Open(path, FileMode.Create);
+            var rawWriter = new BinaryWriter(file);
+            rawWriter.Write(System.Text.Encoding.ASCII.GetBytes("AWBIN100"));
+            rawWriter.Close();
+
+            // Append contents to the file with compression
+            file = File.Open(path, FileMode.Append);
+            var packWriter = new BinaryWriter(new DeflateStream(file, CompressionMode.Compress));
+            foreach (var gob in arena.Gobs.GameplayLayer.Gobs)
+            {
+                if (!(gob is Wall)) continue;
+                checked
+                {
+                    gob.StaticID = gob.Id;
+                    packWriter.Write((int)gob.StaticID);
+                    var buffer = new MemoryStream();
+                    var bufferWriter = new BinaryWriter(buffer);
+                    ((Wall)gob).CreateIndexMap().Serialize(bufferWriter);
+                    int bufferLength = (int)buffer.Length;
+                    bufferWriter.Close();
+                    packWriter.Write(bufferLength);
+                    packWriter.Write(buffer.GetBuffer(), 0, bufferLength);
+                }
+            }
+            packWriter.Close();
         }
 
         #endregion Helpers

@@ -1,3 +1,4 @@
+#define VERY_SMALL_TRIANGLES_ARE_COLLIDABLE // TODO: #undefine
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -173,11 +174,8 @@ namespace AW2.Game.Gobs
             if (Arena.IsForPlaying)
             {
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Client) Prepare3DModel();
-                var boundingBox = collisionAreas.First(area => area.Name == "Bounding").Area.BoundingBox;
-                _indexMap = new WallIndexMap(RemoveTriangle, g_maskEff, _vertexData, _indexData, boundingBox);
-#if true
-                _indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
-#else
+                _indexMap = CreateIndexMap();
+#if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
                 RemoveVerySmallTrianglesFromCollisionAreas();
 #endif
                 drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
@@ -243,6 +241,15 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Methods related to gobs' functionality in the game world
+
+        public WallIndexMap CreateIndexMap()
+        {
+            var indexMap = new WallIndexMap(RemoveTriangle, g_maskEff, _vertexData, _indexData, GetBoundingBox());
+#if VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
+            indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
+#endif
+            return indexMap;
+        }
 
         /// <summary>
         /// Removes a round area from this wall, i.e. makes a hole.
@@ -395,12 +402,17 @@ namespace AW2.Game.Gobs
             }
 
             // Create a collision bounding volume for the whole wall.
+            collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", GetBoundingBox(), this,
+                CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
+        }
+
+        private Rectangle GetBoundingBox()
+        {
             var positions = _vertexData.Select(vertex => new Vector2(vertex.Position.X, vertex.Position.Y));
             var min = positions.Aggregate((v1, v2) => Vector2.Min(v1, v2));
             var max = positions.Aggregate((v1, v2) => Vector2.Max(v1, v2));
             var boundingArea = new Rectangle(min, max);
-            collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", boundingArea, this,
-                CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
+            return boundingArea;
         }
 
         #endregion Private methods

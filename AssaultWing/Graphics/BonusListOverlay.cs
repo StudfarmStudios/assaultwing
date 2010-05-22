@@ -184,7 +184,7 @@ namespace AW2.Graphics
                 bonusPos, null, Color.White, 0, backgroundOrigin, 1, SpriteEffects.None, 0);
 
             // Draw bonus icon.
-            Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(112, 9);
+            Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(133, 9);
             spriteBatch.Draw(bonusIcon,
                 iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
@@ -203,7 +203,7 @@ namespace AW2.Graphics
             // Draw bonus text.
             // Round coordinates for beautiful text.
             Vector2 textSize = bonusFont.MeasureString(bonusText);
-            Vector2 textPos = bonusPos - backgroundOrigin + new Vector2(32, 23.5f - textSize.Y / 2);
+            Vector2 textPos = bonusPos - backgroundOrigin + new Vector2(32, 25.5f - textSize.Y / 2);
             spriteBatch.DrawString(bonusFont, bonusText, textPos.Round(), Color.White);
         }
 

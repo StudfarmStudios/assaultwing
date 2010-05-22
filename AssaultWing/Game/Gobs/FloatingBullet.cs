@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using AW2.Helpers.Geometric;
+
 
 namespace AW2.Game.Gobs
 {
@@ -53,6 +55,26 @@ namespace AW2.Game.Gobs
         protected TimeSpan DeathTime { get; set; }
 
         /// <summary>
+        /// MovementCurve for animating mine
+        /// </summary>
+        protected MovementCurve _movementCurve;
+
+        /// <summary>
+        /// Targetpoint for animation
+        /// </summary>
+        protected Vector2 _targetPos;
+
+        /// <summary>
+        /// Floating bullet original position
+        /// </summary>
+        protected Vector2 _originalPos;
+
+        /// <summary>
+        /// Flag if floating bullet has stopped once
+        /// </summary>
+        protected bool _bulletStopped = false;
+
+        /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
         public override IEnumerable<CanonicalString> ModelNames
@@ -96,25 +118,47 @@ namespace AW2.Game.Gobs
                 Die(new DeathCause());
 
             base.Update();
+
+            // Rotate floating bullet
             if (isRotating)
             {
                 Rotation += rotationSpeed * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            Move *= 0.957f;
-            /*
-            else
+            // Slow down the floating bullet if it hasn't stopped before
+            if (!_bulletStopped)
             {
-                // Fly nose first, but only if we're moving fast enough.
-                if (move.LengthSquared() > 1 * 1)
-                {
-                    float rotationGoal = (float)Math.Acos(Move.X / Move.Length());
-                    if (Move.Y < 0)
-                        rotationGoal = MathHelper.TwoPi - rotationGoal;
-                    Rotation = rotationGoal;
-                }
-            }*/
+                Move *= 0.957f;
+            }
 
+            // When mine has nearly stopped start animating (this condition will succeed only once per floating bullet)
+            if (!_bulletStopped && Move.Length() < 1)
+            {
+                _bulletStopped = true;
+                _targetPos = Pos;
+                _originalPos = Pos;
+                _movementCurve = new MovementCurve(Pos);
+            }
+
+            // Set movement vector to zero always when floating bullet has stopped
+            if (_bulletStopped)
+            {
+                Move = new Vector2(0, 0);
+            }
+
+            // If floating bullet has stopped and current target position is same than current position randomize next target
+            if (_bulletStopped && _targetPos == Pos)
+            {
+                _targetPos = Geometry.GetRandomLocation(new Circle(_originalPos, 15));
+                float animationLength = RandomHelper.GetRandomFloat(1.9f, 2.6f);
+                _movementCurve.SetTarget(_targetPos, Arena.TotalTime, animationLength, MovementCurve.Curvature.SlowFastSlow);
+            }
+
+            // If floating bullet is stopped and current target positions is not the same than current position update the floating bullet position
+            if (_bulletStopped && _targetPos != Pos)
+            {
+                Pos = _movementCurve.Evaluate(Arena.TotalTime);
+            }
         }
 
         /// <summary>

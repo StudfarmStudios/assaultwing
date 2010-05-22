@@ -75,8 +75,19 @@ namespace AW2.Game.Gobs
         protected bool _bulletStopped = false;
 
         /// <summary>
+        /// Zero vector for reseting movement
+        /// </summary>
+        protected static Vector2 zeroVector = new Vector2(0, 0);
+
+        /// <summary>
+        /// Circle representing radius of randomization
+        /// </summary>
+        protected Circle _targetCircle;
+
+        /// <summary>
         /// Names of all 3D models that this gob type will ever use.
         /// </summary>
+
         public override IEnumerable<CanonicalString> ModelNames
         {
             get { return base.ModelNames.Union(bulletModelNames); }
@@ -138,18 +149,19 @@ namespace AW2.Game.Gobs
                 _targetPos = Pos;
                 _originalPos = Pos;
                 _movementCurve = new MovementCurve(Pos);
+                _targetCircle = new Circle(_originalPos, 15);
             }
 
             // Set movement vector to zero always when floating bullet has stopped
             if (_bulletStopped)
             {
-                Move = new Vector2(0, 0);
+                Move = zeroVector;
             }
 
             // If floating bullet has stopped and current target position is same than current position randomize next target
             if (_bulletStopped && _targetPos == Pos)
             {
-                _targetPos = Geometry.GetRandomLocation(new Circle(_originalPos, 15));
+                _targetPos = Geometry.GetRandomLocation(_targetCircle);
                 float animationLength = RandomHelper.GetRandomFloat(1.9f, 2.6f);
                 _movementCurve.SetTarget(_targetPos, Arena.TotalTime, animationLength, MovementCurve.Curvature.SlowFastSlow);
             }

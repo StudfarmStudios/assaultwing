@@ -48,7 +48,10 @@ namespace AW2.Game.BonusActions
             // A more beautiful way around this would be to share deletion logic from Gob to other
             // similar classes such as BonusAction and Weapon. !!!
             float damage = AssaultWing.Instance.PhysicsEngine.ApplyChange(_damagePerSecond, AssaultWing.Instance.GameTime.ElapsedGameTime);
-            AssaultWing.Instance.DataEngine.CustomOperations += () => Player.Ship.InflictDamage(damage, new DeathCause(Player.Ship, DeathCauseType.Damage));
+            AssaultWing.Instance.DataEngine.CustomOperations += () =>
+            {
+                if (Player.Ship != null) Player.Ship.InflictDamage(damage, new DeathCause(Player.Ship, DeathCauseType.Damage));
+            };
         }
 
         private void SetActionMessage()

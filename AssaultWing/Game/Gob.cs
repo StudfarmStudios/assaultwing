@@ -918,17 +918,18 @@ namespace AW2.Game
             {
                 writer.Write((int)Id);
                 if (_owner != null)
-                    writer.Write((int)_owner.Id);
+                    writer.Write(checked((sbyte)_owner.Id));
                 else
-                    writer.Write((int)-1);
+                    writer.Write((sbyte)-1);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((float)pos.X);
-                writer.Write((float)pos.Y);
+                writer.Write((Half)pos.X);
+                writer.Write((Half)pos.Y);
                 writer.Write((Half)move.X);
                 writer.Write((Half)move.Y);
-                writer.Write((Half)rotation);
+                byte rotationAsByte = (byte)Math.Round(rotation / MathHelper.TwoPi * 256);
+                writer.Write((byte)rotationAsByte);
             }
         }
 
@@ -944,15 +945,16 @@ namespace AW2.Game
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 Id = reader.ReadInt32();
-                int ownerId = reader.ReadInt32();
+                int ownerId = reader.ReadSByte();
                 _owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                Vector2 newPos = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
-                Vector2 newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
+                var newPos = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
+                var newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
                 ExtrapolatePosAndMove(newPos, newMove, messageAge);
-                rotation = reader.ReadHalf();
+                byte rotationAsByte = reader.ReadByte();
+                rotation = rotationAsByte * MathHelper.TwoPi / 256;
             }
         }
 

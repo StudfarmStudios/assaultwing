@@ -295,7 +295,8 @@ namespace AW2.Game.Gobs
 
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
+            var reducedMode = mode & AW2.Net.SerializationModeFlags.ConstantData; // HACK to reduce network traffic
+            base.Serialize(writer, reducedMode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)_vertexData.Length);
@@ -309,7 +310,8 @@ namespace AW2.Game.Gobs
 
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
-            base.Deserialize(reader, mode, messageAge);
+            var reducedMode = mode & AW2.Net.SerializationModeFlags.ConstantData; // HACK to reduce network traffic
+            base.Deserialize(reader, reducedMode, messageAge);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 int vertexDataLength = reader.ReadInt32();

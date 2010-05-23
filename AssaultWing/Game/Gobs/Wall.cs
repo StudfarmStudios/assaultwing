@@ -34,6 +34,7 @@ namespace AW2.Game.Gobs
         protected short[] _indexData;
 
         private WallIndexMap _indexMap;
+        private List<int> _removedTriangleIndices;
 
         /// <summary>
         /// The number of triangles in the wall's 3D model not yet removed.
@@ -127,6 +128,7 @@ namespace AW2.Game.Gobs
         public Wall(CanonicalString typeName)
             : base(typeName)
         {
+            _removedTriangleIndices = new List<int>();
             movable = false;
         }
 
@@ -263,18 +265,13 @@ namespace AW2.Game.Gobs
 
             // Eat a round hole.
             Vector2 posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
-            int indexMapWidth = _indexMap.Width;
-            int indexMapHeight = _indexMap.Height;
-            var removeIndices = new List<int>();
-            AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), (x, y) =>
-            {
-                if (x < 0 || y < 0 || x >= indexMapWidth || y >= indexMapHeight) return;
-                _indexMap.Remove(x, y);
-            });
+            _removedTriangleIndices.Clear();
+            AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius),
+                (x, y) => _indexMap.Remove(x, y));
 
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && removeIndices.Any())
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
-                var message = new WallHoleMessage { GobId = Id, TriangleIndices = removeIndices };
+                var message = new WallHoleMessage { GobId = Id, TriangleIndices = _removedTriangleIndices.ToList() };
                 AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }
 
@@ -358,6 +355,7 @@ namespace AW2.Game.Gobs
             _indexData[3 * index + 1] = 0;
             _indexData[3 * index + 2] = 0;
 
+            _removedTriangleIndices.Add(index);
             Arena.Unregister(collisionAreas[index]);
             --TriangleCount;
         }

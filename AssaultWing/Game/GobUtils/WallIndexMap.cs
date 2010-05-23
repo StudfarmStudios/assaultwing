@@ -202,6 +202,7 @@ namespace AW2.Game.GobUtils
 
         public void Remove(int x, int y)
         {
+            if (x < 0 || y < 0 || x >= Width || y >= Height) return;
             foreach (TriInt index in _data.Get(x, y))
                 if (--_triangleCovers[index] == 0) _removeTriangle(index);
         }

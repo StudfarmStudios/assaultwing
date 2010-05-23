@@ -544,6 +544,15 @@ namespace AW2.Game
             yield return Color.MediumSpringGreen;
             yield return Color.HotPink;
             yield return Color.Aquamarine;
+            yield return Color.Olive;
+            yield return Color.OrangeRed;
+            yield return Color.Thistle;
+            yield return Color.Violet;
+            yield return Color.Turquoise;
+            yield return Color.Fuchsia;
+            yield return Color.LightSteelBlue;
+            yield return Color.Lime;
+            // 16 colours total
         }
 
         #endregion Private methods

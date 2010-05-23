@@ -969,6 +969,11 @@ namespace AW2.Game
             if (Arena != null) Arena.Move(this, gameTimeAgo, false);
         }
 
+        public void ForceNetworkUpdate()
+        {
+            LastNetworkUpdate = Arena.TotalTime - NetworkUpdatePeriod;
+        }
+
         #endregion Methods related to serialisation
 
         #region Gob public methods

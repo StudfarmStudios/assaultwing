@@ -61,7 +61,6 @@ namespace AW2.Game.Gobs
                 _bulletStopped = true;
                 _targetPos = Pos;
                 _originalPos = Pos;
-                _movementCurve = new MovementCurve(Pos);
                 _targetCircle = new Circle(_originalPos, 15);
             }
 
@@ -72,11 +71,9 @@ namespace AW2.Game.Gobs
             }
 
             // If floating bullet has stopped and current target position is same than current position randomize next target
-            if (_bulletStopped && _targetPos == Pos)
+            if (_bulletStopped && _targetPos == Pos && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
-                _targetPos = Geometry.GetRandomLocation(_targetCircle);
-                float animationLength = RandomHelper.GetRandomFloat(1.9f, 2.6f);
-                _movementCurve.SetTarget(_targetPos, Arena.TotalTime, animationLength, MovementCurve.Curvature.SlowFastSlow);
+                SetNewTargetPos(Geometry.GetRandomLocation(_targetCircle));
             }
 
             // If floating bullet is stopped and current target positions is not the same than current position update the floating bullet position
@@ -84,6 +81,40 @@ namespace AW2.Game.Gobs
             {
                 Pos = _movementCurve.Evaluate(Arena.TotalTime);
             }
+        }
+
+        public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.WriteHalf(_targetPos);
+            }
+        }
+
+        public override void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            var oldPos = Pos; // HACK to avoid mine jitter on client
+            base.Deserialize(reader, mode, messageAge);
+            if (_bulletStopped) Pos = oldPos;
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                var newTargetPos = reader.ReadHalfVector2();
+                if (newTargetPos != _targetPos)
+                {
+                    _bulletStopped = true;
+                    SetNewTargetPos(newTargetPos);
+                }
+            }
+        }
+
+        private void SetNewTargetPos(Vector2 targetPos)
+        {
+            _targetPos = targetPos;
+            float animationLength = RandomHelper.GetRandomFloat(1.9f, 2.6f);
+            if (_movementCurve == null) _movementCurve = new MovementCurve(Pos);
+            _movementCurve.SetTarget(_targetPos, Arena.TotalTime, animationLength, MovementCurve.Curvature.SlowFastSlow);
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server) ForceNetworkUpdate();
         }
     }
 }

@@ -36,7 +36,7 @@ namespace AW2.Game.Gobs
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {
-                theirArea.Owner.InflictDamage(impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
+                theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
                 DoDamageOverTime(theirArea.Owner);
             }
             Die(new DeathCause());

@@ -57,32 +57,27 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// MovementCurve for animating mine
         /// </summary>
-        protected MovementCurve _movementCurve;
+        private MovementCurve _movementCurve;
 
         /// <summary>
         /// Targetpoint for animation
         /// </summary>
-        protected Vector2 _targetPos;
+        private Vector2 _targetPos;
 
         /// <summary>
         /// Floating bullet original position
         /// </summary>
-        protected Vector2 _originalPos;
+        private Vector2 _originalPos;
 
         /// <summary>
         /// Flag if floating bullet has stopped once
         /// </summary>
-        protected bool _bulletStopped = false;
-
-        /// <summary>
-        /// Zero vector for reseting movement
-        /// </summary>
-        protected static Vector2 zeroVector = new Vector2(0, 0);
+        private bool _bulletStopped = false;
 
         /// <summary>
         /// Circle representing radius of randomization
         /// </summary>
-        protected Circle _targetCircle;
+        private Circle _targetCircle;
 
         /// <summary>
         /// Names of all 3D models that this gob type will ever use.
@@ -155,7 +150,7 @@ namespace AW2.Game.Gobs
             // Set movement vector to zero always when floating bullet has stopped
             if (_bulletStopped)
             {
-                Move = zeroVector;
+                Move = Vector2.Zero;
             }
 
             // If floating bullet has stopped and current target position is same than current position randomize next target

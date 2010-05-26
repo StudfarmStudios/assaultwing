@@ -238,7 +238,6 @@ namespace AW2.Game.Gobs
 
         public WallIndexMap CreateIndexMap()
         {
-            FineTriangles();
             var indexMap = new WallIndexMap(RemoveTriangle, GetBoundingBox(), _vertexData, _indexData);
 #if VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
             indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
@@ -354,24 +353,11 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Fines the wall's 3D model's triangles.
-        /// </summary>
-        public void FineTriangles()
-        {
-            VertexPositionNormalTexture[] fineVertexData;
-            short[] fineIndexData;
-            Graphics3D.FineTriangles(50, _vertexData, _indexData, out fineVertexData, out fineIndexData);
-            _indexData = fineIndexData;
-            _vertexData = fineVertexData;
-        }
-
-        /// <summary>
         /// Prepares the wall's 3D model for use in gameplay.
         /// </summary>
         private void Prepare3DModel()
         {
             _silhouetteEffect = Effect == null ? null : (BasicEffect)Effect.Clone(AssaultWing.Instance.GraphicsDevice);
-            FineTriangles();
             TriangleCount = _indexData.Length / 3;
             CreateCollisionAreas();
         }

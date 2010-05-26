@@ -83,6 +83,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssaultWing.cs" />
+    <Compile Include="Game\ArenaBin.cs" />
+    <Compile Include="Game\ArenaLoadException.cs" />
     <Compile Include="Game\BonusActions\SelfDestructBonusAction.cs" />
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="Game\GobUtils\ShipDevice.cs" />
     <Compile Include="Game\GobUtils\ShipLocationPredicter.cs" />
     <Compile Include="Game\Spectator.cs" />
+    <Compile Include="Helpers\IAWSerializable.cs" />
     <Compile Include="Helpers\TypeLoader.cs" />
     <Compile Include="Game\GobUtils\Weapon.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />

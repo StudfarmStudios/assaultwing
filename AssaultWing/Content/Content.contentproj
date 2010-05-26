@@ -2214,6 +2214,22 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="arenas\Arena_Amazonas.bin">
+      <Name>Arena_Amazonas</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="arenas\Arena_Anna Lunta.bin">
+      <Name>Arena_Anna Lunta</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="arenas\Arena_Blood Bowl.bin">
+      <Name>Arena_Blood Bowl</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="arenas\Arena_Junk.bin">
+      <Name>Arena_Junk</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="weapondefs\ForwardShot_minespewer.xml">
       <Name>ForwardShot_minespewer</Name>
       <Importer>XmlImporter</Importer>

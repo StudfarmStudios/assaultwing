@@ -10,7 +10,7 @@ using TriInt = System.Int16;
 
 namespace AW2.Game.GobUtils
 {
-    public class WallIndexMap
+    public class WallIndexMap : IAWSerializable
     {
         public delegate void RemoveTriangleDelegate(int index);
 
@@ -18,7 +18,7 @@ namespace AW2.Game.GobUtils
         /// Interface for different data models of wall index data. Each model has its
         /// benefits, hence the possibility to easily switch between them.
         /// </summary>
-        internal abstract class IData
+        internal abstract class IData : IEnumerable<TriInt>
         {
             public abstract int Width { get; protected set; }
             public abstract int Height { get; protected set; }
@@ -29,8 +29,9 @@ namespace AW2.Game.GobUtils
             {
                 for (int y = 0; y < Height; y++)
                     for (int x = 0; x < Width; x++)
-                        foreach (int index in data[y, x])
-                            Add(x, y, checked((TriInt)index));
+                        if (data[y, x] != null)
+                            foreach (int index in data[y, x])
+                                Add(x, y, checked((TriInt)index));
             }
 
             protected static void ListAppend(ref TriInt[] list, TriInt index)
@@ -45,6 +46,18 @@ namespace AW2.Game.GobUtils
                 else
                     newList = new TriInt[] { index };
                 list = newList;
+            }
+
+            public IEnumerator<TriInt> GetEnumerator()
+            {
+                for (int y = 0; y < Height; y++)
+                    for (int x = 0; x < Width; x++)
+                        foreach (TriInt index in Get(x, y)) yield return index;
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
             }
         }
 
@@ -153,12 +166,9 @@ namespace AW2.Game.GobUtils
             }
         }
 
+        private static readonly byte[] HEADER_BYTES = System.Text.Encoding.ASCII.GetBytes("AW10");
+        private static BasicEffect g_indexMapEffect;
         private IData _data;
-
-        /// <summary>
-        /// Transformation matrix from wall's 3D model's coordinates to index map coordinates.
-        /// </summary>
-        public Matrix WallToIndexMapTransform { get; private set; }
 
         /// <summary>
         /// Triangle cover counts of the wall's 3D model.
@@ -170,34 +180,70 @@ namespace AW2.Game.GobUtils
         /// A negative cover count marks a deleted triangle.
         private int[] _triangleCovers;
 
-        private RemoveTriangleDelegate _removeTriangle;
-
         public int Width { get { return _data.Width; } }
         public int Height { get { return _data.Height; } }
 
-        public static BasicEffect CreateIndexMapEffect(GraphicsDevice gfx)
+        /// <summary>
+        /// Transformation matrix from wall's 3D model's coordinates to index map coordinates.
+        /// </summary>
+        public Matrix WallToIndexMapTransform { get; private set; }
+
+        private RemoveTriangleDelegate _removeTriangle;
+
+        private static BasicEffect GetIndexMapEffect(GraphicsDevice gfx)
         {
-            var effect = new BasicEffect(gfx, null);
-            effect.VertexColorEnabled = true;
-            effect.LightingEnabled = false;
-            effect.TextureEnabled = false;
-            effect.View = Matrix.CreateLookAt(new Vector3(0, 0, 1000), Vector3.Zero, Vector3.Up);
-            return effect;
+            if (g_indexMapEffect == null || g_indexMapEffect.IsDisposed)
+            {
+                g_indexMapEffect = new BasicEffect(gfx, null);
+                g_indexMapEffect.VertexColorEnabled = true;
+                g_indexMapEffect.LightingEnabled = false;
+                g_indexMapEffect.TextureEnabled = false;
+                g_indexMapEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 1000), Vector3.Zero, Vector3.Up);
+            }
+            return g_indexMapEffect;
         }
 
-        public WallIndexMap(int[,][] data)
+        public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, VertexPositionNormalTexture[] vertexData, short[] indexData)
+            : this(removeTriangle, boundingBox)
         {
+            Initialize(vertexData, indexData, boundingBox);
+        }
+
+        public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, System.IO.BinaryReader reader)
+            : this(removeTriangle, boundingBox)
+        {
+            // Note: 'reader.ReadInt16()' below must match chosen type 'TriInt'
+            if (sizeof(TriInt) != 2) throw new ApplicationException("Programmer error: ReadInt16() doesn't match index map element size (" + sizeof(TriInt) + ")");
+
+            var headerBytes = reader.ReadBytes(HEADER_BYTES.Length);
+            if (!headerBytes.SequenceEqual(HEADER_BYTES)) throw new ApplicationException("Unexpected serialized data");
+            int width = reader.ReadInt16();
+            int height = reader.ReadInt16();
+            var data = new int[height, width][];
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    int count = reader.ReadByte();
+                    int[] values = null;
+                    if (count > 0)
+                    {
+                        values = new int[count];
+                        for (int i = 0; i < count; ++i) values[i] = reader.ReadInt16();
+                    }
+                    data[y, x] = values;
+                }
+
             _data = new IndexMapData(data);
             var subArrays = data.Cast<int[]>().Where(arr => arr != null);
             int triangleCount = subArrays.Any() ? subArrays.Max(arr => arr.Max()) + 1 : 0;
             _triangleCovers = CreateTriangleCovers(triangleCount, _data);
         }
 
-        public WallIndexMap(RemoveTriangleDelegate removeTriangle, BasicEffect indexMapEffect,
-            VertexPositionNormalTexture[] vertexData, short[] indexData, AWRectangle boundingBox)
+        private WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox)
         {
             _removeTriangle = removeTriangle;
-            Initialize(indexMapEffect, vertexData, indexData, boundingBox);
+            var minCorner = boundingBox.Min;
+            WallToIndexMapTransform = Matrix.CreateTranslation(-minCorner.X, -minCorner.Y, 0);
         }
 
         public void Remove(int x, int y)
@@ -238,7 +284,7 @@ namespace AW2.Game.GobUtils
         {
             checked
             {
-                writer.Write(System.Text.Encoding.ASCII.GetBytes("AW10")); // header
+                writer.Write(HEADER_BYTES);
                 writer.Write((short)Width);
                 writer.Write((short)Height);
                 for (int y = 0; y < Height; y++)
@@ -261,16 +307,13 @@ namespace AW2.Game.GobUtils
             return triangleCovers;
         }
 
-        private void Initialize(BasicEffect indexMapEffect, VertexPositionNormalTexture[] vertexData,
-            short[] indexData, AWRectangle boundingArea)
+        private void Initialize(VertexPositionNormalTexture[] vertexData, short[] indexData, AWRectangle boundingArea)
         {
-            var modelMin = boundingArea.Min;
             var modelDim = boundingArea.Dimensions;
 
             // Create an index map for the model.
             // The mask is initialised by a render of the 3D model by the graphics card.
             _data = new IndexMapData((int)Math.Ceiling(modelDim.X) + 1, (int)Math.Ceiling(modelDim.Y) + 1);
-            WallToIndexMapTransform = Matrix.CreateTranslation(-modelMin.X, -modelMin.Y, 0);
 
             // Create colour-coded vertices for each triangle.
             var colouredVertexData = new VertexPositionColor[indexData.Length];
@@ -297,6 +340,7 @@ namespace AW2.Game.GobUtils
             lock (gfx) CreateMaskTarget(out maskTarget, out targetSize);
 
             // Set up the effect.
+            var indexMapEffect = WallIndexMap.GetIndexMapEffect(AssaultWing.Instance.GraphicsDevice);
             indexMapEffect.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1, 0, targetSize - 1, 10, 2000);
             indexMapEffect.World = WallToIndexMapTransform;
 

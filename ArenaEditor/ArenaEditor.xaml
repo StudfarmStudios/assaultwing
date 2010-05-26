@@ -1,4 +1,6 @@
-﻿<Window x:Class="AW2.ArenaEditor"
+﻿<Window
+    x:Name="ArenaEditorWindow"
+    x:Class="AW2.ArenaEditor"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
@@ -16,12 +18,17 @@
     </Window.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Left" LastChildFill="False">
-            <GroupBox DockPanel.Dock="Top" Header="Arenas">
-                <DockPanel LastChildFill="True">
-                    <ComboBox Name="arenaName" DockPanel.Dock="Top" IsEditable="False" MinWidth="150"/>
-                    <Button Click="SaveArena_Click" DockPanel.Dock="Right">Save</Button>
-                    <Button Click="LoadArena_Click">Load</Button>
-                </DockPanel>
+            <GroupBox DockPanel.Dock="Top" Header="Arena">
+                <StackPanel Orientation="Vertical">
+                    <DockPanel LastChildFill="True">
+                        <Label>Name:</Label>
+                        <TextBox Name="ArenaName" MaxLines="1" MaxLength="32">?</TextBox>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True">
+                        <Button Click="SaveArena_Click" DockPanel.Dock="Right">Save as...</Button>
+                        <Button Click="LoadArena_Click">Load...</Button>
+                    </DockPanel>
+                </StackPanel>
             </GroupBox>
             <GroupBox DockPanel.Dock="Top" Header="Layers">
                 <ListBox Name="layerNames" MinWidth="100" MaxHeight="200"/>

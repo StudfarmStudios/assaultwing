@@ -24,6 +24,7 @@ namespace AW2.Game
         protected override object LoadTemplate(string filename)
         {
             var arena = (Arena)base.LoadTemplate(filename);
+            if (arena == null) throw new ArenaLoadException("Failed to load arena (" + filename + ")");
             arena.FileName = filename;
             return arena;
         }

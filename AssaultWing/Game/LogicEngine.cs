@@ -50,8 +50,6 @@ namespace AW2.Game
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(device.TypeName, device);
             foreach (Gob particleEngine in particleLoader.LoadTemplates())
                 AssaultWing.Instance.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
-            var temp = arenaLoader.LoadTemplates().ToList();
-            var temp2 = arenaLoader.LoadTemplates().ToList();
             AssaultWing.Instance.DataEngine.ArenaInfos = arenaLoader.LoadTemplates().Cast<Arena>().Select(arena => arena.Info).ToList();
 
             SaveTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);

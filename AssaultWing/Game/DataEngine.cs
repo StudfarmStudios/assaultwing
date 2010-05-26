@@ -128,17 +128,6 @@ namespace AW2.Game
         /// </summary>
         public List<ArenaInfo> ArenaInfos { get; set; }
 
-        private Arena GetArena(string name)
-        {
-            if (preparedArena == null || !preparedArena.Name.Equals(name))
-            {
-                var filename = ArenaInfos.Single(info => info.Name == name).FileName;
-                preparedArena = (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute));
-                preparedArena.FileName = filename;
-            }
-            return preparedArena;
-        }
-
         /// <summary>
         /// Advances the arena playlist and prepares the new current arena for playing.
         /// </summary>
@@ -149,7 +138,9 @@ namespace AW2.Game
         {
             if (ArenaPlaylist.MoveNext())
             {
-                InitializeFromArena(ArenaPlaylist.Current, true);
+                var arenaFilename = ArenaInfos.Single(info => info.Name == ArenaPlaylist.Current).FileName;
+                var arena = Arena.FromFile(arenaFilename);
+                InitializeFromArena(arena, true);
                 return true;
             }
             else
@@ -184,15 +175,14 @@ namespace AW2.Game
         /// Prepares the game data for playing an arena.
         /// </summary>
         /// When the playing really should start, call <c>StartArena</c>.
-        /// <param name="name">The name of the arena.</param>
         /// <param name="initializeForPlaying">Should the arena be initialised
         /// for playing. If not, some initialisations are skipped.</param>
-        public void InitializeFromArena(string name, bool initializeForPlaying)
+        public void InitializeFromArena(Arena arena, bool initializeForPlaying)
         {
             CustomOperations = null;
-
-            preparedArena = GetArena(name);
+            preparedArena = arena;
             preparedArena.IsForPlaying = initializeForPlaying;
+            if (initializeForPlaying) preparedArena.Bin.Load(System.IO.Path.Combine(Paths.Arenas, preparedArena.BinFilename));
             AssaultWing.Instance.LoadArenaContent(preparedArena);
             int wallCount = preparedArena.Gobs.Count(gob => gob is Wall);
             progressBar.SetSubtaskCount(wallCount);

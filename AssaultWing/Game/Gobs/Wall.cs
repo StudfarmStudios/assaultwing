@@ -66,11 +66,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         private static BasicEffect g_defaultSilhouetteEffect;
 
-        /// <summary>
-        /// Effect for drawing data for index maps.
-        /// </summary>
-        private static BasicEffect g_maskEff; // !!! remove eventually when index maps are created in ArenaEditor
-
         private VertexDeclaration _vertexDeclaration;
 
         #endregion // Wall Fields
@@ -139,7 +134,6 @@ namespace AW2.Game.Gobs
             var gfx = AssaultWing.Instance.GraphicsDevice;
             g_defaultEffect = g_defaultEffect ?? new BasicEffect(gfx, null);
             g_defaultSilhouetteEffect = g_defaultSilhouetteEffect ?? (BasicEffect)g_defaultEffect.Clone(gfx);
-            g_maskEff = g_maskEff ?? WallIndexMap.CreateIndexMapEffect(gfx);
             _silhouetteEffect = g_defaultSilhouetteEffect;
             _vertexDeclaration = _vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             base.LoadContent();
@@ -157,11 +151,6 @@ namespace AW2.Game.Gobs
                 g_defaultEffect.Dispose();
                 g_defaultEffect = null;
             }
-            if (g_maskEff != null)
-            {
-                g_maskEff.Dispose();
-                g_maskEff = null;
-            }
             if (_vertexDeclaration != null)
             {
                 _vertexDeclaration.Dispose();
@@ -176,7 +165,10 @@ namespace AW2.Game.Gobs
             if (Arena.IsForPlaying)
             {
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Client) Prepare3DModel();
-                _indexMap = CreateIndexMap();
+                var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
+                var boundingBox = CollisionAreas.Single(area => area.Name == "Bounding").Area.BoundingBox;
+                _indexMap = new WallIndexMap(RemoveTriangle, boundingBox, binReader);
+                binReader.Close();
 #if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
                 RemoveVerySmallTrianglesFromCollisionAreas();
 #endif
@@ -246,7 +238,8 @@ namespace AW2.Game.Gobs
 
         public WallIndexMap CreateIndexMap()
         {
-            var indexMap = new WallIndexMap(RemoveTriangle, g_maskEff, _vertexData, _indexData, GetBoundingBox());
+            FineTriangles();
+            var indexMap = new WallIndexMap(RemoveTriangle, GetBoundingBox(), _vertexData, _indexData);
 #if VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
             indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
 #endif
@@ -363,7 +356,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Fines the wall's 3D model's triangles.
         /// </summary>
-        private void FineTriangles()
+        public void FineTriangles()
         {
             VertexPositionNormalTexture[] fineVertexData;
             short[] fineIndexData;

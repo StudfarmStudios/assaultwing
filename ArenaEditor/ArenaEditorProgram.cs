@@ -29,22 +29,12 @@ namespace AW2
             game.CommandLineArgs = args;
             game.AllowDialogs = false;
             game.ClientBoundsMin = new Microsoft.Xna.Framework.Rectangle(0, 0, 1, 1);
-            game.GameStateChanged += GetArenaNames;
             game.RunBegan += Initialize;
             var xnaWindow = System.Windows.Forms.Control.FromHandle(((Microsoft.Xna.Framework.Game)game).Window.Handle);
             xnaWindow.VisibleChanged += (sender, eventArgs) => xnaWindow.Visible = false;
             app.Startup += (sender, eventArgs) => game.Run();
             app.Exit += (sender, eventArgs) => game.Exit();
             app.Run(editor);
-        }
-
-        private static void GetArenaNames(GameState state)
-        {
-            if (state == GameState.Initializing) return;
-            editor.arenaName.Items.Clear();
-            foreach (var arenaInfo in AssaultWing.Instance.DataEngine.ArenaInfos)
-                editor.arenaName.Items.Add(arenaInfo.Name);
-            AssaultWing.Instance.GameStateChanged -= GetArenaNames;
         }
 
         private static void Initialize()

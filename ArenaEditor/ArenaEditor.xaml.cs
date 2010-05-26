@@ -12,8 +12,8 @@ using AW2.Helpers;
 using AW2.UI;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
-using System.IO;
-using System.IO.Compression;
+using Microsoft.Win32;
+using System.Windows.Input;
 
 namespace AW2
 {
@@ -49,36 +49,80 @@ namespace AW2
 
         private void LoadArena_Click(object sender, RoutedEventArgs e)
         {
-            // Load the selected arena.
-            var arenaToLoad = arenaName.Text;
-            if (arenaToLoad == "") return;
-            var data = AssaultWing.Instance.DataEngine;
-            data.ProgressBar.Task = () => data.InitializeFromArena(arenaToLoad, false);
-            data.ProgressBar.StartTask();
-            while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
-            data.ProgressBar.FinishTask();
-            AssaultWing.Instance.StartArena();
-
-            // Put arena layers on display.
-            layerNames.Items.Clear();
-            var layerNameList = data.Arena.Layers.Select((layer, index) =>
-                string.Format("#{0} z={1:f0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
-            foreach (var layerName in layerNameList)
-                layerNames.Items.Add(layerName);
-
-            ApplyViewSettingsToAllViewports();
+            var fileDialog = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                DefaultExt = ".xml",
+                Filter = "Assault Wing Arenas (*.xml)|*.xml|All Files (*.*)|*.*",
+                InitialDirectory = ".",
+                Title = "Open an Existing Arena for Editing",
+            };
+            bool? success = fileDialog.ShowDialog();
+            if (success.HasValue && !success.Value) return;
+            var oldCursor = ArenaEditorWindow.Cursor;
+            try
+            {
+                ArenaEditorWindow.Cursor = Cursors.Wait;
+                var arenaFilename = fileDialog.FileName;
+                var arena = Arena.FromFile(arenaFilename);
+                var data = AssaultWing.Instance.DataEngine;
+                data.ProgressBar.Task = () => data.InitializeFromArena(arena, false);
+                data.ProgressBar.StartTask();
+                while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
+                data.ProgressBar.FinishTask();
+                AssaultWing.Instance.StartArena();
+                UpdateControlsFromArena();
+                ApplyViewSettingsToAllViewports();
+            }
+            finally
+            {
+                ArenaEditorWindow.Cursor = oldCursor;
+            }
         }
 
         private void SaveArena_Click(object sender, RoutedEventArgs e)
         {
             var arena = AssaultWing.Instance.DataEngine.Arena;
             if (arena == null) return;
-            if (!arena.Name.EndsWith("_edited")) arena.Name += "_edited";
-            var filename = TypeLoader.GetFilename(arena, arena.Name);
-            var path = System.IO.Path.Combine(Paths.Arenas, filename);
-            var binPath = System.IO.Path.ChangeExtension(path, ".bin");
-            SaveArenaBinaryData(arena, binPath);
-            TypeLoader.SaveTemplate(arena, path, typeof(Arena), typeof(TypeParameterAttribute));
+            arena.Name = ArenaName.Text;
+            var fileDialog = new SaveFileDialog
+            {
+                DefaultExt = ".xml",
+                Filter = "Assault Wing Arenas (*.xml)|*.xml|All Files (*.*)|*.*",
+                InitialDirectory = ".",
+                Title = "Save the Arena to File",
+                FileName = arena.Name + ".xml",
+            };
+            bool? success = fileDialog.ShowDialog();
+            if (success.HasValue && !success.Value) return;
+            var oldCursor = ArenaEditorWindow.Cursor;
+            try
+            {
+                ArenaEditorWindow.Cursor = Cursors.Wait;
+                UpdateArenaBin(arena);
+                var arenaFilename = fileDialog.FileName;
+                var binFilename = System.IO.Path.ChangeExtension(arenaFilename, ".bin");
+                var arenaPath = System.IO.Path.Combine(Paths.Arenas, arenaFilename);
+                var binPath = System.IO.Path.Combine(Paths.Arenas, binFilename);
+                arena.BinFilename = System.IO.Path.GetFileName(binPath);
+                arena.Bin.Save(binPath);
+                TypeLoader.SaveTemplate(arena, arenaPath, typeof(Arena), typeof(TypeParameterAttribute));
+            }
+            finally
+            {
+                ArenaEditorWindow.Cursor = oldCursor;
+            }
+        }
+
+        private static void UpdateArenaBin(Arena arena)
+        {
+            arena.Bin.Clear();
+            foreach (var gob in arena.Gobs.GameplayLayer.Gobs)
+                if (gob is Wall)
+                {
+                    gob.StaticID = gob.Id;
+                    arena.Bin.Add(gob.StaticID, ((Wall)gob).CreateIndexMap());
+                }
         }
 
         private void ArenaView_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -262,6 +306,19 @@ namespace AW2
                     action((EditorViewport)viewport);
         }
 
+        private void UpdateControlsFromArena()
+        {
+            var arena = AssaultWing.Instance.DataEngine.Arena;
+            ArenaName.Text = arena.Name;
+
+            // Put arena layers on display.
+            layerNames.Items.Clear();
+            var layerNameList = arena.Layers.Select((layer, index) =>
+                string.Format("#{0} z={1:f0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
+            foreach (var layerName in layerNameList)
+                layerNames.Items.Add(layerName);
+        }
+
         private void ApplyViewSettingsToAllViewports()
         {
             var arena = AssaultWing.Instance.DataEngine.Arena;
@@ -275,36 +332,6 @@ namespace AW2
             viewport.ZoomRatio = (float)ZoomRatio;
             if (CircleGobs.IsChecked.HasValue)
                 viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
-        }
-
-        private static void SaveArenaBinaryData(Arena arena, string path)
-        {
-            // Create file and write header without compression
-            var file = File.Open(path, FileMode.Create);
-            var rawWriter = new BinaryWriter(file);
-            rawWriter.Write(System.Text.Encoding.ASCII.GetBytes("AWBIN100"));
-            rawWriter.Close();
-
-            // Append contents to the file with compression
-            file = File.Open(path, FileMode.Append);
-            var packWriter = new BinaryWriter(new DeflateStream(file, CompressionMode.Compress));
-            foreach (var gob in arena.Gobs.GameplayLayer.Gobs)
-            {
-                if (!(gob is Wall)) continue;
-                checked
-                {
-                    gob.StaticID = gob.Id;
-                    packWriter.Write((int)gob.StaticID);
-                    var buffer = new MemoryStream();
-                    var bufferWriter = new BinaryWriter(buffer);
-                    ((Wall)gob).CreateIndexMap().Serialize(bufferWriter);
-                    int bufferLength = (int)buffer.Length;
-                    bufferWriter.Close();
-                    packWriter.Write(bufferLength);
-                    packWriter.Write(buffer.GetBuffer(), 0, bufferLength);
-                }
-            }
-            packWriter.Close();
         }
 
         #endregion Helpers

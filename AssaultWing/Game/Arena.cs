@@ -151,13 +151,16 @@ namespace AW2.Game
         /// </summary>
         /// Minimum coordinates are always (0,0).
         [TypeParameter]
-        private Vector2 dimensions;
+        private Vector2 _dimensions;
 
         /// <summary>
         /// Tunes to play in the background while playing this arena.
         /// </summary>
         [TypeParameter]
-        private List<BackgroundMusic> backgroundMusic;
+        private List<BackgroundMusic> _backgroundMusic;
+
+        [TypeParameter]
+        private string _binFilename;
 
         #endregion General fields
 
@@ -308,7 +311,7 @@ namespace AW2.Game
                 {
                     Name = _name,
                     FileName = FileName,
-                    Dimensions = dimensions,
+                    Dimensions = _dimensions,
                     PreviewName = _name.ToLower() + "_preview"
                 };
             }
@@ -329,7 +332,17 @@ namespace AW2.Game
         /// </summary>
         /// The allowed range of gob X-coordinates is from 0 to arena width.
         /// The allowed range of gob Y-coordinates is from 0 to arena height.
-        public Vector2 Dimensions { get { return dimensions; } set { dimensions = value; } }
+        public Vector2 Dimensions { get { return _dimensions; } set { _dimensions = value; } }
+
+        /// <summary>
+        /// Filename of the arena's binary data container.
+        /// </summary>
+        public string BinFilename { get { return _binFilename; } set { _binFilename = value; } }
+
+        /// <summary>
+        /// Binary data container.
+        /// </summary>
+        public ArenaBin Bin { get; private set; }
 
         /// <summary>
         /// Total time the arena has been running.
@@ -401,7 +414,7 @@ namespace AW2.Game
         /// <summary>
         /// The bgmusics the arena contains when it is activated.
         /// </summary>
-        public List<BackgroundMusic> BackgroundMusic { get { return backgroundMusic; } }
+        public List<BackgroundMusic> BackgroundMusic { get { return _backgroundMusic; } }
 
         private bool IsActive { get { return this == AssaultWing.Instance.DataEngine.Arena; } }
 
@@ -433,11 +446,12 @@ namespace AW2.Game
         public Arena()
         {
             _name = "dummyarena";
-            dimensions = new Vector2(4000, 4000);
+            _dimensions = new Vector2(4000, 4000);
             layers = new List<ArenaLayer>();
             layers.Add(new ArenaLayer());
             Gobs = new GobCollection(layers);
-            backgroundMusic = new List<BackgroundMusic>();
+            Bin = new ArenaBin();
+            _backgroundMusic = new List<BackgroundMusic>();
             light0DiffuseColor = Vector3.Zero;
             light0Direction = -Vector3.UnitZ;
             light0Enabled = true;
@@ -454,10 +468,14 @@ namespace AW2.Game
             fogEnabled = false;
             fogEnd = 1.0f;
             fogStart = 0.0f;
-            IsForPlaying = true;
         }
 
         #region Public methods
+
+        public static Arena FromFile(string filename)
+        {
+            return (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute));
+        }
 
         /// <summary>
         /// Loads graphical content required by the arena.
@@ -679,7 +697,7 @@ namespace AW2.Game
         {
             if (gob.PhysicalArea == null) return true;
             var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
-            float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN, 
+            float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN,
                 3 * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
             float checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
             var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
@@ -1157,18 +1175,11 @@ namespace AW2.Game
 
         #region IConsistencyCheckable Members
 
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
         public void MakeConsistent(Type limitationAttribute)
         {
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                dimensions = Vector2.Max(dimensions, new Vector2(500));
+                _dimensions = Vector2.Max(_dimensions, new Vector2(500));
                 light0DiffuseColor = Vector3.Clamp(light0DiffuseColor, Vector3.Zero, Vector3.One);
                 light0Direction.Normalize();
                 light0SpecularColor = Vector3.Clamp(light0SpecularColor, Vector3.Zero, Vector3.One);

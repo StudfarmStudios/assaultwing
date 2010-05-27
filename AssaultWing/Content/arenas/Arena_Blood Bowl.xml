@@ -50,7 +50,7 @@
       <gobs type="System.Collections.Generic.List`1[[AW2.Game.Gob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_8</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2520</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2566</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">320</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
@@ -69,7 +69,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_6</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2521</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2567</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">400</Y>
@@ -88,7 +88,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_2</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2522</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2568</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">90</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">820</Y>
@@ -107,7 +107,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_11</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2523</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2569</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">220</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1100</Y>
@@ -126,7 +126,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_12</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2524</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2570</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">340</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1250</Y>
@@ -145,7 +145,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_3</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2525</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2571</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">120</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1540</Y>
@@ -164,7 +164,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_10</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2526</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2572</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">36</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1100</Y>
@@ -183,7 +183,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_6</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2527</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2573</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">150</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1900</Y>
@@ -202,7 +202,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_8</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2528</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2574</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">560</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1980</Y>
@@ -221,7 +221,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_1</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2529</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2575</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">960</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1900</Y>
@@ -240,7 +240,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_2</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2530</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2576</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1060</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1380</Y>
@@ -259,7 +259,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_5</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2531</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2577</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">620</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1500</Y>
@@ -278,7 +278,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_3</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2532</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2578</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1380</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1900</Y>
@@ -297,7 +297,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_4</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2533</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2579</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">900</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">800</Y>
@@ -316,7 +316,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_1</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2534</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2580</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1800</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1800</Y>
@@ -335,7 +335,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_5</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2535</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2581</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1940</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1600</Y>
@@ -354,7 +354,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_3</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2536</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2582</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1640</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1500</Y>
@@ -373,7 +373,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_10</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2537</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2583</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2000</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1300</Y>
@@ -392,7 +392,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_9</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2538</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2584</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1700</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1220</Y>
@@ -411,7 +411,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_6</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2539</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2585</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1700</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">430</Y>
@@ -430,7 +430,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_5</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2540</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2586</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1400</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">330</Y>
@@ -449,7 +449,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_9</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2541</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2587</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">730</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">40</Y>
@@ -468,7 +468,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_12</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2542</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2588</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">550</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">450</Y>
@@ -487,7 +487,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_7</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2543</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2589</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">900</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">150</Y>
@@ -506,7 +506,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_3</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2544</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2590</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1100</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">230</Y>
@@ -525,7 +525,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">wall_8</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2545</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2591</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1900</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">700</Y>
@@ -544,7 +544,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">demonskull</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2546</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2592</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1600</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1980</Y>
@@ -563,7 +563,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2547</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2593</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">20</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">90</Y>
@@ -582,7 +582,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2548</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2594</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">40</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">30</Y>
@@ -601,7 +601,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2549</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2595</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">90</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
@@ -620,7 +620,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2550</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2596</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">650</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-5</Y>
@@ -639,7 +639,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2551</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2597</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">490</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">20</Y>
@@ -658,7 +658,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2552</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2598</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">790</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">50</Y>
@@ -677,7 +677,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">gravestone</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2553</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2599</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">450</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">25</Y>
@@ -696,7 +696,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2554</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2600</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">480</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">480</Y>
@@ -715,7 +715,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2555</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2601</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">520</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</Y>
@@ -734,7 +734,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2556</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2602</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">800</Y>
@@ -753,7 +753,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">demonskull</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2557</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2603</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">85</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">695</Y>
@@ -772,7 +772,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2558</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2604</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">80</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">670</Y>
@@ -791,7 +791,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2559</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2605</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-80</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">300</Y>
@@ -810,7 +810,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">gravestone</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2560</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2606</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">790</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">860</Y>
@@ -829,7 +829,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2561</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2607</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">610</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1300</Y>
@@ -848,7 +848,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2562</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2608</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">705</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1315</Y>
@@ -867,7 +867,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2563</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2609</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">685</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1615</Y>
@@ -886,7 +886,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2564</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2610</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">685</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1615</Y>
@@ -905,7 +905,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2565</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2611</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">105</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1915</Y>
@@ -924,7 +924,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2566</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2612</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">125</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1965</Y>
@@ -943,7 +943,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">gravestone</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2567</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2613</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">355</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2010</Y>
@@ -962,7 +962,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2568</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2614</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">830</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">700</Y>
@@ -981,7 +981,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2569</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2615</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">950</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">770</Y>
@@ -1000,7 +1000,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">demonskull</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2570</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2616</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1030</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">770</Y>
@@ -1019,7 +1019,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2571</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2617</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1080</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">820</Y>
@@ -1038,7 +1038,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2572</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2618</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1230</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1530</Y>
@@ -1057,7 +1057,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2573</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2619</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1530</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">200</Y>
@@ -1076,7 +1076,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bones</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2574</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2620</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1465</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">520</Y>
@@ -1095,7 +1095,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2575</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2621</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1565</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">670</Y>
@@ -1114,7 +1114,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2576</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2622</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1900</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">870</Y>
@@ -1133,7 +1133,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2577</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2623</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1870</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">800</Y>
@@ -1152,7 +1152,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">gravestone</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2578</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2624</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1690</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1180</Y>
@@ -1171,7 +1171,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2579</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2625</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1260</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1300</Y>
@@ -1190,7 +1190,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2580</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2626</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1150</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1260</Y>
@@ -1209,7 +1209,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2581</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2627</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2000</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1260</Y>
@@ -1228,7 +1228,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">spear</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2582</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2628</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2050</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1560</Y>
@@ -1247,7 +1247,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">shield</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2583</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2629</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">470</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">410</Y>
@@ -1266,7 +1266,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">shield</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2584</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2630</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-70</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">910</Y>
@@ -1285,7 +1285,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">shield</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2585</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2631</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-70</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">910</Y>
@@ -1304,7 +1304,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">shield</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2586</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2632</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">490</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1607</Y>
@@ -1323,7 +1323,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">shield</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2587</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2633</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1210</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1275</Y>
@@ -1342,7 +1342,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">shield</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2588</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2634</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1520</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">640</Y>
@@ -1361,7 +1361,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">shield</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2589</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2635</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2020</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1700</Y>
@@ -1380,7 +1380,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bluediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2590</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2636</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">160</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">496</Y>
@@ -1399,7 +1399,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">orangediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2591</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2637</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">240</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">542</Y>
@@ -1418,7 +1418,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">greendiamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2592</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2638</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">210</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">602</Y>
@@ -1437,7 +1437,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">greendiamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2593</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2639</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">217</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1502</Y>
@@ -1456,7 +1456,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">orangediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2594</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2640</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">185</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1520</Y>
@@ -1475,7 +1475,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bluediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2595</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2641</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">970</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1776</Y>
@@ -1494,7 +1494,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">greendiamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2596</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2642</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">870</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1907</Y>
@@ -1513,7 +1513,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">orangediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2597</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2643</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1070</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1881</Y>
@@ -1532,7 +1532,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bluediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2598</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2644</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1030</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">690</Y>
@@ -1551,7 +1551,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">orangediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2599</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2645</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">900</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">910</Y>
@@ -1570,7 +1570,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">greendiamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2600</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2646</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">723</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">750</Y>
@@ -1589,7 +1589,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">orangediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2601</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2647</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">723</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1470</Y>
@@ -1608,7 +1608,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">greendiamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2602</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2648</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1240</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">397</Y>
@@ -1627,7 +1627,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">orangediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2603</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2649</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1190</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">380</Y>
@@ -1646,7 +1646,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bluediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2604</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2650</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1880</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1470</Y>
@@ -1665,7 +1665,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">greendiamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2605</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2651</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1680</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1270</Y>
@@ -1684,7 +1684,7 @@
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">orangediamond</wallModelName>
-          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2606</staticID>
+          <staticID type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2652</staticID>
           <pos type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d">
             <X type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1760</X>
             <Y type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1200</Y>

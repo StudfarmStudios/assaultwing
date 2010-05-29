@@ -1,4 +1,4 @@
-#define VERY_SMALL_TRIANGLES_ARE_COLLIDABLE // TODO: #undefine
+//#define VERY_SMALL_TRIANGLES_ARE_COLLIDABLE // TODO: #undefine
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -258,8 +258,7 @@ namespace AW2.Game.Gobs
             // Eat a round hole.
             Vector2 posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
             _removedTriangleIndices.Clear();
-            AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius),
-                (x, y) => _indexMap.Remove(x, y));
+            AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), _indexMap.Remove);
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {

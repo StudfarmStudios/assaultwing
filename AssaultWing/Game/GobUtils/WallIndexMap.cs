@@ -22,11 +22,32 @@ namespace AW2.Game.GobUtils
         {
             public abstract int Width { get; protected set; }
             public abstract int Height { get; protected set; }
+            public int[] TriangleCovers { get; protected set; }
+
             public abstract void Add(int x, int y, int index);
             public abstract IEnumerable<TriInt> Get(int x, int y);
 
-            protected void InitializeFromData(int[,][] data)
+            public void ComputeTriangleCovers(int triangleCount)
             {
+                TriangleCovers = new int[triangleCount];
+                for (int y = 0; y < Height; ++y)
+                    for (int x = 0; x < Width; ++x)
+                        foreach (TriInt index in Get(x, y))
+                            ++TriangleCovers[index];
+            }
+
+            protected static int[] ReadTriangleCovers(System.IO.BinaryReader reader)
+            {
+                var triangleCount = reader.ReadInt16();
+                var triangleCovers = new int[triangleCount];
+                for (int i = 0; i < triangleCount; ++i)
+                    triangleCovers[i] = reader.ReadInt16();
+                return triangleCovers;
+            }
+
+            protected void SetData(int[,][] data)
+            {
+                if (data.GetLength(1) != Width || data.GetLength(0) != Height) throw new ArgumentException("Data array has wrong dimensions");
                 for (int y = 0; y < Height; y++)
                     for (int x = 0; x < Width; x++)
                         if (data[y, x] != null)
@@ -84,16 +105,31 @@ namespace AW2.Game.GobUtils
 
             public ArrayOfArraysData(int width, int height)
             {
-                _indexMap = new TriInt[height, width][];
-                Width = width;
-                Height = height;
+                Initialize(width, height);
             }
 
-            public ArrayOfArraysData(int[,][] data)
+            public ArrayOfArraysData(System.IO.BinaryReader reader)
             {
-                InitializeFromData(data);
-                Width = data.GetLength(1);
-                Height = data.GetLength(0);
+                // Note: 'reader.ReadInt16()' below must match chosen type 'TriInt'
+                if (sizeof(TriInt) != 2) throw new ApplicationException("Programmer error: ReadInt16() doesn't match index map element size (" + sizeof(TriInt) + ")");
+                var headerBytes = reader.ReadBytes(HEADER_BYTES.Length);
+                if (!headerBytes.SequenceEqual(HEADER_BYTES)) throw new ApplicationException("Unexpected serialized data");
+                int width = reader.ReadInt16();
+                int height = reader.ReadInt16();
+                Initialize(width, height);
+                TriangleCovers = ReadTriangleCovers(reader);
+                for (int y = 0; y < Height; y++)
+                    for (int x = 0; x < Width; x++)
+                    {
+                        int count = reader.ReadByte();
+                        TriInt[] values = null;
+                        if (count > 0)
+                        {
+                            values = new TriInt[count];
+                            for (int i = 0; i < count; ++i) values[i] = reader.ReadInt16();
+                        }
+                        _indexMap[y, x] = values;
+                    }
             }
 
             public override void Add(int x, int y, int index)
@@ -105,6 +141,13 @@ namespace AW2.Game.GobUtils
             {
                 if (_indexMap[y, x] == null) return g_emptyArray;
                 return _indexMap[y, x];
+            }
+
+            private void Initialize(int width, int height)
+            {
+                Width = width;
+                Height = height;
+                _indexMap = new TriInt[height, width][];
             }
         }
 
@@ -132,19 +175,39 @@ namespace AW2.Game.GobUtils
 
             public ArrayPlusArrayOfArraysData(int width, int height)
             {
-                _baseIndexMap = new TriInt[height, width];
-                for (int y = 0; y < height; y++)
-                    for (int x = 0; x < width; x++)
-                        _baseIndexMap[y, x] = NO_TRIANGLE;
-                _extraIndexMap = new TriInt[height, width][];
-                Width = width;
-                Height = height;
+                Initialize(width, height, true);
             }
 
-            public ArrayPlusArrayOfArraysData(int[,][] data)
-                : this(data.GetLength(1), data.GetLength(0))
+            public ArrayPlusArrayOfArraysData(System.IO.BinaryReader reader)
             {
-                InitializeFromData(data);
+                // Note: 'reader.ReadInt16()' below must match chosen type 'TriInt'
+                if (sizeof(TriInt) != 2) throw new ApplicationException("Programmer error: ReadInt16() doesn't match index map element size (" + sizeof(TriInt) + ")");
+                var headerBytes = reader.ReadBytes(HEADER_BYTES.Length);
+                if (!headerBytes.SequenceEqual(HEADER_BYTES)) throw new ApplicationException("Unexpected serialized data");
+                int width = reader.ReadInt16();
+                int height = reader.ReadInt16();
+                Initialize(width, height, false);
+                TriangleCovers = ReadTriangleCovers(reader);
+                for (int y = 0; y < Height; y++)
+                    for (int x = 0; x < Width; x++)
+                    {
+                        int count = reader.ReadByte();
+                        switch (count)
+                        {
+                            case 0:
+                                _baseIndexMap[y, x] = NO_TRIANGLE;
+                                break;
+                            case 1:
+                                _baseIndexMap[y, x] = reader.ReadInt16();
+                                break;
+                            default:
+                                var extraValues = new TriInt[count - 1];
+                                _baseIndexMap[y, x] = reader.ReadInt16();
+                                for (int i = 0; i < count - 1; ++i) extraValues[i] = reader.ReadInt16();
+                                _extraIndexMap[y, x] = extraValues;
+                                break;
+                        }
+                    }
             }
 
             public override void Add(int x, int y, int index)
@@ -163,6 +226,17 @@ namespace AW2.Game.GobUtils
                 var extraIndices = _extraIndexMap[y, x];
                 if (extraIndices == null) yield break;
                 foreach (var index in extraIndices) yield return index;
+            }
+
+            private void Initialize(int width, int height, bool emptyData)
+            {
+                Width = width;
+                Height = height;
+                _baseIndexMap = new TriInt[height, width];
+                _extraIndexMap = new TriInt[height, width][];
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
+                        _baseIndexMap[y, x] = NO_TRIANGLE;
             }
         }
 
@@ -212,31 +286,8 @@ namespace AW2.Game.GobUtils
         public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, System.IO.BinaryReader reader)
             : this(removeTriangle, boundingBox)
         {
-            // Note: 'reader.ReadInt16()' below must match chosen type 'TriInt'
-            if (sizeof(TriInt) != 2) throw new ApplicationException("Programmer error: ReadInt16() doesn't match index map element size (" + sizeof(TriInt) + ")");
-
-            var headerBytes = reader.ReadBytes(HEADER_BYTES.Length);
-            if (!headerBytes.SequenceEqual(HEADER_BYTES)) throw new ApplicationException("Unexpected serialized data");
-            int width = reader.ReadInt16();
-            int height = reader.ReadInt16();
-            var data = new int[height, width][];
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
-                {
-                    int count = reader.ReadByte();
-                    int[] values = null;
-                    if (count > 0)
-                    {
-                        values = new int[count];
-                        for (int i = 0; i < count; ++i) values[i] = reader.ReadInt16();
-                    }
-                    data[y, x] = values;
-                }
-
-            _data = new IndexMapData(data);
-            var subArrays = data.Cast<int[]>().Where(arr => arr != null);
-            int triangleCount = subArrays.Any() ? subArrays.Max(arr => arr.Max()) + 1 : 0;
-            _triangleCovers = CreateTriangleCovers(triangleCount, _data);
+            _data = new IndexMapData(reader);
+            _triangleCovers = _data.TriangleCovers;
         }
 
         private WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox)
@@ -277,7 +328,8 @@ namespace AW2.Game.GobUtils
                 int centerInIndexMapY = (int)(Math.Round(centerInIndexMap.Y) + 0.1);
                 _data.Add(centerInIndexMapX, centerInIndexMapY, index);
             }
-            _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _data);
+            _data.ComputeTriangleCovers(indexData.Length / 3);
+            _triangleCovers = _data.TriangleCovers;
         }
 
         public void Serialize(System.IO.BinaryWriter writer)
@@ -287,6 +339,8 @@ namespace AW2.Game.GobUtils
                 writer.Write(HEADER_BYTES);
                 writer.Write((short)Width);
                 writer.Write((short)Height);
+                writer.Write((short)_data.TriangleCovers.Length);
+                foreach (int value in _triangleCovers) writer.Write((short)value);
                 for (int y = 0; y < Height; y++)
                     for (int x = 0; x < Width; x++)
                     {
@@ -297,152 +351,24 @@ namespace AW2.Game.GobUtils
             }
         }
 
-        private static int[] CreateTriangleCovers(int triangleCount, IData indexMap)
+        private static Point PointFromVertex(VertexPositionNormalTexture vertex, Vector2 origin)
         {
-            var triangleCovers = new int[triangleCount];
-            for (int y = 0; y < indexMap.Height; ++y)
-                for (int x = 0; x < indexMap.Width; ++x)
-                    foreach (TriInt index in indexMap.Get(x, y))
-                        ++triangleCovers[index];
-            return triangleCovers;
+            return new Point((int)(vertex.Position.X - origin.X), (int)(vertex.Position.Y - origin.Y));
         }
 
         private void Initialize(VertexPositionNormalTexture[] vertexData, short[] indexData, AWRectangle boundingArea)
         {
             var modelDim = boundingArea.Dimensions;
-
-            // Create an index map for the model.
-            // The mask is initialised by a render of the 3D model by the graphics card.
             _data = new IndexMapData((int)Math.Ceiling(modelDim.X) + 1, (int)Math.Ceiling(modelDim.Y) + 1);
-
-            // Create colour-coded vertices for each triangle.
-            var colouredVertexData = new VertexPositionColor[indexData.Length];
-            for (int indexI = 0; indexI < indexData.Length; ++indexI)
+            for (int indexI = 0; indexI < indexData.Length; indexI += 3)
             {
-                var originalVertex = vertexData[indexData[indexI]];
-                originalVertex.Position.Z = 0;
-                var color = new Color((byte)((indexI / 3) % 256), (byte)((indexI / 3 / 256) % 256), (byte)((indexI / 3 / 256 / 256) % 256));
-                colouredVertexData[indexI] = new VertexPositionColor(originalVertex.Position, color);
+                var point1 = PointFromVertex(vertexData[indexData[indexI + 0]], boundingArea.Min);
+                var point2 = PointFromVertex(vertexData[indexData[indexI + 1]], boundingArea.Min);
+                var point3 = PointFromVertex(vertexData[indexData[indexI + 2]], boundingArea.Min);
+                AWMathHelper.FillTriangle(point1, point2, point3, (x, y) => _data.Add(x, y, indexI / 3));
             }
-
-            // Draw the colour-coded triangles on our own render target for
-            // index map initialisation. Render target will be a square with
-            // size ('targetSize') a power of two to meet the demands of some
-            // graphics devices. If the model dimensions are larger than 
-            // 'targetSize', we will have to render the coloured triangles in pieces.
-
-            // This method is run usually in a background thread -- during arena initialisation.
-            // Therefore we have to tell the main draw routines to let us use the device in peace.
-            // We break out of the lock regularly to allow others use the device, too.
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-            RenderTarget2D maskTarget = null;
-            int targetSize = -1;
-            lock (gfx) CreateMaskTarget(out maskTarget, out targetSize);
-
-            // Set up the effect.
-            var indexMapEffect = WallIndexMap.GetIndexMapEffect(AssaultWing.Instance.GraphicsDevice);
-            indexMapEffect.Projection = Matrix.CreateOrthographicOffCenter(0, targetSize - 1, 0, targetSize - 1, 10, 2000);
-            indexMapEffect.World = WallToIndexMapTransform;
-
-            // Draw the coloured triangles in as many parts as necessary to cover 
-            // the whole model with one unit in world coordinates corresponding to
-            // one pixel width in the render target.
-            for (int startY = 0; startY < Height; startY += targetSize)
-                for (int startX = 0; startX < Width; )
-                    try
-                    {
-                        lock (gfx) ComputeIndexMapFragment(indexMapEffect, colouredVertexData, maskTarget, targetSize, startY, startX);
-                        startX += targetSize;
-                        System.Threading.Thread.Sleep(0);
-                    }
-                    // Some exceptions may be thrown if the graphics card is reset e.g.
-                    // by a window resize. Just retry.
-                    catch (NullReferenceException) { }
-                    catch (InvalidOperationException) { }
-
-            _triangleCovers = CreateTriangleCovers(indexData.Length / 3, _data);
-        }
-
-        private void CreateMaskTarget(out RenderTarget2D maskTarget, out int targetSize)
-        {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-            var gfxCaps = gfx.GraphicsDeviceCapabilities;
-            var gfxAdapter = gfx.CreationParameters.Adapter;
-            if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
-                TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
-                throw new ApplicationException("Cannot create render target of type SurfaceFormat.Color");
-            targetSize = Math.Min(
-                AWMathHelper.FloorPowerTwo(Math.Min(gfxCaps.MaxTextureHeight, gfxCaps.MaxTextureWidth)),
-                AWMathHelper.CeilingPowerTwo(Math.Max(Width, Height)));
-            maskTarget = null;
-            while (maskTarget == null)
-                try
-                {
-                    maskTarget = new RenderTarget2D(gfx, targetSize, targetSize, 1, SurfaceFormat.Color);
-                }
-                catch (OutOfVideoMemoryException)
-                {
-                    targetSize /= 2;
-                }
-                catch (Exception e)
-                {
-                    throw new ApplicationException("Cannot create render target for index map creation", e);
-                }
-        }
-
-        private void ComputeIndexMapFragment(BasicEffect indexMapEffect, VertexPositionColor[] colouredVertexData,
-            RenderTarget2D maskTarget, int targetSize, int startY, int startX)
-        {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-
-            // Set up graphics device.
-            var oldVertexDeclaration = gfx.VertexDeclaration;
-            var oldDepthStencilBuffer = gfx.DepthStencilBuffer;
-            gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-            gfx.DepthStencilBuffer = null;
-
-            // Move view to current start coordinates.
-            indexMapEffect.View = Matrix.CreateLookAt(new Vector3(startX, startY, 1000), new Vector3(startX, startY, 0), Vector3.Up);
-
-            // Set and clear our own render target.
-            gfx.SetRenderTarget(0, maskTarget);
-            gfx.Clear(ClearOptions.Target, Color.White, 0, 0);
-
-            // Draw the coloured triangles.
-            indexMapEffect.Begin();
-            foreach (EffectPass pass in indexMapEffect.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-                gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                    colouredVertexData, 0, colouredVertexData.Length / 3);
-                pass.End();
-            }
-            indexMapEffect.End();
-
-            // Restore render target so what we can extract drawn pixels.
-            gfx.SetRenderTarget(0, null);
-
-            // Figure out mask data from the render target.
-            Texture2D maskTexture = maskTarget.GetTexture();
-            Color[] maskData = new Color[targetSize * targetSize];
-            maskTexture.GetData<Color>(maskData);
-            for (int y = 0; y < targetSize; ++y)
-                for (int x = 0; x < targetSize; ++x)
-                {
-                    Color color = maskData[x + y * maskTexture.Width];
-                    if (color == Color.White) continue;
-                    int indexMapY = startY + targetSize - 1 - y;
-                    int indexMapX = startX + x;
-                    if (indexMapY >= Height || indexMapX >= Width)
-                        throw new IndexOutOfRangeException(string.Format("Index map overflow (x={0}, y={1}), color={2}", indexMapX, indexMapY, color));
-                    int maskValue = color.R + color.G * 256 + color.B * 256 * 256;
-                    _data.Add(indexMapX, indexMapY, maskValue);
-                }
-
-            // Restore graphics device's old settings.
-            gfx.VertexDeclaration = oldVertexDeclaration;
-            gfx.DepthStencilBuffer = oldDepthStencilBuffer;
-            maskTarget.Dispose();
+            _data.ComputeTriangleCovers(indexData.Length / 3);
+            _triangleCovers = _data.TriangleCovers;
         }
     }
 }

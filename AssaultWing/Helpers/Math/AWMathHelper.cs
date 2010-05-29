@@ -5,6 +5,8 @@
 using NUnit.Framework;
 #endif
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace AW2.Helpers
@@ -14,6 +16,60 @@ namespace AW2.Helpers
     /// </summary>
     public static class AWMathHelper
     {
+        public delegate void PointPlotDelegate(int x, int y);
+
+        private struct Scanline
+        {
+            private int _y;
+            private int _x1;
+            private int _x2;
+
+            public int Y { get { return _y; } }
+
+            public Scanline(int y, int x)
+            {
+                _y = y;
+                _x1 = x;
+                _x2 = x;
+            }
+
+            public void Include(int x)
+            {
+                if (x < _x1) _x1 = x;
+                else if (x > _x2) _x2 = x;
+            }
+
+            /// <summary>
+            /// Includes X coordinates interpolated from the endpoints of two other scanlines
+            /// at this scanline's Y coordinate.
+            /// </summary>
+            public void IncludeInterpolated(Scanline scan1, Scanline scan3)
+            {
+                Include((scan3._x1 * (_y - scan1._y) + scan1._x1 * (scan3._y - _y)).DivRound(scan3._y - scan1._y));
+                Include((scan3._x2 * (_y - scan1._y) + scan1._x2 * (scan3._y - _y)).DivRound(scan3._y - scan1._y));
+            }
+
+            /// <summary>
+            /// Calls <paramref name="plot"/> for points in the trapezoid spanned by two scanlines.
+            /// The points with maximal X or Y coordinates are left out.
+            /// </summary>
+            public static void InterpolatePlot(PointPlotDelegate plot, Scanline scan1, Scanline scan2)
+            {
+                int divisor = scan2._y - scan1._y;
+                if (divisor == 0) divisor = 1;
+                int x1Step = scan2._x1 - scan1._x1;
+                int x2Step = scan2._x2 - scan1._x2;
+                for (var scanline = new Scanline { _y = scan1._y, _x1 = scan1._x1 * divisor, _x2 = scan1._x2 * divisor };
+                    scanline._y < scan2._y;
+                    ++scanline._y, scanline._x1 += x1Step, scanline._x2 += x2Step)
+                {
+                    int x1 = scanline._x1.DivRound(divisor);
+                    int x2 = scanline._x2.DivRound(divisor);
+                    for (int x = x1; x < x2; ++x) plot(x, scanline._y);
+                }
+            }
+        }
+
         /// <summary>
         /// Linearly interpolates between two values by stepping at most a constant
         /// amount from one towards another.
@@ -123,13 +179,26 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Division rounded to the nearest integer, midpoints rounded towards positive.
+        /// </summary>
+        public static int DivRound(this int value, int divisor)
+        {
+            if (divisor == 0) throw new ArgumentException("Divisor must not be zero");
+            int sign = (value < 0) ^ (divisor < 0) ? -1 : 1;
+            if (value < 0) value = -value;
+            if (divisor < 0) divisor = -divisor;
+            int rounder = sign > 0 ? divisor : divisor - 1;
+            return sign * ((value * 2 + rounder) / (divisor * 2));
+        }
+
+        /// <summary>
         /// Calls <paramref name="plot"/> once for each integer point in a filled circle.
         /// </summary>
         /// <param name="x0">Center X coordinate of the circle.</param>
         /// <param name="y0">Center Y coordinate of the circle.</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="plot">The plot method to be called at each circle point.</param>
-        public static void FillCircle(int x0, int y0, int radius, Action<int, int> plot)
+        public static void FillCircle(int x0, int y0, int radius, PointPlotDelegate plot)
         {
             // Midpoint circle algorithm, a.k.a. Bresenham's circle algorithm.
             // Implementation adapted from code in Wikipedia, 
@@ -176,6 +245,48 @@ namespace AW2.Helpers
                     plot(i, y0 + x);
                 }
             }
+        }
+
+        /// <summary>
+        /// Calls <paramref name="plot"/> once for each integer point in a filled triangle.
+        /// The points of the triangle that are maximal in X or Y coordinate are
+        /// not plotted to allow plotting two triangles that share a side without
+        /// the points of the two triangles overlapping each other.
+        /// </summary>
+        public static void FillTriangle(Point point1, Point point2, Point point3, PointPlotDelegate plot)
+        {
+            // Sort points by increasing Y
+            if (point2.Y < point1.Y) Swap(ref point1, ref point2);
+            if (point3.Y < point2.Y)
+            {
+                Swap(ref point2, ref point3);
+                if (point2.Y < point1.Y) Swap(ref point1, ref point2);
+            }
+
+            // Find master scanlines
+            var scan1 = new Scanline(point1.Y, point1.X);
+            if (point2.Y == point1.Y) scan1.Include(point2.X);
+            if (point3.Y == point1.Y) scan1.Include(point3.X);
+            var scan2 = scan1;
+            if (point2.Y > scan1.Y)
+            {
+                scan2 = new Scanline(point2.Y, point2.X);
+                if (point3.Y == point2.Y) scan2.Include(point3.X);
+            }
+            else if (point3.Y > scan1.Y)
+            {
+                scan2 = new Scanline(point3.Y, point3.X);
+            }
+            var scan3 = scan2;
+            if (point3.Y > scan2.Y)
+            {
+                scan3 = new Scanline(point3.Y, point3.X);
+                scan2.IncludeInterpolated(scan3, scan1);
+            }
+
+            // Loop through Y, interpolating between master scanlines
+            Scanline.InterpolatePlot(plot, scan1, scan2);
+            Scanline.InterpolatePlot(plot, scan2, scan3);
         }
 
         /// <summary>
@@ -349,6 +460,13 @@ namespace AW2.Helpers
             return new Vector2(-value.Y, value.X);
         }
 
+        private static void Swap(ref Point point1, ref Point point2)
+        {
+            var swap = point1;
+            point1 = point2;
+            point2 = swap;
+        }
+
         #region Unit tests
 #if DEBUG
         /// <summary>
@@ -357,6 +475,57 @@ namespace AW2.Helpers
         [TestFixture]
         public class AWMathHelperTest
         {
+            private class PlotData : IEnumerable<int>
+            {
+                private int[,] _data;
+
+                public int Width { get { return _data.GetLength(1); } }
+                public int Height { get { return _data.GetLength(0); } }
+                public int this[int y, int x] { get { return _data[y, x]; } }
+
+                public PlotData(int width, int height)
+                {
+                    _data = new int[height, width];
+                }
+
+                public void Plot(int x, int y)
+                {
+                    Assert.That(x >= 0 && y >= 0 && x < Width && y < Height,
+                        "Point plotted outside the containing square at (" + x + ", " + y + ")");
+                    ++_data[y, x];
+                }
+
+                public void DebugDraw()
+                {
+                    for (int y = 0; y < Height; ++y)
+                    {
+                        for (int x = 0; x < Width; ++x)
+                            Console.Out.Write(_data[y, x] > 0 ? (char)('0' + _data[y, x]) : 'o');
+                        Console.Out.WriteLine();
+                    }
+                }
+
+                public Point? GetFirstDuplicatePlotPoint()
+                {
+                    for (int y = 0; y < Height; ++y)
+                        for (int x = 0; x < Width; ++x)
+                            if (_data[y, x] > 1) return new Point(x, y);
+                    return null;
+                }
+
+                public IEnumerator<int> GetEnumerator()
+                {
+                    for (int y = 0; y < Height; ++y)
+                        for (int x = 0; x < Width; ++x)
+                            yield return _data[y, x];
+                }
+
+                System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+                {
+                    return GetEnumerator();
+                }
+            }
+
             [Test]
             public void TestInterpolateTowardsFloat()
             {
@@ -385,9 +554,6 @@ namespace AW2.Helpers
                 Assert.AreEqual(-p4, InterpolateTowards(p1, -2 * p4, 5));
             }
 
-            /// <summary>
-            /// Tests interpolating angles.
-            /// </summary>
             [Test]
             public void TestAngleInterpolation()
             {
@@ -441,12 +607,6 @@ namespace AW2.Helpers
                 Assert.That(AngleEquals(result, -3 * MathHelper.PiOver4));
             }
 
-            /// <summary>
-            /// Returns true iff the two angles are equal to sufficient precision.
-            /// </summary>
-            /// <param name="a">An angle in radians.</param>
-            /// <param name="b">Another angle in radians.</param>
-            /// <returns>True iff the two angles are equal to sufficient precision.</returns>
             private bool AngleEquals(float a, float b)
             {
                 float epsilon = 0.00001f;
@@ -455,9 +615,6 @@ namespace AW2.Helpers
                 return Math.Abs(a - b) < epsilon;
             }
 
-            /// <summary>
-            /// Tests rounding to powers of two.
-            /// </summary>
             [Test]
             public void TestRoundPowerTwo()
             {
@@ -478,9 +635,6 @@ namespace AW2.Helpers
                 Assert.AreEqual(0x40000000, FloorPowerTwo(0x50fa7e57));
             }
 
-            /// <summary>
-            /// Tests binary logarithm.
-            /// </summary>
             [Test]
             public void TestLogTwo()
             {
@@ -499,9 +653,56 @@ namespace AW2.Helpers
                 }
             }
 
-            /// <summary>
-            /// Tests circle filling.
-            /// </summary>
+            [Test]
+            public void TestDivRound()
+            {
+                Assert.AreEqual(0, 0.DivRound(1));
+                Assert.AreEqual(1, 1.DivRound(1));
+                Assert.AreEqual(1, 2.DivRound(2));
+                Assert.AreEqual(2, 3.DivRound(2));
+                Assert.AreEqual(2, 4.DivRound(2));
+
+                Assert.AreEqual(2, 6.DivRound(3));
+                Assert.AreEqual(2, 7.DivRound(3));
+                Assert.AreEqual(3, 8.DivRound(3));
+                Assert.AreEqual(3, 9.DivRound(3));
+                Assert.AreEqual(2, (-6).DivRound(-3));
+                Assert.AreEqual(2, (-7).DivRound(-3));
+                Assert.AreEqual(3, (-8).DivRound(-3));
+                Assert.AreEqual(3, (-9).DivRound(-3));
+
+                Assert.AreEqual(-2, 6.DivRound(-3));
+                Assert.AreEqual(-2, 7.DivRound(-3));
+                Assert.AreEqual(-3, 8.DivRound(-3));
+                Assert.AreEqual(-3, 9.DivRound(-3));
+                Assert.AreEqual(-2, (-6).DivRound(3));
+                Assert.AreEqual(-2, (-7).DivRound(3));
+                Assert.AreEqual(-3, (-8).DivRound(3));
+                Assert.AreEqual(-3, (-9).DivRound(3));
+
+                Assert.AreEqual(3, 12.DivRound(4));
+                Assert.AreEqual(3, 13.DivRound(4));
+                Assert.AreEqual(4, 14.DivRound(4));
+                Assert.AreEqual(4, 15.DivRound(4));
+                Assert.AreEqual(4, 16.DivRound(4));
+                Assert.AreEqual(3, (-12).DivRound(-4));
+                Assert.AreEqual(3, (-13).DivRound(-4));
+                Assert.AreEqual(4, (-14).DivRound(-4));
+                Assert.AreEqual(4, (-15).DivRound(-4));
+                Assert.AreEqual(4, (-16).DivRound(-4));
+
+                Assert.AreEqual(-3, 12.DivRound(-4));
+                Assert.AreEqual(-3, 13.DivRound(-4));
+                Assert.AreEqual(-3, 14.DivRound(-4));
+                Assert.AreEqual(-4, 15.DivRound(-4));
+                Assert.AreEqual(-4, 16.DivRound(-4));
+                Assert.AreEqual(-3, (-12).DivRound(4));
+                Assert.AreEqual(-3, (-13).DivRound(4));
+                Assert.AreEqual(-3, (-14).DivRound(4));
+                Assert.AreEqual(-4, (-15).DivRound(4));
+                Assert.AreEqual(-4, (-16).DivRound(4));
+            }
+
             [Test]
             public void TestFillCircle()
             {
@@ -509,12 +710,16 @@ namespace AW2.Helpers
                     DoFillCircleTest(radius);
                 DoFillCircleTest(313);
                 DoFillCircleTest(314);
-                DoFillCircleTest(1001);
             }
 
-            /// <summary>
-            /// Tests Vector2 rounding
-            /// </summary>
+            [Test]
+            public void TestFillTriangle()
+            {
+                DoFillTriangleTest(new Point(0, 0), new Point(5, 9), new Point(3, 2));
+                DoFillTriangleTest(new Point(-5, 5), new Point(5, -5), new Point(5, 5));
+                DoFillTriangleTest(new Point(5, 5), new Point(-5, 5), new Point(5, -5));
+            }
+
             [Test]
             public void TestVector2Round()
             {
@@ -536,16 +741,11 @@ namespace AW2.Helpers
                 Assert.AreEqual(MathHelper.Pi, new Vector2(-1, 0).Angle());
             }
 
-            /// <summary>
-            /// Tests integer congruence.
-            /// </summary>
             [Test]
             public void TestModulo()
             {
-                try { 0.Modulo(0); Assert.Fail("Exception not thrown with zero modulus"); }
-                catch { }
-                try { 5.Modulo(-3); Assert.Fail("Exception not thrown with negative modulus"); }
-                catch { }
+                Assert.Throws<InvalidOperationException>(() => 0.Modulo(0), "Exception not thrown with zero modulus");
+                Assert.Throws<InvalidOperationException>(() => 5.Modulo(-3), "Exception not thrown with negative modulus");
 
                 Assert.AreEqual(1, 1.Modulo(3));
                 Assert.AreEqual(2, 2.Modulo(3));
@@ -562,9 +762,6 @@ namespace AW2.Helpers
                 Assert.AreEqual(-3234567 + 2 * 2000000, (-3234567).Modulo(2000000));
             }
 
-            /// <summary>
-            /// Tests Vector2 clamping
-            /// </summary>
             [Test]
             public void TestVector2Clamp()
             {
@@ -573,24 +770,9 @@ namespace AW2.Helpers
                 Assert.AreEqual(5 * Vector2.UnitX, Vector2.UnitX.Clamp(5, 10));
                 Assert.AreEqual(7 * Vector2.UnitY, (9 * Vector2.UnitY).Clamp(3, 7));
                 Assert.AreEqual(new Vector2(-3, -4), new Vector2(-6, -8).Clamp(1, 5));
-                try
-                {
-                    Vector2.One.Clamp(-2, -1);
-                    Assert.Fail("Failed to throw exception");
-                }
-                catch { }
-                try
-                {
-                    Vector2.One.Clamp(5, 3);
-                    Assert.Fail("Failed to throw exception");
-                }
-                catch { }
-                try
-                {
-                    Vector2.Zero.Clamp(1, 2);
-                    Assert.Fail("Failed to throw exception");
-                }
-                catch { }
+                Assert.Throws<InvalidOperationException>(() => Vector2.One.Clamp(-2, -1));
+                Assert.Throws<ArgumentException>(() => Vector2.One.Clamp(5, 3));
+                Assert.Throws<InvalidOperationException>(() => Vector2.Zero.Clamp(1, 2));
             }
 
             [Test]
@@ -605,41 +787,37 @@ namespace AW2.Helpers
                 Assert.AreEqual(new Vector2(0.02f, -0.01f), new Vector2(-0.01f, -0.02f).Rotate90());
             }
 
-            /// <summary>
-            /// Helper for TestFillCircle()
-            /// </summary>
+            private void DoFillTriangleTest(Point point1, Point point2, Point point3)
+            {
+                Console.Out.WriteLine(string.Format("DoFillTriangleTest({0}, {1}, {2})", point1, point2, point3));
+                int xMin = Math.Min(Math.Min(point1.X, point2.X), point3.X);
+                int yMin = Math.Min(Math.Min(point1.Y, point2.Y), point3.Y);
+                int xMax = Math.Max(Math.Max(point1.X, point2.X), point3.X);
+                int yMax = Math.Max(Math.Max(point1.Y, point2.Y), point3.Y);
+                var data = new PlotData(xMax - xMin + 1, yMax - yMin + 1);
+                FillTriangle(point1, point2, point3, (x, y) => data.Plot(x - xMin, y - yMin));
+                data.DebugDraw();
+                var duplicate = data.GetFirstDuplicatePlotPoint();
+                Assert.That(!duplicate.HasValue, "FillTriangle plotted " + duplicate + " several times");
+                Assert.That(data.Any(x => x > 0), "FillTriangle plotted nothing");
+            }
+
             private void DoFillCircleTest(int radius)
             {
                 Console.Out.WriteLine("DoFillCircleTest(" + radius + ")");
                 int x0 = radius;
                 int y0 = radius;
-                int[,] data = new int[2 * radius + 1, 2 * radius + 1]; // indexed as data[y, x]
-                FillCircle(x0, y0, radius, delegate(int x, int y)
-                {
-                    Assert.That(x >= 0 && y >= 0 && x < data.GetLength(1) && y < data.GetLength(0),
-                        "FillCircle plotted outside the containing square at (" + x + ", " + y + ")");
-                    ++data[y, x];
-                });
-                
-                // Draw data.
-                if (radius < 9)
-                    for (int y = 0; y < data.GetLength(0); ++y)
-                    {
-                        for (int x = 0; x < data.GetLength(1); ++x)
-                            Console.Out.Write(data[y, x] > 0 ? (char)('0' + data[y, x]) : 'o');
-                        Console.Out.WriteLine();
-                    }
-
-                // Make sure all data is 0 or 1.
-                for (int y = 0; y < data.GetLength(0); ++y)
-                    for (int x = 0; x < data.GetLength(1); ++x)
-                        Assert.That(data[y, x] <= 1, "FillCircle plotted the same point (" + x + ", " + y + ") " + data[y, x] + " times");
+                var data = new PlotData(2 * radius + 1, 2 * radius + 1);
+                FillCircle(x0, y0, radius, data.Plot);
+                if (radius < 9) data.DebugDraw();
+                var duplicate = data.GetFirstDuplicatePlotPoint();
+                Assert.That(!duplicate.HasValue, "FillCircle plotted " + duplicate + " several times");
                 
                 // Make sure plotted area is continuous horizontally and vertically.
-                for (int y = 0; y < data.GetLength(0); ++y)
+                for (int y = 0; y < data.Height; ++y)
                 {
                     int phase = 0; // 0=not started; 1=started; 2=finished
-                    for (int x = 0; x < data.GetLength(1); ++x)
+                    for (int x = 0; x < data.Width; ++x)
                     {
                         if (phase == 0)
                         {
@@ -653,10 +831,10 @@ namespace AW2.Helpers
                             Assert.That(data[y, x] == 0, "Horizontal line is not continuous at (" + x + "," + y + ")");
                     }
                 }
-                for (int x = 0; x < data.GetLength(1); ++x)
+                for (int x = 0; x < data.Width; ++x)
                 {
                     int phase = 0; // 0=not started; 1=started; 2=finished
-                    for (int y = 0; y < data.GetLength(0); ++y)
+                    for (int y = 0; y < data.Height; ++y)
                     {
                         if (phase == 0)
                         {

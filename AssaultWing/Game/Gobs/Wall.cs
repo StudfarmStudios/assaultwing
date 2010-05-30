@@ -164,7 +164,7 @@ namespace AW2.Game.Gobs
             base.Activate();
             if (Arena.IsForPlaying)
             {
-                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client) Prepare3DModel();
+                Prepare3DModel();
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
                 var boundingBox = CollisionAreas.Single(area => area.Name == "Bounding").Area.BoundingBox;
                 _indexMap = new WallIndexMap(RemoveTriangle, boundingBox, binReader);
@@ -278,43 +278,6 @@ namespace AW2.Game.Gobs
         {
             foreach (int index in triangleIndices) RemoveTriangle(index);
         }
-
-        #region Methods related to serialisation
-
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
-        {
-            var reducedMode = mode & AW2.Net.SerializationModeFlags.ConstantData; // HACK to reduce network traffic
-            base.Serialize(writer, reducedMode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
-            {
-                writer.Write((int)_vertexData.Length);
-                foreach (var vertex in _vertexData)
-                    writer.WriteHalf((VertexPositionNormalTexture)vertex);
-                writer.Write((int)_indexData.Length);
-                foreach (var index in _indexData)
-                    writer.Write((short)index);
-            }
-        }
-
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
-        {
-            var reducedMode = mode & AW2.Net.SerializationModeFlags.ConstantData; // HACK to reduce network traffic
-            base.Deserialize(reader, reducedMode, messageAge);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
-            {
-                int vertexDataLength = reader.ReadInt32();
-                _vertexData = new VertexPositionNormalTexture[vertexDataLength];
-                for (int i = 0; i < vertexDataLength; ++i)
-                    _vertexData[i] = reader.ReadHalfVertexPositionTextureNormal();
-                int indexDataLength = reader.ReadInt32();
-                _indexData = new short[indexDataLength];
-                for (int i = 0; i < indexDataLength; ++i)
-                    _indexData[i] = reader.ReadInt16();
-                CreateCollisionAreas();
-            }
-        }
-
-        #endregion Methods related to serialisation
 
         #region Protected methods
 

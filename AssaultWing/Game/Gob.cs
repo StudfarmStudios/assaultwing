@@ -917,6 +917,9 @@ namespace AW2.Game
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)Id);
+                byte flags = StaticID == 0 ? (byte)0x00 : (byte)0x01;
+                writer.Write((byte)flags);
+                if (StaticID != 0) writer.Write((int)StaticID);
                 if (_owner != null)
                     writer.Write(checked((sbyte)_owner.Id));
                 else
@@ -945,6 +948,8 @@ namespace AW2.Game
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 Id = reader.ReadInt32();
+                byte flags = reader.ReadByte();
+                if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
                 int ownerId = reader.ReadSByte();
                 _owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
             }

@@ -69,8 +69,7 @@ namespace AW2.Game.Gobs
         {
             base.LoadContent();
             // Replace defaults set by Wall.
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
-                Set3DModel();
+            Set3DModel();
         }
 
         /// <summary>
@@ -82,10 +81,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             if (Arena.IsForPlaying)
-            {
-                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
-                    Set3DModel();
-            }
+                Set3DModel();
             else
                 ModelName = wallModelName;
             base.Activate();

@@ -106,7 +106,7 @@ namespace AW2.Game.Gobs
 
             // Manage exhaust engines.
             if (Arena.TotalTime >= thrustEndTime)
-                SwitchExhaustEngines(false);
+                SwitchEngineFlashAndBang(false);
         }
 
         #endregion Methods related to gobs' functionality in the game world

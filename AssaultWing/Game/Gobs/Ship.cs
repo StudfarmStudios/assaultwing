@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
+using AW2.Sound;
 
 namespace AW2.Game.Gobs
 {
@@ -16,6 +17,7 @@ namespace AW2.Game.Gobs
     public class Ship : Gob
     {
         private const string SHIP_BIRTH_SOUND = "ShipBirth";
+        private const string SHIP_THRUST_SOUND = "Thruster";
 
         #region Ship fields related to flying
 
@@ -23,19 +25,21 @@ namespace AW2.Game.Gobs
         /// Maximum force of thrust of the ship, measured in Newtons.
         /// </summary>
         [TypeParameter]
-        private float thrustForce;
+        private float _thrustForce;
 
         /// <summary>
         /// Maximum turning speed of the ship, measured in radians per second.
         /// </summary>
         [TypeParameter]
-        private float turnSpeed;
+        private float _turnSpeed;
 
         /// <summary>
         /// Ship's maximum speed reachable by thrust, measured in meters per second.
         /// </summary>
         [TypeParameter]
-        private float maxSpeed;
+        private float _maxSpeed;
+
+        private AWSound _thrusterSound;
 
         #endregion Ship fields related to flying
 
@@ -45,33 +49,33 @@ namespace AW2.Game.Gobs
         /// Name of the type of primary weapon the ship type uses.
         /// </summary>
         [TypeParameter]
-        private CanonicalString weapon1TypeName;
+        private CanonicalString _weapon1TypeName;
 
         /// <summary>
         /// Maximum amount of charge for extra devices.
         /// </summary>
         [TypeParameter]
-        private float extraDeviceChargeMax;
+        private float _extraDeviceChargeMax;
 
         /// <summary>
         /// Maximum amount of charge for secondary weapons.
         /// </summary>
         [TypeParameter]
-        private float weapon2ChargeMax;
+        private float _weapon2ChargeMax;
 
         /// <summary>
         /// Speed of charging for extra device charge,
         /// measured in charge units per second.
         /// </summary>
         [TypeParameter]
-        private float extraDeviceChargeSpeed;
+        private float _extraDeviceChargeSpeed;
 
         /// <summary>
         /// Speed of charging for secondary weapon charge,
         /// measured in charge units per second.
         /// </summary>
         [TypeParameter]
-        private float weapon2ChargeSpeed;
+        private float _weapon2ChargeSpeed;
 
         private bool _isActivated;
 
@@ -87,20 +91,20 @@ namespace AW2.Game.Gobs
         /// Minimum roll angle will be the additive inverse.
         /// </summary>
         [TypeParameter]
-        private float rollMax;
+        private float _rollMax;
 
         /// <summary>
         /// Roll angle change speed in radians per second.
         /// </summary>
         [TypeParameter]
-        private float rollSpeed;
+        private float _rollSpeed;
 
         #endregion Ship fields related to rolling
 
         #region Ship fields related to coughing
 
         [TypeParameter, ShallowCopy]
-        private CanonicalString[] coughEngineNames;
+        private CanonicalString[] _coughEngineNames;
 
         private Gob[] _coughEngines;
 
@@ -114,7 +118,7 @@ namespace AW2.Game.Gobs
         /// to the amount of damage the ship actually receives.
         /// </summary>
         [TypeParameter, ShallowCopy]
-        private Curve armour;
+        private Curve _armour;
 
         /// <summary>
         /// Alpha of the ship as a function that maps the age of the
@@ -122,13 +126,13 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Use this to implement alpha flashing on ship birth.
         [TypeParameter, ShallowCopy]
-        private Curve birthAlpha;
+        private Curve _birthAlpha;
 
         /// <summary>
         /// Name of the ship's icon in the equip menu main display.
         /// </summary>
         [TypeParameter]
-        private CanonicalString iconEquipName;
+        private CanonicalString _iconEquipName;
 
         /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
@@ -192,15 +196,15 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public float TurnSpeed { get { return turnSpeed; } }
+        public float TurnSpeed { get { return _turnSpeed; } }
 
-        public float ThrustForce { get { return thrustForce; } }
+        public float ThrustForce { get { return _thrustForce; } }
 
         /// <summary>
         /// Name of the type of main weapon the ship is using. Same as
         /// <c>Weapon1.TypeName</c> but works even when <see cref="Weapon1"/> is null.
         /// </summary>
-        public CanonicalString Weapon1Name { get { return weapon1TypeName; } }
+        public CanonicalString Weapon1Name { get { return _weapon1TypeName; } }
 
         /// <summary>
         /// Name of the type of secondary weapon the ship is using. Same as
@@ -221,14 +225,14 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Name of the ship's icon in the equip menu main display.
         /// </summary>
-        public CanonicalString IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
+        public CanonicalString IconEquipName { get { return _iconEquipName; } set { _iconEquipName = value; } }
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
         public override IEnumerable<CanonicalString> TextureNames
         {
-            get { return base.TextureNames.Union(new CanonicalString[] { iconEquipName }); }
+            get { return base.TextureNames.Union(new CanonicalString[] { _iconEquipName }); }
         }
 
         #endregion Ship properties
@@ -240,37 +244,37 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Ship()
         {
-            thrustForce = 100;
-            turnSpeed = 3;
-            maxSpeed = 200;
-            rollMax = (float)MathHelper.PiOver4;
-            rollSpeed = (float)(MathHelper.TwoPi / 2.0);
-            weapon1TypeName = (CanonicalString)"dummyweapon";
-            extraDeviceChargeMax = 5000;
-            extraDeviceChargeSpeed = 500;
-            weapon2ChargeMax = 5000;
-            weapon2ChargeSpeed = 500;
-            armour = new Curve();
-            armour.PreLoop = CurveLoopType.Linear;
-            armour.PostLoop = CurveLoopType.Linear;
-            armour.Keys.Add(new CurveKey(-500, -500, 1, 500 * 1, CurveContinuity.Smooth));
-            armour.Keys.Add(new CurveKey(0, 0, 500 * 1, 10 * 0.3f, CurveContinuity.Smooth));
-            armour.Keys.Add(new CurveKey(10, 7, 10 * 1, 40 * 1, CurveContinuity.Smooth));
-            armour.Keys.Add(new CurveKey(50, 50, 40 * 1, 450 * 1, CurveContinuity.Smooth));
-            armour.Keys.Add(new CurveKey(500, 500, 450 * 1, 1, CurveContinuity.Smooth));
-            birthAlpha = new Curve();
-            birthAlpha.PreLoop = CurveLoopType.Constant;
-            birthAlpha.PostLoop = CurveLoopType.Constant;
+            _thrustForce = 100;
+            _turnSpeed = 3;
+            _maxSpeed = 200;
+            _rollMax = (float)MathHelper.PiOver4;
+            _rollSpeed = (float)(MathHelper.TwoPi / 2.0);
+            _weapon1TypeName = (CanonicalString)"dummyweapon";
+            _extraDeviceChargeMax = 5000;
+            _extraDeviceChargeSpeed = 500;
+            _weapon2ChargeMax = 5000;
+            _weapon2ChargeSpeed = 500;
+            _armour = new Curve();
+            _armour.PreLoop = CurveLoopType.Linear;
+            _armour.PostLoop = CurveLoopType.Linear;
+            _armour.Keys.Add(new CurveKey(-500, -500, 1, 500 * 1, CurveContinuity.Smooth));
+            _armour.Keys.Add(new CurveKey(0, 0, 500 * 1, 10 * 0.3f, CurveContinuity.Smooth));
+            _armour.Keys.Add(new CurveKey(10, 7, 10 * 1, 40 * 1, CurveContinuity.Smooth));
+            _armour.Keys.Add(new CurveKey(50, 50, 40 * 1, 450 * 1, CurveContinuity.Smooth));
+            _armour.Keys.Add(new CurveKey(500, 500, 450 * 1, 1, CurveContinuity.Smooth));
+            _birthAlpha = new Curve();
+            _birthAlpha.PreLoop = CurveLoopType.Constant;
+            _birthAlpha.PostLoop = CurveLoopType.Constant;
             for (float age = 0; age + 0.2f < 2; age += 0.4f)
             {
-                birthAlpha.Keys.Add(new CurveKey(age, 0.2f));
-                birthAlpha.Keys.Add(new CurveKey(age + 0.2f, 0.8f));
+                _birthAlpha.Keys.Add(new CurveKey(age, 0.2f));
+                _birthAlpha.Keys.Add(new CurveKey(age + 0.2f, 0.8f));
             }
-            birthAlpha.Keys.Add(new CurveKey(2, 1));
-            birthAlpha.ComputeTangents(CurveTangent.Flat);
-            coughEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
+            _birthAlpha.Keys.Add(new CurveKey(2, 1));
+            _birthAlpha.ComputeTangents(CurveTangent.Flat);
+            _coughEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
             _temporarilyDisabledGobs = new List<Gob>();
-            iconEquipName = (CanonicalString)"dummytexture";
+            _iconEquipName = (CanonicalString)"dummytexture";
         }
 
         public Ship(CanonicalString typeName)
@@ -301,9 +305,9 @@ namespace AW2.Game.Gobs
         private void CreateCoughEngines()
         {
             var coughEngineList = new List<Gob>();
-            for (int i = 0; i < coughEngineNames.Length; ++i)
+            for (int i = 0; i < _coughEngineNames.Length; ++i)
             {
-                Gob.CreateGob(coughEngineNames[i], gob =>
+                Gob.CreateGob(_coughEngineNames[i], gob =>
                 {
                     if (gob is Peng)
                     {
@@ -341,13 +345,14 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _isActivated = true;
+            _thrusterSound = new AWSound(SHIP_THRUST_SOUND);
 
             // Deferred initialization of ship devices
             if (Weapon1 == null && Weapon1Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
             if (Weapon2 == null && Weapon2Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
             if (ExtraDevice == null && ExtraDeviceName != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
 
-            SwitchExhaustEngines(false);
+            SwitchEngineFlashAndBang(false);
             _exhaustAmountUpdated = false;
             CreateCoughEngines();
             CreateGlow();
@@ -361,7 +366,7 @@ namespace AW2.Game.Gobs
             var elapsedGameTime = AssaultWing.Instance.GameTime.ElapsedGameTime;
 
             // Manage turn-related rolling.
-            _rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(rollSpeed, elapsedGameTime);
+            _rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(_rollSpeed, elapsedGameTime);
             _rollAngle.Advance();
             if (!_rollAngleGoalUpdated)
                 _rollAngle.Target = 0;
@@ -382,7 +387,7 @@ namespace AW2.Game.Gobs
 
             // Manage exhaust engines.
             if (!_exhaustAmountUpdated)
-                SwitchExhaustEngines(false);
+                SwitchEngineFlashAndBang(false);
             _exhaustAmountUpdated = false;
 
             // Manage cough engines.
@@ -398,14 +403,14 @@ namespace AW2.Game.Gobs
                 }
             }
 
-            ExtraDevice.Charge += extraDeviceChargeSpeed * (float)elapsedGameTime.TotalSeconds;
-            Weapon2.Charge += weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
+            ExtraDevice.Charge += _extraDeviceChargeSpeed * (float)elapsedGameTime.TotalSeconds;
+            Weapon2.Charge += _weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
 
             if (_isBirthFlashing)
             {
                 float age = birthTime.SecondsAgoGameTime();
-                Alpha = birthAlpha.Evaluate(age);
-                if (age >= birthAlpha.Keys[birthAlpha.Keys.Count - 1].Position)
+                Alpha = _birthAlpha.Evaluate(age);
+                if (age >= _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position)
                 {
                     Enable();
                     _isBirthFlashing = false;
@@ -426,6 +431,7 @@ namespace AW2.Game.Gobs
             AssaultWing.Instance.DataEngine.Devices.Remove(Weapon1);
             AssaultWing.Instance.DataEngine.Devices.Remove(Weapon2);
             AssaultWing.Instance.DataEngine.Devices.Remove(ExtraDevice);
+            _thrusterSound.Dispose();
             base.Dispose();
         }
 
@@ -491,13 +497,11 @@ namespace AW2.Game.Gobs
         public void Thrust(float force, TimeSpan duration, float direction)
         {
             if (Disabled) return;
-            Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * thrustForce;
-            AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, maxSpeed, duration);
+            Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * _thrustForce;
+            AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed, duration);
             _visualThrustForce = force;
             Thrusting(force);
-
-            // Manage exhaust engines.
-            SwitchExhaustEngines(true);
+            SwitchEngineFlashAndBang(true);
             _exhaustAmountUpdated = true;
         }
 
@@ -521,7 +525,7 @@ namespace AW2.Game.Gobs
         private void Turn(float force, TimeSpan duration)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            float deltaRotation = AssaultWing.Instance.PhysicsEngine.ApplyChange(force * turnSpeed, duration);
+            float deltaRotation = AssaultWing.Instance.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
             Rotation += deltaRotation;
             Turning(deltaRotation);
 
@@ -529,10 +533,10 @@ namespace AW2.Game.Gobs
             float moveLength = Move.Length();
             float headingFactor = // fancy roll
                 moveLength == 0 ? 0 :
-                moveLength <= maxSpeed ? Vector2.Dot(headingNormal, Move / maxSpeed) :
+                moveLength <= _maxSpeed ? Vector2.Dot(headingNormal, Move / _maxSpeed) :
                 Vector2.Dot(headingNormal, Move / moveLength);
             //float headingFactor = 1.0f; // naive roll
-            _rollAngle.Target = -rollMax * force * headingFactor;
+            _rollAngle.Target = -_rollMax * force * headingFactor;
             _rollAngleGoalUpdated = true;
         }
 
@@ -551,7 +555,7 @@ namespace AW2.Game.Gobs
 
         public override void InflictDamage(float damageAmount, DeathCause cause)
         {
-            float realDamage = armour.Evaluate(damageAmount);
+            float realDamage = _armour.Evaluate(damageAmount);
             if (Owner != null)
                 Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
@@ -566,9 +570,9 @@ namespace AW2.Game.Gobs
                 case ShipDevice.OwnerHandleType.PrimaryWeapon:
                     return new ChargeProvider(() => int.MaxValue, () => 0);
                 case ShipDevice.OwnerHandleType.SecondaryWeapon:
-                    return new ChargeProvider(() => weapon2ChargeMax, () => weapon2ChargeSpeed);
+                    return new ChargeProvider(() => _weapon2ChargeMax, () => _weapon2ChargeSpeed);
                 case ShipDevice.OwnerHandleType.ExtraDevice:
-                    return new ChargeProvider(() => extraDeviceChargeMax, () => extraDeviceChargeSpeed);
+                    return new ChargeProvider(() => _extraDeviceChargeMax, () => _extraDeviceChargeSpeed);
                 default: throw new ApplicationException("Unknown ship device type " + deviceType);
             }
         }
@@ -603,9 +607,9 @@ namespace AW2.Game.Gobs
             switch (deviceType)
             {
                 case ShipDevice.OwnerHandleType.PrimaryWeapon:
-                    if (typeName != weapon1TypeName)
+                    if (typeName != _weapon1TypeName)
                         throw new InvalidOperationException("Cannot set Ship primary weapon " + typeName +
-                            ", fixed primary weapon is " + weapon1TypeName);
+                            ", fixed primary weapon is " + _weapon1TypeName);
                     break;
                 case ShipDevice.OwnerHandleType.SecondaryWeapon: Weapon2Name = typeName; break;
                 case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDeviceName = typeName; break;
@@ -635,6 +639,13 @@ namespace AW2.Game.Gobs
                 case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDevice = newDevice; break;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
+        }
+
+        protected override void SwitchEngineFlashAndBang(bool active)
+        {
+            base.SwitchEngineFlashAndBang(active);
+            if (active) _thrusterSound.EnsureIsPlaying();
+            else _thrusterSound.EnsureIsStopped(Microsoft.Xna.Framework.Audio.AudioStopOptions.AsAuthored);
         }
     }
 }

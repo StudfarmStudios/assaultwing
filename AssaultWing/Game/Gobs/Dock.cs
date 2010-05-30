@@ -37,7 +37,6 @@ namespace AW2.Game.Gobs
 
         private TimeSpan _lastDockSoundTime;
         private AWSound _dockSound;
-        [Obsolete] private Cue _dockSoundCue;
 
         #endregion Dock fields
 

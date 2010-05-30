@@ -1093,11 +1093,7 @@ namespace AW2.Game
 
         #region Gob miscellaneous protected methods
 
-        /// <summary>
-        /// Switches exhaust engines on or off.
-        /// </summary>
-        /// <param name="active">If <c>true</c>, switches exhaust engines on, otherwise off.</param>
-        protected void SwitchExhaustEngines(bool active)
+        protected virtual void SwitchEngineFlashAndBang(bool active)
         {
             foreach (var exhaustEngine in exhaustEngines)
             {

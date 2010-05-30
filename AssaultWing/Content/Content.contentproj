@@ -1644,6 +1644,7 @@
       <Name>toikka_1</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1651,11 +1652,13 @@
       <Name>BG_Amazon</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="music\BG_Dark.mp3">
       <Name>BG_Dark</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1774,6 +1777,7 @@
       <Name>menu music</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1920,6 +1924,7 @@
       <Name>jyri_1</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
   </ItemGroup>
   <ItemGroup>

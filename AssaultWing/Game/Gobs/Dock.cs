@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using AW2.Helpers;
+using AW2.Sound;
 
 namespace AW2.Game.Gobs
 {
@@ -35,7 +36,8 @@ namespace AW2.Game.Gobs
         private float _weapon2ChargeSpeed;
 
         private TimeSpan _lastDockSoundTime;
-        private Cue _dockSoundCue;
+        private AWSound _dockSound;
+        [Obsolete] private Cue _dockSoundCue;
 
         #endregion Dock fields
 
@@ -58,10 +60,16 @@ namespace AW2.Game.Gobs
             movable = false;
         }
 
+        public override void Activate()
+        {
+            base.Activate();
+            _dockSound = new AWSound("Docking");
+        }
+
         public override void Update()
         {
             base.Update();
-            if (MustBeSilent) EnsureDockSoundStopped();
+            if (MustBeSilent) _dockSound.EnsureIsStopped(AudioStopOptions.AsAuthored);
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
@@ -83,26 +91,14 @@ namespace AW2.Game.Gobs
 
         public override void Dispose()
         {
-            if (_dockSoundCue != null)
-            {
-                _dockSoundCue.Dispose();
-                _dockSoundCue = null;
-            }
+            _dockSound.Dispose();
             base.Dispose();
         }
 
         private void EnsureDockSoundPlaying()
         {
             _lastDockSoundTime = Arena.TotalTime;
-            if (_dockSoundCue != null && _dockSoundCue.IsPlaying) return;
-            if (_dockSoundCue != null) _dockSoundCue.Dispose();
-            _dockSoundCue = AssaultWing.Instance.SoundEngine.GetCue("Docking");
-            if (_dockSoundCue != null) _dockSoundCue.Play();
-        }
-
-        private void EnsureDockSoundStopped()
-        {
-            if (_dockSoundCue != null && _dockSoundCue.IsPlaying) _dockSoundCue.Stop(AudioStopOptions.AsAuthored);
+            _dockSound.EnsureIsPlaying();
         }
     }
 }

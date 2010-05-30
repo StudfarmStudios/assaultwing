@@ -262,6 +262,7 @@
     <Compile Include="Settings\AWSettings.cs" />
     <Compile Include="Settings\NetSettings.cs" />
     <Compile Include="Settings\SoundSettings.cs" />
+    <Compile Include="Sound\AWSound.cs" />
     <Compile Include="Sound\BackgroundMusic.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
     <Compile Include="UI\Controls.cs" />

@@ -21,6 +21,8 @@ namespace AW2.Game.GobUtils
 
         #region Fields
 
+        private const string FIRING_FAIL_SOUND = "WeaponFail";
+
         /// <summary>
         /// Name of the icon of the weapon, to be displayed in weapon selection 
         /// and bonus display.
@@ -283,22 +285,28 @@ namespace AW2.Game.GobUtils
         public void Fire(AW2.UI.ControlState triggerState)
         {
             if (owner.Disabled) return;
+            bool fail = false;
             switch (FireMode)
             {
                 case FireModeType.Single:
                     if (triggerState.pulse)
                     {
-                        if (PermissionToFire(CanFire) && CanFire) StartFiring();
+                        if (PermissionToFire(CanFire) && CanFire)
+                            StartFiring();
+                        else
+                            fail = true;
                     }
                     break;
                 case FireModeType.Continuous:
                     if (triggerState.force > 0)
                     {
                         if (PermissionToFire(CanFire) && CanFire) StartFiring();
+                        // Note: Never play fail sound in continuous firing mode, it will repeat often and be annoying
                     }
                     break;
                 default: throw new ApplicationException("Unknown FireMode " + FireMode);
             }
+            if (fail) AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
         }
 
         public virtual void Update()

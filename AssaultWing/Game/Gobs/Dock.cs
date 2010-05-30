@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
-using AW2.Helpers;
 using Microsoft.Xna.Framework.Audio;
+using AW2.Helpers;
 
 namespace AW2.Game.Gobs
 {
@@ -21,19 +20,19 @@ namespace AW2.Game.Gobs
         /// Use a negative value for repairing, positive for damaging.
         /// </summary>
         [TypeParameter]
-        private float repairSpeed;
+        private float _repairSpeed;
 
         /// <summary>
         /// Speed of charging primary weapons of ships, measured in charge/second.
         /// </summary>
         [TypeParameter]
-        private float weapon1ChargeSpeed;
+        private float _weapon1ChargeSpeed;
 
         /// <summary>
         /// Speed of charging secondary weapons of ships, measured in charge/second.
         /// </summary>
         [TypeParameter]
-        private float weapon2ChargeSpeed;
+        private float _weapon2ChargeSpeed;
 
         private TimeSpan _lastDockSoundTime;
         private Cue _dockSoundCue;
@@ -48,9 +47,9 @@ namespace AW2.Game.Gobs
         /// This constructor is only for serialisation.
         public Dock()
         {
-            this.repairSpeed = -10;
-            this.weapon1ChargeSpeed = 100;
-            this.weapon2ChargeSpeed = 100;
+            _repairSpeed = -10;
+            _weapon1ChargeSpeed = 100;
+            _weapon2ChargeSpeed = 100;
         }
 
         public Dock(CanonicalString typeName)
@@ -71,13 +70,13 @@ namespace AW2.Game.Gobs
             // Then 'theirArea.Owner' must be damageable.
             if (myArea.Name == "Dock")
             {
-                EnsureDockSoundPlaying();
-                theirArea.Owner.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(repairSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime), new DeathCause());
+                if (theirArea.Owner.Owner != null) EnsureDockSoundPlaying();
+                theirArea.Owner.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(_repairSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime), new DeathCause());
                 Ship ship = theirArea.Owner as Ship;
                 if (ship != null)
                 {
-                    ship.ExtraDevice.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon1ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
-                    ship.Weapon2.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(weapon2ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
+                    ship.ExtraDevice.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
+                    ship.Weapon2.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
                 }
             }
         }

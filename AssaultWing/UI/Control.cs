@@ -17,6 +17,8 @@ namespace AW2.UI
     public abstract class Control
     {
         private static List<Control> g_registeredControls = new List<Control>();
+        protected static InputState OldState { get; private set; }
+        protected static InputState NewState { get; private set; }
 
         /// <summary>
         /// Creates a new control and registers it to receive regular updates from UIEngine.
@@ -26,6 +28,12 @@ namespace AW2.UI
             g_registeredControls.Add(this);
         }
 
+        public static void SetState(ref InputState oldState, ref InputState newState)
+        {
+            OldState = oldState;
+            NewState = newState;
+        }
+
         public static void ForEachControl(Action<Control> action)
         {
             foreach (var control in g_registeredControls) action(control);
@@ -33,16 +41,8 @@ namespace AW2.UI
 
         public void Dispose()
         {
-            // FIXME !!! This may get called on a separate thread while iterating over 'controls' -> uncaught exception
             g_registeredControls.Remove(this);
         }
-
-        /// <summary>
-        /// Sets the control's state based on the current and previous state of all inputs.
-        /// </summary>
-        /// <param name="oldState">The old state of all inputs.</param>
-        /// <param name="newState">The current state of all inputs.</param>
-        public abstract void SetState(ref InputState oldState, ref InputState newState);
 
         /// <summary>
         /// Returns if the control gave a pulse.

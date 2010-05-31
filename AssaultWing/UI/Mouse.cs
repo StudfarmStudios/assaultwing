@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -9,7 +8,7 @@ namespace AW2.UI
     /// <summary>
     /// A digital button on the mouse.
     /// </summary>
-    enum MouseButtons
+    public enum MouseButtons
     {
         /// <summary>
         /// The left mouse button.
@@ -44,7 +43,7 @@ namespace AW2.UI
     /// <summary>
     /// A cardinal direction of the mouse pointer.
     /// </summary>
-    enum MouseDirections
+    public enum MouseDirections
     {
         /// <summary>
         /// Upward mouse pointer movement.
@@ -70,7 +69,7 @@ namespace AW2.UI
     /// <summary>
     /// A direction of the mouse wheel's rotation.
     /// </summary>
-    enum MouseWheelDirections
+    public enum MouseWheelDirections
     {
         /// <summary>
         /// Forward mouse wheel rotation.
@@ -86,43 +85,30 @@ namespace AW2.UI
     /// <summary>
     /// A cardinal direction of the mouse pointer.
     /// </summary>
-    class MouseDirection : Control
+    public class MouseDirection : Control
     {
         /// <summary>
         /// The mouse pointer direction that determines the control's state.
         /// </summary>
-        MouseDirections direction;
+        private MouseDirections _direction;
 
         /// <summary>
         /// Largest mouse movement that won't be registered as control force, in pixels.
         /// </summary>
-        float forceMinimum;
+        private float _forceMinimum;
 
         /// <summary>
         /// Sufficient mouse movement for maximal control force, in pixels.
         /// </summary>
-        float forceMaximum;
+        private float _forceMaximum;
 
         /// <summary>
         /// Largest mouse movement that won't be registered as control pulse, in pixels.
         /// </summary>
-        float pulseMinimum;
+        private float _pulseMinimum;
 
-        /// <summary>
-        /// Minimum number of successive frames during which pulse minimum
-        /// has been exceeded in order to register as a pulse.
-        /// </summary>
-        int pulseMinimumCount;
-
-        /// <summary>
-        /// Amount of control force based on latest input state update.
-        /// </summary>
-        float force;
-
-        /// <summary>
-        /// Number of frames at which mouse movement has exceeded pulse minimum movement.
-        /// </summary>
-        int pulseCount;
+        public override bool Pulse { get { return GetMovement() >= _pulseMinimum; } }
+        public override float Force { get { return MathHelper.Clamp((GetMovement() - _forceMinimum) / (_forceMaximum - _forceMinimum), 0, 1); } }
 
         /// <summary>
         /// Creates a control from a mouse pointer cardinal direction.
@@ -134,169 +120,117 @@ namespace AW2.UI
         /// maximal control force, in pixels.</param>
         /// <param name="pulseMinimum">Largest mouse movement that 
         /// won't be registered as control pulse, in pixels.</param>
-        /// <param name="pulseMinimumCount">Minimum number of successive frames during which
-        /// pulse minimum has been exceeded in order to register as a pulse.</param>
-        public MouseDirection(MouseDirections direction, float forceMinimum, float forceMaximum,
-            float pulseMinimum, int pulseMinimumCount)
-            : base()
+        public MouseDirection(MouseDirections direction, float forceMinimum, float forceMaximum, float pulseMinimum)
         {
             if (!(0 <= forceMinimum && forceMinimum < forceMaximum))
                 throw new ArgumentException("Invalid mouse direction movement limits");
-            if (!(0 < pulseMinimum && 0 < pulseMinimumCount))
+            if (!(0 < pulseMinimum))
                 throw new ArgumentException("Invalid mouse direction movement limits");
-            this.direction = direction;
-            this.forceMinimum = forceMinimum;
-            this.forceMaximum = forceMaximum;
-            this.pulseMinimum = pulseMinimum;
-            this.pulseMinimumCount = pulseMinimumCount;
-            this.pulseCount = 0;
-            this.force = 0;
+            _direction = direction;
+            _forceMinimum = forceMinimum;
+            _forceMaximum = forceMaximum;
+            _pulseMinimum = pulseMinimum;
         }
 
-        public override void SetState(ref InputState oldState, ref InputState newState)
+        private float GetMovement()
         {
-            float movement = 0;
-            switch (direction)
+            switch (_direction)
             {
                 case MouseDirections.Left:
-                    movement = Math.Max(-(newState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2), 0);
-                    break;
+                    return Math.Max(-(NewState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2), 0);
                 case MouseDirections.Right:
-                    movement = Math.Max(newState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2, 0);
-                    break;
+                    return Math.Max(NewState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2, 0);
                 case MouseDirections.Up:
-                    movement = Math.Max(-(newState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2), 0);
-                    break;
+                    return Math.Max(-(NewState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2), 0);
                 case MouseDirections.Down:
-                    movement = Math.Max(newState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2, 0);
-                    break;
-                default:
-                    throw new Exception("Unhandled mouse direction " + direction);
+                    return Math.Max(NewState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2, 0);
+                default: throw new Exception("Unhandled mouse direction " + _direction);
             }
-            force = MathHelper.Clamp((movement - forceMinimum) / (forceMaximum - forceMinimum), 0, 1);
-            if (movement >= pulseMinimum)
-                ++pulseCount;
-            else
-                pulseCount = 0;
         }
-
-        /// <summary>
-        /// Returns if the control gave a pulse.
-        /// </summary>
-        public override bool Pulse { get { return pulseCount >= pulseMinimumCount; } }
-
-        /// <summary>
-        /// Returns the amount of control force; a float between 0 and 1.
-        /// </summary>
-        public override float Force { get { return force; } }
     }
 
     /// <summary>
     /// A digital mouse button.
     /// </summary>
-    class MouseButton : Control
+    public class MouseButton : Control
     {
-        MouseButtons button;
-        bool pulse;
-        float force;
+        private MouseButtons _button;
 
-        /// <summary>
-        /// Creates a control from a mouse button.
-        /// </summary>
-        /// <param name="button">The mouse button.</param>
-        public MouseButton(MouseButtons button)
-            : base()
+        public override bool Pulse
         {
-            this.button = button;
-            pulse = false;
-            force = 0;
-        }
-
-        public override void SetState(ref InputState oldState, ref InputState newState)
-        {
-            switch (button)
+            get
             {
-                case MouseButtons.Left:
-                    pulse = newState.Mouse.LeftButton == ButtonState.Pressed &&
-                            oldState.Mouse.LeftButton == ButtonState.Released;
-                    force = newState.Mouse.LeftButton == ButtonState.Pressed ? 1f : 0f;
-                    break;
-                case MouseButtons.Right:
-                    pulse = newState.Mouse.RightButton == ButtonState.Pressed &&
-                            oldState.Mouse.RightButton == ButtonState.Released;
-                    force = newState.Mouse.RightButton == ButtonState.Pressed ? 1f : 0f;
-                    break;
-                case MouseButtons.Middle:
-                    pulse = newState.Mouse.MiddleButton == ButtonState.Pressed &&
-                            oldState.Mouse.MiddleButton == ButtonState.Released;
-                    force = newState.Mouse.MiddleButton == ButtonState.Pressed ? 1f : 0f;
-                    break;
-                case MouseButtons.X1:
-                    pulse = newState.Mouse.XButton1 == ButtonState.Pressed &&
-                            oldState.Mouse.XButton1 == ButtonState.Released;
-                    force = newState.Mouse.XButton1 == ButtonState.Pressed ? 1f : 0f;
-                    break;
-                case MouseButtons.X2:
-                    pulse = newState.Mouse.XButton2 == ButtonState.Pressed &&
-                            oldState.Mouse.XButton2 == ButtonState.Released;
-                    force = newState.Mouse.XButton2 == ButtonState.Pressed ? 1f : 0f;
-                    break;
-                default:
-                    throw new Exception("Unhandled mouse button " + button);
+                switch (_button)
+                {
+                    case MouseButtons.Left:
+                        return NewState.Mouse.LeftButton == ButtonState.Pressed &&
+                               OldState.Mouse.LeftButton == ButtonState.Released;
+                    case MouseButtons.Right:
+                        return NewState.Mouse.RightButton == ButtonState.Pressed &&
+                               OldState.Mouse.RightButton == ButtonState.Released;
+                    case MouseButtons.Middle:
+                        return NewState.Mouse.MiddleButton == ButtonState.Pressed &&
+                               OldState.Mouse.MiddleButton == ButtonState.Released;
+                    case MouseButtons.X1:
+                        return NewState.Mouse.XButton1 == ButtonState.Pressed &&
+                               OldState.Mouse.XButton1 == ButtonState.Released;
+                    case MouseButtons.X2:
+                        return NewState.Mouse.XButton2 == ButtonState.Pressed &&
+                               OldState.Mouse.XButton2 == ButtonState.Released;
+                    default: throw new Exception("Unhandled mouse button " + _button);
+                }
             }
         }
 
-        /// <summary>
-        /// Returns if the control gave a pulse.
-        /// </summary>
-        public override bool Pulse { get { return pulse; } }
+        public override float Force
+        {
+            get
+            {
+                switch (_button)
+                {
+                    case MouseButtons.Left: return NewState.Mouse.LeftButton == ButtonState.Pressed ? 1f : 0f;
+                    case MouseButtons.Right: return NewState.Mouse.RightButton == ButtonState.Pressed ? 1f : 0f;
+                    case MouseButtons.Middle: return NewState.Mouse.MiddleButton == ButtonState.Pressed ? 1f : 0f;
+                    case MouseButtons.X1: return NewState.Mouse.XButton1 == ButtonState.Pressed ? 1f : 0f;
+                    case MouseButtons.X2: return NewState.Mouse.XButton2 == ButtonState.Pressed ? 1f : 0f;
+                    default: throw new Exception("Unhandled mouse button " + _button);
+                }
+            }
+        }
 
-        /// <summary>
-        /// Returns the amount of control force; a float between 0 and 1.
-        /// </summary>
-        public override float Force { get { return force; } }
+        public MouseButton(MouseButtons button)
+        {
+            _button = button;
+        }
     }
 
     /// <summary>
     /// A direction of the analog mouse wheel.
     /// </summary>
-    class MouseWheelDirection : Control
+    public class MouseWheelDirection : Control
     {
         /// <summary>
         /// The mouse wheel rotation direction that determines the control's state.
         /// </summary>
-        MouseWheelDirections direction;
+        private MouseWheelDirections _direction;
 
         /// <summary>
         /// Largest mouse wheel rotation that won't be registered as control force, in clicks.
         /// </summary>
-        float forceMinimum;
+        private float _forceMinimum;
 
         /// <summary>
         /// Sufficient mouse wheel rotation for maximal control force, in clicks.
         /// </summary>
-        float forceMaximum;
+        private float _forceMaximum;
 
         /// <summary>
         /// Largest mouse wheel rotation that won't be registered as control pulse, in clicks.
         /// </summary>
-        float pulseMinimum;
+        private float _pulseMinimum;
 
-        /// <summary>
-        /// Minimum number of successive frames during which pulse minimum
-        /// has been exceeded in order to register as a pulse.
-        /// </summary>
-        int pulseMinimumCount;
-
-        /// <summary>
-        /// Amount of control force based on latest input state update.
-        /// </summary>
-        float force;
-
-        /// <summary>
-        /// Number of frames at which mouse wheel rotation has exceeded pulse minimum rotation.
-        /// </summary>
-        int pulseCount;
+        public override bool Pulse { get { return GetMovement() >= _pulseMinimum; } }
+        public override float Force { get { return MathHelper.Clamp((GetMovement() - _forceMinimum) / (_forceMaximum - _forceMinimum), 0, 1); } }
 
         /// <summary>
         /// Creates a control from a mouse wheel rotation direction.
@@ -308,54 +242,28 @@ namespace AW2.UI
         /// maximal control force, in clicks.</param>
         /// <param name="pulseMinimum">Largest mouse wheel rotation that 
         /// won't be registered as control pulse, in clicks.</param>
-        /// <param name="pulseMinimumCount">Minimum number of successive frames during which
-        /// pulse minimum has been exceeded in order to register as a pulse.</param>
-        public MouseWheelDirection(MouseWheelDirections direction, float forceMinimum, float forceMaximum,
-            float pulseMinimum, int pulseMinimumCount)
-            : base()
+        public MouseWheelDirection(MouseWheelDirections direction, float forceMinimum, float forceMaximum, float pulseMinimum)
         {
             if (!(0 <= forceMinimum && forceMinimum < forceMaximum))
                 throw new ArgumentException("Invalid mouse wheel direction movement limits");
-            if (!(0 < pulseMinimum && 0 < pulseMinimumCount))
+            if (!(0 < pulseMinimum))
                 throw new ArgumentException("Invalid mouse wheel direction movement limits");
-            this.direction = direction;
-            this.forceMinimum = forceMinimum;
-            this.forceMaximum = forceMaximum;
-            this.pulseMinimum = pulseMinimum;
-            this.pulseMinimumCount = pulseMinimumCount;
-            this.pulseCount = 0;
-            this.force = 0;
+            this._direction = direction;
+            this._forceMinimum = forceMinimum;
+            this._forceMaximum = forceMaximum;
+            this._pulseMinimum = pulseMinimum;
         }
 
-        public override void SetState(ref InputState oldState, ref InputState newState)
+        private float GetMovement()
         {
-            float movement = 0;
-            switch (direction)
+            switch (_direction)
             {
                 case MouseWheelDirections.Forward:
-                    movement = Math.Max(newState.Mouse.ScrollWheelValue - oldState.Mouse.ScrollWheelValue, 0);
-                    break;
+                    return Math.Max(NewState.Mouse.ScrollWheelValue - OldState.Mouse.ScrollWheelValue, 0);
                 case MouseWheelDirections.Backward:
-                    movement = Math.Max(-(newState.Mouse.ScrollWheelValue - oldState.Mouse.ScrollWheelValue), 0);
-                    break;
-                default:
-                    throw new Exception("Unhandled mouse wheel direction " + direction);
+                    return Math.Max(-(NewState.Mouse.ScrollWheelValue - OldState.Mouse.ScrollWheelValue), 0);
+                default: throw new Exception("Unhandled mouse wheel direction " + _direction);
             }
-            force = MathHelper.Clamp((movement - forceMinimum) / (forceMaximum - forceMinimum), 0, 1);
-            if (movement >= pulseMinimum)
-                ++pulseCount;
-            else
-                pulseCount = 0;
         }
-
-        /// <summary>
-        /// Returns if the control gave a pulse.
-        /// </summary>
-        public override bool Pulse { get { return pulseCount >= pulseMinimumCount; } }
-
-        /// <summary>
-        /// Returns the amount of control force; a float between 0 and 1.
-        /// </summary>
-        public override float Force { get { return force; } }
     }
 }

@@ -50,31 +50,6 @@ namespace AW2.UI
             }
         }
 
-        /// <summary>
-        /// Creates a remote control.
-        /// </summary>
-        public RemoteControl()
-            : base()
-        {
-            pulse = false;
-            force = 0;
-            LastStateUpdate = new TimeSpan(-1);
-            LastPulseRead = new TimeSpan(-1);
-        }
-
-        /// <summary>
-        /// Sets the control's state based on the current and previous state of all inputs.
-        /// </summary>
-        /// <param name="oldState">The old state of all inputs.</param>
-        /// <param name="newState">The current state of all inputs.</param>
-        public override void SetState(ref InputState oldState, ref InputState newState)
-        {
-            // The conventional input devices are not of interest to us.
-        }
-
-        /// <summary>
-        /// Did the control give a pulse.
-        /// </summary>
         public override bool Pulse
         {
             get
@@ -88,10 +63,15 @@ namespace AW2.UI
             }
         }
 
-        /// <summary>
-        /// The amount of control force; a float between 0 and 1.
-        /// </summary>
         public override float Force { get { return force; } }
+
+        public RemoteControl()
+        {
+            pulse = false;
+            force = 0;
+            LastStateUpdate = new TimeSpan(-1);
+            LastPulseRead = new TimeSpan(-1);
+        }
 
         /// <summary>
         /// Sets the control's state.

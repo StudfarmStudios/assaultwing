@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace AW2.UI
@@ -11,36 +8,17 @@ namespace AW2.UI
     /// </summary>
     public class KeyboardKey : Control
     {
-        private Keys key;
-        private bool pulse;
-        private float force;
+        private Keys _key;
+
+        public override bool Pulse { get { return NewState.Keyboard[_key] == KeyState.Down && OldState.Keyboard[_key] == KeyState.Up; } }
+        public override float Force { get { return NewState.Keyboard[_key] == KeyState.Down ? 1f : 0f; } }
 
         /// <summary>
         /// Creates a control from a keyboard key.
         /// </summary>
-        /// <param name="key">The key.</param>
         public KeyboardKey(Keys key)
-            : base()
         {
-            this.key = key;
-            pulse = false;
-            force = 0;
+            _key = key;
         }
-
-        public override void SetState(ref InputState oldState, ref InputState newState)
-        {
-            pulse = newState.Keyboard[key] == KeyState.Down && oldState.Keyboard[key] == KeyState.Up;
-            force = newState.Keyboard[key] == KeyState.Down ? 1f : 0f;
-        }
-
-        /// <summary>
-        /// Returns if the control gave a pulse.
-        /// </summary>
-        public override bool Pulse { get { return pulse; } }
-
-        /// <summary>
-        /// Returns the amount of control force; a float between 0 and 1.
-        /// </summary>
-        public override float Force { get { return force; } }
     }
 }

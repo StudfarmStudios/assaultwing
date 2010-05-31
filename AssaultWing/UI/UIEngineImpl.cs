@@ -49,8 +49,7 @@ namespace AW2.UI
                     AssaultWing.Instance.ClientBounds.Width / 2,
                     AssaultWing.Instance.ClientBounds.Height / 2);
 
-            // Update controls.
-            Control.ForEachControl(control => control.SetState(ref oldState, ref newState));
+            Control.SetState(ref oldState, ref newState);
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {

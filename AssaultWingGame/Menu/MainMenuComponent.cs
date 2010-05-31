@@ -330,10 +330,10 @@ namespace AW2.Menu
         /// </summary>
         private void InitializeControls()
         {
-            if (controlUp != null) controlUp.Release();
-            if (controlDown != null) controlDown.Release();
-            if (controlSelect != null) controlSelect.Release();
-            if (controlBack != null) controlBack.Release();
+            if (controlUp != null) controlUp.Dispose();
+            if (controlDown != null) controlDown.Dispose();
+            if (controlSelect != null) controlSelect.Dispose();
+            if (controlBack != null) controlBack.Dispose();
 
             controlBack = new KeyboardKey(Keys.Escape);
             controlUp = new MultiControl();
@@ -345,9 +345,9 @@ namespace AW2.Menu
 
             foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
             {
-                controlUp.Add(player.Controls.thrust);
-                controlDown.Add(player.Controls.down);
-                controlSelect.Add(player.Controls.fire1);
+                controlUp.Add(player.Controls.Thrust);
+                controlDown.Add(player.Controls.Down);
+                controlSelect.Add(player.Controls.Fire1);
             }
         }
 

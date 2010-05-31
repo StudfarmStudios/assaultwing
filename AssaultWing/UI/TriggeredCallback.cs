@@ -38,7 +38,7 @@ namespace AW2.UI
             proceedControl.Add(enterControl);
             proceedControl.Add(escapeControl);
             foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
-                proceedControl.Add(player.Controls.fire1);
+                proceedControl.Add(player.Controls.Fire1);
             return proceedControl;
         }
 
@@ -104,7 +104,7 @@ namespace AW2.UI
         /// </summary>
         public void Dispose()
         {
-            control.Release();
+            control.Dispose();
         }
 
         /// <summary>

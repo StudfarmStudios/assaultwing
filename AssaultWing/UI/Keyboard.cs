@@ -29,8 +29,8 @@ namespace AW2.UI
 
         public override void SetState(ref InputState oldState, ref InputState newState)
         {
-            pulse = newState.keyboard[key] == KeyState.Down && oldState.keyboard[key] == KeyState.Up;
-            force = newState.keyboard[key] == KeyState.Down ? 1f : 0f;
+            pulse = newState.Keyboard[key] == KeyState.Down && oldState.Keyboard[key] == KeyState.Up;
+            force = newState.Keyboard[key] == KeyState.Down ? 1f : 0f;
         }
 
         /// <summary>

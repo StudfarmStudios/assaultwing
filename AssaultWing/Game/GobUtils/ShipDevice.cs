@@ -289,7 +289,7 @@ namespace AW2.Game.GobUtils
             switch (FireMode)
             {
                 case FireModeType.Single:
-                    if (triggerState.pulse)
+                    if (triggerState.Pulse)
                     {
                         if (PermissionToFire(CanFire) && CanFire)
                             StartFiring();
@@ -298,7 +298,7 @@ namespace AW2.Game.GobUtils
                     }
                     break;
                 case FireModeType.Continuous:
-                    if (triggerState.force > 0)
+                    if (triggerState.Force > 0)
                     {
                         if (PermissionToFire(CanFire) && CanFire) StartFiring();
                         // Note: Never play fail sound in continuous firing mode, it will repeat often and be annoying

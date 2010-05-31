@@ -83,10 +83,10 @@ namespace AW2.Game
         {
             float moveSpeed = 10;
             LookAt.Position +=
-                Vector2.UnitY * moveSpeed * Controls.thrust.Force
-                - Vector2.UnitY * moveSpeed * Controls.down.Force
-                + Vector2.UnitX * moveSpeed * Controls.right.Force
-                - Vector2.UnitX * moveSpeed * Controls.left.Force;
+                Vector2.UnitY * moveSpeed * Controls.Thrust.Force
+                - Vector2.UnitY * moveSpeed * Controls.Down.Force
+                + Vector2.UnitX * moveSpeed * Controls.Right.Force
+                - Vector2.UnitX * moveSpeed * Controls.Left.Force;
         }
 
         /// <summary>
@@ -118,13 +118,13 @@ namespace AW2.Game
 
         public virtual void Dispose()
         {
-            Controls.thrust.Release();
-            Controls.left.Release();
-            Controls.right.Release();
-            Controls.down.Release();
-            Controls.fire1.Release();
-            Controls.fire2.Release();
-            Controls.extra.Release();
+            Controls.Thrust.Dispose();
+            Controls.Left.Dispose();
+            Controls.Right.Dispose();
+            Controls.Down.Dispose();
+            Controls.Fire1.Dispose();
+            Controls.Fire2.Dispose();
+            Controls.Extra.Dispose();
         }
 
         #endregion

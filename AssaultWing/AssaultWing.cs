@@ -795,13 +795,13 @@ namespace AW2
             // Hardcoded for now!!!
 
             PlayerControls plr1Controls;
-            plr1Controls.thrust = new KeyboardKey(Keys.Up);
-            plr1Controls.left = new KeyboardKey(Keys.Left);
-            plr1Controls.right = new KeyboardKey(Keys.Right);
-            plr1Controls.down = new KeyboardKey(Keys.Down);
-            plr1Controls.fire1 = new KeyboardKey(Keys.RightControl);
-            plr1Controls.fire2 = new KeyboardKey(Keys.RightShift);
-            plr1Controls.extra = new KeyboardKey(Keys.Down);
+            plr1Controls.Thrust = new KeyboardKey(Keys.Up);
+            plr1Controls.Left = new KeyboardKey(Keys.Left);
+            plr1Controls.Right = new KeyboardKey(Keys.Right);
+            plr1Controls.Down = new KeyboardKey(Keys.Down);
+            plr1Controls.Fire1 = new KeyboardKey(Keys.RightControl);
+            plr1Controls.Fire2 = new KeyboardKey(Keys.RightShift);
+            plr1Controls.Extra = new KeyboardKey(Keys.Down);
 
             PlayerControls plr2Controls;
 #if false // mouse control
@@ -817,13 +817,13 @@ namespace AW2
             plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
             uiEngine.MouseControlsEnabled = true;
 #else
-            plr2Controls.thrust = new KeyboardKey(Keys.W);
-            plr2Controls.left = new KeyboardKey(Keys.A);
-            plr2Controls.right = new KeyboardKey(Keys.D);
-            plr2Controls.down = new KeyboardKey(Keys.X);
-            plr2Controls.fire1 = new KeyboardKey(Keys.LeftControl);
-            plr2Controls.fire2 = new KeyboardKey(Keys.LeftShift);
-            plr2Controls.extra = new KeyboardKey(Keys.X);
+            plr2Controls.Thrust = new KeyboardKey(Keys.W);
+            plr2Controls.Left = new KeyboardKey(Keys.A);
+            plr2Controls.Right = new KeyboardKey(Keys.D);
+            plr2Controls.Down = new KeyboardKey(Keys.X);
+            plr2Controls.Fire1 = new KeyboardKey(Keys.LeftControl);
+            plr2Controls.Fire2 = new KeyboardKey(Keys.LeftShift);
+            plr2Controls.Extra = new KeyboardKey(Keys.X);
             _uiEngine.MouseControlsEnabled = false;
 #endif
 

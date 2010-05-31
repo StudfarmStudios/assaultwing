@@ -62,8 +62,8 @@ namespace AW2.Net.Messages
             writer.Write((int)PlayerId);
             foreach (ControlState state in controlStates)
             {
-                writer.Write((float)state.force);
-                writer.Write((bool)state.pulse);
+                writer.Write((float)state.Force);
+                writer.Write((bool)state.Pulse);
             }
         }
 

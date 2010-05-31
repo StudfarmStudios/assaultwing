@@ -265,11 +265,15 @@
     <Compile Include="Sound\AWSound.cs" />
     <Compile Include="Sound\BackgroundMusic.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
-    <Compile Include="UI\Controls.cs" />
+    <Compile Include="UI\Control.cs" />
+    <Compile Include="UI\PlayerControls.cs" />
+    <Compile Include="UI\ControlState.cs" />
     <Compile Include="UI\EditableText.cs" />
+    <Compile Include="UI\InputState.cs" />
     <Compile Include="UI\Keyboard.cs" />
     <Compile Include="UI\Mouse.cs" />
     <Compile Include="UI\MultiControl.cs" />
+    <Compile Include="UI\PlayerControlType.cs" />
     <Compile Include="UI\RemoteControl.cs" />
     <Compile Include="UI\TriggeredCallback.cs" />
     <Compile Include="UI\TriggeredCallbackCollection.cs" />

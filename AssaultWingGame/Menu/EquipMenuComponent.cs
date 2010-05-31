@@ -210,13 +210,13 @@ namespace AW2.Menu
                 if (player.IsRemote) return;
                 ++playerI;
 
-                ConditionalPlayerAction(player.Controls.thrust.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, () =>
                 {
                     if (currentItems[playerI] > 0)
                         --currentItems[playerI];
                     AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 });
-                ConditionalPlayerAction(player.Controls.down.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Down.Pulse, playerI, () =>
                 {
                     if ((int)currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
                         ++currentItems[playerI];
@@ -224,12 +224,12 @@ namespace AW2.Menu
                 });
 
                 int selectionChange = 0;
-                ConditionalPlayerAction(player.Controls.left.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Left.Pulse, playerI, () =>
                 {
                     selectionChange = -1;
                     AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 });
-                ConditionalPlayerAction(player.Controls.fire1.Pulse || player.Controls.right.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Fire1.Pulse || player.Controls.Right.Pulse, playerI, () =>
                 {
                     selectionChange = 1;
                     AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");

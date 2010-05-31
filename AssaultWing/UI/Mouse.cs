@@ -159,16 +159,16 @@ namespace AW2.UI
             switch (direction)
             {
                 case MouseDirections.Left:
-                    movement = Math.Max(-(newState.mouse.X - AssaultWing.Instance.ClientBounds.Width / 2), 0);
+                    movement = Math.Max(-(newState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2), 0);
                     break;
                 case MouseDirections.Right:
-                    movement = Math.Max(newState.mouse.X - AssaultWing.Instance.ClientBounds.Width / 2, 0);
+                    movement = Math.Max(newState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2, 0);
                     break;
                 case MouseDirections.Up:
-                    movement = Math.Max(-(newState.mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2), 0);
+                    movement = Math.Max(-(newState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2), 0);
                     break;
                 case MouseDirections.Down:
-                    movement = Math.Max(newState.mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2, 0);
+                    movement = Math.Max(newState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2, 0);
                     break;
                 default:
                     throw new Exception("Unhandled mouse direction " + direction);
@@ -217,29 +217,29 @@ namespace AW2.UI
             switch (button)
             {
                 case MouseButtons.Left:
-                    pulse = newState.mouse.LeftButton == ButtonState.Pressed &&
-                            oldState.mouse.LeftButton == ButtonState.Released;
-                    force = newState.mouse.LeftButton == ButtonState.Pressed ? 1f : 0f;
+                    pulse = newState.Mouse.LeftButton == ButtonState.Pressed &&
+                            oldState.Mouse.LeftButton == ButtonState.Released;
+                    force = newState.Mouse.LeftButton == ButtonState.Pressed ? 1f : 0f;
                     break;
                 case MouseButtons.Right:
-                    pulse = newState.mouse.RightButton == ButtonState.Pressed &&
-                            oldState.mouse.RightButton == ButtonState.Released;
-                    force = newState.mouse.RightButton == ButtonState.Pressed ? 1f : 0f;
+                    pulse = newState.Mouse.RightButton == ButtonState.Pressed &&
+                            oldState.Mouse.RightButton == ButtonState.Released;
+                    force = newState.Mouse.RightButton == ButtonState.Pressed ? 1f : 0f;
                     break;
                 case MouseButtons.Middle:
-                    pulse = newState.mouse.MiddleButton == ButtonState.Pressed &&
-                            oldState.mouse.MiddleButton == ButtonState.Released;
-                    force = newState.mouse.MiddleButton == ButtonState.Pressed ? 1f : 0f;
+                    pulse = newState.Mouse.MiddleButton == ButtonState.Pressed &&
+                            oldState.Mouse.MiddleButton == ButtonState.Released;
+                    force = newState.Mouse.MiddleButton == ButtonState.Pressed ? 1f : 0f;
                     break;
                 case MouseButtons.X1:
-                    pulse = newState.mouse.XButton1 == ButtonState.Pressed &&
-                            oldState.mouse.XButton1 == ButtonState.Released;
-                    force = newState.mouse.XButton1 == ButtonState.Pressed ? 1f : 0f;
+                    pulse = newState.Mouse.XButton1 == ButtonState.Pressed &&
+                            oldState.Mouse.XButton1 == ButtonState.Released;
+                    force = newState.Mouse.XButton1 == ButtonState.Pressed ? 1f : 0f;
                     break;
                 case MouseButtons.X2:
-                    pulse = newState.mouse.XButton2 == ButtonState.Pressed &&
-                            oldState.mouse.XButton2 == ButtonState.Released;
-                    force = newState.mouse.XButton2 == ButtonState.Pressed ? 1f : 0f;
+                    pulse = newState.Mouse.XButton2 == ButtonState.Pressed &&
+                            oldState.Mouse.XButton2 == ButtonState.Released;
+                    force = newState.Mouse.XButton2 == ButtonState.Pressed ? 1f : 0f;
                     break;
                 default:
                     throw new Exception("Unhandled mouse button " + button);
@@ -333,10 +333,10 @@ namespace AW2.UI
             switch (direction)
             {
                 case MouseWheelDirections.Forward:
-                    movement = Math.Max(newState.mouse.ScrollWheelValue - oldState.mouse.ScrollWheelValue, 0);
+                    movement = Math.Max(newState.Mouse.ScrollWheelValue - oldState.Mouse.ScrollWheelValue, 0);
                     break;
                 case MouseWheelDirections.Backward:
-                    movement = Math.Max(-(newState.mouse.ScrollWheelValue - oldState.mouse.ScrollWheelValue), 0);
+                    movement = Math.Max(-(newState.Mouse.ScrollWheelValue - oldState.Mouse.ScrollWheelValue), 0);
                     break;
                 default:
                     throw new Exception("Unhandled mouse wheel direction " + direction);

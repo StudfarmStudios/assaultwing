@@ -42,13 +42,13 @@ namespace AW2
             AssaultWing.Instance.DataEngine.Spectators.Clear();
             var spectatorControls = new PlayerControls
             {
-                thrust = new KeyboardKey(Keys.Up),
-                left = new KeyboardKey(Keys.Left),
-                right = new KeyboardKey(Keys.Right),
-                down = new KeyboardKey(Keys.Down),
-                fire1 = new KeyboardKey(Keys.RightControl),
-                fire2 = new KeyboardKey(Keys.RightShift),
-                extra = new KeyboardKey(Keys.Enter)
+                Thrust = new KeyboardKey(Keys.Up),
+                Left = new KeyboardKey(Keys.Left),
+                Right = new KeyboardKey(Keys.Right),
+                Down = new KeyboardKey(Keys.Down),
+                Fire1 = new KeyboardKey(Keys.RightControl),
+                Fire2 = new KeyboardKey(Keys.RightShift),
+                Extra = new KeyboardKey(Keys.Enter)
             };
             var spectator = new EditorSpectator(spectatorControls);
             AssaultWing.Instance.DataEngine.Spectators.Add(spectator);

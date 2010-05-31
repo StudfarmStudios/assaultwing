@@ -33,7 +33,7 @@ namespace AW2.Game.GobUtils
             // and propagate the change to newer ship location entries.
             var frameDurationSeconds = (float)(_shipLocations[entryIndex + 1].GameTime - _shipLocations[entryIndex].GameTime).TotalSeconds;
             float rotationChange = _ship.TurnSpeed * frameDurationSeconds *
-                (state[(int)PlayerControlType.Left].force - state[(int)PlayerControlType.Right].force);
+                (state[(int)PlayerControlType.Left].Force - state[(int)PlayerControlType.Right].Force);
             var moveChange = AWMathHelper.GetUnitVector2(_ship.Rotation) * _ship.ThrustForce / _ship.Mass * frameDurationSeconds;
             for (int i = entryIndex + 1; i < _shipLocations.Count; ++i)
                 _shipLocations[i].ApplyChange(rotationChange, moveChange, _shipLocations[entryIndex].GameTime);

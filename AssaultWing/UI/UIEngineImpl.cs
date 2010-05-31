@@ -78,7 +78,7 @@ namespace AW2.UI
 
         private static void SetRemoteControlState(RemoteControl control, ControlState state)
         {
-            control.SetControlState(state.force, state.pulse);
+            control.SetControlState(state.Force, state.Pulse);
         }
     }
 }

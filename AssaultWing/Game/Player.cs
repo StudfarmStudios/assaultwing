@@ -299,13 +299,13 @@ namespace AW2.Game
             CanonicalString extraDeviceName, int connectionId)
             : this(name, shipTypeName, weapon2Name, extraDeviceName, new PlayerControls
             {
-                thrust = new RemoteControl(),
-                left = new RemoteControl(),
-                right = new RemoteControl(),
-                down = new RemoteControl(),
-                fire1 = new RemoteControl(),
-                fire2 = new RemoteControl(),
-                extra = new RemoteControl()
+                Thrust = new RemoteControl(),
+                Left = new RemoteControl(),
+                Right = new RemoteControl(),
+                Down = new RemoteControl(),
+                Fire1 = new RemoteControl(),
+                Fire2 = new RemoteControl(),
+                Extra = new RemoteControl()
             }, connectionId)
         {
         }
@@ -560,18 +560,18 @@ namespace AW2.Game
         private void ApplyControlsToShip()
         {
             if (Ship == null) return;
-            if (Controls.thrust.Force > 0)
-                Ship.Thrust(Controls.thrust.Force, AssaultWing.Instance.GameTime.ElapsedGameTime, Ship.Rotation);
-            if (Controls.left.Force > 0)
-                Ship.TurnLeft(Controls.left.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
-            if (Controls.right.Force > 0)
-                Ship.TurnRight(Controls.right.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
-            if (Controls.fire1.Pulse || Controls.fire1.Force > 0)
-                Ship.Weapon1.Fire(Controls.fire1.State);
-            if (Controls.fire2.Pulse || Controls.fire2.Force > 0)
-                Ship.Weapon2.Fire(Controls.fire2.State);
-            if (Controls.extra.Pulse || Controls.extra.Force > 0)
-                Ship.ExtraDevice.Fire(Controls.extra.State);
+            if (Controls.Thrust.Force > 0)
+                Ship.Thrust(Controls.Thrust.Force, AssaultWing.Instance.GameTime.ElapsedGameTime, Ship.Rotation);
+            if (Controls.Left.Force > 0)
+                Ship.TurnLeft(Controls.Left.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
+            if (Controls.Right.Force > 0)
+                Ship.TurnRight(Controls.Right.Force, AssaultWing.Instance.GameTime.ElapsedGameTime);
+            if (Controls.Fire1.Pulse || Controls.Fire1.Force > 0)
+                Ship.Weapon1.Fire(Controls.Fire1.State);
+            if (Controls.Fire2.Pulse || Controls.Fire2.Force > 0)
+                Ship.Weapon2.Fire(Controls.Fire2.State);
+            if (Controls.Extra.Pulse || Controls.Extra.Force > 0)
+                Ship.ExtraDevice.Fire(Controls.Extra.State);
         }
 
         /// <summary>

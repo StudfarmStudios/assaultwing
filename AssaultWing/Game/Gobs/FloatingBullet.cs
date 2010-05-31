@@ -20,11 +20,6 @@ namespace AW2.Game.Gobs
         private Vector2 _targetPos;
 
         /// <summary>
-        /// Floating bullet original position
-        /// </summary>
-        private Vector2 _originalPos;
-
-        /// <summary>
         /// Flag if floating bullet has stopped once
         /// </summary>
         private bool _bulletStopped;
@@ -48,39 +43,10 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-
-            // Slow down the floating bullet if it hasn't stopped before
-            if (!_bulletStopped)
-            {
-                Move *= 0.957f;
-            }
-
-            // When mine has nearly stopped start animating (this condition will succeed only once per floating bullet)
-            if (!_bulletStopped && Move.Length() < 1)
-            {
-                _bulletStopped = true;
-                _targetPos = Pos;
-                _originalPos = Pos;
-                _targetCircle = new Circle(_originalPos, 15);
-            }
-
-            // Set movement vector to zero always when floating bullet has stopped
             if (_bulletStopped)
-            {
-                Move = Vector2.Zero;
-            }
-
-            // If floating bullet has stopped and current target position is same than current position randomize next target
-            if (_bulletStopped && _targetPos == Pos && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
-            {
-                SetNewTargetPos(Geometry.GetRandomLocation(_targetCircle));
-            }
-
-            // If floating bullet is stopped and current target positions is not the same than current position update the floating bullet position
-            if (_bulletStopped && _targetPos != Pos)
-            {
-                Pos = _movementCurve.Evaluate(Arena.TotalTime);
-            }
+                UpdateStoppedBullet();
+            else
+                UpdateMovingBullet();
         }
 
         public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
@@ -88,6 +54,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
+                writer.Write((bool)_bulletStopped);
                 writer.WriteHalf(_targetPos);
             }
         }
@@ -99,12 +66,41 @@ namespace AW2.Game.Gobs
             if (_bulletStopped) Pos = oldPos;
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
+                bool oldBulletStopped = _bulletStopped;
+                _bulletStopped = reader.ReadBoolean();
                 var newTargetPos = reader.ReadHalfVector2();
-                if (newTargetPos != _targetPos)
-                {
-                    _bulletStopped = true;
+                if ((!oldBulletStopped && _bulletStopped) || (oldBulletStopped && newTargetPos != _targetPos))
                     SetNewTargetPos(newTargetPos);
-                }
+            }
+        }
+
+        private void UpdateStoppedBullet()
+        {
+            Move = Vector2.Zero;
+            if (_targetPos != Pos || AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            {
+                // Update the floating bullet position
+                Pos = _movementCurve.Evaluate(Arena.TotalTime);
+            }
+            else
+            {
+                // Randomize next target position
+                SetNewTargetPos(Geometry.GetRandomLocation(_targetCircle));
+            }
+        }
+
+        private void UpdateMovingBullet()
+        {
+            // Slow down the floating bullet
+            Move *= 0.957f;
+
+            // When mine has nearly stopped start animating (this condition will succeed only once per floating bullet)
+            if (Move.Length() < 1 && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+            {
+                _bulletStopped = true;
+                _targetPos = Pos;
+                _targetCircle = new Circle(Pos, 15);
+                SetNewTargetPos(Geometry.GetRandomLocation(_targetCircle));
             }
         }
 

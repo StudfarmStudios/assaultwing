@@ -26,11 +26,7 @@ namespace AW2.Game
             public Message(string text)
             {
                 GameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
-                /*
-                if (GameTime.TotalHours >= 1)
-                    Text = string.Format("<{0}:{1:d2}:{2:d2}> {3}", (int)GameTime.TotalHours, GameTime.Minutes, GameTime.Seconds, text);
-                else
-                    Text = string.Format("<{0}:{1:d2}> {2}", (int)GameTime.TotalMinutes, GameTime.Seconds, text);*/
+                Text = text;
             }
         }
 

@@ -498,11 +498,11 @@ namespace AW2.Game
         /// </summary>
         public void Dispose()
         {
-            for (int i = 0; i < _collisionAreas.Length; ++i)
-                _collisionAreas[i] = null;
             UnloadContent();
             foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
+            for (int i = 0; i < _collisionAreas.Length; ++i)
+                _collisionAreas[i] = null;
         }
 
         /// <summary>

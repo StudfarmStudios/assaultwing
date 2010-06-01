@@ -136,6 +136,11 @@ namespace AW2.Net
             return new TimeSpan(ReadInt64());
         }
 
+        public Color WriteColor()
+        {
+            return new Color { PackedValue = ReadUInt32() };
+        }
+
         /// <summary>
         /// Reads a Vector2 value given in half precision.
         /// </summary>

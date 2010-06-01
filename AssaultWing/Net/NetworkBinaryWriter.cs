@@ -160,6 +160,11 @@ namespace AW2.Net
             Write((long)timeSpan.Ticks);
         }
 
+        public void Write(Color color)
+        {
+            Write((uint)color.PackedValue);
+        }
+
         /// <summary>
         /// Writes a Vector2 value using half precision.
         /// </summary>

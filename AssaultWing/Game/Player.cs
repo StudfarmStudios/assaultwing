@@ -471,10 +471,10 @@ namespace AW2.Game
             Ship = null;
         }
 
-        public static Color DEFAULT_COLOR = new Color(1f, 1f, 1f, 1f);
-        public static Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f, 1f);
-        public static Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f, 1f);
-        public static Color KILL_COLOR = new Color(0.2f, 1f, 0.2f, 1f);
+        public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f, 1f);
+        public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f, 1f);
+        public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f, 1f);
+        public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f, 1f);
 
         public void SendMessage(string message)
         {

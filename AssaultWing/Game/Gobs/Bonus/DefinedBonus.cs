@@ -32,7 +32,8 @@ namespace AW2.Game.Gobs.Bonus
                 ((BonusMessage)gob).IconName = gameAction.BonusIconName;
                 AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
             });
-            player.BonusActions.AddOrReplace(gameAction);     
+            player.BonusActions.AddOrReplace(gameAction);
+            player.SendMessage("You collected " + gameAction.BonusText, Player.BONUS_COLOR);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace AW2.Graphics
 
         public override Point Dimensions
         {
-            get { return new Point(450, _chatBoxFont.LineSpacing * VISIBLE_LINES); }
+            get { return new Point(600, _chatBoxFont.LineSpacing * VISIBLE_LINES); }
         }
 
         static ChatBoxOverlay()
@@ -35,7 +35,7 @@ namespace AW2.Graphics
         public ChatBoxOverlay(Player player)
             : base(HorizontalAlignment.Center, VerticalAlignment.Center)
         {
-            CustomAlignment = new Vector2(0, 200);
+            CustomAlignment = new Vector2(0, 300);
             _player = player;
         }
 
@@ -47,13 +47,15 @@ namespace AW2.Graphics
             {
                 float alpha = g_messageFadeoutCurve.Evaluate(_player.Messages[messageI].GameTime.SecondsAgoGameTime());
                 if (alpha == 0) continue;
-                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Text, messagePos, new Color(1f, 1f, 1f, alpha));
+                messagePos = new Vector2((Dimensions.X - _chatBoxFont.MeasureString(_player.Messages[messageI].Text).X) / 2, messagePos.Y);
+                _player.Messages[messageI].TextColor.A = new Color(1f, 1f, 1f, alpha).A;
+                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Text, messagePos, _player.Messages[messageI].TextColor);
             }
         }
 
         public override void LoadContent()
         {
-            _chatBoxFont = AssaultWing.Instance.Content.Load<SpriteFont>("ConsoleFont");
+            _chatBoxFont = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontBig");
         }
 
         public override void UnloadContent()

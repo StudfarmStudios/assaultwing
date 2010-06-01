@@ -22,13 +22,15 @@ namespace AW2.Game
         {
             public TimeSpan GameTime { get; private set; }
             public string Text { get; private set; }
+            public Color TextColor;
             public Message(string text)
             {
                 GameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                
                 if (GameTime.TotalHours >= 1)
                     Text = string.Format("<{0}:{1:d2}:{2:d2}> {3}", (int)GameTime.TotalHours, GameTime.Minutes, GameTime.Seconds, text);
                 else
-                    Text = string.Format("<{0}:{1:d2}> {2}", (int)GameTime.TotalMinutes, GameTime.Seconds, text);
+                    Text = string.Format("<{0}:{1:d2}> {2}", (int)GameTime.TotalMinutes, GameTime.Seconds, text);                
             }
         }
 
@@ -426,9 +428,9 @@ namespace AW2.Game
             Ship = null;
 
             // Notify the player about his death and possible killer about his frag.
-            SendMessage("Death by " + cause.ToPersonalizedString(this));
+            SendMessage("Death by " + cause.ToPersonalizedString(this), DEATH_COLOR);
             if (cause.IsKill)
-                cause.Killer.Owner.SendMessage("You nailed " + Name);
+                cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
             
             // Schedule the making of a new ship, lives permitting.
             _shipSpawnTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
@@ -469,17 +471,31 @@ namespace AW2.Game
             Ship = null;
         }
 
+        public static Color DEFAULT_COLOR = new Color(1f, 1f, 1f, 1f);
+        public static Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f, 1f);
+        public static Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f, 1f);
+        public static Color KILL_COLOR = new Color(0.2f, 1f, 0.2f, 1f);
+
+        public void SendMessage(string message)
+        {
+            SendMessage(message, DEFAULT_COLOR);
+        }
+
         /// <summary>
         /// Sends a message to the player. The message will be displayed on the player's screen.
         /// </summary>
-        public void SendMessage(string message)
+        public void SendMessage(string message, Color messageColor)
         {
+            message = message.Replace("\n", " ");
+
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && IsRemote)
             {
                 var messageMessage = new PlayerMessageMessage { PlayerId = Id, Text = message };
                 AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(messageMessage);
             }
-            Messages.Add(new Message(message));
+            Message msg = new Message(message);
+            msg.TextColor = messageColor;
+            Messages.Add(msg);
 
             // Throw away very old messages.
             if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)

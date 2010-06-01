@@ -14,6 +14,7 @@ using AW2.Net.Messages;
 using AW2.Settings;
 using AW2.Sound;
 using AW2.UI;
+using AW2.UI.Mouse;
 
 namespace AW2
 {
@@ -805,17 +806,17 @@ namespace AW2
 
             PlayerControls plr2Controls;
 #if false // mouse control
-            //plr2Controls.thrust = new MouseDirection(MouseDirections.Up, 2, 7, 5, 1);
-            plr2Controls.thrust = new MouseButton(MouseButtons.Left);
-            plr2Controls.left = new MouseDirection(MouseDirections.Left, 2, 9, 5, 1);
-            plr2Controls.right = new MouseDirection(MouseDirections.Right, 2, 9, 5, 1);
-            plr2Controls.down = new MouseDirection(MouseDirections.Down, 2, 12, 5, 1);
-            //plr2Controls.fire1 = new MouseDirection(MouseDirections.Down, 0, 12, 20, 1);
-            //plr2Controls.fire2 = new MouseButton(MouseButtons.Right);
-            plr2Controls.fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1, 1);
-            plr2Controls.fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1, 1);
-            plr2Controls.extra = new KeyboardKey(Keys.CapsLock);
-            uiEngine.MouseControlsEnabled = true;
+            //plr2Controls.Thrust = new MouseDirection(MouseDirections.Up, 2, 7, 5);
+            plr2Controls.Thrust = new MouseButton(MouseButtons.Left);
+            plr2Controls.Left = new MouseDirection(MouseDirections.Left, 2, 9, 5);
+            plr2Controls.Right = new MouseDirection(MouseDirections.Right, 2, 9, 5);
+            plr2Controls.Down = new MouseDirection(MouseDirections.Down, 2, 12, 5);
+            //plr2Controls.Fire1 = new MouseDirection(MouseDirections.Down, 0, 12, 20);
+            //plr2Controls.Fire2 = new MouseButton(MouseButtons.Right);
+            plr2Controls.Fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1);
+            plr2Controls.Fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1);
+            plr2Controls.Extra = new KeyboardKey(Keys.CapsLock);
+            _uiEngine.MouseControlsEnabled = true;
 #else
             plr2Controls.Thrust = new KeyboardKey(Keys.W);
             plr2Controls.Left = new KeyboardKey(Keys.A);

@@ -20,6 +20,7 @@ namespace AW2.Graphics
         Texture2D barMainTexture;
         Texture2D iconWeaponLoadTexture;
         Texture2D barSpecialTexture;
+        Texture2D barLoadAmountTexture;
 
         /// <summary>
         /// The dimensions of the component in pixels.
@@ -132,6 +133,15 @@ namespace AW2.Graphics
                     charge2BarRect, Color.White, 0,
                     new Vector2(barSpecialTexture.Width, 0) / 2,
                     1, SpriteEffects.None, 0);
+                Rectangle loadAmount2BarRect = new Rectangle(0, 0,
+                    (int)Math.Ceiling((player.Ship.Weapon2.FireCharge) / player.Ship.Weapon2.ChargeMax
+                    * barSpecialTexture.Width),
+                    barSpecialTexture.Height);
+                spriteBatch.Draw(barLoadAmountTexture,
+                    new Vector2(statusDisplayTexture.Width, 40 * 2) / 2 + new Vector2((int)MathHelper.Clamp(charge2BarRect.Width - loadAmount2BarRect.Width, 0, int.MaxValue), 0),
+                    loadAmount2BarRect, Color.White, 0,
+                    new Vector2(barSpecialTexture.Width, 0) / 2,
+                    1, SpriteEffects.None, 0);
             }
 
             // Secondary weapon loadedness
@@ -167,6 +177,7 @@ namespace AW2.Graphics
             barMainTexture = content.Load<Texture2D>("gui_playerinfo_bar_main");
             iconWeaponLoadTexture = content.Load<Texture2D>("gui_playerinfo_loaded");
             barSpecialTexture = content.Load<Texture2D>("gui_playerinfo_bar_special");
+            barLoadAmountTexture = content.Load<Texture2D>("gui_playerinfo_bar_loadamount");
         }
 
         /// <summary>

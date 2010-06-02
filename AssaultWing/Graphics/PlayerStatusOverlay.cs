@@ -133,15 +133,19 @@ namespace AW2.Graphics
                     charge2BarRect, Color.White, 0,
                     new Vector2(barSpecialTexture.Width, 0) / 2,
                     1, SpriteEffects.None, 0);
-                Rectangle loadAmount2BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling((player.Ship.Weapon2.FireCharge) / player.Ship.Weapon2.ChargeMax
-                    * barSpecialTexture.Width),
-                    barSpecialTexture.Height);
-                spriteBatch.Draw(barLoadAmountTexture,
-                    new Vector2(statusDisplayTexture.Width, 40 * 2) / 2 + new Vector2((int)MathHelper.Clamp(charge2BarRect.Width - loadAmount2BarRect.Width, 0, int.MaxValue), 0),
-                    loadAmount2BarRect, Color.White, 0,
-                    new Vector2(barSpecialTexture.Width, 0) / 2,
-                    1, SpriteEffects.None, 0);
+
+                if (player.Ship.Weapon2.FireMode == AW2.Game.GobUtils.ShipDevice.FireModeType.Single)
+                {
+                    Rectangle loadAmount2BarRect = new Rectangle(0, 0,
+                        (int)Math.Ceiling((player.Ship.Weapon2.FireCharge) / player.Ship.Weapon2.ChargeMax
+                        * barSpecialTexture.Width),
+                        barSpecialTexture.Height);
+                    spriteBatch.Draw(barLoadAmountTexture,
+                        new Vector2(statusDisplayTexture.Width, 40 * 2) / 2 + new Vector2((int)MathHelper.Clamp(charge2BarRect.Width - loadAmount2BarRect.Width, 0, int.MaxValue), 0),
+                        loadAmount2BarRect, Color.White, 0,
+                        new Vector2(barSpecialTexture.Width, 0) / 2,
+                        1, SpriteEffects.None, 0);
+                }
             }
 
             // Secondary weapon loadedness

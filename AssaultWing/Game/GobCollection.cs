@@ -203,10 +203,13 @@ namespace AW2.Game
             finally
             {
                 --_isEnumerating;
-                foreach (var gob in _addedGobs) Add(gob);
-                foreach (var gob in _removedGobs) Remove(gob, true);
-                _addedGobs.Clear();
-                _removedGobs.Clear();
+                if (_isEnumerating == 0)
+                {
+                    foreach (var gob in _addedGobs) Add(gob);
+                    foreach (var gob in _removedGobs) Remove(gob, true);
+                    _addedGobs.Clear();
+                    _removedGobs.Clear();
+                }
             }
         }
 

@@ -316,7 +316,7 @@ namespace AW2.Menu
 
                     // Prepare and start playing the game.
                     menuEngine.ProgressBarAction(AssaultWing.Instance.PrepareFirstArena,
-                        () => AssaultWing.Instance.NetworkEngine.MessageHandlers.AddRange(MessageHandlers.GetGameplayHandlers((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection)));
+                        () => MessageHandlers.ActivateHandlers(MessageHandlers.GetGameplayHandlers((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection)));
                     menuEngine.Deactivate();
                 }
             }

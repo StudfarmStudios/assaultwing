@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
@@ -101,10 +102,7 @@ namespace AW2
         private int _framesSinceLastCheck;
         private GameState _gameState;
         private IWindow _window; // use this and not Game.Window
-
-        // Fields for game server starting an arena
-        private bool _startingArenaOnServer;
-        private List<int> _startedArenaOnClients = new List<int>();
+        private ArenaStartWaiter _arenaStartWaiter;
 
         // HACK: Debug keys
         private Control _musicSwitch;
@@ -572,13 +570,8 @@ namespace AW2
         {
             if (NetworkMode == NetworkMode.Server)
             {
-                _startingArenaOnServer = true;
-                _startedArenaOnClients.Clear();
-                NetworkEngine.GameClientConnections.Send(new ArenaStartRequest());
-                NetworkEngine.MessageHandlers.Add(new MessageHandler<ArenaStartReply>(false, NetworkEngine.GameClientConnections, mess =>
-                {
-                    _startedArenaOnClients.Add(mess.ConnectionId);
-                }));
+                _arenaStartWaiter = new ArenaStartWaiter(NetworkEngine.GameClientConnections);
+                _arenaStartWaiter.BeginWait();
             }
             else
                 StartArenaImpl();
@@ -880,14 +873,11 @@ namespace AW2
 
         protected override void Update(GameTime gameTime)
         {
-            if (_startingArenaOnServer)
+            if (_arenaStartWaiter != null && _arenaStartWaiter.IsEverybodyReady)
             {
-                if (NetworkEngine.GameClientConnections.Connections.All(
-                    conn => _startedArenaOnClients.Contains(conn.Id)))
-                {
-                    _startingArenaOnServer = false;
-                    StartArenaImpl();
-                }
+                _arenaStartWaiter.Dispose();
+                _arenaStartWaiter = null;
+                StartArenaImpl();
             }
 
             // Switch music off

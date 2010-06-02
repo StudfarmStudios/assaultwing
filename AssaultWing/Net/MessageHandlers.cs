@@ -9,6 +9,19 @@ namespace AW2.Net
 {
     public static class MessageHandlers
     {
+        public static void ActivateHandlers(IEnumerable<IMessageHandler> handlers)
+        {
+            AssaultWing.Instance.NetworkEngine.MessageHandlers.AddRange(handlers);
+        }
+
+        public static void DeactivateHandlers(IEnumerable<IMessageHandler> handlers)
+        {
+            var net = AssaultWing.Instance.NetworkEngine;
+            var handlerTypesToRemove = handlers.Select(handler => handler.GetType());
+            foreach (var handler in net.MessageHandlers)
+                if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
+        }
+
         public static IEnumerable<IMessageHandler> GetGameplayHandlers(PingedConnection gameServerConnection)
         {
             yield return new MessageHandler<WallHoleMessage>(false, gameServerConnection, HandleWallHoleMessage);
@@ -17,14 +30,12 @@ namespace AW2.Net
             yield return new MessageHandler<PlayerMessageMessage>(false, gameServerConnection, HandlePlayerMessageMessage);
         }
 
-        // TODO !!! someone must call this when gameplay ends
-        public static void DeactivateGameplayHandlers()
+        public static IEnumerable<IMessageHandler> GetServerArenaStartHandlers(IConnection clientConnections, Action<int> idRegisterer)
         {
-            var net = AssaultWing.Instance.NetworkEngine;
-            var handlerTypesToRemove = GetGameplayHandlers(null).Select(handler => handler.GetType());
-            foreach (var handler in net.MessageHandlers)
-                if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
+            yield return new MessageHandler<ArenaStartReply>(false, clientConnections, mess => idRegisterer(mess.ConnectionId));
         }
+
+        #region Handler implementations
 
         private static void HandleWallHoleMessage(WallHoleMessage mess)
         {
@@ -47,5 +58,7 @@ namespace AW2.Net
             if (player == null) throw new ApplicationException("Text message for spectator " + mess.PlayerId + " who is not a Player");
             player.SendMessage(mess.Text);
         }
+
+        #endregion
     }
 }

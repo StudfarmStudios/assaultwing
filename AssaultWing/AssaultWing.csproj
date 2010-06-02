@@ -82,6 +82,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ArenaStartWaiter.cs" />
     <Compile Include="AssaultWing.cs" />
     <Compile Include="Game\ArenaBin.cs" />
     <Compile Include="Game\ArenaLoadException.cs" />

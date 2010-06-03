@@ -1,4 +1,6 @@
-﻿namespace AW2.Net.Messages
+﻿using AW2.Helpers;
+
+namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client updating
@@ -32,7 +34,7 @@
             // int: gob identifier
             // float: gob damage level
             writer.Write((int)GobId);
-            writer.Write((float)DamageLevel);
+            writer.Write((Half)DamageLevel);
         }
 
         /// <summary>
@@ -43,7 +45,7 @@
         {
             base.Deserialize(reader);
             GobId = reader.ReadInt32();
-            DamageLevel = reader.ReadSingle();
+            DamageLevel = reader.ReadHalf();
         }
 
         /// <summary>

@@ -1616,14 +1616,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="weapondefs\ForwardShot_bouncegun.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>ForwardShot_bouncegun</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="weapondefs\ForwardShot_dummyweapontype.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>ForwardShot_dummyweapontype</Name>

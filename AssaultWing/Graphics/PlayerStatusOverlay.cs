@@ -99,6 +99,19 @@ namespace AW2.Graphics
                     charge1BarRect, Color.White, 0,
                     new Vector2(barMainTexture.Width, 0) / 2,
                     1, SpriteEffects.None, 0);
+
+                if (player.Ship.ExtraDevice.FireMode == AW2.Game.GobUtils.ShipDevice.FireModeType.Single)
+                {
+                    Rectangle loadAmount1BarRect = new Rectangle(0, 0,
+                        (int)Math.Ceiling(player.Ship.ExtraDevice.FireCharge / player.Ship.ExtraDevice.ChargeMax
+                        * barMainTexture.Width),
+                        barMainTexture.Height);
+                    spriteBatch.Draw(barLoadAmountTexture,
+                        new Vector2(statusDisplayTexture.Width, 24 * 2) / 2 + new Vector2((int)MathHelper.Clamp(charge1BarRect.Width - loadAmount1BarRect.Width, 0, int.MaxValue), 0),
+                        loadAmount1BarRect, Color.White, 0,
+                        new Vector2(barMainTexture.Width, 0) / 2,
+                        1, SpriteEffects.None, 0);
+                }
             }
 
             // Extra device loadedness

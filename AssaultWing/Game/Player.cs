@@ -471,6 +471,7 @@ namespace AW2.Game
         public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f, 1f);
         public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f, 1f);
         public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f, 1f);
+        public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
 
         public void SendMessage(string message)
         {

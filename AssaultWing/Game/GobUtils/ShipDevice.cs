@@ -309,8 +309,24 @@ namespace AW2.Game.GobUtils
             if (fail) AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
         }
 
+        private bool cannotFireFlagged = false;
+
         public virtual void Update()
         {
+            // Stuff for sending messages when device is loaded (done only for singlefire types)
+            if (FireMode == FireModeType.Single && ownerHandle != OwnerHandleType.PrimaryWeapon)
+            {
+                if (!CanFire && !cannotFireFlagged)
+                {
+                    cannotFireFlagged = true;
+                }
+                else if (CanFire && cannotFireFlagged)
+                {
+                    cannotFireFlagged = false;
+                    PlayerOwner.SendMessage(TypeName + " ready to use", Player.PLAYER_STATUS_COLOR);
+                }
+            }
+            
             _flashAndBangCreated = false;
             bool shootOnceAFrame = shotSpacing <= 0;
             bool shotThisFrame = false;

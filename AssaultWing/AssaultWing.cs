@@ -822,7 +822,7 @@ namespace AW2
 #endif
 
             Player player1 = new Player("Kaiser Lohengramm", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
-            Player player2 = new Player("John Crichton", (CanonicalString)"Bugger", (CanonicalString)"bouncegun", (CanonicalString)"reverse thruster", plr2Controls);
+            Player player2 = new Player("John Crichton", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
             DataEngine.Spectators.Add(player1);
             DataEngine.Spectators.Add(player2);
 

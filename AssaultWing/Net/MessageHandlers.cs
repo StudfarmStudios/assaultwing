@@ -27,7 +27,9 @@ namespace AW2.Net
             yield return new MessageHandler<WallHoleMessage>(false, gameServerConnection, HandleWallHoleMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, gameServerConnection, AssaultWing.Instance.DataEngine.ProcessGobCreationMessage);
             yield return new MessageHandler<ArenaStartRequest>(false, gameServerConnection, HandleArenaStartRequest);
+            yield return new MessageHandler<ArenaFinishMessage>(false, gameServerConnection, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, gameServerConnection, HandlePlayerMessageMessage);
+            yield return new MessageHandler<GobDamageMessage>(false, gameServerConnection, HandleGobDamageMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetServerArenaStartHandlers(IConnection clientConnections, Action<int> idRegisterer)
@@ -52,11 +54,23 @@ namespace AW2.Net
             AssaultWing.Instance.StartArena();
         }
 
+        private static void HandleArenaFinishMessage(ArenaFinishMessage mess)
+        {
+            AssaultWing.Instance.FinishArena();
+        }
+
         private static void HandlePlayerMessageMessage(PlayerMessageMessage mess)
         {
             var player = AssaultWing.Instance.DataEngine.Spectators.First(spec => spec.Id == mess.PlayerId) as Player;
             if (player == null) throw new ApplicationException("Text message for spectator " + mess.PlayerId + " who is not a Player");
             player.SendMessage(mess.Text);
+        }
+
+        private static void HandleGobDamageMessage(GobDamageMessage mess)
+        {
+            Gob gob = AssaultWing.Instance.DataEngine.Arena.Gobs.FirstOrDefault(gobb => gobb.Id == mess.GobId);
+            if (gob == null) return; // Skip updates for gobs we haven't yet created.
+            gob.DamageLevel = mess.DamageLevel;
         }
 
         #endregion

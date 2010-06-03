@@ -301,15 +301,6 @@ namespace AW2.Game
                     }
                 }
                 {
-                    GobDamageMessage message = null;
-                    while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobDamageMessage>()) != null)
-                    {
-                        Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.Id == message.GobId);
-                        if (gob == null) continue; // Skip updates for gobs we haven't yet created.
-                        gob.DamageLevel = message.DamageLevel;
-                    }
-                }
-                {
                     PlayerUpdateMessage message = null;
                     while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<PlayerUpdateMessage>()) != null)
                     {

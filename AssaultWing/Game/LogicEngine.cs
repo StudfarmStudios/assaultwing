@@ -79,12 +79,6 @@ namespace AW2.Game
                 if (data.GameplayMode.ArenaFinished(data.Arena, data.Players))
                     AssaultWing.Instance.FinishArena();
             }
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-            {
-                var message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<ArenaFinishMessage>();
-                if (message != null)
-                    AssaultWing.Instance.FinishArena();
-            }
         }
 
         /// <summary>

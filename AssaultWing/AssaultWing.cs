@@ -704,6 +704,7 @@ namespace AW2
         {
             if (NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers(null));
             NetworkEngine.StopServer();
             NetworkMode = NetworkMode.Standalone;
         }
@@ -880,6 +881,7 @@ namespace AW2
                 _arenaStartWaiter.EndWait();
                 _arenaStartWaiter = null;
                 MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers(null));
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers(NetworkEngine.GameClientConnections));
                 StartArenaImpl();
             }
 

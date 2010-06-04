@@ -42,6 +42,11 @@ namespace AW2.Net
             yield return new MessageHandler<JoinGameRequest>(false, clientConnections, HandleJoinGameRequest);
         }
 
+        public static IEnumerable<IMessageHandler> GetServerGameplayHandlers(IConnection clientConnections)
+        {
+            yield return new MessageHandler<PlayerControlsMessage>(false, clientConnections, AW2.UI.UIEngineImpl.HandlePlayerControlsMessage);
+        }
+
         public static IEnumerable<IMessageHandler> GetServerArenaStartHandlers(IConnection clientConnections, Action<int> idRegisterer)
         {
             yield return new MessageHandler<ArenaStartReply>(false, clientConnections, mess => idRegisterer(mess.ConnectionId));

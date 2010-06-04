@@ -2,7 +2,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
-using AW2.Net;
 using AW2.Net.Messages;
 
 namespace AW2.UI
@@ -10,29 +9,30 @@ namespace AW2.UI
     /// <summary>
     /// Basic user interface implementation.
     /// </summary>
-    class UIEngineImpl : GameComponent
+    public class UIEngineImpl : GameComponent
     {
         /// <summary>
         /// The state of input controls in the previous frame.
         /// </summary>
-        private InputState oldState;
+        private InputState _oldState;
 
         /// <summary>
         /// True iff mouse input is eaten by the game.
         /// </summary>
-        bool eatMouse;
+        private bool _eatMouse;
 
         /// <summary>
         /// If mouse input is being consumed for the purposes of using the mouse
         /// for game controls. Such consumption prevents other programs from using
         /// the mouse in any practical manner. Defaults to <b>false</b>.
         /// </summary>
-        public bool MouseControlsEnabled { get { return eatMouse; } set { eatMouse = value; } }
+        public bool MouseControlsEnabled { get { return _eatMouse; } set { _eatMouse = value; } }
 
-        public UIEngineImpl(Microsoft.Xna.Framework.Game game) : base(game)
+        public UIEngineImpl(Microsoft.Xna.Framework.Game game)
+            : base(game)
         {
-            oldState = InputState.GetState();
-            eatMouse = false;
+            _oldState = InputState.GetState();
+            _eatMouse = false;
         }
 
         /// <summary>
@@ -41,38 +41,32 @@ namespace AW2.UI
         /// <param name="gameTime">Time elapsed since the last call to Update</param>
         public override void Update(GameTime gameTime)
         {
-            InputState newState = InputState.GetState();
+            var newState = InputState.GetState();
 
             // Reset mouse cursor to the middle of the game window.
-            if (eatMouse)
+            if (_eatMouse)
                 Microsoft.Xna.Framework.Input.Mouse.SetPosition(
                     AssaultWing.Instance.ClientBounds.Width / 2,
                     AssaultWing.Instance.ClientBounds.Height / 2);
 
-            Control.SetState(ref oldState, ref newState);
+            Control.SetState(ref _oldState, ref newState);
+            _oldState = newState;
+        }
 
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+        public static void HandlePlayerControlsMessage(PlayerControlsMessage mess)
+        {
+            var player = AssaultWing.Instance.DataEngine.Spectators.First(plr => plr.Id == mess.PlayerId);
+            if (player.ConnectionId != mess.ConnectionId)
             {
-                // Fetch control messages from game clients.
-                PlayerControlsMessage message = null;
-                while ((message = AssaultWing.Instance.NetworkEngine.GameClientConnections.Messages.TryDequeue<PlayerControlsMessage>()) != null)
-                {
-                    var player = AssaultWing.Instance.DataEngine.Spectators.First(plr => plr.Id == message.PlayerId);
-                    if (player.ConnectionId != message.ConnectionId)
-                    {
-                        // A client sent controls for a player that lives on another game instance.
-                        // We silently ignore the controls.
-                        continue;
-                    }
-                    foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
-                        SetRemoteControlState((RemoteControl)player.Controls[control], message.GetControlState(control));
-                    var playerPlayer = player as Player;
-                    if (playerPlayer != null && playerPlayer.Ship != null)
-                        playerPlayer.Ship.LocationPredicter.StoreControlStates(message.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageAge(message));
-                }
+                // A client sent controls for a player that lives on another game instance.
+                // We silently ignore the controls.
+                return;
             }
-
-            oldState = newState;
+            foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
+                SetRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
+            var playerPlayer = player as Player;
+            if (playerPlayer != null && playerPlayer.Ship != null)
+                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageAge(mess));
         }
 
         private static void SetRemoteControlState(RemoteControl control, ControlState state)

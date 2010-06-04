@@ -124,6 +124,7 @@
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\MainMenuComponent.cs" />
     <Compile Include="Menu\MenuComponent.cs" />
+    <Compile Include="Menu\MenuComponentType.cs" />
     <Compile Include="Menu\MenuEngineImpl.cs">
       <SubType>Code</SubType>
       <Name>MenuEngineImpl</Name>

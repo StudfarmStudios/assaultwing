@@ -46,7 +46,6 @@ namespace AW2
         private GraphicsEngineImpl _graphicsEngine;
         private OverlayDialog _overlayDialog;
         private LogicEngine _logicEngine;
-        private IMenuEngine _menuEngine;
         private int _preferredWindowWidth, _preferredWindowHeight;
         private SurfaceFormat _preferredWindowFormat;
         private int _preferredFullscreenWidth, _preferredFullscreenHeight;
@@ -133,6 +132,7 @@ namespace AW2
         public DataEngine DataEngine { get; private set; }
         public NetworkEngine NetworkEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
+        public IMenuEngine MenuEngine { get; private set; }
 
         /// <summary>
         /// The current state of the game.
@@ -290,7 +290,7 @@ namespace AW2
             GraphicsDeviceManager.PreferredBackBufferHeight = ClientBounds.Height;
             GraphicsDeviceManager.ApplyChanges();
             if (_graphicsEngine != null) _graphicsEngine.WindowResize();
-            if (_menuEngine != null) _menuEngine.WindowResize();
+            if (MenuEngine != null) MenuEngine.WindowResize();
         }
 
         private void StartArenaImpl()
@@ -333,7 +333,7 @@ namespace AW2
             _logicEngine = new LogicEngine(this);
             SoundEngine = new SoundEngine(this);
             _graphicsEngine = new GraphicsEngineImpl(this);
-            _menuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
+            MenuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
             NetworkEngine = new NetworkEngine(this);
             _overlayDialog = new OverlayDialog(this);
             DataEngine = new DataEngine();
@@ -345,14 +345,14 @@ namespace AW2
             SoundEngine.UpdateOrder = 3;
             _graphicsEngine.UpdateOrder = 4;
             _overlayDialog.UpdateOrder = 5;
-            _menuEngine.UpdateOrder = 6;
+            MenuEngine.UpdateOrder = 6;
 
             Components.Add(_logicEngine);
             Components.Add(_graphicsEngine);
             Components.Add(_overlayDialog);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
-            Components.Add(_menuEngine);
+            Components.Add(MenuEngine);
             Components.Add(NetworkEngine);
             Services.AddService(typeof(NetworkEngine), NetworkEngine);
             Services.AddService(typeof(DataEngine), DataEngine);
@@ -361,8 +361,8 @@ namespace AW2
             // Disable all optional components.
             _logicEngine.Enabled = false;
             _graphicsEngine.Visible = false;
-            _menuEngine.Enabled = false;
-            _menuEngine.Visible = false;
+            MenuEngine.Enabled = false;
+            MenuEngine.Visible = false;
             _overlayDialog.Enabled = false;
             _overlayDialog.Visible = false;
         }
@@ -451,8 +451,8 @@ namespace AW2
                     _graphicsEngine.Visible = true;
                     break;
                 case GameState.Menu:
-                    _menuEngine.Enabled = true;
-                    _menuEngine.Visible = true;
+                    MenuEngine.Enabled = true;
+                    MenuEngine.Visible = true;
                     break;
                 case GameState.OverlayDialog:
                     _overlayDialog.Enabled = true;
@@ -475,8 +475,8 @@ namespace AW2
                     _graphicsEngine.Visible = false;
                     break;
                 case GameState.Menu:
-                    _menuEngine.Enabled = false;
-                    _menuEngine.Visible = false;
+                    MenuEngine.Enabled = false;
+                    MenuEngine.Visible = false;
                     break;
                 case GameState.OverlayDialog:
                     _overlayDialog.Enabled = false;
@@ -600,7 +600,7 @@ namespace AW2
         {
             Log.Write("Entering menus");
             DataEngine.ClearGameState();
-            _menuEngine.Activate();
+            MenuEngine.Activate();
             GameState = GameState.Menu;
         }
 
@@ -676,7 +676,7 @@ namespace AW2
             {
                 NetworkEngine.StartClient(serverAddress, connectionHandler);
             }
-            catch (Exception e)
+            catch (System.Net.Sockets.SocketException e)
             {
                 Log.Write("Could not start client: " + e.Message);
                 NetworkMode = NetworkMode.Standalone;
@@ -691,7 +691,7 @@ namespace AW2
         {
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
         }
@@ -923,12 +923,6 @@ namespace AW2
             lock (GraphicsDevice) base.Draw(GameTime);
         }
 
-        /// <summary>
-        /// Raises an <see cref="Microsoft.Xna.Framework.Game.Exiting"/> event.
-        /// </summary>
-        /// <param name="sender">The Game.</param>
-        /// <param name="args">Arguments for the 
-        /// <see cref="Microsoft.Xna.Framework.Game.Exiting"/> event.</param>
         protected override void OnExiting(object sender, EventArgs args)
         {
             // If progress bar is running, kill its thread.

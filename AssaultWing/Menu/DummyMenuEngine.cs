@@ -9,7 +9,7 @@ namespace AW2.Menu
     /// <summary>
     /// A dummy implementation of a menu engine.
     /// </summary>
-    class DummyMenuEngine : IMenuEngine
+    public class DummyMenuEngine : IMenuEngine
     {
         bool enabled;
         bool visible;
@@ -43,6 +43,10 @@ namespace AW2.Menu
         public void Activate() { }
 
         public void WindowResize() { }
+
+        public void ProgressBarAction(Action asyncAction, Action finishAction) { }
+
+        public void Deactivate() { }
 
         #endregion
 

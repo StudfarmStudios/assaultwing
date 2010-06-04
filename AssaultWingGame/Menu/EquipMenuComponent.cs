@@ -31,7 +31,6 @@ namespace AW2.Menu
         /// </summary>
         enum EquipMenuItem { Ship, Extra, Weapon2 }
 
-        bool serverIsCreatingGobs; // HACK: for initialising arena on client
         Control controlBack, controlDone;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
@@ -77,7 +76,6 @@ namespace AW2.Menu
                     menuEngine.IsProgressBarVisible = false;
                     menuEngine.IsHelpTextVisible = true;
                     CreateSelectors();
-                    serverIsCreatingGobs = false;
                 }
             }
         }
@@ -153,9 +151,7 @@ namespace AW2.Menu
             {
                 CheckGeneralControls();
                 CheckPlayerControls();
-                CheckNetwork();
             }
-            if (serverIsCreatingGobs) CheckNetwork(); // HACK: done for inactive menu also to allow client to initialise and start arena
         }
 
         /// <summary>
@@ -258,33 +254,6 @@ namespace AW2.Menu
             if (!condition) return;
             cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
             action();
-        }
-
-        private void CheckNetwork()
-        {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-            {
-                var message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<StartGameMessage>();
-                if (message != null)
-                {
-                    message.DeserializePlayers(playerID =>
-                    {
-                        var player = (Player)AssaultWing.Instance.DataEngine.Spectators.FirstOrDefault(p => p.Id == playerID);
-                        if (player == null)
-                        {
-                            player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
-                            AssaultWing.Instance.DataEngine.Spectators.Add(player);
-                        }
-                        return player;
-                    });
-                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(message.ArenaPlaylist);
-
-                    // Prepare and start playing the game.
-                    menuEngine.ProgressBarAction(AssaultWing.Instance.PrepareFirstArena,
-                        () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection)));
-                    menuEngine.Deactivate();
-                }
-            }
         }
 
         /// <summary>

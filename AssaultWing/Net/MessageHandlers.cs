@@ -22,9 +22,9 @@ namespace AW2.Net
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(PingedConnection gameServerConnection)
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(IConnection gameServerConnection)
         {
-            yield break;
+            yield return new MessageHandler<StartGameMessage>(false, gameServerConnection, HandleStartGameMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(PingedConnection gameServerConnection)
@@ -54,6 +54,28 @@ namespace AW2.Net
         }
 
         #region Handler implementations
+
+        private static void HandleStartGameMessage(StartGameMessage mess)
+        {
+            mess.DeserializePlayers(playerID =>
+            {
+                var player = (Player)AssaultWing.Instance.DataEngine.Spectators.FirstOrDefault(p => p.Id == playerID);
+                if (player == null)
+                {
+                    player = new Player("uninitialised", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, 0x7ea1eaf);
+                    AssaultWing.Instance.DataEngine.Spectators.Add(player);
+                }
+                return player;
+            });
+            AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null));
+
+            // Prepare and start playing the game.
+            var menuEngine = AssaultWing.Instance.MenuEngine;
+            menuEngine.ProgressBarAction(AssaultWing.Instance.PrepareFirstArena,
+                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection)));
+            menuEngine.Deactivate();
+        }
 
         private static void HandleWallHoleMessage(WallHoleMessage mess)
         {

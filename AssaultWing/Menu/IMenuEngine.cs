@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace AW2.Menu
 {
@@ -32,5 +33,8 @@ namespace AW2.Menu
         /// Reacts to a system window resize.
         /// </summary>
         void WindowResize();
+
+        void ProgressBarAction(Action asyncAction, Action finishAction);
+        void Deactivate();
     }
 }

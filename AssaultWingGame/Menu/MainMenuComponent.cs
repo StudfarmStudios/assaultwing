@@ -247,53 +247,43 @@ namespace AW2.Menu
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
                 AssaultWing.Instance.Settings.Net.ConnectAddress = connectAddress.Content;
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-                AssaultWing.Instance.StartClient(connectAddress.Content, result =>
-                {
-                    var net = AssaultWing.Instance.NetworkEngine;
-                    if (!result.Successful)
-                    {
-                        Log.Write("Failed to connect to server: " + result.Error);
-                        AssaultWing.Instance.StopClient();
-                        return;
-                    }
-                    Log.Write("Client connected to " + result.Value.RemoteEndPoint);
-
-                    // HACK: Force one local player.
-                    AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
-
-                    // Send a game join request to the game server.
-                    JoinGameRequest joinGameRequest = new JoinGameRequest();
-                    joinGameRequest.PlayerInfos = new List<PlayerInfo>();
-                    foreach (var player in AssaultWing.Instance.DataEngine.Players)
-                        joinGameRequest.PlayerInfos.Add(new PlayerInfo(player));
-                    net.GameServerConnection.Send(joinGameRequest);
-
-                    // Handle one JoinGameReply from the game server.
-                    net.MessageHandlers.Add(new MessageHandler<JoinGameReply>(true, net.GameServerConnection, reply =>
-                    {
-                        foreach (JoinGameReply.IdChange change in reply.PlayerIdChanges)
-                            AssaultWing.Instance.DataEngine.Spectators.First(player => player.Id == change.oldId).Id = change.newId;
-                        CanonicalString.CanonicalForms = reply.CanonicalStrings;
-                        Log.Write("Game server accepted joining");
-                        menuEngine.ActivateComponent(MenuComponentType.Equip);
-                    }));
-
-                    // Handle PlayerBonusMessages from the game server.
-                    /*
-                    net.MessageHandlers.Add(new MessageHandler<PlayerBonusMessage>(false, net.GameServerConnection, message =>
-                    {
-                        //TODO: Fix this
-                        
-                        var expiryTime = message.ExpiryTime + net.ServerGameTimeOffset;
-                        var player = AssaultWing.Instance.DataEngine.Players.First(p => p.Id == message.PlayerId);
-                        if (expiryTime <= AssaultWing.Instance.GameTime.ElapsedGameTime)
-                            player.RemoveBonus(message.BonusTypes);
-                        else
-                            player.AddBonus(message.BonusTypes, message.ExpiryTime);
-                    }));
-                     * */
-                });
+                AssaultWing.Instance.StartClient(connectAddress.Content, ClientConnectedCallback);
             };
+        }
+
+        private void ClientConnectedCallback(Result<Connection> result)
+        {
+            if (!result.Successful)
+            {
+                Log.Write("Failed to connect to server: " + result.Error);
+                AssaultWing.Instance.StopClient();
+                return;
+            }
+            Log.Write("Client connected to " + result.Value.RemoteEndPoint);
+
+            var net = AssaultWing.Instance.NetworkEngine;
+            var handlers = MessageHandlers.GetClientMenuHandlers(net.GameServerConnection);
+            MessageHandlers.ActivateHandlers(handlers);
+
+            // HACK: Force one local player.
+            AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
+
+            // Send a game join request to the game server.
+            JoinGameRequest joinGameRequest = new JoinGameRequest();
+            joinGameRequest.PlayerInfos = new List<PlayerInfo>();
+            foreach (var player in AssaultWing.Instance.DataEngine.Players)
+                joinGameRequest.PlayerInfos.Add(new PlayerInfo(player));
+            net.GameServerConnection.Send(joinGameRequest);
+
+            // Handle one JoinGameReply from the game server.
+            net.MessageHandlers.Add(new MessageHandler<JoinGameReply>(true, net.GameServerConnection, reply =>
+            {
+                foreach (JoinGameReply.IdChange change in reply.PlayerIdChanges)
+                    AssaultWing.Instance.DataEngine.Spectators.First(player => player.Id == change.oldId).Id = change.newId;
+                CanonicalString.CanonicalForms = reply.CanonicalStrings;
+                Log.Write("Game server accepted joining");
+                menuEngine.ActivateComponent(MenuComponentType.Equip);
+            }));
         }
 
         private void InitializeControlCallbacks()

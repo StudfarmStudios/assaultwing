@@ -31,7 +31,7 @@ namespace AW2.Core
         {
             CheckDisposed();
             var handlers = MessageHandlers.GetServerArenaStartHandlers(_connections, (id) => _readyIDs.Add(id));
-            AssaultWing.Instance.NetworkEngine.MessageHandlers.AddRange(handlers);
+            MessageHandlers.ActivateHandlers(handlers);
             _connections.Send(new ArenaStartRequest());
         }
 

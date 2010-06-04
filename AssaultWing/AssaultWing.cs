@@ -20,53 +20,6 @@ using AW2.UI.Mouse;
 namespace AW2
 {
     /// <summary>
-    /// The state of the game.
-    /// </summary>
-    public enum GameState
-    {
-        /// <summary>
-        /// The game is initialising.
-        /// </summary>
-        Initializing,
-
-        /// <summary>
-        /// The game is active.
-        /// </summary>
-        Gameplay,
-
-        /// <summary>
-        /// The game overlay dialog is visible, game is active but paused.
-        /// </summary>
-        OverlayDialog,
-
-        /// <summary>
-        /// The menu is active.
-        /// </summary>
-        Menu,
-    }
-
-    /// <summary>
-    /// Mode of network operation.
-    /// </summary>
-    public enum NetworkMode
-    {
-        /// <summary>
-        /// Acting as a standalone game session, no networking involved.
-        /// </summary>
-        Standalone,
-
-        /// <summary>
-        /// Acting as a client in a game session.
-        /// </summary>
-        Client,
-
-        /// <summary>
-        /// Acting as a server in a game session.
-        /// </summary>
-        Server,
-    }
-
-    /// <summary>
     /// The main class of the Assault Wing game. A singleton class.
     /// </summary>
     /// Game components can be requested from the AssaultWing.Services property.
@@ -738,6 +691,7 @@ namespace AW2
         {
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
         }

@@ -84,6 +84,8 @@
   <ItemGroup>
     <Compile Include="Core\ArenaStartWaiter.cs" />
     <Compile Include="AssaultWing.cs" />
+    <Compile Include="Core\GameState.cs" />
+    <Compile Include="Core\NetworkMode.cs" />
     <Compile Include="Game\ArenaBin.cs" />
     <Compile Include="Game\ArenaLoadException.cs" />
     <Compile Include="Game\BonusActions\SelfDestructBonusAction.cs" />
@@ -254,6 +256,7 @@
     <Compile Include="Net\NetworkBinaryReader.cs" />
     <Compile Include="Net\NetworkBinaryWriter.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
+    <Compile Include="Net\NetworkException.cs" />
     <Compile Include="Net\PingedConnection.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\SerializationModeFlags.cs" />

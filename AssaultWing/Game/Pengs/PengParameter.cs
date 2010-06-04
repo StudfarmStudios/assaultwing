@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 using AW2.Helpers;
 
 namespace AW2.Game.Pengs

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
@@ -16,7 +17,7 @@ namespace AW2.Menu
     /// <summary>
     /// The main menu component where the user can choose to go play, go setup, or go away.
     /// </summary>
-    class MainMenuComponent : MenuComponent
+    public class MainMenuComponent : MenuComponent
     {
         #region Fields
 

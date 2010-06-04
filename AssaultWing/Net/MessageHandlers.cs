@@ -34,6 +34,7 @@ namespace AW2.Net
             yield return new MessageHandler<ArenaStartRequest>(false, gameServerConnection, HandleArenaStartRequest);
             yield return new MessageHandler<ArenaFinishMessage>(false, gameServerConnection, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, gameServerConnection, HandlePlayerMessageMessage);
+            yield return new MessageHandler<PlayerUpdateMessage>(false, gameServerConnection, HandlePlayerUpdateMessage);
             yield return new MessageHandler<GobDamageMessage>(false, gameServerConnection, HandleGobDamageMessage);
         }
 
@@ -77,8 +78,16 @@ namespace AW2.Net
         private static void HandlePlayerMessageMessage(PlayerMessageMessage mess)
         {
             var player = AssaultWing.Instance.DataEngine.Spectators.First(spec => spec.Id == mess.PlayerId) as Player;
-            if (player == null) throw new ApplicationException("Text message for spectator " + mess.PlayerId + " who is not a Player");
+            if (player == null) throw new NetworkException("Text message for spectator " + mess.PlayerId + " who is not a Player");
             player.SendMessage(mess.Text);
+        }
+
+        private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)
+        {
+            var messageAge = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
+            var player = AssaultWing.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.Id == mess.PlayerId);
+            if (player == null) throw new NetworkException("Update for unknown player ID " + mess.PlayerId);
+            mess.Read(player, SerializationModeFlags.VaryingData, messageAge);
         }
 
         private static void HandleGobDamageMessage(GobDamageMessage mess)

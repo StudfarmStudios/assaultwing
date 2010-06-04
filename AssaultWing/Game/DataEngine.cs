@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Core;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Graphics;
@@ -298,16 +299,6 @@ namespace AW2.Game
                     {
                         var messageAge = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
                         message.ReadGobs(gobId => Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId), SerializationModeFlags.VaryingData, messageAge);
-                    }
-                }
-                {
-                    PlayerUpdateMessage message = null;
-                    while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<PlayerUpdateMessage>()) != null)
-                    {
-                        var messageAge = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
-                        var player = Spectators.FirstOrDefault(plr => plr.Id == message.PlayerId);
-                        if (player == null) throw new ArgumentException("Update for unknown player ID " + message.PlayerId);
-                        message.Read(player, SerializationModeFlags.VaryingData, messageAge);
                     }
                 }
             }

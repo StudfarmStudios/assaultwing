@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Messages;

@@ -261,42 +261,6 @@ namespace AW2.Menu
 
         private void CheckNetwork()
         {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-            {
-                // Handle JoinGameRequests from game clients.
-                JoinGameRequest message = null;
-                while ((message = AssaultWing.Instance.NetworkEngine.GameClientConnections.Messages.TryDequeue<JoinGameRequest>()) != null)
-                {
-                    // Send player ID changes for new players, if any. A join game request
-                    // may also update the chosen equipment of a previously added player.
-                    JoinGameReply reply = new JoinGameReply();
-                    var playerIdChanges = new List<JoinGameReply.IdChange>();
-                    foreach (PlayerInfo info in message.PlayerInfos)
-                    {
-                        var oldPlayer = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(
-                            plr => plr.ConnectionId == message.ConnectionId && plr.Id == info.id);
-                        if (oldPlayer != null)
-                        {
-                            oldPlayer.Name = info.name;
-                            oldPlayer.ShipName = info.shipTypeName;
-                            oldPlayer.Weapon2Name = info.weapon2TypeName;
-                            oldPlayer.ExtraDeviceName = info.extraDeviceTypeName;
-                        }
-                        else
-                        {
-                            Player player = new Player(info.name, info.shipTypeName, info.weapon2TypeName, info.extraDeviceTypeName, message.ConnectionId);
-                            AssaultWing.Instance.DataEngine.Spectators.Add(player);
-                            playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
-                        }
-                    }
-                    if (playerIdChanges.Count > 0)
-                    {
-                        reply.CanonicalStrings = AW2.Helpers.CanonicalString.CanonicalForms;
-                        reply.PlayerIdChanges = playerIdChanges.ToArray();
-                        AssaultWing.Instance.NetworkEngine.GameClientConnections[message.ConnectionId].Send(reply);
-                    }
-                }
-            }
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
                 var message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<StartGameMessage>();
@@ -316,7 +280,7 @@ namespace AW2.Menu
 
                     // Prepare and start playing the game.
                     menuEngine.ProgressBarAction(AssaultWing.Instance.PrepareFirstArena,
-                        () => MessageHandlers.ActivateHandlers(MessageHandlers.GetGameplayHandlers((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection)));
+                        () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection)));
                     menuEngine.Deactivate();
                 }
             }

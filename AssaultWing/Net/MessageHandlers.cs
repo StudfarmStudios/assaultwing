@@ -22,7 +22,12 @@ namespace AW2.Net
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
         }
 
-        public static IEnumerable<IMessageHandler> GetGameplayHandlers(PingedConnection gameServerConnection)
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(PingedConnection gameServerConnection)
+        {
+            yield break;
+        }
+
+        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(PingedConnection gameServerConnection)
         {
             yield return new MessageHandler<WallHoleMessage>(false, gameServerConnection, HandleWallHoleMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, gameServerConnection, AssaultWing.Instance.DataEngine.ProcessGobCreationMessage);
@@ -30,6 +35,11 @@ namespace AW2.Net
             yield return new MessageHandler<ArenaFinishMessage>(false, gameServerConnection, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, gameServerConnection, HandlePlayerMessageMessage);
             yield return new MessageHandler<GobDamageMessage>(false, gameServerConnection, HandleGobDamageMessage);
+        }
+
+        public static IEnumerable<IMessageHandler> GetServerMenuHandlers(IConnection clientConnections)
+        {
+            yield return new MessageHandler<JoinGameRequest>(false, clientConnections, HandleJoinGameRequest);
         }
 
         public static IEnumerable<IMessageHandler> GetServerArenaStartHandlers(IConnection clientConnections, Action<int> idRegisterer)
@@ -71,6 +81,38 @@ namespace AW2.Net
             Gob gob = AssaultWing.Instance.DataEngine.Arena.Gobs.FirstOrDefault(gobb => gobb.Id == mess.GobId);
             if (gob == null) return; // Skip updates for gobs we haven't yet created.
             gob.DamageLevel = mess.DamageLevel;
+        }
+
+        private static void HandleJoinGameRequest(JoinGameRequest mess)
+        {
+            // Send player ID changes for new players, if any. A join game request
+            // may also update the chosen equipment of a previously added player.
+            var reply = new JoinGameReply();
+            var playerIdChanges = new List<JoinGameReply.IdChange>();
+            foreach (var info in mess.PlayerInfos)
+            {
+                var oldPlayer = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(
+                    plr => plr.ConnectionId == mess.ConnectionId && plr.Id == info.id);
+                if (oldPlayer != null)
+                {
+                    oldPlayer.Name = info.name;
+                    oldPlayer.ShipName = info.shipTypeName;
+                    oldPlayer.Weapon2Name = info.weapon2TypeName;
+                    oldPlayer.ExtraDeviceName = info.extraDeviceTypeName;
+                }
+                else
+                {
+                    Player player = new Player(info.name, info.shipTypeName, info.weapon2TypeName, info.extraDeviceTypeName, mess.ConnectionId);
+                    AssaultWing.Instance.DataEngine.Spectators.Add(player);
+                    playerIdChanges.Add(new JoinGameReply.IdChange { oldId = info.id, newId = player.Id });
+                }
+            }
+            if (playerIdChanges.Count > 0)
+            {
+                reply.CanonicalStrings = AW2.Helpers.CanonicalString.CanonicalForms;
+                reply.PlayerIdChanges = playerIdChanges.ToArray();
+                AssaultWing.Instance.NetworkEngine.GameClientConnections[mess.ConnectionId].Send(reply);
+            }
         }
 
         #endregion

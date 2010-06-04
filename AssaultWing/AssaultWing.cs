@@ -686,6 +686,8 @@ namespace AW2
             try
             {
                 NetworkEngine.StartServer(connectionHandler);
+                var handlers = MessageHandlers.GetServerMenuHandlers(NetworkEngine.GameClientConnections);
+                NetworkEngine.MessageHandlers.AddRange(handlers);
             }
             catch (Exception e)
             {
@@ -875,8 +877,9 @@ namespace AW2
         {
             if (_arenaStartWaiter != null && _arenaStartWaiter.IsEverybodyReady)
             {
-                _arenaStartWaiter.Dispose();
+                _arenaStartWaiter.EndWait();
                 _arenaStartWaiter = null;
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers(null));
                 StartArenaImpl();
             }
 

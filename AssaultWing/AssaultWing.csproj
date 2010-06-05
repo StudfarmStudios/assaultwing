@@ -137,6 +137,7 @@
     <Compile Include="Game\GobUtils\ChargeProvider.cs" />
     <Compile Include="Game\GobUtils\WallIndexMap.cs" />
     <Compile Include="Game\LogicEngine.cs" />
+    <Compile Include="Game\Pengs\ConstantValue.cs" />
     <Compile Include="Game\Pengs\CurveLerpKey.cs" />
     <Compile Include="Game\Pengs\CurveLerpKeyCollection.cs" />
     <Compile Include="Game\Pengs\Particle.cs" />

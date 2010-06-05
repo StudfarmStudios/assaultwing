@@ -25,37 +25,31 @@ namespace AW2.Game.Pengs
     /// </summary>
     public class CurveLerp : PengParameter
     {
-        private float _min;
-        private float _max;
-        private float _randomAmplitude;
-        private int _randomMixer;
-        private CurveLerpKeyCollection _keys;
-
         /// <summary>
         /// The least possible value of the parameter. 
         /// </summary>
-        public float Min { get { return _min; } set { _min = value; } }
+        private float _min;
 
         /// <summary>
         /// The greatest possible value of the parameter. 
         /// </summary>
-        public float Max { get { return _max; } set { _max = value; } }
+        private float _max;
 
         /// <summary>
         /// The maximum shift a particle's random seed can cause in the
         /// value of the parameter.
         /// </summary>
-        public float RandomAmplitude { get { return _randomAmplitude; } set { _randomAmplitude = value; } }
+        private float _randomAmplitude;
 
         /// <summary>
         /// Mixing value of particle random values.
         /// </summary>
-        public int RandomMixer { get { return _randomMixer; } set { _randomMixer = value; } }
+        private int _randomMixer;
 
         /// <summary>
         /// The curve lerp's keys.
         /// </summary>
-        public CurveLerpKeyCollection Keys { get { return _keys; } }
+        private CurveLerpKeyCollection _keys;
 
         /// <summary>
         /// This constructor is for serialisation only.
@@ -65,6 +59,7 @@ namespace AW2.Game.Pengs
             _min = 0;
             _max = 1;
             _randomAmplitude = 0.3f;
+            _randomMixer = 1234;
             _keys = new CurveLerpKeyCollection();
             Curve curve0 = new Curve();
             curve0.Keys.Add(new CurveKey(0, 0.3f));
@@ -76,13 +71,6 @@ namespace AW2.Game.Pengs
             _keys.Add(new CurveLerpKey(1, curve1));
         }
 
-        /// <summary>
-        /// Returns the particle management parameter's value for the given arguments.
-        /// </summary>
-        /// <param name="age">Particle age, usually between 0 (newborn) and 1 (dead).</param>
-        /// <param name="input">External peng input value, between 0 and 1.</param>
-        /// <param name="random">Particle random seed.</param>
-        /// <returns>Parameter's value for the given arguments</returns>
         public float GetValue(float age, float input, int random)
         {
             float value = float.NaN;

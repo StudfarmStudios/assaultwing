@@ -1,4 +1,4 @@
-//#define VERY_SMALL_TRIANGLES_ARE_COLLIDABLE // TODO: #undefine
+//#define VERY_SMALL_TRIANGLES_ARE_COLLIDABLE // #define this only if large areas of walls become fly-through
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -236,6 +236,24 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Methods related to gobs' functionality in the game world
+
+        public override void Serialize(Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        {
+            // HACK to reduce network traffic
+            var reducedMode = (mode & AW2.Net.SerializationModeFlags.ConstantData) != 0
+                ? AW2.Net.SerializationModeFlags.All
+                : AW2.Net.SerializationModeFlags.None;
+            base.Serialize(writer, reducedMode);
+        }
+
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            // HACK to reduce network traffic
+            var reducedMode = (mode & AW2.Net.SerializationModeFlags.ConstantData) != 0
+                ? AW2.Net.SerializationModeFlags.All
+                : AW2.Net.SerializationModeFlags.None;
+            base.Deserialize(reader, reducedMode, messageAge);
+        }
 
         public WallIndexMap CreateIndexMap()
         {

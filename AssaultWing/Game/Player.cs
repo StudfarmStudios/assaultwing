@@ -611,37 +611,39 @@ namespace AW2.Game
             Ship = null;
             Gob.CreateGob(_shipTypeName, gob =>
             {
-                if (!(gob is Ship))
-                    throw new Exception("Cannot create non-ship ship for player (" + gob.GetType().Name + ")");
-                var arena = AssaultWing.Instance.DataEngine.Arena;
+                if (!(gob is Ship)) throw new ApplicationException("Wrong type for Player's ship: " + gob.GetType().Name);
                 Ship newShip = (Ship)gob;
                 newShip.Owner = this;
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
-
-                // Find a starting place for the new ship.
-                // Use player spawn areas if there's any. Otherwise just randomise a position.
-                var spawns =
-                    from g in arena.Gobs
-                    let spawn = g as SpawnPlayer
-                    where spawn != null
-                    let safeness = spawn.GetSafeness()
-                    orderby safeness descending
-                    select spawn;
-                var bestSpawn = spawns.FirstOrDefault();
-                if (bestSpawn == null)
-                {
-                    var newShipPos = arena.GetFreePosition(newShip,
-                        new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, arena.Dimensions));
-                    newShip.ResetPos(newShipPos, newShip.Move, newShip.Rotation);
-                }
-                else
-                    bestSpawn.Spawn(newShip);
-
-                arena.Gobs.Add(newShip);
+                PositionShip(newShip);
+                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(newShip);
                 Ship = newShip;
             });
+        }
+
+        private void PositionShip(Ship ship)
+        {
+            var arena = AssaultWing.Instance.DataEngine.Arena;
+
+            // Use player spawn areas if there's any. Otherwise just randomise a position.
+            var spawns =
+                from g in arena.Gobs
+                let spawn = g as SpawnPlayer
+                where spawn != null
+                let threat = spawn.GetThreat(this)
+                orderby threat ascending
+                select spawn;
+            var bestSpawn = spawns.FirstOrDefault();
+            if (bestSpawn == null)
+            {
+                var newShipPos = arena.GetFreePosition(ship,
+                    new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, arena.Dimensions));
+                ship.ResetPos(newShipPos, ship.Move, ship.Rotation);
+            }
+            else
+                bestSpawn.Spawn(ship);
         }
 
         /// <summary>

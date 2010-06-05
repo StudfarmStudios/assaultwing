@@ -238,8 +238,9 @@ namespace AW2.Game.Gobs
             coordinateSystem = CoordinateSystem.Game;
             particles = new List<Particle>();
 
-            // Set a better default than class Gob does.
+            // Set better defaults than class Gob does.
             DrawMode2D = new DrawMode2D(DrawModeType2D.Transparent);
+            movable = false;
 
             // Remove default collision areas set by class Gob so that we don't need to explicitly state
             // in each peng's XML definition that there are no collision areas.
@@ -272,27 +273,24 @@ namespace AW2.Game.Gobs
 
         #region Methods related to gobs' functionality in the game world
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
+        public override void Activate()
+        {
+            base.Activate();
+            movable = false; // Peng stays put or moves with its leader
+        }
+
         public override void LoadContent()
         {
             base.LoadContent();
             emitter.LoadContent();
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         public override void UnloadContent()
         {
             base.UnloadContent();
             emitter.UnloadContent();
         }
 
-        /// <summary>
-        /// Updates the gob according to physical laws.
-        /// </summary>
         public override void Update()
         {
             base.Update();

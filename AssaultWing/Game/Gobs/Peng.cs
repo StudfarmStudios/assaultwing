@@ -342,22 +342,22 @@ namespace AW2.Game.Gobs
             foreach (Particle particle in particles)
             {
                 // Find out particle's center's position on screen.
-                Vector2 posCenter = particle.pos;
+                Vector2 posCenter = particle.Pos;
                 if (coordinateSystem == CoordinateSystem.Peng)
                     posCenter = Vector2.Transform(posCenter, pengToGame);
                 Vector2 screenCenter = Vector2.Transform(posCenter, gameToScreen);
 
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
-                float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.layerDepth, 0, 1);
-                Texture2D texture = emitter.Textures[particle.textureIndex];
+                float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
+                Texture2D texture = emitter.Textures[particle.TextureIndex];
                 float drawRotation = coordinateSystem == CoordinateSystem.Game
-                    ? particle.rotation
-                    : particle.rotation + Rotation;
+                    ? particle.Rotation
+                    : particle.Rotation + Rotation;
                 drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
                 spriteBatch.Draw(texture, screenCenter, null,
-                    new Color(new Vector4(pengColor.ToVector3(), particle.alpha)), drawRotation,
-                    new Vector2(texture.Width, texture.Height) / 2, particle.scale * scale,
+                    new Color(new Vector4(pengColor.ToVector3(), particle.Alpha)), drawRotation,
+                    new Vector2(texture.Width, texture.Height) / 2, particle.Scale * scale,
                     SpriteEffects.None, layerDepth);
             }
         }

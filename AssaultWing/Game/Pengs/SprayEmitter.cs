@@ -255,17 +255,20 @@ namespace AW2.Game.Pengs
                 // Set the thing's parameters.
                 if (emitType < textureNames.Length)
                 {
-                    var particle = new Particle();
-                    particle.alpha = 1;
-                    particle.birthTime = Peng.Arena.TotalTime;
-                    particle.move = move;
-                    particle.pengInput = pengInput;
-                    particle.pos = pos;
-                    particle.random = random;
-                    particle.direction = directionAngle;
-                    particle.rotation = rotation;
-                    particle.scale = 1;
-                    particle.textureIndex = emitType;
+                    var particle = new Particle
+                    {
+                        Alpha = 1,
+                        BirthTime = Peng.Arena.TotalTime,
+                        Move = move,
+                        PengInput = pengInput,
+                        Pos = pos,
+                        Random = random,
+                        Direction = directionAngle,
+                        DirectionVector = Vector2.UnitX.Rotate(directionAngle),
+                        Rotation = rotation,
+                        Scale = 1,
+                        TextureIndex = emitType,
+                    };
                     particles.Add(particle);
                 }
                 else

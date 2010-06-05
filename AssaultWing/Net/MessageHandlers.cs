@@ -101,7 +101,7 @@ namespace AW2.Net
         {
             var player = AssaultWing.Instance.DataEngine.Spectators.First(spec => spec.Id == mess.PlayerId) as Player;
             if (player == null) throw new NetworkException("Text message for spectator " + mess.PlayerId + " who is not a Player");
-            player.SendMessage(mess.Text);
+            player.SendMessage(mess.Text, mess.Color);
         }
 
         private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)

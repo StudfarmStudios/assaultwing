@@ -489,7 +489,7 @@ namespace AW2.Game
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && IsRemote)
             {
-                var messageMessage = new PlayerMessageMessage { PlayerId = Id, Text = message };
+                var messageMessage = new PlayerMessageMessage { PlayerId = Id, Color = messageColor, Text = message };
                 AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(messageMessage);
             }
             Message msg = new Message(message);

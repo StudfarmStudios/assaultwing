@@ -96,6 +96,7 @@ namespace AW2.Game.GobUtils
         private bool _flashAndBangCreated;
         private TimeSpan nextShot;
         private int shotsLeft;
+        private bool _cannotFireFlagged = false;
 
         #endregion
 
@@ -310,21 +311,22 @@ namespace AW2.Game.GobUtils
             if (fail) AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
         }
 
-        private bool cannotFireFlagged = false;
-
         public virtual void Update()
         {
-            // Stuff for sending messages when device is loaded (done only for singlefire types)
-            if (FireMode == FireModeType.Single && ownerHandle != OwnerHandleType.PrimaryWeapon)
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
-                if (!CanFire && !cannotFireFlagged)
+                // Stuff for sending messages when device is loaded (done only for singlefire types)
+                if (FireMode == FireModeType.Single && ownerHandle != OwnerHandleType.PrimaryWeapon)
                 {
-                    cannotFireFlagged = true;
-                }
-                else if (CanFire && cannotFireFlagged)
-                {
-                    cannotFireFlagged = false;
-                    PlayerOwner.SendMessage(TypeName + " ready to use", Player.PLAYER_STATUS_COLOR);
+                    if (!CanFire && !_cannotFireFlagged)
+                    {
+                        _cannotFireFlagged = true;
+                    }
+                    else if (CanFire && _cannotFireFlagged)
+                    {
+                        _cannotFireFlagged = false;
+                        PlayerOwner.SendMessage(TypeName + " ready to use", Player.PLAYER_STATUS_COLOR);
+                    }
                 }
             }
             

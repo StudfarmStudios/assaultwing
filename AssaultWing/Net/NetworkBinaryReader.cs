@@ -136,7 +136,7 @@ namespace AW2.Net
             return new TimeSpan(ReadInt64());
         }
 
-        public Color WriteColor()
+        public Color ReadColor()
         {
             return new Color { PackedValue = ReadUInt32() };
         }

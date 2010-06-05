@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 
 namespace AW2.Net.Messages
@@ -13,15 +12,18 @@ namespace AW2.Net.Messages
         protected static MessageType messageType = new MessageType(0x2b, false);
 
         public int PlayerId { get; set; }
+        public Color Color { get; set; }
         public string Text { get; set; }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             base.Serialize(writer);
             // Player message (request) message structure:
-            // int player ID
-            // variable_length_string message text
+            // int: player ID
+            // Color: message color
+            // variable_length_string message: text
             writer.Write((int)PlayerId);
+            writer.Write((Color)Color);
             writer.Write((string)Text);
         }
 
@@ -29,6 +31,7 @@ namespace AW2.Net.Messages
         {
             base.Deserialize(reader);
             PlayerId = reader.ReadInt32();
+            Color = reader.ReadColor();
             Text = reader.ReadString();
         }
 

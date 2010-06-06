@@ -8,6 +8,7 @@ using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Messages;
+using System.IO;
 
 namespace AW2.Net
 {
@@ -51,6 +52,7 @@ namespace AW2.Net
 
         #region Fields
 
+        private const string NETWORK_TRACE_FILE = "AWnetwork.log";
         private const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
 
         /// <summary>
@@ -316,10 +318,16 @@ namespace AW2.Net
 
         #region GameComponent methods
 
-        /// <summary>
-        /// Performs game logic.
-        /// </summary>
-        /// <param name="gameTime">Time elapsed since the last call to Update</param>
+        public override void Initialize()
+        {
+            base.Initialize();
+            if (File.Exists(NETWORK_TRACE_FILE))
+            {
+                Log.Write("Deleting old network trace file " + NETWORK_TRACE_FILE);
+                File.Delete(NETWORK_TRACE_FILE);
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             // Handle established connections.
@@ -373,12 +381,6 @@ namespace AW2.Net
 #endif
         }
 
-        /// <summary>
-        /// Releases the unmanaged resources used by the GameComponent 
-        /// and optionally releases the managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-        /// <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             _gameClientConnections.Dispose();

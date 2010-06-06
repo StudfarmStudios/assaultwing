@@ -258,7 +258,12 @@ namespace AW2.Game.Gobs
 
         private void CreateMesh()
         {
-            if (Shooter.Gob == null) return;
+            if (Shooter.Gob == null)
+            {
+                // This will happen if 'Shooter' cannot be found by its gob ID
+                _vertexData = new VertexPositionTexture[0];
+                return;
+            }
             var start = Shooter.Gob.GetNamedPosition(ShooterBoneIndex);
             if (Target.Gob != null)
             {

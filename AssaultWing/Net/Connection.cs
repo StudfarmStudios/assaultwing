@@ -477,37 +477,36 @@ namespace AW2.Net
 
         private static void ConfigureSocket(Socket socket)
         {
-            Log.Write("Configuring socket:\n  " + string.Join("\n  ", GetSocketInfoString(socket).ToArray()));
+            // TODO: Remove this log output from public release!!!
+            Log.Write("Configuring socket:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
             socket.NoDelay = true;
-            Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoString(socket).ToArray()));
+            Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
         }
 
-        private static IEnumerable<string> GetSocketInfoString(Socket socket)
+        private static IEnumerable<string> GetSocketInfoStrings(Socket socket)
         {
-            var info = new List<string>
+            return
+                from p in typeof(Socket).GetProperties()
+                let s = GetProperty(p, socket)
+                where s != null
+                orderby s ascending
+                select s;
+        }
+
+        private static string GetProperty(System.Reflection.PropertyInfo prop, Socket socket)
+        {
+            try
             {
-                "AddressFamily: " + socket.AddressFamily,
-                "Blocking: " + socket.Blocking,
-                "DontFragment: " + socket.DontFragment,
-                "ExclusiveAddressUse: " + socket.ExclusiveAddressUse,
-                "Handle: " + socket.Handle,
-                "IsBound: " + socket.IsBound,
-                "LingerState: Enabled = " + socket.LingerState.Enabled + ", LingerTime = " + socket.LingerState.LingerTime,
-                "LocalEndPoint: " + socket.LocalEndPoint,
-                "NoDelay: " + socket.NoDelay,
-                "ProtocolType: " + socket.ProtocolType,
-                "ReceiveBufferSize: " + socket.ReceiveBufferSize,
-                "ReceiveTimeout: " + socket.ReceiveTimeout,
-                "RemoteEndPoint: " + socket.RemoteEndPoint,
-                "SendBufferSize: " + socket.SendBufferSize,
-                "SendTimeout: " + socket.SendTimeout,
-                "SocketType: " + socket.SocketType,
-                "Ttl: " + socket.Ttl,
-                "UseOnlyOverlappedIO: " + socket.UseOnlyOverlappedIO,
+                if ((prop.Name == "EnableBroadcast" && socket.ProtocolType != ProtocolType.Udp) ||
+                    (prop.Name == "MulticastLoopback" && socket.ProtocolType == ProtocolType.Tcp))
+                    return null;
+                return prop.Name + ": " + prop.GetValue(socket, null).ToString();
+            }
+            catch (System.Reflection.TargetInvocationException e)
+            {
+                Log.Write("Error reading Socket property " + prop.Name + ": " + e);
             };
-            if (socket.ProtocolType == ProtocolType.Udp) info.Add("EnableBroadcast: " + socket.EnableBroadcast);
-            if (socket.ProtocolType != ProtocolType.Tcp) info.Add("MulticastLoopback: " + socket.MulticastLoopback);
-            return info;
+            return null;
         }
 
         #endregion Non-public methods

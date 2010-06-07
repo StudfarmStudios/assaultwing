@@ -535,6 +535,8 @@ namespace AW2
         /// </summary>
         public void FinishArena()
         {
+            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers(null));
             if (DataEngine.ArenaPlaylist.HasNext)
                 ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
             else
@@ -599,6 +601,8 @@ namespace AW2
         public void ShowMenu()
         {
             Log.Write("Entering menus");
+            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers(null));
             DataEngine.ClearGameState();
             MenuEngine.Activate();
             GameState = GameState.Menu;
@@ -691,7 +695,6 @@ namespace AW2
         {
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
         }
@@ -699,7 +702,6 @@ namespace AW2
         /// <summary>
         /// Loads graphical content required by an arena to DataEngine.
         /// </summary>
-        /// <param name="arena"></param>
         public void LoadArenaContent(Arena arena)
         {
             _graphicsEngine.LoadArenaContent(arena);

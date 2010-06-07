@@ -178,6 +178,7 @@ namespace AW2.Net
         public void StopServer()
         {
             Log.Write("Server stops listening");
+            MessageHandlers.Clear();
             Connection.StopListening();
             _gameClientConnections.Dispose();
         }
@@ -354,8 +355,7 @@ namespace AW2.Net
             // Update ping time measurements.
             ForEachConnection(connection => connection.Update());
 
-            RemoveDisposedMessageHandlers();
-            foreach (var handler in MessageHandlers) handler.HandleMessages();
+            foreach (var handler in MessageHandlers) if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
 
             // Handle occurred errors.

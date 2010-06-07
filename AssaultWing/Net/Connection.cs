@@ -475,7 +475,42 @@ namespace AW2.Net
             lock (_messages) if (MessageCallback != null) MessageCallback();
         }
 
-        #endregion Private methods
+        private static void ConfigureSocket(Socket socket)
+        {
+            Log.Write("Configuring socket:\n  " + string.Join("\n  ", GetSocketInfoString(socket).ToArray()));
+            socket.NoDelay = true;
+            Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoString(socket).ToArray()));
+        }
+
+        private static IEnumerable<string> GetSocketInfoString(Socket socket)
+        {
+            var info = new List<string>
+            {
+                "AddressFamily: " + socket.AddressFamily,
+                "Blocking: " + socket.Blocking,
+                "DontFragment: " + socket.DontFragment,
+                "ExclusiveAddressUse: " + socket.ExclusiveAddressUse,
+                "Handle: " + socket.Handle,
+                "IsBound: " + socket.IsBound,
+                "LingerState: Enabled = " + socket.LingerState.Enabled + ", LingerTime = " + socket.LingerState.LingerTime,
+                "LocalEndPoint: " + socket.LocalEndPoint,
+                "NoDelay: " + socket.NoDelay,
+                "ProtocolType: " + socket.ProtocolType,
+                "ReceiveBufferSize: " + socket.ReceiveBufferSize,
+                "ReceiveTimeout: " + socket.ReceiveTimeout,
+                "RemoteEndPoint: " + socket.RemoteEndPoint,
+                "SendBufferSize: " + socket.SendBufferSize,
+                "SendTimeout: " + socket.SendTimeout,
+                "SocketType: " + socket.SocketType,
+                "Ttl: " + socket.Ttl,
+                "UseOnlyOverlappedIO: " + socket.UseOnlyOverlappedIO,
+            };
+            if (socket.ProtocolType == ProtocolType.Udp) info.Add("EnableBroadcast: " + socket.EnableBroadcast);
+            if (socket.ProtocolType != ProtocolType.Tcp) info.Add("MulticastLoopback: " + socket.MulticastLoopback);
+            return info;
+        }
+
+        #endregion Non-public methods
 
         #region Private callback implementations
 
@@ -491,7 +526,7 @@ namespace AW2.Net
                 try
                 {
                     Socket socketToNewHost = state.Socket.EndAccept(asyncResult);
-                    socketToNewHost.NoDelay = true;
+                    ConfigureSocket(socketToNewHost);
                     var newConnection = new GameClientConnection(socketToNewHost);
                     _connectionResults.Do(queue =>
                     {
@@ -533,7 +568,7 @@ namespace AW2.Net
                 try
                 {
                     state.Socket.EndConnect(asyncResult);
-                    state.Socket.NoDelay = true;
+                    ConfigureSocket(state.Socket);
                     var newConnection = new GameServerConnection(state.Socket);
                     _connectionResults.Do(queue =>
                     {

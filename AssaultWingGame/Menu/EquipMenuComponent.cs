@@ -198,29 +198,25 @@ namespace AW2.Menu
                 if (player.IsRemote) return;
                 ++playerI;
 
-                ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, "MenuBrowseItem", () =>
                 {
                     if (_currentItems[playerI] > 0)
                         --_currentItems[playerI];
-                    AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 });
-                ConditionalPlayerAction(player.Controls.Down.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Down.Pulse, playerI, "MenuBrowseItem", () =>
                 {
                     if ((int)_currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
                         ++_currentItems[playerI];
-                    AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 });
 
                 int selectionChange = 0;
-                ConditionalPlayerAction(player.Controls.Left.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Left.Pulse, playerI, "MenuChangeItem", () =>
                 {
                     selectionChange = -1;
-                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 });
-                ConditionalPlayerAction(player.Controls.Fire1.Pulse || player.Controls.Right.Pulse, playerI, () =>
+                ConditionalPlayerAction(player.Controls.Fire1.Pulse || player.Controls.Right.Pulse, playerI, "MenuChangeItem", () =>
                 {
                     selectionChange = 1;
-                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 });
                 if (selectionChange != 0)
                 {
@@ -240,10 +236,11 @@ namespace AW2.Menu
         /// <summary>
         /// Helper for <seealso cref="CheckPlayerControls"/>
         /// </summary>
-        private void ConditionalPlayerAction(bool condition, int playerI, Action action)
+        private void ConditionalPlayerAction(bool condition, int playerI, string soundName, Action action)
         {
             if (!condition) return;
             _cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
+            if (soundName != null) AssaultWing.Instance.SoundEngine.PlaySound(soundName);
             action();
         }
 

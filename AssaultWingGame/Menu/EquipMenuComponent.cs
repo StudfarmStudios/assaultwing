@@ -24,44 +24,44 @@ namespace AW2.Menu
     /// Each pane, in its main mode, displays the player's selection of equipment.
     /// Each player can control their menu individually, and their current position
     /// in the menu main display is indicated by a cursor and a highlight.
-    class EquipMenuComponent : MenuComponent
+    public class EquipMenuComponent : MenuComponent
     {
         /// <summary>
         /// An item in a pane main display in the equip menu.
         /// </summary>
-        enum EquipMenuItem { Ship, Extra, Weapon2 }
+        private enum EquipMenuItem { Ship, Extra, Weapon2 }
 
-        Control controlBack, controlDone;
-        Vector2 pos; // position of the component's background texture in menu system coordinates
-        SpriteFont menuBigFont, menuSmallFont;
-        Texture2D backgroundTexture;
-        Texture2D cursorMainTexture, highlightMainTexture;
-        Texture2D playerPaneTexture, player1PaneTopTexture, player2PaneTopTexture;
-        Texture2D statusPaneTexture;
-        Texture2D tabEquipmentTexture, tabPlayersTexture, tabGameSettingsTexture, tabChatTexture, tabHilite;
-        Texture2D buttonReadyTexture, buttonReadyHiliteTexture;
+        private Control _controlBack, _controlDone;
+        private Vector2 _pos; // position of the component's background texture in menu system coordinates
+        private SpriteFont _menuBigFont, _menuSmallFont;
+        private Texture2D _backgroundTexture;
+        private Texture2D _cursorMainTexture, _highlightMainTexture;
+        private Texture2D _playerPaneTexture, _player1PaneTopTexture, _player2PaneTopTexture;
+        private Texture2D _statusPaneTexture;
+        private Texture2D _tabEquipmentTexture, _tabPlayersTexture, _tabGameSettingsTexture, _tabChatTexture, _tabHilite;
+        private Texture2D _buttonReadyTexture, _buttonReadyHiliteTexture;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
         /// Values range from 0 (transparent) to 255 (opaque).
         /// </summary>
-        Curve cursorFade;
+        private Curve _cursorFade;
 
         /// <summary>
         /// Time at which the cursor started fading for each player.
         /// </summary>
-        TimeSpan[] cursorFadeStartTimes;
+        private TimeSpan[] _cursorFadeStartTimes;
 
         /// <summary>
         /// Index of current item in each player's pane main display.
         /// </summary>
-        EquipMenuItem[] currentItems;
+        private EquipMenuItem[] _currentItems;
 
         /// <summary>
         /// Equipment selectors for each player and each aspect of the player's equipment.
         /// Indexed as [playerI, aspectI].
         /// </summary>
-        EquipmentSelector[,] equipmentSelectors;
+        private EquipmentSelector[,] _equipmentSelectors;
 
         /// <summary>
         /// Does the menu component react to input.
@@ -85,7 +85,7 @@ namespace AW2.Menu
         /// </summary>
         /// This is a good place to center the menu view to when the menu component
         /// is to be seen well on the screen.
-        public override Vector2 Center { get { return pos + new Vector2(750, 460); } }
+        public override Vector2 Center { get { return _pos + new Vector2(750, 460); } }
 
         /// <summary>
         /// Creates an equip menu component for a menu system.
@@ -94,57 +94,48 @@ namespace AW2.Menu
         public EquipMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            controlDone = new KeyboardKey(Keys.Enter);
-            controlBack = new KeyboardKey(Keys.Escape);
-            pos = new Vector2(0, 0);
-            currentItems = new EquipMenuItem[4];
-            cursorFadeStartTimes = new TimeSpan[4];
+            _controlDone = new KeyboardKey(Keys.Enter);
+            _controlBack = new KeyboardKey(Keys.Escape);
+            _pos = new Vector2(0, 0);
+            _currentItems = new EquipMenuItem[4];
+            _cursorFadeStartTimes = new TimeSpan[4];
 
-            cursorFade = new Curve();
-            cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
-            cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
-            cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
-            cursorFade.PreLoop = CurveLoopType.Cycle;
-            cursorFade.PostLoop = CurveLoopType.Cycle;
+            _cursorFade = new Curve();
+            _cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
+            _cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
+            _cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
+            _cursorFade.PreLoop = CurveLoopType.Cycle;
+            _cursorFade.PostLoop = CurveLoopType.Cycle;
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
-            menuBigFont = content.Load<SpriteFont>("MenuFontBig");
-            menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
-            backgroundTexture = content.Load<Texture2D>("menu_equip_bg");
-            cursorMainTexture = content.Load<Texture2D>("menu_equip_cursor_large");
-            highlightMainTexture = content.Load<Texture2D>("menu_equip_hilite_large");
-            playerPaneTexture = content.Load<Texture2D>("menu_equip_player_bg");
-            player1PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_green");
-            player2PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_red");
-            statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
+            _menuBigFont = content.Load<SpriteFont>("MenuFontBig");
+            _menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
+            _backgroundTexture = content.Load<Texture2D>("menu_equip_bg");
+            _cursorMainTexture = content.Load<Texture2D>("menu_equip_cursor_large");
+            _highlightMainTexture = content.Load<Texture2D>("menu_equip_hilite_large");
+            _playerPaneTexture = content.Load<Texture2D>("menu_equip_player_bg");
+            _player1PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_green");
+            _player2PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_red");
+            _statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
             
-            tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
-            tabPlayersTexture = content.Load<Texture2D>("menu_equip_tab_players");
-            tabGameSettingsTexture = content.Load<Texture2D>("menu_equip_tab_gamesettings");
-            tabChatTexture = content.Load<Texture2D>("menu_equip_tab_chat");
-            tabHilite = content.Load<Texture2D>("menu_equip_tab_hilite");
+            _tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
+            _tabPlayersTexture = content.Load<Texture2D>("menu_equip_tab_players");
+            _tabGameSettingsTexture = content.Load<Texture2D>("menu_equip_tab_gamesettings");
+            _tabChatTexture = content.Load<Texture2D>("menu_equip_tab_chat");
+            _tabHilite = content.Load<Texture2D>("menu_equip_tab_hilite");
 
-            buttonReadyTexture = content.Load<Texture2D>("menu_equip_btn_ready");
-            buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
+            _buttonReadyTexture = content.Load<Texture2D>("menu_equip_btn_ready");
+            _buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         public override void UnloadContent()
         {
             // The textures and fonts we reference will be disposed by GraphicsEngine.
         }
 
-        /// <summary>
-        /// Updates the menu component.
-        /// </summary>
         public override void Update()
         {
             if (Active)
@@ -160,23 +151,23 @@ namespace AW2.Menu
         private void CreateSelectors()
         {
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
-            equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Spectators.Count, aspectCount];
+            _equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Spectators.Count, aspectCount];
 
             int playerI = 0;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
-                equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
-                equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player);
-                equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player);
                 ++playerI;
             }
         }
 
         private void CheckGeneralControls()
         {
-            if (controlBack.Pulse)
+            if (_controlBack.Pulse)
                 menuEngine.ActivateComponent(MenuComponentType.Main);
-            else if (controlDone.Pulse)
+            else if (_controlDone.Pulse)
             {
                 switch (AssaultWing.Instance.NetworkMode)
                 {
@@ -209,14 +200,14 @@ namespace AW2.Menu
 
                 ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, () =>
                 {
-                    if (currentItems[playerI] > 0)
-                        --currentItems[playerI];
+                    if (_currentItems[playerI] > 0)
+                        --_currentItems[playerI];
                     AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 });
                 ConditionalPlayerAction(player.Controls.Down.Pulse, playerI, () =>
                 {
-                    if ((int)currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
-                        ++currentItems[playerI];
+                    if ((int)_currentItems[playerI] < Enum.GetValues(typeof(EquipMenuItem)).Length - 1)
+                        ++_currentItems[playerI];
                     AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 });
 
@@ -233,7 +224,7 @@ namespace AW2.Menu
                 });
                 if (selectionChange != 0)
                 {
-                    equipmentSelectors[playerI, (int)currentItems[playerI]].CurrentValue += selectionChange;
+                    _equipmentSelectors[playerI, (int)_currentItems[playerI]].CurrentValue += selectionChange;
 
                     // Send new equipment choices to the game server.
                     if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
@@ -252,7 +243,7 @@ namespace AW2.Menu
         private void ConditionalPlayerAction(bool condition, int playerI, Action action)
         {
             if (!condition) return;
-            cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
+            _cursorFadeStartTimes[playerI] = AssaultWing.Instance.GameTime.TotalRealTime;
             action();
         }
 
@@ -266,21 +257,21 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             var data = AssaultWing.Instance.DataEngine;
-            spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
+            spriteBatch.Draw(_backgroundTexture, _pos - view, Color.White);
 
             // Draw common tabs for both modes (network, standalone)
-            Vector2 tab1Pos = pos - view + new Vector2(341, 123);
+            Vector2 tab1Pos = _pos - view + new Vector2(341, 123);
             Vector2 tabWidth = new Vector2(97, 0);
-            spriteBatch.Draw(tabEquipmentTexture, tab1Pos, Color.White);
-            spriteBatch.Draw(tabPlayersTexture, tab1Pos + tabWidth, Color.White);
+            spriteBatch.Draw(_tabEquipmentTexture, tab1Pos, Color.White);
+            spriteBatch.Draw(_tabPlayersTexture, tab1Pos + tabWidth, Color.White);
             
             // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
-            spriteBatch.Draw(tabHilite, tab1Pos, Color.White);
+            spriteBatch.Draw(_tabHilite, tab1Pos, Color.White);
 
             // Draw chat tab
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
             {
-                spriteBatch.Draw(tabChatTexture, tab1Pos + (tabWidth * 2), Color.White);
+                spriteBatch.Draw(_tabChatTexture, tab1Pos + (tabWidth * 2), Color.White);
             }
             // Draw game settings tab
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone || AssaultWing.Instance.NetworkMode == NetworkMode.Server)
@@ -289,16 +280,16 @@ namespace AW2.Menu
                     ? tab1Pos + (tabWidth * 3)
                     : tab1Pos + (tabWidth * 2);
 
-                spriteBatch.Draw(tabGameSettingsTexture, tabGameSettingsPos, Color.White);
+                spriteBatch.Draw(_tabGameSettingsTexture, tabGameSettingsPos, Color.White);
             }
             
             // Draw ready button
-            spriteBatch.Draw(buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
+            spriteBatch.Draw(_buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
             // Draw ready buttom hilite (same size than button)
-            spriteBatch.Draw(buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), Color.White);
+            spriteBatch.Draw(_buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), Color.White);
 
             // Setup positions for statusdisplay texts
-            Vector2 statusDisplayTextPos = pos - view + new Vector2(885, 618);
+            Vector2 statusDisplayTextPos = _pos - view + new Vector2(885, 618);
             Vector2 statusDisplayRowHeight = new Vector2(0, 12);
             Vector2 statusDisplayColumnWidth = new Vector2(75, 0);
 
@@ -325,29 +316,29 @@ namespace AW2.Menu
             }
 
             // Draw common statusdisplay texts for all modes
-            spriteBatch.DrawString(menuSmallFont, "Players", statusDisplayTextPos, Color.White);          
-            spriteBatch.DrawString(menuSmallFont, statusDisplayPlayerAmount, statusDisplayTextPos + statusDisplayColumnWidth, Color.GreenYellow);
-            spriteBatch.DrawString(menuSmallFont, "Arena", statusDisplayTextPos + statusDisplayRowHeight * 4, Color.White);
-            spriteBatch.DrawString(menuSmallFont, statusDisplayArenaName, statusDisplayTextPos + statusDisplayRowHeight * 5, Color.GreenYellow);
+            spriteBatch.DrawString(_menuSmallFont, "Players", statusDisplayTextPos, Color.White);          
+            spriteBatch.DrawString(_menuSmallFont, statusDisplayPlayerAmount, statusDisplayTextPos + statusDisplayColumnWidth, Color.GreenYellow);
+            spriteBatch.DrawString(_menuSmallFont, "Arena", statusDisplayTextPos + statusDisplayRowHeight * 4, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, statusDisplayArenaName, statusDisplayTextPos + statusDisplayRowHeight * 5, Color.GreenYellow);
 
             // Draw network game statusdisplay texts
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
             {
-                spriteBatch.DrawString(menuSmallFont, "Status", statusDisplayTextPos + statusDisplayRowHeight, Color.White);
-                spriteBatch.DrawString(menuSmallFont, statusDisplayStatus, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight, Color.GreenYellow);
+                spriteBatch.DrawString(_menuSmallFont, "Status", statusDisplayTextPos + statusDisplayRowHeight, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, statusDisplayStatus, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight, Color.GreenYellow);
             }
 
             // Draw client statusdisplay texts
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
-                spriteBatch.DrawString(menuSmallFont, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
-                spriteBatch.DrawString(menuSmallFont, statusDisplayPing, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, Color.GreenYellow);
+                spriteBatch.DrawString(_menuSmallFont, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, statusDisplayPing, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, Color.GreenYellow);
             }
 
             // Draw player panes.
             Vector2 player1PanePos = new Vector2(334, 164);
             Vector2 playerPaneDeltaPos = new Vector2(203, 0);
-            Vector2 playerPaneMainDeltaPos = new Vector2(0, player1PaneTopTexture.Height);
+            Vector2 playerPaneMainDeltaPos = new Vector2(0, _player1PaneTopTexture.Height);
             Vector2 playerPaneCursorDeltaPos = playerPaneMainDeltaPos + new Vector2(22, 3);
             Vector2 playerPaneIconDeltaPos = playerPaneMainDeltaPos + new Vector2(21, 1);
             Vector2 playerPaneRowDeltaPos = new Vector2(0, 91);
@@ -360,25 +351,25 @@ namespace AW2.Menu
 
                 // Find out things.
                 string playerItemName = "???";
-                switch (currentItems[playerI])
+                switch (_currentItems[playerI])
                 {
                     case EquipMenuItem.Ship: playerItemName = player.ShipName; break;
                     case EquipMenuItem.Extra: playerItemName = player.ExtraDeviceName; break;
                     case EquipMenuItem.Weapon2: playerItemName = player.Weapon2Name; break;
                 }
-                Vector2 playerPanePos = pos - view + player1PanePos + playerI * playerPaneDeltaPos;
+                Vector2 playerPanePos = _pos - view + player1PanePos + playerI * playerPaneDeltaPos;
                 Vector2 playerCursorPos = playerPanePos + playerPaneCursorDeltaPos
-                    + (int)currentItems[playerI] * playerPaneRowDeltaPos;
+                    + (int)_currentItems[playerI] * playerPaneRowDeltaPos;
                 Vector2 playerNamePos = playerPanePos
-                    + new Vector2((int)(104 - menuSmallFont.MeasureString(player.Name).X / 2), 38);
+                    + new Vector2((int)(104 - _menuSmallFont.MeasureString(player.Name).X / 2), 38);
                 Vector2 playerItemNamePos = playerPanePos
-                    + new Vector2((int)(104 - menuSmallFont.MeasureString(playerItemName).X / 2), 355);
-                Texture2D playerPaneTopTexture = playerI == 1 ? player2PaneTopTexture : player1PaneTopTexture;
+                    + new Vector2((int)(104 - _menuSmallFont.MeasureString(playerItemName).X / 2), 355);
+                Texture2D playerPaneTopTexture = playerI == 1 ? _player2PaneTopTexture : _player1PaneTopTexture;
 
                 // Draw pane background.
                 spriteBatch.Draw(playerPaneTopTexture, playerPanePos, Color.White);
-                spriteBatch.Draw(playerPaneTexture, playerPanePos + playerPaneMainDeltaPos, Color.White);
-                spriteBatch.DrawString(menuSmallFont, player.Name, playerNamePos, Color.White);
+                spriteBatch.Draw(_playerPaneTexture, playerPanePos + playerPaneMainDeltaPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, player.Name, playerNamePos, Color.White);
 
                 // Draw icons of selected equipment.
                 var ship = (Game.Gobs.Ship)data.GetTypeTemplate(player.ShipName);
@@ -392,18 +383,18 @@ namespace AW2.Menu
                 spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);
 
                 // Draw cursor, highlight and item name.
-                float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTimes[playerI]).TotalSeconds;
-                spriteBatch.Draw(highlightMainTexture, playerCursorPos, Color.White);
-                spriteBatch.Draw(cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
-                spriteBatch.DrawString(menuSmallFont, playerItemName, playerItemNamePos, Color.White);
+                float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _cursorFadeStartTimes[playerI]).TotalSeconds;
+                spriteBatch.Draw(_highlightMainTexture, playerCursorPos, Color.White);
+                spriteBatch.Draw(_cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
+                spriteBatch.DrawString(_menuSmallFont, playerItemName, playerItemNamePos, Color.White);
             }
 
             // Draw network game status pane.
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
             {
                 // Draw pane background.
-                Vector2 statusPanePos = pos - view + new Vector2(537, 160);
-                spriteBatch.Draw(statusPaneTexture, statusPanePos, Color.White);
+                Vector2 statusPanePos = _pos - view + new Vector2(537, 160);
+                spriteBatch.Draw(_statusPaneTexture, statusPanePos, Color.White);
 
                 // Draw pane content text.
                 Vector2 textPos = statusPanePos + new Vector2(60, 60);
@@ -421,7 +412,7 @@ namespace AW2.Menu
                     textContent += "\n\n" + data.Spectators.Count + (data.Spectators.Count == 1 ? " player" : " players");
                     textContent += "\n\nArena: " + data.ArenaPlaylist[0];
                 }
-                spriteBatch.DrawString(menuBigFont, textContent, textPos, Color.White);
+                spriteBatch.DrawString(_menuBigFont, textContent, textPos, Color.White);
             }
         }
     }

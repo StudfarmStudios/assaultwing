@@ -14,18 +14,18 @@ namespace AW2.Menu
     /// the aspect.
     public abstract class EquipmentSelector
     {
-        int currentValue;
+        private int _currentValue;
 
         /// <summary>
         /// Index of the currently selected value in the list of possible values.
         /// </summary>
         public int CurrentValue
         {
-            get { return currentValue; }
+            get { return _currentValue; }
             set
             {
-                currentValue = value.Modulo(Values.Count);
-                SetValue(Values[currentValue]);
+                _currentValue = value.Modulo(Values.Count);
+                SetValue(Values[_currentValue]);
             }
         }
 
@@ -40,10 +40,11 @@ namespace AW2.Menu
         protected Player Player { get; private set; }
 
         /// <summary>
-        /// Creates an equipment selector for a player with a set of possible values.
+        /// Creates an equipment selector for a player with an empty set of possible values.
+        /// Subclasses should set the list of values.
         /// </summary>
         /// <param name="player">The player.</param>
-        public EquipmentSelector(Player player)
+        protected EquipmentSelector(Player player)
         {
             Values = new List<string>();
             Player = player;
@@ -56,28 +57,15 @@ namespace AW2.Menu
         protected abstract void SetValue(string value);
     }
 
-    /// <summary>
-    /// Selector of the ship of a player.
-    /// </summary>
     public class ShipSelector : EquipmentSelector
     {
-        /// <summary>
-        /// Creates a ship selector.
-        /// </summary>
-        /// <param name="player">The player whose ship we are selecting.</param>
         public ShipSelector(Player player)
             : base(player)
         {
             Values = AssaultWing.Instance.DataEngine.GameplayMode.ShipTypes;
-
-            // Find the value the player currently has.
             CurrentValue = Values.IndexOf(player.ShipName);
         }
 
-        /// <summary>
-        /// Selects the ship of the player.
-        /// </summary>
-        /// <param name="value">The name of the ship.</param>
         protected override void SetValue(string value)
         {
             Player.ShipName = (CanonicalString)value;
@@ -86,50 +74,28 @@ namespace AW2.Menu
 
     public class ExtraDeviceSelector : EquipmentSelector
     {
-        /// <param name="player">The player whose primary weapon we are selecting.</param>
         public ExtraDeviceSelector(Player player)
             : base(player)
         {
-            // Find possible values.
             Values = AssaultWing.Instance.DataEngine.GameplayMode.ExtraDeviceTypes;
-
-            // Find the value the player currently has.
             CurrentValue = Values.IndexOf(player.ExtraDeviceName);
         }
 
-        /// <summary>
-        /// Selects the primary weapon of the player.
-        /// </summary>
-        /// <param name="value">The name of the primary weapon.</param>
         protected override void SetValue(string value)
         {
             Player.ExtraDeviceName = (CanonicalString)value;
         }
     }
 
-    /// <summary>
-    /// Selector of the secondary weapon of a player.
-    /// </summary>
     public class Weapon2Selector : EquipmentSelector
     {
-        /// <summary>
-        /// Creates a secondary weapon selector.
-        /// </summary>
-        /// <param name="player">The player whose secondary weapon we are selecting.</param>
         public Weapon2Selector(Player player)
             : base(player)
         {
-            // Find possible values.
             Values = AssaultWing.Instance.DataEngine.GameplayMode.Weapon2Types;
-
-            // Find the value the player currently has.
             CurrentValue = Values.IndexOf(player.Weapon2Name);
         }
 
-        /// <summary>
-        /// Selects the secondary weapon of the player.
-        /// </summary>
-        /// <param name="value">The name of the secondary weapon.</param>
         protected override void SetValue(string value)
         {
             Player.Weapon2Name = (CanonicalString)value;

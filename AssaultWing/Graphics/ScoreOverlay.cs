@@ -46,14 +46,17 @@ namespace AW2.Graphics
                 Vector2 standingPos = textTopLeft + new Vector2(numberColumnWidth - standingSize.X, line * scoreLineSpacing);
                 Vector2 playerNamePos = textTopLeft + new Vector2(numberColumnWidth + textMargin, line * scoreLineSpacing);
                 Vector2 scorePos = textTopLeft + new Vector2(numberColumnWidth + (textMargin * 2) + playerNameWidth, line * scoreLineSpacing);
-                //Vector2 textPos = new Vector2(textLeftEdge, textCenter.Y);
                 string scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
-                //spriteBatch.DrawString(fontSmall, (line + 1) + ". " + entry.Name, textPos, Color.White);
-                //spriteBatch.DrawString(fontSmall, scoreText, textPos + new Vector2(250, 0), Color.White);
-                //textCenter += new Vector2(0, fontSmall.LineSpacing);
-                spriteBatch.DrawString(_scoreFont, currentStanding.ToString(), standingPos, entry.PlayerColor);
-                spriteBatch.DrawString(_scoreFont, entry.Name, playerNamePos, entry.PlayerColor);
-                spriteBatch.DrawString(_scoreFont, scoreText, scorePos, entry.PlayerColor);
+                Color rowColor = entry.PlayerColor;
+
+                if (_player.Name == entry.Name)
+                {
+                    rowColor = Color.White;
+                }
+
+                spriteBatch.DrawString(_scoreFont, currentStanding.ToString(), standingPos, rowColor);
+                spriteBatch.DrawString(_scoreFont, entry.Name, playerNamePos, rowColor);
+                spriteBatch.DrawString(_scoreFont, scoreText, scorePos, rowColor);
                 ++line;
             }
 

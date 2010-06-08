@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 
 namespace AW2.Game
@@ -11,6 +12,7 @@ namespace AW2.Game
     public struct Standing
     {
         public string Name { get; set; }
+        public Color PlayerColor { get; set; }
         public int Score { get; set; }
         public int Kills { get; set; }
         public int Suicides { get; set; }
@@ -66,7 +68,14 @@ namespace AW2.Game
                 from p in players
                 let score = CalculateScore(p)
                 orderby score descending
-                select new Standing { Name = p.Name, Score = score, Kills = p.Kills, Suicides = p.Suicides };
+                select new Standing
+                {
+                    Name = p.Name,
+                    PlayerColor = p.PlayerColor,
+                    Score = score,
+                    Kills = p.Kills,
+                    Suicides = p.Suicides
+                };
         }
 
         /// <summary>

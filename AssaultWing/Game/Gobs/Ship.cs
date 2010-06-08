@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Sound;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.Gobs
 {
@@ -541,6 +542,31 @@ namespace AW2.Game.Gobs
         }
 
         #endregion Ship public methods
+
+        private SpriteFont playerNameFont;
+
+        public override void Draw2D(Matrix gameToScreen, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, float scale)
+        {
+           // base.Draw2D(gameToScreen, spriteBatch, scale);
+
+            // Draw player name
+            if (Owner.IsRemote)
+            {
+                Vector2 playerNameSize = playerNameFont.MeasureString(Owner.Name);
+                Vector2 screenPos = Vector2.Transform(Pos, gameToScreen);
+                Vector2 playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 40);
+                spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos, new Color(Owner.PlayerColor, 0.8f));
+            }
+        }
+
+        public override void LoadContent()
+        {
+            base.LoadContent();
+
+            var content = AssaultWing.Instance.Content;
+            playerNameFont = content.Load<SpriteFont>("ConsoleFont");
+
+        }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {

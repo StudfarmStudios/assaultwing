@@ -47,8 +47,17 @@ namespace AW2.Graphics
                 if (player.Ship == null) continue;
                 var posInArena = player.Ship.Pos;
                 var posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
-                spriteBatch.Draw(_shipOnRadarTexture, posOnRadar, null, player.PlayerColor, 0,
-                    GetTextureCenter(_shipOnRadarTexture), 0.4f, SpriteEffects.None, 0);
+                Color shipColor = player.PlayerColor;
+                float shipScale = 0.4f;
+
+                if (_player.Name == player.Name)
+                {
+                    shipColor = Color.White;
+                    shipScale = 0.7f;
+                }
+
+                spriteBatch.Draw(_shipOnRadarTexture, posOnRadar, null, shipColor, 0,
+                    GetTextureCenter(_shipOnRadarTexture), shipScale, SpriteEffects.None, 0);
             }
 
             foreach (var dock in AssaultWing.Instance.DataEngine.Arena.Gobs.OfType<Dock>())

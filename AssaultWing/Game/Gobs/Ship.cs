@@ -554,7 +554,7 @@ namespace AW2.Game.Gobs
             {
                 Vector2 playerNameSize = playerNameFont.MeasureString(Owner.Name);
                 Vector2 screenPos = Vector2.Transform(Pos, gameToScreen);
-                Vector2 playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 40);
+                Vector2 playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
                 spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos, new Color(Owner.PlayerColor, 0.8f));
             }
         }

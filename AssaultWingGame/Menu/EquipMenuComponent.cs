@@ -66,6 +66,11 @@ namespace AW2.Menu
         private EquipmentSelector[,] _equipmentSelectors;
 
         /// <summary>
+        /// Text fields containing editable player names.
+        /// </summary>
+        private EditableText[] _playerNames;
+
+        /// <summary>
         /// Does the menu component react to input.
         /// </summary>
         public override bool Active
@@ -147,17 +152,18 @@ namespace AW2.Menu
             }
         }
 
-        /// <summary>
-        /// Sets up selectors for each aspect of equipment of each player.
-        /// </summary>
         private void CreateSelectors()
         {
+            if (AssaultWing.Instance.DataEngine.Players.Where(p => !p.IsRemote).Count() > MAX_LOCAL_PLAYERS)
+                throw new ApplicationException("Too many local players");
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
-            _equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Players.Count(), aspectCount];
+            _equipmentSelectors = new EquipmentSelector[MAX_LOCAL_PLAYERS, aspectCount];
+            _playerNames = new EditableText[MAX_LOCAL_PLAYERS];
 
             int playerI = 0;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
+                _playerNames[playerI] = new EditableText(player.Name);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player);
@@ -211,21 +217,28 @@ namespace AW2.Menu
                         ++_currentItems[playerI];
                 });
 
-                int selectionChange = 0;
-                ConditionalPlayerAction(player.Controls.Left.Pulse,
-                    playerI, "MenuChangeItem", () => selectionChange = -1);
-                ConditionalPlayerAction(player.Controls.Fire1.Pulse || player.Controls.Right.Pulse,
-                    playerI, "MenuChangeItem", () => selectionChange = 1);
-                if (selectionChange != 0)
+                if (_currentItems[playerI] == EquipMenuItem.Name)
                 {
-                    _equipmentSelectors[playerI, (int)_currentItems[playerI]].CurrentValue += selectionChange;
-
-                    // Send new equipment choices to the game server.
-                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                    // TODO
+                }
+                else
+                {
+                    int selectionChange = 0;
+                    ConditionalPlayerAction(player.Controls.Left.Pulse,
+                        playerI, "MenuChangeItem", () => selectionChange = -1);
+                    ConditionalPlayerAction(player.Controls.Fire1.Pulse || player.Controls.Right.Pulse,
+                        playerI, "MenuChangeItem", () => selectionChange = 1);
+                    if (selectionChange != 0)
                     {
-                        var equipUpdateRequest = new JoinGameRequest();
-                        equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
-                        AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(equipUpdateRequest);
+                        _equipmentSelectors[playerI, (int)_currentItems[playerI]].CurrentValue += selectionChange;
+
+                        // Send new equipment choices to the game server.
+                        if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                        {
+                            var equipUpdateRequest = new JoinGameRequest();
+                            equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
+                            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(equipUpdateRequest);
+                        }
                     }
                 }
             }
@@ -251,15 +264,21 @@ namespace AW2.Menu
         /// method returns.</param>
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var data = AssaultWing.Instance.DataEngine;
             spriteBatch.Draw(_backgroundTexture, _pos - view, Color.White);
+            DrawTabsAndButtons(view, spriteBatch);
+            DrawStatusDisplay(view, spriteBatch);
+            DrawPlayerPanes(view, spriteBatch);
+            DrawNetworkPane(view, spriteBatch);
+        }
 
+        private void DrawTabsAndButtons(Vector2 view, SpriteBatch spriteBatch)
+        {
             // Draw common tabs for both modes (network, standalone)
             Vector2 tab1Pos = _pos - view + new Vector2(341, 123);
             Vector2 tabWidth = new Vector2(97, 0);
             spriteBatch.Draw(_tabEquipmentTexture, tab1Pos, Color.White);
             spriteBatch.Draw(_tabPlayersTexture, tab1Pos + tabWidth, Color.White);
-            
+
             // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
             spriteBatch.Draw(_tabHilite, tab1Pos, Color.White);
 
@@ -268,6 +287,7 @@ namespace AW2.Menu
             {
                 spriteBatch.Draw(_tabChatTexture, tab1Pos + (tabWidth * 2), Color.White);
             }
+
             // Draw game settings tab
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone || AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
@@ -277,11 +297,17 @@ namespace AW2.Menu
 
                 spriteBatch.Draw(_tabGameSettingsTexture, tabGameSettingsPos, Color.White);
             }
-            
+
             // Draw ready button
             spriteBatch.Draw(_buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
-            // Draw ready buttom hilite (same size than button)
+
+            // Draw ready button hilite (same size as button)
             spriteBatch.Draw(_buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), Color.White);
+        }
+
+        private void DrawStatusDisplay(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var data = AssaultWing.Instance.DataEngine;
 
             // Setup positions for statusdisplay texts
             Vector2 statusDisplayTextPos = _pos - view + new Vector2(885, 618);
@@ -311,7 +337,7 @@ namespace AW2.Menu
             }
 
             // Draw common statusdisplay texts for all modes
-            spriteBatch.DrawString(_menuSmallFont, "Players", statusDisplayTextPos, Color.White);          
+            spriteBatch.DrawString(_menuSmallFont, "Players", statusDisplayTextPos, Color.White);
             spriteBatch.DrawString(_menuSmallFont, statusDisplayPlayerAmount, statusDisplayTextPos + statusDisplayColumnWidth, Color.GreenYellow);
             spriteBatch.DrawString(_menuSmallFont, "Arena", statusDisplayTextPos + statusDisplayRowHeight * 4, Color.White);
             spriteBatch.DrawString(_menuSmallFont, statusDisplayArenaName, statusDisplayTextPos + statusDisplayRowHeight * 5, Color.GreenYellow);
@@ -329,6 +355,11 @@ namespace AW2.Menu
                 spriteBatch.DrawString(_menuSmallFont, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
                 spriteBatch.DrawString(_menuSmallFont, statusDisplayPing, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, Color.GreenYellow);
             }
+        }
+
+        private void DrawPlayerPanes(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var data = AssaultWing.Instance.DataEngine;
 
             // Draw player panes.
             Vector2 player1PanePos = new Vector2(334, 164);
@@ -383,6 +414,11 @@ namespace AW2.Menu
                 spriteBatch.Draw(_cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
                 spriteBatch.DrawString(_menuSmallFont, playerItemName, playerItemNamePos, Color.White);
             }
+        }
+
+        private void DrawNetworkPane(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var data = AssaultWing.Instance.DataEngine;
 
             // Draw network game status pane.
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)

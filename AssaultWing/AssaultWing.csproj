@@ -153,6 +153,7 @@
     <Compile Include="Game\GobUtils\ShipDevice.cs" />
     <Compile Include="Game\GobUtils\ShipLocationPredicter.cs" />
     <Compile Include="Game\Spectator.cs" />
+    <Compile Include="Graphics\ScoreOverlay.cs" />
     <Compile Include="Helpers\IAWSerializable.cs" />
     <Compile Include="Helpers\TypeLoader.cs" />
     <Compile Include="Game\GobUtils\Weapon.cs" />

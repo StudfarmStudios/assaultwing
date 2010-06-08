@@ -46,6 +46,7 @@ namespace AW2.Graphics
             AddOverlayComponent(new RadarOverlay(player));
             AddOverlayComponent(new BonusListOverlay(player));
             AddOverlayComponent(new PlayerStatusOverlay(player));
+            AddOverlayComponent(new ScoreOverlay(player));
         }
 
         #region PlayerViewport properties

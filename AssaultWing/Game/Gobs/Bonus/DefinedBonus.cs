@@ -23,7 +23,11 @@ namespace AW2.Game.Gobs.Bonus
         {
             gameAction.Player = player;
             gameAction.SetDuration(duration);
-            gameAction.DoAction();
+            if (!gameAction.DoAction())
+            {
+                player.SendMessage("Useless bonus discarded", Player.DEFAULT_COLOR);
+                return;
+            }
 
             Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
             {

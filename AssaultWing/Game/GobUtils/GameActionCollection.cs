@@ -101,8 +101,7 @@ namespace AW2.Game.GobUtils
             foreach (var item in currentItems)
                 if (!_items.Any(x => x.TypeID == item.TypeID))
                 {
-                    item.DoAction();
-                    _items.Add(item);
+                    if (item.DoAction()) _items.Add(item);
                 }
         }
     }

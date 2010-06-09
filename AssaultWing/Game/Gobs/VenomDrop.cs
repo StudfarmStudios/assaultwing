@@ -49,8 +49,7 @@ namespace AW2.Game.Gobs
             var dot = new DamageBuffBonusAction(TypeName, _damageOverTimeBonusIconName, _clingDamagePerSecond);
             dot.Player = player;
             dot.SetDuration(_clingTime);
-            dot.DoAction();
-            player.BonusActions.AddOrReplace(dot);
+            if (dot.DoAction()) player.BonusActions.AddOrReplace(dot);
         }
     }
 }

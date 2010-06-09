@@ -13,11 +13,11 @@ namespace AW2.Game.BonusActions
             Player.PostprocessEffectNames.Remove((CanonicalString)"bomber_rage");
         }
 
-        public override void DoAction()
+        public override bool DoAction()
         {
             UpgradeWeapon();
             SetActionMessage();
-            base.DoAction();
+            return base.DoAction();
         }
 
         private void UpgradeWeapon()

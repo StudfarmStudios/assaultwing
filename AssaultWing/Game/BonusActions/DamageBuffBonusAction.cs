@@ -34,10 +34,10 @@ namespace AW2.Game.BonusActions
             _damagePerSecond = damagePerSecond;
         }
 
-        public override void DoAction()
+        public override bool DoAction()
         {
             SetActionMessage();
-            base.DoAction();
+            return base.DoAction();
         }
 
         public override void Update()

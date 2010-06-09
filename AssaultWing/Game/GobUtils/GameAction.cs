@@ -63,11 +63,15 @@ namespace AW2.Game.GobUtils
             EndTime = BeginTime + TimeSpan.FromSeconds(duration);
         }
 
-        public virtual void DoAction()
+        /// <summary>
+        /// Returns true on success and false on failure.
+        /// </summary>
+        public virtual bool DoAction()
         {
             BonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(BonusIconName);
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                 Player.MustUpdateToClients = true;
+            return true;
         }
 
         public virtual void RemoveAction()

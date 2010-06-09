@@ -7,16 +7,14 @@ namespace AW2.Game.BonusActions
     [GameActionType(5)]
     public class Weapon2UpgradeBonusAction : GameAction
     {
-        public override void DoAction()
+        public override bool DoAction()
         {
             var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.Ship.Weapon2Name);
-            if (weapon2.UpgradeNames != null && weapon2.UpgradeNames.Length > 0)
-            {
-                var weaponUpgrade = weapon2.UpgradeNames[0];
-                UpgradeWeapon(weaponUpgrade);
-            }
+            if (weapon2.UpgradeNames == null || weapon2.UpgradeNames.Length == 0) return false;
+            var weaponUpgrade = weapon2.UpgradeNames[0];
+            UpgradeWeapon(weaponUpgrade);
             SetActionMessage();
-            base.DoAction();
+            return base.DoAction();
         }
 
         public override void RemoveAction()

@@ -8,11 +8,11 @@ namespace AW2.Game.BonusActions
     {
         private static float LOAD_TIME_MULTIPLIER = 0.8f;
 
-        public override void DoAction()
+        public override bool DoAction()
         {
             UpgradeWeapon();
             SetActionMessage();
-            base.DoAction();
+            return base.DoAction();
         }
 
         public override void RemoveAction()

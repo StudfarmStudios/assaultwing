@@ -6,11 +6,11 @@ namespace AW2.Game.BonusActions
     [GameActionType(1)]
     public class InstantHealthBonusAction : GameAction
     {
-        public override void DoAction()
+        public override bool DoAction()
         {
             GiveHealth();
             SetActionMessage();
-            base.DoAction();
+            return base.DoAction();
         }
 
         private void GiveHealth()

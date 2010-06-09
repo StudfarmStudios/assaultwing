@@ -155,6 +155,7 @@ namespace AW2.Game.Gobs
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)((CanonicalString)IconName).Canonical);
+                writer.Write((Color)DrawColor);
                 writer.Write((string)Message, 48, false);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
@@ -172,10 +173,11 @@ namespace AW2.Game.Gobs
             {
                 int canonical = reader.ReadInt32();
                 IconName = (CanonicalString)canonical;
+                DrawColor = reader.ReadColor();
                 Message = reader.ReadString(48);
             }
         }
 
         #endregion Methods related to serialisation
-}
+    }
 }

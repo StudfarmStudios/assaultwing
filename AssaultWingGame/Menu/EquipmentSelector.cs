@@ -1,6 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 using AW2.Helpers;
+using AW2.Game.Gobs;
+using AW2.Game.GobUtils;
 
 namespace AW2.Menu
 {
@@ -15,6 +20,11 @@ namespace AW2.Menu
     public abstract class EquipmentSelector
     {
         private int _currentValue;
+
+        /// <summary>
+        /// Position of the selector's top left corner in menu system coordinates.
+        /// </summary>
+        protected Vector2 Pos { get; private set; }
 
         /// <summary>
         /// Index of the currently selected value in the list of possible values.
@@ -44,11 +54,15 @@ namespace AW2.Menu
         /// Subclasses should set the list of values.
         /// </summary>
         /// <param name="player">The player.</param>
-        protected EquipmentSelector(Player player)
+        /// <param name="pos">Top left corner of the selector in menu system coordinates</param>
+        protected EquipmentSelector(Player player, Vector2 pos)
         {
             Values = new List<string>();
             Player = player;
+            Pos = pos;
         }
+
+        public abstract void Draw(Vector2 view, SpriteBatch spriteBatch);
 
         /// <summary>
         /// Sets a value to the aspect.
@@ -59,11 +73,18 @@ namespace AW2.Menu
 
     public class ShipSelector : EquipmentSelector
     {
-        public ShipSelector(Player player)
-            : base(player)
+        public ShipSelector(Player player, Vector2 pos)
+            : base(player, pos)
         {
             Values = AssaultWing.Instance.DataEngine.GameplayMode.ShipTypes;
             CurrentValue = Values.IndexOf(player.ShipName);
+        }
+
+        public override void Draw(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var ship = (Ship)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.ShipName);
+            var shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.IconEquipName);
+            spriteBatch.Draw(shipTexture, Pos - view, Color.White);
         }
 
         protected override void SetValue(string value)
@@ -74,11 +95,18 @@ namespace AW2.Menu
 
     public class ExtraDeviceSelector : EquipmentSelector
     {
-        public ExtraDeviceSelector(Player player)
-            : base(player)
+        public ExtraDeviceSelector(Player player, Vector2 pos)
+            : base(player, pos)
         {
             Values = AssaultWing.Instance.DataEngine.GameplayMode.ExtraDeviceTypes;
             CurrentValue = Values.IndexOf(player.ExtraDeviceName);
+        }
+
+        public override void Draw(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var extraDevice = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.ExtraDeviceName);
+            var extraDeviceTexture = AssaultWing.Instance.Content.Load<Texture2D>(extraDevice.IconEquipName);
+            spriteBatch.Draw(extraDeviceTexture, Pos - view, Color.White);
         }
 
         protected override void SetValue(string value)
@@ -89,11 +117,18 @@ namespace AW2.Menu
 
     public class Weapon2Selector : EquipmentSelector
     {
-        public Weapon2Selector(Player player)
-            : base(player)
+        public Weapon2Selector(Player player, Vector2 pos)
+            : base(player, pos)
         {
             Values = AssaultWing.Instance.DataEngine.GameplayMode.Weapon2Types;
             CurrentValue = Values.IndexOf(player.Weapon2Name);
+        }
+
+        public override void Draw(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.Weapon2Name);
+            var weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconEquipName);
+            spriteBatch.Draw(weapon2Texture, Pos - view, Color.White);
         }
 
         protected override void SetValue(string value)

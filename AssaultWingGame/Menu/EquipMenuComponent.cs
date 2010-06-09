@@ -70,6 +70,48 @@ namespace AW2.Menu
         /// </summary>
         private EditableText[] _playerNames;
 
+        #region Private coordinate data
+
+        private static readonly Vector2 PLAYER1_PANE_POS = new Vector2(334, 164);
+        private static readonly Vector2 PLAYER_PANE_NAME_POS = new Vector2(104, 38);
+        private static readonly Vector2 PLAYER_PANE_DELTA_POS = new Vector2(203, 0);
+        private static readonly Vector2 PLAYER_PANE_ROW_DELTA_POS = new Vector2(0, 91);
+
+        private Vector2 PlayerPaneMainDeltaPos { get { return new Vector2(0, _player1PaneTopTexture.Height); } }
+        private Vector2 PlayerPaneCursorDeltaPos { get { return PlayerPaneMainDeltaPos + new Vector2(22, 3); } }
+        private Vector2 PlayerPaneIconDeltaPos { get { return PlayerPaneMainDeltaPos + new Vector2(21, 1); } }
+
+        private Vector2 GetPlayerPanePos(int playerI)
+        {
+            return _pos + PLAYER1_PANE_POS + playerI * PLAYER_PANE_DELTA_POS;
+        }
+        private Vector2 GetPlayerCursorPos(int playerI)
+        {
+            return GetPlayerPanePos(playerI) + PlayerPaneCursorDeltaPos + ((int)_currentItems[playerI] - 1) * PLAYER_PANE_ROW_DELTA_POS;
+        }
+        private Vector2 GetPlayerNamePos(int playerI, string name)
+        {
+            return GetPlayerPanePos(playerI) + new Vector2((int)(104 - _menuSmallFont.MeasureString(name).X / 2), 38);
+        }
+        private Vector2 GetPlayerItemNamePos(int playerI, string name)
+        {
+            return GetPlayerPanePos(playerI) + new Vector2((int)(104 - _menuSmallFont.MeasureString(name).X / 2), 355);
+        }
+        private Vector2 GetShipSelectorPos(int playerI)
+        {
+            return GetPlayerPanePos(playerI) + PlayerPaneCursorDeltaPos;
+        }
+        private Vector2 GetExtraDeviceSelectorPos(int playerI)
+        {
+            return GetPlayerPanePos(playerI) + PlayerPaneCursorDeltaPos + PLAYER_PANE_ROW_DELTA_POS;
+        }
+        private Vector2 GetWeapon2SelectorPos(int playerI)
+        {
+            return GetPlayerPanePos(playerI) + PlayerPaneCursorDeltaPos + 2 * PLAYER_PANE_ROW_DELTA_POS;
+        }
+
+        #endregion
+
         /// <summary>
         /// Does the menu component react to input.
         /// </summary>
@@ -113,6 +155,7 @@ namespace AW2.Menu
             _cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
             _cursorFade.PreLoop = CurveLoopType.Cycle;
             _cursorFade.PostLoop = CurveLoopType.Cycle;
+            CreateSelectors();
         }
 
         public override void LoadContent()
@@ -127,7 +170,7 @@ namespace AW2.Menu
             _player1PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_green");
             _player2PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_red");
             _statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
-            
+
             _tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
             _tabPlayersTexture = content.Load<Texture2D>("menu_equip_tab_players");
             _tabGameSettingsTexture = content.Load<Texture2D>("menu_equip_tab_gamesettings");
@@ -145,6 +188,8 @@ namespace AW2.Menu
 
         public override void Update()
         {
+            if (AssaultWing.Instance.DataEngine.Players.Count() != _playerNames.Count())
+                CreateSelectors();
             if (Active)
             {
                 CheckGeneralControls();
@@ -157,16 +202,16 @@ namespace AW2.Menu
             if (AssaultWing.Instance.DataEngine.Players.Where(p => !p.IsRemote).Count() > MAX_LOCAL_PLAYERS)
                 throw new ApplicationException("Too many local players");
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
-            _equipmentSelectors = new EquipmentSelector[MAX_LOCAL_PLAYERS, aspectCount];
-            _playerNames = new EditableText[MAX_LOCAL_PLAYERS];
+            _equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Players.Count(), aspectCount];
+            _playerNames = new EditableText[AssaultWing.Instance.DataEngine.Players.Count()];
 
             int playerI = 0;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
-                _playerNames[playerI] = new EditableText(player.Name);
-                _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player);
-                _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player);
-                _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player);
+                _playerNames[playerI] = new EditableText(player.Name, 20, EditableText.Keysets.PlayerNameSet);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player, GetShipSelectorPos(playerI));
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player, GetExtraDeviceSelectorPos(playerI));
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player, GetWeapon2SelectorPos(playerI));
                 ++playerI;
             }
         }
@@ -208,7 +253,10 @@ namespace AW2.Menu
 
                 ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, "MenuBrowseItem", () =>
                 {
-                    if (_currentItems[playerI] > 0)
+                    var minItem = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
+                        ? EquipMenuItem.Ship
+                        : EquipMenuItem.Name;
+                    if (_currentItems[playerI] > minItem)
                         --_currentItems[playerI];
                 });
                 ConditionalPlayerAction(player.Controls.Down.Pulse, playerI, "MenuBrowseItem", () =>
@@ -219,7 +267,10 @@ namespace AW2.Menu
 
                 if (_currentItems[playerI] == EquipMenuItem.Name)
                 {
-                    // TODO
+                    _playerNames[playerI].Update(() =>
+                    {
+                        player.Name = _playerNames[playerI].Content;
+                    });
                 }
                 else
                 {
@@ -362,13 +413,6 @@ namespace AW2.Menu
             var data = AssaultWing.Instance.DataEngine;
 
             // Draw player panes.
-            Vector2 player1PanePos = new Vector2(334, 164);
-            Vector2 playerPaneDeltaPos = new Vector2(203, 0);
-            Vector2 playerPaneMainDeltaPos = new Vector2(0, _player1PaneTopTexture.Height);
-            Vector2 playerPaneCursorDeltaPos = playerPaneMainDeltaPos + new Vector2(22, 3);
-            Vector2 playerPaneIconDeltaPos = playerPaneMainDeltaPos + new Vector2(21, 1);
-            Vector2 playerPaneRowDeltaPos = new Vector2(0, 91);
-            Vector2 playerPaneNamePos = new Vector2(104, 38);
             int playerI = -1;
             foreach (var player in data.Players)
             {
@@ -383,36 +427,23 @@ namespace AW2.Menu
                     case EquipMenuItem.Extra: playerItemName = player.ExtraDeviceName; break;
                     case EquipMenuItem.Weapon2: playerItemName = player.Weapon2Name; break;
                 }
-                Vector2 playerPanePos = _pos - view + player1PanePos + playerI * playerPaneDeltaPos;
-                Vector2 playerCursorPos = playerPanePos + playerPaneCursorDeltaPos
-                    + (int)_currentItems[playerI] * playerPaneRowDeltaPos;
-                Vector2 playerNamePos = playerPanePos
-                    + new Vector2((int)(104 - _menuSmallFont.MeasureString(player.Name).X / 2), 38);
-                Vector2 playerItemNamePos = playerPanePos
-                    + new Vector2((int)(104 - _menuSmallFont.MeasureString(playerItemName).X / 2), 355);
-                Texture2D playerPaneTopTexture = playerI == 1 ? _player2PaneTopTexture : _player1PaneTopTexture;
+                Texture2D GetPlayerPaneTopTexture = playerI == 1 ? _player2PaneTopTexture : _player1PaneTopTexture;
 
                 // Draw pane background.
-                spriteBatch.Draw(playerPaneTopTexture, playerPanePos, Color.White);
-                spriteBatch.Draw(_playerPaneTexture, playerPanePos + playerPaneMainDeltaPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, player.Name, playerNamePos, Color.White);
+                spriteBatch.Draw(GetPlayerPaneTopTexture, GetPlayerPanePos(playerI) - view, Color.White);
+                spriteBatch.Draw(_playerPaneTexture, GetPlayerPanePos(playerI) - view + PlayerPaneMainDeltaPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, player.Name, GetPlayerNamePos(playerI, player.Name) - view, Color.White);
 
                 // Draw icons of selected equipment.
-                var ship = (Game.Gobs.Ship)data.GetTypeTemplate(player.ShipName);
-                var extraDevice = (ShipDevice)data.GetTypeTemplate(player.ExtraDeviceName);
-                var weapon2 = (Weapon)data.GetTypeTemplate(player.Weapon2Name);
-                Texture2D shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.IconEquipName);
-                Texture2D extraDeviceTexture = AssaultWing.Instance.Content.Load<Texture2D>(extraDevice.IconEquipName);
-                Texture2D weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconEquipName);
-                spriteBatch.Draw(shipTexture, playerPanePos + playerPaneCursorDeltaPos, Color.White);
-                spriteBatch.Draw(extraDeviceTexture, playerPanePos + playerPaneCursorDeltaPos + playerPaneRowDeltaPos, Color.White);
-                spriteBatch.Draw(weapon2Texture, playerPanePos + playerPaneCursorDeltaPos + 2 * playerPaneRowDeltaPos, Color.White);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Ship].Draw(view, spriteBatch);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Extra].Draw(view, spriteBatch);
+                _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2].Draw(view, spriteBatch);
 
                 // Draw cursor, highlight and item name.
                 float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _cursorFadeStartTimes[playerI]).TotalSeconds;
-                spriteBatch.Draw(_highlightMainTexture, playerCursorPos, Color.White);
-                spriteBatch.Draw(_cursorMainTexture, playerCursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
-                spriteBatch.DrawString(_menuSmallFont, playerItemName, playerItemNamePos, Color.White);
+                spriteBatch.Draw(_highlightMainTexture, GetPlayerCursorPos(playerI) - view, Color.White);
+                spriteBatch.Draw(_cursorMainTexture, GetPlayerCursorPos(playerI) - view, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
+                spriteBatch.DrawString(_menuSmallFont, playerItemName, GetPlayerItemNamePos(playerI, playerItemName) - view, Color.White);
             }
         }
 

@@ -240,7 +240,7 @@ namespace AW2.Menu
                 AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist( new string[] { "Amazonas" });
             };
 
-            connectAddress = new EditableText(AssaultWing.Instance.Settings.Net.ConnectAddress);
+            connectAddress = new EditableText(AssaultWing.Instance.Settings.Net.ConnectAddress, 15, EditableText.Keysets.IPAddressSet);
             networkContents[1].Name = connectItemPrefix + connectAddress.Content;
             networkContents[1].Action = () =>
             {

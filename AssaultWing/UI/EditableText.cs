@@ -9,6 +9,22 @@ namespace AW2.UI
     /// </summary>
     public class EditableText
     {
+        [Flags]
+        public enum Keysets
+        {
+            None = 0x00,
+            Numbers = 0x01,
+            Letters = 0x02,
+            Space = 0x04,
+            Dot = 0x08,
+            All = Numbers | Letters | Space | Dot,
+            PlayerNameSet = Letters | Space,
+            IPAddressSet = Numbers | Dot,
+        };
+
+        public Keysets AllowedKeysets { get; set; }
+        public int MaxLength { get; set; }
+
         /// <summary>
         /// Position of the caret in the text field, as a zero-based index from
         /// the beginning of the text.
@@ -26,12 +42,12 @@ namespace AW2.UI
         /// </summary>
         public string Content;
 
-        /// <summary>
-        /// Creates an editable piece of text.
-        /// </summary>
-        /// <param name="content">The initial text content.</param>
-        public EditableText(string content)
+        public EditableText(string content, int maxLength, Keysets allowedKeysets)
         {
+            if (maxLength < 0) throw new ArgumentException("Maximum length cannot be negative");
+            if (content.Length > maxLength) throw new ArgumentException("Initial content is longer than maximum length");
+            AllowedKeysets = allowedKeysets;
+            MaxLength = maxLength;
             Content = content;
         }
 
@@ -74,11 +90,25 @@ namespace AW2.UI
                         default:
                             // React to text input
                             char? chr = null;
-                            if (key >= Keys.D0 && key <= Keys.D9)
-                                chr = (char)('0' + key - Keys.D0);
-                            if (key == Keys.OemPeriod)
-                                chr = '.';
-                            if (chr.HasValue && Content.Length < 15)
+                            if ((AllowedKeysets & Keysets.Numbers) != 0)
+                            {
+                                if (key >= Keys.D0 && key <= Keys.D9)
+                                    chr = (char)('0' + key - Keys.D0);
+                            }
+                            if ((AllowedKeysets & Keysets.Letters) != 0)
+                            {
+                                if (key >= Keys.A && key <= Keys.Z)
+                                    chr = (char)('a' + key - Keys.A);
+                            }
+                            if ((AllowedKeysets & Keysets.Space) != 0)
+                            {
+                                if (key == Keys.Space) chr = ' ';
+                            }
+                            if ((AllowedKeysets & Keysets.Dot) != 0)
+                            {
+                                if (key == Keys.OemPeriod) chr = '.';
+                            }
+                            if (chr.HasValue && Content.Length < MaxLength)
                             {
                                 Content = Content.Insert(CaretPosition, chr.Value.ToString());
                                 ++CaretPosition;

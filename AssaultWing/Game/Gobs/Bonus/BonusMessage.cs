@@ -31,6 +31,11 @@ namespace AW2.Game.Gobs
         public string IconName { set; get; }
 
         /// <summary>
+        /// Tint color for bonus message
+        /// </summary>
+        public Color DrawColor { set; get; }
+
+        /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
         public override IEnumerable<CanonicalString> TextureNames
@@ -97,10 +102,10 @@ namespace AW2.Game.Gobs
             float timePassed = birthTime.SecondsAgoGameTime();
             float finalScale = scaleCurve.Evaluate(timePassed) * scale;
             Vector2 origin = new Vector2(iconBackground.Width, iconBackground.Height) / 2;
-            Vector2 iconPos = backgroundPos + new Vector2(-origin.X + 6, -icon.Height / 2) * finalScale;
-            Vector2 textPos = backgroundPos + new Vector2(icon.Width + 6, 0) / 2 * finalScale;
+            Vector2 iconPos = backgroundPos + new Vector2(-origin.X + 6, -icon.Height / 2 - 1) * finalScale;
+            Vector2 textPos = backgroundPos + new Vector2(icon.Width + 1, 0) / 2 * finalScale;
             Vector2 textOrigin = messageFont.MeasureString(Message) / 2;
-            Color drawColor = new Color(1, 1, 1, alphaCurve.Evaluate(timePassed));
+            Color drawColor = new Color(DrawColor, alphaCurve.Evaluate(timePassed));
             if (timePassed > scaleCurve.Keys.Last().Position)
             {
                 textPos = textPos.Round();

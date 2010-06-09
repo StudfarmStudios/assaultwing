@@ -186,7 +186,7 @@ namespace AW2.Graphics
             // Draw bonus icon.
             Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(133, 9);
             spriteBatch.Draw(bonusIcon,
-                iconPos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                iconPos, null, player.PlayerColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus duration meter.
             float startSeconds = (float)bonusAction.BeginTime.TotalSeconds;

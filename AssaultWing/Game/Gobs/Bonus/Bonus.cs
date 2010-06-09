@@ -98,19 +98,5 @@ namespace AW2.Game.Gobs.Bonus
         /// </summary>
         /// <param name="player">The player to receive the bonus action.</param>
         protected abstract void DoBonusAction(Player player);
-
-        /// <summary>
-        /// Displays the BonusMessage on BonusGob collision position
-        /// </summary>
-        protected void DisplayMessage()
-        {
-            Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
-            {
-                gob.ResetPos(Pos, gob.Move, gob.Rotation);
-                ((BonusMessage)gob).Message = bonusText;
-                ((BonusMessage)gob).IconName = bonusIconName;
-                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
-            });
-        }
     }
 }

@@ -298,7 +298,11 @@ namespace AW2.Game
                     while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobUpdateMessage>()) != null)
                     {
                         var messageAge = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
-                        message.ReadGobs(gobId => Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId), SerializationModeFlags.VaryingData, messageAge);
+                        message.ReadGobs(gobId =>
+                        {
+                            var theGob = Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId);
+                            return theGob == null || theGob.IsDisposed ? null : theGob;
+                        }, SerializationModeFlags.VaryingData, messageAge);
                     }
                 }
             }

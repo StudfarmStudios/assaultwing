@@ -574,7 +574,7 @@ namespace AW2.Game
         /// </summary>
         private void ApplyControlsToShip()
         {
-            if (Ship == null) return;
+            if (Ship == null || Ship.IsDisposed) return;
             if (Controls.Thrust.Force > 0)
                 Ship.Thrust(Controls.Thrust.Force, AssaultWing.Instance.GameTime.ElapsedGameTime, Ship.Rotation);
             if (Controls.Left.Force > 0)

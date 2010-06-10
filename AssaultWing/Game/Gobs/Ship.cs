@@ -597,8 +597,6 @@ namespace AW2.Game.Gobs
             if (Owner != null)
                 Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
-
-            
         }
 
         public ShipLocationPredicter LocationPredicter { get; private set; }

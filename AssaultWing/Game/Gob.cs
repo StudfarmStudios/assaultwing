@@ -337,6 +337,7 @@ namespace AW2.Game
         /// </summary>
         public virtual bool IsRelevant { get { return true; } }
 
+        public bool IsDisposed { get; private set; }
         public bool IsDamageable
         {
             get
@@ -344,7 +345,6 @@ namespace AW2.Game
                 return CollisionAreas.Any(area => (area.Type & CollisionAreaType.PhysicalDamageable) != 0);
             }
         }
-
         public bool IsVisible { get; set; }
 
         /// <summary>
@@ -771,6 +771,7 @@ namespace AW2.Game
                 if (!(exhaustEngine is Gobs.Peng))
                     exhaustEngine.Die(new DeathCause());
             UnloadContent();
+            IsDisposed = true;
         }
 
         /// <summary>

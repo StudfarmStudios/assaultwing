@@ -14,6 +14,7 @@ namespace AW2.Sound
     {
         private string _cueName;
         private Cue _cue;
+        private bool _isDisposed;
 
         public bool IsPlaying { get { return _cue != null && _cue.IsPlaying; } }
 
@@ -24,6 +25,7 @@ namespace AW2.Sound
 
         public void EnsureIsPlaying()
         {
+            if (_isDisposed) throw new InvalidOperationException("The sound is disposed");
             if (_cue != null && _cue.IsPlaying) return;
             if (_cue != null) _cue.Dispose();
             _cue = AssaultWing.Instance.SoundEngine.GetCue(_cueName);
@@ -32,6 +34,7 @@ namespace AW2.Sound
 
         public void EnsureIsStopped(AudioStopOptions stopOptions)
         {
+            if (_isDisposed) throw new InvalidOperationException("The sound is disposed");
             if (IsPlaying) _cue.Stop(stopOptions);
         }
 
@@ -42,6 +45,7 @@ namespace AW2.Sound
                 _cue.Dispose();
                 _cue = null;
             }
+            _isDisposed = true;
         }
     }
 }

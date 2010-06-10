@@ -16,6 +16,7 @@ namespace AW2.Game
         public int Score { get; set; }
         public int Kills { get; set; }
         public int Suicides { get; set; }
+        public int SpectatorId { get; set; }
     }
 
     /// <summary>
@@ -74,7 +75,8 @@ namespace AW2.Game
                     PlayerColor = p.PlayerColor,
                     Score = score,
                     Kills = p.Kills,
-                    Suicides = p.Suicides
+                    Suicides = p.Suicides,
+                    SpectatorId = p.Id
                 };
         }
 

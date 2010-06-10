@@ -50,7 +50,7 @@ namespace AW2.Graphics
                 Color shipColor = player.PlayerColor;
                 float shipScale = 0.4f;
 
-                if (_player.Name == player.Name)
+                if (_player.Id == player.Id)
                 {
                     shipColor = Color.White;
                     shipScale = 0.7f;

@@ -56,7 +56,18 @@ namespace AW2.Net
         /// Least int that is known not to have been used as a connection identifier.
         /// </summary>
         /// <see cref="Connection.Id"/>
-        private static int _leastUnusedID = 0;
+        private static int g_leastUnusedID = 0;
+
+        /// <summary>
+        /// Server socket for listening to incoming connection attempts.
+        /// <c>null</c> if not in use.
+        /// </summary>
+        private static Socket g_serverSocket;
+
+        /// <summary>
+        /// Results of connection attempts.
+        /// </summary>
+        private static ThreadSafeWrapper<Queue<Result<Connection>>> g_connectionResults = new ThreadSafeWrapper<Queue<Result<Connection>>>(new Queue<Result<Connection>>());
 
         /// <summary>
         /// If greater than zero, then the connection is disposed and thus no longer usable.
@@ -67,12 +78,6 @@ namespace AW2.Net
         /// TCP socket to the connected remote host.
         /// </summary>
         private Socket _socket;
-
-        /// <summary>
-        /// Server socket for listening to incoming connection attempts.
-        /// <c>null</c> if not in use.
-        /// </summary>
-        private static Socket _serverSocket;
 
         /// <summary>
         /// Buffer of serialised messages waiting to be sent to the remote host.
@@ -93,11 +98,6 @@ namespace AW2.Net
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
         private TypedQueue<Message> _messages;
-
-        /// <summary>
-        /// Results of connection attempts.
-        /// </summary>
-        private static ThreadSafeWrapper<Queue<Result<Connection>>> _connectionResults = new ThreadSafeWrapper<Queue<Result<Connection>>>(new Queue<Result<Connection>>());
 
         /// <summary>
         /// Information on general error situations.
@@ -186,19 +186,19 @@ namespace AW2.Net
             get
             {
                 if (!IsListening) throw new InvalidOperationException("Not listening for connections, therefore no listening port exists");
-                lock (_connectionResults) return ((IPEndPoint)_serverSocket.LocalEndPoint).Port;
+                lock (g_connectionResults) return ((IPEndPoint)g_serverSocket.LocalEndPoint).Port;
             }
         }
 
         /// <summary>
         /// Are we listening for connection attempts from remote hosts.
         /// </summary>
-        public static bool IsListening { get { lock (_connectionResults) return _serverSocket != null; } }
+        public static bool IsListening { get { lock (g_connectionResults) return g_serverSocket != null; } }
 
         /// <summary>
         /// Results of connection attempts.
         /// </summary>
-        public static ThreadSafeWrapper<Queue<Result<Connection>>> ConnectionResults { get { return _connectionResults; } }
+        public static ThreadSafeWrapper<Queue<Result<Connection>>> ConnectionResults { get { return g_connectionResults; } }
 
         /// <summary>
         /// Called after a new element has been added to <c>ConnectionResults</c>.
@@ -226,21 +226,21 @@ namespace AW2.Net
         /// <param name="id">Identifier for distinguishing incoming connection attempts from others.</param>
         public static void StartListening(int port, string id)
         {
-            lock (_connectionResults)
+            lock (g_connectionResults)
             {
-                if (_serverSocket != null)
+                if (g_serverSocket != null)
                     throw new InvalidOperationException("Already listening for incoming connections");
                 try
                 {
-                    _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    g_serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, port);
-                    _serverSocket.Bind(serverEndPoint);
-                    _serverSocket.Listen(64);
-                    _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(_serverSocket, id));
+                    g_serverSocket.Bind(serverEndPoint);
+                    g_serverSocket.Listen(64);
+                    g_serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(g_serverSocket, id));
                 }
                 catch (SocketException e)
                 {
-                    _connectionResults.Do(queue =>
+                    g_connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(e, id));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();
@@ -254,12 +254,12 @@ namespace AW2.Net
         /// </summary>
         public static void StopListening()
         {
-            lock (_connectionResults)
+            lock (g_connectionResults)
             {
-                if (_serverSocket == null)
+                if (g_serverSocket == null)
                     throw new Exception("Already not listening for incoming connections");
-                _serverSocket.Close();
-                _serverSocket = null;
+                g_serverSocket.Close();
+                g_serverSocket = null;
             }
         }
 
@@ -428,7 +428,7 @@ namespace AW2.Net
                 throw new ArgumentNullException("Null socket argument");
             if (!socket.Connected)
                 throw new ArgumentException("Socket not connected");
-            Id = _leastUnusedID++;
+            Id = g_leastUnusedID++;
             Name = "Connection " + Id;
             Application.ApplicationExit += ApplicationExitCallback;
             socket.Blocking = true;
@@ -520,22 +520,22 @@ namespace AW2.Net
         private static void AcceptCallback(IAsyncResult asyncResult)
         {
             ConnectAsyncState state = (ConnectAsyncState)asyncResult.AsyncState;
-            lock (_connectionResults)
+            lock (g_connectionResults)
             {
                 try
                 {
                     Socket socketToNewHost = state.Socket.EndAccept(asyncResult);
                     ConfigureSocket(socketToNewHost);
                     var newConnection = new GameClientConnection(socketToNewHost);
-                    _connectionResults.Do(queue =>
+                    g_connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(newConnection, state.ID));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();
                     });
 
                     // Resume listening for connections.
-                    if (_serverSocket != null)
-                        _serverSocket.BeginAccept(AcceptCallback, state);
+                    if (g_serverSocket != null)
+                        g_serverSocket.BeginAccept(AcceptCallback, state);
                 }
                 catch (Exception e)
                 {
@@ -545,7 +545,7 @@ namespace AW2.Net
                     }
                     else
                     {
-                        _connectionResults.Do(queue =>
+                        g_connectionResults.Do(queue =>
                         {
                             queue.Enqueue(new Result<Connection>(e, state.ID));
                             if (ConnectionResultCallback != null) ConnectionResultCallback();
@@ -562,14 +562,14 @@ namespace AW2.Net
         private static void ConnectCallback(IAsyncResult asyncResult)
         {
             ConnectAsyncState state = (ConnectAsyncState)asyncResult.AsyncState;
-            lock (_connectionResults)
+            lock (g_connectionResults)
             {
                 try
                 {
                     state.Socket.EndConnect(asyncResult);
                     ConfigureSocket(state.Socket);
                     var newConnection = new GameServerConnection(state.Socket);
-                    _connectionResults.Do(queue =>
+                    g_connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(newConnection, state.ID));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();
@@ -577,7 +577,7 @@ namespace AW2.Net
                 }
                 catch (Exception e)
                 {
-                    _connectionResults.Do(queue =>
+                    g_connectionResults.Do(queue =>
                     {
                         queue.Enqueue(new Result<Connection>(e, state.ID));
                         if (ConnectionResultCallback != null) ConnectionResultCallback();

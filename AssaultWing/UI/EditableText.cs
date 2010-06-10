@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace AW2.UI
 {
@@ -22,6 +23,17 @@ namespace AW2.UI
             IPAddressSet = Numbers | Dot,
         };
 
+        private static readonly TimeSpan REPEAT_DELAY = TimeSpan.FromSeconds(0.4);
+        private static readonly TimeSpan REPEAT_INTERVAL = TimeSpan.FromSeconds(0.05);
+
+        /// <summary>
+        /// Last key pressed, or <c>null</c> if
+        /// no key pressed yet or the pressed key has been released.
+        /// </summary>
+        private Keys? _lastPressedKey;
+
+        private TimeSpan _nextKeyRepeat;
+
         public Keysets AllowedKeysets { get; set; }
         public int MaxLength { get; set; }
 
@@ -32,15 +44,11 @@ namespace AW2.UI
         public int CaretPosition { get; private set; }
 
         /// <summary>
-        /// Last key pressed, or <c>null</c> if
-        /// no key pressed yet or the pressed key has been released.
+        /// The current text content.
         /// </summary>
-        Keys? lastPressedKey;
+        public string Content { get; private set; }
 
-        /// <summary>
-        /// The current content of the text.
-        /// </summary>
-        public string Content;
+        private bool TimeToRepeatKey { get { return _nextKeyRepeat != TimeSpan.Zero && _nextKeyRepeat <= AssaultWing.Instance.GameTime.TotalRealTime; } }
 
         public EditableText(string content, int maxLength, Keysets allowedKeysets)
         {
@@ -58,68 +66,86 @@ namespace AW2.UI
         /// the text contents were changed.</param>
         public void Update(Action changedCallback)
         {
-            KeyboardState state = Keyboard.GetState();
+            var state = Keyboard.GetState();
 
             // If a key has been pressed, do nothing until it is released.
-            if (lastPressedKey.HasValue)
+            IEnumerable<Keys> pressedKeys = null;
+            if (!_lastPressedKey.HasValue)
             {
-                if (state.IsKeyUp(lastPressedKey.Value))
-                    lastPressedKey = null;
+                _nextKeyRepeat = AssaultWing.Instance.GameTime.TotalRealTime + REPEAT_DELAY;
+                pressedKeys = state.GetPressedKeys();
             }
-            if (!lastPressedKey.HasValue)
+            else
             {
-                foreach (Keys key in state.GetPressedKeys())
+                if (state.IsKeyUp(_lastPressedKey.Value))
+                    _lastPressedKey = null;
+                else if (TimeToRepeatKey)
                 {
-                    switch (key)
-                    {
-                        case Keys.Left: --CaretPosition; break;
-                        case Keys.Right: ++CaretPosition; break;
-                        case Keys.Home: CaretPosition = 0; break;
-                        case Keys.End: CaretPosition = Content.Length; break;
-                        case Keys.Back:
-                            if (CaretPosition > 0)
-                            {
-                                --CaretPosition;
-                                Content = Content.Remove(CaretPosition, 1);
-                            }
-                            break;
-                        case Keys.Delete:
-                            if (CaretPosition < Content.Length)
-                                Content = Content.Remove(CaretPosition, 1);
-                            break;
-                        default:
-                            // React to text input
-                            char? chr = null;
-                            if ((AllowedKeysets & Keysets.Numbers) != 0)
-                            {
-                                if (key >= Keys.D0 && key <= Keys.D9)
-                                    chr = (char)('0' + key - Keys.D0);
-                            }
-                            if ((AllowedKeysets & Keysets.Letters) != 0)
-                            {
-                                if (key >= Keys.A && key <= Keys.Z)
-                                    chr = (char)('a' + key - Keys.A);
-                            }
-                            if ((AllowedKeysets & Keysets.Space) != 0)
-                            {
-                                if (key == Keys.Space) chr = ' ';
-                            }
-                            if ((AllowedKeysets & Keysets.Dot) != 0)
-                            {
-                                if (key == Keys.OemPeriod) chr = '.';
-                            }
-                            if (chr.HasValue && Content.Length < MaxLength)
-                            {
-                                Content = Content.Insert(CaretPosition, chr.Value.ToString());
-                                ++CaretPosition;
-                            }
-                            break;
-                    }
-                    CaretPosition = Math.Min(CaretPosition, Content.Length);
-                    CaretPosition = Math.Max(CaretPosition, 0);
-                    lastPressedKey = key;
+                    _nextKeyRepeat = AssaultWing.Instance.GameTime.TotalRealTime + REPEAT_INTERVAL;
+                    pressedKeys = new Keys[] { _lastPressedKey.Value };
                 }
+            }
+
+            if (pressedKeys != null)
+            {
+                foreach (var key in pressedKeys) InterpretKey(key);
                 changedCallback();
+            }
+        }
+
+        private void InterpretKey(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.Left: --CaretPosition; break;
+                case Keys.Right: ++CaretPosition; break;
+                case Keys.Home: CaretPosition = 0; break;
+                case Keys.End: CaretPosition = Content.Length; break;
+                case Keys.Back:
+                    if (CaretPosition > 0)
+                    {
+                        --CaretPosition;
+                        Content = Content.Remove(CaretPosition, 1);
+                    }
+                    break;
+                case Keys.Delete:
+                    if (CaretPosition < Content.Length)
+                        Content = Content.Remove(CaretPosition, 1);
+                    break;
+                default:
+                    InterpretTextInput(key);
+                    break;
+            }
+            CaretPosition = Math.Min(CaretPosition, Content.Length);
+            CaretPosition = Math.Max(CaretPosition, 0);
+            _lastPressedKey = key;
+        }
+
+        private void InterpretTextInput(Keys key)
+        {
+            char? chr = null;
+            if ((AllowedKeysets & Keysets.Numbers) != 0)
+            {
+                if (key >= Keys.D0 && key <= Keys.D9)
+                    chr = (char)('0' + key - Keys.D0);
+            }
+            if ((AllowedKeysets & Keysets.Letters) != 0)
+            {
+                if (key >= Keys.A && key <= Keys.Z)
+                    chr = (char)('a' + key - Keys.A);
+            }
+            if ((AllowedKeysets & Keysets.Space) != 0)
+            {
+                if (key == Keys.Space) chr = ' ';
+            }
+            if ((AllowedKeysets & Keysets.Dot) != 0)
+            {
+                if (key == Keys.OemPeriod) chr = '.';
+            }
+            if (chr.HasValue && Content.Length < MaxLength)
+            {
+                Content = Content.Insert(CaretPosition, chr.Value.ToString());
+                ++CaretPosition;
             }
         }
     }

@@ -71,17 +71,33 @@ namespace AW2.Game.Gobs
             if (MustBeSilent) _dockSound.EnsureIsStopped(AudioStopOptions.AsAuthored);
         }
 
+        public static int UNDAMAGED_TIME_REQUIRED = 5000;
+
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             // We assume we have only one Receptor collision area which handles docking.
             // Then 'theirArea.Owner' must be damageable.
             if (myArea.Name == "Dock")
             {
-                if (theirArea.Owner.Owner != null) EnsureDockSoundPlaying();
-                theirArea.Owner.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(_repairSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime), new DeathCause());
                 Ship ship = theirArea.Owner as Ship;
+                bool canDock = false;
+
+                // If the ship is not null and the player hasn't taken damage for long enough time then set canDock to true (player can dock)
                 if (ship != null)
                 {
+                    double totalGameTime = AssaultWing.Instance.GameTime.TotalGameTime.TotalMilliseconds;
+
+                    if (ship.lastDamageTaken == 0 || totalGameTime - ship.lastDamageTaken > UNDAMAGED_TIME_REQUIRED)
+                    {
+                        canDock = true;
+                    }
+                }
+
+                if (ship != null && theirArea.Owner.Owner != null && canDock) EnsureDockSoundPlaying();                
+
+                if (ship != null && canDock)
+                {
+                    ship.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(_repairSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime), new DeathCause());
                     ship.ExtraDevice.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
                     ship.Weapon2.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
                 }

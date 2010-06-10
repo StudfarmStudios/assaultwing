@@ -579,12 +579,23 @@ namespace AW2.Game.Gobs
             }
         }
 
+        public double lastDamageTaken = 0;
+
         public override void InflictDamage(float damageAmount, DeathCause cause)
         {
+            // If player takes damage (something substracted from health) mark the GameTime so
+            // that a dock can check whether the player can actually dock.
+            if (damageAmount > 0)
+            {
+                lastDamageTaken = AssaultWing.Instance.GameTime.TotalGameTime.TotalMilliseconds;
+            }
+
             float realDamage = _armour.Evaluate(damageAmount);
             if (Owner != null)
                 Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
+
+            
         }
 
         public ShipLocationPredicter LocationPredicter { get; private set; }

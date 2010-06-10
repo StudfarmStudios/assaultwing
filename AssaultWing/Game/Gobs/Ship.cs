@@ -579,6 +579,9 @@ namespace AW2.Game.Gobs
             }
         }
 
+        /// <summary>
+        /// Time in milliseconds when the ship took the last damage
+        /// </summary>
         public double LastDamageTaken = 0;
 
         public override void InflictDamage(float damageAmount, DeathCause cause)

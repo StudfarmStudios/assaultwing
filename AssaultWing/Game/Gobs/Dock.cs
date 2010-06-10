@@ -83,7 +83,7 @@ namespace AW2.Game.Gobs
                 bool canDock = false;
 
                 // If the ship is not null and the player hasn't taken damage for long enough time then set canDock to true (player can dock)
-                if (ship != null)
+                if (ship != null && theirArea.Owner is Ship)
                 {
                     double totalGameTime = AssaultWing.Instance.GameTime.TotalGameTime.TotalMilliseconds;
 

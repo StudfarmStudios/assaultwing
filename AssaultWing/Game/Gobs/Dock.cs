@@ -87,7 +87,7 @@ namespace AW2.Game.Gobs
                 {
                     double totalGameTime = AssaultWing.Instance.GameTime.TotalGameTime.TotalMilliseconds;
 
-                    if (ship.lastDamageTaken == 0 || totalGameTime - ship.lastDamageTaken > UNDAMAGED_TIME_REQUIRED)
+                    if (ship.LastDamageTaken == 0 || totalGameTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED)
                     {
                         canDock = true;
                     }

@@ -71,7 +71,7 @@ namespace AW2.Game.Gobs
             if (MustBeSilent) _dockSound.EnsureIsStopped(AudioStopOptions.AsAuthored);
         }
 
-        public static int UNDAMAGED_TIME_REQUIRED = 5000;
+        public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
@@ -85,9 +85,10 @@ namespace AW2.Game.Gobs
                 // If the ship is not null and the player hasn't taken damage for long enough time then set canDock to true (player can dock)
                 if (ship != null)
                 {
-                    double totalGameTime = AssaultWing.Instance.GameTime.TotalGameTime.TotalMilliseconds;
+                    TimeSpan totalGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
 
-                    if (ship.LastDamageTaken == 0 || totalGameTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED)
+                    if (ship.LastDamageTaken == TimeSpan.Zero || 
+                        totalGameTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED)
                     {
                         canDock = true;
                     }

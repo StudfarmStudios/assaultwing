@@ -582,7 +582,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Time in milliseconds when the ship took the last damage
         /// </summary>
-        public double LastDamageTaken = 0;
+        public TimeSpan LastDamageTaken { get; set; }
 
         public override void InflictDamage(float damageAmount, DeathCause cause)
         {
@@ -590,7 +590,7 @@ namespace AW2.Game.Gobs
             // that a dock can check whether the player can actually dock.
             if (damageAmount > 0)
             {
-                LastDamageTaken = AssaultWing.Instance.GameTime.TotalGameTime.TotalMilliseconds;
+                LastDamageTaken = AssaultWing.Instance.DataEngine.ArenaTotalTime;
             }
 
             float realDamage = _armour.Evaluate(damageAmount);

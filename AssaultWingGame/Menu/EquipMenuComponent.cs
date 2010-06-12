@@ -38,7 +38,7 @@ namespace AW2.Menu
         private SpriteFont _menuBigFont, _menuSmallFont;
         private Texture2D _backgroundTexture;
         private Texture2D _cursorMainTexture, _highlightMainTexture;
-        private Texture2D _playerPaneTexture, _player1PaneTopTexture, _player2PaneTopTexture;
+        private Texture2D _playerPaneTexture, _playerNameBackgroundTexture, _playerNameBorderTexture, _playerNameHiliteTexture, _playerNameCursorTexture;
         private Texture2D _statusPaneTexture;
         private Texture2D _tabEquipmentTexture, _tabPlayersTexture, _tabGameSettingsTexture, _tabChatTexture, _tabHilite;
         private Texture2D _buttonReadyTexture, _buttonReadyHiliteTexture;
@@ -77,7 +77,7 @@ namespace AW2.Menu
         private static readonly Vector2 PLAYER_PANE_DELTA_POS = new Vector2(203, 0);
         private static readonly Vector2 PLAYER_PANE_ROW_DELTA_POS = new Vector2(0, 91);
 
-        private Vector2 PlayerPaneMainDeltaPos { get { return new Vector2(0, _player1PaneTopTexture.Height); } }
+        private Vector2 PlayerPaneMainDeltaPos { get { return new Vector2(0, _playerNameBackgroundTexture.Height); } }
         private Vector2 PlayerPaneCursorDeltaPos { get { return PlayerPaneMainDeltaPos + new Vector2(22, 3); } }
         private Vector2 PlayerPaneIconDeltaPos { get { return PlayerPaneMainDeltaPos + new Vector2(21, 1); } }
 
@@ -91,7 +91,7 @@ namespace AW2.Menu
         }
         private Vector2 GetPlayerNamePos(int playerI, string name)
         {
-            return GetPlayerPanePos(playerI) + new Vector2((int)(104 - _menuSmallFont.MeasureString(name).X / 2), 38);
+            return GetPlayerPanePos(playerI) + new Vector2((int)(106 - _menuSmallFont.MeasureString(name).X / 2), 36);
         }
         private Vector2 GetPlayerItemNamePos(int playerI, string name)
         {
@@ -167,8 +167,10 @@ namespace AW2.Menu
             _cursorMainTexture = content.Load<Texture2D>("menu_equip_cursor_large");
             _highlightMainTexture = content.Load<Texture2D>("menu_equip_hilite_large");
             _playerPaneTexture = content.Load<Texture2D>("menu_equip_player_bg");
-            _player1PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_green");
-            _player2PaneTopTexture = content.Load<Texture2D>("menu_equip_player_color_red");
+            _playerNameBackgroundTexture = content.Load<Texture2D>("menu_equip_player_name_bg");
+            _playerNameBorderTexture = content.Load<Texture2D>("menu_equip_player_name_border");
+            _playerNameHiliteTexture = content.Load<Texture2D>("menu_equip_player_name_hilite");
+            _playerNameCursorTexture = content.Load<Texture2D>("menu_equip_player_name_cursor");
             _statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
 
             _tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
@@ -420,17 +422,18 @@ namespace AW2.Menu
                 ++playerI;
 
                 // Find out things.
-                string playerItemName = "???";
+                string playerItemName = "Write your name";
                 switch (_currentItems[playerI])
                 {
                     case EquipMenuItem.Ship: playerItemName = player.ShipName; break;
                     case EquipMenuItem.Extra: playerItemName = player.ExtraDeviceName; break;
                     case EquipMenuItem.Weapon2: playerItemName = player.Weapon2Name; break;
                 }
-                Texture2D GetPlayerPaneTopTexture = playerI == 1 ? _player2PaneTopTexture : _player1PaneTopTexture;
+               // Texture2D GetPlayerPaneTopTexture = playerI == 1 ? _player2PaneTopTexture : _player1PaneTopTexture;
 
                 // Draw pane background.
-                spriteBatch.Draw(GetPlayerPaneTopTexture, GetPlayerPanePos(playerI) - view, Color.White);
+                spriteBatch.Draw(_playerNameBackgroundTexture, GetPlayerPanePos(playerI) - view, player.PlayerColor);
+                spriteBatch.Draw(_playerNameBorderTexture, GetPlayerPanePos(playerI) - view, Color.White);
                 spriteBatch.Draw(_playerPaneTexture, GetPlayerPanePos(playerI) - view + PlayerPaneMainDeltaPos, Color.White);
                 spriteBatch.DrawString(_menuSmallFont, player.Name, GetPlayerNamePos(playerI, player.Name) - view, Color.White);
 
@@ -441,8 +444,13 @@ namespace AW2.Menu
 
                 // Draw cursor, highlight and item name.
                 float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _cursorFadeStartTimes[playerI]).TotalSeconds;
-                spriteBatch.Draw(_highlightMainTexture, GetPlayerCursorPos(playerI) - view, Color.White);
-                spriteBatch.Draw(_cursorMainTexture, GetPlayerCursorPos(playerI) - view, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
+                Texture2D hiliteTexture = _currentItems[playerI] == EquipMenuItem.Name ? _playerNameHiliteTexture : _highlightMainTexture;
+                Vector2 hiliteTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;
+                spriteBatch.Draw(hiliteTexture, hiliteTexturePos, Color.White);
+
+                Texture2D cursorTexture = _currentItems[playerI] == EquipMenuItem.Name ? _playerNameCursorTexture : _cursorMainTexture;
+                Vector2 cursorTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;
+                spriteBatch.Draw(cursorTexture, cursorTexturePos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
                 spriteBatch.DrawString(_menuSmallFont, playerItemName, GetPlayerItemNamePos(playerI, playerItemName) - view, Color.White);
             }
         }

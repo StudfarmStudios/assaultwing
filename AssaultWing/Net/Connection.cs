@@ -40,6 +40,8 @@ namespace AW2.Net
         /// <see cref="Connection.Id"/>
         private static int g_leastUnusedID = 0;
 
+        private static List<ConnectAsyncState> g_connectAsyncStates = new List<ConnectAsyncState>();
+
         /// <summary>
         /// If greater than zero, then the connection is disposed and thus no longer usable.
         /// </summary>
@@ -175,8 +177,18 @@ namespace AW2.Net
         /// <param name="port">Listening port of the remote host.</param>
         public static void Connect(IPAddress address, int port)
         {
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.BeginConnect(address, port, ConnectCallback, new ConnectAsyncState(socket));
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var asyncState = new ConnectAsyncState(socket);
+            g_connectAsyncStates.Add(asyncState);
+            socket.BeginConnect(address, port, ConnectCallback, asyncState);
+        }
+
+        /// <summary>
+        /// Cancels all current connection attempts to a remote host.
+        /// </summary>
+        public static void CancelConnect()
+        {
+            foreach (var state in g_connectAsyncStates) state.Cancel();
         }
 
         /// <summary>
@@ -428,9 +440,10 @@ namespace AW2.Net
         /// <param name="asyncResult">The result of the asynchronous operation.</param>
         private static void ConnectCallback(IAsyncResult asyncResult)
         {
+            g_connectAsyncStates.Remove((ConnectAsyncState)asyncResult.AsyncState);
             ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateServerConnection(asyncResult), ReportResult);
         }
-        
+
         private static Connection CreateServerConnection(IAsyncResult asyncResult)
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;

@@ -8,11 +8,8 @@ namespace AW2.Net
     /// </summary>
     public class ConnectAsyncState
     {
-        public Socket Socket { get; set; }
-        public ConnectAsyncState(Socket socket)
-        {
-            Socket = socket;
-        }
+        public Socket Socket { get; private set; }
+        public bool IsCancelled { get; private set; }
 
         /// <summary>
         /// Callback implementation for accepting an incoming connection.
@@ -21,7 +18,8 @@ namespace AW2.Net
         /// <param name="reportResult">Connection result reporting delegate.</param>
         public static void ConnectionAttemptCallback(IAsyncResult asyncResult, Func<Connection> createConnection, Action<Result<Connection>> reportResult)
         {
-            ConnectAsyncState state = (ConnectAsyncState)asyncResult.AsyncState;
+            var state = (ConnectAsyncState)asyncResult.AsyncState;
+            if (state.IsCancelled) return;
             try
             {
                 var newConnection = createConnection();
@@ -36,6 +34,16 @@ namespace AW2.Net
                 else
                     reportResult(new Result<Connection>(e));
             }
+        }
+
+        public ConnectAsyncState(Socket socket)
+        {
+            Socket = socket;
+        }
+
+        public void Cancel()
+        {
+            IsCancelled = true;
         }
     }
 }

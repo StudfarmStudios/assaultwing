@@ -57,6 +57,7 @@ namespace AW2.UI
             AllowedKeysets = allowedKeysets;
             MaxLength = maxLength;
             Content = content;
+            CaretPosition = content.Length;
         }
 
         /// <summary>

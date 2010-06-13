@@ -383,6 +383,27 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Clamps width and height to the Rectangle, preserving aspect ratio.
+        /// </summary>
+        public static void Clamp(this Rectangle rect, ref int width, ref int height)
+        {
+            if (width == 0 || height == 0) throw new ArgumentException("Width and height must be non-zero");
+            if (width <= rect.Width && height <= rect.Height) return;
+            float widthScale = rect.Width / (float)width;
+            float heightScale = rect.Height / (float)height;
+            if (widthScale < heightScale)
+            {
+                height = height * rect.Width / width;
+                width = rect.Width;
+            }
+            else
+            {
+                width = width * rect.Height / height;
+                height = rect.Height;
+            }
+        }
+
+        /// <summary>
         /// Returns the number of seconds this <see cref="TimeSpan"/> 
         /// is in the past relative to the current game time.
         /// </summary>
@@ -781,6 +802,32 @@ namespace AW2.Helpers
                 Assert.Throws<InvalidOperationException>(() => Vector2.One.Clamp(-2, -1));
                 Assert.Throws<ArgumentException>(() => Vector2.One.Clamp(5, 3));
                 Assert.Throws<InvalidOperationException>(() => Vector2.Zero.Clamp(1, 2));
+            }
+
+            [Test]
+            public void TestRectangleClamp()
+            {
+                int width;
+                int height;
+                var rect = new Rectangle(50,30,150,200);
+
+                width = 0; height = 0;
+                Assert.Throws<ArgumentException>(() => rect.Clamp(ref width, ref height));
+
+                width = 100; height = 110;
+                rect.Clamp(ref width, ref height);
+                Assert.AreEqual(100, width);
+                Assert.AreEqual(110, height);
+
+                width = 300; height = 50;
+                rect.Clamp(ref width, ref height);
+                Assert.AreEqual(150, width);
+                Assert.AreEqual(25, height);
+
+                width = 60; height = 300;
+                rect.Clamp(ref width, ref height);
+                Assert.AreEqual(40, width);
+                Assert.AreEqual(200, height);
             }
 
             [Test]

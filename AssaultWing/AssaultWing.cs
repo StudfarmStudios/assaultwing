@@ -44,6 +44,7 @@ namespace AW2
 
         private UIEngineImpl _uiEngine;
         private GraphicsEngineImpl _graphicsEngine;
+        private IntroEngine _introEngine;
         private OverlayDialog _overlayDialog;
         private LogicEngine _logicEngine;
         private int _preferredWindowWidth, _preferredWindowHeight;
@@ -253,8 +254,6 @@ namespace AW2
             _frameStep = false;
 
             Content = new AWContentManager(Services);
-            _lastFramerateCheck = new TimeSpan(0);
-            _framesSinceLastCheck = 0;
             GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
             GameTime = new GameTime();
@@ -335,6 +334,7 @@ namespace AW2
             _logicEngine = new LogicEngine(this);
             SoundEngine = new SoundEngine(this);
             _graphicsEngine = new GraphicsEngineImpl(this);
+            _introEngine = new IntroEngine(this);
             MenuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
             NetworkEngine = new NetworkEngine(this);
             _overlayDialog = new OverlayDialog(this);
@@ -346,11 +346,13 @@ namespace AW2
             _logicEngine.UpdateOrder = 2;
             SoundEngine.UpdateOrder = 3;
             _graphicsEngine.UpdateOrder = 4;
+            _introEngine.UpdateOrder = 4;
             _overlayDialog.UpdateOrder = 5;
             MenuEngine.UpdateOrder = 6;
 
             Components.Add(_logicEngine);
             Components.Add(_graphicsEngine);
+            Components.Add(_introEngine);
             Components.Add(_overlayDialog);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
@@ -360,13 +362,14 @@ namespace AW2
             Services.AddService(typeof(DataEngine), DataEngine);
             Services.AddService(typeof(PhysicsEngine), PhysicsEngine);
 
-            // Disable all optional components.
-            _logicEngine.Enabled = false;
-            _graphicsEngine.Visible = false;
-            MenuEngine.Enabled = false;
-            MenuEngine.Visible = false;
-            _overlayDialog.Enabled = false;
-            _overlayDialog.Visible = false;
+            // Disable all optional components
+            foreach (var component in Components)
+            {
+                if (component is DrawableGameComponent) ((DrawableGameComponent)component).Visible = false;
+                if (component is GameComponent) ((GameComponent)component).Enabled = false;
+            }
+            _uiEngine.Enabled = true;
+            SoundEngine.Enabled = true;
         }
 
         [Conditional("DEBUG")]
@@ -446,6 +449,10 @@ namespace AW2
             {
                 case GameState.Initializing:
                     break;
+                case GameState.Intro:
+                    _introEngine.Enabled = true;
+                    _introEngine.Visible = true;
+                    break;
                 case GameState.Gameplay:
                     Log.Write("Saving settings to file");
                     Settings.ToFile();
@@ -471,6 +478,10 @@ namespace AW2
             switch (_gameState)
             {
                 case GameState.Initializing:
+                    break;
+                case GameState.Intro:
+                    _introEngine.Enabled = false;
+                    _introEngine.Visible = false;
                     break;
                 case GameState.Gameplay:
                     _logicEngine.Enabled = false;
@@ -792,7 +803,7 @@ namespace AW2
             DataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
             DataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets", "mines" };
 
-            GameState = GameState.Menu;
+            GameState = GameState.Intro;
             base.BeginRun();
             if (RunBegan != null) RunBegan();
         }

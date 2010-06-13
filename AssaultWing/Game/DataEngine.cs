@@ -183,7 +183,7 @@ namespace AW2.Game
             CustomOperations = null;
             preparedArena = arena;
             preparedArena.IsForPlaying = initializeForPlaying;
-            if (initializeForPlaying) preparedArena.Bin.Load(System.IO.Path.Combine(Paths.Arenas, preparedArena.BinFilename));
+            if (initializeForPlaying) preparedArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, preparedArena.BinFilename));
             AssaultWing.Instance.LoadArenaContent(preparedArena);
             int wallCount = preparedArena.Gobs.Count(gob => gob is Wall);
             progressBar.SetSubtaskCount(wallCount);

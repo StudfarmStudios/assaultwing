@@ -102,8 +102,8 @@ namespace AW2
                 UpdateArenaBin(arena);
                 var arenaFilename = fileDialog.FileName;
                 var binFilename = System.IO.Path.ChangeExtension(arenaFilename, ".bin");
-                var arenaPath = System.IO.Path.Combine(Paths.Arenas, arenaFilename);
-                var binPath = System.IO.Path.Combine(Paths.Arenas, binFilename);
+                var arenaPath = System.IO.Path.Combine(Paths.ARENAS, arenaFilename);
+                var binPath = System.IO.Path.Combine(Paths.ARENAS, binFilename);
                 arena.BinFilename = System.IO.Path.GetFileName(binPath);
                 arena.Bin.Save(binPath);
                 TypeLoader.SaveTemplate(arena, arenaPath, typeof(Arena), typeof(TypeParameterAttribute));

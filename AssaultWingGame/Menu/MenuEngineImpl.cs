@@ -167,7 +167,6 @@ namespace AW2.Menu
             components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
 
             WindowResize();
-            Activate();
             base.Initialize();
         }
 

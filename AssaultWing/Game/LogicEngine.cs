@@ -38,10 +38,10 @@ namespace AW2.Game
         {
             Helpers.Log.Write("Loading user-defined types");
 
-            var gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Gobs);
-            var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.Devices);
-            var particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.Particles);
-            var arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.Arenas);
+            var gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.GOBS);
+            var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.DEVICES);
+            var particleLoader = new TypeLoader(typeof(Gob), Helpers.Paths.PARTICLES);
+            var arenaLoader = new ArenaTypeLoader(typeof(Arena), Helpers.Paths.ARENAS);
 
             DeleteTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
 

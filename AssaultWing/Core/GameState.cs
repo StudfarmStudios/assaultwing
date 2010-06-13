@@ -11,6 +11,11 @@
         Initializing,
 
         /// <summary>
+        /// Introductory animations are playing.
+        /// </summary>
+        Intro,
+
+        /// <summary>
         /// The game is active.
         /// </summary>
         Gameplay,

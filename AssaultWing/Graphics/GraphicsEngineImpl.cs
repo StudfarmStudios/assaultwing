@@ -9,7 +9,7 @@ using AW2.Helpers;
 namespace AW2.Graphics
 {
     /// <summary>
-    /// Basic graphics engine.
+    /// Gameplay graphics implementation.
     /// </summary>
     public class GraphicsEngineImpl : DrawableGameComponent
     {

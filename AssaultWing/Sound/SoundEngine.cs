@@ -37,9 +37,9 @@ namespace AW2.Sound
         {
             try
             {
-                _audioEngine = new AudioEngine(System.IO.Path.Combine(Paths.Sounds, "assaultwingsounds.xgs"));
-                _waveBank = new WaveBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Wave Bank.xwb"));
-                _soundBank = new SoundBank(_audioEngine, System.IO.Path.Combine(Paths.Sounds, "Sound Bank.xsb"));
+                _audioEngine = new AudioEngine(System.IO.Path.Combine(Paths.SOUNDS, "assaultwingsounds.xgs"));
+                _waveBank = new WaveBank(_audioEngine, System.IO.Path.Combine(Paths.SOUNDS, "Wave Bank.xwb"));
+                _soundBank = new SoundBank(_audioEngine, System.IO.Path.Combine(Paths.SOUNDS, "Sound Bank.xsb"));
                 _soundEffectCategory = _audioEngine.GetCategory("Default");
                 Log.Write("Sound engine initialized.");
             }

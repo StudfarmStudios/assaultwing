@@ -168,7 +168,7 @@ namespace AW2.Net
         {
             Log.Write("Server starts listening");
             _startServerConnectionHandler = connectionHandler;
-            Connection.StartListening(TCP_CONNECTION_PORT, "I listen");
+            ConnectionAttemptListener.Instance.StartListening(TCP_CONNECTION_PORT);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace AW2.Net
         {
             Log.Write("Server stops listening");
             MessageHandlers.Clear();
-            Connection.StopListening();
+            ConnectionAttemptListener.Instance.StopListening();
             _gameClientConnections.Dispose();
         }
 
@@ -197,7 +197,7 @@ namespace AW2.Net
             IPAddress serverIp;
             if (!System.Net.IPAddress.TryParse(serverAddress, out serverIp))
                 throw new ArgumentException("Not a valid IP address: " + serverAddress);
-            Connection.Connect(serverIp, TCP_CONNECTION_PORT, "I connect");
+            Connection.Connect(serverIp, TCP_CONNECTION_PORT);
         }
 
         /// <summary>
@@ -332,23 +332,22 @@ namespace AW2.Net
         public override void Update(GameTime gameTime)
         {
             // Handle established connections.
+            ConnectionAttemptListener.Instance.ConnectionResults.Do(queue =>
+            {
+                while (queue.Count > 0)
+                {
+                    var result = queue.Dequeue();
+                    if (result.Successful) _gameClientConnections.Connections.Add(new PingedConnection(result.Value));
+                    _startServerConnectionHandler(result);
+                }
+            });
             Connection.ConnectionResults.Do(queue =>
             {
                 while (queue.Count > 0)
                 {
                     var result = queue.Dequeue();
-                    if (result.Id == "I connect")
-                    {
-                        if (result.Successful)
-                            _gameServerConnection = new PingedConnection(result.Value);
-                        _startClientConnectionHandler(result);
-                    }
-                    if (result.Id == "I listen")
-                    {
-                        if (result.Successful)
-                            _gameClientConnections.Connections.Add(new PingedConnection(result.Value));
-                        _startServerConnectionHandler(result);
-                    }
+                    if (result.Successful) _gameServerConnection = new PingedConnection(result.Value);
+                    _startClientConnectionHandler(result);
                 }
             });
 

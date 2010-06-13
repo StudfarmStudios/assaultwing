@@ -126,6 +126,7 @@ namespace AW2
             }
         }
 
+        public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
         public string[] CommandLineArgs { get; set; }
         public PhysicsEngine PhysicsEngine { get; private set; }
@@ -237,6 +238,7 @@ namespace AW2
         private AssaultWing()
         {
             Log.Write("Creating an Assault Wing instance");
+            ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             if (WindowInitializing == null)
                 throw new ApplicationException("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
 

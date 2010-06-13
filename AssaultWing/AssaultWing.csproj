@@ -227,7 +227,9 @@
     <Compile Include="Helpers\SuspendableThread.cs" />
     <Compile Include="Menu\DummyMenuEngine.cs" />
     <Compile Include="Menu\IMenuEngine.cs" />
+    <Compile Include="Net\ConnectAsyncState.cs" />
     <Compile Include="Net\Connection.cs" />
+    <Compile Include="Net\ConnectionAttemptListener.cs" />
     <Compile Include="Net\GameClientConnection.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\GameServerConnection.cs" />

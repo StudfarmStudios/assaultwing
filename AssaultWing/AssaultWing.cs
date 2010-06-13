@@ -368,6 +368,7 @@ namespace AW2
                 if (component is DrawableGameComponent) ((DrawableGameComponent)component).Visible = false;
                 if (component is GameComponent) ((GameComponent)component).Enabled = false;
             }
+            NetworkEngine.Enabled = true;
             _uiEngine.Enabled = true;
             SoundEngine.Enabled = true;
         }

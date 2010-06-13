@@ -90,14 +90,9 @@ namespace AW2.Menu
             components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
             // The components are created in Initialize() when other resources are ready.
 
-            viewCurve = new MovementCurve(Vector2.Zero);
             HelpText = null; // initialises helpText to default value
         }
 
-        /// <summary>
-        /// Called when the component needs to load graphics resources. Override this
-        /// method to load any component-specific graphics resources.
-        /// </summary>
         protected override void LoadContent()
         {
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
@@ -122,10 +117,6 @@ namespace AW2.Menu
             base.LoadContent();
         }
 
-        /// <summary>
-        /// Called when graphics resources should be unloaded. 
-        /// Handle component-specific graphics resources.
-        /// </summary>
         protected override void UnloadContent()
         {
             if (spriteBatch != null)
@@ -154,9 +145,6 @@ namespace AW2.Menu
             base.UnloadContent();
         }
 
-        /// <summary>
-        /// Initialises the menu system.
-        /// </summary>
         public override void Initialize()
         {
             screenWidth = AssaultWing.Instance.ClientBounds.Width;
@@ -165,6 +153,7 @@ namespace AW2.Menu
             components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
             components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
+            viewCurve = new MovementCurve(components[(int)MenuComponentType.Main].Center);
 
             WindowResize();
             base.Initialize();

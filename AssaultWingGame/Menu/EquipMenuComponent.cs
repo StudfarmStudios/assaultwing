@@ -147,7 +147,6 @@ namespace AW2.Menu
             _controlBack = new KeyboardKey(Keys.Escape);
             _pos = new Vector2(0, 0);
             _currentItems = new EquipMenuItem[MAX_LOCAL_PLAYERS];
-            for (int i = 0; i < MAX_LOCAL_PLAYERS; ++i) _currentItems[i] = EquipMenuItem.Ship;
             _cursorFadeStartTimes = new TimeSpan[MAX_LOCAL_PLAYERS];
             _cursorFade = new Curve();
             _cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
@@ -210,6 +209,7 @@ namespace AW2.Menu
             int playerI = 0;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
+                _currentItems[playerI] = EquipMenuItem.Ship;
                 _playerNames[playerI] = new EditableText(player.Name, 20, EditableText.Keysets.PlayerNameSet);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player, GetExtraDeviceSelectorPos(playerI));

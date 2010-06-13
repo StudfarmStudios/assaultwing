@@ -195,6 +195,7 @@ namespace AW2.Menu
             {
                 CheckGeneralControls();
                 CheckPlayerControls();
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) SendSelectionsToServer();
             }
         }
 
@@ -282,19 +283,19 @@ namespace AW2.Menu
                     ConditionalPlayerAction(player.Controls.Fire1.Pulse || player.Controls.Right.Pulse,
                         playerI, "MenuChangeItem", () => selectionChange = 1);
                     if (selectionChange != 0)
-                    {
                         _equipmentSelectors[playerI, (int)_currentItems[playerI]].CurrentValue += selectionChange;
-
-                        // Send new equipment choices to the game server.
-                        if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                        {
-                            var equipUpdateRequest = new JoinGameRequest();
-                            equipUpdateRequest.PlayerInfos = new List<PlayerInfo> { new PlayerInfo(player) };
-                            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(equipUpdateRequest);
-                        }
-                    }
                 }
             }
+        }
+
+        private static void SendSelectionsToServer()
+        {
+            var equipUpdateRequest = new JoinGameRequest();
+            equipUpdateRequest.PlayerInfos =
+                (from p in AssaultWing.Instance.DataEngine.Players
+                where !p.IsRemote
+                select new PlayerInfo(p)).ToList();
+            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(equipUpdateRequest);
         }
 
         /// <summary>

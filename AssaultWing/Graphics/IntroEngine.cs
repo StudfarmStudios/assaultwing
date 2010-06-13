@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using AW2.Helpers;
+using AW2.UI;
 
 namespace AW2.Graphics
 {
@@ -13,6 +14,7 @@ namespace AW2.Graphics
     /// </summary>
     public class IntroEngine : DrawableGameComponent
     {
+        Control _skipControl;
         Video _awIntroVideo;
         VideoPlayer _videoPlayer;
         SpriteBatch _spriteBatch;
@@ -25,6 +27,7 @@ namespace AW2.Graphics
         public override void Initialize()
         {
             base.Initialize();
+            _skipControl = new KeyboardKey(Microsoft.Xna.Framework.Input.Keys.Escape);
         }
 
         protected override void LoadContent()
@@ -52,24 +55,30 @@ namespace AW2.Graphics
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
             if (_videoPlayer.State != MediaState.Playing) _videoPlayer.Play(_awIntroVideo);
-            if (_videoPlayer.PlayPosition == _videoPlayer.Video.Duration)
-                AssaultWing.Instance.ShowMenu();
+            if (_skipControl.Pulse) IntroFinished();
+            if (_videoPlayer.PlayPosition == _videoPlayer.Video.Duration) IntroFinished();
         }
 
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            gfx.Clear(Color.Black);
             var videoFrame = _videoPlayer.GetTexture();
             _spriteBatch.Begin();
             int width = videoFrame.Width;
             int height = videoFrame.Height;
-            var titleSafeArea = AssaultWing.Instance.GraphicsDevice.Viewport.TitleSafeArea;
+            var titleSafeArea = gfx.Viewport.TitleSafeArea;
             titleSafeArea.Clamp(ref width, ref height);
             var destinationRect = new Rectangle((titleSafeArea.Width - width) / 2, (titleSafeArea.Height - height) / 2, width, height);
             _spriteBatch.Draw(videoFrame, destinationRect, Color.White);
             _spriteBatch.End();
+        }
+
+        private void IntroFinished()
+        {
+            _videoPlayer.Stop();
+            AssaultWing.Instance.ShowMenu();
         }
     }
 }

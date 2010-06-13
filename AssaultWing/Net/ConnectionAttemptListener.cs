@@ -20,6 +20,8 @@ namespace AW2.Net
         /// </summary>
         private Socket _serverSocket;
 
+        private IAsyncResult _listenResult;
+
         /// <summary>
         /// The only instance (Singleton pattern).
         /// </summary>
@@ -41,7 +43,7 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Starts listening for the next connection attempt from remote hosts.
+        /// Starts listening connection attempts from remote hosts.
         /// To be called from the main thread only.
         /// </summary>
         /// <param name="port">The port at which to listen for incoming connections.</param>
@@ -49,15 +51,13 @@ namespace AW2.Net
         {
             CheckThread();
             if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
-            try
-            {
-                CreateServerSocket(port);
-                _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(_serverSocket));
-            }
-            catch (SocketException e)
-            {
-                ReportResult(new Result<Connection>(e));
-            }
+            CreateServerSocket(port);
+            ListenOneConnection();
+        }
+
+        public void Update()
+        {
+            if (_serverSocket != null && _listenResult.IsCompleted) ListenOneConnection();
         }
 
         /// <summary>
@@ -70,6 +70,7 @@ namespace AW2.Net
             if (_serverSocket == null) throw new Exception("Already not listening for incoming connections");
             _serverSocket.Close();
             _serverSocket = null;
+            _listenResult = null;
         }
 
         private static void CheckThread()
@@ -80,11 +81,23 @@ namespace AW2.Net
 
         private void CreateServerSocket(int port)
         {
-            if (_serverSocket != null) return;
             _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, port);
             _serverSocket.Bind(serverEndPoint);
             _serverSocket.Listen(64);
+        }
+
+        private void ListenOneConnection()
+        {
+            if (_serverSocket == null) throw new ApplicationException("Server socket must be opened first");
+            try
+            {
+                _listenResult = _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(_serverSocket));
+            }
+            catch (SocketException e)
+            {
+                ReportResult(new Result<Connection>(e));
+            }
         }
 
         private void AcceptCallback(IAsyncResult asyncResult)

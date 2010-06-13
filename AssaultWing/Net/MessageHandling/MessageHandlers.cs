@@ -5,7 +5,7 @@ using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Messages;
 
-namespace AW2.Net
+namespace AW2.Net.MessageHandling
 {
     public static class MessageHandlers
     {
@@ -24,33 +24,33 @@ namespace AW2.Net
 
         public static IEnumerable<IMessageHandler> GetClientMenuHandlers(IConnection gameServerConnection)
         {
-            yield return new MessageHandler<StartGameMessage>(false, gameServerConnection, HandleStartGameMessage);
+            yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, HandleStartGameMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(PingedConnection gameServerConnection)
         {
-            yield return new MessageHandler<WallHoleMessage>(false, gameServerConnection, HandleWallHoleMessage);
-            yield return new GameplayMessageHandler<GobCreationMessage>(false, gameServerConnection, AssaultWing.Instance.DataEngine.ProcessGobCreationMessage);
-            yield return new MessageHandler<ArenaStartRequest>(false, gameServerConnection, HandleArenaStartRequest);
-            yield return new MessageHandler<ArenaFinishMessage>(false, gameServerConnection, HandleArenaFinishMessage);
-            yield return new MessageHandler<PlayerMessageMessage>(false, gameServerConnection, HandlePlayerMessageMessage);
-            yield return new MessageHandler<PlayerUpdateMessage>(false, gameServerConnection, HandlePlayerUpdateMessage);
-            yield return new MessageHandler<GobDamageMessage>(false, gameServerConnection, HandleGobDamageMessage);
+            yield return new MessageHandler<WallHoleMessage>(false, IMessageHandler.SourceType.Server, HandleWallHoleMessage);
+            yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, AssaultWing.Instance.DataEngine.ProcessGobCreationMessage);
+            yield return new MessageHandler<ArenaStartRequest>(false, IMessageHandler.SourceType.Server, HandleArenaStartRequest);
+            yield return new MessageHandler<ArenaFinishMessage>(false, IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
+            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessage);
+            yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
+            yield return new MessageHandler<GobDamageMessage>(false, IMessageHandler.SourceType.Server, HandleGobDamageMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers(IConnection clientConnections)
         {
-            yield return new MessageHandler<JoinGameRequest>(false, clientConnections, HandleJoinGameRequest);
+            yield return new MessageHandler<JoinGameRequest>(false, IMessageHandler.SourceType.Client, HandleJoinGameRequest);
         }
 
         public static IEnumerable<IMessageHandler> GetServerGameplayHandlers(IConnection clientConnections)
         {
-            yield return new MessageHandler<PlayerControlsMessage>(false, clientConnections, AW2.UI.UIEngineImpl.HandlePlayerControlsMessage);
+            yield return new MessageHandler<PlayerControlsMessage>(false, IMessageHandler.SourceType.Client, AW2.UI.UIEngineImpl.HandlePlayerControlsMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetServerArenaStartHandlers(IConnection clientConnections, Action<int> idRegisterer)
         {
-            yield return new MessageHandler<ArenaStartReply>(false, clientConnections, mess => idRegisterer(mess.ConnectionId));
+            yield return new MessageHandler<ArenaStartReply>(false, IMessageHandler.SourceType.Client, mess => idRegisterer(mess.ConnectionId));
         }
 
         #region Handler implementations

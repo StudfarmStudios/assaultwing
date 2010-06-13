@@ -9,6 +9,7 @@ using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Net;
+using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
 
@@ -276,7 +277,7 @@ namespace AW2.Menu
             net.GameServerConnection.Send(joinGameRequest);
 
             // Handle one JoinGameReply from the game server.
-            net.MessageHandlers.Add(new MessageHandler<JoinGameReply>(true, net.GameServerConnection, reply =>
+            net.MessageHandlers.Add(new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, reply =>
             {
                 foreach (JoinGameReply.IdChange change in reply.PlayerIdChanges)
                     AssaultWing.Instance.DataEngine.Spectators.First(player => player.Id == change.oldId).Id = change.newId;

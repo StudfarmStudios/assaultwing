@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -7,8 +8,8 @@ using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
+using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
-using System.IO;
 
 namespace AW2.Net
 {
@@ -332,6 +333,8 @@ namespace AW2.Net
 
         public override void Update(GameTime gameTime)
         {
+            if (ConnectionAttemptListener.Instance.IsListening) ConnectionAttemptListener.Instance.Update();
+
             // Handle established connections.
             ConnectionAttemptListener.Instance.ConnectionResults.Do(queue =>
             {
@@ -364,6 +367,7 @@ namespace AW2.Net
             // Finish removing dropped client connections.
             foreach (PingedConnection connection in _removedClientConnections)
                 _gameClientConnections.Connections.Remove(connection);
+            _removedClientConnections.Clear();
 
 #if DEBUG
             // Look for unhandled messages.

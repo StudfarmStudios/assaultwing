@@ -18,7 +18,7 @@ namespace AW2.Sound
         WaveBank _waveBank;
         SoundBank _soundBank;
         AudioCategory _soundEffectCategory;
-        SoundEffectInstance _musicInstance;
+        AWMusic _music;
         Action _volumeFadeAction;
 
         #endregion
@@ -53,7 +53,7 @@ namespace AW2.Sound
         public override void Update(GameTime gameTime)
         {
             if (_volumeFadeAction != null) _volumeFadeAction();
-            if (_musicInstance != null) _musicInstance.Volume = ActualMusicVolume;
+            if (_music != null) _music.Volume = ActualMusicVolume;
             _audioEngine.Update();
             _soundEffectCategory.SetVolume(AssaultWing.Instance.Settings.Sound.SoundVolume);
         }
@@ -97,19 +97,14 @@ namespace AW2.Sound
         /// <summary>
         /// Starts playing set track from game music playlist
         /// </summary>
-        public void PlayMusic(String trackName, float trackVolume)
+        public void PlayMusic(string trackName, float trackVolume)
         {
             if (!Enabled) return;
-            var music = AssaultWing.Instance.Content.Load<SoundEffect>(trackName);
             StopMusic();
             RelativeMusicVolume = trackVolume;
             InternalMusicVolume = 1;
-            _musicInstance = music.CreateInstance();
-            _musicInstance.Volume = ActualMusicVolume;
-            _musicInstance.Pitch = 0;
-            _musicInstance.Pan = 0;
-            _musicInstance.IsLooped = true;
-            _musicInstance.Play();
+            _music = new AWMusic(trackName) { Volume = ActualMusicVolume };
+            _music.EnsureIsPlaying();
         }
 
         /// <summary>
@@ -118,9 +113,8 @@ namespace AW2.Sound
         public void StopMusic()
         {
             if (!Enabled) return;
-            if (_musicInstance == null) return;
-            _musicInstance.Stop();
-            _musicInstance = null;
+            if (_music == null) return;
+            _music.EnsureIsStopped();
             _volumeFadeAction = null;
         }
 
@@ -130,7 +124,7 @@ namespace AW2.Sound
         public void StopMusic(TimeSpan fadeoutTime)
         {
             if (!Enabled) return;
-            if (_musicInstance == null) return;
+            if (_music == null || !_music.IsPlaying) return;
             var now = AssaultWing.Instance.GameTime.TotalRealTime;
             float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
             _volumeFadeAction = () =>

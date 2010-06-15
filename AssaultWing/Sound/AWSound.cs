@@ -26,7 +26,7 @@ namespace AW2.Sound
         public void EnsureIsPlaying()
         {
             if (_isDisposed) throw new InvalidOperationException("The sound is disposed");
-            if (_cue != null && _cue.IsPlaying) return;
+            if (IsPlaying) return;
             if (_cue != null) _cue.Dispose();
             _cue = AssaultWing.Instance.SoundEngine.GetCue(_cueName);
             if (_cue != null) _cue.Play();

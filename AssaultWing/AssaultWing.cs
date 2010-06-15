@@ -290,7 +290,7 @@ namespace AW2
             if (ClientBounds.Width == 0 || ClientBounds.Height == 0) return;
             GraphicsDeviceManager.PreferredBackBufferWidth = ClientBounds.Width;
             GraphicsDeviceManager.PreferredBackBufferHeight = ClientBounds.Height;
-            GraphicsDeviceManager.ApplyChanges();
+            GraphicsDeviceManager.ApplyChanges(); // this may trigger ContentManager.Unload()
             if (_graphicsEngine != null) _graphicsEngine.WindowResize();
             if (MenuEngine != null) MenuEngine.WindowResize();
         }

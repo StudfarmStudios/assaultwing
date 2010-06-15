@@ -405,6 +405,22 @@ namespace AW2.Game
             }
         }
 
+        private void CreateDeathMessage(string message, Color messageColor, Vector2 Pos, bool isSuicide)
+        {
+            string iconName = "b_icon_add_kill";
+
+            if (isSuicide) iconName = "b_icon_take_life";
+            
+            Gob.CreateGob((CanonicalString)"deathmessage", gob =>
+            {
+                gob.ResetPos(Pos, gob.Move, gob.Rotation);
+                ((DeathMessage)gob).Message = message;
+                ((DeathMessage)gob).IconName = iconName;
+                ((DeathMessage)gob).DrawColor = messageColor;
+                AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
+            });
+        }
+
         /// <summary>
         /// Performs necessary operations when the player's ship dies.
         /// </summary>
@@ -422,13 +438,22 @@ namespace AW2.Game
             --_lives;
 
             BonusActions.Clear();
+
+            if (cause.IsKill)
+            {
+                cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
+                CreateDeathMessage(cause.Killer.Owner.Name, cause.Killer.Owner.PlayerColor, Ship.Pos, false);
+            }
+            if (cause.IsSuicide)
+            {
+                CreateDeathMessage(Name, PlayerColor, Ship.Pos, true);
+            }
+
             Ship = null;
 
             // Notify the player about his death and possible killer about his frag.
             SendMessage("Death by " + cause.ToPersonalizedString(this), DEATH_COLOR);
-            if (cause.IsKill)
-                cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
-            
+
             // Schedule the making of a new ship, lives permitting.
             _shipSpawnTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
 

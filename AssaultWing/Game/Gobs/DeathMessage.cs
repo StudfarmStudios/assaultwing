@@ -9,7 +9,7 @@ using AW2.Helpers;
 namespace AW2.Game.Gobs
 {
     /// <summary>
-    /// Message after bonus is consumed.
+    /// Message after a player dies.
     /// </summary>
     public class DeathMessage : Gob
     {
@@ -69,7 +69,7 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Creates an uninitialised bonusmessage.
+        /// Creates an uninitialised deathmessage.
         /// </summary>
         /// This constructor is only for serialisation.
         public DeathMessage()
@@ -78,9 +78,9 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Creates a bonusmessage.
+        /// Creates a deathmessage.
         /// </summary>
-        /// <param name="typeName">The type of the bonusmessage.</param>
+        /// <param name="typeName">The type of the deathmessage.</param>
         public DeathMessage(CanonicalString typeName)
             : base(typeName)
         {

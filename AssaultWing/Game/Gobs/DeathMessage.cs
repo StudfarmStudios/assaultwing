@@ -31,7 +31,7 @@ namespace AW2.Game.Gobs
         public string IconName { set; get; }
 
         /// <summary>
-        /// Tint color for bonus message
+        /// Tint color for death message
         /// </summary>
         public Color DrawColor { set; get; }
 

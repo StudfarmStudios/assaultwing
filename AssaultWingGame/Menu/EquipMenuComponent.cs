@@ -202,7 +202,7 @@ namespace AW2.Menu
         private void CreateSelectors()
         {
             if (AssaultWing.Instance.DataEngine.Players.Where(p => !p.IsRemote).Count() > MAX_LOCAL_PLAYERS)
-                throw new ApplicationException("Too many local players");
+                return; // !!! UNDONE FOR QUICK FIX !!! throw new ApplicationException("Too many local players");
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
             _equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Players.Count(), aspectCount];
             _playerNames = new EditableText[AssaultWing.Instance.DataEngine.Players.Count()];
@@ -210,6 +210,7 @@ namespace AW2.Menu
             int playerI = 0;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
+                if (player.IsRemote) continue;
                 _currentItems[playerI] = EquipMenuItem.Ship;
                 _playerNames[playerI] = new EditableText(player.Name, 20, EditableText.Keysets.PlayerNameSet);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player, GetShipSelectorPos(playerI));

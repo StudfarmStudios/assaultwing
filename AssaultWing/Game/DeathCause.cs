@@ -58,6 +58,11 @@ namespace AW2.Game
             get
             {
                 if (dead == null || dead.Owner == null) return false;
+                if (dead.LastDamager != null && dead.LastDamager.Ship != null && dead.Owner != dead.LastDamager)
+                {
+                    other = dead.LastDamager.Ship;
+                    return false;
+                } 
                 if (other == null || other.Owner == null) return true;
                 return dead.Owner == other.Owner;
             }
@@ -71,6 +76,11 @@ namespace AW2.Game
             get
             {
                 if (dead == null || dead.Owner == null) return false;
+                if (dead.LastDamager != null && dead.LastDamager.Ship != null && dead.Owner != dead.LastDamager)
+                {
+                    other = dead.LastDamager.Ship;
+                    return true;
+                }
                 if (other == null || other.Owner == null) return false;
                 return dead.Owner != other.Owner;
             }

@@ -359,6 +359,11 @@ namespace AW2.Game
         public float DepthLayer2D { get { return depthLayer2D; } set { depthLayer2D = value; } }
 
         /// <summary>
+        /// The last player to damage this gob
+        /// </summary>
+        public Player LastDamager { get; set; }
+
+        /// <summary>
         /// Drawing mode of 2D graphics of the gob.
         /// </summary>
         public DrawMode2D DrawMode2D { get { return drawMode2D; } set { drawMode2D = value; } }
@@ -1187,6 +1192,10 @@ namespace AW2.Game
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
 
+            if (cause.Killer != null && 
+                cause.Killer.Owner != null && 
+                damageAmount > 0) LastDamager = cause.Killer.Owner;
+            
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
 

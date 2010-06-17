@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AW2.Game
 {
@@ -30,24 +28,24 @@ namespace AW2.Game
     /// </summary>
     public struct DeathCause
     {
-        Gob dead;
-        DeathCauseType type;
-        Gob other;
+        private Gob _dead;
+        private DeathCauseType _type;
+        private Gob _other;
 
         /// <summary>
         /// The gob that died.
         /// </summary>
-        public Gob Dead { get { return dead; } }
+        public Gob Dead { get { return _dead; } }
 
         /// <summary>
         /// The gob that caused the death. May be <c>null</c>.
         /// </summary>
-        public Gob Killer { get { return other; } }
+        public Gob Killer { get { return _other; } }
 
         /// <summary>
         /// The type of the cause of death.
         /// </summary>
-        public DeathCauseType Type { get { return type; } }
+        public DeathCauseType Type { get { return _type; } }
 
         /// <summary>
         /// Is the death a suicide of a player, i.e. caused by anything but 
@@ -57,14 +55,14 @@ namespace AW2.Game
         {
             get
             {
-                if (dead == null || dead.Owner == null) return false;
-                if (dead.LastDamager != null && dead.LastDamager.Ship != null && dead.Owner != dead.LastDamager)
+                if (_dead == null || _dead.Owner == null) return false;
+                if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager)
                 {
-                    other = dead.LastDamager.Ship;
+                    _other = _dead.LastDamager.Ship;
                     return false;
                 } 
-                if (other == null || other.Owner == null) return true;
-                return dead.Owner == other.Owner;
+                if (_other == null || _other.Owner == null) return true;
+                return _dead.Owner == _other.Owner;
             }
         }
 
@@ -75,51 +73,41 @@ namespace AW2.Game
         {
             get
             {
-                if (dead == null || dead.Owner == null) return false;
-                if (dead.LastDamager != null && dead.LastDamager.Ship != null && dead.Owner != dead.LastDamager)
+                if (_dead == null || _dead.Owner == null) return false;
+                if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager)
                 {
-                    other = dead.LastDamager.Ship;
+                    _other = _dead.LastDamager.Ship;
                     return true;
                 }
-                if (other == null || other.Owner == null) return false;
-                return dead.Owner != other.Owner;
+                if (_other == null || _other.Owner == null) return false;
+                return _dead.Owner != _other.Owner;
             }
         }
 
-        /// <summary>
-        /// Creates a cause of death with information about the killer gob.
-        /// </summary>
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
         /// <param name="other">The gob that caused the death.</param>
         public DeathCause(Gob dead, DeathCauseType type, Gob other)
         {
-            this.dead = dead;
-            this.type = type;
-            this.other = other;
+            _dead = dead;
+            _type = type;
+            _other = other;
         }
 
-        /// <summary>
-        /// Creates a cause of death.
-        /// </summary>
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
         public DeathCause(Gob dead, DeathCauseType type)
         {
-            this.dead = dead;
-            this.type = type;
-            other = null;
+            _dead = dead;
+            _type = type;
+            _other = null;
         }
 
-        /// <summary>
-        /// Returns a human-readable textual representation of the cause of death.
-        /// </summary>
-        /// <returns>A textual representation of the cause of death.</returns>
         public override string ToString()
         {
-            if (other == null || other.Owner == null)
-                return type.ToString();
-            return type.ToString() + " by " + other.Owner.Name;
+            if (_other == null || _other.Owner == null)
+                return _type.ToString();
+            return _type.ToString() + " by " + _other.Owner.Name;
         }
 
         /// <summary>
@@ -130,13 +118,13 @@ namespace AW2.Game
         /// <returns>A personalised textual representation of the cause of death.</returns>
         public string ToPersonalizedString(Player player)
         {
-            if (other == null)
-                return type.ToString();
-            if (other.Owner == null)
-                return type + " by nature (" + other.TypeName + ")";
-            if (other.Owner == player)
-                return type + " by you";
-            return type + " by " + other.Owner.Name;
+            if (_other == null)
+                return _type.ToString();
+            if (_other.Owner == null)
+                return _type + " by nature (" + _other.TypeName + ")";
+            if (_other.Owner == player)
+                return _type + " by you";
+            return _type + " by " + _other.Owner.Name;
         }
     }
 }

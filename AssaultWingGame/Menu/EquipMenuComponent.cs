@@ -31,7 +31,7 @@ namespace AW2.Menu
         /// </summary>
         private enum EquipMenuItem { Name, Ship, Extra, Weapon2 }
 
-        private const int MAX_LOCAL_PLAYERS = 4;
+        private const int MAX_MENU_PANES = 4;
 
         private Control _controlBack, _controlDone;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
@@ -136,6 +136,16 @@ namespace AW2.Menu
         /// is to be seen well on the screen.
         public override Vector2 Center { get { return _pos + new Vector2(750, 460); } }
 
+        private IEnumerable<Pair<Player, int>> MenuPanePlayers
+        {
+            get
+            {
+                return AssaultWing.Instance.DataEngine.Players
+                    .Where(p => !p.IsRemote)
+                    .Select((p, i) => new Pair<Player, int>(p, i));
+            }
+        }
+
         /// <summary>
         /// Creates an equip menu component for a menu system.
         /// </summary>
@@ -146,8 +156,8 @@ namespace AW2.Menu
             _controlDone = new KeyboardKey(Keys.Enter);
             _controlBack = new KeyboardKey(Keys.Escape);
             _pos = new Vector2(0, 0);
-            _currentItems = new EquipMenuItem[MAX_LOCAL_PLAYERS];
-            _cursorFadeStartTimes = new TimeSpan[MAX_LOCAL_PLAYERS];
+            _currentItems = new EquipMenuItem[MAX_MENU_PANES];
+            _cursorFadeStartTimes = new TimeSpan[MAX_MENU_PANES];
             _cursorFade = new Curve();
             _cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
             _cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
@@ -201,22 +211,19 @@ namespace AW2.Menu
 
         private void CreateSelectors()
         {
-            if (AssaultWing.Instance.DataEngine.Players.Where(p => !p.IsRemote).Count() > MAX_LOCAL_PLAYERS)
-                return; // !!! UNDONE FOR QUICK FIX !!! throw new ApplicationException("Too many local players");
+            if (MenuPanePlayers.Count() > MAX_MENU_PANES) throw new ApplicationException("Too many players want menu panes");
             int aspectCount = Enum.GetValues(typeof(EquipMenuItem)).Length;
-            _equipmentSelectors = new EquipmentSelector[AssaultWing.Instance.DataEngine.Players.Count(), aspectCount];
-            _playerNames = new EditableText[AssaultWing.Instance.DataEngine.Players.Count()];
-
-            int playerI = 0;
-            foreach (var player in AssaultWing.Instance.DataEngine.Players)
+            _equipmentSelectors = new EquipmentSelector[MenuPanePlayers.Count(), aspectCount];
+            _playerNames = new EditableText[MenuPanePlayers.Count()];
+            foreach (var indexedPlayer in MenuPanePlayers)
             {
-                if (player.IsRemote) continue;
+                var player = indexedPlayer.First;
+                int playerI = indexedPlayer.Second;
                 _currentItems[playerI] = EquipMenuItem.Ship;
                 _playerNames[playerI] = new EditableText(player.Name, 20, EditableText.Keysets.PlayerNameSet);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(player, GetShipSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Extra] = new ExtraDeviceSelector(player, GetExtraDeviceSelectorPos(playerI));
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Weapon2] = new Weapon2Selector(player, GetWeapon2SelectorPos(playerI));
-                ++playerI;
             }
         }
 
@@ -249,12 +256,10 @@ namespace AW2.Menu
 
         private void CheckPlayerControls()
         {
-            int playerI = -1;
-            foreach (var player in AssaultWing.Instance.DataEngine.Players)
+            foreach (var indexedPlayer in MenuPanePlayers)
             {
-                if (player.IsRemote) return;
-                ++playerI;
-
+                var player = indexedPlayer.First;
+                int playerI = indexedPlayer.Second;
                 ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, "MenuBrowseItem", () =>
                 {
                     var minItem = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
@@ -271,10 +276,7 @@ namespace AW2.Menu
 
                 if (_currentItems[playerI] == EquipMenuItem.Name)
                 {
-                    _playerNames[playerI].Update(() =>
-                    {
-                        player.Name = _playerNames[playerI].Content;
-                    });
+                    _playerNames[playerI].Update(() => { player.Name = _playerNames[playerI].Content; });
                 }
                 else
                 {
@@ -414,14 +416,10 @@ namespace AW2.Menu
 
         private void DrawPlayerPanes(Vector2 view, SpriteBatch spriteBatch)
         {
-            var data = AssaultWing.Instance.DataEngine;
-
-            // Draw player panes.
-            int playerI = -1;
-            foreach (var player in data.Players)
+            foreach (var indexedPlayer in MenuPanePlayers)
             {
-                if (player.IsRemote) continue;
-                ++playerI;
+                var player = indexedPlayer.First;
+                int playerI = indexedPlayer.Second;
 
                 // Find out things.
                 string playerItemName = "Write your name";
@@ -431,7 +429,6 @@ namespace AW2.Menu
                     case EquipMenuItem.Extra: playerItemName = player.ExtraDeviceName; break;
                     case EquipMenuItem.Weapon2: playerItemName = player.Weapon2Name; break;
                 }
-               // Texture2D GetPlayerPaneTopTexture = playerI == 1 ? _player2PaneTopTexture : _player1PaneTopTexture;
 
                 // Draw pane background.
                 spriteBatch.Draw(_playerNameBackgroundTexture, GetPlayerPanePos(playerI) - view, player.PlayerColor);

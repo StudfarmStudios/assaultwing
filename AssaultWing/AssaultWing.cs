@@ -288,9 +288,14 @@ namespace AW2
         private void ClientSizeChanged(object sender, EventArgs e)
         {
             if (ClientBounds.Width == 0 || ClientBounds.Height == 0) return;
-            GraphicsDeviceManager.PreferredBackBufferWidth = ClientBounds.Width;
-            GraphicsDeviceManager.PreferredBackBufferHeight = ClientBounds.Height;
-            GraphicsDeviceManager.ApplyChanges(); // this may trigger ContentManager.Unload()
+            if (GraphicsDevice.PresentationParameters.BackBufferWidth != ClientBounds.Width ||
+                GraphicsDevice.PresentationParameters.BackBufferHeight != ClientBounds.Height)
+            {
+                // This happens in ArenaEditor where the draw buffer is not hosted by an XNA window.
+                GraphicsDevice.PresentationParameters.BackBufferWidth = ClientBounds.Width;
+                GraphicsDevice.PresentationParameters.BackBufferHeight = ClientBounds.Height;
+                GraphicsDevice.Reset(GraphicsDevice.PresentationParameters); // WARNING: This may trigger ContentManager.Unload()
+            }
             if (_graphicsEngine != null) _graphicsEngine.WindowResize();
             if (MenuEngine != null) MenuEngine.WindowResize();
         }
@@ -454,6 +459,7 @@ namespace AW2
                 case GameState.Intro:
                     _introEngine.Enabled = true;
                     _introEngine.Visible = true;
+                    _introEngine.BeginIntro();
                     break;
                 case GameState.Gameplay:
                     Log.Write("Saving settings to file");

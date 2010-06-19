@@ -38,7 +38,7 @@ namespace AW2.Menu
         private SpriteFont _menuBigFont, _menuSmallFont;
         private Texture2D _backgroundTexture;
         private Texture2D _cursorMainTexture, _highlightMainTexture;
-        private Texture2D _playerPaneTexture, _playerNameBackgroundTexture, _playerNameBorderTexture, _playerNameHiliteTexture, _playerNameCursorTexture;
+        private Texture2D _playerPaneTexture, _playerNameBackgroundTexture, _playerNameBorderTexture, _playerNameHiliteTexture, _playerNameCursorTexture, _playerNameTextCursorTexture;
         private Texture2D _statusPaneTexture;
         private Texture2D _tabEquipmentTexture, _tabPlayersTexture, _tabGameSettingsTexture, _tabChatTexture, _tabHilite;
         private Texture2D _buttonReadyTexture, _buttonReadyHiliteTexture;
@@ -180,6 +180,7 @@ namespace AW2.Menu
             _playerNameBorderTexture = content.Load<Texture2D>("menu_equip_player_name_border");
             _playerNameHiliteTexture = content.Load<Texture2D>("menu_equip_player_name_hilite");
             _playerNameCursorTexture = content.Load<Texture2D>("menu_equip_player_name_cursor");
+            _playerNameTextCursorTexture = content.Load<Texture2D>("menu_equip_player_name_textcursor");
             _statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
 
             _tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
@@ -446,6 +447,18 @@ namespace AW2.Menu
                 Texture2D hiliteTexture = _currentItems[playerI] == EquipMenuItem.Name ? _playerNameHiliteTexture : _highlightMainTexture;
                 Vector2 hiliteTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;
                 spriteBatch.Draw(hiliteTexture, hiliteTexturePos, Color.White);
+
+                // Draw player name textcursor if necessary
+                if (_currentItems[playerI] == EquipMenuItem.Name)
+                {
+                    Vector2 partialTextSize = _menuSmallFont.MeasureString(_playerNames[playerI].Content.Substring(0, _playerNames[playerI].CaretPosition));
+                    Vector2 totalTextSize = _menuSmallFont.MeasureString(_playerNames[playerI].Content);
+                    partialTextSize.Y = 0;
+                    // Pixel perfect, otherwise thin textures look stupid
+                    partialTextSize.X = (float)Math.Round(partialTextSize.X - totalTextSize.X / 2);
+                    Vector2 textCursorPos = hiliteTexturePos + partialTextSize + new Vector2(91, 24);
+                    spriteBatch.Draw(_playerNameTextCursorTexture, textCursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
+                }
 
                 Texture2D cursorTexture = _currentItems[playerI] == EquipMenuItem.Name ? _playerNameCursorTexture : _cursorMainTexture;
                 Vector2 cursorTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;

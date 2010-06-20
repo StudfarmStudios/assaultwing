@@ -105,7 +105,7 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             var extraDevice = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.ExtraDeviceName);
-            var extraDeviceTexture = AssaultWing.Instance.Content.Load<Texture2D>(extraDevice.IconEquipName);
+            var extraDeviceTexture = AssaultWing.Instance.Content.Load<Texture2D>(extraDevice.DeviceInfo.IconEquipName);
             spriteBatch.Draw(extraDeviceTexture, Pos - view, Color.White);
         }
 
@@ -127,7 +127,7 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.Weapon2Name);
-            var weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.IconEquipName);
+            var weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.DeviceInfo.IconEquipName);
             spriteBatch.Draw(weapon2Texture, Pos - view, Color.White);
         }
 

@@ -17,7 +17,6 @@
   </upgradeNames>
   <shotTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bomb</shotTypeName>
   <iconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_berserkers</iconName>
-  <iconEquipName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_wep2_dumbfire</iconEquipName>
   <recoilMomentum type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000</recoilMomentum>
   <loadTime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.01</loadTime>
   <fireCharge type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">600</fireCharge>

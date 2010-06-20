@@ -32,12 +32,6 @@ namespace AW2.Game.GobUtils
         private CanonicalString iconName;
 
         /// <summary>
-        /// Name of the weapon's icon in the equip menu main display.
-        /// </summary>
-        [TypeParameter]
-        private CanonicalString iconEquipName;
-
-        /// <summary>
         /// The sound to play when firing.
         /// </summary>
         [TypeParameter]
@@ -113,16 +107,11 @@ namespace AW2.Game.GobUtils
         public CanonicalString IconName { get { return iconName; } set { iconName = value; } }
 
         /// <summary>
-        /// Name of the weapon's icon in the equip menu main display.
-        /// </summary>
-        public CanonicalString IconEquipName { get { return iconEquipName; } set { iconEquipName = value; } }
-
-        /// <summary>
         /// Names of all textures that this weapon will ever use.
         /// </summary>
         public IEnumerable<CanonicalString> TextureNames
         {
-            get { return new List<CanonicalString> { iconName, iconEquipName }; }
+            get { return new List<CanonicalString> { iconName, DeviceInfo.IconEquipName }; }
         }
 
         /// <summary>
@@ -217,7 +206,6 @@ namespace AW2.Game.GobUtils
         public ShipDevice()
         {
             iconName = (CanonicalString)"dummytexture";
-            iconEquipName = (CanonicalString)"dummytexture";
             fireSound = "dummysound";
             shotCount = 3;
             shotSpacing = 0.2f;

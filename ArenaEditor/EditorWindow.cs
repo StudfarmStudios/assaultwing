@@ -1,36 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using AW2.Graphics;
 using Microsoft.Xna.Framework;
+using AW2.Graphics;
 
 namespace AW2
 {
     /// <summary>
-    /// An area where AssaultWing can draw itself.
+    /// An area in ArenaEditor where the game view is drawn.
     /// </summary>
-    class EditorWindow : PictureBox, IWindow
+    public class EditorWindow : PictureBox, IWindow
     {
-        #region IWindow Members
-
         public string Title { get; set; }
 
         public bool AllowUserResizing { get; set; }
+
+        public bool IsFullscreen { get { return false; } }
 
         public Rectangle ClientBounds { get { return new Rectangle(Left, Top, Width, Height); } }
 
         public Rectangle ClientBoundsMin
         {
-            get
-            {
-                return new Rectangle(0, 0, MinimumSize.Width, MinimumSize.Height);
-            }
-            set
-            {
-                MinimumSize = new System.Drawing.Size(value.Width, value.Height);
-            }
+            get { return new Rectangle(0, 0, MinimumSize.Width, MinimumSize.Height); }
+            set { MinimumSize = new System.Drawing.Size(value.Width, value.Height); }
         }
 
         public new IntPtr Handle { get { return base.Handle; } }
@@ -45,7 +38,5 @@ namespace AW2
         {
             // silently ignored
         }
-
-        #endregion
     }
 }

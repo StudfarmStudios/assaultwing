@@ -21,6 +21,8 @@ namespace AW2.Graphics
         /// </summary>
         bool AllowUserResizing { get; set; }
 
+        bool IsFullscreen { get; }
+
         /// <summary>
         /// Width and height of the area to draw on, in pixels.
         /// </summary>

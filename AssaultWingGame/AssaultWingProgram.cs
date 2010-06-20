@@ -30,7 +30,8 @@ namespace AW2
             {
                 Log.Write("Assault Wing fatal error");
                 Log.Write("Please send the following information to the developers:\n" + e.ToString());
-                System.Windows.Forms.MessageBox.Show(e.ToString(), "Assault Wing fatal error");
+                AssaultWing.Instance.IsMouseVisible = true;
+                System.Windows.Forms.MessageBox.Show(e.ToString(), "Oops, something went wrong! Please send us this information to help fix it.");
             }
 #endif
         }

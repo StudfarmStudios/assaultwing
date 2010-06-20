@@ -169,6 +169,8 @@ namespace AW2
         /// </summary>
         public Rectangle ClientBounds { get { return _window.ClientBounds; } }
 
+        public bool IsFullscreen { get { return _window.IsFullscreen; } }
+
         /// <summary>
         /// The minimum allowed screen dimensions of the game window's client rectangle.
         /// </summary>
@@ -181,11 +183,11 @@ namespace AW2
         /// <summary>
         /// The <see cref="Microsoft.Xna.Framework.Game.Window"/> property inherited from
         /// <see cref="Microsoft.Xna.Framework.Game"/> is dangerously confusable with
-        /// the private <see cref="window"/> field. Thus, access to
+        /// the private <see cref="_window"/> field. Thus, access to
         /// <see cref="Microsoft.Xna.Framework.Game.Window"/> is limited only to
         /// references of type <see cref="Microsoft.Xna.Framework.Game"/>.
         /// </summary>
-        public new GameWindow Window { get { throw new Exception("Use either ((Microsoft.Xna.Framework.Game)AssaultWing).Window or AssaultWing.window"); } }
+        public new GameWindow Window { get { throw new ApplicationException("Use either ((Microsoft.Xna.Framework.Game)AssaultWing).Window or AssaultWing._window"); } }
 
         public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 

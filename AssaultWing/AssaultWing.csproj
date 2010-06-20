@@ -255,6 +255,8 @@
     <Compile Include="Net\Messages\ArenaStartRequest.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
+    <Compile Include="Net\Messages\PlayerSettingsReply.cs" />
+    <Compile Include="Net\Messages\PlayerSettingsRequest.cs" />
     <Compile Include="Net\Messages\GobCreationMessage.cs" />
     <Compile Include="Net\Messages\GobDamageMessage.cs" />
     <Compile Include="Net\Messages\GobDeletionMessage.cs" />

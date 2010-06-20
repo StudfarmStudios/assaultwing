@@ -11,7 +11,7 @@ namespace AW2.Net
         /// <summary>
         /// Unique identifier of the connection. Nonnegative.
         /// </summary>
-        int Id { get; }
+        int ID { get; }
 
         /// <summary>
         /// Short, human-readable name of the connection.

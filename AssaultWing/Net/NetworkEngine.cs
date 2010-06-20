@@ -235,14 +235,14 @@ namespace AW2.Net
             {
                 List<string> droppedPlayerNames = new List<string>();
                 foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
-                    if (player.ConnectionId == connection.Id)
+                    if (player.ConnectionID == connection.ID)
                         droppedPlayerNames.Add(player.Name);
                 string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
                 foreach (var player in AssaultWing.Instance.DataEngine.Players)
                     if (!player.IsRemote)
                         player.SendMessage(message);
             }
-            AssaultWing.Instance.DataEngine.Spectators.Remove(player => player.ConnectionId == connection.Id);
+            AssaultWing.Instance.DataEngine.Spectators.Remove(player => player.ConnectionID == connection.ID);
         }
 
         /// <summary>
@@ -314,7 +314,7 @@ namespace AW2.Net
         {
             return AssaultWing.Instance.DataEngine.ArenaTotalTime
                 - message.TotalGameTime
-                - ((PingedConnection)GetConnection(message.ConnectionId)).RemoteGameTimeOffset;
+                - ((PingedConnection)GetConnection(message.ConnectionID)).RemoteGameTimeOffset;
         }
 
         #endregion Public interface
@@ -420,7 +420,7 @@ namespace AW2.Net
                     foreach (var conn2 in ((MultiConnection)conn).Connections)
                         finder(conn2);
                 else
-                    if (conn.Id == connectionId)
+                    if (conn.ID == connectionId)
                         result = conn;
             };
             ForEachConnection(finder);

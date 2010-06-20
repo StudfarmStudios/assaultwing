@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AW2.UI;
 using AW2.Net;
 using Microsoft.Xna.Framework;
@@ -14,6 +13,8 @@ namespace AW2.Game
     /// </summary>
     public class Spectator : IDisposable, INetworkSerializable
     {
+        public enum ServerRegistrationType { No, Requested, Yes };
+
         public class LookAtPoint : AW2.Graphics.ILookAt
         {
             public Vector2 Position { get; set; }
@@ -22,16 +23,27 @@ namespace AW2.Game
         public LookAtPoint LookAt { get; set; }
 
         /// <summary>
+        /// Meaningful only for a client's local spectators.
+        /// </summary>
+        public ServerRegistrationType ServerRegistration { get; set; }
+
+        /// <summary>
         /// The player's unique identifier.
         /// </summary>
         /// The identifier may change if a remote game server says so.
-        public int Id { get; set; }
+        public int ID { get; set; }
 
         /// <summary>
         /// Identifier of the connection behind which this spectator lives,
         /// or negative if the spectator lives at the local game instance.
         /// </summary>
-        public int ConnectionId { get; private set; }
+        public int ConnectionID { get; private set; }
+
+        /// <summary>
+        /// If <c>true</c> then the spectator lives at a remote game instance.
+        /// If <c>false</c> then the spectator lives at this game instance.
+        /// </summary>
+        public bool IsRemote { get { return ConnectionID >= 0; } }
 
         /// <summary>
         /// The human-readable name of the spectator.
@@ -56,7 +68,7 @@ namespace AW2.Game
         public Spectator(PlayerControls controls, int connectionId)
         {
             Controls = controls;
-            ConnectionId = connectionId;
+            ConnectionID = connectionId;
             LookAt = new LookAtPoint();
         }
 
@@ -96,20 +108,28 @@ namespace AW2.Game
         {
         }
 
-        #region INetworkSerializable
-
-        /// <summary>
-        /// Serialises the spectator to a binary writer.
-        /// </summary>
-        public virtual void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public void ResetForClient()
         {
+            if (AssaultWing.Instance.NetworkMode != AW2.Core.NetworkMode.Client) throw new InvalidOperationException("Not a client game instance");
+            ServerRegistration = ServerRegistrationType.No;
         }
 
-        /// <summary>
-        /// Deserialises the gob from a binary writer.
-        /// </summary>
+        #region INetworkSerializable
+
+        public virtual void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write(Name, 32, true);
+            }
+        }
+
         public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
         {
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                Name = reader.ReadString(32);
+            }
         }
 
         #endregion INetworkSerializable

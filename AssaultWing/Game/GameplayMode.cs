@@ -76,7 +76,7 @@ namespace AW2.Game
                     Score = score,
                     Kills = p.Kills,
                     Suicides = p.Suicides,
-                    SpectatorId = p.Id
+                    SpectatorId = p.ID
                 };
         }
 

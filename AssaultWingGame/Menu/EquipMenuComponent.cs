@@ -201,13 +201,24 @@ namespace AW2.Menu
 
         public override void Update()
         {
-            if (AssaultWing.Instance.DataEngine.Players.Count() != _playerNames.Count())
-                CreateSelectors();
+            if (MenuPanePlayers.Count() != _playerNames.Count()) CreateSelectors();
             if (Active)
             {
                 CheckGeneralControls();
                 CheckPlayerControls();
-                if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) SendSelectionsToServer();
+                switch (AssaultWing.Instance.NetworkMode)
+                {
+                    case NetworkMode.Client:
+                        SendSelectionsToRemote(
+                            p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested,
+                            AssaultWing.Instance.NetworkEngine.GameServerConnection);
+                        break;
+                    case NetworkMode.Server:
+                        SendSelectionsToRemote(
+                            p => true,
+                            AssaultWing.Instance.NetworkEngine.GameClientConnections);
+                        break;
+                }
             }
         }
 
@@ -293,14 +304,20 @@ namespace AW2.Menu
             }
         }
 
-        private static void SendSelectionsToServer()
+        private static void SendSelectionsToRemote(Func<Player, bool> sendCriteria, IConnection connection)
         {
-            var equipUpdateRequest = new JoinGameRequest();
-            equipUpdateRequest.PlayerInfos =
-                (from p in AssaultWing.Instance.DataEngine.Players
-                where !p.IsRemote
-                select new PlayerInfo(p)).ToList();
-            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(equipUpdateRequest);
+            foreach (var player in AssaultWing.Instance.DataEngine.Players.Where(sendCriteria))
+            {
+                var mess = new PlayerSettingsRequest
+                {
+                    IsRegisteredToServer = player.ServerRegistration == Spectator.ServerRegistrationType.Yes,
+                    PlayerID = player.ID
+                };
+                mess.Write(player, SerializationModeFlags.ConstantData);
+                if (player.ServerRegistration == Spectator.ServerRegistrationType.No)
+                    player.ServerRegistration = Spectator.ServerRegistrationType.Requested;
+                connection.Send(mess);
+            }
         }
 
         /// <summary>

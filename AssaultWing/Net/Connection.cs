@@ -94,7 +94,7 @@ namespace AW2.Net
         /// <summary>
         /// Unique identifier of the connection. Nonnegative.
         /// </summary>
-        public int Id { get; private set; }
+        public int ID { get; private set; }
 
         /// <summary>
         /// Short, human-readable name of the connection.
@@ -347,8 +347,8 @@ namespace AW2.Net
         {
             if (socket == null) throw new ArgumentNullException("Null socket argument");
             if (!socket.Connected) throw new ArgumentException("Socket not connected");
-            Id = g_leastUnusedID++;
-            Name = "Connection " + Id;
+            ID = g_leastUnusedID++;
+            Name = "Connection " + ID;
             Application.ApplicationExit += ApplicationExitCallback;
             ConfigureSocket(socket);
             _socket = socket;
@@ -387,7 +387,7 @@ namespace AW2.Net
 
         private void MessageHandler(byte[] messageHeaderBuffer, byte[] messageBodyBuffer)
         {
-            var message = Message.Deserialize(messageHeaderBuffer, messageBodyBuffer, Id);
+            var message = Message.Deserialize(messageHeaderBuffer, messageBodyBuffer, ID);
             _messages.Enqueue(message);
             lock (_messages) if (MessageCallback != null) MessageCallback();
         }

@@ -8,15 +8,12 @@ namespace AW2.Net.Messages
     /// </summary>
     public class GobDamageMessage : GameplayMessage
     {
-        /// <summary>
-        /// Identifier of the message type.
-        /// </summary>
         protected static MessageType messageType = new MessageType(0x26, false);
 
         /// <summary>
         /// Identifier of the gob to update.
         /// </summary>
-        public int GobId { get; set; }
+        public int GobID { get; set; }
 
         /// <summary>
         /// New damage level of the gob.
@@ -33,7 +30,7 @@ namespace AW2.Net.Messages
             // Gob damage (request) message structure:
             // int: gob identifier
             // float: gob damage level
-            writer.Write((int)GobId);
+            writer.Write((int)GobID);
             writer.Write((Half)DamageLevel);
         }
 
@@ -44,16 +41,13 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            GobId = reader.ReadInt32();
+            GobID = reader.ReadInt32();
             DamageLevel = reader.ReadHalf();
         }
 
-        /// <summary>
-        /// Returns a String that represents the current Object. 
-        /// </summary>
         public override string ToString()
         {
-            return base.ToString() + " [GobId " + GobId + ", damage " + DamageLevel + "]";
+            return base.ToString() + " [GobID " + GobID + ", damage " + DamageLevel + "]";
         }
     }
 }

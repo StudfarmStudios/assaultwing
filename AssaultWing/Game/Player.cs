@@ -16,7 +16,7 @@ namespace AW2.Game
     /// <summary>
     /// Player of the game. 
     /// </summary>
-    [System.Diagnostics.DebuggerDisplay("Id:{Id} name:{Name} shipType:{shipTypeName}")]
+    [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
         public class Message
@@ -63,13 +63,8 @@ namespace AW2.Game
         /// Least int that is known not to have been used as a player identifier
         /// on this game instance.
         /// </summary>
-        /// <see cref="Player.Id"/>
+        /// <see cref="Spectator.ID"/>
         private static int g_leastUnusedID = 0;
-
-        /// <summary>
-        /// Type of ship the player has chosen to fly.
-        /// </summary>
-        private CanonicalString _shipTypeName;
 
         /// <summary>
         /// How many reincarnations the player has left.
@@ -146,12 +141,6 @@ namespace AW2.Game
         public Color PlayerColor { get; set; }
 
         /// <summary>
-        /// If <c>true</c> then the player is playing at a remote game instance.
-        /// If <c>false</c> then the player is playing at this game instance.
-        /// </summary>
-        public bool IsRemote { get { return ConnectionId >= 0; } }
-
-        /// <summary>
         /// Does the player need a viewport on the game window.
         /// </summary>
         public override bool NeedsViewport { get { return !IsRemote; } }
@@ -217,7 +206,7 @@ namespace AW2.Game
         /// <summary>
         /// The name of the type of ship the player has chosen to fly.
         /// </summary>
-        public CanonicalString ShipName { get { return _shipTypeName; } set { _shipTypeName = value; } }
+        public CanonicalString ShipName { get; set; }
 
         /// <summary>
         /// The name of the primary weapon as the player has chosen it.
@@ -293,7 +282,7 @@ namespace AW2.Game
         /// <param name="extraDeviceName">Name of the type of extra device.</param>
         /// <param name="connectionId">Identifier of the connection to the remote game instance
         /// at which the player lives.</param>
-        /// <see cref="AW2.Net.Connection.Id"/>
+        /// <see cref="AW2.Net.Connection.ID"/>
         public Player(string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, int connectionId)
             : this(name, shipTypeName, weapon2Name, extraDeviceName, new PlayerControls
@@ -316,9 +305,9 @@ namespace AW2.Game
             CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
             : base(controls, connectionId)
         {
-            Id = g_leastUnusedID++;
+            ID = g_leastUnusedID++;
             Name = name;
-            this._shipTypeName = shipTypeName;
+            ShipName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
             Messages = new List<Message>();
@@ -399,7 +388,7 @@ namespace AW2.Game
             {
                 MustUpdateToClients = false;
                 var message = new PlayerUpdateMessage();
-                message.PlayerId = Id;
+                message.PlayerID = ID;
                 message.Write(this, SerializationModeFlags.VaryingData);
                 AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }
@@ -514,8 +503,8 @@ namespace AW2.Game
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && IsRemote)
             {
-                var messageMessage = new PlayerMessageMessage { PlayerId = Id, Color = messageColor, Text = message };
-                AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionId].Send(messageMessage);
+                var messageMessage = new PlayerMessageMessage { PlayerID = ID, Color = messageColor, Text = message };
+                AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionID].Send(messageMessage);
             }
             Message msg = new Message(message);
             msg.TextColor = messageColor;
@@ -546,20 +535,20 @@ namespace AW2.Game
         /// <param name="mode">Which parts of the gob to serialise.</param>
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
+            base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)Id);
-                writer.Write(Name, 32, true);
-                writer.Write(_shipTypeName, 32, true);
-                writer.Write(Weapon2Name, 32, true);
-                writer.Write((uint)PlayerColor.PackedValue);
+                writer.Write((int)ShipName.Canonical);
+                writer.Write((int)Weapon2Name.Canonical);
+                writer.Write((int)ExtraDeviceName.Canonical);
+                writer.Write((Color)PlayerColor);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((short)_lives);
                 writer.Write((short)_kills);
                 writer.Write((short)_suicides);
-                writer.Write((short)PostprocessEffectNames.Count);
+                writer.Write((byte)PostprocessEffectNames.Count);
                 foreach (var effectName in PostprocessEffectNames)
                     writer.Write((int)effectName.Canonical);
                 BonusActions.Serialize(writer, mode);
@@ -568,21 +557,20 @@ namespace AW2.Game
 
         public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
+            base.Deserialize(reader, mode, messageAge);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                Id = reader.ReadInt32();
-                Name = reader.ReadString(32);
-                _shipTypeName = (CanonicalString)reader.ReadString(32);
-                Weapon2Name = (CanonicalString)reader.ReadString(32);
-                var playerColor = new Color { PackedValue = reader.ReadUInt32() };
-                PlayerColor = playerColor;
+                ShipName = new CanonicalString(reader.ReadInt32());
+                Weapon2Name = new CanonicalString(reader.ReadInt32());
+                ExtraDeviceName = new CanonicalString(reader.ReadInt32());
+                PlayerColor = reader.ReadColor();
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 _lives = reader.ReadInt16();
                 _kills = reader.ReadInt16();
                 _suicides = reader.ReadInt16();
-                int effectNameCount = reader.ReadInt16();
+                int effectNameCount = reader.ReadByte();
                 PostprocessEffectNames.Clear();
                 for (int i = 0; i < effectNameCount; ++i)
                     PostprocessEffectNames.Add(new CanonicalString(reader.ReadInt32()));
@@ -620,7 +608,7 @@ namespace AW2.Game
         private void SendControlsToServer()
         {
             PlayerControlsMessage message = new PlayerControlsMessage();
-            message.PlayerId = Id;
+            message.PlayerID = ID;
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
                 message.SetControlState(controlType, Controls[controlType].State);
             AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(message);
@@ -634,7 +622,7 @@ namespace AW2.Game
             // Gain ownership over the ship only after its position has been set.
             // This way the ship won't be affecting its own spawn position.
             Ship = null;
-            Gob.CreateGob(_shipTypeName, gob =>
+            Gob.CreateGob(ShipName, gob =>
             {
                 if (!(gob is Ship)) throw new ApplicationException("Wrong type for Player's ship: " + gob.GetType().Name);
                 Ship newShip = (Ship)gob;

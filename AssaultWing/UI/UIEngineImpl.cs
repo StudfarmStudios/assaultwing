@@ -55,8 +55,8 @@ namespace AW2.UI
 
         public static void HandlePlayerControlsMessage(PlayerControlsMessage mess)
         {
-            var player = AssaultWing.Instance.DataEngine.Spectators.First(plr => plr.Id == mess.PlayerId);
-            if (player.ConnectionId != mess.ConnectionId)
+            var player = AssaultWing.Instance.DataEngine.Spectators.First(plr => plr.ID == mess.PlayerID);
+            if (player.ConnectionID != mess.ConnectionID)
             {
                 // A client sent controls for a player that lives on another game instance.
                 // We silently ignore the controls.

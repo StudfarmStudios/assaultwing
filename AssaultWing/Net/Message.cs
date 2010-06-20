@@ -68,7 +68,7 @@ namespace AW2.Net
         /// or negative if the message was created locally and was not
         /// received from a connection.
         /// </summary>
-        public int ConnectionId { get; private set; }
+        public int ConnectionID { get; private set; }
 
         static byte protocolIdentifier = (byte)'A';
         static byte versionIdentifier = 0x00;
@@ -198,7 +198,7 @@ namespace AW2.Net
         /// possibly trailed with extra bytes.</param>
         /// <param name="connectionId">Identifier of the connection 
         /// from which the serialised data came.</param>
-        /// <see cref="Connection.Id"/>
+        /// <see cref="Connection.ID"/>
         public static Message Deserialize(byte[] header, byte[] body, int connectionId)
         {
             if (header == null || body == null)
@@ -212,13 +212,10 @@ namespace AW2.Net
 
             Message message = (Message)GetMessageSubclass(header).GetConstructor(System.Type.EmptyTypes).Invoke(null);
             message.Deserialize(new NetworkBinaryReader(new MemoryStream(body)));
-            message.ConnectionId = connectionId;
+            message.ConnectionID = connectionId;
             return message;
         }
 
-        /// <summary>
-        /// Returns a String that represents the current Object. 
-        /// </summary>
         public override string ToString()
         {
             return Type.ToString();
@@ -251,7 +248,7 @@ namespace AW2.Net
         /// </summary>
         protected Message()
         {
-            ConnectionId = -1;
+            ConnectionID = -1;
         }
         
         /// <summary>

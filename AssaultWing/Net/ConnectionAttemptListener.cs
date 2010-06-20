@@ -49,10 +49,18 @@ namespace AW2.Net
         /// <param name="port">The port at which to listen for incoming connections.</param>
         public void StartListening(int port)
         {
-            CheckThread();
-            if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
-            CreateServerSocket(port);
-            ListenOneConnection();
+            try
+            {
+                CheckThread();
+                if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
+                CreateServerSocket(port);
+                ListenOneConnection();
+            }
+            catch (Exception)
+            {
+                StopListeningImpl();
+                throw;
+            }
         }
 
         public void Update()
@@ -68,6 +76,11 @@ namespace AW2.Net
         {
             CheckThread();
             if (_serverSocket == null) throw new Exception("Already not listening for incoming connections");
+            StopListeningImpl();
+        }
+
+        private void StopListeningImpl()
+        {
             _serverSocket.Close();
             _serverSocket = null;
             _listenResult = null;

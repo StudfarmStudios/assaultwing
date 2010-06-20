@@ -10,17 +10,14 @@ namespace AW2.Net.Messages
     /// </summary>
     public class PlayerControlsMessage : GameplayMessage
     {
+        protected static MessageType messageType = new MessageType(0x22, false);
+
         ControlState[] controlStates = new ControlState[Enum.GetValues(typeof(PlayerControlType)).Length];
 
         /// <summary>
         /// Identifier of the player the message is about.
         /// </summary>
-        public int PlayerId { get; set; }
-
-        /// <summary>
-        /// Identifier of the message type.
-        /// </summary>
-        protected static MessageType messageType = new MessageType(0x22, false);
+        public int PlayerID { get; set; }
 
         /// <summary>
         /// Returns the state of a control of the player.
@@ -59,7 +56,7 @@ namespace AW2.Net.Messages
             // repeat over PlayerControlType
             //   4 bytes = float: force of the control
             //   1 byte  = bool:  pulse of the control
-            writer.Write((int)PlayerId);
+            writer.Write((int)PlayerID);
             foreach (ControlState state in controlStates)
             {
                 writer.Write((float)state.Force);
@@ -74,7 +71,7 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            PlayerId = reader.ReadInt32();
+            PlayerID = reader.ReadInt32();
             for (int i = 0; i < controlStates.Length; ++i)
             {
                 float force = reader.ReadSingle();
@@ -88,7 +85,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public override string ToString()
         {
-            return base.ToString() + " [PlayerId " + PlayerId + "]";
+            return base.ToString() + " [PlayerID " + PlayerID + "]";
         }
     }
 }

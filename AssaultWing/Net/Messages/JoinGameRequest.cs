@@ -1,114 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AW2.Helpers;
 
 namespace AW2.Net.Messages
 {
     /// <summary>
-    /// Information about a player who wants to join a game.
-    /// </summary>
-    public struct PlayerInfo
-    {
-        /// <summary>
-        /// The player's identifier on the game instance he lives on.
-        /// </summary>
-        public int id;
-
-        /// <summary>
-        /// The player's name.
-        /// </summary>
-        public string name;
-
-        public CanonicalString shipTypeName;
-        public CanonicalString weapon2TypeName;
-        public CanonicalString extraDeviceTypeName;
-
-        /// <summary>
-        /// Creates a new player info based on a player.
-        /// </summary>
-        /// <param name="player">The player.</param>
-        public PlayerInfo(AW2.Game.Player player)
-        {
-            id = player.Id;
-            name = player.Name;
-            shipTypeName = player.ShipName;
-            weapon2TypeName = player.Weapon2Name;
-            extraDeviceTypeName = player.ExtraDeviceName;
-        }
-    }
-
-    /// <summary>
-    /// A message from a game client to a game server requesting
-    /// to update the players' chosen equipment, and additionally
-    /// requesting the players to join the game.
+    /// A message from a game client to the game server, sending identification information
+    /// about the version of Assault Wing the client is running.
     /// </summary>
     public class JoinGameRequest : Message
     {
-        /// <summary>
-        /// Information about the players that want to join the game.
-        /// </summary>
-        public List<PlayerInfo> PlayerInfos { get; set; }
-
-        /// <summary>
-        /// Identifier of the message type.
-        /// </summary>
         protected static MessageType messageType = new MessageType(0x20, false);
 
-        /// <summary>
-        /// Writes the body of the message in serialised form.
-        /// </summary>
-        /// <param name="writer">Writer of serialised data.</param>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            // Join game request message structure:
-            // byte number of players N
-            // repeat N
-            //   int player ID
-            //   32-byte-string player name
-            //   32-byte-string player ship type
-            //   32-byte-string player weapon2 type
-            //   32-byte-string player extra device type
-            writer.Write((byte)PlayerInfos.Count);
-            foreach (PlayerInfo info in PlayerInfos)
-            {
-                writer.Write((int)info.id);
-                writer.Write((string)info.name, 32, false);
-                writer.Write((string)info.shipTypeName, 32, false);
-                writer.Write((string)info.weapon2TypeName, 32, false);
-                writer.Write((string)info.extraDeviceTypeName, 32, false);
-            }
+            // Join game request structure:
+            // <empty>
+            // TODO: Send CanonicalStrings to server for matching
         }
 
-        /// <summary>
-        /// Reads the body of the message from serialised form.
-        /// </summary>
-        /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            int count = reader.ReadByte();
-            PlayerInfos = new List<PlayerInfo>(count);
-            for (int i = 0; i < count; ++i)
-            {
-                PlayerInfo info;
-                info.id = reader.ReadInt32();
-                info.name = reader.ReadString(32);
-                info.shipTypeName = (CanonicalString)reader.ReadString(32);
-                info.weapon2TypeName = (CanonicalString)reader.ReadString(32);
-                info.extraDeviceTypeName = (CanonicalString)reader.ReadString(32);
-                PlayerInfos.Add(info);
-            }
         }
 
-        /// <summary>
-        /// Returns a String that represents the current Object. 
-        /// </summary>
         public override string ToString()
         {
-            var playerNames = from info in PlayerInfos select info.name;
-            return base.ToString() + " " + PlayerInfos.Count + " players ["
-                + string.Join(", ", playerNames.ToArray<string>()) + "]";
+            return base.ToString();
         }
     }
 }

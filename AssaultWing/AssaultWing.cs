@@ -527,8 +527,6 @@ namespace AW2
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new StartGameMessage();
-                foreach (var player in DataEngine.Spectators)
-                    message.SerializePlayer((Player)player);
                 message.ArenaPlaylist = DataEngine.ArenaPlaylist;
                 NetworkEngine.GameClientConnections.Send(message);
             }
@@ -556,8 +554,8 @@ namespace AW2
         /// </summary>
         public void FinishArena()
         {
-            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
-            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers(null));
+            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
+            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             if (DataEngine.ArenaPlaylist.HasNext)
                 ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
             else
@@ -622,8 +620,8 @@ namespace AW2
         public void ShowMenu()
         {
             Log.Write("Entering menus");
-            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
-            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers(null));
+            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
+            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             DataEngine.ClearGameState();
             MenuEngine.Activate();
             GameState = GameState.Menu;
@@ -656,7 +654,8 @@ namespace AW2
         /// can connect as game clients.
         /// </summary>
         /// <param name="connectionHandler">Handler of connection result.</param>
-        public void StartServer(Action<Result<Connection>> connectionHandler)
+        /// <returns>True on success, false on failure</returns>
+        public bool StartServer(Action<Result<Connection>> connectionHandler)
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
@@ -664,14 +663,16 @@ namespace AW2
             try
             {
                 NetworkEngine.StartServer(connectionHandler);
-                var handlers = MessageHandlers.GetServerMenuHandlers(NetworkEngine.GameClientConnections);
+                var handlers = MessageHandlers.GetServerMenuHandlers();
                 NetworkEngine.MessageHandlers.AddRange(handlers);
+                return true;
             }
             catch (Exception e)
             {
                 Log.Write("Could not start server: " + e);
                 NetworkMode = NetworkMode.Standalone;
             }
+            return false;
         }
 
         /// <summary>
@@ -682,7 +683,7 @@ namespace AW2
         {
             if (NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers(null));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             NetworkEngine.StopServer();
             NetworkMode = NetworkMode.Standalone;
         }
@@ -700,6 +701,7 @@ namespace AW2
             try
             {
                 NetworkEngine.StartClient(serverAddress, connectionHandler);
+                foreach (var spectator in DataEngine.Spectators) spectator.ResetForClient();
             }
             catch (System.Net.Sockets.SocketException e)
             {
@@ -857,8 +859,8 @@ namespace AW2
             {
                 _arenaStartWaiter.EndWait();
                 _arenaStartWaiter = null;
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers(null));
-                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers(NetworkEngine.GameClientConnections));
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
                 StartArenaImpl();
             }
 
@@ -940,7 +942,7 @@ namespace AW2
                 if (NetworkMode == NetworkMode.Server)
                     foreach (PingedConnection conn in NetworkEngine.GameClientConnections.Connections)
                         _window.Title += string.Format(" [#{0}: {1} ms lag]",
-                            conn.Id,
+                            conn.ID,
                             (int)conn.PingTime.TotalMilliseconds);
             }
             lock (GraphicsDevice) base.Draw(GameTime);

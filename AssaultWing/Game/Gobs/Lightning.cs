@@ -21,7 +21,7 @@ namespace AW2.Game.Gobs
                 if (_id > 0)
                 {
                     int id = _id;
-                    _gob = _arena.Gobs.FirstOrDefault(gob => gob.Id == id);
+                    _gob = _arena.Gobs.FirstOrDefault(gob => gob.ID == id);
                     if (_gob == null) Log.Write("ERROR: GobProxy cannot find gob by the ID " + id);
                     _id = 0;
                 }
@@ -39,7 +39,7 @@ namespace AW2.Game.Gobs
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                int gobID = Gob == null ? 0 : Gob.Id;
+                int gobID = Gob == null ? 0 : Gob.ID;
                 writer.Write((int)gobID);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
@@ -229,7 +229,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)Shooter.Gob.Id);
+                writer.Write((int)Shooter.Gob.ID);
                 writer.Write((int)ShooterBoneIndex);
                 Target.Serialize(writer, mode);
             }

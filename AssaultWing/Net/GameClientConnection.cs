@@ -15,7 +15,7 @@ namespace AW2.Net
         public GameClientConnection(Socket socket)
             : base(socket)
         {
-            Name = "Game Client Connection " + Id;
+            Name = "Game Client Connection " + ID;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace AW2.Net
         protected override void DisposeImpl(bool error)
         {
             // On internal error, notify the game instance.
-            AssaultWing.Instance.NetworkEngine.DropClient(Id, error);
+            AssaultWing.Instance.NetworkEngine.DropClient(ID, error);
             base.DisposeImpl(error);
         }
     }

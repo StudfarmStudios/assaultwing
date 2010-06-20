@@ -85,7 +85,7 @@ namespace AW2.Game.Gobs
                 tailAmplitudes[i] = amplitude;
             }
             wiggleFrequency = 3f;
-            wiggleMainPhase = Owner.Id * 1.2345f; // to avoid different ships wiggling synchronously
+            wiggleMainPhase = Owner.ID * 1.2345f; // to avoid different ships wiggling synchronously
         }
 
         /// <summary>

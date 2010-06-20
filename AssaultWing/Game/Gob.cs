@@ -50,7 +50,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
-    [System.Diagnostics.DebuggerDisplay("Id:{Id} typeName:{typeName} pos:{pos} move:{move}")]
+    [System.Diagnostics.DebuggerDisplay("ID:{ID} typeName:{typeName} pos:{pos} move:{move}")]
     public class Gob : Clonable, IConsistencyCheckable, Net.INetworkSerializable
     {
         /// <summary>
@@ -90,7 +90,7 @@ namespace AW2.Game
         /// shared among all participating game instances (this means
         /// relevant gobs but this field may be used for irrelevant gobs, too).
         /// Such identifiers are positive.
-        /// <seealso cref="Gob.Id"/>
+        /// <seealso cref="Gob.ID"/>
         /// <seealso cref="Gob.leastUnusedIrrelevantId"/>
         private static int g_leastUnusedId = 1;
 
@@ -101,7 +101,7 @@ namespace AW2.Game
         /// This field is used in obtaining identifiers for gobs that are 
         /// local to one game instance (irrelevant gobs). Such identifiers
         /// are negative.
-        /// <seealso cref="Gob.Id"/>
+        /// <seealso cref="Gob.ID"/>
         /// <seealso cref="Gob.leastUnusedId"/>
         private static int g_leastUnusedIrrelevantId = -1;
 
@@ -317,11 +317,11 @@ namespace AW2.Game
         /// <summary>
         /// The gob's unique runtime identifier.
         /// </summary>
-        public int Id { get; set; }
+        public int ID { get; set; }
 
         /// <summary>
         /// The gob's unique identifier while serialized as part of an arena, or zero.
-        /// Not to be confused with <see cref="Id"/>.
+        /// Not to be confused with <see cref="ID"/>.
         /// </summary>
         public int StaticID { get { return _staticID; } set { _staticID = value; } }
 
@@ -579,7 +579,7 @@ namespace AW2.Game
         /// </summary>
         public Gob()
         {
-            Id = -1;
+            ID = -1;
             depthLayer2D = 0.5f;
             drawMode2D = new DrawMode2D(DrawModeType2D.None);
             layerPreference = LayerPreferenceType.Front;
@@ -610,7 +610,7 @@ namespace AW2.Game
             : base(typeName)
         {
             _gravitating = true;
-            SetId();
+            SetID();
             _owner = null;
             ResetPos(Vector2.Zero, Vector2.Zero, Gob.defaultRotation); // also translates collPrimitives
             _modelPartTransforms = null;
@@ -923,12 +923,12 @@ namespace AW2.Game
         {
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)Id);
+                writer.Write((int)ID);
                 byte flags = StaticID == 0 ? (byte)0x00 : (byte)0x01;
                 writer.Write((byte)flags);
                 if (StaticID != 0) writer.Write((int)StaticID);
                 if (_owner != null)
-                    writer.Write(checked((sbyte)_owner.Id));
+                    writer.Write(checked((sbyte)_owner.ID));
                 else
                     writer.Write((sbyte)-1);
             }
@@ -954,11 +954,11 @@ namespace AW2.Game
         {
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
-                Id = reader.ReadInt32();
+                ID = reader.ReadInt32();
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
                 int ownerId = reader.ReadSByte();
-                _owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.Id == ownerId);
+                _owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.ID == ownerId);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1202,7 +1202,7 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
                 var message = new AW2.Net.Messages.GobDamageMessage();
-                message.GobId = this.Id;
+                message.GobID = this.ID;
                 message.DamageLevel = damage;
                 AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }
@@ -1356,9 +1356,9 @@ namespace AW2.Game
             return _previousBleach;
         }
 
-        private void SetId()
+        private void SetID()
         {
-            Id = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+            ID = AssaultWing.Instance.NetworkMode == NetworkMode.Client
                 ? g_leastUnusedIrrelevantId--
                 : g_leastUnusedId++;
         }
@@ -1403,7 +1403,7 @@ namespace AW2.Game
             }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
             {
-                SetId();
+                SetID();
             }
         }
 

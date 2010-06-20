@@ -300,7 +300,7 @@ namespace AW2.Game
                         var messageAge = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
                         message.ReadGobs(gobId =>
                         {
-                            var theGob = Arena.Gobs.FirstOrDefault(gob => gob.Id == gobId);
+                            var theGob = Arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                             return theGob == null || theGob.IsDisposed ? null : theGob;
                         }, SerializationModeFlags.VaryingData, messageAge);
                     }
@@ -318,7 +318,7 @@ namespace AW2.Game
                 GobDeletionMessage message = null;
                 while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobDeletionMessage>()) != null)
                 {
-                    Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.Id == message.GobId);
+                    Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.ID == message.GobId);
                     if (gob == null)
                     {
                         // The gob hasn't been created yet. This happens when the server
@@ -344,7 +344,7 @@ namespace AW2.Game
                     if (!gob.Movable) continue;
                     if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
                     gob.LastNetworkUpdate = now;
-                    message.AddGob(gob.Id, gob, SerializationModeFlags.VaryingData);
+                    message.AddGob(gob.ID, gob, SerializationModeFlags.VaryingData);
                 }
                 AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
             }

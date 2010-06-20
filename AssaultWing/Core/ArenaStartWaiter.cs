@@ -18,7 +18,7 @@ namespace AW2.Core
             get
             {
                 CheckDisposed();
-                return _connections.Connections.All(conn => _readyIDs.Contains(conn.Id));
+                return _connections.Connections.All(conn => _readyIDs.Contains(conn.ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AW2.Core
         public void BeginWait()
         {
             CheckDisposed();
-            var handlers = MessageHandlers.GetServerArenaStartHandlers(_connections, (id) => _readyIDs.Add(id));
+            var handlers = MessageHandlers.GetServerArenaStartHandlers(_readyIDs.Add);
             MessageHandlers.ActivateHandlers(handlers);
             _connections.Send(new ArenaStartRequest());
         }
@@ -45,7 +45,7 @@ namespace AW2.Core
         public void Dispose()
         {
             _disposed = true;
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerArenaStartHandlers(null, null));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerArenaStartHandlers(null));
         }
 
         private void CheckDisposed()

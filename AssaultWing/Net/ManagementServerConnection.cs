@@ -15,7 +15,7 @@ namespace AW2.Net
         public ManagementServerConnection(Socket socket)
             : base(socket)
         {
-            Name = "Management Server Connection " + Id;
+            Name = "Management Server Connection " + ID;
         }
 
         /// <summary>

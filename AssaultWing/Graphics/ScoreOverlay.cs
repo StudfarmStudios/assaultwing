@@ -49,7 +49,7 @@ namespace AW2.Graphics
                 string scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
                 Color rowColor = entry.PlayerColor;
 
-                if (_player.Id == entry.SpectatorId)
+                if (_player.ID == entry.SpectatorId)
                 {
                     rowColor = Color.White;
                 }

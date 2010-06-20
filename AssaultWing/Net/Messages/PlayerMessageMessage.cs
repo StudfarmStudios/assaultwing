@@ -11,7 +11,7 @@ namespace AW2.Net.Messages
     {
         protected static MessageType messageType = new MessageType(0x2b, false);
 
-        public int PlayerId { get; set; }
+        public int PlayerID { get; set; }
         public Color Color { get; set; }
         public string Text { get; set; }
 
@@ -22,7 +22,7 @@ namespace AW2.Net.Messages
             // int: player ID
             // Color: message color
             // variable_length_string message: text
-            writer.Write((int)PlayerId);
+            writer.Write((int)PlayerID);
             writer.Write((Color)Color);
             writer.Write((string)Text);
         }
@@ -30,14 +30,14 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            PlayerId = reader.ReadInt32();
+            PlayerID = reader.ReadInt32();
             Color = reader.ReadColor();
             Text = reader.ReadString();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [PlayerId " + PlayerId + ", Message '" + Text + "']";
+            return base.ToString() + " [PlayerID " + PlayerID + ", Message '" + Text + "']";
         }
     }
 }

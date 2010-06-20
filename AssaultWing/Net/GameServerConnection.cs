@@ -15,7 +15,7 @@ namespace AW2.Net
         public GameServerConnection(Socket socket)
             : base(socket)
         {
-            Name = "Game Server Connection " + Id;
+            Name = "Game Server Connection " + ID;
         }
 
         /// <summary>

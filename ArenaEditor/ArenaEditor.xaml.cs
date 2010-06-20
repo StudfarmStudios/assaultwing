@@ -120,7 +120,7 @@ namespace AW2
             foreach (var gob in arena.Gobs.GameplayLayer.Gobs)
                 if (gob is Wall)
                 {
-                    gob.StaticID = gob.Id;
+                    gob.StaticID = gob.ID;
                     arena.Bin.Add(gob.StaticID, ((Wall)gob).CreateIndexMap());
                 }
         }

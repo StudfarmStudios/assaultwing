@@ -86,12 +86,12 @@ namespace AW2.Net
         /// </summary>
         /// <param name="connectionId"></param>
         /// <returns></returns>
-        public IConnection this[int connectionId] { get { return Connections.First(conn => conn.Id == connectionId); } }
+        public IConnection this[int connectionId] { get { return Connections.First(conn => conn.ID == connectionId); } }
 
         /// <summary>
         /// Unique identifier of the connection. Nonnegative.
         /// </summary>
-        public int Id { get { throw new NotImplementedException("MultiConnection has no identifier"); } }
+        public int ID { get { throw new NotImplementedException("MultiConnection has no identifier"); } }
 
         /// <summary>
         /// Creates a new <see cref="MultiConnection"/>.

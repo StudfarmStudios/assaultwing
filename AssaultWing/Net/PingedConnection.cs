@@ -42,7 +42,7 @@ namespace AW2.Net
         /// <summary>
         /// Unique identifier of the connection. Nonnegative.
         /// </summary>
-        public int Id { get { return BaseConnection.Id; } }
+        public int ID { get { return BaseConnection.ID; } }
 
         /// <summary>
         /// Short, human-readable name of the connection.

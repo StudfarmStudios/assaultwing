@@ -362,6 +362,25 @@ namespace AW2.Menu
             {
                 Player player = MenuPanePlayers.ElementAt(0).First;
                 ShipDevice device = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
+                ShipDeviceInfo info = device.DeviceInfo;
+                Vector2 infoDisplayPos = _pos - view + new Vector2(560, 186);
+                Vector2 infoDataPos = infoDisplayPos + new Vector2(200, 100);
+                Vector2 infoDataValuePos = infoDataPos + new Vector2(350, 8);
+                Vector2 infoDataValueLineHeight = new Vector2(0, 21);
+                Vector2 infoTextPos = infoDataPos + new Vector2(177, 194) - _menuSmallFont.MeasureString(info.InfoText) / 2;
+
+                var devicePicture = AssaultWing.Instance.Content.Load<Texture2D>(info.PictureName);
+                var deviceTitlePicture = AssaultWing.Instance.Content.Load<Texture2D>(info.TitlePictureName);
+                var deviceHeaders = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_deviceinfo_headers");
+
+                spriteBatch.Draw(devicePicture, infoDisplayPos + new Vector2(-6, 0), Color.White);
+                spriteBatch.Draw(deviceTitlePicture, infoDisplayPos + new Vector2(190, 18), Color.White);
+                spriteBatch.Draw(deviceHeaders, infoDataPos, Color.White);
+
+                spriteBatch.DrawString(_menuSmallFont, info.ReloadSpeed.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.ReloadSpeed.ToString()).X, 0), EquipInfo.GetColorForAmountType(info.ReloadSpeed));
+                spriteBatch.DrawString(_menuSmallFont, info.EnergyUsage.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.EnergyUsage.ToString()).X, 0) + (infoDataValueLineHeight), EquipInfo.GetColorForAmountType(info.EnergyUsage));
+                spriteBatch.DrawString(_menuSmallFont, info.UsageType.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.UsageType.ToString()).X, 0) + (infoDataValueLineHeight * 2), EquipInfo.GetColorForUsageType(info.UsageType));
+                spriteBatch.DrawString(_menuSmallFont, info.InfoText, infoTextPos, new Color(218, 159, 33));
             }
         }
 
@@ -549,7 +568,7 @@ namespace AW2.Menu
                 spriteBatch.Draw(_statusPaneTexture, statusPanePos, Color.White);
                
                 // Draw pane content text. (the IF is hack for now to allow something to be drawn when not selecting ship)
-                if (MenuPanePlayers.ElementAt(0) != null && _currentItems[MenuPanePlayers.ElementAt(0).Second] != EquipMenuItem.Ship)
+                if (MenuPanePlayers.ElementAt(0) != null && _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Name)
                 {
                     Vector2 textPos = statusPanePos + new Vector2(60, 60);
                     string textContent = AssaultWing.Instance.NetworkMode == NetworkMode.Client

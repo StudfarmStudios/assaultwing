@@ -7,14 +7,17 @@
   <iconEquipName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_ship_hyperion</iconEquipName>
   
   <shipInfo type="AW2.Game.GobUtils.ShipInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<pictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</pictureName>
-	<titlePictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</titlePictureName>
+	<pictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_shippicture_windlord</pictureName>
+	<titlePictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_shipname_windlord</titlePictureName>
 	<armor type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</armor>
-	<hull type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</hull>
+	<hull type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Great</hull>
 	<speed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</speed>
-	<steering type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</steering>
+	<steering type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</steering>
   	<modEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</modEnergy>
-	<specialEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</specialEnergy>
+	<specialEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</specialEnergy>
+	<infoText type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Dangerous ship especially
+when used in close range combat
+with its ship-ripping claws</infoText>
   </shipInfo>  
   
   <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</mass>

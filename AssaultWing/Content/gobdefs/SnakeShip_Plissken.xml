@@ -7,14 +7,17 @@
   <iconEquipName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_ship_snake</iconEquipName>
   
   <shipInfo type="AW2.Game.GobUtils.ShipInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<pictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</pictureName>
-	<titlePictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</titlePictureName> 
-	<armor type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</armor>
-	<hull type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</hull>
-	<speed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</speed>
-	<steering type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</steering>
-  	<modEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</modEnergy>
-	<specialEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</specialEnergy>
+	<pictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_shippicture_snake</pictureName>
+	<titlePictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_shipname_snake</titlePictureName> 
+	<armor type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</armor>
+	<hull type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</hull>
+	<speed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</speed>
+	<steering type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</steering>
+  	<modEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</modEnergy>
+	<specialEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Great</specialEnergy>
+	<infoText type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Durable, easy-to-fly ship that
+can take quite a beating. Shoots
+a venom that does damage over time</infoText>
   </shipInfo>  
   
   <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">420</mass>

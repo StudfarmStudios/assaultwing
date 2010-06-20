@@ -9,12 +9,15 @@
   <shipInfo type="AW2.Game.GobUtils.ShipInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
 	<pictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_shippicture_bugger</pictureName>
 	<titlePictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_shipname_bugger</titlePictureName>
-	<armor type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</armor>
+	<armor type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Poor</armor>
 	<hull type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</hull>
-	<speed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Excellent</speed>
-	<steering type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Good</steering>
-  	<modEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Good</modEnergy>
+	<speed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Great</speed>
+	<steering type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</steering>
+  	<modEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Great</modEnergy>
 	<specialEnergy type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</specialEnergy>
+	<infoText type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Lightweight, fast fighter that can
+shoot lightning through walls
+without missing its target</infoText>
   </shipInfo>  
   
   <mass type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">350</mass>

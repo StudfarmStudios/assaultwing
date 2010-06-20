@@ -91,6 +91,9 @@ namespace AW2.Game.GobUtils
         [TypeParameter]
         private float fireChargePerSecond;
 
+        [TypeParameter]
+        private ShipDeviceInfo _deviceInfo;
+
         private ChargeProvider _chargeProvider;
         private float _charge;
         private bool _flashAndBangCreated;
@@ -102,6 +105,7 @@ namespace AW2.Game.GobUtils
 
         #region Properties
 
+        public ShipDeviceInfo DeviceInfo { get { return _deviceInfo; } set { _deviceInfo = value; } }
         /// <summary>
         /// Name of the icon of the weapon, to be displayed in weapon selection 
         /// and bonus display.

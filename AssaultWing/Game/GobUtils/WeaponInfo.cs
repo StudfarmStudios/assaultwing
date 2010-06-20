@@ -6,19 +6,19 @@ using AW2.Helpers;
 
 namespace AW2.Game.GobUtils
 {
-    public class WeaponInfo : EquipInfo
+    public class WeaponInfo
     {
         [TypeParameter]
-        private EquipInfoAmountType _singleShotDamage;
+        private EquipInfo.EquipInfoAmountType _singleShotDamage;
 
         [TypeParameter]
-        private EquipInfoAmountType _shotSpeed;
+        private EquipInfo.EquipInfoAmountType _shotSpeed;
 
         [TypeParameter]
-        private EquipInfoAmountType _recoilMomentum;
+        private EquipInfo.EquipInfoAmountType _recoilMomentum;
 
-        public EquipInfoAmountType SingleShotDamage { get { return _singleShotDamage; } set { _singleShotDamage = value; } }
-        public EquipInfoAmountType ShotSpeed { get { return _shotSpeed; } set { _shotSpeed = value; } }
-        public EquipInfoAmountType RecoilMomentum { get { return _recoilMomentum; } set { _recoilMomentum = value; } }
+        public EquipInfo.EquipInfoAmountType SingleShotDamage { get { return _singleShotDamage; } set { _singleShotDamage = value; } }
+        public EquipInfo.EquipInfoAmountType ShotSpeed { get { return _shotSpeed; } set { _shotSpeed = value; } }
+        public EquipInfo.EquipInfoAmountType RecoilMomentum { get { return _recoilMomentum; } set { _recoilMomentum = value; } }
     }
 }

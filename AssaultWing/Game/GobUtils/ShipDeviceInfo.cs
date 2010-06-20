@@ -9,16 +9,16 @@ namespace AW2.Game.GobUtils
     public class ShipDeviceInfo : EquipInfo
     {
         [TypeParameter]
-        private EquipInfoAmountType _reloadTime;
+        private EquipInfoAmountType _reloadSpeed;
 
         [TypeParameter]
         private EquipInfoAmountType _energyUsage;
 
         [TypeParameter]
-        private EquipInfoAmountType _usageType;
+        private EquipInfoUsageType _usageType;
 
-        public EquipInfoAmountType ReloadTime { get { return _reloadTime; } set { _reloadTime = value; } }
+        public EquipInfoAmountType ReloadSpeed { get { return _reloadSpeed; } set { _reloadSpeed = value; } }
         public EquipInfoAmountType EnergyUsage { get { return _energyUsage; } set { _energyUsage = value; } }
-        public EquipInfoAmountType usageType { get { return _usageType; } set { _usageType = value; } }
+        public EquipInfoUsageType UsageType { get { return _usageType; } set { _usageType = value; } }
     }
 }

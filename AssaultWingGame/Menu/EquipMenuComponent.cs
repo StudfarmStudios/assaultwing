@@ -331,7 +331,23 @@ namespace AW2.Menu
 
             // Draw info display if in network game
             DrawShipInfoDisplay(view, spriteBatch);
+
+            // Draw ship device info display
+            DrawShipDeviceInfoDisplay(view, spriteBatch);
         }
+
+        private void DrawShipDeviceInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
+        {
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone &&
+                MenuPanePlayers.ElementAt(0) != null &&
+                (_currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Weapon2 ||
+                _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Extra))
+            {
+                Player player = MenuPanePlayers.ElementAt(0).First;
+                ShipDevice device = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
+            }
+        }
+
 
         private void DrawShipInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
         {

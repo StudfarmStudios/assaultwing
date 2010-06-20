@@ -9,14 +9,17 @@ namespace AW2.Game.GobUtils
 {
     public class EquipInfo
     {
-        public static readonly Color C_AMOUNT_TYPE_1 = new Color(220, 0, 0);
-        public static readonly Color C_AMOUNT_TYPE_2 = new Color(255, 132, 0);
-        public static readonly Color C_AMOUNT_TYPE_3 = new Color(255, 196, 0);
-        public static readonly Color C_AMOUNT_TYPE_4 = new Color(152, 200, 33);
-        public static readonly Color C_AMOUNT_TYPE_5 = new Color(0, 255, 0);
+        public static readonly Color C_AMOUNT_TYPE_POOR = new Color(220, 0, 0);
+        public static readonly Color C_AMOUNT_TYPE_LOW = new Color(255, 132, 0);
+        public static readonly Color C_AMOUNT_TYPE_AVERAGE = new Color(255, 196, 0);
+        public static readonly Color C_AMOUNT_TYPE_HIGH = new Color(152, 200, 33);
+        public static readonly Color C_AMOUNT_TYPE_GREAT = new Color(0, 255, 0);
+
+        public static readonly Color C_USAGE_TYPE_SINGLE = Color.Aqua;
+        public static readonly Color C_USAGE_TYPE_CONTINUOUS = Color.Aqua;
 
         public enum EquipInfoAmountType { Poor, Low, Average, High, Great };
-        public enum EquipInfoUsageType { Charge, Continuous };
+        public enum EquipInfoUsageType { Single, Continuous };
 
         #region Fields
 
@@ -46,20 +49,33 @@ namespace AW2.Game.GobUtils
         public string InfoText { get { return _infoText; } set { _infoText = value; } }
 
 
+        public static Color GetColorForUsageType(EquipInfoUsageType usage)
+        {
+            switch (usage)
+            {
+                case EquipInfoUsageType.Single:
+                    return C_USAGE_TYPE_SINGLE;
+                case EquipInfoUsageType.Continuous:
+                    return C_USAGE_TYPE_CONTINUOUS;
+            }
+
+            return Color.White;
+        }
+
         public static Color GetColorForAmountType(EquipInfoAmountType amount)
         {
             switch (amount)
             {
                 case EquipInfoAmountType.Poor:
-                    return C_AMOUNT_TYPE_1;
+                    return C_AMOUNT_TYPE_POOR;
                 case EquipInfoAmountType.Low:
-                    return C_AMOUNT_TYPE_2;
+                    return C_AMOUNT_TYPE_LOW;
                 case EquipInfoAmountType.Average:
-                    return C_AMOUNT_TYPE_3;
+                    return C_AMOUNT_TYPE_AVERAGE;
                 case EquipInfoAmountType.High:
-                    return C_AMOUNT_TYPE_4;
+                    return C_AMOUNT_TYPE_HIGH;
                 case EquipInfoAmountType.Great:
-                    return C_AMOUNT_TYPE_5;
+                    return C_AMOUNT_TYPE_GREAT;
             }
 
             return Color.White;

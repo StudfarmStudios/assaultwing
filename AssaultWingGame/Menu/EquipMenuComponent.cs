@@ -361,7 +361,10 @@ namespace AW2.Menu
                 _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Extra))
             {
                 Player player = MenuPanePlayers.ElementAt(0).First;
+
                 ShipDevice device = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
+                if (_currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Weapon2) device = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Weapon2Name);
+
                 ShipDeviceInfo info = device.DeviceInfo;
                 Vector2 infoDisplayPos = _pos - view + new Vector2(560, 186);
                 Vector2 infoDataPos = infoDisplayPos + new Vector2(200, 100);

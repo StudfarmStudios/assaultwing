@@ -9,9 +9,22 @@ namespace AW2.Game.GobUtils
 {
     public class EquipInfo
     {
+        public static readonly Color C_AMOUNT_TYPE_1 = new Color(220, 0, 0);
+        public static readonly Color C_AMOUNT_TYPE_2 = new Color(255, 132, 0);
+        public static readonly Color C_AMOUNT_TYPE_3 = new Color(255, 196, 0);
+        public static readonly Color C_AMOUNT_TYPE_4 = new Color(152, 200, 33);
+        public static readonly Color C_AMOUNT_TYPE_5 = new Color(0, 255, 0);
+
         public enum EquipInfoAmountType { Poor, Low, Average, High, Great };
+        public enum EquipInfoUsageType { Charge, Continuous };
 
         #region Fields
+
+        /// <summary>
+        /// Name of the icon in the equip menu main display.
+        /// </summary>
+        [TypeParameter]
+        private CanonicalString _iconEquipName;
 
         [TypeParameter]
         private CanonicalString _pictureName;
@@ -24,6 +37,10 @@ namespace AW2.Game.GobUtils
 
         #endregion
 
+        /// <summary>
+        /// Name of the icon in the equip menu main display.
+        /// </summary>
+        public CanonicalString IconEquipName { get { return _iconEquipName; } set { _iconEquipName = value; } }
         public CanonicalString PictureName { get { return _pictureName; } set { _pictureName = value; } }
         public CanonicalString TitlePictureName { get { return _titlePictureName; } set { _titlePictureName = value; } }
         public string InfoText { get { return _infoText; } set { _infoText = value; } }
@@ -34,15 +51,15 @@ namespace AW2.Game.GobUtils
             switch (amount)
             {
                 case EquipInfoAmountType.Poor:
-                    return new Color(220, 0, 0);
+                    return C_AMOUNT_TYPE_1;
                 case EquipInfoAmountType.Low:
-                    return new Color(255, 132, 0);
+                    return C_AMOUNT_TYPE_2;
                 case EquipInfoAmountType.Average:
-                    return new Color(255, 196, 0);
+                    return C_AMOUNT_TYPE_3;
                 case EquipInfoAmountType.High:
-                    return new Color(152, 200, 33);
+                    return C_AMOUNT_TYPE_4;
                 case EquipInfoAmountType.Great:
-                    return new Color(0, 255, 0);
+                    return C_AMOUNT_TYPE_5;
             }
 
             return Color.White;

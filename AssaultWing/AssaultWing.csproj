@@ -137,8 +137,10 @@
     <Compile Include="Game\Gobs\WallModel.cs" />
     <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\GobUtils\ChargeProvider.cs" />
+    <Compile Include="Game\GobUtils\ShipDeviceInfo.cs" />
     <Compile Include="Game\GobUtils\ShipInfo.cs" />
     <Compile Include="Game\GobUtils\WallIndexMap.cs" />
+    <Compile Include="Game\GobUtils\WeaponInfo.cs" />
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Pengs\ConstantValue.cs" />
     <Compile Include="Game\Pengs\CurveLerpKey.cs" />

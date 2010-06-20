@@ -83,7 +83,7 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             var ship = (Ship)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.ShipName);
-            var shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.IconEquipName);
+            var shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.ShipInfo.IconEquipName);
             spriteBatch.Draw(shipTexture, Pos - view, Color.White);
         }
 

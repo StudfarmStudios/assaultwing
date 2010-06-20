@@ -129,12 +129,6 @@ namespace AW2.Game.Gobs
         [TypeParameter, ShallowCopy]
         private Curve _birthAlpha;
 
-        /// <summary>
-        /// Name of the ship's icon in the equip menu main display.
-        /// </summary>
-        [TypeParameter]
-        private CanonicalString _iconEquipName;
-
         [TypeParameter]
         private ShipInfo _shipInfo;
 
@@ -226,10 +220,6 @@ namespace AW2.Game.Gobs
         public Weapon Weapon2 { get; private set; }
         public ShipDevice ExtraDevice { get; private set; }
 
-        /// <summary>
-        /// Name of the ship's icon in the equip menu main display.
-        /// </summary>
-        public CanonicalString IconEquipName { get { return _iconEquipName; } set { _iconEquipName = value; } }
         public ShipInfo ShipInfo { get { return _shipInfo; } set { _shipInfo = value; } }
 
         /// <summary>
@@ -237,7 +227,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override IEnumerable<CanonicalString> TextureNames
         {
-            get { return base.TextureNames.Union(new CanonicalString[] { _iconEquipName }); }
+            get { return base.TextureNames.Union(new CanonicalString[] { ShipInfo.IconEquipName }); }
         }
 
         #endregion Ship properties
@@ -279,7 +269,6 @@ namespace AW2.Game.Gobs
             _birthAlpha.ComputeTangents(CurveTangent.Flat);
             _coughEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
             _temporarilyDisabledGobs = new List<Gob>();
-            _iconEquipName = (CanonicalString)"dummytexture";
         }
 
         public Ship(CanonicalString typeName)

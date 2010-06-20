@@ -12,6 +12,7 @@ using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
 using AW2.UI;
+using AW2.Game.Gobs;
 
 namespace AW2.Menu
 {
@@ -327,6 +328,36 @@ namespace AW2.Menu
             DrawStatusDisplay(view, spriteBatch);
             DrawPlayerPanes(view, spriteBatch);
             DrawNetworkPane(view, spriteBatch);
+
+            // Draw info display if in network game
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone &&
+                _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Ship) DrawShipInfoDisplay(view, spriteBatch);
+        }
+
+        private void DrawShipInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
+        {
+            Player player = MenuPanePlayers.ElementAt(0).First;
+            Ship ship = (Ship)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.ShipName);
+            ShipInfo info = ship.ShipInfo;
+            Vector2 infoDisplayPos = _pos - view + new Vector2(560, 186);
+            Vector2 infoDataPos = infoDisplayPos + new Vector2(200, 100);
+            Vector2 infoDataValuePos = infoDataPos + new Vector2(350, 8);
+            Vector2 infoDataValueLineHeight = new Vector2(0, 21);
+
+            var shipPicture = AssaultWing.Instance.Content.Load<Texture2D>(info.PictureName);
+            var shipTitlePicture = AssaultWing.Instance.Content.Load<Texture2D>(info.TitlePictureName);
+            var infoHeaders = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_shipinfo_headers");
+            
+            spriteBatch.Draw(shipPicture, infoDisplayPos + new Vector2(-6, 0), Color.White);
+            spriteBatch.Draw(shipTitlePicture, infoDisplayPos + new Vector2(190, 8), Color.White);
+            spriteBatch.Draw(infoHeaders, infoDataPos, Color.White);
+
+            spriteBatch.DrawString(_menuSmallFont, info.Hull.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.Hull.ToString()).X, 0), Color.White);
+            spriteBatch.DrawString(_menuSmallFont, info.Armor.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.Armor.ToString()).X, 0) + (infoDataValueLineHeight), Color.White);
+            spriteBatch.DrawString(_menuSmallFont, info.Speed.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.Speed.ToString()).X, 0) + (infoDataValueLineHeight * 2), Color.White);
+            spriteBatch.DrawString(_menuSmallFont, info.Steering.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.Steering.ToString()).X, 0) + (infoDataValueLineHeight * 3), Color.White);
+            spriteBatch.DrawString(_menuSmallFont, info.ModEnergy.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.ModEnergy.ToString()).X, 0) + (infoDataValueLineHeight * 4), Color.White);
+            spriteBatch.DrawString(_menuSmallFont, info.SpecialEnergy.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.SpecialEnergy.ToString()).X, 0) + (infoDataValueLineHeight * 5), Color.White);
         }
 
         private void DrawTabsAndButtons(Vector2 view, SpriteBatch spriteBatch)
@@ -477,7 +508,7 @@ namespace AW2.Menu
                 // Draw pane background.
                 Vector2 statusPanePos = _pos - view + new Vector2(537, 160);
                 spriteBatch.Draw(_statusPaneTexture, statusPanePos, Color.White);
-
+                /*
                 // Draw pane content text.
                 Vector2 textPos = statusPanePos + new Vector2(60, 60);
                 string textContent = AssaultWing.Instance.NetworkMode == NetworkMode.Client
@@ -495,6 +526,7 @@ namespace AW2.Menu
                     textContent += "\n\nArena: " + data.ArenaPlaylist[0];
                 }
                 spriteBatch.DrawString(_menuBigFont, textContent, textPos, Color.White);
+                */
             }
         }
     }

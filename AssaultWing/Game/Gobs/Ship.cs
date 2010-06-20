@@ -135,6 +135,9 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private CanonicalString _iconEquipName;
 
+        [TypeParameter]
+        private ShipInfo _shipInfo;
+
         /// <summary>
         /// True iff the amount of exhaust output has been set by ship thrusting this frame.
         /// </summary>
@@ -227,6 +230,7 @@ namespace AW2.Game.Gobs
         /// Name of the ship's icon in the equip menu main display.
         /// </summary>
         public CanonicalString IconEquipName { get { return _iconEquipName; } set { _iconEquipName = value; } }
+        public ShipInfo ShipInfo { get { return _shipInfo; } set { _shipInfo = value; } }
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.

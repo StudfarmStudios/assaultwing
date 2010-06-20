@@ -96,6 +96,7 @@
     <Compile Include="Game\Gobs\FloatingBullet.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Game\GobUtils\EquipInfo.cs" />
     <Compile Include="Game\GobUtils\GameAction.cs" />
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Game\Gobs\WallModel.cs" />
     <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\GobUtils\ChargeProvider.cs" />
+    <Compile Include="Game\GobUtils\ShipInfo.cs" />
     <Compile Include="Game\GobUtils\WallIndexMap.cs" />
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Pengs\ConstantValue.cs" />

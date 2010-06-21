@@ -533,9 +533,7 @@ namespace AW2.Menu
             Vector2 statusDisplayColumnWidth = new Vector2(75, 0);
 
             // Setup statusdisplay texts
-            string statusDisplayPlayerAmount = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
-                ? "" + data.Players.Count()
-                : "2-8";
+            string statusDisplayPlayerAmount = "" + data.Players.Count();
             string statusDisplayArenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
                 ? data.ArenaPlaylist[0]
                 : "to be announced";
@@ -544,14 +542,9 @@ namespace AW2.Menu
                 : "connected";
             string statusDisplayPing = "good";
 
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
-                bool unsureData = data.Spectators.Count == 1 && AssaultWing.Instance.NetworkMode == NetworkMode.Client;
-                if (!unsureData)
-                {
-                    statusDisplayPlayerAmount = "" + data.Spectators.Count;
-                    statusDisplayArenaName = "" + data.ArenaPlaylist[0];
-                }
+                statusDisplayArenaName = "" + data.ArenaPlaylist[0];
             }
 
             // Draw common statusdisplay texts for all modes
@@ -637,28 +630,6 @@ namespace AW2.Menu
                 // Draw pane background.
                 Vector2 statusPanePos = _pos - view + new Vector2(537, 160);
                 spriteBatch.Draw(_statusPaneTexture, statusPanePos, Color.White);
-               
-                /*
-                // Draw pane content text. (the IF is hack for now to allow something to be drawn when not selecting ship)
-                if (MenuPanePlayers.ElementAt(0) != null && _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Name)
-                {
-                    Vector2 textPos = statusPanePos + new Vector2(60, 60);
-                    string textContent = AssaultWing.Instance.NetworkMode == NetworkMode.Client
-                        ? "Connected to game server"
-                        : "Hosting a game as server";
-                    bool unsureData = data.Spectators.Count == 1 && AssaultWing.Instance.NetworkMode == NetworkMode.Client;
-                    if (unsureData)
-                    {
-                        textContent += "\n\n2 or more players";
-                        textContent += "\n\nArena: to be announced";
-                    }
-                    else
-                    {
-                        textContent += "\n\n" + data.Spectators.Count + (data.Spectators.Count == 1 ? " player" : " players");
-                        textContent += "\n\nArena: " + data.ArenaPlaylist[0];
-                    }
-                    spriteBatch.DrawString(_menuBigFont, textContent, textPos, Color.White);
-                }*/
             }
         }
     }

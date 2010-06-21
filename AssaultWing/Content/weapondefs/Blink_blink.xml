@@ -5,8 +5,8 @@
 	<pictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_devicepicture_blink</pictureName>
 	<titlePictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_devicename_blink</titlePictureName>
 	<infoText type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Info</infoText>
-	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</reloadSpeed>
-	<energyUsage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</energyUsage>
+	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</reloadSpeed>
+	<energyUsage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</energyUsage>
 	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
     <iconEquipName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_mod_blink</iconEquipName>
   </deviceInfo>

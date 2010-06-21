@@ -375,7 +375,7 @@ namespace AW2.Menu
 
                 spriteBatch.DrawString(_menuSmallFont, info.SingleShotDamage.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.SingleShotDamage.ToString()).X, 0), EquipInfo.GetColorForAmountType(info.SingleShotDamage));
                 spriteBatch.DrawString(_menuSmallFont, info.ShotSpeed.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.ShotSpeed.ToString()).X, 0) + (infoDataValueLineHeight), EquipInfo.GetColorForAmountType(info.ShotSpeed));
-                spriteBatch.DrawString(_menuSmallFont, info.RecoilMomentum.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.RecoilMomentum.ToString()).X, 0) + (infoDataValueLineHeight * 2), EquipInfo.GetColorForAmountType(info.RecoilMomentum));
+                spriteBatch.DrawString(_menuSmallFont, info.RecoilMomentum.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.RecoilMomentum.ToString()).X, 0) + (infoDataValueLineHeight * 2), EquipInfo.GetReversedColorForAmountType(info.RecoilMomentum));
             }
         }
 

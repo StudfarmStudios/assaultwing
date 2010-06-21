@@ -81,6 +81,25 @@ namespace AW2.Game.GobUtils
             return Color.White;
         }
 
+        public static Color GetReversedColorForAmountType(EquipInfoAmountType amount)
+        {
+            switch (amount)
+            {
+                case EquipInfoAmountType.Poor:
+                    return C_AMOUNT_TYPE_GREAT;
+                case EquipInfoAmountType.Low:
+                    return C_AMOUNT_TYPE_HIGH;
+                case EquipInfoAmountType.Average:
+                    return C_AMOUNT_TYPE_AVERAGE;
+                case EquipInfoAmountType.High:
+                    return C_AMOUNT_TYPE_LOW;
+                case EquipInfoAmountType.Great:
+                    return C_AMOUNT_TYPE_POOR;
+            }
+
+            return Color.White;
+        }
+
         public EquipInfo()
         {
         }

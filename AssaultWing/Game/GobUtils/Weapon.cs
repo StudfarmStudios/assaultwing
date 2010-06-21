@@ -50,6 +50,9 @@ namespace AW2.Game.GobUtils
 
         #region Weapon fields
 
+        [TypeParameter]
+        private WeaponInfo _weaponInfo;
+
         /// <summary>
         /// Names of the weapon type upgrades of the weapon.
         /// </summary>
@@ -83,6 +86,7 @@ namespace AW2.Game.GobUtils
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.
         /// </summary>
         public CanonicalString[] UpgradeNames { get { return upgradeNames; } }
+        public WeaponInfo WeaponInfo { get { return _weaponInfo; } }
 
         #endregion // Weapon properties
 

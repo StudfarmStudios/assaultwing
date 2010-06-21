@@ -351,6 +351,32 @@ namespace AW2.Menu
 
             // Draw ship device info display
             DrawShipDeviceInfoDisplay(view, spriteBatch);
+
+            // Draw weapon info display
+            DrawWeaponInfoDisplay(view, spriteBatch);
+        }
+
+        private void DrawWeaponInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
+        {
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone &&
+                MenuPanePlayers.ElementAt(0) != null &&
+                _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Weapon2)
+            {
+                Player player = MenuPanePlayers.ElementAt(0).First;
+                Weapon weapon = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Weapon2Name);
+                WeaponInfo info = weapon.WeaponInfo;
+                Vector2 infoDisplayPos = _pos - view + new Vector2(560, 186);
+                Vector2 infoDataPos = infoDisplayPos + new Vector2(200, 164);
+                Vector2 infoDataValuePos = infoDataPos + new Vector2(350, 8);
+                Vector2 infoDataValueLineHeight = new Vector2(0, 21);
+
+                var weaponHeaders = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_weaponinfo_headers");
+                spriteBatch.Draw(weaponHeaders, infoDataPos, Color.White);
+
+                spriteBatch.DrawString(_menuSmallFont, info.SingleShotDamage.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.SingleShotDamage.ToString()).X, 0), EquipInfo.GetColorForAmountType(info.SingleShotDamage));
+                spriteBatch.DrawString(_menuSmallFont, info.ShotSpeed.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.ShotSpeed.ToString()).X, 0) + (infoDataValueLineHeight), EquipInfo.GetColorForAmountType(info.ShotSpeed));
+                spriteBatch.DrawString(_menuSmallFont, info.RecoilMomentum.ToString(), infoDataValuePos - new Vector2(_menuSmallFont.MeasureString(info.RecoilMomentum.ToString()).X, 0) + (infoDataValueLineHeight * 2), EquipInfo.GetColorForAmountType(info.RecoilMomentum));
+            }
         }
 
         private void DrawShipDeviceInfoDisplay(Vector2 view, SpriteBatch spriteBatch)

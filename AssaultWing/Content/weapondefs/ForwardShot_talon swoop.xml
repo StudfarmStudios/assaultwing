@@ -11,6 +11,12 @@
     <iconEquipName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummytexture</iconEquipName>
   </deviceInfo>
 
+  <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	<singleShotDamage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</singleShotDamage>
+	<shotSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</shotSpeed>
+	<recoilMomentum type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</recoilMomentum>
+  </weaponInfo>  
+  
   <typeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">talon swoop</typeName>
   <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right</gunBarrels>
   <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>

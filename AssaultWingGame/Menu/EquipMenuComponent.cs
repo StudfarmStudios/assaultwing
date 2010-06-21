@@ -354,6 +354,48 @@ namespace AW2.Menu
 
             // Draw weapon info display
             DrawWeaponInfoDisplay(view, spriteBatch);
+
+            // Draw player info (TEST/HACK)
+            DrawPlayerInfoDisplay(view, spriteBatch, MenuPanePlayers.ElementAt(0).First);
+        }
+
+        private void DrawPlayerInfoDisplay(Vector2 view, SpriteBatch spriteBatch, Player player)
+        {
+            // THIS IF IS A HACK JUST TO ENABLE THIS SCREEN TO SHOWN WHEN IN PLAYER NAME CHANGE
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone &&
+                MenuPanePlayers.ElementAt(0) != null &&
+                _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Name)
+            {
+                Weapon weapon = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.Weapon2Name);
+                ShipDeviceInfo weaponInfo = weapon.DeviceInfo;
+                ShipDevice device = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
+                ShipDeviceInfo deviceInfo = device.DeviceInfo;
+                Ship ship = (Ship)AssaultWing.Instance.DataEngine.GetTypeTemplate(player.ShipName);
+                ShipInfo shipInfo = ship.ShipInfo;
+                Vector2 infoDisplayPos = _pos - view + new Vector2(570, 191);
+
+                var shipPicture = AssaultWing.Instance.Content.Load<Texture2D>(shipInfo.PictureName);
+                var shipTitlePicture = AssaultWing.Instance.Content.Load<Texture2D>(shipInfo.TitlePictureName);
+                var weaponPicture = AssaultWing.Instance.Content.Load<Texture2D>(weaponInfo.PictureName);
+                var weaponTitlePicture = AssaultWing.Instance.Content.Load<Texture2D>(weaponInfo.TitlePictureName);
+                var devicePicture = AssaultWing.Instance.Content.Load<Texture2D>(deviceInfo.PictureName);
+                var deviceTitlePicture = AssaultWing.Instance.Content.Load<Texture2D>(deviceInfo.TitlePictureName);
+
+                spriteBatch.Draw(shipPicture, infoDisplayPos, null, Color.White, 0,
+                    new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
+                spriteBatch.DrawString(_menuBigFont, "Ship", infoDisplayPos + new Vector2(149, 15), Color.White);
+                spriteBatch.Draw(shipTitlePicture, infoDisplayPos + new Vector2(140, 37), Color.White);
+
+                spriteBatch.Draw(devicePicture, infoDisplayPos + new Vector2(0, 120), null, Color.White, 0,
+                    new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
+                spriteBatch.DrawString(_menuBigFont, "Ship Modification", infoDisplayPos + new Vector2(0, 120) + new Vector2(149, 15), Color.White);
+                spriteBatch.Draw(deviceTitlePicture, infoDisplayPos + new Vector2(0, 120) + new Vector2(140, 37), Color.White);
+
+                spriteBatch.Draw(weaponPicture, infoDisplayPos + new Vector2(0, 240), null, Color.White, 0,
+                    new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
+                spriteBatch.DrawString(_menuBigFont, "Special Weapon", infoDisplayPos + new Vector2(0, 240) + new Vector2(149, 15), Color.White);
+                spriteBatch.Draw(weaponTitlePicture, infoDisplayPos + new Vector2(0, 240) + new Vector2(140, 37), Color.White);
+            }
         }
 
         private void DrawWeaponInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
@@ -596,6 +638,7 @@ namespace AW2.Menu
                 Vector2 statusPanePos = _pos - view + new Vector2(537, 160);
                 spriteBatch.Draw(_statusPaneTexture, statusPanePos, Color.White);
                
+                /*
                 // Draw pane content text. (the IF is hack for now to allow something to be drawn when not selecting ship)
                 if (MenuPanePlayers.ElementAt(0) != null && _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Name)
                 {
@@ -615,7 +658,7 @@ namespace AW2.Menu
                         textContent += "\n\nArena: " + data.ArenaPlaylist[0];
                     }
                     spriteBatch.DrawString(_menuBigFont, textContent, textPos, Color.White);
-                }
+                }*/
             }
         }
     }

@@ -477,11 +477,6 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\junk_circuitcard.X">
-      <Name>junk_circuitcard</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="models\greendiamond.X">
       <Name>greendiamond</Name>
       <Importer>XImporter</Importer>

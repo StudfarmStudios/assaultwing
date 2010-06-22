@@ -347,16 +347,6 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\testship2.X">
-      <Name>testship2</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\testship.X">
-      <Name>testship</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="models\spear.X">
       <Name>spear</Name>
       <Importer>XImporter</Importer>
@@ -1170,20 +1160,6 @@
   <ItemGroup>
     <Compile Include="textures\menu_equip_status_display.png">
       <Name>menu_equip_status_display</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_wep1_peashooter.png">
-      <Name>menu_equip_wep1_peashooter</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_wep1_shotgun.png">
-      <Name>menu_equip_wep1_shotgun</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

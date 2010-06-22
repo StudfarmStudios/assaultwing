@@ -1986,13 +1986,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\gui_1kill.png">
-      <Name>gui_1kill</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\gui_target_circle.png">
       <Name>gui_target_circle</Name>
       <Importer>TextureImporter</Importer>

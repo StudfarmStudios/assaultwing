@@ -1152,20 +1152,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\menu_equip_player_color_green.png">
-      <Name>menu_equip_player_color_green</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\menu_equip_player_color_red.png">
-      <Name>menu_equip_player_color_red</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\menu_equip_ship_hyperion.png">
       <Name>menu_equip_ship_hyperion</Name>
       <Importer>TextureImporter</Importer>

@@ -35,6 +35,7 @@ namespace AW2.Menu
         private EquipMenuTab _currentTab;
         private int _playerListIndex;
         private TimeSpan _playerListCursorFadeStartTime;
+        private TimeSpan _tabFadeStartTime;
 
         private const int MAX_MENU_PANES = 4;
 
@@ -53,6 +54,8 @@ namespace AW2.Menu
         /// Values range from 0 (transparent) to 255 (opaque).
         /// </summary>
         private Curve _cursorFade;
+
+        private Curve _tabFade;
 
         /// <summary>
         /// Time at which the cursor started fading for each player.
@@ -166,6 +169,7 @@ namespace AW2.Menu
             _currentTab = EquipMenuTab.Equipment;
             _playerListIndex = 0;
             _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            _tabFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _pos = new Vector2(0, 0);
             _currentItems = new EquipMenuItem[MAX_MENU_PANES];
             _cursorFadeStartTimes = new TimeSpan[MAX_MENU_PANES];
@@ -175,6 +179,13 @@ namespace AW2.Menu
             _cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
             _cursorFade.PreLoop = CurveLoopType.Cycle;
             _cursorFade.PostLoop = CurveLoopType.Cycle;
+            _tabFade = new Curve();
+            _tabFade.Keys.Add(new CurveKey(0f, 255));
+            _tabFade.Keys.Add(new CurveKey(1f, 150));
+            _tabFade.Keys.Add(new CurveKey(2.2f, 255));
+            _tabFade.PreLoop = CurveLoopType.Cycle;
+            _tabFade.PostLoop = CurveLoopType.Cycle;
+
             CreateSelectors();
         }
 
@@ -274,7 +285,7 @@ namespace AW2.Menu
                 }
 
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-
+                _tabFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                 return;
             }
             if (_controlBack.Pulse)
@@ -419,20 +430,16 @@ namespace AW2.Menu
                 }
 
                 DrawPlayerPanes(view, spriteBatch);
-                
                 // Draw info display if in network game
                 DrawShipInfoDisplay(view, spriteBatch);
-
                 // Draw ship device info display
                 DrawShipDeviceInfoDisplay(view, spriteBatch);
-
                 // Draw weapon info display
                 DrawWeaponInfoDisplay(view, spriteBatch);
             }
             
             if (_currentTab == EquipMenuTab.Players)
             {
-                // Draw player info (TEST/HACK)
                 DrawLargeStatusBackground(view, spriteBatch);
                 DrawPlayerListDisplay(view, spriteBatch);
                 DrawPlayerInfoDisplay(view, spriteBatch, AssaultWing.Instance.DataEngine.Players.ElementAt(_playerListIndex));
@@ -592,8 +599,9 @@ namespace AW2.Menu
             spriteBatch.Draw(_tabPlayersTexture, tab1Pos + tabWidth, Color.White);
 
             // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
-            spriteBatch.Draw(_tabHilite, tab1Pos + (tabWidth * ((int)_currentTab - 1)), Color.White);
-
+            float fadeTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _tabFadeStartTime).TotalSeconds;
+            spriteBatch.Draw(_tabHilite, tab1Pos + (tabWidth * ((int)_currentTab - 1)), new Color(255, 255, 255, (byte)_tabFade.Evaluate(fadeTime)));
+            
             // Draw chat tab
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
             {

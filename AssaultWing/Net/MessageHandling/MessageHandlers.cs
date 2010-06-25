@@ -4,6 +4,7 @@ using System.Linq;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Messages;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Net.MessageHandling
 {
@@ -82,7 +83,17 @@ namespace AW2.Net.MessageHandling
                 newPlayer.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             }
             else if (spectator.IsRemote)
+            {
                 mess.Read(spectator, SerializationModeFlags.ConstantData, TimeSpan.Zero);
+            }
+            else
+            {
+                // Be careful not to overwrite our most recent name and equipment choices
+                // with something older from the server.
+                var tempPlayer = GetTempPlayer();
+                mess.Read(tempPlayer, SerializationModeFlags.ConstantData, TimeSpan.Zero);
+                if (spectator is Player) ((Player)spectator).PlayerColor = tempPlayer.PlayerColor;
+            }
         }
 
         private static void HandlePlayerSettingsReply(PlayerSettingsReply mess)
@@ -166,11 +177,21 @@ namespace AW2.Net.MessageHandling
                     // Silently ignoring update of a player that doesn't live on the client who sent the update.
                 }
                 else
+                {
+                    // Be careful not to overwrite the player's color with something silly from the client.
+                    var oldColor = player is Player ? (Color?)((Player)player).PlayerColor : null;
                     mess.Read(player, SerializationModeFlags.ConstantData, TimeSpan.Zero);
+                    if (oldColor.HasValue) ((Player)player).PlayerColor = oldColor.Value;
+                }
             }
         }
 
         #endregion
+
+        private static Player GetTempPlayer()
+        {
+            return new Player("dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
+        }
 
         private static bool ClientPlayerCriteria(Spectator spectator, int oldPlayerID)
         {

@@ -1,4 +1,6 @@
-﻿namespace AW2.Net.Messages
+﻿using System;
+
+namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game instance to another, requesting the update of the settings of a player.
@@ -23,16 +25,19 @@
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            // Player settings request structure:
-            // bool: has the player been registered to the server
-            // byte: player identifier
-            // word: data length N
-            // N bytes: serialised data of the player
-            byte[] writeBytes = StreamedData;
-            writer.Write((bool)IsRegisteredToServer);
-            writer.Write((byte)PlayerID);
-            writer.Write(checked((ushort)writeBytes.Length));
-            writer.Write(writeBytes, 0, writeBytes.Length);
+            checked
+            {
+                // Player settings request structure:
+                // bool: has the player been registered to the server
+                // byte: player identifier
+                // word: data length N
+                // N bytes: serialised data of the player
+                byte[] writeBytes = StreamedData;
+                writer.Write((bool)IsRegisteredToServer);
+                writer.Write((byte)PlayerID);
+                writer.Write((ushort)writeBytes.Length);
+                writer.Write(writeBytes, 0, writeBytes.Length);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

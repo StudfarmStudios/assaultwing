@@ -499,8 +499,9 @@ namespace AW2.Game
         private void SpectatorAdded(Spectator spectator)
         {
             var player = spectator as Player;
-            if (player != null)
+            if (player != null && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
+                player.PlayerColor = Color.Black; // reset to a color that won't affect free color picking
                 player.PlayerColor = GetFreePlayerColor();
             }
         }

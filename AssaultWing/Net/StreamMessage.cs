@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
 using System.IO;
 
 namespace AW2.Net
@@ -14,8 +10,7 @@ namespace AW2.Net
     /// </summary>
     /// To initialise the streamed data of a message for sending, 
     /// call <c>Write</c> as many times as you like and make appropriate 
-    /// calls to the various write methods of the returned writer. Then 
-    /// call <c>EndWrite</c> before sending the message.
+    /// calls to the various write methods of the returned writer.
     /// 
     /// To get the streamed data from a message, call <c>BeginRead</c>
     /// and make appropriate calls to the various
@@ -24,10 +19,10 @@ namespace AW2.Net
     /// Streamed data in a stream message is modal. See <c>DataMode</c>.
     public abstract class StreamMessage : Message
     {
-        byte[] writeBytes;
-        NetworkBinaryWriter writer;
-        MemoryStream readBuffer;
-        NetworkBinaryReader reader;
+        private byte[] _writeBytes;
+        private NetworkBinaryWriter _writer;
+        private MemoryStream _readBuffer;
+        private NetworkBinaryReader _reader;
 
         /// <summary>
         /// How streamed data is being handled in a stream message.
@@ -81,13 +76,13 @@ namespace AW2.Net
                 switch (DataMode)
                 {
                     case DataModeType.Uninitialized:
-                        writeBytes = new byte[0];
+                        _writeBytes = new byte[0];
                         break;
                     case DataModeType.SettingDataByWrite:
-                        writer.Flush();
-                        writeBytes = ((MemoryStream)writer.BaseStream).ToArray();
-                        writer.Close();
-                        writer = null;
+                        _writer.Flush();
+                        _writeBytes = ((MemoryStream)_writer.BaseStream).ToArray();
+                        _writer.Close();
+                        _writer = null;
                         break;
                     case DataModeType.DataSetByWrite:
                         break;
@@ -95,7 +90,7 @@ namespace AW2.Net
                         throw new InvalidOperationException("Cannot get streamed data in mode " + DataMode);
                 }
                 DataMode = DataModeType.DataSetByWrite;
-                return writeBytes;
+                return _writeBytes;
             }
             set {
                 switch (DataMode)
@@ -107,7 +102,7 @@ namespace AW2.Net
                         throw new InvalidOperationException("Cannot set streamed data in mode " + DataMode);
                 }
                 DataMode = DataModeType.DataSetForRead;
-                readBuffer = new MemoryStream(value);
+                _readBuffer = new MemoryStream(value);
             }
         }
 
@@ -131,7 +126,7 @@ namespace AW2.Net
             switch (DataMode)
             {
                 case DataModeType.Uninitialized:
-                    writer = new NetworkBinaryWriter(new MemoryStream());
+                    _writer = new NetworkBinaryWriter(new MemoryStream());
                     break;
                 case DataModeType.SettingDataByWrite:
                     break;
@@ -139,9 +134,9 @@ namespace AW2.Net
                     throw new InvalidOperationException("Cannot Write() streamed data in mode " + DataMode);
             }
             DataMode = DataModeType.SettingDataByWrite;
-            long oldPos = writer.Seek(0, SeekOrigin.Current);
-            serializable.Serialize(writer, mode);
-            long newPos = writer.Seek(0, SeekOrigin.Current);
+            long oldPos = _writer.Seek(0, SeekOrigin.Current);
+            serializable.Serialize(_writer, mode);
+            long newPos = _writer.Seek(0, SeekOrigin.Current);
             return (int)(newPos - oldPos);
         }
 
@@ -156,7 +151,7 @@ namespace AW2.Net
         public void Read(INetworkSerializable serializable, SerializationModeFlags mode, TimeSpan messageAge)
         {
             SetDataModeToRead();
-            serializable.Deserialize(reader, mode, messageAge);
+            serializable.Deserialize(_reader, mode, messageAge);
 
             // The reader will be closed when the message goes to garbage collection.
             // For now, we leave it open for successive calls to Read().
@@ -170,7 +165,7 @@ namespace AW2.Net
         public void Skip(int byteCount)
         {
             SetDataModeToRead();
-            reader.ReadBytes(byteCount);
+            _reader.ReadBytes(byteCount);
         }
 
         private void SetDataModeToRead()
@@ -178,7 +173,7 @@ namespace AW2.Net
             switch (DataMode)
             {
                 case DataModeType.DataSetForRead:
-                    reader = new NetworkBinaryReader(readBuffer);
+                    _reader = new NetworkBinaryReader(_readBuffer);
                     break;
                 case DataModeType.ReadingSetData:
                     break;

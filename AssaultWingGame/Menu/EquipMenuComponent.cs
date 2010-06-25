@@ -34,6 +34,7 @@ namespace AW2.Menu
         private enum EquipMenuTab { Equipment = 1, Players = 2}
         private EquipMenuTab _currentTab;
         private int _playerListIndex;
+        private TimeSpan _playerListCursorFadeStartTime;
 
         private const int MAX_MENU_PANES = 4;
 
@@ -164,6 +165,7 @@ namespace AW2.Menu
             _controlPlayerListDown = new KeyboardKey(Keys.Down);
             _currentTab = EquipMenuTab.Equipment;
             _playerListIndex = 0;
+            _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _pos = new Vector2(0, 0);
             _currentItems = new EquipMenuItem[MAX_MENU_PANES];
             _cursorFadeStartTimes = new TimeSpan[MAX_MENU_PANES];
@@ -314,6 +316,7 @@ namespace AW2.Menu
                     _playerListIndex = 0;
 
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
 
                 return;
             }
@@ -325,6 +328,7 @@ namespace AW2.Menu
                     _playerListIndex = AssaultWing.Instance.DataEngine.Players.Count() - 1;
 
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
 
                 return;
             }
@@ -442,9 +446,11 @@ namespace AW2.Menu
             Vector2 lineHeight = new Vector2(0, 30);
             Vector2 cursorPos = playerListPos + (lineHeight * _playerListIndex) + new Vector2(-27, -37);
 
+            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _playerListCursorFadeStartTime).TotalSeconds;
             var playerNameEmptyTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_player_name_bg_empty");
             spriteBatch.Draw(playerNameEmptyTexture, GetPlayerPanePos(0) - view, Color.White);
             spriteBatch.Draw(_playerNameCursorTexture, cursorPos, Color.White);
+            spriteBatch.Draw(_playerNameHiliteTexture, cursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
 
             foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
             {

@@ -20,17 +20,16 @@ namespace AW2.Menu
             _text.Update(_menuEngine.ResetCursorFade);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 pos)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 origin)
         {
-            spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, Name + _text.Content, pos, Color.White);
+            Draw(spriteBatch, origin, Name + _text.Content);
         }
 
-        public override void DrawHighlight(SpriteBatch spriteBatch, Vector2 pos)
+        public override void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin)
         {
-            var font = _menuEngine.MenuContent.FontBig;
-            var partialTextSize = new Vector2(34, 1) + font.MeasureString(Name + _text.Content.Substring(0, _text.CaretPosition));
-            var cursorDelta = new Vector2(partialTextSize.X, 0);
-            DrawHighlight(spriteBatch, pos + cursorDelta, pos);
+            float partialTextWidth = Font.MeasureString(Name + _text.Content.Substring(0, _text.CaretPosition)).X;
+            var cursorDelta = new Vector2(34 - 7 + partialTextWidth, 0);
+            DrawHighlight(spriteBatch, origin, cursorDelta);
         }
     }
 }

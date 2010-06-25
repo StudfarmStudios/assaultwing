@@ -86,26 +86,15 @@ namespace AW2.Menu
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var font = MenuEngine.MenuContent.FontBig;
-            var highlightToTextDelta = new Vector2(34, 1);
-            var highlightPos = _pos - view + GetHighlightPos(font, _currentItem);
-
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
-            _currentItems[_currentItem].DrawHighlight(spriteBatch, highlightPos);
+            _currentItems[_currentItem].DrawHighlight(spriteBatch, _pos - view);
             for (int i = 0; i < _currentItems.Count; ++i)
-                _currentItems[i].Draw(spriteBatch, _pos - view + highlightToTextDelta + GetHighlightPos(font, i));
+                _currentItems[i].Draw(spriteBatch, _pos - view);
         }
 
         #endregion Public methods
 
         #region Private methods
-
-        private static Vector2 GetHighlightPos(SpriteFont font, int itemIndex)
-        {
-            var highlightPos = new Vector2(551, 354);
-            var lineDelta = new Vector2(0, font.LineSpacing);
-            return highlightPos + itemIndex * lineDelta;
-        }
 
         private void InitializeControlCallbacks()
         {

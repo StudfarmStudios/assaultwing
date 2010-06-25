@@ -27,6 +27,8 @@ namespace AW2.Menu
         /// </summary>
         public Action<MainMenuComponent> Action { get; set; }
 
+        protected SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
+
         public MainMenuItem(MenuEngineImpl menuEngine)
         {
             _menuEngine = menuEngine;
@@ -34,20 +36,36 @@ namespace AW2.Menu
 
         public virtual void Update() { }
 
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 pos)
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 origin)
         {
-            spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, Name, pos, Color.White);
+            Draw(spriteBatch, origin, Name);
         }
 
-        public virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 pos)
+        public virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin)
         {
-            DrawHighlight(spriteBatch, pos, pos);
+            DrawHighlight(spriteBatch, origin, Vector2.Zero);
         }
 
-        protected void DrawHighlight(SpriteBatch spriteBatch, Vector2 cursorPos, Vector2 highlightPos)
+        protected void Draw(SpriteBatch spriteBatch, Vector2 origin, string text)
         {
+            var highlightToTextDelta = new Vector2(34, 1);
+            var pos = GetHighlightPos(origin) + highlightToTextDelta;
+            spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, text, pos, Color.White);
+        }
+
+        protected void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta)
+        {
+            var highlightPos = GetHighlightPos(origin);
+            var cursorPos = highlightPos + cursorDelta;
             spriteBatch.Draw(_menuEngine.MenuContent.MainCursor, cursorPos, new Color(1, 1, 1, _menuEngine.GetCursorFade()));
             spriteBatch.Draw(_menuEngine.MenuContent.MainHighlight, highlightPos, Color.White);
+        }
+
+        private Vector2 GetHighlightPos(Vector2 origin)
+        {
+            var highlightDelta = new Vector2(551, 354);
+            var lineDelta = new Vector2(0, Font.LineSpacing);
+            return origin + highlightDelta + ItemIndex * lineDelta;
         }
     }
 }

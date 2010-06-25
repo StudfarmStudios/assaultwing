@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,17 +9,15 @@ namespace AW2.Menu
     /// </summary>
     public abstract class MenuComponent
     {
-        bool active;
-
         /// <summary>
         /// The menu system of which this component is part of.
         /// </summary>
-        protected MenuEngineImpl menuEngine;
+        public MenuEngineImpl MenuEngine { get; private set; }
 
         /// <summary>
         /// Does the menu component react to input.
         /// </summary>
-        public virtual bool Active { set { active = value; } get { return active; } }
+        public virtual bool Active { set; get; }
 
         /// <summary>
         /// The center of the menu component in menu system coordinates.
@@ -36,18 +32,18 @@ namespace AW2.Menu
         /// <param name="menuEngine">The menu system.</param>
         public MenuComponent(MenuEngineImpl menuEngine)
         {
-            this.menuEngine = menuEngine;
+            MenuEngine = menuEngine;
         }
 
         /// <summary>
         /// Called when graphics resources need to be loaded.
         /// </summary>
-        public abstract void LoadContent();
+        public virtual void LoadContent() { }
 
         /// <summary>
         /// Called when graphics resources need to be unloaded.
         /// </summary>
-        public abstract void UnloadContent();
+        public virtual void UnloadContent() { }
 
         /// <summary>
         /// Updates the menu component.

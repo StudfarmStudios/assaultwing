@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
-using AW2.Game;
-using AW2.Graphics;
-using AW2.Helpers;
-using AW2.Net;
-using AW2.Net.MessageHandling;
-using AW2.Net.Messages;
 using AW2.UI;
 
 namespace AW2.Menu
@@ -22,57 +14,26 @@ namespace AW2.Menu
     {
         #region Fields
 
-        /// <summary>
-        /// The very first menu when the game starts.
-        /// </summary>
-        MainMenuContents startContents;
-
-        /// <summary>
-        /// Menu for establishing a network game.
-        /// </summary>
-        MainMenuContents networkContents;
-
+        private MainMenuContents _contents;
         /// <summary>
         /// Currently active main menu contents.
         /// </summary>
-        MainMenuContents currentContents;
+        private MainMenuItemCollection _currentContent;
 
         /// <summary>
         /// Index of the currently active menu item.
         /// </summary>
-        int currentItem = 0;
+        private int _currentItem = 0;
 
-        /// <summary>
-        /// IP address of server to connect.
-        /// </summary>
-        EditableText connectAddress;
-
-        string connectItemPrefix = "Connect to ";
-        MultiControl controlUp, controlDown, controlSelect;
-        Control controlBack;
-        TriggeredCallbackCollection commonCallbacks;
-        Vector2 pos; // position of the component's background texture in menu system coordinates
-        SpriteFont menuBigFont;
-        Texture2D backgroundTexture, cursorTexture, highlightTexture;
-
-        /// <summary>
-        /// Cursor fade curve as a function of time in seconds.
-        /// Values range from 0 (transparent) to 255 (opaque).
-        /// </summary>
-        Curve cursorFade;
-
-        /// <summary>
-        /// Time at which the cursor started fading.
-        /// </summary>
-        TimeSpan cursorFadeStartTime;
+        private MultiControl _controlUp, _controlDown, _controlSelect;
+        private Control _controlBack;
+        private TriggeredCallbackCollection _commonCallbacks;
+        private Vector2 _pos; // position of the component's background texture in menu system coordinates
 
         #endregion Fields
 
         #region Properties
 
-        /// <summary>
-        /// Does the menu component react to input.
-        /// </summary>
         public override bool Active
         {
             set
@@ -84,21 +45,13 @@ namespace AW2.Menu
                     InitializeControls();
                     InitializeControlCallbacks();
 
-                    // Fall back to start menu.
-                    currentContents = startContents;
-                    currentItem = 0;
-
+                    SetContent(_contents.StartContent);
                     CutNetworkConnections();
                 }
             }
         }
 
-        /// <summary>
-        /// The center of the menu component in menu system coordinates.
-        /// </summary>
-        /// This is a good place to center the menu view to when the menu component
-        /// is to be seen well on the screen.
-        public override Vector2 Center { get { return pos + new Vector2(700, 495); } }
+        public override Vector2 Center { get { return _pos + new Vector2(700, 495); } }
 
         #endregion Properties
 
@@ -111,196 +64,81 @@ namespace AW2.Menu
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            pos = new Vector2(0, 698);
-
-            cursorFade = new Curve();
-            cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
-            cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
-            cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
-            cursorFade.PreLoop = CurveLoopType.Cycle;
-            cursorFade.PostLoop = CurveLoopType.Cycle;
-
-            InitializeMenuContents();
+            _contents = new MainMenuContents(menuEngine);
+            _pos = new Vector2(0, 698);
 
             // Set initial menu contents
-            currentContents = startContents;
+            SetContent(_contents.StartContent);
         }
 
         #endregion Constructor
 
         #region Public methods
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
-        public override void LoadContent()
+        public void SetContent(MainMenuItemCollection content)
         {
-            var content = AssaultWing.Instance.Content;
-            menuBigFont = content.Load<SpriteFont>("MenuFontBig");
-            backgroundTexture = content.Load<Texture2D>("menu_main_bg");
-            cursorTexture = content.Load<Texture2D>("menu_main_cursor");
-            highlightTexture = content.Load<Texture2D>("menu_main_hilite");
+            _currentContent = content;
+            _currentItem = 0;
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // The textures and fonts we reference will be disposed by GraphicsEngine.
-        }
-
-        /// <summary>
-        /// Updates the menu component.
-        /// </summary>
         public override void Update()
         {
             if (!Active) return;
-            if (currentContents != networkContents && AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + AssaultWing.Instance.NetworkMode);
-            commonCallbacks.Update();
-
-            // Text field editing
-            if (currentContents == networkContents && currentItem == 1)
-            {
-                connectAddress.Update(() =>
-                {
-                    cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
-                    networkContents[1].Name = connectItemPrefix + connectAddress.Content;
-                });
-            }
+            if (_currentContent != _contents.NetworkContent && AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + AssaultWing.Instance.NetworkMode);
+            _commonCallbacks.Update();
+            foreach (var menuItem in _currentContent) menuItem.Update();
         }
 
-        /// <summary>
-        /// Draws the menu component.
-        /// </summary>
-        /// <param name="view">Top left corner of the menu view in menu system coordinates.</param>
-        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
-        /// to have been called and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
-            Vector2 textPos = pos - view + new Vector2(585, 355);
-            Vector2 cursorPos = pos - view + new Vector2(551, 354 + (int)currentItem * menuBigFont.LineSpacing);
-            Vector2 highlightPos = cursorPos;
-            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
+            var font = MenuEngine.MenuContent.FontBig;
+            var highlightToTextDelta = new Vector2(34, 1);
+            var highlightPos = _pos - view + GetHighlightPos(font, _currentItem);
 
-            // HACK: Draw cursor as text field editing caret in a special case
-            if (currentContents == networkContents && currentItem == 1)
-            {
-                Vector2 partialTextSize = menuBigFont.MeasureString(connectItemPrefix + 
-                    connectAddress.Content.Substring(0, connectAddress.CaretPosition));
-                cursorPos.X = textPos.X + partialTextSize.X;
-            }
-            spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
-
-            spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
-            for (int i = 0; i < currentContents.Count; ++i)
-            {
-                spriteBatch.DrawString(menuBigFont, currentContents[i].Name, textPos, Color.White);
-                textPos.Y += menuBigFont.LineSpacing;
-            }
+            spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
+            _currentContent[_currentItem].DrawHighlight(spriteBatch, highlightPos);
+            for (int i = 0; i < _currentContent.Count; ++i)
+                _currentContent[i].Draw(spriteBatch, _pos - view + highlightToTextDelta + GetHighlightPos(font, i));
         }
 
         #endregion Public methods
 
         #region Private methods
 
-        private void InitializeMenuContents()
+        private static Vector2 GetHighlightPos(SpriteFont font, int itemIndex)
         {
-            startContents = new MainMenuContents("Start Menu", 4);
-            startContents[0].Name = "Play Local";
-            startContents[0].Action = () => menuEngine.ActivateComponent(MenuComponentType.Equip);
-            startContents[1].Name = "Play at the Battlefront";
-            startContents[1].Action = () =>
-            {
-                currentContents = networkContents;
-                AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-            };
-            startContents[2].Name = "Setup";
-            //startContents[2].Action = () => stuff;
-            startContents[3].Name = "Quit";
-            startContents[3].Action = AssaultWing.Instance.Exit;
-
-            networkContents = new MainMenuContents("Battlefront Menu", 2);
-            networkContents[0].Name = "Play as Server";
-            networkContents[0].Action = () =>
-            {
-                if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
-                if (!AssaultWing.Instance.StartServer(IncomingClientConnectionHandler)) return;
-                menuEngine.ActivateComponent(MenuComponentType.Equip);
-
-                // HACK: Force one local player and Amazonas as the only arena.
-                AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
-                AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist( new string[] { "Amazonas" });
-            };
-
-            connectAddress = new EditableText(AssaultWing.Instance.Settings.Net.ConnectAddress, 15, EditableText.Keysets.IPAddressSet);
-            networkContents[1].Name = connectItemPrefix + connectAddress.Content;
-            networkContents[1].Action = () =>
-            {
-                if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
-                AssaultWing.Instance.Settings.Net.ConnectAddress = connectAddress.Content;
-                AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-                AssaultWing.Instance.StartClient(connectAddress.Content, ClientConnectedCallback);
-            };
-        }
-
-        private static void IncomingClientConnectionHandler(Result<Connection> result)
-        {
-            if (!result.Successful)
-                Log.Write("Some client failed to connect: " + result.Error);
-            else
-                Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
-        }
-
-        private void ClientConnectedCallback(Result<Connection> result)
-        {
-            if (!result.Successful)
-            {
-                Log.Write("Failed to connect to server: " + result.Error);
-                AssaultWing.Instance.StopClient();
-                return;
-            }
-            Log.Write("Client connected to " + result.Value.RemoteEndPoint);
-
-            var net = AssaultWing.Instance.NetworkEngine;
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
-
-            // HACK: Force one local player.
-            AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
-
-            net.GameServerConnection.Send(new JoinGameRequest());
-            menuEngine.ActivateComponent(MenuComponentType.Equip);
+            var highlightPos = new Vector2(551, 354);
+            var lineDelta = new Vector2(0, font.LineSpacing);
+            return highlightPos + itemIndex * lineDelta;
         }
 
         private void InitializeControlCallbacks()
         {
-            commonCallbacks = new TriggeredCallbackCollection();
-            commonCallbacks.TriggeredCallback = () =>
+            _commonCallbacks = new TriggeredCallbackCollection();
+            _commonCallbacks.TriggeredCallback = () =>
             {
-                cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                MenuEngine.ResetCursorFade();
             };
-            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () =>
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlUp, () =>
             {
-                if (currentItem > 0)
-                    --currentItem;
+                if (_currentItem > 0)
+                    --_currentItem;
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
             }));
-            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () =>
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
             {
-                if (currentItem < currentContents.Count - 1)
-                    ++currentItem;
+                if (_currentItem < _currentContent.Count - 1)
+                    ++_currentItem;
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
             }));
-            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlSelect, () =>
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () =>
             {
-                currentContents[currentItem].Action();
+                _currentContent[_currentItem].Action(this);
             }));
-            commonCallbacks.Callbacks.Add(new TriggeredCallback(controlBack, () =>
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
                 CutNetworkConnections();
-                currentContents = startContents;
+                _currentContent = _contents.StartContent;
             }));
         }
 
@@ -309,24 +147,24 @@ namespace AW2.Menu
         /// </summary>
         private void InitializeControls()
         {
-            if (controlUp != null) controlUp.Dispose();
-            if (controlDown != null) controlDown.Dispose();
-            if (controlSelect != null) controlSelect.Dispose();
-            if (controlBack != null) controlBack.Dispose();
+            if (_controlUp != null) _controlUp.Dispose();
+            if (_controlDown != null) _controlDown.Dispose();
+            if (_controlSelect != null) _controlSelect.Dispose();
+            if (_controlBack != null) _controlBack.Dispose();
 
-            controlBack = new KeyboardKey(Keys.Escape);
-            controlUp = new MultiControl();
-            controlUp.Add(new KeyboardKey(Keys.Up));
-            controlDown = new MultiControl();
-            controlDown.Add(new KeyboardKey(Keys.Down));
-            controlSelect = new MultiControl();
-            controlSelect.Add(new KeyboardKey(Keys.Enter));
+            _controlBack = new KeyboardKey(Keys.Escape);
+            _controlUp = new MultiControl();
+            _controlUp.Add(new KeyboardKey(Keys.Up));
+            _controlDown = new MultiControl();
+            _controlDown.Add(new KeyboardKey(Keys.Down));
+            _controlSelect = new MultiControl();
+            _controlSelect.Add(new KeyboardKey(Keys.Enter));
 
             foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
             {
-                controlUp.Add(player.Controls.Thrust);
-                controlDown.Add(player.Controls.Down);
-                controlSelect.Add(player.Controls.Fire1);
+                _controlUp.Add(player.Controls.Thrust);
+                _controlDown.Add(player.Controls.Down);
+                _controlSelect.Add(player.Controls.Fire1);
             }
         }
 
@@ -339,66 +177,5 @@ namespace AW2.Menu
         }
 
         #endregion Private methods
-    }
-
-    /// <summary>
-    /// Pluggable contents of the main menu, consisting of a list of menu items.
-    /// </summary>
-    public class MainMenuContents
-    {
-        List<MainMenuItem> menuItems;
-
-        /// <summary>
-        /// Name of the menu contents.
-        /// </summary>
-        public string Name { get; private set; }
-
-        /// <summary>
-        /// Number of menu items.
-        /// </summary>
-        public int Count { get { return menuItems.Count; } }
-
-        /// <summary>
-        /// The menu items.
-        /// </summary>
-        /// <param name="i">Zero-based index of the menu item.</param>
-        /// <returns>The <c>i</c>'th menu item.</returns>
-        public MainMenuItem this[int i] { get { return menuItems[i]; } }
-
-        /// <summary>
-        /// Creates new menu contents with a number of dummy menu items.
-        /// </summary>
-        /// <param name="name">Name of the menu contents.</param>
-        /// <param name="menuItemCount">Number of menu items.</param>
-        public MainMenuContents(string name, int menuItemCount)
-        {
-            if (name == null || name == "") throw new ArgumentNullException("Null or empty menu mode name");
-            if (menuItemCount < 1) throw new ArgumentException("Must have at least one menu item");
-            Name = name;
-            menuItems = new List<MainMenuItem>(menuItemCount);
-            for (int i = 0; i < menuItemCount; ++i)
-                menuItems.Add(new MainMenuItem
-                {
-                    Name = "???",
-                    Action = () => Log.Write("WARNING: Triggered an uninitialised menu item")
-                });
-        }
-    }
-
-    /// <summary>
-    /// An item in the main menu, consisting of a visible name and an action
-    /// to trigger when the item is selected.
-    /// </summary>
-    public class MainMenuItem
-    {
-        /// <summary>
-        /// Visible name of the menu item.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Action to perform on triggering the menu item.
-        /// </summary>
-        public Action Action { get; set; }
     }
 }

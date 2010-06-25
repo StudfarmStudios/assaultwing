@@ -15,18 +15,11 @@ namespace AW2.Graphics
     {
         private SpriteBatch _spriteBatch;
 
-        /// <summary>
-        /// Creates a new graphics engine.
-        /// </summary>
-        /// <param name="game">The Game to add the component to.</param>
         public GraphicsEngineImpl(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
         }
 
-        /// <summary>
-        /// Called when the component needs to load graphics resources.
-        /// </summary>
         protected override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");
@@ -65,8 +58,6 @@ namespace AW2.Graphics
             // Propagate LoadContent to other components that are known to
             // contain references to graphics content.
             foreach (var viewport in data.Viewports) viewport.LoadContent();
-            //TODO: FIX THIS
-            //PlayerBonus.LoadContent();
         }
 
         /// <summary>
@@ -96,9 +87,6 @@ namespace AW2.Graphics
                     AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         protected override void UnloadContent()
         {
             Log.Write("Graphics engine unloading graphics content.");
@@ -116,8 +104,6 @@ namespace AW2.Graphics
             if (data.Arena != null)
                 foreach (var gob in data.Arena.Gobs) gob.UnloadContent();
             data.UnloadContent();
-            //TODO: FIX THIS
-            //PlayerBonus.UnloadContent();
 
             base.UnloadContent();
         }

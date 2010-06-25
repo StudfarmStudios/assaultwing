@@ -123,8 +123,8 @@ namespace AW2.Menu
                 base.Active = value;
                 if (value)
                 {
-                    menuEngine.IsProgressBarVisible = false;
-                    menuEngine.IsHelpTextVisible = true;
+                    MenuEngine.IsProgressBarVisible = false;
+                    MenuEngine.IsHelpTextVisible = true;
                     CreateSelectors();
                 }
             }
@@ -243,27 +243,31 @@ namespace AW2.Menu
         private void CheckGeneralControls()
         {
             if (_controlBack.Pulse)
-                menuEngine.ActivateComponent(MenuComponentType.Main);
-            else if (_controlDone.Pulse)
+            {
+                MenuEngine.ActivateComponent(MenuComponentType.Main);
+                return;
+            }
+            if (_controlDone.Pulse)
             {
                 switch (AssaultWing.Instance.NetworkMode)
                 {
                     case NetworkMode.Server:
                         // HACK: Server has a fixed arena playlist
                         // Start loading the first arena and display its progress.
-                        menuEngine.ProgressBarAction(
+                        MenuEngine.ProgressBarAction(
                             AssaultWing.Instance.PrepareFirstArena,
                             AssaultWing.Instance.StartArena);
-                        menuEngine.Deactivate();
+                        MenuEngine.Deactivate();
                         break;
                     case NetworkMode.Client:
                         // Client advances only when the server says so.
                         break;
                     case NetworkMode.Standalone:
-                        menuEngine.ActivateComponent(MenuComponentType.Arena);
+                        MenuEngine.ActivateComponent(MenuComponentType.Arena);
                         break;
                     default: throw new Exception("Unexpected network mode " + AssaultWing.Instance.NetworkMode);
                 }
+                return;
             }
         }
 

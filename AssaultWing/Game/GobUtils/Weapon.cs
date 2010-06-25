@@ -95,6 +95,7 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public Weapon()
         {
+            _weaponInfo = new WeaponInfo();
             upgradeNames = new CanonicalString[] { (CanonicalString)"dummyweapontype" };
             shotTypeName = (CanonicalString)"dummygobtype";
             recoilMomentum = 10000;

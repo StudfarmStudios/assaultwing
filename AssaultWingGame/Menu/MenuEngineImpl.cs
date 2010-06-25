@@ -25,40 +25,49 @@ namespace AW2.Menu
     /// an optional help text and an optional progress bar.
     public class MenuEngineImpl : DrawableGameComponent, IMenuEngine
     {
-        MenuComponentType activeComponent;
-        MenuComponent[] components;
-        bool activeComponentActivatedOnce, activeComponentSoundPlayedOnce;
-        bool showHelpText, showProgressBar;
-        string helpText;
-        Action finishAction; // what to do when progress bar finishes
-        Vector2 view; // center of menu view in menu system coordinates
-        Vector2 viewTarget;
-        MovementCurve viewCurve;
-        Cue menuChangeCue;
-        int viewWidth, viewHeight; // how many pixels to show scaled down to the screen
-        int screenWidth, screenHeight; // last known dimensions of client bounds
+        /// <summary>
+        /// Cursor fade curve as a function of time in seconds.
+        /// Values range from 0 (transparent) to 1 (opaque).
+        /// </summary>
+        private static Curve g_cursorFade;
+
+        private MenuComponentType _activeComponent;
+        private MenuComponent[] _components;
+        private bool _activeComponentActivatedOnce, _activeComponentSoundPlayedOnce;
+        private bool _showHelpText, _showProgressBar;
+        private string _helpText;
+        private Action _finishAction; // what to do when progress bar finishes
+        private Vector2 _view; // center of menu view in menu system coordinates
+        private Vector2 _viewTarget;
+        private MovementCurve _viewCurve;
+        private Cue _menuChangeCue;
+        private int _viewWidth, _viewHeight; // how many pixels to show scaled down to the screen
+        private int _screenWidth, _screenHeight; // last known dimensions of client bounds
+        private TimeSpan _cursorFadeStartTime;
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
-        VertexPositionColor[] shadowVertexData;
-        int[] shadowIndexData; // stored as a triangle list
-        VertexDeclaration vertexDeclaration;
-        BasicEffect effect;
+        private VertexPositionColor[] _shadowVertexData;
+        private int[] _shadowIndexData; // stored as a triangle list
+        private VertexDeclaration _vertexDeclaration;
+        private BasicEffect _effect;
 
-        SpriteBatch spriteBatch;
-        Texture2D backgroundTexture;
-        SpriteFont smallFont;
+        private SpriteBatch _spriteBatch;
+        private Texture2D _backgroundTexture;
+        private SpriteFont _smallFont;
+
+        public MenuContent MenuContent { get; private set; }
 
         /// <summary>
         /// Is the help text visible.
         /// </summary>
         /// <seealso cref="HelpText"/>
-        public bool IsHelpTextVisible { get { return showHelpText; } set { showHelpText = value; } }
+        public bool IsHelpTextVisible { get { return _showHelpText; } set { _showHelpText = value; } }
 
         /// <summary>
         /// The help text. Assigning <c>null</c> will restore the default help text.
         /// </summary>
         /// <seealso cref="IsHelpTextVisible"/>
-        public string HelpText { get { return helpText; } set { helpText = value ?? "Enter to proceed, Esc to return to previous"; } }
+        public string HelpText { get { return _helpText; } set { _helpText = value ?? "Enter to proceed, Esc to return to previous"; } }
 
         /// <summary>
         /// Is the progress bar visible.
@@ -66,10 +75,10 @@ namespace AW2.Menu
         /// <seealso cref="DataEngine.ProgressBar"/>
         public bool IsProgressBarVisible
         {
-            get { return showProgressBar; }
+            get { return _showProgressBar; }
             set
             {
-                showProgressBar = value;
+                _showProgressBar = value;
                 if (value)
                 {
                     var progressBar = AssaultWing.Instance.DataEngine.ProgressBar;
@@ -80,6 +89,16 @@ namespace AW2.Menu
             }
         }
 
+        static MenuEngineImpl()
+        {
+            g_cursorFade = new Curve();
+            g_cursorFade.Keys.Add(new CurveKey(0, 1, 0, 0, CurveContinuity.Step));
+            g_cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
+            g_cursorFade.Keys.Add(new CurveKey(1, 1, 0, 0, CurveContinuity.Step));
+            g_cursorFade.PreLoop = CurveLoopType.Cycle;
+            g_cursorFade.PostLoop = CurveLoopType.Cycle;
+        }
+
         /// <summary>
         /// Creates a menu system.
         /// </summary>
@@ -87,30 +106,43 @@ namespace AW2.Menu
         public MenuEngineImpl(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
-            components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
+            MenuContent = new MenuContent();
+            _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
             // The components are created in Initialize() when other resources are ready.
 
             HelpText = null; // initialises helpText to default value
         }
 
+        public float GetCursorFade()
+        {
+            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _cursorFadeStartTime).TotalSeconds;
+            return g_cursorFade.Evaluate(cursorTime);
+        }
+
+        public void ResetCursorFade()
+        {
+            _cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+        }
+
         protected override void LoadContent()
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
-            vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
-            effect = new BasicEffect(gfx, null);
-            effect.FogEnabled = false;
-            effect.LightingEnabled = false;
-            effect.View = Matrix.CreateLookAt(100 * Vector3.UnitZ, Vector3.Zero, Vector3.Up);
-            effect.World = Matrix.Identity;
-            effect.VertexColorEnabled = true;
-            effect.TextureEnabled = false;
-            backgroundTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_rustywall_bg");
-            smallFont = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontSmall");
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            _spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
+            _effect = new BasicEffect(gfx, null);
+            _effect.FogEnabled = false;
+            _effect.LightingEnabled = false;
+            _effect.View = Matrix.CreateLookAt(100 * Vector3.UnitZ, Vector3.Zero, Vector3.Up);
+            _effect.World = Matrix.Identity;
+            _effect.VertexColorEnabled = true;
+            _effect.TextureEnabled = false;
+            _backgroundTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_rustywall_bg");
+            _smallFont = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontSmall");
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
-            foreach (MenuComponent component in components)
+            MenuContent.LoadContent();
+            foreach (MenuComponent component in _components)
                 component.LoadContent();
             AssaultWing.Instance.DataEngine.ProgressBar.LoadContent();
 
@@ -119,26 +151,26 @@ namespace AW2.Menu
 
         protected override void UnloadContent()
         {
-            if (spriteBatch != null)
+            if (_spriteBatch != null)
             {
-                spriteBatch.Dispose();
-                spriteBatch = null;
+                _spriteBatch.Dispose();
+                _spriteBatch = null;
             }
-            if (vertexDeclaration != null)
+            if (_vertexDeclaration != null)
             {
-                vertexDeclaration.Dispose();
-                vertexDeclaration = null;
+                _vertexDeclaration.Dispose();
+                _vertexDeclaration = null;
             }
-            if (effect != null)
+            if (_effect != null)
             {
-                effect.Dispose();
-                effect = null;
+                _effect.Dispose();
+                _effect = null;
             }
             // The textures and font we reference will be disposed by GraphicsEngine.
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
-            foreach (MenuComponent component in components)
+            foreach (MenuComponent component in _components)
                 if (component != null) component.UnloadContent();
             AssaultWing.Instance.DataEngine.ProgressBar.UnloadContent();
 
@@ -147,13 +179,13 @@ namespace AW2.Menu
 
         public override void Initialize()
         {
-            screenWidth = AssaultWing.Instance.ClientBounds.Width;
-            screenHeight = AssaultWing.Instance.ClientBounds.Height;
+            _screenWidth = AssaultWing.Instance.ClientBounds.Width;
+            _screenHeight = AssaultWing.Instance.ClientBounds.Height;
 
-            components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
-            components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
-            components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
-            viewCurve = new MovementCurve(components[(int)MenuComponentType.Main].Center);
+            _components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
+            _components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
+            _components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
+            _viewCurve = new MovementCurve(_components[(int)MenuComponentType.Main].Center);
 
             WindowResize();
             base.Initialize();
@@ -171,7 +203,7 @@ namespace AW2.Menu
         public void Deactivate()
         {
             AssaultWing.Instance.SoundEngine.StopMusic(TimeSpan.FromSeconds(2));
-            components[(int)activeComponent].Active = false;
+            _components[(int)_activeComponent].Active = false;
         }
 
         /// <summary>
@@ -181,26 +213,26 @@ namespace AW2.Menu
         /// <param name="component">The menu component to activate and move menu view to.</param>
         public void ActivateComponent(MenuComponentType component)
         {
-            components[(int)activeComponent].Active = false;
-            activeComponent = component;
-            MenuComponent newComponent = components[(int)activeComponent];
+            _components[(int)_activeComponent].Active = false;
+            _activeComponent = component;
+            MenuComponent newComponent = _components[(int)_activeComponent];
 
             // Make menu view scroll to the new component's position.
-            viewTarget = newComponent.Center;
+            _viewTarget = newComponent.Center;
             float duration = RandomHelper.GetRandomFloat(0.9f, 1.1f);
-            viewCurve.SetTarget(viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, duration,
+            _viewCurve.SetTarget(_viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, duration,
                 MovementCurve.Curvature.FastSlow);
 
-            if (menuChangeCue != null)
+            if (_menuChangeCue != null)
             {
-                menuChangeCue.Stop(AudioStopOptions.Immediate);
-                menuChangeCue.Dispose();
+                _menuChangeCue.Stop(AudioStopOptions.Immediate);
+                _menuChangeCue.Dispose();
             }
-            menuChangeCue = AssaultWing.Instance.SoundEngine.GetCue("MenuChangeStart");
-            if (menuChangeCue != null) menuChangeCue.Play();
+            _menuChangeCue = AssaultWing.Instance.SoundEngine.GetCue("MenuChangeStart");
+            if (_menuChangeCue != null) _menuChangeCue.Play();
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
-            activeComponentSoundPlayedOnce = activeComponentActivatedOnce = false;
+            _activeComponentSoundPlayedOnce = _activeComponentActivatedOnce = false;
         }
 
         /// <summary>
@@ -215,7 +247,7 @@ namespace AW2.Menu
         public void ProgressBarAction(Action asyncAction, Action finishAction)
         {
             var data = AssaultWing.Instance.DataEngine;
-            this.finishAction = finishAction;
+            this._finishAction = finishAction;
             IsHelpTextVisible = false;
             IsProgressBarVisible = true;
             data.ProgressBar.Task = asyncAction;
@@ -234,27 +266,27 @@ namespace AW2.Menu
                 AssaultWing.Instance.DataEngine.ProgressBar.FinishTask();
                 IsProgressBarVisible = false;
                 IsHelpTextVisible = true;
-                finishAction();
+                _finishAction();
             }
-            view = viewCurve.Evaluate(AssaultWing.Instance.GameTime.TotalRealTime);
+            _view = _viewCurve.Evaluate(AssaultWing.Instance.GameTime.TotalRealTime);
 
             // Activate 'activeComponent' if the view has just come close enough to its center.
-            if (!activeComponentActivatedOnce && Vector2.Distance(view, viewTarget) < 200)
+            if (!_activeComponentActivatedOnce && Vector2.Distance(_view, _viewTarget) < 200)
             {
-                activeComponentActivatedOnce = true;
-                components[(int)activeComponent].Active = true;
+                _activeComponentActivatedOnce = true;
+                _components[(int)_activeComponent].Active = true;
                 IsProgressBarVisible = false;
                 IsHelpTextVisible = true;
             }
-            if (!activeComponentSoundPlayedOnce && Vector2.Distance(view, viewTarget) < 1)
+            if (!_activeComponentSoundPlayedOnce && Vector2.Distance(_view, _viewTarget) < 1)
             {
-                activeComponentSoundPlayedOnce = true;
-                if (menuChangeCue != null) menuChangeCue.Stop(AudioStopOptions.AsAuthored);
+                _activeComponentSoundPlayedOnce = true;
+                if (_menuChangeCue != null) _menuChangeCue.Stop(AudioStopOptions.AsAuthored);
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeEnd");
             }
 
             // Update menu components.
-            foreach (MenuComponent component in components)
+            foreach (MenuComponent component in _components)
                 component.Update();
         }
 
@@ -270,17 +302,17 @@ namespace AW2.Menu
             Viewport screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
-            screen.Width = viewWidth;
-            screen.Height = viewHeight;
+            screen.Width = _viewWidth;
+            screen.Height = _viewHeight;
 
             // If client bounds are very small, render everything
             // to a separate render target of reasonable size, 
             // then scale the target to the screen.
             RenderTarget2D renderTarget = null;
             DepthStencilBuffer oldDepthStencilBuffer = null;
-            if (screenWidth < viewWidth || screenHeight < viewHeight)
+            if (_screenWidth < _viewWidth || _screenHeight < _viewHeight)
             {
-                renderTarget = new RenderTarget2D(gfx, viewWidth, viewHeight, 1, gfx.DisplayMode.Format);
+                renderTarget = new RenderTarget2D(gfx, _viewWidth, _viewHeight, 1, gfx.DisplayMode.Format);
 
                 // Set up graphics device.
                 oldDepthStencilBuffer = gfx.DepthStencilBuffer;
@@ -293,83 +325,83 @@ namespace AW2.Menu
             // Begin drawing.
             gfx.Viewport = screen;
             gfx.Clear(ClearOptions.Target, Color.DimGray, 0, 0);
-            spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
 
             // Draw background looping all over the screen.
-            float yStart = view.Y < 0
-                ? -(view.Y % backgroundTexture.Height) - backgroundTexture.Height
-                : -(view.Y % backgroundTexture.Height);
-            float xStart = view.X < 0
-                ? -(view.X % backgroundTexture.Width) - backgroundTexture.Width
-                : -(view.X % backgroundTexture.Width);
-            for (float y = yStart; y < screen.Height; y += backgroundTexture.Height)
-                for (float x = xStart; x < screen.Width; x += backgroundTexture.Width)
-                    spriteBatch.Draw(backgroundTexture, new Vector2(x, y), Color.White);
+            float yStart = _view.Y < 0
+                ? -(_view.Y % _backgroundTexture.Height) - _backgroundTexture.Height
+                : -(_view.Y % _backgroundTexture.Height);
+            float xStart = _view.X < 0
+                ? -(_view.X % _backgroundTexture.Width) - _backgroundTexture.Width
+                : -(_view.X % _backgroundTexture.Width);
+            for (float y = yStart; y < screen.Height; y += _backgroundTexture.Height)
+                for (float x = xStart; x < screen.Width; x += _backgroundTexture.Width)
+                    _spriteBatch.Draw(_backgroundTexture, new Vector2(x, y), Color.White);
 
             // Draw menu components.
-            foreach (MenuComponent component in components)
-                component.Draw(view - new Vector2(viewWidth, viewHeight) / 2, spriteBatch);
+            foreach (MenuComponent component in _components)
+                component.Draw(_view - new Vector2(_viewWidth, _viewHeight) / 2, _spriteBatch);
 
-            spriteBatch.End();
+            _spriteBatch.End();
 
             // Draw menu focus shadow.
-            gfx.VertexDeclaration = vertexDeclaration;
-            effect.Projection = Matrix.CreateOrthographicOffCenter(
+            gfx.VertexDeclaration = _vertexDeclaration;
+            _effect.Projection = Matrix.CreateOrthographicOffCenter(
                 -screen.Width / 2, screen.Width / 2,
                 -screen.Height, 0,
                 1, 500);
-            effect.Begin();
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            _effect.Begin();
+            foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
             {
                 pass.Begin();
                 gfx.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                    shadowVertexData, 0, shadowVertexData.Length,
-                    shadowIndexData, 0, shadowIndexData.Length / 3);
+                    _shadowVertexData, 0, _shadowVertexData.Length,
+                    _shadowIndexData, 0, _shadowIndexData.Length / 3);
                 pass.End();
             }
-            effect.End();
+            _effect.End();
 
             // Draw progress bar if wanted.
-            if (showProgressBar)
-                AssaultWing.Instance.DataEngine.ProgressBar.Draw(spriteBatch);
+            if (_showProgressBar)
+                AssaultWing.Instance.DataEngine.ProgressBar.Draw(_spriteBatch);
 
             // Draw static text.
-            spriteBatch.Begin();
-            spriteBatch.DrawString(smallFont, "4th Milestone 2010-05-15",
-                new Vector2(10, viewHeight - smallFont.LineSpacing), Color.White);
-            if (showHelpText)
+            _spriteBatch.Begin();
+            _spriteBatch.DrawString(_smallFont, "4th Milestone 2010-05-15",
+                new Vector2(10, _viewHeight - _smallFont.LineSpacing), Color.White);
+            if (_showHelpText)
             {
                 Vector2 helpTextPos = new Vector2(
-                    (int)(((float)viewWidth - smallFont.MeasureString(helpText).X) / 2),
-                    viewHeight - smallFont.LineSpacing);
-                spriteBatch.DrawString(smallFont, helpText, helpTextPos, Color.White);
+                    (int)(((float)_viewWidth - _smallFont.MeasureString(_helpText).X) / 2),
+                    _viewHeight - _smallFont.LineSpacing);
+                _spriteBatch.DrawString(_smallFont, _helpText, helpTextPos, Color.White);
             }
             string copyrightText = "Studfarm Studios";
             Vector2 copyrightTextPos = new Vector2(
-                viewWidth - (int)smallFont.MeasureString(copyrightText).X - 10,
-                viewHeight - smallFont.LineSpacing);
-            spriteBatch.DrawString(smallFont, copyrightText, copyrightTextPos, Color.White);
-            spriteBatch.End();
+                _viewWidth - (int)_smallFont.MeasureString(copyrightText).X - 10,
+                _viewHeight - _smallFont.LineSpacing);
+            _spriteBatch.DrawString(_smallFont, copyrightText, copyrightTextPos, Color.White);
+            _spriteBatch.End();
 
             // If we're stretching the view, take the temporary render target
             // and draw its contents to the screen.
-            if (screenWidth < viewWidth || screenHeight < viewHeight)
+            if (_screenWidth < _viewWidth || _screenHeight < _viewHeight)
             {
                 // Restore render target so what we can extract drawn pixels.
                 gfx.SetRenderTarget(0, null);
                 Texture2D renderTexture = renderTarget.GetTexture();
 
                 // Restore the graphics device to the real backbuffer.
-                screen.Width = screenWidth;
-                screen.Height = screenHeight;
+                screen.Width = _screenWidth;
+                screen.Height = _screenHeight;
                 gfx.Viewport = screen;
                 gfx.DepthStencilBuffer = oldDepthStencilBuffer;
 
                 // Draw the texture stretched on the screen.
                 Rectangle destination = new Rectangle(0, 0, screen.Width, screen.Height);
-                spriteBatch.Begin();
-                spriteBatch.Draw(renderTexture, destination, Color.White);
-                spriteBatch.End();
+                _spriteBatch.Begin();
+                _spriteBatch.Draw(renderTexture, destination, Color.White);
+                _spriteBatch.End();
 
                 // Dispose of needless data.
                 renderTexture.Dispose();
@@ -385,11 +417,11 @@ namespace AW2.Menu
         /// or after switching between windowed and fullscreen mode.
         public void WindowResize()
         {
-            screenWidth = AssaultWing.Instance.ClientBounds.Width;
-            screenHeight = AssaultWing.Instance.ClientBounds.Height;
+            _screenWidth = AssaultWing.Instance.ClientBounds.Width;
+            _screenHeight = AssaultWing.Instance.ClientBounds.Height;
 
-            int oldViewWidth = viewWidth;
-            int oldViewHeight = viewHeight;
+            int oldViewWidth = _viewWidth;
+            int oldViewHeight = _viewHeight;
             SetViewDimensions();
             InitializeShadow();
         }
@@ -404,26 +436,26 @@ namespace AW2.Menu
         {
             // If client bounds are very small, scale the menu view down
             // to fit more in the screen.
-            viewWidth = AssaultWing.Instance.ClientBounds.Width;
-            viewHeight = AssaultWing.Instance.ClientBounds.Height;
+            _viewWidth = AssaultWing.Instance.ClientBounds.Width;
+            _viewHeight = AssaultWing.Instance.ClientBounds.Height;
 
-            if (screenWidth == 0 || screenHeight == 0)
+            if (_screenWidth == 0 || _screenHeight == 0)
                 return;
 
             int screenWidthMin = 1; // least screen width that doesn't require scaling
             int screenHeightMin = 1; // least screen height that doesn't require scaling
-            if (screenWidth < screenWidthMin)
+            if (_screenWidth < screenWidthMin)
             {
-                viewWidth = screenWidthMin;
-                viewHeight = viewWidth * screenHeight / screenWidth;
+                _viewWidth = screenWidthMin;
+                _viewHeight = _viewWidth * _screenHeight / _screenWidth;
             }
-            if (screenHeight < screenHeightMin)
+            if (_screenHeight < screenHeightMin)
             {
                 // Follow the stronger scale if there is a limitation both by width and by height.
-                if (viewHeight < screenHeightMin)
+                if (_viewHeight < screenHeightMin)
                 {
-                    viewHeight = screenHeightMin;
-                    viewWidth = viewHeight * screenWidth / screenHeight;
+                    _viewHeight = screenHeightMin;
+                    _viewWidth = _viewHeight * _screenWidth / _screenHeight;
                 }
             }
         }
@@ -432,12 +464,12 @@ namespace AW2.Menu
         /// Initialises fields <c>shadowVertexData</c> and <c>shadowIndexData</c>
         /// to a shadow 3D model that fills the current client bounds.
         /// </summary>
-        void InitializeShadow()
+        private void InitializeShadow()
         {
             // The shadow is a rectangle that spans a grid of vertices, each
             // of them black but with different levels of alpha.
             // The origin of the shadow 3D model is at the top center.
-            Vector2 shadowDimensions = new Vector2(viewWidth, viewHeight);
+            Vector2 shadowDimensions = new Vector2(_viewWidth, _viewHeight);
             int gridWidth = (int)shadowDimensions.X / 30;
             int gridHeight = (int)shadowDimensions.Y / 30;
             Curve alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
@@ -474,8 +506,8 @@ namespace AW2.Menu
                         }
                     }
                 }
-            shadowVertexData = vertexData.ToArray();
-            shadowIndexData = indexData.ToArray();
+            _shadowVertexData = vertexData.ToArray();
+            _shadowIndexData = indexData.ToArray();
         }
     }
 }

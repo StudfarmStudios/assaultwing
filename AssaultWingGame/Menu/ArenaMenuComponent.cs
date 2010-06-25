@@ -184,7 +184,7 @@ namespace AW2.Menu
             };
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlBack, () =>
             { 
-                menuEngine.ActivateComponent(MenuComponentType.Equip); 
+                MenuEngine.ActivateComponent(MenuComponentType.Equip); 
             }));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDone, () =>
             {
@@ -192,10 +192,10 @@ namespace AW2.Menu
                 {
                     selectedArenaNames.Sort();
                     AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
-                    menuEngine.ProgressBarAction(
+                    MenuEngine.ProgressBarAction(
                         AssaultWing.Instance.PrepareFirstArena,
                         AssaultWing.Instance.StartArena);
-                    menuEngine.Deactivate();
+                    MenuEngine.Deactivate();
                 }
             }));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () =>

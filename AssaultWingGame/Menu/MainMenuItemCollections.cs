@@ -9,55 +9,55 @@ using AW2.Net;
 namespace AW2.Menu
 {
     /// <summary>
-    /// The known choices of content for <see cref="MainMenuComponent"/>.
+    /// All possible item collections for <see cref="MainMenuComponent"/>.
     /// </summary>
-    public class MainMenuContents
+    public class MainMenuItemCollections
     {
         /// <summary>
-        /// IP address of server to connect. Used by <see cref="NetworkContent"/>.
+        /// IP address of server to connect. Used by <see cref="NetworkItems"/>.
         /// </summary>
         private EditableText _connectAddress;
 
         /// <summary>
         /// The very first menu when the game starts.
         /// </summary>
-        public MainMenuItemCollection StartContent { get; private set; }
+        public MainMenuItemCollection StartItems { get; private set; }
 
         /// <summary>
         /// Menu for establishing a network game.
         /// </summary>
-        public MainMenuItemCollection NetworkContent { get; private set; }
+        public MainMenuItemCollection NetworkItems { get; private set; }
 
-        public MainMenuContents(MenuEngineImpl menuEngine)
+        public MainMenuItemCollections(MenuEngineImpl menuEngine)
         {
-            StartContent = new MainMenuItemCollection("Start Menu");
-            StartContent.Add(new MainMenuItem(menuEngine)
+            StartItems = new MainMenuItemCollection("Start Menu");
+            StartItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Play Local",
                 Action = component => component.MenuEngine.ActivateComponent(MenuComponentType.Equip)
             });
-            StartContent.Add(new MainMenuItem(menuEngine)
+            StartItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Play at the Battlefront",
                 Action = component =>
                 {
-                    component.SetContent(NetworkContent);
+                    component.SetItems(NetworkItems);
                     AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 }
             });
-            StartContent.Add(new MainMenuItem(menuEngine)
+            StartItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Setup",
                 Action = component => Log.Write("NOTE: Main menu item 'Setup' is not implemented")
             });
-            StartContent.Add(new MainMenuItem(menuEngine)
+            StartItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Quit",
                 Action = component => AssaultWing.Instance.Exit()
             });
 
-            NetworkContent = new MainMenuItemCollection("Battlefront Menu");
-            NetworkContent.Add(new MainMenuItem(menuEngine)
+            NetworkItems = new MainMenuItemCollection("Battlefront Menu");
+            NetworkItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Play as Server",
                 Action = component =>
@@ -73,7 +73,7 @@ namespace AW2.Menu
             });
 
             _connectAddress = new EditableText(AssaultWing.Instance.Settings.Net.ConnectAddress, 15, EditableText.Keysets.IPAddressSet);
-            NetworkContent.Add(new MainMenuTextField(menuEngine, _connectAddress)
+            NetworkItems.Add(new MainMenuTextField(menuEngine, _connectAddress)
             {
                 Name = "Connect to ",
                 Action = component =>

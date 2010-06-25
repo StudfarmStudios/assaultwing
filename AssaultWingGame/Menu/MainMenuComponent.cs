@@ -14,11 +14,8 @@ namespace AW2.Menu
     {
         #region Fields
 
-        private MainMenuContents _contents;
-        /// <summary>
-        /// Currently active main menu contents.
-        /// </summary>
-        private MainMenuItemCollection _currentContent;
+        private MainMenuItemCollections _itemCollections;
+        private MainMenuItemCollection _currentItems;
 
         /// <summary>
         /// Index of the currently active menu item.
@@ -45,7 +42,7 @@ namespace AW2.Menu
                     InitializeControls();
                     InitializeControlCallbacks();
 
-                    SetContent(_contents.StartContent);
+                    SetItems(_itemCollections.StartItems);
                     CutNetworkConnections();
                 }
             }
@@ -64,29 +61,27 @@ namespace AW2.Menu
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            _contents = new MainMenuContents(menuEngine);
+            _itemCollections = new MainMenuItemCollections(menuEngine);
             _pos = new Vector2(0, 698);
-
-            // Set initial menu contents
-            SetContent(_contents.StartContent);
+            SetItems(_itemCollections.StartItems);
         }
 
         #endregion Constructor
 
         #region Public methods
 
-        public void SetContent(MainMenuItemCollection content)
+        public void SetItems(MainMenuItemCollection items)
         {
-            _currentContent = content;
+            _currentItems = items;
             _currentItem = 0;
         }
 
         public override void Update()
         {
             if (!Active) return;
-            if (_currentContent != _contents.NetworkContent && AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + AssaultWing.Instance.NetworkMode);
+            if (_currentItems != _itemCollections.NetworkItems && AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + AssaultWing.Instance.NetworkMode);
             _commonCallbacks.Update();
-            foreach (var menuItem in _currentContent) menuItem.Update();
+            foreach (var menuItem in _currentItems) menuItem.Update();
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
@@ -96,9 +91,9 @@ namespace AW2.Menu
             var highlightPos = _pos - view + GetHighlightPos(font, _currentItem);
 
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
-            _currentContent[_currentItem].DrawHighlight(spriteBatch, highlightPos);
-            for (int i = 0; i < _currentContent.Count; ++i)
-                _currentContent[i].Draw(spriteBatch, _pos - view + highlightToTextDelta + GetHighlightPos(font, i));
+            _currentItems[_currentItem].DrawHighlight(spriteBatch, highlightPos);
+            for (int i = 0; i < _currentItems.Count; ++i)
+                _currentItems[i].Draw(spriteBatch, _pos - view + highlightToTextDelta + GetHighlightPos(font, i));
         }
 
         #endregion Public methods
@@ -127,18 +122,18 @@ namespace AW2.Menu
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
             {
-                if (_currentItem < _currentContent.Count - 1)
+                if (_currentItem < _currentItems.Count - 1)
                     ++_currentItem;
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () =>
             {
-                _currentContent[_currentItem].Action(this);
+                _currentItems[_currentItem].Action(this);
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
                 CutNetworkConnections();
-                _currentContent = _contents.StartContent;
+                _currentItems = _itemCollections.StartItems;
             }));
         }
 

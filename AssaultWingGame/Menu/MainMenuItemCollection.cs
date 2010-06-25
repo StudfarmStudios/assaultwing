@@ -6,7 +6,7 @@ using AW2.Helpers;
 namespace AW2.Menu
 {
     /// <summary>
-    /// Pluggable content of <see cref="MainMenuComponent"/>, consisting of a list of menu items.
+    /// A list of menu items, pluggable into <see cref="MainMenuComponent"/>.
     /// </summary>
     public class MainMenuItemCollection : IEnumerable<MainMenuItem>
     {
@@ -25,6 +25,7 @@ namespace AW2.Menu
 
         public void Add(MainMenuItem item)
         {
+            item.ItemIndex = _menuItems.Count;
             _menuItems.Add(item);
         }
 

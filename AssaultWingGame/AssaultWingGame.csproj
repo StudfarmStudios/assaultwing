@@ -126,8 +126,8 @@
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\MainMenuComponent.cs" />
-    <Compile Include="Menu\MainMenuContent.cs" />
-    <Compile Include="Menu\MainMenuContents.cs" />
+    <Compile Include="Menu\MainMenuItemCollection.cs" />
+    <Compile Include="Menu\MainMenuItemCollections.cs" />
     <Compile Include="Menu\MainMenuItem.cs" />
     <Compile Include="Menu\MainMenuTextField.cs" />
     <Compile Include="Menu\MenuComponent.cs" />

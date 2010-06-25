@@ -13,6 +13,11 @@ namespace AW2.Menu
         protected MenuEngineImpl _menuEngine;
 
         /// <summary>
+        /// Index of the menu item in a menu item collection. Set by the menu item collection.
+        /// </summary>
+        public int ItemIndex { get; set; }
+
+        /// <summary>
         /// Visible name of the menu item.
         /// </summary>
         public string Name { get; set; }

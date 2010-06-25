@@ -197,8 +197,9 @@ namespace AW2.Net
             _startClientConnectionHandler = connectionHandler;
             IPAddress serverIp;
             if (!System.Net.IPAddress.TryParse(serverAddress, out serverIp))
-                throw new ArgumentException("Not a valid IP address: " + serverAddress);
-            Connection.Connect(serverIp, TCP_CONNECTION_PORT);
+                Log.Write("Cannot connect to an invalid IP address: " + serverAddress);
+            else
+                Connection.Connect(serverIp, TCP_CONNECTION_PORT);
         }
 
         /// <summary>

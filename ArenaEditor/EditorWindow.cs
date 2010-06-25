@@ -14,8 +14,6 @@ namespace AW2
     {
         public string Title { get; set; }
 
-        public bool AllowUserResizing { get; set; }
-
         public bool IsFullscreen { get { return false; } }
 
         public Rectangle ClientBounds { get { return new Rectangle(Left, Top, Width, Height); } }

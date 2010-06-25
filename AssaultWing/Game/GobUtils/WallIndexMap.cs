@@ -241,7 +241,6 @@ namespace AW2.Game.GobUtils
         }
 
         private static readonly byte[] HEADER_BYTES = System.Text.Encoding.ASCII.GetBytes("AW10");
-        private static BasicEffect g_indexMapEffect;
         private IData _data;
 
         /// <summary>
@@ -263,19 +262,6 @@ namespace AW2.Game.GobUtils
         public Matrix WallToIndexMapTransform { get; private set; }
 
         private RemoveTriangleDelegate _removeTriangle;
-
-        private static BasicEffect GetIndexMapEffect(GraphicsDevice gfx)
-        {
-            if (g_indexMapEffect == null || g_indexMapEffect.IsDisposed)
-            {
-                g_indexMapEffect = new BasicEffect(gfx, null);
-                g_indexMapEffect.VertexColorEnabled = true;
-                g_indexMapEffect.LightingEnabled = false;
-                g_indexMapEffect.TextureEnabled = false;
-                g_indexMapEffect.View = Matrix.CreateLookAt(new Vector3(0, 0, 1000), Vector3.Zero, Vector3.Up);
-            }
-            return g_indexMapEffect;
-        }
 
         public WallIndexMap(RemoveTriangleDelegate removeTriangle, AWRectangle boundingBox, VertexPositionNormalTexture[] vertexData, short[] indexData)
             : this(removeTriangle, boundingBox)

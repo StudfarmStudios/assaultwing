@@ -330,7 +330,6 @@ namespace AW2
             GraphicsDeviceManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
 
             _window = WindowInitializing(this);
-            _window.AllowUserResizing = true;
             _window.ClientSizeChanged += ClientSizeChanged;
             ClientBoundsMin = new Rectangle(0, 0, _preferredWindowWidth, _preferredWindowHeight);
             AllowDialogs = true;
@@ -578,23 +577,8 @@ namespace AW2
         /// idea to make it run in a background thread.
         public void PrepareNextArena()
         {
-            // Disallow window resizing during arena loading.
-            // A window resize event may reset the graphics card, fatally
-            // screwing up initialisation of walls' index maps.
-            bool oldAllowUserResizing = _window.AllowUserResizing;
-            if (oldAllowUserResizing)
-                _window.AllowUserResizing = false;
-
-            try
-            {
-                if (!DataEngine.NextArena())
-                    throw new InvalidOperationException("There is no next arena to play");
-            }
-            finally
-            {
-                if (oldAllowUserResizing)
-                    _window.AllowUserResizing = true;
-            }
+            if (!DataEngine.NextArena())
+                throw new InvalidOperationException("There is no next arena to play");
         }
 
         /// <summary>
@@ -911,10 +895,6 @@ namespace AW2
             }
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             if ((gameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds < 1)
@@ -947,7 +927,7 @@ namespace AW2
                             conn.ID,
                             (int)conn.PingTime.TotalMilliseconds);
             }
-            lock (GraphicsDevice) base.Draw(GameTime);
+            base.Draw(GameTime);
         }
 
         protected override void OnExiting(object sender, EventArgs args)

@@ -9,13 +9,11 @@ namespace AW2.Helpers
     /// </summary>
     public static class Log
     {
-        #region Private fields
-        static object @lock = new object();
-        static StreamWriter writer = null;
-        const string LogFilenameBase = "Log";
-        const string LogFilenameExtension = ".txt";
-        const int rotateCount = 5;
-        #endregion
+        private static object g_lock = new object();
+        private static StreamWriter g_writer = null;
+        private const string FILE_BASENAME = "Log";
+        private const string FILE_EXTENSION = ".txt";
+        private const int ROTATE_COUNT = 5;
 
         /// <summary>
         /// Opens a new log file, rotating old ones.
@@ -25,9 +23,9 @@ namespace AW2.Helpers
             try
             {
                 // Rotate old logs.
-                if (File.Exists(GetLogFilename(rotateCount)))
-                    File.Delete(GetLogFilename(rotateCount));
-                for (int rotation = rotateCount - 1; rotation >= 0; --rotation)
+                if (File.Exists(GetLogFilename(ROTATE_COUNT)))
+                    File.Delete(GetLogFilename(ROTATE_COUNT));
+                for (int rotation = ROTATE_COUNT - 1; rotation >= 0; --rotation)
                     if (File.Exists(GetLogFilename(rotation)))
                         File.Move(GetLogFilename(rotation), GetLogFilename(rotation + 1));
             }
@@ -42,10 +40,10 @@ namespace AW2.Helpers
                 // Open a new log file.
                 FileStream file = new FileStream(GetLogFilename(0), FileMode.OpenOrCreate,
                     FileAccess.Write, FileShare.ReadWrite);
-                writer = new StreamWriter(file, System.Text.Encoding.UTF8);
+                g_writer = new StreamWriter(file, System.Text.Encoding.UTF8);
 
                 // Enable auto flush (always be up to date when reading!)
-                writer.AutoFlush = true;
+                g_writer.AutoFlush = true;
             }
             catch
             {
@@ -62,30 +60,25 @@ namespace AW2.Helpers
         /// </summary>
         public static void Write(string message)
         {
-            lock (@lock)
-            {
-                // Can't continue without valid writer
-                if (writer == null)
-                    return;
-
-                try
-                {
 #if DEBUG
-                    string s = DateTime.Now.ToString("'['HH':'mm':'ss'.'fff'] '") + message;
+            string s = DateTime.Now.ToString("'['HH':'mm':'ss'.'fff'] '") + message;
 #else
-                string s = DateTime.Now.ToString("'['HH':'mm':'ss'] '") + message;
+            string s = DateTime.Now.ToString("'['HH':'mm':'ss'] '") + message;
 #endif
-                    writer.WriteLine(s);
+            lock (g_lock)
+            {
+                if (g_writer != null)
+                    try
+                    {
+                        g_writer.WriteLine(s);
+                    }
+                    catch (IOException)
+                    {
+                        // Couldn't write to log file, cannot help it!
+                    }
 #if DEBUG
-                    // In debug mode write that message to the console as well!
-                    System.Console.WriteLine(s);
+                Console.WriteLine(s);
 #endif
-                }
-                catch
-                {
-                    // Ignore any file exceptions, if file is not
-                    // writable (e.g. on a CD-Rom) it doesn't matter
-                }
             }
         }
 
@@ -94,7 +87,7 @@ namespace AW2.Helpers
         /// </summary>
         private static string GetLogFilename(int rotation)
         {
-            var filename = string.Format("{0}{1}{2}", LogFilenameBase, rotation == 0 ? "" : "." + rotation, LogFilenameExtension);
+            var filename = string.Format("{0}{1}{2}", FILE_BASENAME, rotation == 0 ? "" : "." + rotation, FILE_EXTENSION);
             return Path.Combine(LogPath, filename);
         }
 

@@ -28,20 +28,6 @@ namespace AW2
         /// </summary>
         public string Title { get { return _window.Title; } set { _window.Title = value; } }
 
-        /// <summary>
-        /// Can the user resize the window.
-        /// </summary>
-        public bool AllowUserResizing
-        {
-            get { return _window.AllowUserResizing; }
-            set
-            {
-                // This piece of code may get called from another thread. Therefore
-                // we cannot set window.AllowUserResizing = false; without Invoke().
-                _windowForm.Invoke(new Action(() => { _window.AllowUserResizing = value; }));
-            }
-        }
-
         public bool IsFullscreen { get { return _graphics.IsFullScreen; } }
 
         /// <summary>
@@ -84,24 +70,21 @@ namespace AW2
         /// </summary>
         public void ToggleFullscreen()
         {
-            lock (_graphics)
+            // Set our window size and format preferences before switching.
+            if (_graphics.IsFullScreen)
             {
-                // Set our window size and format preferences before switching.
-                if (_graphics.IsFullScreen)
-                {
-                    _graphics.PreferredBackBufferWidth = _windowedSize.Width;
-                    _graphics.PreferredBackBufferHeight = _windowedSize.Height;
-                }
-                else
-                {
-                    _windowedSize.Width = ClientBounds.Width;
-                    _windowedSize.Height = ClientBounds.Height;
-                    var displayMode = _graphics.GraphicsDevice.DisplayMode;
-                    _graphics.PreferredBackBufferWidth = displayMode.Width;
-                    _graphics.PreferredBackBufferHeight = displayMode.Height;
-                }
-                _graphics.ToggleFullScreen();
+                _graphics.PreferredBackBufferWidth = _windowedSize.Width;
+                _graphics.PreferredBackBufferHeight = _windowedSize.Height;
             }
+            else
+            {
+                _windowedSize.Width = ClientBounds.Width;
+                _windowedSize.Height = ClientBounds.Height;
+                var displayMode = _graphics.GraphicsDevice.DisplayMode;
+                _graphics.PreferredBackBufferWidth = displayMode.Width;
+                _graphics.PreferredBackBufferHeight = displayMode.Height;
+            }
+            _graphics.ToggleFullScreen();
         }
 
         #endregion

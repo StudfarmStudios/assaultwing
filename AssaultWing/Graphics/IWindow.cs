@@ -16,11 +16,6 @@ namespace AW2.Graphics
         /// </summary>
         string Title { get; set; }
 
-        /// <summary>
-        /// Does the window allow resizing by the end-user.
-        /// </summary>
-        bool AllowUserResizing { get; set; }
-
         bool IsFullscreen { get; }
 
         /// <summary>

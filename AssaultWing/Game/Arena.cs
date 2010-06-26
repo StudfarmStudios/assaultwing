@@ -1228,7 +1228,7 @@ namespace AW2.Game
 
         private void AddShipTrackerToViewports(AW2.Game.Gobs.Ship ship)
         {
-            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(ship, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, ship.Owner.PlayerColor);
+            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(ship, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
 
             foreach (AW2.Graphics.PlayerViewport viewport in AssaultWing.Instance.DataEngine.Viewports)
             {

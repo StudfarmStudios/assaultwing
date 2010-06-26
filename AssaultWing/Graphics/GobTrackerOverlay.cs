@@ -16,10 +16,11 @@ namespace AW2.Graphics
         public bool StickToBorders { get; set; }
         public bool RotateTowardsTarget { get; set; }
         public bool ShowWhileTargetOnScreen { get; set; }
+        public bool ScaleByDistance { get; set; }
         public string Texture { get; set; }
         public Color DrawColor { get; set; }
 
-        public GobTrackerItem(Gob gob, string texture,  bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, Color drawColor)
+        public GobTrackerItem(Gob gob, string texture,  bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, bool scaleByDistance, Color drawColor)
         {
             Gob = gob;
             StickToBorders = stickToViewportBorders;
@@ -27,6 +28,7 @@ namespace AW2.Graphics
             ShowWhileTargetOnScreen = showWhileTargetOnScreen;
             Texture = texture;
             DrawColor = drawColor;
+            ScaleByDistance = scaleByDistance;
         }
     }
 
@@ -86,7 +88,15 @@ namespace AW2.Graphics
                     {
                         Vector2 pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
                         float rotation = 0f;
+                        float scale = 1f;
                         Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
+
+                        Arena arena = AssaultWing.Instance.DataEngine.Arena;
+
+                        if (gobtracker.ScaleByDistance)
+                        {
+                            scale = (arena.Dimensions.Length() - Vector2.Distance(gobtracker.Gob.Pos, _player.Ship.Pos)) / arena.Dimensions.Length();
+                        }
 
                         if (gobtracker.RotateTowardsTarget)
                         {
@@ -102,7 +112,7 @@ namespace AW2.Graphics
                         if ((pos != origPos && gobtracker.StickToBorders) || (pos == origPos && gobtracker.ShowWhileTargetOnScreen))
                         {
                             Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(gobtracker.Texture);
-                            spriteBatch.Draw(texture, pos, null, gobtracker.DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, 1.23f, SpriteEffects.None, 0);
+                            spriteBatch.Draw(texture, pos, null, gobtracker.DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, scale, SpriteEffects.None, 0);
                         }
                     }
                 }

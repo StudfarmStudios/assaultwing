@@ -10,7 +10,7 @@ namespace AW2.Graphics
 {
     public class GobTrackerItem
     {
-        public static readonly string PLAYER_TEXTURE = "gui_playerinfo_white_ball";
+        public static readonly string PLAYER_TEXTURE = "gui_tracker_player";
 
         public Gob Gob { get; set; }
         public bool StickToBorders { get; set; }
@@ -90,7 +90,7 @@ namespace AW2.Graphics
 
                         if (gobtracker.RotateTowardsTarget)
                         {
-                            rotation = AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - _player.Ship.Pos);
+                            rotation = -AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - _player.Ship.Pos);
                         }
 
                         if (gobtracker.StickToBorders)
@@ -102,7 +102,7 @@ namespace AW2.Graphics
                         if ((pos != origPos && gobtracker.StickToBorders) || (pos == origPos && gobtracker.ShowWhileTargetOnScreen))
                         {
                             Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(gobtracker.Texture);
-                            spriteBatch.Draw(texture, pos, null, gobtracker.DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, 1.5f, SpriteEffects.None, 0);
+                            spriteBatch.Draw(texture, pos, null, gobtracker.DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, 1.23f, SpriteEffects.None, 0);
                         }
                     }
                 }

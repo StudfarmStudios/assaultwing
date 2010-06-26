@@ -72,9 +72,6 @@ namespace AW2.Game
 
         #endregion Properties
 
-        /// <summary>
-        /// Creates a new data engine.
-        /// </summary>
         public DataEngine()
         {
             Spectators = new IndexedItemCollection<Spectator>();

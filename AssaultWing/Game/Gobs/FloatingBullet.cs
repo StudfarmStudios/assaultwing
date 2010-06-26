@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Helpers;
@@ -11,28 +9,20 @@ namespace AW2.Game.Gobs
     public class FloatingBullet : Bullet
     {
         /// <summary>
-        /// MovementCurve for animating mine
+        /// Amplitude of bullet thrust when hovering around, measured in Newtons.
         /// </summary>
-        private MovementCurve _movementCurve;
+        [TypeParameter]
+        private float _hoverThrust;
 
-        /// <summary>
-        /// Targetpoint for animation
-        /// </summary>
-        private Vector2 _targetPos;
-
-        /// <summary>
-        /// Flag if floating bullet has stopped once
-        /// </summary>
-        private bool _bulletStopped;
-
-        /// <summary>
-        /// Circle representing radius of randomization
-        /// </summary>
         private Circle _targetCircle;
+        private Vector2 _thrustForce;
+        private float? _thrustSeconds; // if not null, thrust time to send from server to clients
+        private TimeSpan _thrustEndGameTime;
 
         /// This constructor is only for serialisation.
         public FloatingBullet()
         {
+            _hoverThrust = 10000;
         }
 
         public FloatingBullet(CanonicalString typeName)
@@ -44,10 +34,16 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (_bulletStopped)
-                UpdateStoppedBullet();
+            if (_thrustEndGameTime < AssaultWing.Instance.DataEngine.ArenaTotalTime)
+            {
+                Move *= 0.957f;
+                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client && Move.LengthSquared() < 1 * 1)
+                    RandomizeNewTargetPos();
+            }
             else
-                UpdateMovingBullet();
+            {
+                AssaultWing.Instance.PhysicsEngine.ApplyForce(this, _thrustForce);
+            }
         }
 
         public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
@@ -55,62 +51,40 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((bool)_bulletStopped);
-                writer.WriteHalf(_targetPos);
+                if (!_thrustSeconds.HasValue)
+                    writer.Write((bool)false);
+                else
+                {
+                    writer.Write((bool)true);
+                    writer.Write((Half)_thrustSeconds.Value);
+                    writer.WriteHalf(_thrustForce);
+                    _thrustSeconds = null;
+                }
             }
         }
 
         public override void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, TimeSpan messageAge)
         {
-            var oldPos = Pos; // HACK to avoid mine jitter on client
             base.Deserialize(reader, mode, messageAge);
-            if (_bulletStopped) Pos = oldPos;
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
-                bool oldBulletStopped = _bulletStopped;
-                _bulletStopped = reader.ReadBoolean();
-                var newTargetPos = reader.ReadHalfVector2();
-                if ((!oldBulletStopped && _bulletStopped) || (oldBulletStopped && newTargetPos != _targetPos))
-                    SetNewTargetPos(newTargetPos);
+                bool movementChanged = reader.ReadBoolean();
+                if (movementChanged)
+                {
+                    float thrustSeconds = reader.ReadHalf();
+                    _thrustEndGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(thrustSeconds) - messageAge;
+                    _thrustForce = reader.ReadHalfVector2();
+                }
             }
         }
 
-        private void UpdateStoppedBullet()
+        private void RandomizeNewTargetPos()
         {
-            Move = Vector2.Zero;
-            if (_targetPos != Pos || AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-            {
-                // Update the floating bullet position
-                Pos = _movementCurve.Evaluate(Arena.TotalTime);
-            }
-            else
-            {
-                // Randomize next target position
-                SetNewTargetPos(Geometry.GetRandomLocation(_targetCircle));
-            }
-        }
-
-        private void UpdateMovingBullet()
-        {
-            // Slow down the floating bullet
-            Move *= 0.957f;
-
-            // When mine has nearly stopped start animating (this condition will succeed only once per floating bullet)
-            if (Move.Length() < 1 && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
-            {
-                _bulletStopped = true;
-                _targetPos = Pos;
-                _targetCircle = new Circle(Pos, 15);
-                SetNewTargetPos(Geometry.GetRandomLocation(_targetCircle));
-            }
-        }
-
-        private void SetNewTargetPos(Vector2 targetPos)
-        {
-            _targetPos = targetPos;
-            float animationLength = RandomHelper.GetRandomFloat(1.9f, 2.6f);
-            if (_movementCurve == null) _movementCurve = new MovementCurve(Pos);
-            _movementCurve.SetTarget(_targetPos, Arena.TotalTime, animationLength, MovementCurve.Curvature.SlowFastSlow);
+            if (_targetCircle == null) _targetCircle = new Circle(Pos, 15);
+            var targetPos = Geometry.GetRandomLocation(_targetCircle);
+            _thrustForce = _hoverThrust * Vector2.Normalize(targetPos - Pos);
+            _thrustSeconds = RandomHelper.GetRandomFloat(1.2f, 1.9f);
+            _thrustEndGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(_thrustSeconds.Value);
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server) ForceNetworkUpdate();
         }
     }

@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
-using AW2.Helpers.Geometric;
-using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game
 {
@@ -14,9 +9,6 @@ namespace AW2.Game
     /// </summary>
     public class PhysicsEngine
     {
-        /// <summary>
-        /// Creates a new physics engine.
-        /// </summary>
         public PhysicsEngine() { }
 
         #region Public interface
@@ -35,8 +27,7 @@ namespace AW2.Game
         /// <param name="drag">Drag constant for the medium and the gob.</param>
         public void ApplyDrag(Gob gob, Vector2 flow, float drag)
         {
-            if (gob.Gravitating)
-                gob.Move = (1 - drag) * (gob.Move - flow) + flow;
+            gob.Move = (1 - drag) * (gob.Move - flow) + flow;
         }
 
         /// <summary>
@@ -48,8 +39,7 @@ namespace AW2.Game
         /// <param name="force">The force to apply, measured in Newtons.</param>
         public void ApplyForce(Gob gob, Vector2 force)
         {
-            if (gob.Gravitating)
-                gob.Move += force / gob.Mass * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            gob.Move += force / gob.Mass * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
         }
 
         /// <summary>
@@ -64,13 +54,10 @@ namespace AW2.Game
         /// <param name="maxSpeed">The speed limit beyond which the gob's speed cannot grow.</param>
         public void ApplyLimitedForce(Gob gob, Vector2 force, float maxSpeed, TimeSpan duration)
         {
-            if (gob.Gravitating)
-            {
-                float oldSpeed = gob.Move.Length();
-                gob.Move += force / gob.Mass * (float)duration.TotalSeconds;
-                float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
-                gob.Move = gob.Move.Clamp(0, speedLimit);
-            }
+            float oldSpeed = gob.Move.Length();
+            gob.Move += force / gob.Mass * (float)duration.TotalSeconds;
+            float speedLimit = MathHelper.Max(maxSpeed, oldSpeed);
+            gob.Move = gob.Move.Clamp(0, speedLimit);
         }
 
         /// <summary>
@@ -82,8 +69,7 @@ namespace AW2.Game
         /// <param name="momentum">The momentum to apply, measured in Newton seconds.</param>
         public void ApplyMomentum(Gob gob, Vector2 momentum)
         {
-            if (gob.Gravitating)
-                gob.Move += momentum / gob.Mass;
+            gob.Move += momentum / gob.Mass;
         }
 
         /// <summary>

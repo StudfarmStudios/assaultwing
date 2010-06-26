@@ -80,12 +80,12 @@ namespace AW2.Graphics
         {
             SetViewport();
 
-            // First remove
-            Viewport.Player.GobTrackerItems.RemoveAll(item => item.TargetGob.Dead);
-
-            // Then draw
             if (Viewport != null)
             {
+                // First remove
+                Viewport.Player.GobTrackerItems.RemoveAll(item => item.TargetGob.Dead);
+
+                // Then draw
                 foreach (GobTrackerItem gobtracker in Viewport.Player.GobTrackerItems)
                 {
                     Vector2 pos = Vector2.Transform(gobtracker.TargetGob.Pos, Viewport.GetGameToScreenMatrix(0));

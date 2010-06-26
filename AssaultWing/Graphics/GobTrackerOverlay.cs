@@ -87,28 +87,24 @@ namespace AW2.Graphics
                     foreach (GobTrackerItem gobtracker in Viewport.Player.GobTrackerItems)
                     {
                         Vector2 pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
+                        Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
                         float rotation = 0f;
                         float scale = 1f;
-                        Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
-
-                        Arena arena = AssaultWing.Instance.DataEngine.Arena;
 
                         if (gobtracker.ScaleByDistance)
                         {
+                            Arena arena = AssaultWing.Instance.DataEngine.Arena;
                             scale = (arena.Dimensions.Length() - Vector2.Distance(gobtracker.Gob.Pos, _player.Ship.Pos)) / arena.Dimensions.Length();
                         }
-
                         if (gobtracker.RotateTowardsTarget)
                         {
                             rotation = -AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - _player.Ship.Pos);
                         }
-
                         if (gobtracker.StickToBorders)
                         {
                             pos = AW2.Helpers.Geometric.Geometry.CropLineSegment(_player.Ship.Pos, gobtracker.Gob.Pos, Viewport.WorldAreaMin(0), Viewport.WorldAreaMax(0));
                             pos = Vector2.Transform(pos, Viewport.GetGameToScreenMatrix(0));
                         }
-
                         if ((pos != origPos && gobtracker.StickToBorders) || (pos == origPos && gobtracker.ShowWhileTargetOnScreen))
                         {
                             Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(gobtracker.Texture);

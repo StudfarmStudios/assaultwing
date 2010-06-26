@@ -11,7 +11,6 @@ using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Net;
 using AW2.Net.Messages;
-using Viewport = AW2.Graphics.AWViewport;
 
 namespace AW2.Game
 {

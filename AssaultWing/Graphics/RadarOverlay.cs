@@ -11,7 +11,7 @@ namespace AW2.Graphics
     /// <summary>
     /// Overlay graphics component displaying a radar view of the arena.
     /// </summary>
-    class RadarOverlay : OverlayComponent
+    public class RadarOverlay : OverlayComponent
     {
         private static readonly Color ARENA_RADAR_SILHOUETTE_COLOR = new Color(190, 190, 190, 85);
         private Player _player;
@@ -44,7 +44,7 @@ namespace AW2.Graphics
             var arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
-                if (player.Ship == null) continue;
+                if (player.Ship == null || player.Ship.Dead) continue;
                 var posInArena = player.Ship.Pos;
                 var posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
                 Color shipColor = player.PlayerColor;

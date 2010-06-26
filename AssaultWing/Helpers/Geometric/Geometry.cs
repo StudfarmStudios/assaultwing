@@ -629,6 +629,26 @@ namespace AW2.Helpers.Geometric
             throw new Exception("Method not implemented: Intersect(Polygon, Polygon)");
         }
 
+        /// <summary>
+        /// Crops a line segment to a rectangle, returning the new end point.
+        /// The start point must be strictly inside the rectangle.
+        /// </summary>
+        public static Vector2 CropLineSegment(Vector2 start, Vector2 end, Vector2 min, Vector2 max)
+        {
+            if (min.X > max.X || min.Y > max.Y) throw new ArgumentException("Min must not be greater than max");
+            if (start.X <= min.X || start.X >= max.X || start.Y <= min.Y || start.Y >= max.Y) throw new ArgumentException("Start must be inside the rectangle");
+            var p11 = min;
+            var p21 = new Vector2(max.X, min.Y);
+            var p22 = max;
+            var p12 = new Vector2(min.X, max.Y);
+            Vector2? intersection = null;
+            if (Intersect(p11, p21, start, end, ref intersection) && intersection.HasValue) return intersection.Value;
+            if (Intersect(p21, p22, start, end, ref intersection) && intersection.HasValue) return intersection.Value;
+            if (Intersect(p22, p12, start, end, ref intersection) && intersection.HasValue) return intersection.Value;
+            if (Intersect(p12, p11, start, end, ref intersection) && intersection.HasValue) return intersection.Value;
+            return end;
+        }
+
         #endregion Intersection methods
 
         #region Location and distance query methods
@@ -1020,22 +1040,22 @@ namespace AW2.Helpers.Geometric
             if (left)
             {
                 if (under)
-                    return 
+                    return
                         (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
                         (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
                 else // over
-                    return 
+                    return
                         (rectangle.Min.X - point.Location.X) * (rectangle.Min.X - point.Location.X) +
                         (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
             }
             else // right
             {
                 if (under)
-                    return 
+                    return
                         (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
                         (rectangle.Min.Y - point.Location.Y) * (rectangle.Min.Y - point.Location.Y);
                 else // over
-                    return 
+                    return
                         (point.Location.X - rectangle.Max.X) * (point.Location.X - rectangle.Max.X) +
                         (point.Location.Y - rectangle.Max.Y) * (point.Location.Y - rectangle.Max.Y);
             }
@@ -1271,7 +1291,7 @@ namespace AW2.Helpers.Geometric
                     Vector2 difference = ((Point)prim2).Location - circle1.Center;
                     return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
                 }
-                if (prim2 is Circle) 
+                if (prim2 is Circle)
                 {
                     Vector2 difference = ((Circle)prim2).Center - circle1.Center;
                     return difference == Vector2.Zero ? Vector2.Zero : Vector2.Normalize(difference);
@@ -2057,6 +2077,34 @@ namespace AW2.Helpers.Geometric
                 Assert.IsFalse(Intersect(new Circle(p4, 9.9999f), t1)); // barely out
                 Assert.IsTrue(Intersect(new Circle(p4, 10), t1)); // borders intersect
                 Assert.IsTrue(Intersect(new Circle(p4, 10.0001f), t1)); // barely in
+            }
+
+            [Test]
+            public void TestCropLineSegment()
+            {
+                var min = new Vector2(-10, -10);
+                var max = new Vector2(10, 10);
+                var a = new Vector2(0, 0);
+                var b = new Vector2(-5, 9);
+                var c = new Vector2(20, 6);
+                var a_c = new Vector2(10, 3);
+                var d = new Vector2(6, 20);
+                var a_d = new Vector2(3, 10);
+                var e = new Vector2(-20, 6);
+                var a_e = new Vector2(-10, 3);
+                var f = new Vector2(-6, -20);
+                var a_f = new Vector2(-3, -10);
+                Assert.AreEqual(b, CropLineSegment(a, b, min, max));
+                Assert.AreEqual(a, CropLineSegment(a, a, min, max));
+                Assert.AreEqual(max, CropLineSegment(a, max, min, max)); 
+                Assert.AreEqual(min, CropLineSegment(a, min, min, max));
+                Assert.Throws<ArgumentException>(() => CropLineSegment(min, max, a, a));
+                Assert.Throws<ArgumentException>(() => CropLineSegment(a, a, a, max));
+                Assert.Throws<ArgumentException>(() => CropLineSegment(a, b, max, min));
+                Assert.AreEqual(a_c, CropLineSegment(a, c, min, max));
+                Assert.AreEqual(a_d, CropLineSegment(a, d, min, max));
+                Assert.AreEqual(a_e, CropLineSegment(a, e, min, max));
+                Assert.AreEqual(a_f, CropLineSegment(a, f, min, max));
             }
 
             /// <summary>

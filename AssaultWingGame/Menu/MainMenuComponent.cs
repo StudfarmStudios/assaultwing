@@ -146,6 +146,7 @@ namespace AW2.Menu
 
             foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
             {
+                if (player.IsRemote) continue;
                 _controlUp.Add(player.Controls.Thrust);
                 _controlDown.Add(player.Controls.Down);
                 _controlSelect.Add(player.Controls.Fire1);

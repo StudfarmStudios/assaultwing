@@ -215,6 +215,17 @@ namespace AW2.Menu
             _buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
         }
 
+        private void ResetPlayerList()
+        {
+            _playerListIndex = 0;
+        }
+
+        private void ResetEquipMenu()
+        {
+            ResetPlayerList();
+            _currentTab = EquipMenuTab.Equipment;
+        }
+
         public override void UnloadContent()
         {
             // The textures and fonts we reference will be disposed by GraphicsEngine.
@@ -223,6 +234,7 @@ namespace AW2.Menu
         public override void Update()
         {
             if (MenuPanePlayers.Count() != _playerNames.Count()) CreateSelectors();
+            if (MenuPanePlayers.Count() < _playerNames.Count()) ResetPlayerList();
             if (Active)
             {
                 CheckGeneralControls();
@@ -277,24 +289,24 @@ namespace AW2.Menu
                 {
                     ++_currentTab;
                 }
-
                 // If someone drops of or whatever, set the playerListIndex to Zero for safety
                 if (_currentTab == EquipMenuTab.Players)
                 {
-                    _playerListIndex = 0;
+                    ResetPlayerList();
                 }
-
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 _tabFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
                 return;
             }
             if (_controlBack.Pulse)
             {
+                ResetEquipMenu();
                 MenuEngine.ActivateComponent(MenuComponentType.Main);
                 return;
             }
             if (_controlDone.Pulse)
             {
+                ResetEquipMenu();
                 switch (AssaultWing.Instance.NetworkMode)
                 {
                     case NetworkMode.Server:

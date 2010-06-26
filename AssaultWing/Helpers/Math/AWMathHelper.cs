@@ -305,7 +305,8 @@ namespace AW2.Helpers
         /// </summary>
         public static float Angle(this Vector2 v)
         {
-            float asin = (float)Math.Asin(v.Y);
+            float yDivLength = v.X == 0 ? Math.Sign(v.Y) : v.Y / v.Length();
+            float asin = (float)Math.Asin(yDivLength);
             if (v.X < 0) return MathHelper.Pi - asin;
             return asin;
         }
@@ -764,10 +765,14 @@ namespace AW2.Helpers
             public void TestAngle()
             {
                 Assert.AreEqual(0, new Vector2(0, 0).Angle());
+                Assert.AreEqual(0, new Vector2(0.1f, 0).Angle());
                 Assert.AreEqual(0, new Vector2(1, 0).Angle());
+                Assert.AreEqual(0, new Vector2(10, 0).Angle());
+                Assert.AreEqual(MathHelper.PiOver2, new Vector2(0, 0.1f).Angle());
                 Assert.AreEqual(MathHelper.PiOver2, new Vector2(0, 1).Angle());
                 Assert.AreEqual(-MathHelper.PiOver2, new Vector2(0, -1).Angle());
                 Assert.AreEqual(MathHelper.Pi, new Vector2(-1, 0).Angle());
+                Assert.AreEqual(3 * MathHelper.PiOver4, new Vector2(-4, 4).Angle());
             }
 
             [Test]

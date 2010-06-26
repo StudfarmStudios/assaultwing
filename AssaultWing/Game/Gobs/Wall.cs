@@ -52,21 +52,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         protected BasicEffect Effect { get; set; }
 
-        /// <summary>
-        /// The effect for drawing the wall as a silhouette.
-        /// </summary>
-        private BasicEffect _silhouetteEffect;
-
-        /// <summary>
-        /// The default effect for drawing the wall.
-        /// </summary>
-        private static BasicEffect g_defaultEffect;
-
-        /// <summary>
-        /// The default effect for drawing the wall as a silhouette.
-        /// </summary>
-        private static BasicEffect g_defaultSilhouetteEffect;
-
         private VertexDeclaration _vertexDeclaration;
 
         #endregion // Wall Fields
@@ -133,25 +118,14 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
-            g_defaultEffect = g_defaultEffect ?? new BasicEffect(gfx, null);
-            g_defaultSilhouetteEffect = g_defaultSilhouetteEffect ?? (BasicEffect)g_defaultEffect.Clone(gfx);
-            _silhouetteEffect = g_defaultSilhouetteEffect;
             _vertexDeclaration = _vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             base.LoadContent();
         }
 
         public override void UnloadContent()
         {
-            // Must not dispose 'defaultSilhouetteEffect' because others may be using it.
-            // Must not dispose 'silhouetteEffect' because it may refer to 'defaultSilhouetteEffect'.
             // 'texture' will be disposed by the graphics engine.
             // 'effect' is managed by other objects
-            _silhouetteEffect = null;
-            if (g_defaultEffect != null)
-            {
-                g_defaultEffect.Dispose();
-                g_defaultEffect = null;
-            }
             if (_vertexDeclaration != null)
             {
                 _vertexDeclaration.Dispose();
@@ -214,25 +188,21 @@ namespace AW2.Game.Gobs
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var silhouetteEffect = AssaultWing.Instance.GraphicsEngine.GameContent.WallSilhouetteEffect;
             gfx.VertexDeclaration = _vertexDeclaration;
-            _silhouetteEffect.World = Matrix.Identity;
-            _silhouetteEffect.Projection = projection;
-            _silhouetteEffect.View = view;
-            _silhouetteEffect.Texture = Texture;
-            _silhouetteEffect.VertexColorEnabled = false;
-            _silhouetteEffect.LightingEnabled = false;
-            _silhouetteEffect.TextureEnabled = false;
-            _silhouetteEffect.FogEnabled = false;
-            _silhouetteEffect.Begin();
-            foreach (EffectPass pass in _silhouetteEffect.CurrentTechnique.Passes)
+            silhouetteEffect.Projection = projection;
+            silhouetteEffect.View = view;
+            silhouetteEffect.Texture = Texture;
+            silhouetteEffect.Begin();
+            foreach (var pass in silhouetteEffect.CurrentTechnique.Passes)
             {
                 pass.Begin();
                 gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
                     PrimitiveType.TriangleList, _vertexData, 0, _vertexData.Length, _indexData, 0, _indexData.Length / 3);
                 pass.End();
             }
-            _silhouetteEffect.End();
+            silhouetteEffect.End();
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -338,7 +308,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         private void Prepare3DModel()
         {
-            _silhouetteEffect = Effect == null ? null : (BasicEffect)Effect.Clone(AssaultWing.Instance.GraphicsDevice);
             TriangleCount = _indexData.Length / 3;
             CreateCollisionAreas();
         }

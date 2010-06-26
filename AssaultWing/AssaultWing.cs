@@ -44,7 +44,6 @@ namespace AW2
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
-        private GraphicsEngineImpl _graphicsEngine;
         private IntroEngine _introEngine;
         private OverlayDialog _overlayDialog;
         private LogicEngine _logicEngine;
@@ -134,6 +133,7 @@ namespace AW2
         public PhysicsEngine PhysicsEngine { get; private set; }
         public DataEngine DataEngine { get; private set; }
         public NetworkEngine NetworkEngine { get; private set; }
+        public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
         public IMenuEngine MenuEngine { get; private set; }
 
@@ -298,7 +298,7 @@ namespace AW2
                 GraphicsDevice.PresentationParameters.BackBufferHeight = ClientBounds.Height;
                 GraphicsDevice.Reset(GraphicsDevice.PresentationParameters); // WARNING: This may trigger ContentManager.Unload()
             }
-            if (_graphicsEngine != null) _graphicsEngine.WindowResize();
+            if (GraphicsEngine != null) GraphicsEngine.WindowResize();
             if (MenuEngine != null) MenuEngine.WindowResize();
         }
 
@@ -340,7 +340,7 @@ namespace AW2
             _uiEngine = new UIEngineImpl(this);
             _logicEngine = new LogicEngine(this);
             SoundEngine = new SoundEngine(this);
-            _graphicsEngine = new GraphicsEngineImpl(this);
+            GraphicsEngine = new GraphicsEngineImpl(this);
             _introEngine = new IntroEngine(this);
             MenuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
             NetworkEngine = new NetworkEngine(this);
@@ -352,13 +352,13 @@ namespace AW2
             _uiEngine.UpdateOrder = 1;
             _logicEngine.UpdateOrder = 2;
             SoundEngine.UpdateOrder = 3;
-            _graphicsEngine.UpdateOrder = 4;
+            GraphicsEngine.UpdateOrder = 4;
             _introEngine.UpdateOrder = 4;
             _overlayDialog.UpdateOrder = 5;
             MenuEngine.UpdateOrder = 6;
 
             Components.Add(_logicEngine);
-            Components.Add(_graphicsEngine);
+            Components.Add(GraphicsEngine);
             Components.Add(_introEngine);
             Components.Add(_overlayDialog);
             Components.Add(_uiEngine);
@@ -466,7 +466,7 @@ namespace AW2
                     Log.Write("Saving settings to file");
                     Settings.ToFile();
                     _logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    _graphicsEngine.Visible = true;
+                    GraphicsEngine.Visible = true;
                     break;
                 case GameState.Menu:
                     MenuEngine.Enabled = true;
@@ -475,7 +475,7 @@ namespace AW2
                 case GameState.OverlayDialog:
                     _overlayDialog.Enabled = true;
                     _overlayDialog.Visible = true;
-                    _graphicsEngine.Visible = true;
+                    GraphicsEngine.Visible = true;
                     break;
                 default:
                     throw new ApplicationException("Cannot change to unexpected game state " + value);
@@ -494,7 +494,7 @@ namespace AW2
                     break;
                 case GameState.Gameplay:
                     _logicEngine.Enabled = false;
-                    _graphicsEngine.Visible = false;
+                    GraphicsEngine.Visible = false;
                     break;
                 case GameState.Menu:
                     MenuEngine.Enabled = false;
@@ -503,7 +503,7 @@ namespace AW2
                 case GameState.OverlayDialog:
                     _overlayDialog.Enabled = false;
                     _overlayDialog.Visible = false;
-                    _graphicsEngine.Visible = false;
+                    GraphicsEngine.Visible = false;
                     break;
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
@@ -713,7 +713,7 @@ namespace AW2
         /// </summary>
         public void LoadArenaContent(Arena arena)
         {
-            _graphicsEngine.LoadArenaContent(arena);
+            GraphicsEngine.LoadArenaContent(arena);
         }
 
         #endregion Methods for game components

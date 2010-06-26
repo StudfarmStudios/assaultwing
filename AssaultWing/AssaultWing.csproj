@@ -92,6 +92,7 @@
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
+    <Compile Include="Game\GameContent.cs" />
     <Compile Include="Game\Gobs\DeathMessage.cs" />
     <Compile Include="Game\Gobs\FloatingBullet.cs">
       <SubType>Code</SubType>

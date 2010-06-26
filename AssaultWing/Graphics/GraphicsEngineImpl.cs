@@ -15,9 +15,12 @@ namespace AW2.Graphics
     {
         private SpriteBatch _spriteBatch;
 
+        public GameContent GameContent { get; private set; }
+
         public GraphicsEngineImpl(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
+            GameContent = new GameContent();
         }
 
         protected override void LoadContent()
@@ -25,6 +28,7 @@ namespace AW2.Graphics
             Log.Write("Graphics engine loading graphics content.");
             var data = AssaultWing.Instance.DataEngine;
             _spriteBatch = new SpriteBatch(this.GraphicsDevice);
+            GameContent.LoadContent();
 
             // Loop through gob types and load all the 3D models and textures they need.
             // The purpose of this is to load from disk here and cache the content for fast access later.
@@ -91,6 +95,7 @@ namespace AW2.Graphics
         {
             Log.Write("Graphics engine unloading graphics content.");
             var data = AssaultWing.Instance.DataEngine;
+            GameContent.UnloadContent();
 
             if (_spriteBatch != null)
             {

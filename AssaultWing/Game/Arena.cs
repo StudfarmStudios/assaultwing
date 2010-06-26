@@ -1226,12 +1226,31 @@ namespace AW2.Game
                 Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
         }
 
+        private void AddShipTrackerToViewports(AW2.Game.Gobs.Ship ship)
+        {
+            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(ship, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, ship.Owner.PlayerColor);
+
+            foreach (AW2.Graphics.PlayerViewport viewport in AssaultWing.Instance.DataEngine.Viewports)
+            {
+                if (viewport != null && viewport.Player.ID != ship.Owner.ID)
+                {
+                    viewport.Player.AddGobTrackerItem(trackerItem);
+                }
+            }
+        }
+
         #region Callbacks
+
 
         private void GobAdded(Gob gob)
         {
             if (IsActive) AssaultWing.Instance.GobsCounter.Increment();
             Prepare(gob);
+
+            if (gob is AW2.Game.Gobs.Ship)
+            {
+                AddShipTrackerToViewports((AW2.Game.Gobs.Ship)gob);
+            }
 
             // Game server notifies game clients of the new gob.
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)

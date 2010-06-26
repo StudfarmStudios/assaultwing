@@ -10,6 +10,7 @@ using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
 using AW2.UI;
+using AW2.Graphics;
 
 namespace AW2.Game
 {
@@ -115,6 +116,7 @@ namespace AW2.Game
 
         private LookAtShip _lookAt;
         private Ship _ship;
+        private List<GobTrackerItem> _gobTrackerItems = new List<GobTrackerItem>();
 
         #endregion Player fields about general things
 
@@ -134,6 +136,8 @@ namespace AW2.Game
         #endregion Player fields about statistics
 
         #region Player properties
+
+        public List<GobTrackerItem> GobTrackerItems { get { return _gobTrackerItems; } set { _gobTrackerItems = value; } }
 
         /// <summary>
         /// The player's Color on radar.
@@ -345,6 +349,11 @@ namespace AW2.Game
         #endregion Constructors
 
         #region General public methods
+
+        public void AddGobTrackerItem(GobTrackerItem item)
+        {
+            _gobTrackerItems.Add(item);
+        }
 
         /// <summary>
         /// Updates the player.

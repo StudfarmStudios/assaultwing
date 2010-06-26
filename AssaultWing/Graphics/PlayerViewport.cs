@@ -19,12 +19,16 @@ namespace AW2.Graphics
         /// </summary>
         Player player;
 
+        private GobTrackerOverlay _gobTrackerOverlay;
+
         /// <summary>
         /// Last used sign of player's shake angle. Either 1 or -1.
         /// </summary>
         float shakeSign;
 
         #endregion PlayerViewport fields
+
+        public GobTrackerOverlay GobTracker { get { return _gobTrackerOverlay; } set { _gobTrackerOverlay = value; } }
 
         /// <summary>
         /// Creates a new player viewport.
@@ -47,6 +51,8 @@ namespace AW2.Graphics
             AddOverlayComponent(new BonusListOverlay(player));
             AddOverlayComponent(new PlayerStatusOverlay(player));
             AddOverlayComponent(new ScoreOverlay(player));
+            GobTracker = new GobTrackerOverlay(player);
+            AddOverlayComponent(GobTracker);
         }
 
         #region PlayerViewport properties

@@ -271,6 +271,17 @@ namespace AW2.Graphics
                 component.Draw(_spriteBatch);
         }
 
+        public Matrix GetGameToScreenMatrix(float Z)
+        {
+            var projection = GetProjectionMatrix(Z);
+            var view = ViewMatrix;
+            Matrix gameToScreen = view * projection
+                * Matrix.CreateReflection(new Plane(Vector3.UnitY, 0))
+                * Matrix.CreateTranslation(1, 1, 0)
+                * Matrix.CreateScale(new Vector3(Viewport.Width, Viewport.Height, Viewport.MaxDepth - Viewport.MinDepth) / 2);
+            return gameToScreen;
+        }
+
         protected virtual void RenderGameWorld()
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
@@ -299,10 +310,7 @@ namespace AW2.Graphics
                 }
 
                 // 2D graphics
-                Matrix gameToScreen = view * projection
-                    * Matrix.CreateReflection(new Plane(Vector3.UnitY, 0))
-                    * Matrix.CreateTranslation(1, 1, 0)
-                    * Matrix.CreateScale(new Vector3(Viewport.Width, Viewport.Height, Viewport.MaxDepth - Viewport.MinDepth) / 2);
+
                 DrawMode2D? drawMode = null;
                 layer.Gobs.ForEachIn2DOrder(gob =>
                 {
@@ -314,7 +322,7 @@ namespace AW2.Graphics
                         drawMode = gob.DrawMode2D;
                         drawMode.Value.BeginDraw(_spriteBatch);
                     }
-                    gob.Draw2D(gameToScreen, _spriteBatch, layerScale * ZoomRatio);
+                    gob.Draw2D(GetGameToScreenMatrix(layer.Z), _spriteBatch, layerScale * ZoomRatio);
                 });
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(_spriteBatch);

@@ -371,44 +371,9 @@ namespace AW2.Game
             private set
             {
                 _gobs = value;
-                Gobs.Added += gob =>
-                {
-                    if (IsActive) AssaultWing.Instance.GobsCounter.Increment();
-                    Prepare(gob);
-
-                    // Game server notifies game clients of the new gob.
-                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
-                    {
-                        var message = new GobCreationMessage();
-                        message.CreateToNextArena = !IsActive;
-                        message.GobTypeName = gob.TypeName;
-                        message.LayerIndex = Layers.IndexOf(gob.Layer);
-                        message.Write(gob, AW2.Net.SerializationModeFlags.All);
-                        AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
-                    }
-                };
-                Gobs.Removing += item =>
-                {
-                    // Game client removes relevant gobs only when the server says so.
-                    return AssaultWing.Instance.NetworkMode != NetworkMode.Client || !item.IsRelevant;
-                };
-                Gobs.Removed += gob =>
-                {
-                    // Game server notifies game clients of the removal of relevant gobs.
-                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
-                    {
-                        if (!IsActive) throw new Exception("Removing a gob from an inactive arena during network game");
-                        var message = new GobDeletionMessage();
-                        message.GobId = gob.ID;
-                        AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
-                    }
-
-                    if (IsActive)
-                        AssaultWing.Instance.GobsCounter.Decrement();
-                    if (gob.Layer == Gobs.GameplayLayer)
-                        Unregister(gob);
-                    gob.Dispose();
-                };
+                _gobs.Added += GobAdded;
+                _gobs.Removing += GobRemoving;
+                _gobs.Removed += GobRemoved;
             }
         }
 
@@ -1260,5 +1225,50 @@ namespace AW2.Game
             else
                 Gobs.GameplayBackLayer = Layers[gameplayLayerIndex - 1];
         }
+
+        #region Callbacks
+
+        private void GobAdded(Gob gob)
+        {
+            if (IsActive) AssaultWing.Instance.GobsCounter.Increment();
+            Prepare(gob);
+
+            // Game server notifies game clients of the new gob.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+            {
+                var message = new GobCreationMessage();
+                message.CreateToNextArena = !IsActive;
+                message.GobTypeName = gob.TypeName;
+                message.LayerIndex = Layers.IndexOf(gob.Layer);
+                message.Write(gob, AW2.Net.SerializationModeFlags.All);
+                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+            }
+        }
+
+        private bool GobRemoving(Gob gob)
+        {
+            // Game client removes relevant gobs only when the server says so.
+            return AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant;
+        }
+
+        private void GobRemoved(Gob gob)
+        {
+            // Game server notifies game clients of the removal of relevant gobs.
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+            {
+                if (!IsActive) throw new Exception("Removing a gob from an inactive arena during network game");
+                var message = new GobDeletionMessage();
+                message.GobId = gob.ID;
+                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+            }
+
+            if (IsActive)
+                AssaultWing.Instance.GobsCounter.Decrement();
+            if (gob.Layer == Gobs.GameplayLayer)
+                Unregister(gob);
+            gob.Dispose();
+        }
+
+        #endregion
     }
 }

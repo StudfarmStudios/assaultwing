@@ -18,7 +18,7 @@ namespace AW2.Graphics
         private string _texture;
         private Color _drawColor;
 
-        public Gob TargetGob { get { return _gob; } set { _gob = value; } }
+        public Gob Gob { get { return _gob; } set { _gob = value; } }
         public bool StickToBorders { get { return _stickToViewportBorders; } set { _stickToViewportBorders = value; } }
         public bool RotateTowardsTarget { get { return _rotateTowardsTarget; } set { _rotateTowardsTarget = value; } }
         public bool ShowWhileTargetOnScreen { get { return _showWhileTargetOnScreen; } set { _showWhileTargetOnScreen = value; } }
@@ -62,7 +62,7 @@ namespace AW2.Graphics
             _player = player;
         }
 
-        protected void SetViewport()
+        private void SetViewport()
         {
             if (Viewport == null)
             {
@@ -83,17 +83,17 @@ namespace AW2.Graphics
             if (Viewport != null)
             {
                 // First remove
-                Viewport.Player.GobTrackerItems.RemoveAll(item => item.TargetGob.Dead);
+                Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.Dead);
 
                 // Then draw
                 foreach (GobTrackerItem gobtracker in Viewport.Player.GobTrackerItems)
                 {
-                    Vector2 pos = Vector2.Transform(gobtracker.TargetGob.Pos, Viewport.GetGameToScreenMatrix(0));
-                    Vector2 origPos = Vector2.Transform(gobtracker.TargetGob.Pos, Viewport.GetGameToScreenMatrix(0));
+                    Vector2 pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
+                    Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
 
                     if (gobtracker.StickToBorders)
                     {
-                        pos = AW2.Helpers.Geometric.Geometry.CropLineSegment(_player.Ship.Pos, gobtracker.TargetGob.Pos, Viewport.WorldAreaMin(0), Viewport.WorldAreaMax(0));
+                        pos = AW2.Helpers.Geometric.Geometry.CropLineSegment(_player.Ship.Pos, gobtracker.Gob.Pos, Viewport.WorldAreaMin(0), Viewport.WorldAreaMax(0));
                         pos = Vector2.Transform(pos, Viewport.GetGameToScreenMatrix(0));
                     }
 

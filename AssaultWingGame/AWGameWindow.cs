@@ -17,6 +17,7 @@ namespace AW2
         public AWGameWindow(GameWindow window, GraphicsDeviceManager graphics)
         {
             _window = window;
+            _window.AllowUserResizing = true;
             _windowForm = (Form)Form.FromHandle(window.Handle);
             _graphics = graphics;
         }

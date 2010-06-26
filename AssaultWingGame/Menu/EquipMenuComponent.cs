@@ -34,8 +34,10 @@ namespace AW2.Menu
         private enum EquipMenuTab { Equipment = 1, Players = 2}
         private EquipMenuTab _currentTab;
         private int _playerListIndex;
+        private bool _playerNameChanged;
         private TimeSpan _playerListCursorFadeStartTime;
         private TimeSpan _tabFadeStartTime;
+        private TimeSpan _nameInfoMoveStartTime;
 
         private const int MAX_MENU_PANES = 4;
 
@@ -56,6 +58,7 @@ namespace AW2.Menu
         private Curve _cursorFade;
 
         private Curve _tabFade;
+        private Curve _nameInfoMove;
 
         /// <summary>
         /// Time at which the cursor started fading for each player.
@@ -169,7 +172,9 @@ namespace AW2.Menu
             _currentTab = EquipMenuTab.Equipment;
             _playerListIndex = 0;
             _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            _playerNameChanged = false;
             _tabFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            _nameInfoMoveStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _pos = new Vector2(0, 0);
             _currentItems = new EquipMenuItem[MAX_MENU_PANES];
             _cursorFadeStartTimes = new TimeSpan[MAX_MENU_PANES];
@@ -185,6 +190,12 @@ namespace AW2.Menu
             _tabFade.Keys.Add(new CurveKey(2.2f, 255));
             _tabFade.PreLoop = CurveLoopType.Cycle;
             _tabFade.PostLoop = CurveLoopType.Cycle;
+            _nameInfoMove = new Curve();
+            _nameInfoMove.Keys.Add(new CurveKey(0f, 0));
+            _nameInfoMove.Keys.Add(new CurveKey(0.6f, 15));
+            _nameInfoMove.Keys.Add(new CurveKey(1.2f, 0));
+            _nameInfoMove.PreLoop = CurveLoopType.Cycle;
+            _nameInfoMove.PostLoop = CurveLoopType.Cycle;
 
             CreateSelectors();
         }
@@ -379,7 +390,12 @@ namespace AW2.Menu
 
                 if (_currentItems[playerI] == EquipMenuItem.Name)
                 {
-                    _playerNames[playerI].Update(() => { player.Name = _playerNames[playerI].Content; });
+                    _playerNames[playerI].Update(() => 
+                    { 
+                        player.Name = _playerNames[playerI].Content; 
+                        if (playerI == 0) _playerNameChanged = true; 
+                        else throw new ApplicationException("Unexpected player index " + playerI); 
+                    });
                 }
                 else
                 {
@@ -448,6 +464,8 @@ namespace AW2.Menu
                 DrawShipDeviceInfoDisplay(view, spriteBatch);
                 // Draw weapon info display
                 DrawWeaponInfoDisplay(view, spriteBatch);
+
+                DrawNameChangeInfo(view, spriteBatch);
             }
             
             if (_currentTab == EquipMenuTab.Players)
@@ -455,6 +473,18 @@ namespace AW2.Menu
                 DrawLargeStatusBackground(view, spriteBatch);
                 DrawPlayerListDisplay(view, spriteBatch);
                 DrawPlayerInfoDisplay(view, spriteBatch, AssaultWing.Instance.DataEngine.Players.ElementAt(_playerListIndex));
+            }
+        }
+
+        private void DrawNameChangeInfo(Vector2 view, SpriteBatch spriteBatch)
+        {
+            if (!_playerNameChanged && AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
+            {
+                Vector2 nameChangeInfoPos = _pos - view + new Vector2(250, 180);
+                var nameChangeInfoTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
+                float moveTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _nameInfoMoveStartTime).TotalSeconds;
+                spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos + new Vector2((float)_nameInfoMove.Evaluate(moveTime), 0), MenuPanePlayers.ElementAt(0).First.PlayerColor);
+               // spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).First.PlayerColor);
             }
         }
 

@@ -11,28 +11,22 @@ namespace AW2.Graphics
     public class GobTrackerItem
     {
         public static readonly string PLAYER_TEXTURE = "gui_playerinfo_white_ball";
-        private Gob _gob;
-        private bool _stickToViewportBorders;
-        private bool _rotateTowardsTarget;
-        private bool _showWhileTargetOnScreen;
-        private string _texture;
-        private Color _drawColor;
 
-        public Gob Gob { get { return _gob; } set { _gob = value; } }
-        public bool StickToBorders { get { return _stickToViewportBorders; } set { _stickToViewportBorders = value; } }
-        public bool RotateTowardsTarget { get { return _rotateTowardsTarget; } set { _rotateTowardsTarget = value; } }
-        public bool ShowWhileTargetOnScreen { get { return _showWhileTargetOnScreen; } set { _showWhileTargetOnScreen = value; } }
-        public string Texture { get { return _texture; } set { _texture = value; } }
-        public Color DrawColor { get { return _drawColor; } set { _drawColor = value; } }
+        public Gob Gob { get; set; }
+        public bool StickToBorders { get; set; }
+        public bool RotateTowardsTarget { get; set; }
+        public bool ShowWhileTargetOnScreen { get; set; }
+        public string Texture { get; set; }
+        public Color DrawColor { get; set; }
 
         public GobTrackerItem(Gob gob, string texture,  bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, Color drawColor)
         {
-            _gob = gob;
-            _stickToViewportBorders = stickToViewportBorders;
-            _rotateTowardsTarget = rotateTowardsTarget;
-            _showWhileTargetOnScreen = showWhileTargetOnScreen;
-            _texture = texture;
-            _drawColor = drawColor;
+            Gob = gob;
+            StickToBorders = stickToViewportBorders;
+            RotateTowardsTarget = rotateTowardsTarget;
+            ShowWhileTargetOnScreen = showWhileTargetOnScreen;
+            Texture = texture;
+            DrawColor = drawColor;
         }
     }
 
@@ -86,21 +80,30 @@ namespace AW2.Graphics
                 Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.Dead);
 
                 // Then draw
-                foreach (GobTrackerItem gobtracker in Viewport.Player.GobTrackerItems)
+                if (_player.Ship != null)
                 {
-                    Vector2 pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
-                    Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
-
-                    if (gobtracker.StickToBorders)
+                    foreach (GobTrackerItem gobtracker in Viewport.Player.GobTrackerItems)
                     {
-                        pos = AW2.Helpers.Geometric.Geometry.CropLineSegment(_player.Ship.Pos, gobtracker.Gob.Pos, Viewport.WorldAreaMin(0), Viewport.WorldAreaMax(0));
-                        pos = Vector2.Transform(pos, Viewport.GetGameToScreenMatrix(0));
-                    }
+                        Vector2 pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
+                        float rotation = 0f;
+                        Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
 
-                    if ((pos != origPos && gobtracker.StickToBorders) || (pos == origPos && gobtracker.ShowWhileTargetOnScreen))
-                    {
-                        Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(gobtracker.Texture);
-                        spriteBatch.Draw(texture, pos, null, gobtracker.DrawColor, 0, new Vector2(texture.Width, texture.Height) / 2, 1.5f, SpriteEffects.None, 0);
+                        if (gobtracker.RotateTowardsTarget)
+                        {
+                            rotation = AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - _player.Ship.Pos);
+                        }
+
+                        if (gobtracker.StickToBorders)
+                        {
+                            pos = AW2.Helpers.Geometric.Geometry.CropLineSegment(_player.Ship.Pos, gobtracker.Gob.Pos, Viewport.WorldAreaMin(0), Viewport.WorldAreaMax(0));
+                            pos = Vector2.Transform(pos, Viewport.GetGameToScreenMatrix(0));
+                        }
+
+                        if ((pos != origPos && gobtracker.StickToBorders) || (pos == origPos && gobtracker.ShowWhileTargetOnScreen))
+                        {
+                            Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(gobtracker.Texture);
+                            spriteBatch.Draw(texture, pos, null, gobtracker.DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, 1.5f, SpriteEffects.None, 0);
+                        }
                     }
                 }
             }

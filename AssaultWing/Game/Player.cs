@@ -419,6 +419,23 @@ namespace AW2.Game
             });
         }
 
+        private void SendDeathMessageToBystanders(DeathCause cause, string bystanderMessage)
+        {
+            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            {
+                if (plr.ID != ID)
+                {
+                    if (cause.IsKill && plr.ID == cause.Killer.Owner.ID)
+                    {
+                    }
+                    else
+                    {
+                        plr.SendMessage(bystanderMessage, KILL_COLOR);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Performs necessary operations when the player's ship dies.
         /// </summary>
@@ -437,15 +454,22 @@ namespace AW2.Game
 
             BonusActions.Clear();
 
+            var bystanderMessage = "";
+
             if (cause.IsKill)
             {
                 cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
                 CreateDeathMessage(cause.Killer.Owner.Name, cause.Killer.Owner.PlayerColor, Ship.Pos, false);
+                bystanderMessage = cause.Killer.Owner.Name + " fragged " + Name;
             }
             if (cause.IsSuicide)
             {
                 CreateDeathMessage(Name, PlayerColor, Ship.Pos, true);
+                bystanderMessage = Name + " could not take it anymore";
             }
+
+            // Send message about death to other players too
+            SendDeathMessageToBystanders(cause, bystanderMessage);
 
             Ship = null;
 

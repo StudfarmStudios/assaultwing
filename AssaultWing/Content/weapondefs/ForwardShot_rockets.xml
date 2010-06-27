@@ -4,7 +4,10 @@
   <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
 	<pictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_weaponpicture_rockets</pictureName>
 	<titlePictureName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_weaponname_rockets</titlePictureName>
-	<infoText type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Fires 6 semi-guided rockects in 3 
+	<infoText type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">High Explosive Rocket Propelling 
+Emitter System  -HERPES-
+
+Fires 6 semi-guided rockects in 3 
 series of 2 rockets. These are petrol 
 powered so it will run outin some point</infoText>
 	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</reloadSpeed>

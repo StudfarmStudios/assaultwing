@@ -9,7 +9,7 @@ Emitter System  -HERPES-
 
 Fires 6 semi-guided rockects in 3 
 series of 2 rockets. These are petrol 
-powered so it will run outin some point</infoText>
+powered so it will run out in some point</infoText>
 	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</reloadSpeed>
 	<energyUsage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</energyUsage>
 	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>

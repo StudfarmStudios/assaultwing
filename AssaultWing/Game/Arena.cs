@@ -1252,6 +1252,19 @@ namespace AW2.Game
             }
         }
 
+        private void AddBonusTrackerToViewports(AW2.Game.Gobs.Bonus.Bonus bonus)
+        {
+            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(bonus, AW2.Graphics.GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
+            
+            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            {
+                if (!plr.IsRemote)
+                {
+                    plr.AddGobTrackerItem(trackerItem);
+                }
+            }
+        }
+
         #region Callbacks
 
         private void GobAdded(Gob gob)
@@ -1266,6 +1279,10 @@ namespace AW2.Game
             if (gob is AW2.Game.Gobs.Dock)
             {
                 AddDockTrackerToViewports((AW2.Game.Gobs.Dock)gob);
+            }
+            if (gob is AW2.Game.Gobs.Bonus.Bonus)
+            {
+                AddBonusTrackerToViewports((AW2.Game.Gobs.Bonus.Bonus)gob);
             }
 
             // Game server notifies game clients of the new gob.

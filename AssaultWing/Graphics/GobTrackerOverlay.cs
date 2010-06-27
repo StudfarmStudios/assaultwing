@@ -24,6 +24,11 @@ namespace AW2.Graphics
 
         public GobTrackerItem(Gob gob, string texture,  bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, bool scaleByDistance, Color drawColor)
         {
+            if (gob == null)
+            {
+                throw new ArgumentNullException("Trying to add NULL Gob to GobTrackerItem!");
+            }
+
             Gob = gob;
             StickToBorders = stickToViewportBorders;
             RotateTowardsTarget = rotateTowardsTarget;
@@ -82,7 +87,6 @@ namespace AW2.Graphics
             {
                 // First remove
                 Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.Dead);
-                Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob == null);
                 Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.IsDisposed);
 
                 // Then draw

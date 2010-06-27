@@ -392,7 +392,7 @@ namespace AW2.Menu
                 {
                     _playerNames[playerI].Update(() =>
                     {
-                        player.Name = _playerNames[playerI].Content;
+                        player.Name = _playerNames[playerI].Content.CapitalizeWords();
                         if (playerI == 0) _playerNameChanged = true;
                         else throw new ApplicationException("Unexpected player index " + playerI);
                     });

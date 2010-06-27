@@ -164,6 +164,7 @@
     <Compile Include="Graphics\IntroEngine.cs" />
     <Compile Include="Graphics\ScoreOverlay.cs" />
     <Compile Include="Helpers\IAWSerializable.cs" />
+    <Compile Include="Helpers\MiscHelper.cs" />
     <Compile Include="Helpers\TypeLoader.cs" />
     <Compile Include="Game\GobUtils\Weapon.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />

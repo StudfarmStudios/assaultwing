@@ -364,6 +364,11 @@ namespace AW2.Game
         public Player LastDamager { get; set; }
 
         /// <summary>
+        /// The timespan then the damager damaged this gob
+        /// </summary>
+        public TimeSpan LastDamagerTime { get; set; }
+
+        /// <summary>
         /// Drawing mode of 2D graphics of the gob.
         /// </summary>
         public DrawMode2D DrawMode2D { get { return drawMode2D; } set { drawMode2D = value; } }
@@ -1192,9 +1197,13 @@ namespace AW2.Game
         {
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
 
-            if (cause.Killer != null && 
-                cause.Killer.Owner != null && 
-                damageAmount > 0) LastDamager = cause.Killer.Owner;
+            if (cause.Killer != null &&
+                cause.Killer.Owner != null &&
+                damageAmount > 0)
+            {
+                LastDamager = cause.Killer.Owner;
+                LastDamagerTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+            }
             
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);

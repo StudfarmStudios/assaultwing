@@ -82,6 +82,8 @@ namespace AW2.Graphics
             {
                 // First remove
                 Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.Dead);
+                Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob == null);
+                Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.IsDisposed);
 
                 // Then draw
                 if (_player.Ship != null)

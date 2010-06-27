@@ -531,8 +531,15 @@ namespace AW2.Game
         /// </summary>
         public void SendMessage(string message, Color messageColor)
         {
-            message = message.Replace("\n", " ");
-            message = message.Substring(0, 1).ToUpper() + message.Substring(1);
+            if (message != null && message.Length > 0)
+            {
+                message = message.Replace("\n", " ");
+                message = message.Substring(0, 1).ToUpper() + message.Substring(1);
+            }
+            else
+            {
+                message = "";
+            }
 
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && IsRemote)
             {

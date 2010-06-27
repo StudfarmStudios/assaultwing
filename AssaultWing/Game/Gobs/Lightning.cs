@@ -261,7 +261,11 @@ namespace AW2.Game.Gobs
             if (Shooter.Gob == null)
             {
                 // This will happen if 'Shooter' cannot be found by its gob ID
-                _vertexData = new VertexPositionTexture[0];
+                _vertexData = new VertexPositionTexture[] {
+                    new VertexPositionTexture(Vector3.Zero, Vector2.Zero),
+                    new VertexPositionTexture(Vector3.Zero, Vector2.Zero),
+                    new VertexPositionTexture(Vector3.Zero, Vector2.Zero)
+                };
                 return;
             }
             var start = Shooter.Gob.GetNamedPosition(ShooterBoneIndex);

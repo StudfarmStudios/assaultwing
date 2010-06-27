@@ -1,16 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.Gobs
 {
     /// <summary>
     /// A rocket that has its own means of propulsion.
     /// </summary>
-    class Rocket : Gob
+    public class Rocket : Gob
     {
         #region Rocket fields
 
@@ -18,52 +15,44 @@ namespace AW2.Game.Gobs
         /// Amount of damage to inflict on impact with a damageable gob.
         /// </summary>
         [TypeParameter]
-        float impactDamage;
+        private float _impactDamage;
 
         /// <summary>
         /// Maximum force of thrust of the rocket, measured in Newtons.
         /// </summary>
         [TypeParameter]
-        float thrustForce;
+        private float _thrustForce;
 
         /// <summary>
         /// Duration of thrust, measured in seconds.
         /// </summary>
         [TypeParameter]
-        float thrustDuration;
+        private float _thrustDuration;
 
         /// <summary>
         /// Maximum turning speed of the rocket, measured in radians per second.
         /// </summary>
         [TypeParameter]
-        float turnSpeed;
+        private float _turnSpeed;
 
         /// <summary>
         /// Time at which thursting ends, in game time.
         /// </summary>
-        [RuntimeState]
-        TimeSpan thrustEndTime;
+        private TimeSpan _thrustEndTime;
 
         #endregion Rocket fields
 
         /// <summary>
-        /// Creates an uninitialised rocket.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Rocket()
-            : base()
         {
-            this.impactDamage = 100;
-            this.thrustForce = 100;
-            this.thrustDuration = 2;
-            this.turnSpeed = 5;
-            this.thrustEndTime = new TimeSpan(0,0,0,9);
+            _impactDamage = 100;
+            _thrustForce = 100;
+            _thrustDuration = 2;
+            _turnSpeed = 5;
         }
 
-        /// <summary>
-        /// Creates a rocket.
-        /// </summary>
-        /// <param name="typeName">The type of the rocket.</param>
         public Rocket(CanonicalString typeName)
             : base(typeName)
         {
@@ -71,61 +60,46 @@ namespace AW2.Game.Gobs
 
         #region Methods related to gobs' functionality in the game world
 
-        /// <summary>
-        /// Activates the gob, i.e. performs an initialisation rite.
-        /// </summary>
         public override void Activate()
         {
             base.Activate();
-            thrustEndTime = Arena.TotalTime + TimeSpan.FromSeconds(thrustDuration);
+            _thrustEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_thrustDuration);
         }
 
-        /// <summary>
-        /// Updates the gob according to its natural behaviour.
-        /// </summary>
         public override void Update()
         {
-            if (Arena.TotalTime < thrustEndTime)
-            {
-                // Thrust.
-                Vector2 forceVector = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))
-                    * thrustForce;
-                AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
-            }
+            if (Arena.TotalTime < _thrustEndTime)
+                Thrust();
             else
-            {
-                // Fall nose first.
-                float rotationGoal = (float)Math.Acos(Move.X / Move.Length());
-                if (Move.Y < 0)
-                    rotationGoal = MathHelper.TwoPi - rotationGoal;
-                Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal,
-                    AssaultWing.Instance.PhysicsEngine.ApplyChange(turnSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime));
-            }
+                FallNoseFirst();
 
             base.Update();
 
             // Manage exhaust engines.
-            if (Arena.TotalTime >= thrustEndTime)
+            if (Arena.TotalTime >= _thrustEndTime)
                 SwitchEngineFlashAndBang(false);
+        }
+
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        {
+            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
+                theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
+            Die(new DeathCause());
         }
 
         #endregion Methods related to gobs' functionality in the game world
 
-        /// <summary>
-        /// Performs collision operations for the case when one of this gob's collision areas
-        /// is overlapping one of another gob's collision areas.
-        /// </summary>
-        /// <param name="myArea">The collision area of this gob.</param>
-        /// <param name="theirArea">The collision area of the other gob.</param>
-        /// <param name="stuck">If <b>true</b> then the gob is stuck, i.e.
-        /// <b>theirArea.Type</b> matches <b>myArea.CannotOverlap</b> and it's not possible
-        /// to backtrack out of the overlap. It is then up to this gob and the other gob 
-        /// to resolve the overlap.</param>
-        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        private void FallNoseFirst()
         {
-            if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                theirArea.Owner.InflictDamage(impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
-            Die(new DeathCause());
+            float rotationGoal = AWMathHelper.Angle(Move);
+            Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal,
+                AssaultWing.Instance.PhysicsEngine.ApplyChange(_turnSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime));
+        }
+
+        private void Thrust()
+        {
+            var forceVector = _thrustForce * AWMathHelper.GetUnitVector2(Rotation);
+            AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
         }
     }
 }

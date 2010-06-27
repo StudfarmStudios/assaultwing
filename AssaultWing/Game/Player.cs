@@ -139,6 +139,8 @@ namespace AW2.Game
 
         public List<GobTrackerItem> GobTrackerItems { get { return _gobTrackerItems; } set { _gobTrackerItems = value; } }
 
+        public int KillsWithoutDying { get; set; }
+
         /// <summary>
         /// The player's Color on radar.
         /// </summary>
@@ -309,6 +311,7 @@ namespace AW2.Game
             CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
             : base(controls, connectionId)
         {
+            KillsWithoutDying = 0;
             ID = g_leastUnusedID++;
             Name = name;
             ShipName = shipTypeName;
@@ -436,6 +439,23 @@ namespace AW2.Game
             }
         }
 
+        private static readonly int KILLINGSPREE_KILLS_REQUIRED = 3;
+
+        private void SendKillingSpreeMessage(Player player)
+        {
+            string message = player.Name + " IS ON FIRE! (" + player.KillsWithoutDying + " kills)";
+
+            if (player.KillsWithoutDying > 5)
+            {
+                message = player.Name + " IS UNSTOPPABLE! (" + player.KillsWithoutDying + " kills) OMG!";
+            }
+
+            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            {
+                plr.SendMessage(message, KILL_COLOR);
+            }
+        }
+
         /// <summary>
         /// Performs necessary operations when the player's ship dies.
         /// </summary>
@@ -450,8 +470,11 @@ namespace AW2.Game
                 if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
                     cause.Killer.Owner.MustUpdateToClients = true;
             }
+            
+            // Take a life (it's not easy to die)
             --_lives;
-
+            // Reset killing-spree
+            KillsWithoutDying = 0;
             BonusActions.Clear();
 
             var bystanderMessage = "";
@@ -459,6 +482,11 @@ namespace AW2.Game
             if (cause.IsKill)
             {
                 cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
+                // Increase killing spree
+                ++cause.Killer.Owner.KillsWithoutDying;
+                // If Killer is on a KillingSpree, send message
+                if (cause.Killer.Owner.KillsWithoutDying >= KILLINGSPREE_KILLS_REQUIRED)
+                    SendKillingSpreeMessage(cause.Killer.Owner);
                 CreateDeathMessage(cause.Killer.Owner.Name, cause.Killer.Owner.PlayerColor, Ship.Pos, false);
                 bystanderMessage = cause.Killer.Owner.Name + " fragged " + Name;
             }
@@ -509,6 +537,7 @@ namespace AW2.Game
             _shipSpawnTime = TimeSpan.Zero;
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;
+            KillsWithoutDying = 0;
             Lives = AssaultWing.Instance.DataEngine.GameplayMode.StartLives;
             BonusActions.Clear();
             Messages.Clear();

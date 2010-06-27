@@ -31,8 +31,7 @@ namespace AW2.Core
         public void BeginWait()
         {
             CheckDisposed();
-            var handlers = MessageHandlers.GetServerArenaStartHandlers(_readyIDs.Add);
-            MessageHandlers.ActivateHandlers(handlers);
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetServerArenaStartHandlers(_readyIDs.Add));
             _connections.Send(new ArenaStartRequest());
         }
 

@@ -31,7 +31,7 @@ namespace AW2.Menu
         /// An item in a pane main display in the equip menu.
         /// </summary>
         private enum EquipMenuItem { Name, Ship, Extra, Weapon2 }
-        private enum EquipMenuTab { Equipment = 1, Players = 2}
+        private enum EquipMenuTab { Equipment = 1, Players = 2 }
         private EquipMenuTab _currentTab;
         private int _playerListIndex;
         private bool _playerNameChanged;
@@ -390,11 +390,11 @@ namespace AW2.Menu
 
                 if (_currentItems[playerI] == EquipMenuItem.Name)
                 {
-                    _playerNames[playerI].Update(() => 
-                    { 
-                        player.Name = _playerNames[playerI].Content; 
-                        if (playerI == 0) _playerNameChanged = true; 
-                        else throw new ApplicationException("Unexpected player index " + playerI); 
+                    _playerNames[playerI].Update(() =>
+                    {
+                        player.Name = _playerNames[playerI].Content;
+                        if (playerI == 0) _playerNameChanged = true;
+                        else throw new ApplicationException("Unexpected player index " + playerI);
                     });
                 }
                 else
@@ -467,7 +467,7 @@ namespace AW2.Menu
 
                 DrawNameChangeInfo(view, spriteBatch);
             }
-            
+
             if (_currentTab == EquipMenuTab.Players)
             {
                 DrawLargeStatusBackground(view, spriteBatch);
@@ -484,7 +484,7 @@ namespace AW2.Menu
                 var nameChangeInfoTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
                 float moveTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _nameInfoMoveStartTime).TotalSeconds;
                 spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos + new Vector2((float)_nameInfoMove.Evaluate(moveTime), 0), MenuPanePlayers.ElementAt(0).First.PlayerColor);
-               // spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).First.PlayerColor);
+                // spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).First.PlayerColor);
             }
         }
 
@@ -643,7 +643,7 @@ namespace AW2.Menu
             // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
             float fadeTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _tabFadeStartTime).TotalSeconds;
             spriteBatch.Draw(_tabHilite, tab1Pos + (tabWidth * ((int)_currentTab - 1)), new Color(255, 255, 255, (byte)_tabFade.Evaluate(fadeTime)));
-            
+
             // Draw chat tab
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
             {
@@ -678,18 +678,12 @@ namespace AW2.Menu
 
             // Setup statusdisplay texts
             string statusDisplayPlayerAmount = "" + data.Players.Count();
-            string statusDisplayArenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Standalone
-                ? data.ArenaPlaylist[0]
-                : "to be announced";
+            string statusDisplayArenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+                ? "to be announced"
+                : data.ArenaPlaylist[0];
             string statusDisplayStatus = AssaultWing.Instance.NetworkMode == NetworkMode.Server
                 ? "server"
                 : "connected";
-            string statusDisplayPing = "good";
-
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-            {
-                statusDisplayArenaName = "" + data.ArenaPlaylist[0];
-            }
 
             // Draw common statusdisplay texts for all modes
             spriteBatch.DrawString(_menuSmallFont, "Players", statusDisplayTextPos, Color.White);
@@ -708,7 +702,8 @@ namespace AW2.Menu
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
             {
                 spriteBatch.DrawString(_menuSmallFont, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, statusDisplayPing, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, Color.GreenYellow);
+                var textAndColor = GetPingTextAndColor();
+                spriteBatch.DrawString(_menuSmallFont, textAndColor.First, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, textAndColor.Second);
             }
         }
 
@@ -771,6 +766,19 @@ namespace AW2.Menu
             // Draw pane background.
             Vector2 statusPanePos = _pos - view + new Vector2(537, 160);
             spriteBatch.Draw(_statusPaneTexture, statusPanePos, Color.White);
+        }
+
+        private static Pair<string, Color> GetPingTextAndColor()
+        {
+            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client ||
+                !AssaultWing.Instance.NetworkEngine.IsConnectedToGameServer)
+                return new Pair<string, Color>("???", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));
+            var ping = ((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection).PingTime.TotalMilliseconds;
+            if (ping < 35) return new Pair<string, Color>("Excellent", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Great));
+            if (ping < 70) return new Pair<string, Color>("Good", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.High));
+            if (ping < 120) return new Pair<string, Color>("Sufficient", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));
+            if (ping < 200) return new Pair<string, Color>("Poor", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Low));
+            return new Pair<string, Color>("Dreadful", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Poor));
         }
     }
 }

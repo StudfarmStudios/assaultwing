@@ -11,6 +11,7 @@ namespace AW2.Graphics
     public class GobTrackerItem
     {
         public static readonly string PLAYER_TEXTURE = "gui_tracker_player";
+        public static readonly string DOCK_TEXTURE = "gui_tracker_dock";
 
         public Gob Gob { get; set; }
         public bool StickToBorders { get; set; }

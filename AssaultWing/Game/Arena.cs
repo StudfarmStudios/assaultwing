@@ -1229,18 +1229,38 @@ namespace AW2.Game
         private void AddShipTrackerToViewports(AW2.Game.Gobs.Ship ship)
         {
             AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(ship, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
-
+            /*
             foreach (AW2.Graphics.PlayerViewport viewport in AssaultWing.Instance.DataEngine.Viewports)
             {
                 if (viewport != null && viewport.Player.ID != ship.Owner.ID)
                 {
                     viewport.Player.AddGobTrackerItem(trackerItem);
                 }
+            }*/
+
+            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            {
+                if (!plr.IsRemote && plr.ID != ship.Owner.ID)
+                {
+                    plr.AddGobTrackerItem(trackerItem);
+                }
+            }
+        }
+
+        private void AddDockTrackerToViewports(AW2.Game.Gobs.Dock dock)
+        {
+            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(dock, AW2.Graphics.GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
+
+            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            {
+                if (!plr.IsRemote)
+                {
+                    plr.AddGobTrackerItem(trackerItem);
+                }
             }
         }
 
         #region Callbacks
-
 
         private void GobAdded(Gob gob)
         {
@@ -1250,6 +1270,10 @@ namespace AW2.Game
             if (gob is AW2.Game.Gobs.Ship)
             {
                 AddShipTrackerToViewports((AW2.Game.Gobs.Ship)gob);
+            }
+            if (gob is AW2.Game.Gobs.Dock)
+            {
+                AddDockTrackerToViewports((AW2.Game.Gobs.Dock)gob);
             }
 
             // Game server notifies game clients of the new gob.

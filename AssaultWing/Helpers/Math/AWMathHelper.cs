@@ -120,7 +120,7 @@ namespace AW2.Helpers
                 ? from + Math.Min(step, difference)
                 : from - Math.Min(step, MathHelper.TwoPi - difference);
         }
-        
+
         /// <summary>
         /// Returns the least power of two that is more than or equal to a value.
         /// Return value is undefined for zero and negative arguments.
@@ -309,6 +309,18 @@ namespace AW2.Helpers
             float asin = (float)Math.Asin(yDivLength);
             if (v.X < 0) return MathHelper.Pi - asin;
             return asin;
+        }
+
+        /// <summary>
+        /// Returns the absolute difference of two angles in radians
+        /// as the smallest non-negative angle congruent to 2 * PI.
+        /// </summary>
+        public static float AbsoluteAngleDifference(float angle1, float angle2)
+        {
+            float moduloDifference = (angle1 - angle2).Modulo(MathHelper.TwoPi);
+            return moduloDifference <= MathHelper.Pi
+                ? moduloDifference
+                : MathHelper.TwoPi - moduloDifference;
         }
 
         /// <summary>
@@ -646,6 +658,19 @@ namespace AW2.Helpers
             }
 
             [Test]
+            public void TestAbsoluteAngleDifference()
+            {
+                Assert.AreEqual(0, AbsoluteAngleDifference(0, 0));
+                Assert.AreEqual(1, AbsoluteAngleDifference(0, 1));
+                Assert.AreEqual(1, AbsoluteAngleDifference(1, 0));
+                Assert.AreEqual(1, AbsoluteAngleDifference(0, -1));
+                Assert.AreEqual(1, AbsoluteAngleDifference(-1, 0));
+                Assert.AreEqual(0, AbsoluteAngleDifference(0, MathHelper.TwoPi));
+                Assert.AreEqual(0, AbsoluteAngleDifference(MathHelper.Pi, -MathHelper.Pi));
+                Assert.AreEqual(MathHelper.Pi, AbsoluteAngleDifference(MathHelper.PiOver2, (float)(-2.5 * Math.PI)), 0.00001);
+            }
+
+            [Test]
             public void TestRoundPowerTwo()
             {
                 for (int power = 0; power < 31; ++power)
@@ -814,7 +839,7 @@ namespace AW2.Helpers
             {
                 int width;
                 int height;
-                var rect = new Rectangle(50,30,150,200);
+                var rect = new Rectangle(50, 30, 150, 200);
 
                 width = 0; height = 0;
                 Assert.Throws<ArgumentException>(() => rect.Clamp(ref width, ref height));
@@ -872,7 +897,7 @@ namespace AW2.Helpers
                 if (radius < 9) data.DebugDraw();
                 var duplicate = data.GetFirstDuplicatePlotPoint();
                 Assert.That(!duplicate.HasValue, "FillCircle plotted " + duplicate + " several times");
-                
+
                 // Make sure plotted area is continuous horizontally and vertically.
                 for (int y = 0; y < data.Height; ++y)
                 {

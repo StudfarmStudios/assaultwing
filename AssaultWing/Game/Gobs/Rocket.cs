@@ -1,15 +1,18 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs
 {
     /// <summary>
-    /// A rocket that has its own means of propulsion.
+    /// A rocket that has its own means of propulsion and targetting capabilities.
     /// </summary>
     public class Rocket : Gob
     {
         #region Rocket fields
+
+        private static readonly TimeSpan FIND_TARGET_INTERVAL = TimeSpan.FromSeconds(0.5);
 
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
@@ -30,15 +33,42 @@ namespace AW2.Game.Gobs
         private float _thrustDuration;
 
         /// <summary>
-        /// Maximum turning speed of the rocket, measured in radians per second.
+        /// Rocket's maximum speed reachable by thrust, measured in meters per second.
         /// </summary>
         [TypeParameter]
-        private float _turnSpeed;
+        private float _maxSpeed;
+
+        /// <summary>
+        /// Maximum turning speed of the rocket when falling without thrusting, measured in radians per second.
+        /// </summary>
+        [TypeParameter]
+        private float _fallTurnSpeed;
+
+        /// <summary>
+        /// Maximum turning speed of the rocket when thrusting towards a target, measured in radians per second.
+        /// </summary>
+        [TypeParameter]
+        private float _targetTurnSpeed;
+
+        /// <summary>
+        /// Range in which to look for targets, in meters.
+        /// </summary>
+        [TypeParameter]
+        private float _findTargetRange;
+
+        /// <summary>
+        /// Half central angle of the sector in which to look for targets, in radians.
+        /// </summary>
+        [TypeParameter]
+        private float _findTargetAngle;
 
         /// <summary>
         /// Time at which thursting ends, in game time.
         /// </summary>
         private TimeSpan _thrustEndTime;
+
+        private Gob _target;
+        private TimeSpan _lastFindTarget;
 
         #endregion Rocket fields
 
@@ -50,7 +80,11 @@ namespace AW2.Game.Gobs
             _impactDamage = 100;
             _thrustForce = 100;
             _thrustDuration = 2;
-            _turnSpeed = 5;
+            _maxSpeed = 400;
+            _fallTurnSpeed = 5;
+            _targetTurnSpeed = 5;
+            _findTargetRange = 800;
+            _findTargetAngle = MathHelper.Pi / 6;
         }
 
         public Rocket(CanonicalString typeName)
@@ -68,10 +102,14 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
+            if (_target == null && _lastFindTarget + FIND_TARGET_INTERVAL <= Arena.TotalTime) FindTarget();
             if (Arena.TotalTime < _thrustEndTime)
+            {
+                if (_target != null) RotateTowards(_target.Pos - Pos, _targetTurnSpeed);
                 Thrust();
+            }
             else
-                FallNoseFirst();
+                RotateTowards(Move, _fallTurnSpeed);
 
             base.Update();
 
@@ -89,17 +127,32 @@ namespace AW2.Game.Gobs
 
         #endregion Methods related to gobs' functionality in the game world
 
-        private void FallNoseFirst()
+        private void RotateTowards(Vector2 direction, float rotationSpeed)
         {
-            float rotationGoal = AWMathHelper.Angle(Move);
+            float rotationGoal = AWMathHelper.Angle(direction);
             Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal,
-                AssaultWing.Instance.PhysicsEngine.ApplyChange(_turnSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime));
+                AssaultWing.Instance.PhysicsEngine.ApplyChange(rotationSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime));
         }
 
         private void Thrust()
         {
             var forceVector = _thrustForce * AWMathHelper.GetUnitVector2(Rotation);
-            AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
+            AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed,
+                AssaultWing.Instance.GameTime.ElapsedGameTime);
+        }
+
+        private void FindTarget()
+        {
+            _lastFindTarget = Arena.TotalTime;
+            var targets =
+                from gob in Arena.Gobs.GameplayLayer.Gobs
+                where gob.IsDamageable && !gob.Disabled && gob.Owner != Owner
+                    && AWMathHelper.AbsoluteAngleDifference((gob.Pos - Pos).Angle(), Rotation) <= _findTargetAngle
+                let distanceSquared = Vector2.DistanceSquared(gob.Pos, Pos)
+                where distanceSquared <= _findTargetRange * _findTargetRange
+                orderby distanceSquared ascending
+                select gob;
+            _target = targets.FirstOrDefault();
         }
     }
 }

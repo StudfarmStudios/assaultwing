@@ -1228,7 +1228,7 @@ namespace AW2.Game
 
         private void AddShipTrackerToViewports(AW2.Game.Gobs.Ship ship)
         {
-            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(ship, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
+            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(ship, null, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
 
             foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
             {
@@ -1241,7 +1241,7 @@ namespace AW2.Game
 
         private void AddDockTrackerToViewports(AW2.Game.Gobs.Dock dock)
         {
-            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(dock, AW2.Graphics.GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
+            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(dock, null, AW2.Graphics.GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
 
             foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
             {
@@ -1254,7 +1254,7 @@ namespace AW2.Game
 
         private void AddBonusTrackerToViewports(AW2.Game.Gobs.Bonus.Bonus bonus)
         {
-            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(bonus, AW2.Graphics.GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
+            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(bonus, null, AW2.Graphics.GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
             
             foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
             {

@@ -353,9 +353,26 @@ namespace AW2.Game
 
         #region General public methods
 
+        public void RemoveGobTrackerItem(GobTrackerItem item)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException("Trying to remove NULL GobTrackerItem from the GobTrackerList");
+            }
+
+            if (_gobTrackerItems.Contains(item))
+                _gobTrackerItems.Remove(item);
+        }
+
         public void AddGobTrackerItem(GobTrackerItem item)
         {
-            _gobTrackerItems.Add(item);
+            if (item == null)
+            {
+                throw new ArgumentNullException("Trying to add NULL GobTrackerItem to the GobTrackerList");
+            }
+
+            if (!_gobTrackerItems.Contains(item))
+                _gobTrackerItems.Add(item);
         }
 
         /// <summary>

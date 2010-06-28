@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using AW2.Graphics;
 
 namespace AW2.Game.Gobs
 {
@@ -109,7 +110,11 @@ namespace AW2.Game.Gobs
                 Thrust();
             }
             else
-                RotateTowards(Move, _fallTurnSpeed);
+            {
+                RotateTowards(Move, _fallTurnSpeed);                
+                if (_targetTracker != null)
+                    RemoveTargetTrackers();
+            }
 
             base.Update();
 
@@ -123,6 +128,18 @@ namespace AW2.Game.Gobs
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
             Die(new DeathCause());
+            RemoveTargetTrackers();
+        }
+
+        private void RemoveTargetTrackers()
+        {
+            if (_targetTracker != null)
+            {
+                Owner.RemoveGobTrackerItem(_targetTracker);
+                if (_targetTracker.Gob != null)
+                    _targetTracker.Gob.Owner.RemoveGobTrackerItem(_targetTracker);
+                _targetTracker = null;
+            }
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -141,6 +158,8 @@ namespace AW2.Game.Gobs
                 AssaultWing.Instance.GameTime.ElapsedGameTime);
         }
 
+        private GobTrackerItem _targetTracker;
+
         private void FindTarget()
         {
             _lastFindTarget = Arena.TotalTime;
@@ -153,6 +172,21 @@ namespace AW2.Game.Gobs
                 orderby distanceSquared ascending
                 select gob;
             _target = targets.FirstOrDefault();
+
+            // If the target has changed remove the GobTrackerItem from the list and set
+            // the _targetTracker to null so that a new one will be created.
+            if (_target != null && _targetTracker != null && _target != _targetTracker.Gob)
+            {
+                RemoveTargetTrackers();
+            }
+
+            // Create a target GobTrackerItem
+            if (_target != null && _target is Ship && _targetTracker == null)
+            {
+                _targetTracker = new GobTrackerItem(_target, this, GobTrackerItem.ROCKET_TARGET_TEXTURE, false, true, true, true, Owner.PlayerColor);
+                Owner.AddGobTrackerItem(_targetTracker);
+                _target.Owner.AddGobTrackerItem(_targetTracker);
+            }
         }
     }
 }

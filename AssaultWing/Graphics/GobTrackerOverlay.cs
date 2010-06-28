@@ -13,8 +13,10 @@ namespace AW2.Graphics
         public static readonly string PLAYER_TEXTURE = "gui_tracker_player";
         public static readonly string DOCK_TEXTURE = "gui_tracker_dock";
         public static readonly string BONUS_TEXTURE = "gui_tracker_bonus";
+        public static readonly string ROCKET_TARGET_TEXTURE = "gui_tracker_rockettarget";
 
         public Gob Gob { get; set; }
+        public Gob TrackerGob { get; set; }
         public bool StickToBorders { get; set; }
         public bool RotateTowardsTarget { get; set; }
         public bool ShowWhileTargetOnScreen { get; set; }
@@ -22,7 +24,7 @@ namespace AW2.Graphics
         public string Texture { get; set; }
         public Color DrawColor { get; set; }
 
-        public GobTrackerItem(Gob gob, string texture,  bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, bool scaleByDistance, Color drawColor)
+        public GobTrackerItem(Gob gob, Gob trackerGob, string texture,  bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, bool scaleByDistance, Color drawColor)
         {
             if (gob == null)
             {
@@ -36,6 +38,7 @@ namespace AW2.Graphics
             Texture = texture;
             DrawColor = drawColor;
             ScaleByDistance = scaleByDistance;
+            TrackerGob = trackerGob;
         }
     }
 
@@ -98,15 +101,19 @@ namespace AW2.Graphics
                         Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
                         float rotation = 0f;
                         float scale = 1f;
+                        Gob trackerGob = _player.Ship;
+
+                        if (gobtracker.TrackerGob != null)
+                            trackerGob = gobtracker.TrackerGob;
 
                         if (gobtracker.ScaleByDistance)
                         {
                             Arena arena = AssaultWing.Instance.DataEngine.Arena;
-                            scale = (arena.Dimensions.Length() - Vector2.Distance(gobtracker.Gob.Pos, _player.Ship.Pos)) / arena.Dimensions.Length();
+                            scale = (arena.Dimensions.Length() - Vector2.Distance(gobtracker.Gob.Pos, trackerGob.Pos)) / arena.Dimensions.Length();
                         }
                         if (gobtracker.RotateTowardsTarget)
                         {
-                            rotation = -AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - _player.Ship.Pos);
+                            rotation = -AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - trackerGob.Pos);
                         }
                         if (gobtracker.StickToBorders)
                         {

@@ -75,7 +75,7 @@ namespace AW2.Game
         {
             Spectators = new IndexedItemCollection<Spectator>();
             Spectators.Added += SpectatorAdded;
-            Spectators.Removed += player => player.Dispose();
+            Spectators.Removed += SpectatorRemoved;
 
             Devices = new IndexedItemCollection<ShipDevice>();
             Devices.Added += device =>
@@ -506,6 +506,16 @@ namespace AW2.Game
                 player.PlayerColor = Color.Black; // reset to a color that won't affect free color picking
                 player.PlayerColor = GetFreePlayerColor();
             }
+        }
+
+        private void SpectatorRemoved(Spectator spectator)
+        {
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            {
+                var message = new PlayerDeletionMessage { PlayerID = spectator.ID };
+                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+            }
+            spectator.Dispose();
         }
 
         private int GetFreeSpectatorID()

@@ -28,6 +28,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
+            yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, HandleJoinGameReply);
         }
 
@@ -40,6 +41,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessage);
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<GobDamageMessage>(false, IMessageHandler.SourceType.Server, HandleGobDamageMessage);
+            yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
@@ -102,6 +104,11 @@ namespace AW2.Net.MessageHandling
             if (player == null) throw new ApplicationException("Cannot find unregistered local player with ID " + mess.OldPlayerID);
             player.ServerRegistration = Spectator.ServerRegistrationType.Yes;
             player.ID = mess.NewPlayerID;
+        }
+
+        private static void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
+        {
+            AssaultWing.Instance.DataEngine.Spectators.Remove(spec => spec.ID == mess.PlayerID);
         }
 
         private static void HandleJoinGameReply(JoinGameReply mess)

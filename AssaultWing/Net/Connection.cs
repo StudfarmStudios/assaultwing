@@ -101,6 +101,8 @@ namespace AW2.Net
         /// </summary>
         public string Name { get; set; }
 
+        public bool IsDisposed { get { return _isDisposed > 0; } }
+
         /// <summary>
         /// The local end point of the connection.
         /// </summary>
@@ -109,6 +111,7 @@ namespace AW2.Net
         {
             get
             {
+                if (IsDisposed) return null;
                 try
                 {
                     return (IPEndPoint)_socket.LocalEndPoint;
@@ -129,6 +132,7 @@ namespace AW2.Net
         {
             get
             {
+                if (IsDisposed) return null;
                 try
                 {
                     return (IPEndPoint)_socket.RemoteEndPoint;
@@ -194,7 +198,9 @@ namespace AW2.Net
         /// <summary>
         /// Updates the connection. Call this regularly.
         /// </summary>
-        public void Update() { }
+        public void Update()
+        {
+        }
 
         /// <summary>
         /// Sends a message to the remote host. The message is sent asynchronously,
@@ -203,6 +209,7 @@ namespace AW2.Net
         /// <param name="message">The message to send.</param>
         public void Send(Message message)
         {
+            if (IsDisposed) return;
             try
             {
 #if DEBUG_MESSAGE_DELAY
@@ -255,6 +262,7 @@ namespace AW2.Net
         /// </summary>
         public void HandleErrors()
         {
+            if (IsDisposed) return;
             bool errorsFound = false;
             Errors.Do(queue =>
             {
@@ -277,6 +285,7 @@ namespace AW2.Net
         /// </summary>
         public int GetSendQueueSize()
         {
+            if (IsDisposed) return 0;
             int count = 0;
             _sendBuffers.Do(queue =>
             {
@@ -450,7 +459,7 @@ namespace AW2.Net
             state.Socket.EndConnect(asyncResult);
             return new GameServerConnection(state.Socket);
         }
-        
+
         private static void ReportResult(Result<Connection> result)
         {
             ConnectionResults.Do(queue => queue.Enqueue(result));

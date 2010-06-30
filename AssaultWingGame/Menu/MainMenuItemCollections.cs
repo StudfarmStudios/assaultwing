@@ -63,7 +63,7 @@ namespace AW2.Menu
                 Action = component =>
                 {
                     if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
-                    if (!AssaultWing.Instance.StartServer(IncomingClientConnectionHandler)) return;
+                    if (!AssaultWing.Instance.StartServer(MessageHandlers.IncomingConnectionHandlerOnServer)) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player and Amazonas as the only arena.
@@ -84,14 +84,6 @@ namespace AW2.Menu
                     AssaultWing.Instance.StartClient(_connectAddress.Content, result => ClientConnectedCallback(result, component));
                 }
             });
-        }
-
-        private static void IncomingClientConnectionHandler(Result<Connection> result)
-        {
-            if (!result.Successful)
-                Log.Write("Some client failed to connect: " + result.Error);
-            else
-                Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
         }
 
         private static void ClientConnectedCallback(Result<Connection> result, MainMenuComponent component)

@@ -19,6 +19,11 @@ namespace AW2.Net
         string Name { get; set; }
 
         /// <summary>
+        /// Is the connection closed and its resources disposed.
+        /// </summary>
+        bool IsDisposed { get; }
+
+        /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
         ITypedQueue<Message> Messages { get; }

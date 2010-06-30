@@ -25,6 +25,7 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetClientMenuHandlers()
         {
+            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
@@ -34,6 +35,7 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers()
         {
+            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<WallHoleMessage>(false, IMessageHandler.SourceType.Server, HandleWallHoleMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, AssaultWing.Instance.DataEngine.ProcessGobCreationMessage);
             yield return new MessageHandler<ArenaStartRequest>(false, IMessageHandler.SourceType.Server, HandleArenaStartRequest);
@@ -60,7 +62,32 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ArenaStartReply>(false, IMessageHandler.SourceType.Client, mess => idRegisterer(mess.ConnectionID));
         }
 
+        public static void IncomingConnectionHandlerOnServer(Result<Connection> result)
+        {
+            if (!result.Successful)
+                Log.Write("Some client failed to connect: " + result.Error);
+            else
+            {
+                Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
+                if (AssaultWing.Instance.GameState == AW2.Core.GameState.Gameplay ||
+                    AssaultWing.Instance.GameState == AW2.Core.GameState.OverlayDialog)
+                {
+                    var mess = new ConnectionClosingMessage { Info = "Game is already running, you're late!" };
+                    result.Value.Send(mess);
+                    result.Value.Dispose();
+                }
+            }
+        }
+
         #region Handler implementations
+
+        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
+        {
+            Log.Write("Server is going to close the connection, reason: " + mess.Info);
+            var dialogData = new AW2.Graphics.CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
+                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), AssaultWing.Instance.ShowMenu));
+            AssaultWing.Instance.ShowDialog(dialogData);
+        }
 
         private static void HandleStartGameMessage(StartGameMessage mess)
         {

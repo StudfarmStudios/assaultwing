@@ -361,14 +361,8 @@ namespace AW2.Net
 
             foreach (var handler in MessageHandlers) if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
-
-            // Handle occurred errors.
             ForEachConnection(connection => connection.HandleErrors());
-
-            // Finish removing dropped client connections.
-            foreach (PingedConnection connection in _removedClientConnections)
-                _gameClientConnections.Connections.Remove(connection);
-            _removedClientConnections.Clear();
+            RemoveClosedConnections();
 
 #if DEBUG
             // Look for unhandled messages.
@@ -399,6 +393,20 @@ namespace AW2.Net
         private void RemoveDisposedMessageHandlers()
         {
             MessageHandlers = MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
+        }
+
+        private void RemoveClosedConnections()
+        {
+            foreach (var connection in _removedClientConnections)
+                _gameClientConnections.Connections.Remove(connection);
+            _removedClientConnections.Clear();
+            if (_managementServerConnection != null && _managementServerConnection.IsDisposed)
+                _managementServerConnection = null;
+            if (_gameServerConnection != null && _gameServerConnection.IsDisposed)
+                _gameServerConnection = null;
+            IConnection conn;
+            while ((conn = _gameClientConnections.Connections.FirstOrDefault(c => c.IsDisposed)) != null)
+                _gameClientConnections.Connections.Remove(conn);
         }
 
         private void ForEachConnection(Action<IConnection> action)

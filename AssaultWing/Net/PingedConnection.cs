@@ -49,6 +49,8 @@ namespace AW2.Net
         /// </summary>
         public string Name { get { return BaseConnection.Name; } set { BaseConnection.Name = value; } }
 
+        public bool IsDisposed { get { return BaseConnection.IsDisposed; } }
+
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>

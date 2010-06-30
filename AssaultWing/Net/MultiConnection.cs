@@ -11,10 +11,10 @@ namespace AW2.Net
     /// </summary>
     public class MultiConnection : IConnection
     {
-        class ConnectionList : IList<IConnection>
+        private class ConnectionList : IList<IConnection>
         {
-            List<IConnection> list = new List<IConnection>();
-            TypedQueueCollection<Message> messages;
+            private List<IConnection> list = new List<IConnection>();
+            private TypedQueueCollection<Message> messages;
 
             public ConnectionList(TypedQueueCollection<Message> messages)
             {
@@ -74,7 +74,7 @@ namespace AW2.Net
             #endregion
         }
 
-        TypedQueueCollection<Message> messages = new TypedQueueCollection<Message>();
+        private TypedQueueCollection<Message> messages = new TypedQueueCollection<Message>();
 
         /// <summary>
         /// The connections this <see cref="MultiConnection"/> consists of.
@@ -94,8 +94,17 @@ namespace AW2.Net
         public int ID { get { throw new NotImplementedException("MultiConnection has no identifier"); } }
 
         /// <summary>
-        /// Creates a new <see cref="MultiConnection"/>.
+        /// Short, human-readable name of the connection.
         /// </summary>
+        public string Name { get; set; }
+
+        public bool IsDisposed { get { return false; } }
+
+        /// <summary>
+        /// Received messages that are waiting for consumption by the client program.
+        /// </summary>
+        public ITypedQueue<Message> Messages { get { return messages; } }
+
         public MultiConnection()
         {
             Connections = new ConnectionList(messages);
@@ -108,16 +117,6 @@ namespace AW2.Net
         {
             foreach (var conn in Connections) conn.Dispose();
         }
-
-        /// <summary>
-        /// Short, human-readable name of the connection.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Received messages that are waiting for consumption by the client program.
-        /// </summary>
-        public ITypedQueue<Message> Messages { get { return messages; } }
 
         /// <summary>
         /// Sends a message to the remote host. The message is sent asynchronously,

@@ -1228,9 +1228,9 @@ namespace AW2.Game
 
         private void AddShipTrackerToViewports(AW2.Game.Gobs.Ship ship)
         {
-            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(ship, null, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
+            var trackerItem = new AW2.Graphics.GobTrackerItem(ship, null, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
 
-            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            foreach (var plr in AssaultWing.Instance.DataEngine.Players)
             {
                 if (!plr.IsRemote && plr.ID != ship.Owner.ID)
                 {
@@ -1241,9 +1241,9 @@ namespace AW2.Game
 
         private void AddDockTrackerToViewports(AW2.Game.Gobs.Dock dock)
         {
-            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(dock, null, AW2.Graphics.GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
+            var trackerItem = new AW2.Graphics.GobTrackerItem(dock, null, AW2.Graphics.GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
 
-            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            foreach (var plr in AssaultWing.Instance.DataEngine.Players)
             {
                 if (!plr.IsRemote)
                 {
@@ -1254,9 +1254,9 @@ namespace AW2.Game
 
         private void AddBonusTrackerToViewports(AW2.Game.Gobs.Bonus.Bonus bonus)
         {
-            AW2.Graphics.GobTrackerItem trackerItem = new AW2.Graphics.GobTrackerItem(bonus, null, AW2.Graphics.GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
+            var trackerItem = new AW2.Graphics.GobTrackerItem(bonus, null, AW2.Graphics.GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
             
-            foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
+            foreach (var plr in AssaultWing.Instance.DataEngine.Players)
             {
                 if (!plr.IsRemote)
                 {

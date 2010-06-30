@@ -61,13 +61,6 @@ namespace AW2.Game
         #region Player fields about general things
 
         /// <summary>
-        /// Least int that is known not to have been used as a player identifier
-        /// on this game instance.
-        /// </summary>
-        /// <see cref="Spectator.ID"/>
-        private static int g_leastUnusedID = 0;
-
-        /// <summary>
         /// How many reincarnations the player has left.
         /// </summary>
         protected int _lives;
@@ -304,15 +297,11 @@ namespace AW2.Game
         {
         }
 
-        /// <summary>
-        /// Creates a new player.
-        /// </summary>
         private Player(string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
             : base(controls, connectionId)
         {
             KillsWithoutDying = 0;
-            ID = g_leastUnusedID++;
             Name = name;
             ShipName = shipTypeName;
             Weapon2Name = weapon2Name;
@@ -548,9 +537,9 @@ namespace AW2.Game
         /// <summary>
         /// Resets the player's internal state for a new arena.
         /// </summary>
-        public override void Reset()
+        public override void ResetForArena()
         {
-            base.Reset();
+            base.ResetForArena();
             _shipSpawnTime = TimeSpan.Zero;
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;

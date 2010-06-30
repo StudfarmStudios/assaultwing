@@ -31,13 +31,13 @@ namespace AW2.Game
         /// <summary>
         /// Type templates, indexed by <see cref="CanonicalString.Canonical"/> of their type name.
         /// </summary>
-        List<object> templates;
+        private List<object> _templates;
 
-        Arena preparedArena;
-        Texture2D arenaRadarSilhouette;
-        Vector2 arenaDimensionsOnRadar;
-        Matrix arenaToRadarTransform;
-        ProgressBar progressBar;
+        private Arena _preparedArena;
+        private Texture2D _arenaRadarSilhouette;
+        private Vector2 _arenaDimensionsOnRadar;
+        private Matrix _arenaToRadarTransform;
+        private ProgressBar _progressBar;
 
         #endregion Fields
 
@@ -86,7 +86,7 @@ namespace AW2.Game
             Devices.Removed += device => device.Dispose();
 
             Viewports = new AWViewportCollection(0, null);
-            templates = new List<object>();
+            _templates = new List<object>();
             ArenaPlaylist = new Playlist(new string[] { "Amazonas" });
         }
 
@@ -100,8 +100,8 @@ namespace AW2.Game
         {
             get
             {
-                if (arenaRadarSilhouette == null) RefreshArenaRadarSilhouette();
-                return arenaRadarSilhouette;
+                if (_arenaRadarSilhouette == null) RefreshArenaRadarSilhouette();
+                return _arenaRadarSilhouette;
             }
         }
 
@@ -113,7 +113,7 @@ namespace AW2.Game
         /// and positive Y is up. Radar display origin is the top left corner
         /// of the radar display area, positive X is to the right, and positive
         /// Y is down.
-        public Matrix ArenaToRadarTransform { get { return arenaToRadarTransform; } }
+        public Matrix ArenaToRadarTransform { get { return _arenaToRadarTransform; } }
 
         /// <summary>
         /// Arenas to play in one session.
@@ -155,11 +155,11 @@ namespace AW2.Game
         {
             // Clear old stuff from previous arena, if any.
             Devices.Clear();
-            foreach (var player in Spectators) player.Reset();
+            foreach (var player in Spectators) player.ResetForArena();
             if (Arena != null) Arena.Dispose();
 
-            Arena = preparedArena;
-            preparedArena = null;
+            Arena = _preparedArena;
+            _preparedArena = null;
             AssaultWing.Instance.GobsCounter.SetRawValue(Arena.Gobs.Count);
             if (Arena.IsForPlaying)
             {
@@ -177,13 +177,13 @@ namespace AW2.Game
         public void InitializeFromArena(Arena arena, bool initializeForPlaying)
         {
             CustomOperations = null;
-            preparedArena = arena;
-            preparedArena.IsForPlaying = initializeForPlaying;
-            if (initializeForPlaying) preparedArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, preparedArena.BinFilename));
-            AssaultWing.Instance.LoadArenaContent(preparedArena);
-            int wallCount = preparedArena.Gobs.Count(gob => gob is Wall);
-            progressBar.SetSubtaskCount(wallCount);
-            preparedArena.Reset(); // this usually takes several seconds
+            _preparedArena = arena;
+            _preparedArena.IsForPlaying = initializeForPlaying;
+            if (initializeForPlaying) _preparedArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, _preparedArena.BinFilename));
+            AssaultWing.Instance.LoadArenaContent(_preparedArena);
+            int wallCount = _preparedArena.Gobs.Count(gob => gob is Wall);
+            _progressBar.SetSubtaskCount(wallCount);
+            _preparedArena.Reset(); // this usually takes several seconds
         }
 
         #endregion arenas
@@ -195,15 +195,15 @@ namespace AW2.Game
         /// </summary>
         public void AddTypeTemplate(CanonicalString typeName, object template)
         {
-            while (templates.Count < typeName.Canonical + 1) templates.Add(null);
-            if (templates[typeName.Canonical] != null)
+            while (_templates.Count < typeName.Canonical + 1) _templates.Add(null);
+            if (_templates[typeName.Canonical] != null)
                 Log.Write("WARNING: Overwriting template for user-defined type " + typeName);
-            templates[typeName.Canonical] = template;
+            _templates[typeName.Canonical] = template;
         }
 
         public object GetTypeTemplate(CanonicalString typeName)
         {
-            var item = templates.ElementAtOrDefault(typeName.Canonical);
+            var item = _templates.ElementAtOrDefault(typeName.Canonical);
             if (item == null) throw new ApplicationException("Missing template for user-defined type " + typeName);
             return item;
         }
@@ -217,7 +217,7 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each template.</param>
         public void ForEachTypeTemplate<T>(Action<T> action)
         {
-            foreach (var template in templates)
+            foreach (var template in _templates)
                 if (template != null && template is T) action((T)template);
         }
 
@@ -267,8 +267,8 @@ namespace AW2.Game
         {
             get
             {
-                if (progressBar == null) progressBar = new ProgressBar();
-                return progressBar;
+                if (_progressBar == null) _progressBar = new ProgressBar();
+                return _progressBar;
             }
         }
 
@@ -356,8 +356,8 @@ namespace AW2.Game
             message.Read(gob, SerializationModeFlags.All, messageAge);
             if (message.CreateToNextArena)
             {
-                gob.Layer = preparedArena.Layers[message.LayerIndex];
-                preparedArena.Gobs.Add(gob);
+                gob.Layer = _preparedArena.Layers[message.LayerIndex];
+                _preparedArena.Gobs.Add(gob);
             }
             else
             {
@@ -382,7 +382,7 @@ namespace AW2.Game
             if (Arena != null) Arena.Dispose();
             Arena = null;
             Viewports = new AWViewportCollection(0, null);
-            foreach (var player in Spectators) player.Reset();
+            foreach (var player in Spectators) player.ResetForArena();
         }
 
         /// <summary>
@@ -390,10 +390,10 @@ namespace AW2.Game
         /// </summary>
         public void UnloadContent()
         {
-            if (arenaRadarSilhouette != null)
+            if (_arenaRadarSilhouette != null)
             {
-                arenaRadarSilhouette.Dispose();
-                arenaRadarSilhouette = null;
+                _arenaRadarSilhouette.Dispose();
+                _arenaRadarSilhouette = null;
             }
         }
 
@@ -411,17 +411,17 @@ namespace AW2.Game
                 throw new InvalidOperationException("No active arena");
 
             // Dispose of any previous silhouette.
-            if (arenaRadarSilhouette != null)
+            if (_arenaRadarSilhouette != null)
             {
-                arenaRadarSilhouette.Dispose();
-                arenaRadarSilhouette = null;
+                _arenaRadarSilhouette.Dispose();
+                _arenaRadarSilhouette = null;
             }
 
             // Draw arena walls in one color in a radar-sized texture.
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
-            int targetWidth = (int)arenaDimensionsOnRadar.X;
-            int targetHeight = (int)arenaDimensionsOnRadar.Y;
+            int targetWidth = (int)_arenaDimensionsOnRadar.X;
+            int targetHeight = (int)_arenaDimensionsOnRadar.Y;
             GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
             if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
                 TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
@@ -459,8 +459,8 @@ namespace AW2.Game
             gfx.SetRenderTarget(0, null);
             Color[] textureData = new Color[targetHeight * targetWidth];
             maskTarget.GetTexture().GetData(textureData);
-            arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, 1, TextureUsage.None, SurfaceFormat.Color);
-            arenaRadarSilhouette.SetData(textureData);
+            _arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, 1, TextureUsage.None, SurfaceFormat.Color);
+            _arenaRadarSilhouette.SetData(textureData);
 
             // Restore graphics device's old settings.
             gfx.DepthStencilBuffer = oldDepthStencilBuffer;
@@ -468,6 +468,11 @@ namespace AW2.Game
         }
 
         #endregion miscellaneous
+
+        public void RemoveRemoteSpectators()
+        {
+            Spectators.Remove(spec => spec.IsRemote);
+        }
 
         #region Private methods
 
@@ -486,20 +491,29 @@ namespace AW2.Game
             float arenaToRadarScale = Math.Min(
                 radarDisplayDimensions.X / arenaDimensions.X,
                 radarDisplayDimensions.Y / arenaDimensions.Y);
-            arenaDimensionsOnRadar = arenaDimensions * arenaToRadarScale;
-            arenaToRadarTransform =
+            _arenaDimensionsOnRadar = arenaDimensions * arenaToRadarScale;
+            _arenaToRadarTransform =
                 Matrix.CreateScale(arenaToRadarScale, -arenaToRadarScale, 1) *
-                Matrix.CreateTranslation(0, arenaDimensionsOnRadar.Y, 0);
+                Matrix.CreateTranslation(0, _arenaDimensionsOnRadar.Y, 0);
         }
 
         private void SpectatorAdded(Spectator spectator)
         {
+            spectator.ID = GetFreeSpectatorID();
             var player = spectator as Player;
             if (player != null && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
             {
                 player.PlayerColor = Color.Black; // reset to a color that won't affect free color picking
                 player.PlayerColor = GetFreePlayerColor();
             }
+        }
+
+        private int GetFreeSpectatorID()
+        {
+            var usedIDs = Spectators.Select(spec => spec.ID);
+            for (int id = 0; id <= byte.MaxValue; ++id)
+                if (!usedIDs.Contains(id)) return id;
+            throw new ApplicationException("There are no free spectator IDs");
         }
 
         private Color GetFreePlayerColor()

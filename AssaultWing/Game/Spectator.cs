@@ -104,7 +104,7 @@ namespace AW2.Game
         /// <summary>
         /// Resets the spectator's internal state for a new arena.
         /// </summary>
-        public virtual void Reset()
+        public virtual void ResetForArena()
         {
         }
 

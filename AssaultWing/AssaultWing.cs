@@ -672,6 +672,7 @@ namespace AW2
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             NetworkEngine.StopServer();
             NetworkMode = NetworkMode.Standalone;
+            DataEngine.RemoveRemoteSpectators();
         }
 
         /// <summary>
@@ -706,6 +707,7 @@ namespace AW2
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
+            DataEngine.RemoveRemoteSpectators();
         }
 
         /// <summary>

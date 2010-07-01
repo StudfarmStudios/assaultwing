@@ -54,7 +54,8 @@ namespace AW2.Net
                 CheckThread();
                 if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
                 CreateServerSocket(port);
-                StaticPortMapper.EnsurePortMapped(NetworkEngine.TCP_CONNECTION_PORT, "TCP");
+                if (StaticPortMapper.IsSupported)
+                    StaticPortMapper.EnsurePortMapped(NetworkEngine.TCP_CONNECTION_PORT, "TCP");
                 ListenOneConnection();
             }
             catch (Exception)
@@ -85,7 +86,8 @@ namespace AW2.Net
             _serverSocket.Close();
             _serverSocket = null;
             _listenResult = null;
-            StaticPortMapper.RemovePortMapping(NetworkEngine.TCP_CONNECTION_PORT, "TCP");
+            if (StaticPortMapper.IsSupported)
+                StaticPortMapper.RemovePortMapping(NetworkEngine.TCP_CONNECTION_PORT, "TCP");
         }
 
         private static void CheckThread()

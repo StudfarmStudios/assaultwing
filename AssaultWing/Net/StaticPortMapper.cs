@@ -9,6 +9,8 @@ namespace AW2.Net
 {
     public static class StaticPortMapper
     {
+        public static bool IsSupported { get { return Mappings != null; } }
+
         private static string MappingDescription { get { return "Assault Wing game server"; } }
 
         private static IStaticPortMappingCollection Mappings
@@ -22,6 +24,7 @@ namespace AW2.Net
 
         public static void EnsurePortMapped(int port, string protocol)
         {
+            if (!IsSupported) throw new InvalidOperationException("Static port mapping is not supported by the network device");
             var mapping = GetMappingOrNull(port, protocol);
             if (mapping == null)
                 AddMapping(port, protocol);
@@ -31,6 +34,7 @@ namespace AW2.Net
 
         public static void RemovePortMapping(int port, string protocol)
         {
+            if (!IsSupported) throw new InvalidOperationException("Static port mapping is not supported by the network device");
             var mapping = GetMappingOrNull(port, protocol);
             if (mapping == null) return;
             Mappings.Remove(port, protocol);

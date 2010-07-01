@@ -627,7 +627,8 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Creates a gob of a given type and performs a given initialisation on it.
+        /// Creates a gob of a given type, ensures the gob has a given base class
+        /// and performs a given initialisation on the gob.
         /// This method is for game logic; gob init is skipped appropriately on clients.
         /// </summary>
         /// Note that you cannot call new Gob(typeName) because then the created object
@@ -636,12 +637,14 @@ namespace AW2.Game
         /// 
         /// In order for a call to this method to be meaningful, <c>init</c>
         /// should contain a call to <c>DataEngine.AddGob</c> or similar method.
-        /// <param name="typeName">The type of the gob.</param>
-        /// <param name="init">Initialisation to perform on the gob.</param>
+        /// <typeparam name="T">Required base class of the gob</typeparam>
+        /// <param name="typeName">Template type name of the gob</param>
+        /// <param name="init">Initialisation to perform on the gob</param>
         /// <seealso cref="CreateGob(CanonicalString)"/>
-        public static void CreateGob(CanonicalString typeName, Action<Gob> init)
+        public static void CreateGob<T>(CanonicalString typeName, Action<T> init) where T : Gob
         {
-            Gob gob = (Gob)Clonable.Instantiate(typeName);
+            T gob = Clonable.Instantiate(typeName) as T;
+            if (gob == null) throw new ApplicationException("Gob type template " + typeName + " wasn't of expected type " + typeof(T).Name);
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
@@ -1084,14 +1087,10 @@ namespace AW2.Game
             for (int thrustI = 0; thrustI < boneIs.Length; ++thrustI)
                 for (int tempI = 0; tempI < templates; ++tempI)
                 {
-                    Gob.CreateGob(exhaustEngineNames[tempI], gob =>
+                    Gob.CreateGob<Gobs.Peng>(exhaustEngineNames[tempI], gob =>
                     {
-                        var peng = gob as Gobs.Peng;
-                        if (peng != null)
-                        {
-                            peng.Leader = this;
-                            peng.LeaderBone = boneIs[thrustI].Value;
-                        }
+                        gob.Leader = this;
+                        gob.LeaderBone = boneIs[thrustI].Value;
                         Arena.Gobs.Add(gob);
                         exhaustBoneIList.Add(boneIs[thrustI].Value);
                         exhaustEngineList.Add(gob);
@@ -1233,12 +1232,15 @@ namespace AW2.Game
         {
             foreach (var gobType in birthGobTypes)
             {
-                CreateGob(gobType, gob =>
+                CreateGob<Gob>(gobType, gob =>
                 {
-                    gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);
-                    gob._owner = this._owner;
+                    gob.ResetPos(Pos, Vector2.Zero, Rotation);
                     var peng = gob as Gobs.Peng;
-                    if (peng != null) peng.Leader = this;
+                    if (peng != null)
+                    {
+                        peng.Owner = Owner;
+                        peng.Leader = this;
+                    }
                     Arena.Gobs.Add(gob);
                 });
             }
@@ -1262,14 +1264,10 @@ namespace AW2.Game
                     Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + modelName);
                     continue;
                 }
-                Gob.CreateGob((CanonicalString)tokens[1], gob =>
+                Gob.CreateGob<Gobs.Peng>((CanonicalString)tokens[1], gob =>
                 {
-                    var peng = gob as Gobs.Peng;
-                    if (peng != null)
-                    {
-                        peng.Leader = this;
-                        peng.LeaderBone = pos.Value;
-                    }
+                    gob.Leader = this;
+                    gob.LeaderBone = pos.Value;
                     Arena.Gobs.Add(gob);
                 });
             }
@@ -1326,10 +1324,10 @@ namespace AW2.Game
             // Create death gobs.
             foreach (var gobType in deathGobTypes)
             {
-                CreateGob(gobType, gob =>
+                CreateGob<Gob>(gobType, gob =>
                 {
-                    gob.ResetPos(this.Pos, Vector2.Zero, this.Rotation);
-                    gob._owner = this._owner;
+                    gob.ResetPos(Pos, Vector2.Zero, Rotation);
+                    gob.Owner = Owner;
                     Arena.Gobs.Add(gob);
                 });
             }

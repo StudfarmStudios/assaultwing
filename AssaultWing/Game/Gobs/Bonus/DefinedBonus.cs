@@ -29,12 +29,12 @@ namespace AW2.Game.Gobs.Bonus
                 return;
             }
 
-            Gob.CreateGob((CanonicalString)"bonusmessage", gob =>
+            Gob.CreateGob<ArenaMessage>((CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, gob.Move, gob.Rotation);
-                ((BonusMessage)gob).Message = gameAction.BonusText;
-                ((BonusMessage)gob).IconName = gameAction.BonusIconName;
-                ((BonusMessage)gob).DrawColor = gameAction.Player.PlayerColor;
+                gob.Message = gameAction.BonusText;
+                gob.IconName = gameAction.BonusIconName;
+                gob.DrawColor = gameAction.Player.PlayerColor;
                 AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
             });
             player.BonusActions.AddOrReplace(gameAction);

@@ -53,17 +53,13 @@ namespace AW2.Game.Weapons
 
         private void CreateShot(Gob target, int boneIndex)
         {
-            Gob.CreateGob(shotTypeName, shot =>
+            Gob.CreateGob<Lightning>(shotTypeName, shot =>
             {
                 shot.Owner = owner.Owner;
                 shot.ResetPos(owner.GetNamedPosition(boneIndex), Vector2.Zero, owner.Rotation);
-                var lightning = shot as Lightning;
-                if (lightning != null)
-                {
-                    lightning.Shooter = new GobProxy(owner);
-                    lightning.ShooterBoneIndex = boneIndex;
-                    lightning.Target = new GobProxy(target);
-                }
+                shot.Shooter = new GobProxy(owner);
+                shot.ShooterBoneIndex = boneIndex;
+                shot.Target = new GobProxy(target);
                 Arena.Gobs.Add(shot);
             });
         }

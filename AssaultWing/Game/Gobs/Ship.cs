@@ -107,7 +107,7 @@ namespace AW2.Game.Gobs
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _coughEngineNames;
 
-        private Gob[] _coughEngines;
+        private List<Peng> _coughEngines;
 
         #endregion Ship fields related to coughing
 
@@ -298,35 +298,26 @@ namespace AW2.Game.Gobs
 
         private void CreateCoughEngines()
         {
-            var coughEngineList = new List<Gob>();
-            for (int i = 0; i < _coughEngineNames.Length; ++i)
+            _coughEngines = new List<Peng>();
+            foreach (var name in _coughEngineNames)
             {
-                Gob.CreateGob(_coughEngineNames[i], gob =>
+                Gob.CreateGob<Peng>(name, gob =>
                 {
-                    if (gob is Peng)
-                    {
-                        Peng peng = (Peng)gob;
-                        peng.Paused = true;
-                        peng.Leader = this;
-                    }
+                    gob.Paused = true;
+                    gob.Leader = this;
                     Arena.Gobs.Add(gob);
-                    coughEngineList.Add(gob);
+                    _coughEngines.Add(gob);
                 });
             }
-            _coughEngines = coughEngineList.ToArray();
         }
 
         private void CreateGlow()
         {
             if (Owner == null) return;
-            Gob.CreateGob((CanonicalString)"playerglow", gob =>
+            Gob.CreateGob<Peng>((CanonicalString)"playerglow", gob =>
             {
-                if (gob is Peng)
-                {
-                    var peng = (Peng)gob;
-                    peng.Owner = Owner;
-                    peng.Leader = this;
-                }
+                gob.Owner = Owner;
+                gob.Leader = this;
                 AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
             });
         }
@@ -357,18 +348,10 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            var elapsedGameTime = AssaultWing.Instance.GameTime.ElapsedGameTime;
-
-            // Manage turn-related rolling.
-            _rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(_rollSpeed, elapsedGameTime);
-            _rollAngle.Advance();
-            if (!_rollAngleGoalUpdated)
-                _rollAngle.Target = 0;
-            _rollAngleGoalUpdated = false;
-
+            UpdateRoll();
             LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
             {
-                GameTime = Arena.TotalTime - elapsedGameTime,
+                GameTime = Arena.TotalTime - AssaultWing.Instance.GameTime.ElapsedGameTime,
                 Pos = Pos,
                 Move = Move,
                 Rotation = Rotation
@@ -379,37 +362,10 @@ namespace AW2.Game.Gobs
             foreach (Gob gob in _temporarilyDisabledGobs) gob.Enable();
             _temporarilyDisabledGobs.Clear();
 
-            // Manage exhaust engines.
-            if (!_exhaustAmountUpdated)
-                SwitchEngineFlashAndBang(false);
-            _exhaustAmountUpdated = false;
-
-            // Manage cough engines.
-            float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
-            coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
-            foreach (var coughEngine in _coughEngines)
-            {
-                var peng = coughEngine as Peng;
-                if (peng != null)
-                {
-                    peng.Input = coughArgument;
-                    peng.Paused = coughArgument == 0;
-                }
-            }
-
-            ExtraDevice.Charge += _extraDeviceChargeSpeed * (float)elapsedGameTime.TotalSeconds;
-            Weapon2.Charge += _weapon2ChargeSpeed * (float)elapsedGameTime.TotalSeconds;
-
-            if (_isBirthFlashing)
-            {
-                float age = birthTime.SecondsAgoGameTime();
-                Alpha = _birthAlpha.Evaluate(age);
-                if (age >= _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position)
-                {
-                    Enable();
-                    _isBirthFlashing = false;
-                }
-            }
+            UpdateExhaustEngines();
+            UpdateCoughEngines();
+            UpdateCharges();
+            UpdateFlashing();
         }
 
         public override void Die(DeathCause cause)
@@ -677,6 +633,54 @@ namespace AW2.Game.Gobs
             base.SwitchEngineFlashAndBang(active);
             if (active) _thrusterSound.EnsureIsPlaying();
             else _thrusterSound.EnsureIsStopped(Microsoft.Xna.Framework.Audio.AudioStopOptions.AsAuthored);
+        }
+
+        private void UpdateRoll()
+        {
+            _rollAngle.Step = AssaultWing.Instance.PhysicsEngine.ApplyChange(_rollSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
+            _rollAngle.Advance();
+            if (!_rollAngleGoalUpdated)
+                _rollAngle.Target = 0;
+            _rollAngleGoalUpdated = false;
+        }
+
+        private void UpdateExhaustEngines()
+        {
+            if (!_exhaustAmountUpdated)
+                SwitchEngineFlashAndBang(false);
+            _exhaustAmountUpdated = false;
+        }
+
+        private void UpdateCoughEngines()
+        {
+            float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
+            coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
+            foreach (var coughEngine in _coughEngines)
+            {
+                coughEngine.Input = coughArgument;
+                coughEngine.Paused = coughArgument == 0;
+            }
+        }
+
+        private void UpdateCharges()
+        {
+            float elapsedSeconds = (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            ExtraDevice.Charge += _extraDeviceChargeSpeed * elapsedSeconds;
+            Weapon2.Charge += _weapon2ChargeSpeed * elapsedSeconds;
+        }
+
+        private void UpdateFlashing()
+        {
+            if (_isBirthFlashing)
+            {
+                float age = birthTime.SecondsAgoGameTime();
+                Alpha = _birthAlpha.Evaluate(age);
+                if (age >= _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position)
+                {
+                    Enable();
+                    _isBirthFlashing = false;
+                }
+            }
         }
     }
 }

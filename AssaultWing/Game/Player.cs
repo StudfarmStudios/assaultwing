@@ -418,12 +418,12 @@ namespace AW2.Game
 
             if (isSuicide) iconName = "b_icon_take_life";
             
-            Gob.CreateGob((CanonicalString)"deathmessage", gob =>
+            Gob.CreateGob<ArenaMessage>((CanonicalString)"deathmessage", gob =>
             {
                 gob.ResetPos(Pos, gob.Move, gob.Rotation);
-                ((DeathMessage)gob).Message = message;
-                ((DeathMessage)gob).IconName = iconName;
-                ((DeathMessage)gob).DrawColor = messageColor;
+                gob.Message = message;
+                gob.IconName = iconName;
+                gob.DrawColor = messageColor;
                 AssaultWing.Instance.DataEngine.Arena.Gobs.Add(gob);
             });
         }
@@ -692,10 +692,8 @@ namespace AW2.Game
             // Gain ownership over the ship only after its position has been set.
             // This way the ship won't be affecting its own spawn position.
             Ship = null;
-            Gob.CreateGob(ShipName, gob =>
+            Gob.CreateGob<Ship>(ShipName, newShip =>
             {
-                if (!(gob is Ship)) throw new ApplicationException("Wrong type for Player's ship: " + gob.GetType().Name);
-                Ship newShip = (Ship)gob;
                 newShip.Owner = this;
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);

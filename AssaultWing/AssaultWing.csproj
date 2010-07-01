@@ -93,7 +93,7 @@
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
     <Compile Include="Game\GameContent.cs" />
-    <Compile Include="Game\Gobs\DeathMessage.cs" />
+    <Compile Include="Game\Gobs\ArenaMessage.cs" />
     <Compile Include="Game\Gobs\FloatingBullet.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -115,7 +115,6 @@
     <Compile Include="Game\Gob.cs" />
     <Compile Include="Game\GobCollection.cs" />
     <Compile Include="Game\Gobs\Bonus\Bonus.cs" />
-    <Compile Include="Game\Gobs\Bonus\BonusMessage.cs" />
     <Compile Include="Game\Gobs\Bonus\DefinedBonus.cs" />
     <Compile Include="Game\Gobs\Bonus\RandomBonus.cs" />
     <Compile Include="Game\Gobs\BounceBullet.cs" />

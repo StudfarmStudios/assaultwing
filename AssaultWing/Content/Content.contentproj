@@ -100,9 +100,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\BonusMessage_bonusmessage.xml">
+    <None Include="gobdefs\ArenaMessage_bonusmessage.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>BonusMessage_bonusmessage</Name>
+      <Name>ArenaMessage_bonusmessage</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </None>
@@ -2216,8 +2216,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\DeathMessage_deathmessage.xml">
-      <Name>DeathMessage_deathmessage</Name>
+    <None Include="gobdefs\ArenaMessage_deathmessage.xml">
+      <Name>ArenaMessage_deathmessage</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

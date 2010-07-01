@@ -70,19 +70,19 @@ namespace AW2.Game.Gobs
         /// Area in which spawning takes place.
         /// </summary>
         [RuntimeState]
-        private IGeomPrimitive spawnArea;
+        private IGeomPrimitive _spawnArea;
 
         /// <summary>
         /// Time between spawns, in seconds of game time.
         /// </summary>
         [RuntimeState]
-        private float spawnInterval;
+        private float _spawnInterval;
 
         /// <summary>
         /// Name of the type of gobs to spawn.
         /// </summary>
         [RuntimeState]
-        private SpawnType[] spawnTypes;
+        private SpawnType[] _spawnTypes;
 
         /// <summary>
         /// Time of next spawn, in game time.
@@ -91,28 +91,19 @@ namespace AW2.Game.Gobs
 
         #endregion SpawnGob fields
 
-        /// <summary>
-        /// Bounding volume of the 3D visuals of the gob, in world coordinates.
-        /// </summary>
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
 
         /// <summary>
-        /// Creates an uninitialised gob.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public SpawnGob()
-            : base()
         {
-            spawnArea = new Everything();
-            spawnInterval = 20;
-            spawnTypes = new SpawnType[1]{new SpawnType()};
+            _spawnArea = new Everything();
+            _spawnInterval = 20;
+            _spawnTypes = new SpawnType[1] { new SpawnType() };
             _nextSpawn = new TimeSpan(0, 1, 2);
         }
 
-        /// <summary>
-        /// Creates a spawn gob.
-        /// </summary>
-        /// <param name="typeName">The type of the spawn gob.</param>
         public SpawnGob(CanonicalString typeName)
             : base(typeName)
         {
@@ -120,35 +111,32 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(spawnInterval);
+            _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(_spawnInterval);
             base.Activate();
         }
 
         private CanonicalString GetRandomSpawnType()
         {
-            float massTotal = spawnTypes.Sum(spawnType => spawnType.weight);
+            float massTotal = _spawnTypes.Sum(spawnType => spawnType.weight);
             float choice = RandomHelper.GetRandomFloat(0, massTotal);
             massTotal = 0;
             SpawnType poss = new SpawnType();
-            for (int i = 0; i < spawnTypes.Length && choice >= massTotal; ++i)
+            for (int i = 0; i < _spawnTypes.Length && choice >= massTotal; ++i)
             {
-                poss = spawnTypes[i];
+                poss = _spawnTypes[i];
                 massTotal += poss.weight;
             }
             return poss.spawnTypeName;
         }
 
-        /// <summary>
-        /// Updates the spawn area, perhaps creating a new gob.
-        /// </summary>
         public override void Update()
         {
             while (_nextSpawn <= Arena.TotalTime)
             {
-                _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(spawnInterval);
-                Gob.CreateGob(GetRandomSpawnType(), newGob =>
+                _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(_spawnInterval);
+                Gob.CreateGob<Gob>(GetRandomSpawnType(), newGob =>
                 {
-                    Vector2 spawnPos = Arena.GetFreePosition(newGob, spawnArea);
+                    var spawnPos = Arena.GetFreePosition(newGob, _spawnArea);
                     newGob.Pos = spawnPos;
                     Arena.Gobs.Add(newGob);
                 });
@@ -164,9 +152,9 @@ namespace AW2.Game.Gobs
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 // TODO: Serialise 'spawnArea'
-                writer.Write((float)spawnInterval);
-                writer.Write((int)spawnTypes.Length);
-                foreach (var spawnType in spawnTypes)
+                writer.Write((float)_spawnInterval);
+                writer.Write((int)_spawnTypes.Length);
+                foreach (var spawnType in _spawnTypes)
                     spawnType.Serialize(writer, SerializationModeFlags.ConstantData);
             }
         }
@@ -177,36 +165,14 @@ namespace AW2.Game.Gobs
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 // TODO: Deserialise 'spawnArea'
-                spawnInterval = reader.ReadSingle();
+                _spawnInterval = reader.ReadSingle();
                 int spawnTypesCount = reader.ReadInt32();
-                spawnTypes = new SpawnType[spawnTypesCount];
+                _spawnTypes = new SpawnType[spawnTypesCount];
                 for (int i = 0; i < spawnTypesCount; ++i)
-                    spawnTypes[i].Deserialize(reader, SerializationModeFlags.ConstantData, messageAge);
+                    _spawnTypes[i].Deserialize(reader, SerializationModeFlags.ConstantData, messageAge);
             }
         }
 
         #endregion Methods related to serialisation
-
-        #region IConsistencyCheckable Members
-
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(RuntimeStateAttribute))
-            {
-                // Make sure there's no null references.
-                if (spawnArea == null)
-                    spawnArea = new Everything();
-            }
-        }
-
-        #endregion IConsistencyCheckable Members
     }
 }

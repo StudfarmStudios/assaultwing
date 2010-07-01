@@ -283,6 +283,7 @@
     <Compile Include="Net\PingedConnection.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\SerializationModeFlags.cs" />
+    <Compile Include="Net\StaticPortMapper.cs" />
     <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Net\ThreadSafeWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -354,6 +355,16 @@
       <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="NATUPNPLib">
+      <Guid>{1C565858-F302-471E-B409-F180AA4ABEC6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

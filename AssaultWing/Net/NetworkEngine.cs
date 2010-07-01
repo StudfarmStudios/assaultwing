@@ -54,7 +54,7 @@ namespace AW2.Net
         #region Fields
 
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
-        private const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
+        public const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
 
         /// <summary>
         /// Network connection to the management server, 

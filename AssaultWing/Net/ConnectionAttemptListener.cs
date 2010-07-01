@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using AW2.Helpers;
 
 namespace AW2.Net
 {
@@ -55,7 +56,15 @@ namespace AW2.Net
                 if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
                 CreateServerSocket(port);
                 if (StaticPortMapper.IsSupported)
+                {
+                    Log.Write("Mapping server connection port with UPnP");
                     StaticPortMapper.EnsurePortMapped(NetworkEngine.TCP_CONNECTION_PORT, "TCP");
+                }
+                else
+                {
+                    Log.Write("UPnP not supported, make sure the server port " + NetworkEngine.TCP_CONNECTION_PORT
+                        + " is forwarded to your computer in your local network"); 
+                }
                 ListenOneConnection();
             }
             catch (Exception)
@@ -87,7 +96,10 @@ namespace AW2.Net
             _serverSocket = null;
             _listenResult = null;
             if (StaticPortMapper.IsSupported)
+            {
+                Log.Write("Removing previous UPnP port mapping");
                 StaticPortMapper.RemovePortMapping(NetworkEngine.TCP_CONNECTION_PORT, "TCP");
+            }
         }
 
         private static void CheckThread()

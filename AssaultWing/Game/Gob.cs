@@ -72,6 +72,12 @@ namespace AW2.Game
         #region Fields for all gobs
 
         /// <summary>
+        /// A gob ID that will not be used by any actual gob.
+        /// </summary>
+        /// <seealso cref="ID"/>
+        public const int INVALID_ID = -1;
+
+        /// <summary>
         /// Default rotation of gobs. Points up in the game world.
         /// </summary>
         protected const float defaultRotation = MathHelper.PiOver2;

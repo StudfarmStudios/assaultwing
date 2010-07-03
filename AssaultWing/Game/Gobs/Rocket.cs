@@ -103,7 +103,12 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            if (_target == null && _lastFindTarget + FIND_TARGET_INTERVAL <= Arena.TotalTime) FindTarget();
+            if (_target != null && _target.Dead) _target = null;
+            if (_lastFindTarget + FIND_TARGET_INTERVAL <= Arena.TotalTime)
+            {
+                _lastFindTarget = Arena.TotalTime;
+                UpdateTarget();
+            }
             if (Arena.TotalTime < _thrustEndTime)
             {
                 if (_target != null) RotateTowards(_target.Pos - Pos, _targetTurnSpeed);
@@ -129,6 +134,31 @@ namespace AW2.Game.Gobs
                 theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
             Die(new DeathCause());
             RemoveTargetTrackers();
+        }
+
+        public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                int targetID = _target != null ? _target.ID : Gob.INVALID_ID;
+                writer.Write((int)targetID);
+            }
+        }
+
+        public override void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            base.Deserialize(reader, mode, messageAge);
+            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            {
+                int targetID = reader.ReadInt32();
+                if (targetID == Gob.INVALID_ID) _target = null;
+                else
+                {
+                    _target = Arena.Gobs.FirstOrDefault(gob => gob.ID == targetID);
+                    if (_target == null) Log.Write("WARNING: Couldn't find Rocket target by gob ID " + targetID);
+                }
+            }
         }
 
         private void RemoveTargetTrackers()
@@ -160,9 +190,8 @@ namespace AW2.Game.Gobs
 
         private GobTrackerItem _targetTracker;
 
-        private void FindTarget()
+        private Gob FindBestTarget()
         {
-            _lastFindTarget = Arena.TotalTime;
             var targets =
                 from gob in Arena.Gobs.GameplayLayer.Gobs
                 where gob.IsDamageable && !gob.Disabled && gob.Owner != Owner
@@ -171,7 +200,17 @@ namespace AW2.Game.Gobs
                 where distanceSquared <= _findTargetRange * _findTargetRange
                 orderby distanceSquared ascending
                 select gob;
-            _target = targets.FirstOrDefault();
+            return targets.FirstOrDefault();
+        }
+
+        private void UpdateTarget()
+        {
+            if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Client) return;
+            var oldTarget = _target;
+            var newBestTarget = FindBestTarget();
+            _target = newBestTarget ?? _target;
+            if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Server && _target != oldTarget)
+                ForceNetworkUpdate();
 
             // If the target has changed remove the GobTrackerItem from the list and set
             // the _targetTracker to null so that a new one will be created.

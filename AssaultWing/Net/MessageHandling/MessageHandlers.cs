@@ -186,10 +186,12 @@ namespace AW2.Net.MessageHandling
             bool differ = MiscHelper.FirstDifference(mess.CanonicalStrings, CanonicalString.CanonicalForms, out clientDiff, out serverDiff);
             if (differ)
             {
+                string mismatchInfo = string.Format("First mismatch is client: {0}, server: {1}",
+                    clientDiff ?? "<missing>", serverDiff ?? "<missing>");
+                Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo);
                 var reply = new ConnectionClosingMessage
                 {
-                    Info = string.Format("Cannot join server due to mismatching canonical strings!\nFirst mismatch is client: {0}, server: {1}",
-                        clientDiff ?? "<missing>", serverDiff ?? "<missing>")
+                    Info = "Cannot join server due to mismatching canonical strings!\n" + mismatchInfo
                 };
                 AssaultWing.Instance.NetworkEngine.GameClientConnections[mess.ConnectionID].Send(reply);
                 AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);

@@ -229,7 +229,7 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
 
             var connection = GameClientConnections[connectionId];
-            _removedClientConnections.Add(connection);
+            if (!connection.IsDisposed) _removedClientConnections.Add(connection);
 
             // Remove the client's players.
             if (error)
@@ -398,7 +398,10 @@ namespace AW2.Net
         private void RemoveClosedConnections()
         {
             foreach (var connection in _removedClientConnections)
+            {
+                connection.Dispose();
                 _gameClientConnections.Connections.Remove(connection);
+            }
             _removedClientConnections.Clear();
             if (_managementServerConnection != null && _managementServerConnection.IsDisposed)
                 _managementServerConnection = null;

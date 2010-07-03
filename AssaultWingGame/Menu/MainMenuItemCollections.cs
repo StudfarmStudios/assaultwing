@@ -97,13 +97,12 @@ namespace AW2.Menu
             Log.Write("Client connected to " + result.Value.RemoteEndPoint);
 
             var net = AssaultWing.Instance.NetworkEngine;
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => component.MenuEngine.ActivateComponent(MenuComponentType.Equip)));
 
             // HACK: Force one local player.
             AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
 
-            net.GameServerConnection.Send(new JoinGameRequest());
-            component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
+            net.GameServerConnection.Send(new JoinGameRequest { CanonicalStrings = CanonicalString.CanonicalForms });
         }
     }
 }

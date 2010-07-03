@@ -23,14 +23,14 @@ namespace AW2.Net.MessageHandling
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers()
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction)
         {
             yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
-            yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, HandleJoinGameReply);
+            yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, mess => joinGameReplyAction());
         }
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers()
@@ -92,7 +92,7 @@ namespace AW2.Net.MessageHandling
         private static void HandleStartGameMessage(StartGameMessage mess)
         {
             AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers());
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null));
 
             // Prepare and start playing the game.
             var menuEngine = AssaultWing.Instance.MenuEngine;
@@ -136,11 +136,6 @@ namespace AW2.Net.MessageHandling
         private static void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
         {
             AssaultWing.Instance.DataEngine.Spectators.Remove(spec => spec.ID == mess.PlayerID);
-        }
-
-        private static void HandleJoinGameReply(JoinGameReply mess)
-        {
-            CanonicalString.CanonicalForms = mess.CanonicalStrings;
         }
 
         private static void HandleWallHoleMessage(WallHoleMessage mess)
@@ -187,7 +182,23 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleJoinGameRequest(JoinGameRequest mess)
         {
-            // Nothing to do
+            string clientDiff, serverDiff;
+            bool differ = MiscHelper.FirstDifference(mess.CanonicalStrings, CanonicalString.CanonicalForms, out clientDiff, out serverDiff);
+            if (differ)
+            {
+                var reply = new ConnectionClosingMessage
+                {
+                    Info = string.Format("Cannot join server due to mismatching canonical strings!\nFirst mismatch is client: {0}, server: {1}",
+                        clientDiff ?? "<missing>", serverDiff ?? "<missing>")
+                };
+                AssaultWing.Instance.NetworkEngine.GameClientConnections[mess.ConnectionID].Send(reply);
+                AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
+            }
+            else
+            {
+                var reply = new JoinGameReply();
+                AssaultWing.Instance.NetworkEngine.GameClientConnections[mess.ConnectionID].Send(reply);
+            }
         }
 
         private static void HandlePlayerSettingsRequestOnServer(PlayerSettingsRequest mess)

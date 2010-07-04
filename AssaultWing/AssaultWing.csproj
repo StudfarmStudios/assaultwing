@@ -159,6 +159,7 @@
     <Compile Include="Game\GobUtils\ShipLocationPredicter.cs" />
     <Compile Include="Game\Spectator.cs" />
     <Compile Include="Graphics\AWVideo.cs" />
+    <Compile Include="Graphics\GobTrackerItem.cs" />
     <Compile Include="Graphics\GobTrackerOverlay.cs" />
     <Compile Include="Graphics\IntroEngine.cs" />
     <Compile Include="Graphics\ScoreOverlay.cs" />

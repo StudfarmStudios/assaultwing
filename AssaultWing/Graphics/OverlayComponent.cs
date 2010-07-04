@@ -161,11 +161,11 @@ namespace AW2.Graphics
         /// <summary>
         /// Called when graphics resources need to be loaded.
         /// </summary>
-        public abstract void LoadContent();
+        public virtual void LoadContent() { }
 
         /// <summary>
         /// Called when graphics resources need to be unloaded.
         /// </summary>
-        public abstract void UnloadContent();
+        public virtual void UnloadContent() { }
     }
 }

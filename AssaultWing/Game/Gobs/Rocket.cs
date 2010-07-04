@@ -70,6 +70,7 @@ namespace AW2.Game.Gobs
 
         private Gob _target;
         private TimeSpan _lastFindTarget;
+        private GobTrackerItem _targetTracker;
 
         #endregion Rocket fields
 
@@ -118,7 +119,7 @@ namespace AW2.Game.Gobs
             {
                 RotateTowards(Move, _fallTurnSpeed);                
                 if (_targetTracker != null)
-                    RemoveTargetTrackers();
+                    RemoveGobTrackers();
             }
 
             base.Update();
@@ -133,8 +134,17 @@ namespace AW2.Game.Gobs
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
             Die(new DeathCause());
-            RemoveTargetTrackers();
         }
+
+        public override void Dispose()
+        {
+            RemoveGobTrackers();
+            base.Dispose();
+        }
+
+        #endregion Methods related to gobs' functionality in the game world
+
+        #region Methods related to serialisation
 
         public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
         {
@@ -158,21 +168,13 @@ namespace AW2.Game.Gobs
                     _target = Arena.Gobs.FirstOrDefault(gob => gob.ID == targetID);
                     if (_target == null) Log.Write("WARNING: Couldn't find Rocket target by gob ID " + targetID);
                 }
+                UpdateGobTrackers();
             }
         }
 
-        private void RemoveTargetTrackers()
-        {
-            if (_targetTracker != null)
-            {
-                Owner.RemoveGobTrackerItem(_targetTracker);
-                if (_targetTracker.Gob != null)
-                    _targetTracker.Gob.Owner.RemoveGobTrackerItem(_targetTracker);
-                _targetTracker = null;
-            }
-        }
+        #endregion Methods related to serialisation
 
-        #endregion Methods related to gobs' functionality in the game world
+        #region Private methods
 
         private void RotateTowards(Vector2 direction, float rotationSpeed)
         {
@@ -187,8 +189,6 @@ namespace AW2.Game.Gobs
             AssaultWing.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed,
                 AssaultWing.Instance.GameTime.ElapsedGameTime);
         }
-
-        private GobTrackerItem _targetTracker;
 
         private Gob FindBestTarget()
         {
@@ -209,23 +209,37 @@ namespace AW2.Game.Gobs
             var oldTarget = _target;
             var newBestTarget = FindBestTarget();
             _target = newBestTarget ?? _target;
+            UpdateGobTrackers();
             if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Server && _target != oldTarget)
                 ForceNetworkUpdate();
-
-            // If the target has changed remove the GobTrackerItem from the list and set
-            // the _targetTracker to null so that a new one will be created.
-            if (_target != null && _targetTracker != null && _target != _targetTracker.Gob)
-            {
-                RemoveTargetTrackers();
-            }
-
-            // Create a target GobTrackerItem
-            if (_target != null && _target is Ship && _targetTracker == null)
-            {
-                _targetTracker = new GobTrackerItem(_target, this, GobTrackerItem.ROCKET_TARGET_TEXTURE, false, true, true, true, Owner.PlayerColor);
-                Owner.AddGobTrackerItem(_targetTracker);
-                _target.Owner.AddGobTrackerItem(_targetTracker);
-            }
         }
+
+        private void UpdateGobTrackers()
+        {
+            if (_targetTracker == null && _target == null) return;
+            if (_targetTracker != null && _target == _targetTracker.Gob) return;
+            RemoveGobTrackers();
+            CreateGobTrackers();
+        }
+
+        private void RemoveGobTrackers()
+        {
+            if (_targetTracker == null) return;
+            Owner.RemoveGobTrackerItem(_targetTracker);
+            if (_targetTracker.Gob != null && _targetTracker.Gob.Owner != null)
+                _targetTracker.Gob.Owner.RemoveGobTrackerItem(_targetTracker);
+            _targetTracker = null;
+        }
+
+        private void CreateGobTrackers()
+        {
+            if (_targetTracker != null) throw new ApplicationException("Rocket is creating a gob tracker although it has one already");
+            if (_target == null) return;
+            _targetTracker = new GobTrackerItem(_target, this, GobTrackerItem.ROCKET_TARGET_TEXTURE, false, true, true, true, Owner.PlayerColor);
+            Owner.AddGobTrackerItem(_targetTracker);
+            if (_target.Owner != null) _target.Owner.AddGobTrackerItem(_targetTracker);
+        }
+
+        #endregion Private methods
     }
 }

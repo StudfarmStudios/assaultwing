@@ -1,48 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
-using AW2.Game.Gobs;
 
 namespace AW2.Graphics
 {
-    public class GobTrackerItem
-    {
-        public static readonly string PLAYER_TEXTURE = "gui_tracker_player";
-        public static readonly string DOCK_TEXTURE = "gui_tracker_dock";
-        public static readonly string BONUS_TEXTURE = "gui_tracker_bonus";
-        public static readonly string ROCKET_TARGET_TEXTURE = "gui_tracker_rockettarget";
-
-        public Gob Gob { get; set; }
-        public Gob TrackerGob { get; set; }
-        public bool StickToBorders { get; set; }
-        public bool RotateTowardsTarget { get; set; }
-        public bool ShowWhileTargetOnScreen { get; set; }
-        public bool ScaleByDistance { get; set; }
-        public string Texture { get; set; }
-        public Color DrawColor { get; set; }
-
-        public GobTrackerItem(Gob gob, Gob trackerGob, string texture,  bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, bool scaleByDistance, Color drawColor)
-        {
-            if (gob == null)
-            {
-                throw new ArgumentNullException("Trying to add NULL Gob to GobTrackerItem!");
-            }
-
-            Gob = gob;
-            StickToBorders = stickToViewportBorders;
-            RotateTowardsTarget = rotateTowardsTarget;
-            ShowWhileTargetOnScreen = showWhileTargetOnScreen;
-            Texture = texture;
-            DrawColor = drawColor;
-            ScaleByDistance = scaleByDistance;
-            TrackerGob = trackerGob;
-        }
-    }
-
-    class GobTrackerOverlay : OverlayComponent
+    /// <summary>
+    /// Overlay graphics component pointing to a few selected gobs on top of a player's arena view.
+    /// </summary>
+    public class GobTrackerOverlay : OverlayComponent
     {
         private Player _player;
         private PlayerViewport _viewport;
@@ -51,7 +16,8 @@ namespace AW2.Graphics
 
         public override Point Dimensions
         {
-            get {
+            get
+            {
                 if (Viewport != null)
                 {
                     var x = Viewport.OnScreen.Right - Viewport.OnScreen.Left;
@@ -88,9 +54,7 @@ namespace AW2.Graphics
 
             if (Viewport != null)
             {
-                // First remove
-                Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.Dead);
-                Viewport.Player.GobTrackerItems.RemoveAll(item => item.Gob.IsDisposed);
+                RemoveOutdatedItems();
 
                 // Then draw
                 if (_player.Ship != null)
@@ -130,13 +94,19 @@ namespace AW2.Graphics
             }
         }
 
-        public override void LoadContent()
+        private void RemoveOutdatedItems()
         {
-            var content = AssaultWing.Instance.Content;
+            Viewport.Player.GobTrackerItems.RemoveAll(IsItemOutdated);
         }
 
-        public override void UnloadContent()
+        private bool IsItemOutdated(GobTrackerItem item)
         {
+            if (item.Gob.Dead || item.Gob.IsDisposed) return true;
+            if (item.TrackerGob != null)
+            {
+                if (item.TrackerGob.Dead || item.TrackerGob.IsDisposed) return true;
+            }
+            return false;
         }
     }
 }

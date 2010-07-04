@@ -10,7 +10,7 @@ namespace AW2.Graphics
     /// <summary>
     /// A viewport that follows a player.
     /// </summary>
-    class PlayerViewport : AWViewport
+    public class PlayerViewport : AWViewport
     {
         #region PlayerViewport fields
 

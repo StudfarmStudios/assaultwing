@@ -2,23 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game;
 using AW2.Helpers;
 
 namespace AW2.Graphics
 {
     internal class EditorViewport : AWViewport
     {
+        private EditorSpectator _spectator;
+
         public bool IsCirclingSmallAndInvisibleGobs { get; set; }
 
-        public EditorViewport(Rectangle onScreen, ILookAt lookAt, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
-            : base(onScreen, lookAt, getPostprocessEffectNames)
+        public EditorViewport(EditorSpectator spectator, Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
+            : base(onScreen, getPostprocessEffectNames)
         {
+            _spectator = spectator;
         }
 
         protected override void RenderGameWorld()
         {
             base.RenderGameWorld();
             if (IsCirclingSmallAndInvisibleGobs) CircleSmallAndInvisibleGobs();
+        }
+
+        protected override Vector2 GetLookAtPos()
+        {
+            return _spectator.LookAtPos;
         }
 
         private void CircleSmallAndInvisibleGobs()

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -25,6 +23,11 @@ namespace AW2.Graphics
         /// Aligned to the right.
         /// </summary>
         Right,
+
+        /// <summary>
+        /// Covers the whole viewport.
+        /// </summary>
+        Stretch,
     }
 
     /// <summary>
@@ -46,6 +49,11 @@ namespace AW2.Graphics
         /// Aligned to the bottom.
         /// </summary>
         Bottom,
+
+        /// <summary>
+        /// Covers the whole viewport.
+        /// </summary>
+        Stretch,
     }
 
     /// <summary>
@@ -57,49 +65,37 @@ namespace AW2.Graphics
     /// right on the horizontal axis.
     public abstract class OverlayComponent
     {
-        HorizontalAlignment horizontalAlignment;
-        VerticalAlignment verticalAlignment;
-        Vector2 customAlignment;
-        bool visible;
-
         /// <summary>
         /// Horizontal alignment of the component in the backbuffer viewport.
         /// </summary>
-        public HorizontalAlignment HorizontalAlignment { get { return horizontalAlignment; } set { horizontalAlignment = value; } }
+        public HorizontalAlignment HorizontalAlignment { get; set; }
 
         /// <summary>
         /// Vertical alignment of the component in the backbuffer viewport.
         /// </summary>
-        public VerticalAlignment VerticalAlignment { get { return verticalAlignment; } set { verticalAlignment = value; } }
+        public VerticalAlignment VerticalAlignment { get; set; }
 
         /// <summary>
         /// Alignment adjustment; added to the coordinates obtained by the chosen alignment.
-        /// </summary>
         /// Initially set to Vector2.Zero, which gives no adjustment to the chosen alignment.
-        public Vector2 CustomAlignment { get { return customAlignment; } set { customAlignment = value; } }
+        /// </summary>
+        public Vector2 CustomAlignment { get; set; }
 
         /// <summary>
         /// Is the component visible.
         /// </summary>
-        public bool Visible { get { return visible; } set { visible = value; } }
+        public bool Visible { get; set; }
 
         /// <summary>
         /// The dimensions of the component in pixels.
         /// </summary>
-        /// The return value field <c>Point.X</c> is the width of the component,
-        /// and the field <c>Point.Y</c> is the height of the component,
         public abstract Point Dimensions { get; }
 
-        /// <summary>
-        /// Creates an overlay graphics component with alignment.
-        /// </summary>
-        /// <param name="horizontal">Horizontal alignment of the component in the viewport.</param>
-        /// <param name="vertical">Vertical alignment of the component in the viewport.</param>
         public OverlayComponent(HorizontalAlignment horizontal, VerticalAlignment vertical)
         {
-            horizontalAlignment = horizontal;
-            verticalAlignment = vertical;
-            visible = true;
+            HorizontalAlignment = horizontal;
+            VerticalAlignment = vertical;
+            Visible = true;
             LoadContent();
         }
 
@@ -112,11 +108,11 @@ namespace AW2.Graphics
         public void Draw(SpriteBatch spriteBatch)
         {
             if (!Visible) return;
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
-            Viewport oldViewport = gfx.Viewport;
-            Viewport newViewport = oldViewport;
-            Point dimensions = Dimensions;
-            switch (horizontalAlignment)
+            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var oldViewport = gfx.Viewport;
+            var newViewport = oldViewport;
+            var dimensions = Dimensions;
+            switch (HorizontalAlignment)
             {
                 case HorizontalAlignment.Left:
                     break;
@@ -126,8 +122,11 @@ namespace AW2.Graphics
                 case HorizontalAlignment.Right:
                     newViewport.X += Math.Max(0, oldViewport.Width - dimensions.X);
                     break;
+                case HorizontalAlignment.Stretch:
+                    dimensions.X = oldViewport.Width;
+                    break;
             }
-            switch (verticalAlignment)
+            switch (VerticalAlignment)
             {
                 case VerticalAlignment.Top:
                     break;
@@ -137,9 +136,12 @@ namespace AW2.Graphics
                 case VerticalAlignment.Bottom:
                     newViewport.Y += Math.Max(0, oldViewport.Height - dimensions.Y);
                     break;
+                case VerticalAlignment.Stretch:
+                    dimensions.Y = oldViewport.Height;
+                    break;
             }
-            newViewport.X += (int)customAlignment.X;
-            newViewport.Y += (int)customAlignment.Y;
+            newViewport.X += (int)CustomAlignment.X;
+            newViewport.Y += (int)CustomAlignment.Y;
             newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
             newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
             gfx.Viewport = newViewport;

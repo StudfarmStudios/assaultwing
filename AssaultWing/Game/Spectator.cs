@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AW2.UI;
-using AW2.Net;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using AW2.Net;
+using AW2.UI;
 
 namespace AW2.Game
 {
@@ -14,13 +14,6 @@ namespace AW2.Game
     public class Spectator : IDisposable, INetworkSerializable
     {
         public enum ServerRegistrationType { No, Requested, Yes };
-
-        public class LookAtPoint : AW2.Graphics.ILookAt
-        {
-            public Vector2 Position { get; set; }
-        }
-
-        public LookAtPoint LookAt { get; set; }
 
         /// <summary>
         /// Meaningful only for a client's local spectators.
@@ -69,16 +62,12 @@ namespace AW2.Game
         {
             Controls = controls;
             ConnectionID = connectionId;
-            LookAt = new LookAtPoint();
         }
 
-        /// <summary>
-        /// Creates a viewport for the spectator.
-        /// </summary>
         /// <param name="onScreen">Location of the viewport on screen.</param>
         public virtual AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
-            return new AW2.Graphics.AWViewport(onScreen, LookAt, () => new CanonicalString[0]);
+            throw new NotImplementedException("Spectator.CreateViewport is to be implemented in subclasses only");
         }
 
         /// <summary>
@@ -93,12 +82,6 @@ namespace AW2.Game
         /// </summary>
         public virtual void Update()
         {
-            float moveSpeed = 10;
-            LookAt.Position +=
-                Vector2.UnitY * moveSpeed * Controls.Thrust.Force
-                - Vector2.UnitY * moveSpeed * Controls.Down.Force
-                + Vector2.UnitX * moveSpeed * Controls.Right.Force
-                - Vector2.UnitX * moveSpeed * Controls.Left.Force;
         }
 
         /// <summary>

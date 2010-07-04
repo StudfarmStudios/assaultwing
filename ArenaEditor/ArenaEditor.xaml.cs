@@ -282,7 +282,7 @@ namespace AW2
             if ((_mouseButtons & System.Windows.Forms.MouseButtons.Right) != 0)
             {
                 var move = viewport.MouseMoveToWorldCoordinates(_lastMouseLocation, newMouseLocation, 0);
-                Spectator.LookAt.Position -= move;
+                Spectator.LookAtPos -= move;
             }
 
             _lastMouseLocation = newMouseLocation;

@@ -4,6 +4,8 @@ using NUnit.Framework;
 using System;
 using System.Text;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Helpers
 {
@@ -70,6 +72,11 @@ namespace AW2.Helpers
                 if (bHas) bDiff = bEnum.Current;
                 return aHas || bHas;
             }
+        }
+
+        public static Vector2 Dimensions(this Texture2D texture)
+        {
+            return new Vector2(texture.Width, texture.Height);
         }
 
 #if DEBUG

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 
@@ -10,9 +11,8 @@ namespace AW2.Graphics
     public class GobTrackerOverlay : OverlayComponent
     {
         private Player _player;
-        private PlayerViewport _viewport;
 
-        public PlayerViewport Viewport { get { return _viewport; } set { _viewport = value; } }
+        public PlayerViewport Viewport { get; set; }
 
         public override Point Dimensions
         {
@@ -29,7 +29,7 @@ namespace AW2.Graphics
         }
 
         public GobTrackerOverlay(Player player)
-            : base(HorizontalAlignment.Center, VerticalAlignment.Center)
+            : base(HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
         {
             _player = player;
         }
@@ -48,6 +48,13 @@ namespace AW2.Graphics
             }
         }
 
+        private Vector2 GetTrackerPos(Gob trackerGob, Player trackerPlayer)
+        {
+            if (trackerGob != null) return trackerGob.Pos;
+            if (trackerPlayer != null) return trackerPlayer.LookAtPos;
+            throw new ApplicationException("Null tracker");
+        }
+
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             SetViewport();
@@ -59,25 +66,23 @@ namespace AW2.Graphics
                 // Then draw
                 if (_player.Ship != null)
                 {
-                    foreach (GobTrackerItem gobtracker in Viewport.Player.GobTrackerItems)
+                    foreach (var gobtracker in Viewport.Player.GobTrackerItems)
                     {
-                        Vector2 pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
-                        Vector2 origPos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
+                        var pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
+                        var origPos = pos;
+                        var trackerPos = GetTrackerPos(gobtracker.TrackerGob, _player);
                         float rotation = 0f;
                         float scale = 1f;
-                        Gob trackerGob = _player.Ship;
-
-                        if (gobtracker.TrackerGob != null)
-                            trackerGob = gobtracker.TrackerGob;
 
                         if (gobtracker.ScaleByDistance)
                         {
-                            Arena arena = AssaultWing.Instance.DataEngine.Arena;
-                            scale = (arena.Dimensions.Length() - Vector2.Distance(gobtracker.Gob.Pos, trackerGob.Pos)) / arena.Dimensions.Length();
+                            var farDistance = AssaultWing.Instance.DataEngine.Arena.Dimensions.Length();
+                            var distance = Vector2.Distance(gobtracker.Gob.Pos, trackerPos);
+                            scale = MathHelper.Max(0, (farDistance - distance) / farDistance);
                         }
                         if (gobtracker.RotateTowardsTarget)
                         {
-                            rotation = -AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - trackerGob.Pos);
+                            rotation = -AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - trackerPos);
                         }
                         if (gobtracker.StickToBorders)
                         {

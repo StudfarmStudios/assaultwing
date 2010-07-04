@@ -1,6 +1,6 @@
 //#define PARALLAX_IN_3D // Defining this will make parallaxes be drawn as 3D primitives
 #if !PARALLAX_IN_3D
-  #define PARALLAX_WITH_SPRITE_BATCH
+#define PARALLAX_WITH_SPRITE_BATCH
 #endif
 
 using System;
@@ -15,18 +15,10 @@ using AW2.Helpers;
 namespace AW2.Graphics
 {
     /// <summary>
-    /// A point in game world that a viewport is viewing.
-    /// </summary>
-    public interface ILookAt
-    {
-        Vector2 Position { get; }
-    }
-
-    /// <summary>
     /// A view on the display that looks into the game world.
     /// </summary>
     /// <c>LoadContent</c> must be called before a viewport is used.
-    public class AWViewport
+    public abstract class AWViewport
     {
         #region Fields that are used only when PARALLAX_IN_3D is #defined
 
@@ -73,11 +65,6 @@ namespace AW2.Graphics
         protected Viewport Viewport { get; set; }
 
         /// <summary>
-        /// Center of the view in game world coordinates.
-        /// </summary>
-        protected ILookAt LookAt { get; set; }
-
-        /// <summary>
         /// The area of the viewport on the render target surface.
         /// </summary>
         public Rectangle OnScreen { get { return new Rectangle(Viewport.Y, Viewport.Y, Viewport.Width, Viewport.Height); } }
@@ -91,7 +78,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMin(float z)
         {
-            return LookAt.Position - new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
+            return GetLookAtPos() - new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
         }
 
         /// <summary>
@@ -101,7 +88,7 @@ namespace AW2.Graphics
         /// <param name="z">The depth.</param>
         public Vector2 WorldAreaMax(float z)
         {
-            return LookAt.Position + new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
+            return GetLookAtPos() + new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
         }
 
         /// <summary>
@@ -123,16 +110,12 @@ namespace AW2.Graphics
         {
             get
             {
-                return Matrix.CreateLookAt(new Vector3(LookAt.Position, 1000), new Vector3(LookAt.Position, 0), Vector3.Up);
+                return Matrix.CreateLookAt(new Vector3(GetLookAtPos(), 1000), new Vector3(GetLookAtPos(), 0), Vector3.Up);
             }
         }
 
-        /// <summary>
-        /// Creates a viewport.
-        /// </summary>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
-        /// <param name="lookAt">The point to follow.</param>
-        public AWViewport(Rectangle onScreen, ILookAt lookAt, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
+        protected AWViewport(Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
         {
             _overlayComponents = new List<OverlayComponent>();
             Viewport = new Viewport
@@ -144,7 +127,6 @@ namespace AW2.Graphics
                 MinDepth = 0f,
                 MaxDepth = 1f
             };
-            LookAt = lookAt;
             _getPostprocessEffectNames = getPostprocessEffectNames;
             ZoomRatio = 1;
         }
@@ -342,8 +324,7 @@ namespace AW2.Graphics
                     container.Add(AssaultWing.Instance.Content.Load<Effect>(name));
             };
             _postprocessor = new TexturePostprocessor(AssaultWing.Instance.GraphicsDevice, effectContainerUpdater);
-            foreach (OverlayComponent component in _overlayComponents)
-                component.LoadContent();
+            foreach (var component in _overlayComponents) component.LoadContent();
         }
 
         /// <summary>
@@ -351,11 +332,12 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void UnloadContent()
         {
-            foreach (OverlayComponent component in _overlayComponents)
-                component.UnloadContent();
+            foreach (var component in _overlayComponents) component.UnloadContent();
             _postprocessor.Dispose();
             _spriteBatch.Dispose();
         }
+
+        protected abstract Vector2 GetLookAtPos();
 
         /// <summary>
         /// Returns the visual scaling factor at a depth in game coordinates.
@@ -422,9 +404,7 @@ namespace AW2.Graphics
                 gfx.RenderState.DepthBufferEnable = false;
                 gfx.VertexDeclaration = _vertexDeclaration;
                 _effect.Texture = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                var texCenter = GetScale(layer.Z) * new Vector2(
-                    LookAt.Position.X / _effect.Texture.Width,
-                    -LookAt.Position.Y / _effect.Texture.Height);
+                var texCenter = GetScale(layer.Z) * GetLookAtPos() / _effect.Texture.Dimensions();
                 var texCornerOffset = new Vector2(
                     Viewport.Width / (2f * _effect.Texture.Width),
                     -Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;
@@ -456,34 +436,14 @@ namespace AW2.Graphics
                 _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
                 gfx.RenderState.AlphaTestEnable = false;
                 var tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                float texCenterX = (GetScale(layer.Z) * LookAt.Position.X).Modulo(tex.Width);
-                float texCenterY = (GetScale(layer.Z) * -LookAt.Position.Y).Modulo(tex.Height);
+                var lookAtPosScaled = GetScale(layer.Z) * GetLookAtPos();
+                float texCenterX = lookAtPosScaled.X.Modulo(tex.Width);
+                float texCenterY = (-lookAtPosScaled.Y).Modulo(tex.Height);
                 float screenStartX = (Viewport.Width / 2f - texCenterX * ZoomRatio).Modulo(tex.Width * ZoomRatio) - tex.Width * ZoomRatio;
                 float screenStartY = (Viewport.Height / 2f - texCenterY * ZoomRatio).Modulo(tex.Height * ZoomRatio) - tex.Height * ZoomRatio;
                 for (float posX = screenStartX; posX <= Viewport.Width; posX += tex.Width * ZoomRatio)
                     for (float posY = screenStartY; posY <= Viewport.Height; posY += tex.Height * ZoomRatio)
                         _spriteBatch.Draw(tex, new Vector2(posX, posY), null, Color.White, 0, Vector2.Zero, ZoomRatio, SpriteEffects.None, 1);
-/*
-                Vector2 pos = WorldAreaMin(0) * -GetScale(layer.Z);
-                pos.Y = -pos.Y;
-                Vector2 fillPos = new Vector2();
-                pos.X -= tex.Width * (float)Math.Ceiling(pos.X / (tex.Width * zoomRatio));
-                pos.Y -= tex.Height * (float)Math.Ceiling(pos.Y / (tex.Height * zoomRatio));
-                int loopX = (int)Math.Ceiling((-pos.X + Viewport.Width) / (tex.Width * zoomRatio));
-                int loopY = (int)Math.Ceiling((-pos.Y + Viewport.Height) / (tex.Height * zoomRatio));
-
-                fillPos.Y = pos.Y;
-                for (int y = 0; y < loopY; y++)
-                {
-                    fillPos.X = pos.X;
-                    for (int x = 0; x < loopX; x++)
-                    {
-                        spriteBatch.Draw(tex, fillPos, null, Color.White, 0, Vector2.Zero, zoomRatio, SpriteEffects.None, 1);
-                        fillPos.X += tex.Width * zoomRatio;
-                    }
-                    fillPos.Y += tex.Height * zoomRatio;
-                }
-*/
                 _spriteBatch.End();
             }
 

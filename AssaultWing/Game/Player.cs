@@ -32,20 +32,6 @@ namespace AW2.Game
             }
         }
 
-        private class LookAtShip : AW2.Graphics.ILookAt
-        {
-            private Vector2 _oldPos;
-            public Vector2 Position
-            {
-                get
-                {
-                    if (Ship != null) _oldPos = Ship.Pos;
-                    return _oldPos;
-                }
-            }
-            public Ship Ship { get; set; }
-        }
-
         #region Player constants
 
         private const int MESSAGE_KEEP_COUNT = 100;
@@ -107,8 +93,8 @@ namespace AW2.Game
         /// </summary>
         private TimeSpan _shakeUpdateTime;
 
-        private LookAtShip _lookAt;
         private Ship _ship;
+        private Vector2 _lastLookAtPos;
         private List<GobTrackerItem> _gobTrackerItems = new List<GobTrackerItem>();
 
         #endregion Player fields about general things
@@ -153,7 +139,16 @@ namespace AW2.Game
         /// <summary>
         /// The ship the player is controlling in the game arena.
         /// </summary>
-        public Ship Ship { get { return _ship; } set { _lookAt.Ship = _ship = value; } }
+        public Ship Ship { get { return _ship; } set { _ship = value; } }
+
+        public Vector2 LookAtPos
+        {
+            get
+            {
+                if (Ship != null) _lastLookAtPos = Ship.Pos;
+                return _lastLookAtPos;
+            }
+        }
 
         /// <summary>
         /// If positive, how many reincarnations the player has left.
@@ -333,7 +328,6 @@ namespace AW2.Game
             foreach (CurveKey key in _shakeAttenuationCurve.Keys)
                 _shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
             _shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
-            _lookAt = new LookAtShip();
             BonusActions = new GameActionCollection(this);
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
         }
@@ -369,8 +363,6 @@ namespace AW2.Game
         /// </summary>
         public override void Update()
         {
-            base.Update();
-
             foreach (var action in BonusActions)
             {
                 action.Update();
@@ -517,13 +509,9 @@ namespace AW2.Game
                 MustUpdateToClients = true;
         }
 
-        /// <summary>
-        /// Creates a viewport for the player.
-        /// </summary>
-        /// <param name="onScreen">Location of the viewport on screen.</param>
         public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
-            return new AW2.Graphics.PlayerViewport(this, onScreen, _lookAt, () => PostprocessEffectNames);
+            return new AW2.Graphics.PlayerViewport(this, onScreen, () => PostprocessEffectNames);
         }
 
         /// <summary>

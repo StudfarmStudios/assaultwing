@@ -1,4 +1,3 @@
-// marked in as DEBUG because we don't want NUnit framework to release builds
 #if DEBUG
 using NUnit.Framework;
 #endif
@@ -579,18 +578,7 @@ namespace AW2.Helpers.Geometric
         /// <returns>True iff the circle intersects the polygon.</returns>
         public static bool Intersect(Circle circle, Polygon polygon)
         {
-#if GEOMETRY_APPROXIMATE
-            // This approximation is unsuitable for ship vs. wall collisions;
-            // players get stuck very easily.
-            Point right = new Point(circle.Center + new Vector2(circle.Radius, 0));
-            Point top = new Point(circle.Center + new Vector2(0, circle.Radius));
-            Point left = new Point(circle.Center + new Vector2(-circle.Radius, 0));
-            Point bottom = new Point(circle.Center + new Vector2(0, -circle.Radius));
-            return Intersect(right, polygon) || Intersect(top, polygon)
-                || Intersect(left, polygon) || Intersect(bottom, polygon);
-#else
             return DistanceSquared(new Point(circle.Center), polygon) < circle.Radius * circle.Radius;
-#endif
         }
 
         /// <summary>

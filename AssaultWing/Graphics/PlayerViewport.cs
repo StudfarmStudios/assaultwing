@@ -12,39 +12,28 @@ namespace AW2.Graphics
     /// </summary>
     public class PlayerViewport : AWViewport
     {
-        #region PlayerViewport fields
-
         /// <summary>
-        /// The player we are following.
+        /// The player to follow.
         /// </summary>
-        Player player;
+        private Player player;
 
         private GobTrackerOverlay _gobTrackerOverlay;
 
         /// <summary>
         /// Last used sign of player's shake angle. Either 1 or -1.
         /// </summary>
-        float shakeSign;
-
-        #endregion PlayerViewport fields
+        private float shakeSign;
 
         public GobTrackerOverlay GobTracker { get { return _gobTrackerOverlay; } set { _gobTrackerOverlay = value; } }
 
-        /// <summary>
-        /// Creates a new player viewport.
-        /// </summary>
         /// <param name="player">Which player the viewport will follow.</param>
         /// <param name="onScreen">Where on screen is the viewport located.</param>
-        /// <param name="lookAt">The point to follow.</param>
         /// <param name="getPostprocessEffectNames">Provider of names of postprocess effects.</param>
-        public PlayerViewport(Player player, Rectangle onScreen, ILookAt lookAt,
-            Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
-            : base(onScreen, lookAt, getPostprocessEffectNames)
+        public PlayerViewport(Player player, Rectangle onScreen, Func<IEnumerable<CanonicalString>> getPostprocessEffectNames)
+            : base(onScreen, getPostprocessEffectNames)
         {
             this.player = player;
             shakeSign = -1;
-
-            // Create overlay graphics components.
             AddOverlayComponent(new MiniStatusOverlay(player));
             AddOverlayComponent(new ChatBoxOverlay(player));
             AddOverlayComponent(new RadarOverlay(player));
@@ -55,13 +44,8 @@ namespace AW2.Graphics
             AddOverlayComponent(GobTracker);
         }
 
-        #region PlayerViewport properties
-
         public Player Player { get { return player; } }
 
-        /// <summary>
-        /// The view matrix for drawing 3D content into the viewport.
-        /// </summary>
         protected override Matrix ViewMatrix
         {
             get
@@ -72,13 +56,16 @@ namespace AW2.Graphics
                     shakeSign = -shakeSign;
 
                 float viewShake = shakeSign * player.Shake;
-                return Matrix.CreateLookAt(new Vector3(LookAt.Position, 1000), new Vector3(LookAt.Position, 0),
+                return Matrix.CreateLookAt(new Vector3(GetLookAtPos(), 1000), new Vector3(GetLookAtPos(), 0),
                     new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),
                                 (float)Math.Sin(MathHelper.PiOver2 + viewShake),
                                 0));
             }
         }
 
-        #endregion PlayerViewport properties
+        protected override Vector2 GetLookAtPos()
+        {
+            return player.LookAtPos;
+        }
     }
 }

@@ -182,9 +182,6 @@ namespace AW2.Graphics
             }
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
@@ -195,14 +192,6 @@ namespace AW2.Graphics
             iconWeaponLoadTexture = content.Load<Texture2D>("gui_playerinfo_loaded");
             barSpecialTexture = content.Load<Texture2D>("gui_playerinfo_bar_special");
             barLoadAmountTexture = content.Load<Texture2D>("gui_playerinfo_bar_loadamount");
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // Our textures are disposed by the graphics engine.
         }
     }
 }

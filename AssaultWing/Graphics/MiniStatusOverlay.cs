@@ -79,23 +79,12 @@ namespace AW2.Graphics
             spriteBatch.DrawString(healthFont, healthText, textPos, halfColor);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
             barFillTexture = content.Load<Texture2D>("mini_hpbar_fill");
             barBackgroundTexture = content.Load<Texture2D>("mini_hpbar_bg");
             healthFont = content.Load<SpriteFont>("ConsoleFont");
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // Our textures and fonts are disposed by the graphics engine.
         }
     }
 }

@@ -76,10 +76,6 @@ namespace AW2.Graphics
             _dockOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("p_green_box");
         }
 
-        public override void UnloadContent()
-        {
-        }
-
         private Vector2 GetTextureCenter(Texture2D texture)
         {
             return new Vector2(texture.Width, texture.Height) / 2;

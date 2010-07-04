@@ -57,10 +57,5 @@ namespace AW2.Graphics
         {
             _chatBoxFont = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontBig");
         }
-
-        public override void UnloadContent()
-        {
-            // Our textures and fonts are disposed by the graphics engine.
-        }
     }
 }

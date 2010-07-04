@@ -68,9 +68,5 @@ namespace AW2.Graphics
             _scoreBackgroundTexture = content.Load<Texture2D>("gui_radar_bg");
             _scoreFont = content.Load<SpriteFont>("ConsoleFont");
         }
-
-        public override void UnloadContent()
-        {
-        }
     }
 }

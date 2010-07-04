@@ -59,23 +59,12 @@ namespace AW2.Graphics
             spriteBatch.DrawString(fontSmall, "Press Enter to return to Main Menu", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
             fontHuge = content.Load<SpriteFont>("MenuFontHuge");
             fontBig = content.Load<SpriteFont>("MenuFontBig");
             fontSmall = content.Load<SpriteFont>("MenuFontSmall");
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // Our textures are disposed by the graphics engine.
         }
     }
 }

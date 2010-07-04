@@ -119,21 +119,10 @@ namespace AW2.Graphics
             }
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             fontBig = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontBig");
             fontSmall = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontSmall");
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // Our fonts are disposed by the graphics engine.
         }
     }
 }

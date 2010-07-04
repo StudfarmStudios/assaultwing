@@ -41,20 +41,9 @@ namespace AW2.Graphics
             spriteBatch.DrawString(font, text, AWMathHelper.Round(textCenter - textSize / 2), Color.White);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             font = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontBig");
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // Our fonts are disposed by the graphics engine.
         }
     }
 }

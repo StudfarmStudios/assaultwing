@@ -142,8 +142,7 @@ namespace AW2.Menu
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
             MenuContent.LoadContent();
-            foreach (MenuComponent component in _components)
-                component.LoadContent();
+            foreach (var component in _components) component.LoadContent();
             AssaultWing.Instance.DataEngine.ProgressBar.LoadContent();
 
             base.LoadContent();

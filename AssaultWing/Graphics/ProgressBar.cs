@@ -227,9 +227,6 @@ namespace AW2.Graphics
             spriteBatch.Draw(flowTexture, flowPos, flowRectangle, Color.White);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
@@ -238,15 +235,7 @@ namespace AW2.Graphics
             flowTexture = content.Load<Texture2D>("menu_progressbar_advancer");
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // Our textures are disposed by the graphics engine.
-        }
-
-        void ResetTask()
+        private void ResetTask()
         {
             taskWorkItem = null;
             task = null;
@@ -257,14 +246,13 @@ namespace AW2.Graphics
         /// Runs the task, handling exceptions. This method is to be run in a background thread.
         /// </summary>
         /// <param name="state">A <see cref="TaskStatus"/> instance.</param>
-        void RunTask(object state)
+        private void RunTask(object state)
         {
             TaskStatus status = (TaskStatus)state;
             try
             {
                 task();
             }
-            catch (System.Threading.ThreadAbortException) { }
 #if !DEBUG
             catch (Exception e)
             {

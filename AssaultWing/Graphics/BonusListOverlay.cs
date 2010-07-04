@@ -349,23 +349,12 @@ namespace AW2.Graphics
                         / (bonusBoxEffect.Evaluate(0) - bonusBoxEffect.Keys[bonusBoxEffect.Keys.Count - 1].Value));
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
             bonusBackgroundTexture = content.Load<Texture2D>("gui_bonus_bg");
             bonusDurationTexture = content.Load<Texture2D>("gui_bonus_duration");
             bonusFont = content.Load<SpriteFont>("ConsoleFont");
-        }
-
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // Our textures and fonts are disposed by the graphics engine.
         }
     }
 }

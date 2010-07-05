@@ -15,10 +15,16 @@ namespace AW2.Game.Gobs
         private float _hoverThrust;
 
         /// <summary>
-        /// Amplitude of attraction force towards targets that overlap the "Magnet" receptor.
+        /// Amplitude of attraction force towards nearby enemy targets.
         /// </summary>
         [TypeParameter]
         private float _attractionForce;
+
+        /// <summary>
+        /// Amplitude of repulsion force away from nearby friendly mines.
+        /// </summary>
+        [TypeParameter]
+        private float _spreadingForce;
 
         private Circle _targetCircle;
         private Vector2 _thrustForce;
@@ -57,17 +63,20 @@ namespace AW2.Game.Gobs
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            if (myArea.Name == "Magnet")
+            switch (myArea.Name)
             {
-                if (theirArea.Owner.Owner != Owner)
-                {
-                    var forceVector = _attractionForce * Vector2.Normalize(theirArea.Owner.Pos - Pos);
-                    AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
-                    _targetCircle = null;
-                }
+                case "Magnet":
+                    if (theirArea.Owner.Owner != Owner)
+                        MoveTowards(theirArea.Owner.Pos, _attractionForce);
+                    break;
+                case "Spread":
+                    if (theirArea.Owner.Owner == Owner)
+                        MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
+                    break;
+                default:
+                    base.Collide(myArea, theirArea, stuck);
+                    break;
             }
-            else
-                base.Collide(myArea, theirArea, stuck);
         }
 
         public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
@@ -100,6 +109,13 @@ namespace AW2.Game.Gobs
                     _thrustForce = reader.ReadHalfVector2();
                 }
             }
+        }
+
+        private void MoveTowards(Vector2 target, float force)
+        {
+            var forceVector = force * Vector2.Normalize(target - Pos);
+            AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
+            _targetCircle = null;
         }
 
         private void RandomizeNewTargetPos()

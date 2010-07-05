@@ -92,6 +92,8 @@
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
+    <Compile Include="Game\CollisionAreaType.cs" />
+    <Compile Include="Game\CollisionMaterialType.cs" />
     <Compile Include="Game\GameContent.cs" />
     <Compile Include="Game\Gobs\ArenaMessage.cs" />
     <Compile Include="Game\Gobs\FloatingBullet.cs">

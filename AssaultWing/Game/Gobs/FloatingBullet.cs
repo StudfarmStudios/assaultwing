@@ -14,15 +14,24 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _hoverThrust;
 
+        /// <summary>
+        /// Amplitude of attraction force towards targets that overlap the "Magnet" receptor.
+        /// </summary>
+        [TypeParameter]
+        private float _attractionForce;
+
         private Circle _targetCircle;
         private Vector2 _thrustForce;
         private float? _thrustSeconds; // if not null, thrust time to send from server to clients
         private TimeSpan _thrustEndGameTime;
 
+        /// <summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public FloatingBullet()
         {
             _hoverThrust = 10000;
+            _attractionForce = 50000;
         }
 
         public FloatingBullet(CanonicalString typeName)
@@ -44,6 +53,21 @@ namespace AW2.Game.Gobs
             {
                 AssaultWing.Instance.PhysicsEngine.ApplyForce(this, _thrustForce);
             }
+        }
+
+        public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
+        {
+            if (myArea.Name == "Magnet")
+            {
+                if (theirArea.Owner.Owner != Owner)
+                {
+                    var forceVector = _attractionForce * Vector2.Normalize(theirArea.Owner.Pos - Pos);
+                    AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
+                    _targetCircle = null;
+                }
+            }
+            else
+                base.Collide(myArea, theirArea, stuck);
         }
 
         public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)

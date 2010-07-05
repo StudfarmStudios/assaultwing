@@ -2126,8 +2126,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gobdefs\Bullet_mine.xml">
-      <Name>Bullet_mine</Name>
+    <None Include="gobdefs\FloatingBullet_mine.xml">
+      <Name>FloatingBullet_mine</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
+using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Net;
 using AW2.Net.Messages;
 using AW2.UI;
-using AW2.Graphics;
 
 namespace AW2.Game
 {

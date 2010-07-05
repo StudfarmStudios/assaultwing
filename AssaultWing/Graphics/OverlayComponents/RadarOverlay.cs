@@ -7,7 +7,7 @@ using AW2.Helpers;
 using AW2.Game;
 using AW2.Game.Gobs;
 
-namespace AW2.Graphics
+namespace AW2.Graphics.OverlayComponents
 {
     /// <summary>
     /// Overlay graphics component displaying a radar view of the arena.

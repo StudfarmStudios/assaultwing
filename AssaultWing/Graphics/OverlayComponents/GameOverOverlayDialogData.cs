@@ -2,7 +2,7 @@ using AW2.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AW2.Graphics
+namespace AW2.Graphics.OverlayComponents
 {
     /// <summary>
     /// Content and action data for an overlay dialog displaying standings after

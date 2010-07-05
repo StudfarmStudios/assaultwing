@@ -99,14 +99,12 @@ namespace AW2.Game
 #endif
             if (escapeControl.Pulse)
             {
-                AW2.Graphics.CustomOverlayDialogData dialogData;
-                if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                    dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                var dialogData = AssaultWing.Instance.NetworkMode == NetworkMode.Server
+                    ? new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
                         "Finish Arena? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.GetYesControl(), AssaultWing.Instance.FinishArena),
-                        new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWing.Instance.ResumePlay));
-                else
-                    dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                        new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWing.Instance.ResumePlay))
+                    : new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
                         "Quit to Main Menu? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.GetYesControl(), AssaultWing.Instance.ShowMenu),
                         new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWing.Instance.ResumePlay));

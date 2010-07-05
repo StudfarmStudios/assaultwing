@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using AW2.UI;
 using AW2.Game;
+using AW2.Graphics.OverlayComponents;
+using AW2.UI;
 
 namespace AW2.Graphics
 {
@@ -17,14 +18,10 @@ namespace AW2.Graphics
     /// <seealso cref="OverlayDialogData"/>
     public class OverlayDialog : Microsoft.Xna.Framework.DrawableGameComponent
     {
-        OverlayDialogData dialogData;
-        SpriteBatch spriteBatch;
-        Texture2D dialogTexture;
+        private OverlayDialogData _dialogData;
+        private SpriteBatch _spriteBatch;
+        private Texture2D _dialogTexture;
 
-        /// <summary>
-        /// Creates an overlay dialog.
-        /// </summary>
-        /// <param name="game">The game instance to attach the dialog to.</param>
         public OverlayDialog(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
@@ -35,20 +32,16 @@ namespace AW2.Graphics
         /// <summary>
         /// The dialog's actions and visual contents.
         /// </summary>
-        public OverlayDialogData Data { set { dialogData = value; } }
+        public OverlayDialogData Data { set { _dialogData = value; } }
 
         #endregion Public interface
 
         #region Overridden methods from DrawableGameComponent
 
-        /// <summary>
-        /// Allows the game component to update itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
             // Check our controls and react to them.
-            dialogData.Update();
+            _dialogData.Update();
 
 #if DEBUG
             // Check for cheat codes.
@@ -71,50 +64,38 @@ namespace AW2.Graphics
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         protected override void LoadContent()
         {
-            dialogTexture = AssaultWing.Instance.Content.Load<Texture2D>("ingame_dialog");
-            spriteBatch = new SpriteBatch(this.GraphicsDevice);
+            _dialogTexture = AssaultWing.Instance.Content.Load<Texture2D>("ingame_dialog");
+            _spriteBatch = new SpriteBatch(this.GraphicsDevice);
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
         protected override void UnloadContent()
         {
-            if (spriteBatch != null)
+            if (_spriteBatch != null)
             {
-                spriteBatch.Dispose();
-                spriteBatch = null;
+                _spriteBatch.Dispose();
+                _spriteBatch = null;
             }
-            // Our textures and fonts are disposed by GraphicsEngine.
         }
 
-        /// <summary>
-        /// Called when the DrawableGameComponent needs to be drawn. Override this method
-        /// with component-specific drawing code.
-        /// </summary>
-        /// <param name="gameTime">Time passed since the last call to Microsoft.Xna.Framework.DrawableGameComponent.Draw(Microsoft.Xna.Framework.GameTime).</param>
         public override void Draw(GameTime gameTime)
         {
             // Set viewport exactly to the dialog's area.
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             Rectangle screen = AssaultWing.Instance.ClientBounds;
             Viewport newViewport = gfx.Viewport;
-            newViewport.X = (screen.Width - dialogTexture.Width) / 2;
-            newViewport.Y = (screen.Height - dialogTexture.Height) / 2;
-            newViewport.Width = dialogTexture.Width;
-            newViewport.Height = dialogTexture.Height;
+            newViewport.X = (screen.Width - _dialogTexture.Width) / 2;
+            newViewport.Y = (screen.Height - _dialogTexture.Height) / 2;
+            newViewport.Width = _dialogTexture.Width;
+            newViewport.Height = _dialogTexture.Height;
             gfx.Viewport = newViewport;
 
             // Draw contents.
-            spriteBatch.Begin();
-            spriteBatch.Draw(dialogTexture, Vector2.Zero, Color.White);
-            spriteBatch.End();
-            dialogData.Draw(spriteBatch);
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(_dialogTexture, Vector2.Zero, Color.White);
+            _spriteBatch.End();
+            _dialogData.Draw(_spriteBatch);
         }
 
         #endregion Overridden methods from DrawableGameComponent

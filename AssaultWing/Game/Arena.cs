@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Net.Messages;
@@ -1228,7 +1229,7 @@ namespace AW2.Game
 
         private void AddShipTrackerToViewports(AW2.Game.Gobs.Ship ship)
         {
-            var trackerItem = new AW2.Graphics.GobTrackerItem(ship, null, AW2.Graphics.GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
+            var trackerItem = new GobTrackerItem(ship, null, GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
 
             foreach (var plr in AssaultWing.Instance.DataEngine.Players)
             {
@@ -1241,7 +1242,7 @@ namespace AW2.Game
 
         private void AddDockTrackerToViewports(AW2.Game.Gobs.Dock dock)
         {
-            var trackerItem = new AW2.Graphics.GobTrackerItem(dock, null, AW2.Graphics.GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
+            var trackerItem = new GobTrackerItem(dock, null, GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
 
             foreach (var plr in AssaultWing.Instance.DataEngine.Players)
             {
@@ -1254,7 +1255,7 @@ namespace AW2.Game
 
         private void AddBonusTrackerToViewports(AW2.Game.Gobs.Bonus.Bonus bonus)
         {
-            var trackerItem = new AW2.Graphics.GobTrackerItem(bonus, null, AW2.Graphics.GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
+            var trackerItem = new GobTrackerItem(bonus, null, GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
             
             foreach (var plr in AssaultWing.Instance.DataEngine.Players)
             {

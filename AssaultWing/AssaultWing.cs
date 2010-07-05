@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game;
 using AW2.Graphics;
+using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Menu;
 using AW2.Net;
@@ -593,7 +594,7 @@ namespace AW2
         /// Displays the dialog on top of the game and stops updating the game logic.
         /// </summary>
         /// <param name="dialogData">The contents and actions for the dialog.</param>
-        public void ShowDialog(OverlayDialogData dialogData)
+        public void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
         {
             if (!AllowDialogs) return;
             _overlayDialog.Data = dialogData;

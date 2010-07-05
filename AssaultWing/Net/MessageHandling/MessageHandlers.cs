@@ -84,7 +84,7 @@ namespace AW2.Net.MessageHandling
         private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
             Log.Write("Server is going to close the connection, reason: " + mess.Info);
-            var dialogData = new AW2.Graphics.CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
+            var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
                 new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), AssaultWing.Instance.ShowMenu));
             AssaultWing.Instance.ShowDialog(dialogData);
         }

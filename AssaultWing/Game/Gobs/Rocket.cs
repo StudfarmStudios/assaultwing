@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using AW2.Helpers;
 using AW2.Graphics;
+using AW2.Graphics.OverlayComponents;
+using AW2.Helpers;
 
 namespace AW2.Game.Gobs
 {

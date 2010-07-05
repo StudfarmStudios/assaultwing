@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 using Microsoft.Xna.Framework;
 
-namespace AW2.Graphics
+namespace AW2.Graphics.OverlayComponents
 {
     public class GobTrackerItem
     {

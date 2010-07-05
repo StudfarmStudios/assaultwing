@@ -28,7 +28,7 @@ namespace AW2.Net
             if (error)
             {
                 AssaultWing.Instance.StopClient();
-                AW2.Graphics.CustomOverlayDialogData dialogData = new AW2.Graphics.CustomOverlayDialogData(
+                var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
                     "Connection to server lost!\nPress Enter to return to Main Menu",
                     new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
                         AssaultWing.Instance.ShowMenu));

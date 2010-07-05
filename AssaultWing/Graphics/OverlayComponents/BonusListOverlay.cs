@@ -7,7 +7,7 @@ using AW2.Game;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 
-namespace AW2.Graphics
+namespace AW2.Graphics.OverlayComponents
 {
     /// <summary>
     /// Overlay graphics component displaying a player's current bonuses.

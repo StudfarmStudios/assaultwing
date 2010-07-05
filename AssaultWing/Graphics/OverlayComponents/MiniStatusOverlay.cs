@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 
-namespace AW2.Graphics
+namespace AW2.Graphics.OverlayComponents
 {
     /// <summary>
     /// Overlay graphics component displaying a small damage bar and health

@@ -113,12 +113,17 @@ namespace AW2.Game.Gobs
             }
             if (Arena.TotalTime < _thrustEndTime)
             {
-                if (_target != null) RotateTowards(_target.Pos - Pos, _targetTurnSpeed);
+                if (_target != null)
+                {
+                    float secondsToCollision = 1.0f * MathHelper.Clamp(Vector2.Distance(Pos, _target.Pos) / 300, 0, 1);
+                    var predictedTargetPos = PredictPos(_target, TimeSpan.FromSeconds(secondsToCollision));
+                    RotateTowards(predictedTargetPos - Pos, _targetTurnSpeed);
+                }
                 Thrust();
             }
             else
             {
-                RotateTowards(Move, _fallTurnSpeed);                
+                RotateTowards(Move, _fallTurnSpeed);
                 if (_targetTracker != null)
                     RemoveGobTrackers();
             }
@@ -176,6 +181,11 @@ namespace AW2.Game.Gobs
         #endregion Methods related to serialisation
 
         #region Private methods
+
+        private Vector2 PredictPos(Gob gob, TimeSpan timeDelta)
+        {
+            return gob.Pos + AssaultWing.Instance.PhysicsEngine.ApplyChange(gob.Move, timeDelta);
+        }
 
         private void RotateTowards(Vector2 direction, float rotationSpeed)
         {

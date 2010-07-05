@@ -34,13 +34,13 @@ namespace AW2.Graphics
         {
             this.player = player;
             shakeSign = -1;
-            AddOverlayComponent(new MiniStatusOverlay(player));
-            AddOverlayComponent(new ChatBoxOverlay(player));
-            AddOverlayComponent(new RadarOverlay(player));
-            AddOverlayComponent(new BonusListOverlay(player));
-            AddOverlayComponent(new PlayerStatusOverlay(player));
-            AddOverlayComponent(new ScoreOverlay(player));
-            GobTracker = new GobTrackerOverlay(player);
+            AddOverlayComponent(new MiniStatusOverlay(this));
+            AddOverlayComponent(new ChatBoxOverlay(this));
+            AddOverlayComponent(new RadarOverlay(this));
+            AddOverlayComponent(new BonusListOverlay(this));
+            AddOverlayComponent(new PlayerStatusOverlay(this));
+            AddOverlayComponent(new ScoreOverlay(this));
+            GobTracker = new GobTrackerOverlay(this);
             AddOverlayComponent(GobTracker);
         }
 

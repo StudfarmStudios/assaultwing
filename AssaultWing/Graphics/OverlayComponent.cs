@@ -25,7 +25,7 @@ namespace AW2.Graphics
         Right,
 
         /// <summary>
-        /// Covers the whole viewport.
+        /// Covers all available horizontal space.
         /// </summary>
         Stretch,
     }
@@ -51,7 +51,7 @@ namespace AW2.Graphics
         Bottom,
 
         /// <summary>
-        /// Covers the whole viewport.
+        /// Covers all available vertical space.
         /// </summary>
         Stretch,
     }
@@ -59,10 +59,11 @@ namespace AW2.Graphics
     /// <summary>
     /// An overlay graphics component, for example in player's screen during play.
     /// </summary>
-    /// An overlay component is drawn onto the active viewport of the backbuffer.
+    /// An overlay component is drawn onto an <see cref="AWViewport"/>.
     /// The component is aligned by setting a point of reference in the viewport.
     /// This point can be top, center, bottom on the vertical axis, and left, center,
-    /// right on the horizontal axis.
+    /// right on the horizontal axis. The component can also be stretched to cover
+    /// the whole viewport.
     public abstract class OverlayComponent
     {
         /// <summary>
@@ -91,11 +92,18 @@ namespace AW2.Graphics
         /// </summary>
         public abstract Point Dimensions { get; }
 
-        public OverlayComponent(HorizontalAlignment horizontal, VerticalAlignment vertical)
+        /// <summary>
+        /// The viewport into which the component is drawn, or null.
+        /// </summary>
+        protected AWViewport Viewport { get; private set; }
+
+        /// <param name="viewport">The viewport to draw on, or null.</param>
+        protected OverlayComponent(AWViewport viewport, HorizontalAlignment horizontal, VerticalAlignment vertical)
         {
             HorizontalAlignment = horizontal;
             VerticalAlignment = vertical;
             Visible = true;
+            Viewport = viewport;
             LoadContent();
         }
 

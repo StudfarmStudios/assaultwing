@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
@@ -11,187 +9,194 @@ namespace AW2.Graphics
     /// <summary>
     /// Overlay graphics component displaying the player's status.
     /// </summary>
-    class PlayerStatusOverlay : OverlayComponent
+    public class PlayerStatusOverlay : OverlayComponent
     {
-        Player player;
-        Texture2D statusDisplayTexture;
-        Texture2D barShipTexture;
-        Texture2D iconShipTexture;
-        Texture2D barMainTexture;
-        Texture2D iconWeaponLoadTexture;
-        Texture2D barSpecialTexture;
-        Texture2D barLoadAmountTexture;
+        private Player _player;
+        private Texture2D _statusDisplayTexture;
+        private Texture2D _barShipTexture;
+        private Texture2D _iconShipTexture;
+        private Texture2D _barMainTexture;
+        private Texture2D _iconWeaponLoadTexture;
+        private Texture2D _barSpecialTexture;
+        private Texture2D _barLoadAmountTexture;
 
-        /// <summary>
-        /// The dimensions of the component in pixels.
-        /// </summary>
-        /// The return value field <c>Point.X</c> is the width of the component,
-        /// and the field <c>Point.Y</c> is the height of the component,
         public override Point Dimensions
         {
-            get { return new Point(statusDisplayTexture.Width, statusDisplayTexture.Height); }
+            get { return new Point(_statusDisplayTexture.Width, _statusDisplayTexture.Height); }
         }
 
-        /// <summary>
-        /// Creates a player status display.
-        /// </summary>
-        /// <param name="player">The player whose status to display.</param>
-        public PlayerStatusOverlay(Player player)
-            : base(HorizontalAlignment.Center, VerticalAlignment.Top)
+        private Rectangle ExtraDeviceChargeBarRectangle
         {
-            this.player = player;
+            get
+            {
+                float relativeCharge = _player.Ship.ExtraDevice.Charge / _player.Ship.ExtraDevice.ChargeMax;
+                int width = (int)Math.Ceiling(relativeCharge * _barMainTexture.Width);
+                return new Rectangle(0, 0, width, _barMainTexture.Height);
+            }
         }
 
-        /// <summary>
-        /// Draws the overlay graphics component using the guarantee that the
-        /// graphics device's viewport is set to the exact area needed by the component.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
-        /// to have been called and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
+        private Rectangle SecondaryWeaponChargeBarRectangle
+        {
+            get
+            {
+                float relativeCharge = _player.Ship.Weapon2.Charge / _player.Ship.Weapon2.ChargeMax;
+                int width = (int)Math.Ceiling(relativeCharge * _barSpecialTexture.Width);
+                return new Rectangle(0, 0, width, _barSpecialTexture.Height);
+            }
+        }
+
+        public PlayerStatusOverlay(PlayerViewport viewport)
+            : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Top)
+        {
+            _player = viewport.Player;
+        }
+
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             // Status display background
-            spriteBatch.Draw(statusDisplayTexture, Vector2.Zero, Color.White);
+            spriteBatch.Draw(_statusDisplayTexture, Vector2.Zero, Color.White);
 
-            // Damage meter
-            if (player.Ship != null)
+            DrawShipDamage(spriteBatch);
+            DrawPlayerLives(spriteBatch);
+            DrawExtraDeviceCharge(spriteBatch);
+            DrawExtraDeviceChargeUsage(spriteBatch);
+            DrawExtraDeviceLoadedness(spriteBatch);
+            DrawSecondaryWeaponCharge(spriteBatch);
+            DrawSecondaryWeaponChargeUsage(spriteBatch);
+            DrawSecondaryWeaponLoadedness(spriteBatch);
+        }
+
+        private void DrawShipDamage(SpriteBatch spriteBatch)
+        {
+            if (_player.Ship == null) return;
+            Rectangle damageBarRect = new Rectangle(0, 0,
+                (int)Math.Ceiling((1 - _player.Ship.DamageLevel / _player.Ship.MaxDamageLevel)
+                * _barShipTexture.Width),
+                _barShipTexture.Height);
+            Color damageBarColor = Color.White;
+            if (_player.Ship.DamageLevel / _player.Ship.MaxDamageLevel >= 0.8f)
             {
-                Rectangle damageBarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling((1 - player.Ship.DamageLevel / player.Ship.MaxDamageLevel)
-                    * barShipTexture.Width),
-                    barShipTexture.Height);
-                Color damageBarColor = Color.White;
-                if (player.Ship.DamageLevel / player.Ship.MaxDamageLevel >= 0.8f)
-                {
-                    float seconds = (float)AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds;
-                    if (seconds % 0.5f < 0.25f)
-                        damageBarColor = Color.Red;
-                }
-                spriteBatch.Draw(barShipTexture,
-                    new Vector2(statusDisplayTexture.Width, 8 * 2) / 2,
-                    damageBarRect, damageBarColor, 0,
-                    new Vector2(barShipTexture.Width, 0) / 2,
-                    1, SpriteEffects.None, 0);
+                float seconds = (float)AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds;
+                if (seconds % 0.5f < 0.25f)
+                    damageBarColor = Color.Red;
             }
+            spriteBatch.Draw(_barShipTexture,
+                new Vector2(_statusDisplayTexture.Width, 8 * 2) / 2,
+                damageBarRect, damageBarColor, 0,
+                new Vector2(_barShipTexture.Width, 0) / 2,
+                1, SpriteEffects.None, 0);
+        }
 
-            // Player lives left
-            for (int i = 0; i < player.Lives; ++i)
-                spriteBatch.Draw(iconShipTexture,
-                    new Vector2(statusDisplayTexture.Width +
-                                barShipTexture.Width + (8 + i * 10) * 2,
-                                barShipTexture.Height + 8 * 2) / 2,
+        private void DrawPlayerLives(SpriteBatch spriteBatch)
+        {
+            for (int i = 0; i < _player.Lives; ++i)
+                spriteBatch.Draw(_iconShipTexture,
+                    new Vector2(_statusDisplayTexture.Width +
+                                _barShipTexture.Width + (8 + i * 10) * 2,
+                                _barShipTexture.Height + 8 * 2) / 2,
                     null,
                     Color.White,
                     0,
-                    new Vector2(0, iconShipTexture.Height) / 2,
+                    new Vector2(0, _iconShipTexture.Height) / 2,
                     1, SpriteEffects.None, 0);
+        }
 
-            // Extra device charge
-            if (player.Ship != null)
-            {
-                Rectangle charge1BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling(player.Ship.ExtraDevice.Charge / player.Ship.ExtraDevice.ChargeMax
-                    * barMainTexture.Width),
-                    barMainTexture.Height);
-                spriteBatch.Draw(barMainTexture,
-                    new Vector2(statusDisplayTexture.Width, 24 * 2) / 2,
-                    charge1BarRect, Color.White, 0,
-                    new Vector2(barMainTexture.Width, 0) / 2,
-                    1, SpriteEffects.None, 0);
+        private void DrawExtraDeviceCharge(SpriteBatch spriteBatch)
+        {
+            if (_player.Ship == null) return;
+            spriteBatch.Draw(_barMainTexture,
+                new Vector2(_statusDisplayTexture.Width, 24 * 2) / 2,
+                ExtraDeviceChargeBarRectangle, Color.White, 0,
+                new Vector2(_barMainTexture.Width, 0) / 2,
+                1, SpriteEffects.None, 0);
+                    }
 
-                if (player.Ship.ExtraDevice.FireMode == AW2.Game.GobUtils.ShipDevice.FireModeType.Single)
-                {
-                    Rectangle loadAmount1BarRect = new Rectangle(0, 0,
-                        (int)Math.Ceiling(player.Ship.ExtraDevice.FireCharge / player.Ship.ExtraDevice.ChargeMax
-                        * barMainTexture.Width),
-                        barMainTexture.Height);
-                    spriteBatch.Draw(barLoadAmountTexture,
-                        new Vector2(statusDisplayTexture.Width, 24 * 2) / 2 + new Vector2((int)MathHelper.Clamp(charge1BarRect.Width - loadAmount1BarRect.Width, 0, int.MaxValue), 0),
-                        loadAmount1BarRect, Color.White, 0,
-                        new Vector2(barMainTexture.Width, 0) / 2,
-                        1, SpriteEffects.None, 0);
-                }
-            }
+        private void DrawExtraDeviceChargeUsage(SpriteBatch spriteBatch)
+        {
+            if (_player.Ship == null) return;
+            if (_player.Ship.ExtraDevice.FireMode != AW2.Game.GobUtils.ShipDevice.FireModeType.Single) return;
+            Rectangle loadAmountExtraBarRect = new Rectangle(0, 0,
+                (int)Math.Ceiling(_player.Ship.ExtraDevice.FireCharge / _player.Ship.ExtraDevice.ChargeMax
+                * _barMainTexture.Width),
+                _barMainTexture.Height);
+            spriteBatch.Draw(_barLoadAmountTexture,
+                new Vector2(_statusDisplayTexture.Width, 24 * 2) / 2 + new Vector2((int)MathHelper.Clamp(ExtraDeviceChargeBarRectangle.Width - loadAmountExtraBarRect.Width, 0, int.MaxValue), 0),
+                loadAmountExtraBarRect, Color.White, 0,
+                new Vector2(_barMainTexture.Width, 0) / 2,
+                1, SpriteEffects.None, 0);
+        }
 
-            // Extra device loadedness
-            if (player.Ship != null)
-            {
-                if (player.Ship.ExtraDevice.Loaded)
-                {
-                    float seconds = player.Ship.ExtraDevice.LoadedTime.SecondsAgoGameTime();
-                    float scale = 1;
-                    Color color = Color.White;
-                    if (seconds < 0.2f)
-                        color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.1f), Vector4.One, seconds / 0.2f));
-                    spriteBatch.Draw(iconWeaponLoadTexture,
-                        new Vector2(statusDisplayTexture.Width + iconWeaponLoadTexture.Width +
-                                    barMainTexture.Width + 8 * 2,
-                                    barMainTexture.Height + 24 * 2) / 2,
-                        null, color, 0,
-                        new Vector2(iconWeaponLoadTexture.Width, iconWeaponLoadTexture.Height) / 2,
-                        scale, SpriteEffects.None, 0);
-                }
-            }
+        private void DrawExtraDeviceLoadedness(SpriteBatch spriteBatch)
+        {
+            if (_player.Ship == null) return;
+            if (!_player.Ship.ExtraDevice.Loaded) return;
+            float seconds = _player.Ship.ExtraDevice.LoadedTime.SecondsAgoGameTime();
+            float scale = 1;
+            Color color = Color.White;
+            if (seconds < 0.2f)
+                color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.1f), Vector4.One, seconds / 0.2f));
+            spriteBatch.Draw(_iconWeaponLoadTexture,
+                new Vector2(_statusDisplayTexture.Width + _iconWeaponLoadTexture.Width +
+                            _barMainTexture.Width + 8 * 2,
+                            _barMainTexture.Height + 24 * 2) / 2,
+                null, color, 0,
+                new Vector2(_iconWeaponLoadTexture.Width, _iconWeaponLoadTexture.Height) / 2,
+                scale, SpriteEffects.None, 0);
+        }
 
-            // Secondary weapon charge
-            if (player.Ship != null)
-            {
-                Rectangle charge2BarRect = new Rectangle(0, 0,
-                    (int)Math.Ceiling(player.Ship.Weapon2.Charge / player.Ship.Weapon2.ChargeMax
-                    * barSpecialTexture.Width),
-                    barSpecialTexture.Height);
-                spriteBatch.Draw(barSpecialTexture,
-                    new Vector2(statusDisplayTexture.Width, 40 * 2) / 2,
-                    charge2BarRect, Color.White, 0,
-                    new Vector2(barSpecialTexture.Width, 0) / 2,
-                    1, SpriteEffects.None, 0);
+        private void DrawSecondaryWeaponCharge(SpriteBatch spriteBatch)
+        {
+            if (_player.Ship == null) return;
+            spriteBatch.Draw(_barSpecialTexture,
+                new Vector2(_statusDisplayTexture.Width, 40 * 2) / 2,
+                SecondaryWeaponChargeBarRectangle, Color.White, 0,
+                new Vector2(_barSpecialTexture.Width, 0) / 2,
+                1, SpriteEffects.None, 0);
+        }
 
-                if (player.Ship.Weapon2.FireMode == AW2.Game.GobUtils.ShipDevice.FireModeType.Single)
-                {
-                    Rectangle loadAmount2BarRect = new Rectangle(0, 0,
-                        (int)Math.Ceiling((player.Ship.Weapon2.FireCharge) / player.Ship.Weapon2.ChargeMax
-                        * barSpecialTexture.Width),
-                        barSpecialTexture.Height);
-                    spriteBatch.Draw(barLoadAmountTexture,
-                        new Vector2(statusDisplayTexture.Width, 40 * 2) / 2 + new Vector2((int)MathHelper.Clamp(charge2BarRect.Width - loadAmount2BarRect.Width, 0, int.MaxValue), 0),
-                        loadAmount2BarRect, Color.White, 0,
-                        new Vector2(barSpecialTexture.Width, 0) / 2,
-                        1, SpriteEffects.None, 0);
-                }
-            }
+        private void DrawSecondaryWeaponChargeUsage(SpriteBatch spriteBatch)
+        {
+            if (_player.Ship == null) return;
+            if (_player.Ship.Weapon2.FireMode != AW2.Game.GobUtils.ShipDevice.FireModeType.Single) return;
+            var loadAmount2BarRect = new Rectangle(0, 0,
+                (int)Math.Ceiling((_player.Ship.Weapon2.FireCharge) / _player.Ship.Weapon2.ChargeMax
+                * _barSpecialTexture.Width),
+                _barSpecialTexture.Height);
+            spriteBatch.Draw(_barLoadAmountTexture,
+                new Vector2(_statusDisplayTexture.Width, 40 * 2) / 2 + new Vector2((int)MathHelper.Clamp(SecondaryWeaponChargeBarRectangle.Width - loadAmount2BarRect.Width, 0, int.MaxValue), 0),
+                loadAmount2BarRect, Color.White, 0,
+                new Vector2(_barSpecialTexture.Width, 0) / 2,
+                1, SpriteEffects.None, 0);
+        }
 
-            // Secondary weapon loadedness
-            if (player.Ship != null)
-            {
-                if (player.Ship.Weapon2.Loaded)
-                {
-                    float seconds = player.Ship.Weapon2.LoadedTime.SecondsAgoGameTime();
-                    float scale = 1;
-                    Color color = Color.White;
-                    if (seconds < 0.2f)
-                        color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.2f), Vector4.One, seconds / 0.2f));
-                    spriteBatch.Draw(iconWeaponLoadTexture,
-                        new Vector2(statusDisplayTexture.Width + iconWeaponLoadTexture.Width +
-                                    barSpecialTexture.Width + 8 * 2,
-                                    barSpecialTexture.Height + 40 * 2) / 2,
-                        null, color, 0,
-                        new Vector2(iconWeaponLoadTexture.Width, iconWeaponLoadTexture.Height) / 2,
-                        scale, SpriteEffects.None, 0);
-                }
-            }
+        private void DrawSecondaryWeaponLoadedness(SpriteBatch spriteBatch)
+        {
+            if (_player.Ship == null) return;
+            if (!_player.Ship.Weapon2.Loaded) return;
+            float seconds = _player.Ship.Weapon2.LoadedTime.SecondsAgoGameTime();
+            float scale = 1;
+            Color color = Color.White;
+            if (seconds < 0.2f)
+                color = new Color(Vector4.Lerp(new Vector4(0, 1, 0, 0.2f), Vector4.One, seconds / 0.2f));
+            spriteBatch.Draw(_iconWeaponLoadTexture,
+                new Vector2(_statusDisplayTexture.Width + _iconWeaponLoadTexture.Width +
+                            _barSpecialTexture.Width + 8 * 2,
+                            _barSpecialTexture.Height + 40 * 2) / 2,
+                null, color, 0,
+                new Vector2(_iconWeaponLoadTexture.Width, _iconWeaponLoadTexture.Height) / 2,
+                scale, SpriteEffects.None, 0);
         }
 
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
-            statusDisplayTexture = content.Load<Texture2D>("gui_playerinfo_bg");
-            barShipTexture = content.Load<Texture2D>("gui_playerinfo_bar_ship");
-            iconShipTexture = content.Load<Texture2D>("gui_playerinfo_ship");
-            barMainTexture = content.Load<Texture2D>("gui_playerinfo_bar_main");
-            iconWeaponLoadTexture = content.Load<Texture2D>("gui_playerinfo_loaded");
-            barSpecialTexture = content.Load<Texture2D>("gui_playerinfo_bar_special");
-            barLoadAmountTexture = content.Load<Texture2D>("gui_playerinfo_bar_loadamount");
+            _statusDisplayTexture = content.Load<Texture2D>("gui_playerinfo_bg");
+            _barShipTexture = content.Load<Texture2D>("gui_playerinfo_bar_ship");
+            _iconShipTexture = content.Load<Texture2D>("gui_playerinfo_ship");
+            _barMainTexture = content.Load<Texture2D>("gui_playerinfo_bar_main");
+            _iconWeaponLoadTexture = content.Load<Texture2D>("gui_playerinfo_loaded");
+            _barSpecialTexture = content.Load<Texture2D>("gui_playerinfo_bar_special");
+            _barLoadAmountTexture = content.Load<Texture2D>("gui_playerinfo_bar_loadamount");
         }
     }
 }

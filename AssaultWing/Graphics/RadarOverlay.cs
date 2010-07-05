@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Helpers;
 using AW2.Game;
 using AW2.Game.Gobs;
 
@@ -14,6 +15,7 @@ namespace AW2.Graphics
     public class RadarOverlay : OverlayComponent
     {
         private static readonly Color ARENA_RADAR_SILHOUETTE_COLOR = new Color(190, 190, 190, 85);
+        private static readonly Vector2 RADAR_DISPLAY_TOP_LEFT = new Vector2(7, 7);
         private Player _player;
         private Texture2D _radarDisplayTexture;
         private Texture2D _shipOnRadarTexture;
@@ -24,29 +26,50 @@ namespace AW2.Graphics
             get { return new Point(_radarDisplayTexture.Width, _radarDisplayTexture.Height); }
         }
 
-        /// <param name="player">The player whose status to display.</param>
-        public RadarOverlay(Player player)
-            : base(HorizontalAlignment.Left, VerticalAlignment.Top)
+        public RadarOverlay(PlayerViewport viewport)
+            : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Top)
         {
-            _player = player;
+            _player = viewport.Player;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            // Radar background
+            DrawBackground(spriteBatch);
+            DrawWalls(spriteBatch);
+            DrawDocks(spriteBatch);
+            DrawShips(spriteBatch);
+        }
+
+        private void DrawBackground(SpriteBatch spriteBatch)
+        {
             spriteBatch.Draw(_radarDisplayTexture, Vector2.Zero, Color.White);
+        }
 
-            // Arena walls on radar
-            Vector2 radarDisplayTopLeft = new Vector2(7, 7);
-            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, radarDisplayTopLeft, ARENA_RADAR_SILHOUETTE_COLOR);
+        private static void DrawWalls(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, RADAR_DISPLAY_TOP_LEFT, ARENA_RADAR_SILHOUETTE_COLOR);
+        }
 
-            // Ships on radar
+        private void DrawDocks(SpriteBatch spriteBatch)
+        {
+            var arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
+            foreach (var dock in AssaultWing.Instance.DataEngine.Arena.Gobs.OfType<Dock>())
+            {
+                var posInArena = dock.Pos;
+                var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
+                spriteBatch.Draw(_dockOnRadarTexture, posOnRadar, null, Color.White, 0,
+                    _dockOnRadarTexture.Dimensions() / 2, 0.1f, SpriteEffects.None, 0);
+            }
+        }
+
+        private void DrawShips(SpriteBatch spriteBatch)
+        {
             var arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
             foreach (var player in AssaultWing.Instance.DataEngine.Players)
             {
                 if (player.Ship == null || player.Ship.Dead) continue;
                 var posInArena = player.Ship.Pos;
-                var posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
+                var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
                 Color shipColor = player.PlayerColor;
                 float shipScale = 0.4f;
 
@@ -57,15 +80,7 @@ namespace AW2.Graphics
                 }
 
                 spriteBatch.Draw(_shipOnRadarTexture, posOnRadar, null, shipColor, 0,
-                    GetTextureCenter(_shipOnRadarTexture), shipScale, SpriteEffects.None, 0);
-            }
-
-            foreach (var dock in AssaultWing.Instance.DataEngine.Arena.Gobs.OfType<Dock>())
-            {
-                var posInArena = dock.Pos;
-                var posOnRadar = radarDisplayTopLeft + Vector2.Transform(posInArena, arenaToRadarTransform);
-                spriteBatch.Draw(_dockOnRadarTexture, posOnRadar, null, Color.White, 0,
-                    GetTextureCenter(_dockOnRadarTexture), 0.1f, SpriteEffects.None, 0);
+                    _shipOnRadarTexture.Dimensions() / 2, shipScale, SpriteEffects.None, 0);
             }
         }
 
@@ -74,11 +89,6 @@ namespace AW2.Graphics
             _radarDisplayTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_radar_bg");
             _shipOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
             _dockOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("p_green_box");
-        }
-
-        private Vector2 GetTextureCenter(Texture2D texture)
-        {
-            return new Vector2(texture.Width, texture.Height) / 2;
         }
     }
 }

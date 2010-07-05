@@ -8,7 +8,7 @@ using AW2.Game.Gobs;
 
 namespace AW2.Graphics
 {
-    class ScoreOverlay : OverlayComponent
+    public class ScoreOverlay : OverlayComponent
     {
         private Player _player;
         private Texture2D _scoreBackgroundTexture;
@@ -20,10 +20,10 @@ namespace AW2.Graphics
             get { return new Point(_scoreBackgroundTexture.Width, 10 + (AssaultWing.Instance.DataEngine.Players.Count() * scoreLineSpacing)); }
         }
 
-        public ScoreOverlay(Player player)
-            : base(HorizontalAlignment.Left, VerticalAlignment.Bottom)
+        public ScoreOverlay(PlayerViewport viewport)
+            : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Bottom)
         {
-            _player = player;
+            _player = viewport.Player;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)

@@ -249,19 +249,15 @@ namespace AW2.Graphics
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Viewport = Viewport;
-            foreach (OverlayComponent component in _overlayComponents)
-                component.Draw(_spriteBatch);
+            foreach (var component in _overlayComponents) component.Draw(_spriteBatch);
         }
 
-        public Matrix GetGameToScreenMatrix(float Z)
+        public Matrix GetGameToScreenMatrix(float z)
         {
-            var projection = GetProjectionMatrix(Z);
-            var view = ViewMatrix;
-            Matrix gameToScreen = view * projection
+            return ViewMatrix * GetProjectionMatrix(z)
                 * Matrix.CreateReflection(new Plane(Vector3.UnitY, 0))
                 * Matrix.CreateTranslation(1, 1, 0)
                 * Matrix.CreateScale(new Vector3(Viewport.Width, Viewport.Height, Viewport.MaxDepth - Viewport.MinDepth) / 2);
-            return gameToScreen;
         }
 
         protected virtual void RenderGameWorld()

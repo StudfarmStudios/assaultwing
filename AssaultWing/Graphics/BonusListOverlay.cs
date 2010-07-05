@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,99 +9,95 @@ using AW2.Helpers;
 
 namespace AW2.Graphics
 {
-    public enum DisplayDirection { ENTER, EXIT };
-
-    public class BonusOverlay
-    {
-        public BonusOverlay(GameAction action)
-        {
-            bonusEntryDirection = DisplayDirection.ENTER;
-            bonusEntryPosAdjustments = Vector2.Zero;
-            bonusEntryTimeins = AssaultWing.Instance.DataEngine.ArenaTotalTime;
-            gameActionData = action;
-        }
-
-        public BonusOverlay()
-        {
-        }
-
-        /// <summary>
-        /// Times, in game time, at which the player's bonus boxes started
-        /// sliding in to the player's viewport overlay or out of it.
-        /// </summary>
-        public TimeSpan bonusEntryTimeins;
-
-        /// <summary>
-        /// Start position relative X and Y adjustments for sliding bonus boxes, 
-        /// usually between 0 and 1. The adjustment is the relative coordinate
-        /// at which the box was when it started its current movement.
-        /// Normally this is 0 for entering boxes and 1 for exiting boxes.
-        /// </summary>
-        public Vector2 bonusEntryPosAdjustments;
-
-        /// <summary>
-        /// Direction of movement of the overlay
-        /// </summary>
-        public DisplayDirection bonusEntryDirection;
-
-        /// <summary>
-        /// GameAction which we are displaying.
-        /// </summary>
-        public GameAction gameActionData;
-
-        public Vector2 displayPosition;
-    }
-
     /// <summary>
     /// Overlay graphics component displaying a player's current bonuses.
     /// </summary>
-    class BonusListOverlay : OverlayComponent
+    public class BonusListOverlay : OverlayComponent
     {
-        Player player;
-        Texture2D bonusBackgroundTexture;
-        Texture2D bonusDurationTexture;
-        SpriteFont bonusFont;
+        private enum DisplayDirection { Enter, Exit };
+
+        private class BonusOverlay
+        {
+            public BonusOverlay(GameAction action)
+            {
+                bonusEntryDirection = DisplayDirection.Enter;
+                bonusEntryPosAdjustment = Vector2.Zero;
+                bonusEntryTimeIn = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                gameActionData = action;
+            }
+
+            /// <summary>
+            /// Times, in game time, at which the bonus box started
+            /// sliding in to the player's viewport overlay or out of it.
+            /// </summary>
+            public TimeSpan bonusEntryTimeIn;
+
+            /// <summary>
+            /// Start position relative X and Y adjustments for the sliding bonus box, 
+            /// usually between 0 and 1. The adjustment is the relative coordinate
+            /// at which the box was when it started its current movement.
+            /// Normally this is 0 for entering boxes and 1 for exiting boxes.
+            /// </summary>
+            public Vector2 bonusEntryPosAdjustment;
+
+            /// <summary>
+            /// Direction of movement of the overlay
+            /// </summary>
+            public DisplayDirection bonusEntryDirection;
+
+            /// <summary>
+            /// GameAction which we are displaying.
+            /// </summary>
+            public GameAction gameActionData;
+
+            public Vector2 displayPosition;
+        }
 
         /// <summary>
-        /// All objects we need to display
-        /// </summary>
-        List<BonusOverlay> displayQueue = new List<BonusOverlay>();
-
-        /// <summary>
-        /// The X-movement curve of a bonux box that enters a player's
+        /// The X-movement curve of a bonus box that enters a player's
         /// viewport overlay.
         /// </summary>
         /// The curve defines the relative X-coordinate (between 0 and 1)
         /// of the bonus box in respect of time in seconds. 0 means the box is
         /// not visible; 1 means the box is fully visible.
-        Curve bonusBoxEntry;
+        private static Curve g_bonusBoxEntry;
 
         /// <summary>
-        /// The X-movement curve of a bonux box that leaves a player's
+        /// The X-movement curve of a bonus box that leaves a player's
         /// viewport overlay.
         /// </summary>
         /// The curve defines the relative X-coordinate (between 0 and 1)
         /// of the bonus box in respect of time in seconds. 0 means the box is
         /// not visible; 1 means the box is fully visible.
-        Curve bonusBoxExit;
+        private static Curve g_bonusBoxExit;
 
         /// <summary>
-        /// The Y-movement curve of a bonux box that is giving space for another
+        /// The Y-movement curve of a bonus box that is giving space for another
         /// bonus box that is entering a player's viewport overlay.
         /// </summary>
         /// The curve defines the relative Y-coordinate (between 0 and 1)
         /// of the bonus box in respect of time in seconds. 0 means the box is
         /// still blocking the other box; 1 means the box has moved totally aside.
-        Curve bonusBoxAvoid;
+        private static Curve g_bonusBoxAvoid;
 
         /// <summary>
-        /// The Y-movement curve of a bonux box that is closing in space from another
+        /// The Y-movement curve of a bonus box that is closing in space from another
         /// bonus box that is leaving a player's viewport overlay.
         /// </summary>
         /// The curve defines the relative Y-coordinate (between 0 and 1)
         /// of the bonus box in respect of time in seconds. 0 means the box is
         /// still blocking the other box; 1 means the box has moved totally aside.
-        Curve bonusBoxClose;
+        private static Curve g_bonusBoxClose;
+
+        private Player _player;
+        private Texture2D _bonusBackgroundTexture;
+        private Texture2D _bonusDurationTexture;
+        private SpriteFont _bonusFont;
+
+        /// <summary>
+        /// All objects we need to display
+        /// </summary>
+        private List<BonusOverlay> _displayQueue = new List<BonusOverlay>();
 
         /// <summary>
         /// The dimensions of the component in pixels.
@@ -121,48 +115,41 @@ namespace AW2.Graphics
             }
         }
 
-        /// <summary>
-        /// Creates a bonus list overlay.
-        /// </summary>
-        /// <param name="player">The player whose bonuses to display.</param>
-        public BonusListOverlay(Player player)
-            : base(HorizontalAlignment.Right, VerticalAlignment.Center)
+        static BonusListOverlay()
         {
-            this.player = player;
+            g_bonusBoxEntry = new Curve();
+            g_bonusBoxEntry.Keys.Add(new CurveKey(0, 0));
+            g_bonusBoxEntry.Keys.Add(new CurveKey(0.3f, 1));
+            g_bonusBoxEntry.Keys.Add(new CurveKey(0.9f, 1));
+            g_bonusBoxEntry.Keys.Add(new CurveKey(2.0f, 1));
+            g_bonusBoxEntry.ComputeTangents(CurveTangent.Smooth);
+            g_bonusBoxEntry.PostLoop = CurveLoopType.Constant;
+            g_bonusBoxExit = new Curve();
+            g_bonusBoxExit.Keys.Add(new CurveKey(0, 1));
+            g_bonusBoxExit.Keys.Add(new CurveKey(0.4f, 0.2f));
+            g_bonusBoxExit.Keys.Add(new CurveKey(1.0f, 0));
+            g_bonusBoxExit.ComputeTangents(CurveTangent.Smooth);
+            g_bonusBoxExit.PostLoop = CurveLoopType.Constant;
+            g_bonusBoxAvoid = new Curve();
+            g_bonusBoxAvoid.Keys.Add(new CurveKey(0, 0));
+            g_bonusBoxAvoid.Keys.Add(new CurveKey(0.2f, 0.8f));
+            g_bonusBoxAvoid.Keys.Add(new CurveKey(0.5f, 1));
+            g_bonusBoxAvoid.Keys.Add(new CurveKey(1.0f, 1));
+            g_bonusBoxAvoid.ComputeTangents(CurveTangent.Smooth);
+            g_bonusBoxAvoid.PostLoop = CurveLoopType.Constant;
+            g_bonusBoxClose = new Curve();
+            g_bonusBoxClose.Keys.Add(new CurveKey(0, 1));
+            g_bonusBoxClose.Keys.Add(new CurveKey(0.4f, 0.8f));
+            g_bonusBoxClose.Keys.Add(new CurveKey(1.0f, 0));
+            g_bonusBoxClose.ComputeTangents(CurveTangent.Smooth);
+            g_bonusBoxClose.PostLoop = CurveLoopType.Constant;
+        }
 
-            bonusBoxEntry = new Curve();
-            bonusBoxEntry.Keys.Add(new CurveKey(0, 0));
-            bonusBoxEntry.Keys.Add(new CurveKey(0.3f, 1));
-            bonusBoxEntry.Keys.Add(new CurveKey(0.9f, 1));
-            bonusBoxEntry.Keys.Add(new CurveKey(2.0f, 1));
-            bonusBoxEntry.ComputeTangents(CurveTangent.Smooth);
-            bonusBoxEntry.PostLoop = CurveLoopType.Constant;
-            bonusBoxExit = new Curve();
-            bonusBoxExit.Keys.Add(new CurveKey(0, 1));
-            bonusBoxExit.Keys.Add(new CurveKey(0.4f, 0.2f));
-            bonusBoxExit.Keys.Add(new CurveKey(1.0f, 0));
-            bonusBoxExit.ComputeTangents(CurveTangent.Smooth);
-            bonusBoxExit.PostLoop = CurveLoopType.Constant;
-            bonusBoxAvoid = new Curve();
-            bonusBoxAvoid.Keys.Add(new CurveKey(0, 0));
-            bonusBoxAvoid.Keys.Add(new CurveKey(0.2f, 0.8f));
-            bonusBoxAvoid.Keys.Add(new CurveKey(0.5f, 1));
-            bonusBoxAvoid.Keys.Add(new CurveKey(1.0f, 1));
-            bonusBoxAvoid.ComputeTangents(CurveTangent.Smooth);
-            bonusBoxAvoid.PostLoop = CurveLoopType.Constant;
-            bonusBoxClose = new Curve();
-            bonusBoxClose.Keys.Add(new CurveKey(0, 1));
-            bonusBoxClose.Keys.Add(new CurveKey(0.4f, 0.8f));
-            bonusBoxClose.Keys.Add(new CurveKey(1.0f, 0));
-            bonusBoxClose.ComputeTangents(CurveTangent.Smooth);
-            bonusBoxClose.PostLoop = CurveLoopType.Constant;
-            displayQueue.Add(new BonusOverlay
-            {
-                bonusEntryDirection = DisplayDirection.ENTER,
-                bonusEntryPosAdjustments = Vector2.Zero,
-            }
-            );
-
+        public BonusListOverlay(PlayerViewport viewport)
+            : base(viewport, HorizontalAlignment.Right, VerticalAlignment.Center)
+        {
+            _player = viewport.Player;
+            _displayQueue.Add(new BonusOverlay(null));
         }
 
         /// <summary>
@@ -179,32 +166,32 @@ namespace AW2.Graphics
             Texture2D bonusIcon = bonusAction.BonusIcon;
 
             // Draw bonus box background.
-            Vector2 backgroundOrigin = new Vector2(0, bonusBackgroundTexture.Height) / 2;
-            spriteBatch.Draw(bonusBackgroundTexture,
+            Vector2 backgroundOrigin = new Vector2(0, _bonusBackgroundTexture.Height) / 2;
+            spriteBatch.Draw(_bonusBackgroundTexture,
                 bonusPos, null, Color.White, 0, backgroundOrigin, 1, SpriteEffects.None, 0);
 
             // Draw bonus icon.
             Vector2 iconPos = bonusPos - backgroundOrigin + new Vector2(133, 9);
             spriteBatch.Draw(bonusIcon,
-                iconPos, null, player.PlayerColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                iconPos, null, _player.PlayerColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus duration meter.
             float startSeconds = (float)bonusAction.BeginTime.TotalSeconds;
             float endSeconds = (float)bonusAction.EndTime.TotalSeconds;
             float nowSeconds = (float)AssaultWing.Instance.DataEngine.ArenaTotalTime.TotalSeconds;
             float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
-            int durationHeight = (int)Math.Round(duration * bonusDurationTexture.Height);
-            int durationY = bonusDurationTexture.Height - durationHeight;
-            Rectangle durationClip = new Rectangle(0, durationY, bonusDurationTexture.Width, durationHeight);
+            int durationHeight = (int)Math.Round(duration * _bonusDurationTexture.Height);
+            int durationY = _bonusDurationTexture.Height - durationHeight;
+            Rectangle durationClip = new Rectangle(0, durationY, _bonusDurationTexture.Width, durationHeight);
             Vector2 durationPos = bonusPos - backgroundOrigin + new Vector2(14, 8 + durationY);
-            spriteBatch.Draw(bonusDurationTexture,
+            spriteBatch.Draw(_bonusDurationTexture,
                 durationPos, durationClip, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus text.
             // Round coordinates for beautiful text.
-            Vector2 textSize = bonusFont.MeasureString(bonusText);
+            Vector2 textSize = _bonusFont.MeasureString(bonusText);
             Vector2 textPos = bonusPos - backgroundOrigin + new Vector2(32, 25.5f - textSize.Y / 2);
-            spriteBatch.DrawString(bonusFont, bonusText, textPos.Round(), Color.White);
+            spriteBatch.DrawString(_bonusFont, bonusText, textPos.Round(), Color.White);
         }
 
         /// <summary>
@@ -218,30 +205,30 @@ namespace AW2.Graphics
         {
             var data = AssaultWing.Instance.DataEngine;
             //Remove expired bonusOverlays from the queue
-            for (int i = displayQueue.Count - 1; i >= 1; i--)
+            for (int i = _displayQueue.Count - 1; i >= 1; i--)
             {
-                BonusOverlay bonusOverlay = displayQueue[i];
-                if (bonusOverlay.displayPosition.X >= 0 && bonusOverlay.bonusEntryDirection == DisplayDirection.EXIT)
-                    displayQueue.RemoveAt(i);
+                BonusOverlay bonusOverlay = _displayQueue[i];
+                if (bonusOverlay.displayPosition.X >= 0 && bonusOverlay.bonusEntryDirection == DisplayDirection.Exit)
+                    _displayQueue.RemoveAt(i);
             }
 
             //this dictionary is only used for reduce load from the loop that adds new objects to queue
             var gameActionsInQueue = new Dictionary<Type, BonusOverlay>();
-            for (int i = 1; i < displayQueue.Count; i++)
+            for (int i = 1; i < _displayQueue.Count; i++)
             {
-                BonusOverlay bonusOverlay = displayQueue[i];
+                BonusOverlay bonusOverlay = _displayQueue[i];
                 //if bonus is exitting it doesn't exist. when the same bonus is activated
                 //when the bonusOverlay is exitting, the will be a new bonusOverlay as a last item it the list
-                if (bonusOverlay.bonusEntryDirection == DisplayDirection.ENTER)
+                if (bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
                     gameActionsInQueue.Add(bonusOverlay.gameActionData.GetType(), bonusOverlay);
             }
 
             //Loop bonusActions and add them to displayQueue if they don't exist yet
-            foreach (GameAction action in player.BonusActions)
+            foreach (GameAction action in _player.BonusActions)
             {
                 if (!gameActionsInQueue.Keys.Contains(action.GetType()))
                 {
-                    displayQueue.Add(new BonusOverlay(action));
+                    _displayQueue.Add(new BonusOverlay(action));
                 }
                 else
                 {
@@ -251,27 +238,27 @@ namespace AW2.Graphics
             }
 
             //Handle Displayables
-            for (int i = 1; i < displayQueue.Count; i++)
+            for (int i = 1; i < _displayQueue.Count; i++)
             {
-                BonusOverlay bonusOverlay = displayQueue[i];
+                BonusOverlay bonusOverlay = _displayQueue[i];
                 float slideTime = (float)(AssaultWing.Instance.DataEngine.ArenaTotalTime.TotalSeconds
-                - bonusOverlay.bonusEntryTimeins.TotalSeconds);
+                - bonusOverlay.bonusEntryTimeIn.TotalSeconds);
 
-                Vector2 adjustment = bonusOverlay.bonusEntryPosAdjustments;
+                Vector2 adjustment = bonusOverlay.bonusEntryPosAdjustment;
                 Vector2 curvePos, shift, scale;
 
                 //Do entry for bonusOverlay
-                if (bonusOverlay.bonusEntryDirection == DisplayDirection.ENTER)
+                if (bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
                 {
-                    curvePos = GetCurvePos(bonusBoxEntry, bonusBoxAvoid, slideTime);
-                    shift = GetEntryShift(bonusBoxEntry, bonusBoxAvoid, adjustment);
-                    scale = GetScale(bonusBoxEntry, bonusBoxAvoid, adjustment);
+                    curvePos = GetCurvePos(g_bonusBoxEntry, g_bonusBoxAvoid, slideTime);
+                    shift = GetEntryShift(g_bonusBoxEntry, g_bonusBoxAvoid, adjustment);
+                    scale = GetScale(g_bonusBoxEntry, g_bonusBoxAvoid, adjustment);
                 } //do exit for bonusOverlay
                 else
                 {
-                    curvePos = GetCurvePos(bonusBoxExit, bonusBoxClose, slideTime);
-                    shift = GetExitShift(bonusBoxExit, bonusBoxClose, adjustment);
-                    scale = GetScale(bonusBoxExit, bonusBoxClose, adjustment);
+                    curvePos = GetCurvePos(g_bonusBoxExit, g_bonusBoxClose, slideTime);
+                    shift = GetExitShift(g_bonusBoxExit, g_bonusBoxClose, adjustment);
+                    scale = GetScale(g_bonusBoxExit, g_bonusBoxClose, adjustment);
                 }
 
                 //get relative position
@@ -280,34 +267,31 @@ namespace AW2.Graphics
                     (curvePos.Y + shift.Y) * scale.Y);
 
                 /*update bonusOverlay when the bonus in player ceases to be*/
-                if (!player.BonusActions.Contains(bonusOverlay.gameActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.ENTER)
+                if (!_player.BonusActions.Contains(bonusOverlay.gameActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
                 {
-                    bonusOverlay.bonusEntryPosAdjustments = relativePos;
-                    bonusOverlay.bonusEntryTimeins = AssaultWing.Instance.DataEngine.ArenaTotalTime;
-                    bonusOverlay.bonusEntryDirection = DisplayDirection.EXIT;
+                    bonusOverlay.bonusEntryPosAdjustment = relativePos;
+                    bonusOverlay.bonusEntryTimeIn = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                    bonusOverlay.bonusEntryDirection = DisplayDirection.Exit;
                 }
 
                 //calculate position for each displayable
-                bonusOverlay.displayPosition = new Vector2(-bonusBackgroundTexture.Width * relativePos.X,
-                        displayQueue[i - 1].displayPosition.Y + bonusBackgroundTexture.Height * relativePos.Y);
+                bonusOverlay.displayPosition = new Vector2(-_bonusBackgroundTexture.Width * relativePos.X,
+                        _displayQueue[i - 1].displayPosition.Y + _bonusBackgroundTexture.Height * relativePos.Y);
             }
 
             // Draw the bonus boxes in their places.
             Point dimensions = Dimensions;
             Vector2 bonusBoxAreaTopRight = new Vector2(dimensions.X * 2,
-                dimensions.Y - displayQueue[displayQueue.Count - 1].displayPosition.Y) / 2;
+                dimensions.Y - _displayQueue[_displayQueue.Count - 1].displayPosition.Y) / 2;
 
-            for (int i = 1; i < displayQueue.Count; ++i)
+            for (int i = 1; i < _displayQueue.Count; ++i)
             {
-                Vector2 leftMiddlePoint = new Vector2(displayQueue[i].displayPosition.X + bonusBoxAreaTopRight.X,
-                    bonusBoxAreaTopRight.Y + (displayQueue[i].displayPosition.Y + displayQueue[i - 1].displayPosition.Y) / 2);
-                DrawBonusBox(spriteBatch, leftMiddlePoint, displayQueue[i].gameActionData);
+                Vector2 leftMiddlePoint = new Vector2(_displayQueue[i].displayPosition.X + bonusBoxAreaTopRight.X,
+                    bonusBoxAreaTopRight.Y + (_displayQueue[i].displayPosition.Y + _displayQueue[i - 1].displayPosition.Y) / 2);
+                DrawBonusBox(spriteBatch, leftMiddlePoint, _displayQueue[i].gameActionData);
             }
         }
 
-        /// <summary>
-        /// called to get the Curve for position
-        /// </summary>
         /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
         /// <param name="bonusBoxEffect"> Avoid or Close</param>
         /// <param name="slideTime"> Time passed since entry or exit</param>
@@ -315,9 +299,7 @@ namespace AW2.Graphics
         {
             return new Vector2(bonusBoxDirection.Evaluate(slideTime), bonusBoxEffect.Evaluate(slideTime));
         }
-        /// <summary>
-        /// called to get the shift for entry
-        /// </summary>
+
         /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
         /// <param name="bonusBoxEffect"> Avoid or Close</param>
         /// <param name="adjustment"> Place where the adjustment starts</param>
@@ -325,9 +307,7 @@ namespace AW2.Graphics
         {
             return new Vector2(adjustment.X - bonusBoxDirection.Evaluate(0), adjustment.Y - bonusBoxEffect.Evaluate(0));
         }
-        /// <summary>
-        /// called to get the shift for exit
-        /// </summary>
+
         /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
         /// <param name="bonusBoxEffect"> Avoid or Close</param>
         /// <param name="adjustment"> Place where the adjustment starts</param>
@@ -335,9 +315,7 @@ namespace AW2.Graphics
         {
             return new Vector2(adjustment.Y - bonusBoxDirection.Evaluate(0), adjustment.Y - bonusBoxEffect.Evaluate(0));
         }
-        /// <summary>
-        /// called to get the scale
-        /// </summary>
+
         /// <param name="bonusBoxDirection"> Entry or Exit Direction</param>
         /// <param name="bonusBoxEffect"> Avoid or Close</param>
         /// <param name="adjustment"> Place where the adjustment starts</param>
@@ -352,9 +330,9 @@ namespace AW2.Graphics
         public override void LoadContent()
         {
             var content = AssaultWing.Instance.Content;
-            bonusBackgroundTexture = content.Load<Texture2D>("gui_bonus_bg");
-            bonusDurationTexture = content.Load<Texture2D>("gui_bonus_duration");
-            bonusFont = content.Load<SpriteFont>("ConsoleFont");
+            _bonusBackgroundTexture = content.Load<Texture2D>("gui_bonus_bg");
+            _bonusDurationTexture = content.Load<Texture2D>("gui_bonus_duration");
+            _bonusFont = content.Load<SpriteFont>("ConsoleFont");
         }
     }
 }

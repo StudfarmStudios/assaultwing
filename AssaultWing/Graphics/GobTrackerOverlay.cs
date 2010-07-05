@@ -12,40 +12,15 @@ namespace AW2.Graphics
     {
         private Player _player;
 
-        public PlayerViewport Viewport { get; set; }
+        /// <summary>
+        /// Dimensions are meaningless because our alignments are Stretch.
+        /// </summary>
+        public override Point Dimensions { get { return new Point(1, 1); } }
 
-        public override Point Dimensions
+        public GobTrackerOverlay(PlayerViewport viewport)
+            : base(viewport, HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
         {
-            get
-            {
-                if (Viewport != null)
-                {
-                    var x = Viewport.OnScreen.Right - Viewport.OnScreen.Left;
-                    var y = Viewport.OnScreen.Bottom - Viewport.OnScreen.Top;
-                    return new Point(x, y);
-                }
-                return new Point(0, 0);
-            }
-        }
-
-        public GobTrackerOverlay(Player player)
-            : base(HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
-        {
-            _player = player;
-        }
-
-        private void SetViewport()
-        {
-            if (Viewport == null)
-            {
-                foreach (PlayerViewport viewport in AssaultWing.Instance.DataEngine.Viewports)
-                {
-                    if (viewport != null && viewport.Player.ID == _player.ID)
-                    {
-                        Viewport = viewport;
-                    }
-                }
-            }
+            _player = viewport.Player;
         }
 
         private Vector2 GetTrackerPos(Gob trackerGob, Player trackerPlayer)
@@ -57,51 +32,17 @@ namespace AW2.Graphics
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            SetViewport();
-
-            if (Viewport != null)
+            RemoveOutdatedItems();
+            foreach (var gobTracker in _player.GobTrackerItems)
             {
-                RemoveOutdatedItems();
-
-                // Then draw
-                if (_player.Ship != null)
-                {
-                    foreach (var gobtracker in Viewport.Player.GobTrackerItems)
-                    {
-                        var pos = Vector2.Transform(gobtracker.Gob.Pos, Viewport.GetGameToScreenMatrix(0));
-                        var origPos = pos;
-                        var trackerPos = GetTrackerPos(gobtracker.TrackerGob, _player);
-                        float rotation = 0f;
-                        float scale = 1f;
-
-                        if (gobtracker.ScaleByDistance)
-                        {
-                            var farDistance = AssaultWing.Instance.DataEngine.Arena.Dimensions.Length();
-                            var distance = Vector2.Distance(gobtracker.Gob.Pos, trackerPos);
-                            scale = MathHelper.Max(0, (farDistance - distance) / farDistance);
-                        }
-                        if (gobtracker.RotateTowardsTarget)
-                        {
-                            rotation = -AW2.Helpers.AWMathHelper.Angle(gobtracker.Gob.Pos - trackerPos);
-                        }
-                        if (gobtracker.StickToBorders)
-                        {
-                            pos = AW2.Helpers.Geometric.Geometry.CropLineSegment(_player.Ship.Pos, gobtracker.Gob.Pos, Viewport.WorldAreaMin(0), Viewport.WorldAreaMax(0));
-                            pos = Vector2.Transform(pos, Viewport.GetGameToScreenMatrix(0));
-                        }
-                        if ((pos != origPos && gobtracker.StickToBorders) || (pos == origPos && gobtracker.ShowWhileTargetOnScreen))
-                        {
-                            Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(gobtracker.Texture);
-                            spriteBatch.Draw(texture, pos, null, gobtracker.DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, scale, SpriteEffects.None, 0);
-                        }
-                    }
-                }
+                var trackerPos = GetTrackerPos(gobTracker.TrackerGob, _player);
+                gobTracker.Draw(spriteBatch, trackerPos, z => Viewport.GetGameToScreenMatrix(z));
             }
         }
 
         private void RemoveOutdatedItems()
         {
-            Viewport.Player.GobTrackerItems.RemoveAll(IsItemOutdated);
+            _player.GobTrackerItems.RemoveAll(IsItemOutdated);
         }
 
         private bool IsItemOutdated(GobTrackerItem item)

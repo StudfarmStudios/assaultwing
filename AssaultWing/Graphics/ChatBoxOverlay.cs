@@ -32,11 +32,11 @@ namespace AW2.Graphics
         }
 
         /// <param name="player">The player whose chat messages to display.</param>
-        public ChatBoxOverlay(Player player)
-            : base(HorizontalAlignment.Center, VerticalAlignment.Center)
+        public ChatBoxOverlay(PlayerViewport viewport)
+            : base(viewport, HorizontalAlignment.Center, VerticalAlignment.Center)
         {
             CustomAlignment = new Vector2(0, 300);
-            _player = player;
+            _player = viewport.Player;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)

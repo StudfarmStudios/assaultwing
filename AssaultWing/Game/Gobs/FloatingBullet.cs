@@ -38,6 +38,7 @@ namespace AW2.Game.Gobs
         {
             _hoverThrust = 10000;
             _attractionForce = 50000;
+            _spreadingForce = 10000;
         }
 
         public FloatingBullet(CanonicalString typeName)

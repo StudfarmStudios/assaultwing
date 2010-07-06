@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using AW2.Graphics;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
+using AW2.Helpers.Geometric;
 
 namespace AW2.Game.Gobs
 {
@@ -115,8 +116,7 @@ namespace AW2.Game.Gobs
             {
                 if (_target != null)
                 {
-                    float secondsToCollision = 1.0f * MathHelper.Clamp(Vector2.Distance(Pos, _target.Pos) / 300, 0, 1);
-                    var predictedTargetPos = PredictPos(_target, TimeSpan.FromSeconds(secondsToCollision));
+                    var predictedTargetPos = PredictPositionDecent(_target);
                     RotateTowards(predictedTargetPos - Pos, _targetTurnSpeed);
                 }
                 Thrust();
@@ -182,9 +182,47 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        private Vector2 PredictPos(Gob gob, TimeSpan timeDelta)
+        private Vector2 PredictPositionDecent(Gob gob)
         {
-            return gob.Pos + AssaultWing.Instance.PhysicsEngine.ApplyChange(gob.Move, timeDelta);
+            var trip = _target.Pos - Pos;
+            float distance = trip.Length();
+            var unitTowardsTarget = trip / distance;
+            var targetEscapeMove = unitTowardsTarget * Vector2.Dot(_target.Move, unitTowardsTarget);
+            var rocketChaseMove = unitTowardsTarget * _maxSpeed;
+            var relativeMove = rocketChaseMove - targetEscapeMove;
+            float secondsToCollisionEstimate = distance / relativeMove.Length();
+            float lookAheadSeconds = MathHelper.Clamp(secondsToCollisionEstimate, 0, 1);
+            return gob.Pos + gob.Move * lookAheadSeconds;
+        }
+
+        private Vector2 PredictPositionGood(Gob gob)
+        {
+            // Solve the prediction problem with 3D geometry where the Z axis represents time relative to now.
+            // The rocket travelling at an estimated maximum speed to all directions spans a cone.
+            // The target with its current known position and movement spans a 3D line.
+            // The intersection of the cone and the line represents possible collision points in space and time.
+            float rocketSpeedEstimate = _maxSpeed * 0.9f;
+            var rocketStart = new Vector3(Pos, 0);
+            var targetStart = new Vector3(_target.Pos, 0);
+            var targetDelta = new Vector3(_target.Move, 1);
+            float squareCosine = 1 / (1 * 1 + rocketSpeedEstimate * rocketSpeedEstimate);
+            Vector3 intersectionData1, intersectionData2;
+            var intersectionType = Geometry.Intersect(rocketStart, Vector3.UnitZ, squareCosine,
+                targetStart, targetDelta, out intersectionData1, out intersectionData2);
+            switch (intersectionType)
+            {
+                case Geometry.LineConeIntersectionType.Point:
+                    return new Vector2(intersectionData1.X, intersectionData1.Y);
+                case Geometry.LineConeIntersectionType.Ray:
+                    return new Vector2(intersectionData1.X, intersectionData1.Y);
+                case Geometry.LineConeIntersectionType.Segment:
+                    if (intersectionData1.Z <= intersectionData2.Z)
+                        return new Vector2(intersectionData1.X, intersectionData1.Y);
+                    else
+                        return new Vector2(intersectionData2.X, intersectionData2.Y);
+                default:
+                    return gob.Pos + 1 * gob.Move;
+            }
         }
 
         private void RotateTowards(Vector2 direction, float rotationSpeed)

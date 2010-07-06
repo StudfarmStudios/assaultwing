@@ -14,6 +14,8 @@ namespace AW2.Game.Weapons
     /// </summary>
     public class Blink : ShipDevice
     {
+        private static readonly CanonicalString EFFECT_NAME = (CanonicalString)"gaussian_blur";
+
         /// <summary>
         /// Target area of blink, relative to ship position and rotation.
         /// </summary>
@@ -54,9 +56,15 @@ namespace AW2.Game.Weapons
                 {
                     owner.Enable();
                     _targetPos = null;
-                    owner.Owner.PostprocessEffectNames.Remove((CanonicalString)"gaussian_blur");
+                    owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
                 }
             }
+        }
+
+        public override void Dispose()
+        {
+            owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
+            base.Dispose();
         }
 
         protected override bool PermissionToFire(bool canFire)
@@ -85,7 +93,7 @@ namespace AW2.Game.Weapons
 
         protected override void CreateVisuals()
         {
-            owner.Owner.PostprocessEffectNames.EnsureContains((CanonicalString)"gaussian_blur");
+            owner.Owner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
         }
     }
 }

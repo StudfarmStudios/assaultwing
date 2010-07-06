@@ -309,7 +309,7 @@ namespace AW2.Game.Gobs
                     ++i;
 
             // Die by our leader.
-            if (Leader != null && Leader.Dead)
+            if (Leader != null && (Leader.Dead || Leader.IsDisposed))
             {
                 Die(new DeathCause());
                 Leader = null;
@@ -335,7 +335,7 @@ namespace AW2.Game.Gobs
             Vector3 viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
             Matrix pengToGame = WorldMatrix;
             Color pengColor = new Color(new Vector3(1, 1, 1));
-            if(this.PlayerRelated)
+            if (this.PlayerRelated)
                 pengColor = this.Owner.PlayerColor;
             foreach (Particle particle in particles)
             {

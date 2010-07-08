@@ -63,7 +63,6 @@ namespace AW2.Menu
                 {
                     InitializeControls();
                     InitializeControlCallbacks();
-                    selectedArenaNames = ArenaInfos.Select(info => info.Name).ToList();
                 }
             }
         }
@@ -85,7 +84,7 @@ namespace AW2.Menu
             pos = new Vector2(1220, 698);
 
             selectedArenaNames = new List<string>();
-
+            selectedArenaNames.Add(ArenaInfos.First().Name);
             cursorFade = new Curve();
             cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
             cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
@@ -186,18 +185,19 @@ namespace AW2.Menu
             { 
                 MenuEngine.ActivateComponent(MenuComponentType.Equip); 
             }));
+           
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDone, () =>
             {
-                if (selectedArenaNames.Count > 0)
+                if (currentArena >= 0 && currentArena < ArenaInfos.Count)
                 {
-                    selectedArenaNames.Sort();
-                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
-                    MenuEngine.ProgressBarAction(
-                        AssaultWing.Instance.PrepareFirstArena,
-                        AssaultWing.Instance.StartArena);
-                    MenuEngine.Deactivate();
+                    if (SelectCurrentArena())
+                    {
+                        AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+                        MenuEngine.ActivateComponent(MenuComponentType.Equip);
+                    }
                 }
             }));
+            
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () =>
             {
                 --currentArena;
@@ -212,14 +212,27 @@ namespace AW2.Menu
             {
                 if (currentArena >= 0 && currentArena < ArenaInfos.Count)
                 {
-                    var name = ArenaInfos[currentArena].Name;
-                    if (selectedArenaNames.Contains(name))
-                        selectedArenaNames.Remove(name);
-                    else
-                        selectedArenaNames.Add(name);
-                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+                    if (SelectCurrentArena())
+                        AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
                 }
             }));
+        }
+
+        private bool SelectCurrentArena()
+        {
+            if (currentArena >= 0 && currentArena < ArenaInfos.Count)
+            {
+                var name = ArenaInfos[currentArena].Name;
+                if (!selectedArenaNames.Contains(name))
+                {
+                    selectedArenaNames.Clear();
+                    selectedArenaNames.Add(name);
+                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
+                    return true;
+                }
+            }
+
+            return false;
         }
         
         /// <summary>

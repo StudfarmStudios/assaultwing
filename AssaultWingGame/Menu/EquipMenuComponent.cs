@@ -31,22 +31,25 @@ namespace AW2.Menu
         /// An item in a pane main display in the equip menu.
         /// </summary>
         private enum EquipMenuItem { Name, Ship, Extra, Weapon2 }
-        private enum EquipMenuTab { Equipment = 1, Players = 2 }
+        private enum EquipMenuTab { Equipment = 1, Players = 2, Chat = 3, GameSettings = 4 }
+        private enum EquipMenuGameSettings { Template = 0, Arena = 1 }
         private EquipMenuTab _currentTab;
         private int _playerListIndex;
+        private int _gameSettingsListIndex;
         private bool _playerNameChanged;
-        private TimeSpan _playerListCursorFadeStartTime;
+        private TimeSpan _listCursorFadeStartTime;
         private TimeSpan _tabFadeStartTime;
         private TimeSpan _nameInfoMoveStartTime;
 
         private const int MAX_MENU_PANES = 4;
 
-        private Control _controlBack, _controlDone, _controlTab, _controlPlayerListUp, _controlPlayerListDown;
+        private Control _controlBack, _controlActivate, _controlTab, _controlListUp, _controlListDown, _controlStartGame;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
         private SpriteFont _menuBigFont, _menuSmallFont;
         private Texture2D _backgroundTexture;
         private Texture2D _cursorMainTexture, _highlightMainTexture;
-        private Texture2D _playerPaneTexture, _playerNameBackgroundTexture, _playerNameBorderTexture, _playerNameHiliteTexture, _playerNameCursorTexture, _playerNameTextCursorTexture;
+        private Texture2D _playerPaneTexture, _playerNameBackgroundTexture, _playerNameBorderTexture;
+        private Texture2D _listHiliteTexture, _listCursorTexture, _listTextCursorTexture;
         private Texture2D _statusPaneTexture;
         private Texture2D _tabEquipmentTexture, _tabPlayersTexture, _tabGameSettingsTexture, _tabChatTexture, _tabHilite;
         private Texture2D _buttonReadyTexture, _buttonReadyHiliteTexture;
@@ -164,14 +167,16 @@ namespace AW2.Menu
         public EquipMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
-            _controlDone = new KeyboardKey(Keys.Enter);
+            _controlActivate = new KeyboardKey(Keys.Enter);
             _controlBack = new KeyboardKey(Keys.Escape);
             _controlTab = new KeyboardKey(Keys.Tab);
-            _controlPlayerListUp = new KeyboardKey(Keys.Up);
-            _controlPlayerListDown = new KeyboardKey(Keys.Down);
+            _controlListUp = new KeyboardKey(Keys.Up);
+            _controlListDown = new KeyboardKey(Keys.Down);
+            _controlStartGame = new KeyboardKey(Keys.Space);
             _currentTab = EquipMenuTab.Equipment;
             _playerListIndex = 0;
-            _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            _gameSettingsListIndex = 0;
+            _listCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _playerNameChanged = false;
             _tabFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _nameInfoMoveStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
@@ -211,9 +216,9 @@ namespace AW2.Menu
             _playerPaneTexture = content.Load<Texture2D>("menu_equip_player_bg");
             _playerNameBackgroundTexture = content.Load<Texture2D>("menu_equip_player_name_bg");
             _playerNameBorderTexture = content.Load<Texture2D>("menu_equip_player_name_border");
-            _playerNameHiliteTexture = content.Load<Texture2D>("menu_equip_player_name_hilite");
-            _playerNameCursorTexture = content.Load<Texture2D>("menu_equip_player_name_cursor");
-            _playerNameTextCursorTexture = content.Load<Texture2D>("menu_equip_player_name_textcursor");
+            _listHiliteTexture = content.Load<Texture2D>("menu_equip_player_name_hilite");
+            _listCursorTexture = content.Load<Texture2D>("menu_equip_player_name_cursor");
+            _listTextCursorTexture = content.Load<Texture2D>("menu_equip_player_name_textcursor");
             _statusPaneTexture = content.Load<Texture2D>("menu_equip_status_display");
 
             _tabEquipmentTexture = content.Load<Texture2D>("menu_equip_tab_equipment");
@@ -254,6 +259,8 @@ namespace AW2.Menu
                     CheckEquipTabPlayerControls();
                 if (_currentTab == EquipMenuTab.Players)
                     CheckPlayersTabControls();
+                if (_currentTab == EquipMenuTab.GameSettings)
+                    CheckGameSettingsTabControls();
                 switch (AssaultWing.Instance.NetworkMode)
                 {
                     case NetworkMode.Client:
@@ -292,13 +299,17 @@ namespace AW2.Menu
         {
             if (_controlTab.Pulse)
             {
-                if (_currentTab == EquipMenuTab.Players)
+                if (_currentTab == EquipMenuTab.GameSettings)
                 {
                     _currentTab = EquipMenuTab.Equipment;
                 }
                 else
                 {
                     ++_currentTab;
+
+                    // There is no chat in standalone mode
+                    if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone && _currentTab == EquipMenuTab.Chat)
+                        ++_currentTab;
                 }
                 // If someone drops of or whatever, set the playerListIndex to Zero for safety
                 if (_currentTab == EquipMenuTab.Players)
@@ -315,7 +326,8 @@ namespace AW2.Menu
                 MenuEngine.ActivateComponent(MenuComponentType.Main);
                 return;
             }
-            if (_controlDone.Pulse)
+
+            if (_controlStartGame.Pulse)
             {
                 ResetEquipMenu();
                 switch (AssaultWing.Instance.NetworkMode)
@@ -332,17 +344,63 @@ namespace AW2.Menu
                         // Client advances only when the server says so.
                         break;
                     case NetworkMode.Standalone:
-                        MenuEngine.ActivateComponent(MenuComponentType.Arena);
+                        if (AssaultWing.Instance.DataEngine.ArenaPlaylist.Count > 0)
+                        {
+                            /*
+                            selectedArenaNames.Sort();
+                            AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
+                            */
+                            MenuEngine.ProgressBarAction(
+                                AssaultWing.Instance.PrepareFirstArena,
+                                AssaultWing.Instance.StartArena);
+                            MenuEngine.Deactivate();
+                        }
                         break;
                     default: throw new Exception("Unexpected network mode " + AssaultWing.Instance.NetworkMode);
                 }
+
+            }
+        }
+
+        private void CheckGameSettingsTabControls()
+        {
+            if (_controlListDown.Pulse)
+            {
+                ++_gameSettingsListIndex;
+
+                if (_gameSettingsListIndex > (int)EquipMenuGameSettings.Arena)
+                    _gameSettingsListIndex = 0;
+
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                _listCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+
                 return;
+            }
+            if (_controlListUp.Pulse)
+            {
+                --_gameSettingsListIndex;
+
+                if (_gameSettingsListIndex < 0)
+                    _gameSettingsListIndex = (int)EquipMenuGameSettings.Arena;
+
+                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                _listCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+
+                return;
+            }
+            if (_controlActivate.Pulse && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+            {
+                if (_gameSettingsListIndex == (int)EquipMenuGameSettings.Arena)
+                {
+                    MenuEngine.ActivateComponent(MenuComponentType.Arena);
+                    return;
+                }
             }
         }
 
         private void CheckPlayersTabControls()
         {
-            if (_controlPlayerListDown.Pulse)
+            if (_controlListDown.Pulse)
             {
                 ++_playerListIndex;
 
@@ -350,11 +408,11 @@ namespace AW2.Menu
                     _playerListIndex = 0;
 
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
-                _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                _listCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
 
                 return;
             }
-            if (_controlPlayerListUp.Pulse)
+            if (_controlListUp.Pulse)
             {
                 --_playerListIndex;
 
@@ -362,7 +420,7 @@ namespace AW2.Menu
                     _playerListIndex = AssaultWing.Instance.DataEngine.Players.Count() - 1;
 
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
-                _playerListCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                _listCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
 
                 return;
             }
@@ -474,6 +532,42 @@ namespace AW2.Menu
                 DrawPlayerListDisplay(view, spriteBatch);
                 DrawPlayerInfoDisplay(view, spriteBatch, AssaultWing.Instance.DataEngine.Players.ElementAt(_playerListIndex));
             }
+
+            if (_currentTab == EquipMenuTab.Chat)
+            {
+                DrawLargeStatusBackground(view, spriteBatch);
+            }
+
+            if (_currentTab == EquipMenuTab.GameSettings)
+            {
+                DrawLargeStatusBackground(view, spriteBatch);
+                DrawGameSettingsList(view, spriteBatch);
+            }
+        }
+
+        private void DrawGameSettingsList(Vector2 view, SpriteBatch spriteBatch)
+        {
+            Vector2 listPos = _pos - view + new Vector2(360, 201);
+            Vector2 currentPos = listPos;
+            Vector2 lineHeight = new Vector2(0, 56);
+            Vector2 cursorPos = currentPos + (lineHeight * _gameSettingsListIndex) + new Vector2(-27, -17);
+
+            var background = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_player_name_bg_empty");
+            spriteBatch.Draw(background, GetPlayerPanePos(0) - view, Color.White);
+
+            spriteBatch.DrawString(_menuSmallFont, EquipMenuGameSettings.Template.ToString(), currentPos, Color.GreenYellow);
+            spriteBatch.DrawString(_menuSmallFont, "Mayhem", currentPos + new Vector2(0, 20), Color.White);
+            currentPos += lineHeight;
+
+            string arenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+                ? "TBA"
+                : AssaultWing.Instance.DataEngine.ArenaPlaylist[0];
+            spriteBatch.DrawString(_menuSmallFont, EquipMenuGameSettings.Arena.ToString(), currentPos, Color.GreenYellow);
+            spriteBatch.DrawString(_menuSmallFont, arenaName, currentPos + new Vector2(0, 20), Color.White);
+
+            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _listCursorFadeStartTime).TotalSeconds;
+            spriteBatch.Draw(_listCursorTexture, cursorPos, Color.White);
+            spriteBatch.Draw(_listHiliteTexture, cursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
         }
 
         private void DrawNameChangeInfo(Vector2 view, SpriteBatch spriteBatch)
@@ -495,11 +589,11 @@ namespace AW2.Menu
             Vector2 lineHeight = new Vector2(0, 30);
             Vector2 cursorPos = playerListPos + (lineHeight * _playerListIndex) + new Vector2(-27, -37);
 
-            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _playerListCursorFadeStartTime).TotalSeconds;
+            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _listCursorFadeStartTime).TotalSeconds;
             var playerNameEmptyTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_player_name_bg_empty");
             spriteBatch.Draw(playerNameEmptyTexture, GetPlayerPanePos(0) - view, Color.White);
-            spriteBatch.Draw(_playerNameCursorTexture, cursorPos, Color.White);
-            spriteBatch.Draw(_playerNameHiliteTexture, cursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
+            spriteBatch.Draw(_listCursorTexture, cursorPos, Color.White);
+            spriteBatch.Draw(_listHiliteTexture, cursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
 
             foreach (Player plr in AssaultWing.Instance.DataEngine.Players)
             {
@@ -640,10 +734,6 @@ namespace AW2.Menu
             spriteBatch.Draw(_tabEquipmentTexture, tab1Pos, Color.White);
             spriteBatch.Draw(_tabPlayersTexture, tab1Pos + tabWidth, Color.White);
 
-            // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
-            float fadeTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _tabFadeStartTime).TotalSeconds;
-            spriteBatch.Draw(_tabHilite, tab1Pos + (tabWidth * ((int)_currentTab - 1)), new Color(255, 255, 255, (byte)_tabFade.Evaluate(fadeTime)));
-
             // Draw chat tab
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone)
             {
@@ -651,14 +741,12 @@ namespace AW2.Menu
             }
 
             // Draw game settings tab
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Standalone || AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-            {
-                Vector2 tabGameSettingsPos = AssaultWing.Instance.NetworkMode == NetworkMode.Server
-                    ? tab1Pos + (tabWidth * 3)
-                    : tab1Pos + (tabWidth * 2);
+            Vector2 tabGameSettingsPos = tab1Pos + (tabWidth * 3);
+            spriteBatch.Draw(_tabGameSettingsTexture, tabGameSettingsPos, Color.White);
 
-                spriteBatch.Draw(_tabGameSettingsTexture, tabGameSettingsPos, Color.White);
-            }
+            // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
+            float fadeTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _tabFadeStartTime).TotalSeconds;
+            spriteBatch.Draw(_tabHilite, tab1Pos + (tabWidth * ((int)_currentTab - 1)), new Color(255, 255, 255, (byte)_tabFade.Evaluate(fadeTime)));
 
             // Draw ready button
             spriteBatch.Draw(_buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
@@ -736,7 +824,7 @@ namespace AW2.Menu
 
                 // Draw cursor, highlight and item name.
                 float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _cursorFadeStartTimes[playerI]).TotalSeconds;
-                Texture2D hiliteTexture = _currentItems[playerI] == EquipMenuItem.Name ? _playerNameHiliteTexture : _highlightMainTexture;
+                Texture2D hiliteTexture = _currentItems[playerI] == EquipMenuItem.Name ? _listHiliteTexture : _highlightMainTexture;
                 Vector2 hiliteTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;
                 spriteBatch.Draw(hiliteTexture, hiliteTexturePos, Color.White);
 
@@ -749,10 +837,10 @@ namespace AW2.Menu
                     // Pixel perfect, otherwise thin textures look stupid
                     partialTextSize.X = (float)Math.Round(partialTextSize.X - totalTextSize.X / 2);
                     Vector2 textCursorPos = hiliteTexturePos + partialTextSize + new Vector2(91, 24);
-                    spriteBatch.Draw(_playerNameTextCursorTexture, textCursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
+                    spriteBatch.Draw(_listTextCursorTexture, textCursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
                 }
 
-                Texture2D cursorTexture = _currentItems[playerI] == EquipMenuItem.Name ? _playerNameCursorTexture : _cursorMainTexture;
+                Texture2D cursorTexture = _currentItems[playerI] == EquipMenuItem.Name ? _listCursorTexture : _cursorMainTexture;
                 Vector2 cursorTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;
                 spriteBatch.Draw(cursorTexture, cursorTexturePos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
                 spriteBatch.DrawString(_menuSmallFont, playerItemName, GetPlayerItemNamePos(playerI, playerItemName) - view, Color.White);

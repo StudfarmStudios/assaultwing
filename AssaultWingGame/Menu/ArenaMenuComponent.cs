@@ -20,7 +20,7 @@ namespace AW2.Menu
         const int MENU_ITEM_COUNT = 8; // number of items that fit in the menu at once
 
         Control controlBack, controlDone;
-        MultiControl controlUp, controlDown, controlSelect;
+        MultiControl controlUp, controlDown;
         TriggeredCallbackCollection controlCallbacks;
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
@@ -208,14 +208,6 @@ namespace AW2.Menu
                 ++currentArena;
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
             }));
-            controlCallbacks.Callbacks.Add(new TriggeredCallback(controlSelect, () =>
-            {
-                if (currentArena >= 0 && currentArena < ArenaInfos.Count)
-                {
-                    if (SelectCurrentArena())
-                        AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-                }
-            }));
         }
 
         private bool SelectCurrentArena()
@@ -244,7 +236,6 @@ namespace AW2.Menu
             if (controlBack != null) controlBack.Dispose();
             if (controlUp != null) controlUp.Dispose();
             if (controlDown != null) controlDown.Dispose();
-            if (controlSelect != null) controlSelect.Dispose();
 
             controlDone = new KeyboardKey(Keys.Enter);
             controlBack = new KeyboardKey(Keys.Escape);
@@ -252,14 +243,11 @@ namespace AW2.Menu
             controlUp.Add(new KeyboardKey(Keys.Up));
             controlDown = new MultiControl();
             controlDown.Add(new KeyboardKey(Keys.Down));
-            controlSelect = new MultiControl();
-            controlSelect.Add(new KeyboardKey(Keys.Space));
 
             foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
             {
                 controlUp.Add(player.Controls.Thrust);
                 controlDown.Add(player.Controls.Down);
-                controlSelect.Add(player.Controls.Fire1);
             }
         }
     }

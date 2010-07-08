@@ -32,7 +32,7 @@ namespace AW2.Menu
         /// </summary>
         private enum EquipMenuItem { Name, Ship, Extra, Weapon2 }
         private enum EquipMenuTab { Equipment = 1, Players = 2, Chat = 3, GameSettings = 4 }
-        private enum EquipMenuGameSettings { Template = 0, Arena = 1 }
+        private enum EquipMenuGameSettings { Type = 0, Arena = 1 }
         private EquipMenuTab _currentTab;
         private int _playerListIndex;
         private int _gameSettingsListIndex;
@@ -542,6 +542,57 @@ namespace AW2.Menu
             {
                 DrawLargeStatusBackground(view, spriteBatch);
                 DrawGameSettingsList(view, spriteBatch);
+                DrawGameModeInfo(view, spriteBatch);
+            }
+        }
+
+        private void DrawGameModeInfo(Vector2 view, SpriteBatch spriteBatch)
+        {
+            if (_gameSettingsListIndex == (int)EquipMenuGameSettings.Type)
+            {
+                Vector2 infoDisplayPos = _pos - view + new Vector2(620, 226);
+                Vector2 lineHeight = new Vector2(0, 20);
+                Vector2 infoWidth = new Vector2(320, 0);
+                Vector2 currentPos = infoDisplayPos;
+                string arenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+                  ? "TBA"
+                  : AssaultWing.Instance.DataEngine.ArenaPlaylist[0];
+
+                spriteBatch.DrawString(_menuBigFont, "Gametype Settings", currentPos, Color.White);
+                currentPos += new Vector2(0, 50);
+                
+                spriteBatch.DrawString(_menuSmallFont, "Enemy", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, "Everyone", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("Everyone").X, 0)), Color.GreenYellow);
+                currentPos += lineHeight;
+
+                spriteBatch.DrawString(_menuSmallFont, "Players", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, "max 16", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("max 16").X, 0)), Color.GreenYellow);
+                currentPos += lineHeight;
+
+                spriteBatch.DrawString(_menuSmallFont, "Time limit", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
+                currentPos += lineHeight;
+
+                spriteBatch.DrawString(_menuSmallFont, "Life limit", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
+                currentPos += lineHeight;
+
+                spriteBatch.DrawString(_menuSmallFont, "Score limit", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
+                currentPos += lineHeight;
+
+                spriteBatch.DrawString(_menuSmallFont, "Arena count", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, "1", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("1").X, 0)), Color.GreenYellow);
+                currentPos += lineHeight;
+
+                spriteBatch.DrawString(_menuSmallFont, "Arenas", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, "Selectable <" + arenaName + ">", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("Selectable <" + arenaName + ">").X, 0)), Color.GreenYellow);
+                currentPos += new Vector2(0, 66);
+
+                spriteBatch.DrawString(_menuSmallFont, "If you want to change these gametype\n" + 
+                                                       "settings, please create a pilot in\n" +
+                                                       "assault wing website which will allow\n" +
+                                                       "you to create your own gametype settings'.", currentPos, new Color(218, 159, 33));
             }
         }
 
@@ -555,7 +606,7 @@ namespace AW2.Menu
             var background = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_player_name_bg_empty");
             spriteBatch.Draw(background, GetPlayerPanePos(0) - view, Color.White);
 
-            spriteBatch.DrawString(_menuSmallFont, EquipMenuGameSettings.Template.ToString(), currentPos, Color.GreenYellow);
+            spriteBatch.DrawString(_menuSmallFont, EquipMenuGameSettings.Type.ToString(), currentPos, Color.GreenYellow);
             spriteBatch.DrawString(_menuSmallFont, "Mayhem", currentPos + new Vector2(0, 20), Color.White);
             currentPos += lineHeight;
 

@@ -543,6 +543,43 @@ namespace AW2.Menu
                 DrawLargeStatusBackground(view, spriteBatch);
                 DrawGameSettingsList(view, spriteBatch);
                 DrawGameModeInfo(view, spriteBatch);
+                DrawArenaInfo(view, spriteBatch);
+            }
+        }
+
+        private void DrawArenaInfo(Vector2 view, SpriteBatch spriteBatch)
+        {
+            if (_gameSettingsListIndex == (int)EquipMenuGameSettings.Arena)
+            {
+                Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
+                Vector2 currentPos = infoDisplayPos;
+                Vector2 lineHeight = new Vector2(0, 20);
+                Vector2 infoWidth = new Vector2(320, 0);
+                string arenaName = AssaultWing.Instance.DataEngine.ArenaPlaylist[0];
+                ArenaInfo arenaInfo = AssaultWing.Instance.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
+                var content = (AWContentManager)AssaultWing.Instance.Content;
+                string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
+
+                if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+                {
+                    arenaName = "To be announced";
+                    previewName = "no_preview";
+                }
+
+                var previewTexture = content.Load<Texture2D>(previewName);
+
+                spriteBatch.DrawString(_menuBigFont, "Arena info", currentPos, Color.White);
+                currentPos += new Vector2(0, 50);
+                spriteBatch.DrawString(_menuSmallFont, "Current arena:", currentPos, Color.White);
+                spriteBatch.DrawString(_menuSmallFont, arenaName, currentPos + new Vector2(_menuSmallFont.MeasureString("Current arena:  ").X, 0), Color.GreenYellow);
+                spriteBatch.DrawString(_menuSmallFont, "Arena list", currentPos + infoWidth + new Vector2(10, 0), Color.White);
+                currentPos += lineHeight;
+                spriteBatch.DrawString(_menuSmallFont, "Gametype settings don't\n" +
+                                                       "contain a list of arenas\n" +
+                                                       "so the game host can\n" +
+                                                       "change the arena.", currentPos + infoWidth + new Vector2(10, 0), new Color(218, 159, 33));
+                spriteBatch.Draw(previewTexture, currentPos, null, Color.White, 0,
+                    new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
             }
         }
 
@@ -550,7 +587,7 @@ namespace AW2.Menu
         {
             if (_gameSettingsListIndex == (int)EquipMenuGameSettings.Type)
             {
-                Vector2 infoDisplayPos = _pos - view + new Vector2(620, 226);
+                Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
                 Vector2 lineHeight = new Vector2(0, 20);
                 Vector2 infoWidth = new Vector2(320, 0);
                 Vector2 currentPos = infoDisplayPos;
@@ -587,7 +624,7 @@ namespace AW2.Menu
 
                 spriteBatch.DrawString(_menuSmallFont, "Arenas", currentPos, Color.White);
                 spriteBatch.DrawString(_menuSmallFont, "Selectable <" + arenaName + ">", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("Selectable <" + arenaName + ">").X, 0)), Color.GreenYellow);
-                currentPos += new Vector2(0, 66);
+                currentPos += new Vector2(0, 72);
 
                 spriteBatch.DrawString(_menuSmallFont, "If you want to change these gametype\n" + 
                                                        "settings, please create a pilot in\n" +

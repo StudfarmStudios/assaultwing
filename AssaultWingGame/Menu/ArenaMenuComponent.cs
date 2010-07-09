@@ -25,7 +25,6 @@ namespace AW2.Menu
         Vector2 pos; // position of the component's background texture in menu system coordinates
         SpriteFont menuBigFont, menuSmallFont;
         Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture, infoBackgroundTexture;
-        List<Texture2D> arenaPreviews;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -110,11 +109,6 @@ namespace AW2.Menu
             highlightTexture = content.Load<Texture2D>("menu_levels_hilite");
             tagTexture = content.Load<Texture2D>("menu_levels_tag");
             infoBackgroundTexture = content.Load<Texture2D>("menu_levels_infobox");
-            arenaPreviews = ArenaInfos.Select(info =>
-            {
-                var previewName = content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
-                return content.Load<Texture2D>(previewName);
-            }).ToList();
         }
 
         /// <summary>

@@ -536,6 +536,7 @@ namespace AW2.Menu
             if (_currentTab == EquipMenuTab.Chat)
             {
                 DrawLargeStatusBackground(view, spriteBatch);
+                DrawChatTextInputBox(view, spriteBatch);
             }
 
             if (_currentTab == EquipMenuTab.GameSettings)
@@ -545,6 +546,12 @@ namespace AW2.Menu
                 DrawGameModeInfo(view, spriteBatch);
                 DrawArenaInfo(view, spriteBatch);
             }
+        }
+
+        private void DrawChatTextInputBox(Vector2 view, SpriteBatch spriteBatch)
+        {
+            var background = AssaultWing.Instance.Content.Load<Texture2D>("menu_equip_player_name_bg_empty");
+            spriteBatch.Draw(background, GetPlayerPanePos(0) - view, Color.White);
         }
 
         private void DrawArenaInfo(Vector2 view, SpriteBatch spriteBatch)

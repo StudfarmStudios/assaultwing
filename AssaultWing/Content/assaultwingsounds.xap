@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2485973594;
-    Last Modified High = 30081059;
+    Last Modified Low = 30081059;
+    Last Modified High = 2485973594;
 
     Category
     {
@@ -193,7 +193,7 @@ Global Settings
         Reserved = 1;
         Read Only = 1;
         Time = 0;
-        Value = 0.000000;
+        Value = 2.000000;
         Initial Value = 0.000000;
         Min = 0.000000;
         Max = 1024.000000;
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::64c7f0b7-5843-4acb-a70e-2d9c856f33ea;
+            Name = 1::7823ef11-a0d2-4d49-aaeb-92dfebcfb19e;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -255,7 +255,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::e8379486-70c5-4cea-bb6a-f80b89a560c2;
+            Name = 1::35db9947-ebd7-45c4-a9c0-336716f026ec;
             Property = 0;
             Sound = 0;
             Line Color = 4279846310;
@@ -295,7 +295,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::da80d3fe-edd0-43f4-9a36-556d12f0e709;
+            Name = 1::16d38fab-ca6c-43b5-84ea-a111e1b66e6b;
             Property = 0;
             Sound = 0;
             Line Color = 4286596879;
@@ -323,7 +323,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::98d9ad38-a477-4a79-a795-d76bad28d7c8;
+            Name = 1::236f7b19-866c-4e8c-a235-6a30b36ff04b;
             Property = 0;
             Sound = 0;
             Line Color = 4289448844;
@@ -373,8 +373,6 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Header Last Modified Low = 0;
-    Header Last Modified High = 0;
     Bank Last Revised Low = 2133301784;
     Bank Last Revised High = 30081060;
 
@@ -1766,8 +1764,6 @@ Sound Bank
     Windows File = bin\x86\Debug\Sound Bank.xsb;
     Xbox Bank Path Edited = 1;
     Windows Bank Path Edited = 1;
-    Bank Last Modified Low = 2486003596;
-    Bank Last Modified High = 30081059;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -2667,7 +2663,7 @@ Sound Bank
     Sound
     {
         Name = blink01;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -2714,7 +2710,7 @@ Sound Bank
     Sound
     {
         Name = blink02;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -2761,7 +2757,7 @@ Sound Bank
     Sound
     {
         Name = blink03;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -2808,7 +2804,7 @@ Sound Bank
     Sound
     {
         Name = blink04;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -2855,7 +2851,7 @@ Sound Bank
     Sound
     {
         Name = blink05;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -2902,7 +2898,7 @@ Sound Bank
     Sound
     {
         Name = blink06;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -2949,7 +2945,7 @@ Sound Bank
     Sound
     {
         Name = blink07;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -2996,7 +2992,7 @@ Sound Bank
     Sound
     {
         Name = blink08;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -3043,7 +3039,7 @@ Sound Bank
     Sound
     {
         Name = blink09;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -3090,7 +3086,7 @@ Sound Bank
     Sound
     {
         Name = blink10;
-        Volume = -2090;
+        Volume = -1200;
         Pitch = 0;
         Priority = 0;
 
@@ -3572,7 +3568,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Dock loop;
-                RPC Curve Name = 1::64c7f0b7-5843-4acb-a70e-2d9c856f33ea;
+                RPC Curve Name = 1::7823ef11-a0d2-4d49-aaeb-92dfebcfb19e;
             }
         }
     }
@@ -3862,7 +3858,7 @@ Sound Bank
     Sound
     {
         Name = hisss;
-        Volume = -1200;
+        Volume = -600;
         Pitch = 0;
         Priority = 0;
 
@@ -4006,7 +4002,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Lightning fadeout;
-                RPC Curve Name = 1::e8379486-70c5-4cea-bb6a-f80b89a560c2;
+                RPC Curve Name = 1::35db9947-ebd7-45c4-a9c0-336716f026ec;
             }
         }
     }
@@ -4629,13 +4625,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::da80d3fe-edd0-43f4-9a36-556d12f0e709;
+                RPC Curve Name = 1::16d38fab-ca6c-43b5-84ea-a111e1b66e6b;
             }
 
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::98d9ad38-a477-4a79-a795-d76bad28d7c8;
+                RPC Curve Name = 1::236f7b19-866c-4e8c-a235-6a30b36ff04b;
             }
         }
     }

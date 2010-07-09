@@ -144,7 +144,7 @@ namespace AW2.Game.Weapons
             ApplyRecoil();
         }
 
-        protected override void CreateVisuals()
+        protected override void CreateVisualsImpl()
         {
             ForEachShipBarrel(gunBarrels, CreateMuzzleFire);
         }

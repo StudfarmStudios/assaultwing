@@ -80,7 +80,7 @@ namespace AW2.Game.Weapons
             owner.Thrust(thrustForce, duration, direction);
         }
 
-        protected override void CreateVisuals()
+        protected override void CreateVisualsImpl()
         {
         }
     }

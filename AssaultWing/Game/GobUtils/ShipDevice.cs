@@ -18,6 +18,19 @@ namespace AW2.Game.GobUtils
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
 
+        public enum FiringSoundType
+        {
+            /// <summary>
+            /// Play firing sound once at the beginning of the burst.
+            /// </summary>
+            Once,
+
+            /// <summary>
+            /// Play firing sound once for every shot but at most once each frame.
+            /// </summary>
+            EveryShot
+        }
+
         #region Fields
 
         private const string FIRING_FAIL_SOUND = "WeaponFail";
@@ -34,6 +47,12 @@ namespace AW2.Game.GobUtils
         /// </summary>
         [TypeParameter]
         private string fireSound;
+
+        /// <summary>
+        /// How to play the firing sound.
+        /// </summary>
+        [TypeParameter]
+        private FiringSoundType fireSoundType;
 
         /// <summary>
         /// Number of shots to shoot in a series.
@@ -83,7 +102,8 @@ namespace AW2.Game.GobUtils
 
         private ChargeProvider _chargeProvider;
         private float _charge;
-        private bool _flashAndBangCreated;
+        private bool _visualsCreatedThisFrame;
+        private bool _soundPlayedThisFrame;
 
         #endregion
 
@@ -170,6 +190,7 @@ namespace AW2.Game.GobUtils
         {
             iconName = (CanonicalString)"dummytexture";
             fireSound = "dummysound";
+            fireSoundType = FiringSoundType.EveryShot;
             shotCount = 3;
             shotSpacing = 0.2f;
             loadTime = 0.5f;
@@ -243,18 +264,25 @@ namespace AW2.Game.GobUtils
             if (owner.Disabled) return;
             if (!FiringOperator.IsFirePressed(triggerState)) return;
             bool success = PermissionToFire(FiringOperator.CanFire) && FiringOperator.TryFire();
-            if (!success) AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
+            if (success)
+            {
+                if (fireSoundType == FiringSoundType.Once) PlayFiringSound();
+            }
+            else
+                AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
         }
 
         public virtual void Update()
         {
-            _flashAndBangCreated = false;
+            _visualsCreatedThisFrame = false;
+            _soundPlayedThisFrame = false;
             bool shootOnceAFrame = shotSpacing <= 0;
             bool shotThisFrame = false;
             while (FiringOperator.IsItTimeToShoot && !(shootOnceAFrame && shotThisFrame))
             {
                 shotThisFrame = true;
-                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client) CreateFlashAndBang();
+                if (fireSoundType == FiringSoundType.EveryShot) PlayFiringSound();
+                CreateVisuals();
                 ShootImpl();
                 FiringOperator.ShotFired();
             }
@@ -271,7 +299,8 @@ namespace AW2.Game.GobUtils
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((Half)_charge);
-                writer.Write((bool)_flashAndBangCreated);
+                writer.Write((bool)_visualsCreatedThisFrame);
+                writer.Write((bool)_soundPlayedThisFrame);
             }
         }
 
@@ -280,8 +309,10 @@ namespace AW2.Game.GobUtils
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 _charge = reader.ReadHalf();
-                bool mustCreateFlashAndBang = reader.ReadBoolean();
-                if (mustCreateFlashAndBang) CreateFlashAndBang();
+                bool mustCreateVisuals = reader.ReadBoolean();
+                bool mustPlaySound = reader.ReadBoolean();
+                if (mustCreateVisuals) CreateVisualsImpl();
+                if (mustPlaySound) PlayFiringSoundImpl();
             }
         }
 
@@ -289,20 +320,26 @@ namespace AW2.Game.GobUtils
 
         #region Nonpublic methods
 
-        protected abstract void CreateVisuals();
+        protected abstract void CreateVisualsImpl();
         protected abstract void ShootImpl();
         protected virtual bool PermissionToFire(bool canFire) { return true; }
 
-        private void CreateFlashAndBang()
+        private void CreateVisuals()
         {
-            PlayFiringSound();
-            CreateVisuals();
-            _flashAndBangCreated = true;
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            CreateVisualsImpl();
+            _visualsCreatedThisFrame = true;
         }
 
         private void PlayFiringSound()
         {
-            if (_flashAndBangCreated) return;
+            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            PlayFiringSoundImpl();
+            _soundPlayedThisFrame = true;
+        }
+
+        private void PlayFiringSoundImpl()
+        {
             if (fireSound != "") AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
         }
 

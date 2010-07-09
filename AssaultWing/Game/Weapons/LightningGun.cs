@@ -42,7 +42,7 @@ namespace AW2.Game.Weapons
             FireAtTarget(targets.FirstOrDefault());
         }
 
-        protected override void CreateVisuals()
+        protected override void CreateVisualsImpl()
         {
         }
 

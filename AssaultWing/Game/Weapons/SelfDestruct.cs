@@ -33,7 +33,7 @@ namespace AW2.Game.Weapons
                 });
         }
 
-        protected override void CreateVisuals()
+        protected override void CreateVisualsImpl()
         {
         }
     }

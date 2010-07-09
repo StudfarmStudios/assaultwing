@@ -25,4 +25,5 @@ been unused for 3 seconds</infoText>
   <shotCount type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</shotCount>
   <shotSpacing type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</shotSpacing>
   <fireSound type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"></fireSound>
+  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
 </ShipDeviceType>

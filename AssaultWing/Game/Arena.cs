@@ -149,6 +149,12 @@ namespace AW2.Game
         private string _name;
 
         /// <summary>
+        /// Menu info for this arena
+        /// </summary>
+        [TypeParameter]
+        private ArenaMenuInfo _menuInfo;
+
+        /// <summary>
         /// Dimensions of the arena, i.e. maximum coordinates for gobs.
         /// </summary>
         /// Minimum coordinates are always (0,0).
@@ -323,6 +329,11 @@ namespace AW2.Game
         /// The name of the arena.
         /// </summary>
         public string Name { get { return _name; } set { _name = value; } }
+
+        /// <summary>
+        ///  The Menu Info for this arena.
+        /// </summary>
+        public ArenaMenuInfo MenuInfo { get { return _menuInfo; } set { _menuInfo = value; } }
 
         /// <summary>
         /// The file name of the arena.

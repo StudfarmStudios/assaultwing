@@ -42,6 +42,9 @@ namespace AW2.Menu
         /// Index of currently highlighted arena in the arena name list.
         /// </summary>
         int currentArena;
+        private Arena _selectedArena;
+
+
 
         /// <summary>
         /// Index of first arena in the arena name list that is visible on screen.
@@ -91,6 +94,7 @@ namespace AW2.Menu
             cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
             cursorFade.PreLoop = CurveLoopType.Cycle;
             cursorFade.PostLoop = CurveLoopType.Cycle;
+            _selectedArena = (Arena)TypeLoader.LoadTemplate(ArenaInfos[currentArena].FileName, typeof(Arena), typeof(TypeParameterAttribute));
         }
 
         /// <summary>
@@ -129,10 +133,19 @@ namespace AW2.Menu
             // Check our controls and react to them.
             if (Active)
             {
+                var oldCurrentArena = currentArena;
+                
                 controlCallbacks.Update();
 
                 // Limit cursor to sensible limits and scroll currently highlighted arena into view.
                 currentArena = currentArena.Clamp(0, ArenaInfos.Count - 1);
+
+                // Load new arena typetemplate if currentArena has really changed
+                if (oldCurrentArena != currentArena)
+                {
+                    _selectedArena = (Arena)TypeLoader.LoadTemplate(ArenaInfos[currentArena].FileName, typeof(Arena), typeof(TypeParameterAttribute));
+                }
+
                 arenaListStart = arenaListStart.Clamp(currentArena - MENU_ITEM_COUNT + 1, currentArena);
             }
         }
@@ -174,33 +187,34 @@ namespace AW2.Menu
             Vector2 infoBoxContentPos = infoBoxHeaderPos + new Vector2(0, 38);
             Vector2 infoBoxLineHeight = new Vector2(0, 14);
             Vector2 infoBoxColumnWidth = new Vector2(220, 0);
-
+            ArenaMenuInfo menuInfo = _selectedArena.MenuInfo;
+            var content = (AWContentManager)AssaultWing.Instance.Content;
+            string previewName = content.Exists<Texture2D>(menuInfo.PreviewName) ? menuInfo.PreviewName : "no_preview";
+            var previewTexture = content.Load<Texture2D>(previewName);
             float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
+
             spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
-            spriteBatch.Draw(arenaPreviews[currentArena], arenaPreviewPos, Color.White);
+            spriteBatch.Draw(previewTexture, arenaPreviewPos, Color.White);
             spriteBatch.Draw(infoBackgroundTexture, infoBoxPos, Color.White);
-            spriteBatch.DrawString(menuBigFont, ArenaInfos[currentArena].Name, infoBoxHeaderPos, Color.White);
+            spriteBatch.DrawString(menuBigFont, menuInfo.Name, infoBoxHeaderPos, Color.White);
             
             spriteBatch.DrawString(menuSmallFont, "Size", infoBoxContentPos, Color.White);
-            spriteBatch.DrawString(menuSmallFont, "Medium", infoBoxContentPos + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString("Medium").X, 0)), Color.YellowGreen);
+            spriteBatch.DrawString(menuSmallFont, menuInfo.Size.ToString(), infoBoxContentPos + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString(menuInfo.Size.ToString()).X, 0)), ArenaMenuInfo.GetColorForSize(menuInfo.Size));
             
             spriteBatch.DrawString(menuSmallFont, "Ideal Players", infoBoxContentPos + (infoBoxLineHeight * 1), Color.White);
-            spriteBatch.DrawString(menuSmallFont, "4-8", infoBoxContentPos + (infoBoxLineHeight * 1) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString("4-8").X, 0)), Color.YellowGreen);
+            spriteBatch.DrawString(menuSmallFont, menuInfo.IdealPlayers, infoBoxContentPos + (infoBoxLineHeight * 1) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString(menuInfo.IdealPlayers).X, 0)), Color.YellowGreen);
 
             spriteBatch.DrawString(menuSmallFont, "Bonus Amount", infoBoxContentPos + (infoBoxLineHeight * 2), Color.White);
-            spriteBatch.DrawString(menuSmallFont, "Average", infoBoxContentPos + (infoBoxLineHeight * 2) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString("Average").X, 0)), Color.Orange);
+            spriteBatch.DrawString(menuSmallFont, menuInfo.BonusAmount.ToString(), infoBoxContentPos + (infoBoxLineHeight * 2) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString(menuInfo.BonusAmount.ToString()).X, 0)), ArenaMenuInfo.GetColorForBonusAmount(menuInfo.BonusAmount));
             
             spriteBatch.DrawString(menuSmallFont, "Docks", infoBoxContentPos + (infoBoxLineHeight * 3), Color.White);
-            spriteBatch.DrawString(menuSmallFont, "5", infoBoxContentPos + (infoBoxLineHeight * 3) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString("5").X, 0)), Color.YellowGreen);
+            spriteBatch.DrawString(menuSmallFont, menuInfo.Docks, infoBoxContentPos + (infoBoxLineHeight * 3) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString(menuInfo.Docks).X, 0)), Color.YellowGreen);
             
             spriteBatch.DrawString(menuSmallFont, "Flight Easiness", infoBoxContentPos + (infoBoxLineHeight * 4), Color.White);
-            spriteBatch.DrawString(menuSmallFont, "Good", infoBoxContentPos + (infoBoxLineHeight * 4) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString("Good").X, 0)), Color.YellowGreen);
+            spriteBatch.DrawString(menuSmallFont, menuInfo.FlightEasiness.ToString(), infoBoxContentPos + (infoBoxLineHeight * 4) + (infoBoxColumnWidth - new Vector2(menuSmallFont.MeasureString(menuInfo.FlightEasiness.ToString()).X, 0)), ArenaMenuInfo.GetColorForFlightEasiness(menuInfo.FlightEasiness));
 
-            spriteBatch.DrawString(menuSmallFont, "This arena found deep in the\n" +
-                                       "region of space that is called\n" +
-                                       "the RajnFjurest is intense \n" +
-                                       "battles in open spaces.", infoBoxContentPos + infoBoxColumnWidth + new Vector2(16, 0), new Color(218, 159, 33));
+            spriteBatch.DrawString(menuSmallFont, menuInfo.InfoText, infoBoxContentPos + infoBoxColumnWidth + new Vector2(16, 0), new Color(218, 159, 33));
         }
 
         private void InitializeControlCallbacks()
@@ -229,6 +243,7 @@ namespace AW2.Menu
             {
                 --currentArena;
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                
             }));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () =>
             {

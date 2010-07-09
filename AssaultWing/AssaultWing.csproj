@@ -89,6 +89,7 @@
     <Compile Include="Core\NetworkMode.cs" />
     <Compile Include="Game\ArenaBin.cs" />
     <Compile Include="Game\ArenaLoadException.cs" />
+    <Compile Include="Game\ArenaMenuInfo.cs" />
     <Compile Include="Game\BonusActions\SelfDestructBonusAction.cs" />
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />

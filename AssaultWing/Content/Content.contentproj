@@ -955,20 +955,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="textures\amazonas_preview.png">
-      <Name>amazonas_preview</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="textures\anna lunta_preview.png">
-      <Name>anna lunta_preview</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="textures\b_icon_berserkers.png">
       <Name>b_icon_berserkers</Name>
       <Importer>TextureImporter</Importer>

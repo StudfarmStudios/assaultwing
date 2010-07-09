@@ -778,7 +778,6 @@
   <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Anna Lunta</name>
   
   <menuInfo type="AW2.Game.ArenaMenuInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Anna Lunta</name>
     <docks type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</docks>
     <idealPlayers type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3-5</idealPlayers>
     <previewName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">preview_arena_annalunta</previewName>

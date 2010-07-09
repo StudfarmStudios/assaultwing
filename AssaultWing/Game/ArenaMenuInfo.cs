@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game
 {
+    [LimitedSerialization]
     public class ArenaMenuInfo
     {
         public static readonly Color C_LEVEL_1 = new Color(220, 0, 0);
@@ -20,9 +21,6 @@ namespace AW2.Game
         public enum ArenaFlightEasiness { Deadly, Hard, Average, Easy, Stoner }
         
         #region Fields
-
-        [TypeParameter]
-        private string _name;
 
         [TypeParameter]
         private string _docks;
@@ -47,7 +45,7 @@ namespace AW2.Game
 
         #endregion
 
-        public string Name { get { return _name; } set { _name = value; } }
+        public string Name { get; set; }
         public string Docks { get { return _docks; } set { _docks = value; } }
         public CanonicalString PreviewName { get { return _previewName; } set { _previewName = value; } }
         public string InfoText { get { return _infoText; } set { _infoText = value; } }

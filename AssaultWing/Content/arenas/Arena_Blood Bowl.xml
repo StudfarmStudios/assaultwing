@@ -1869,7 +1869,6 @@
   <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Blood Bowl</name>
   
   <menuInfo type="AW2.Game.ArenaMenuInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <name type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Blood Bowl</name>
     <docks type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</docks>
     <idealPlayers type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4-7</idealPlayers>
     <previewName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">preview_arena_bloodbowl</previewName>

@@ -1170,6 +1170,7 @@ namespace AW2.Game
                 fogColor = Vector3.Clamp(fogColor, Vector3.Zero, Vector3.One);
                 fogEnd = MathHelper.Max(fogEnd, 0);
                 fogStart = MathHelper.Max(fogStart, 0);
+                _menuInfo.Name = Name;
             }
             Gobs = new GobCollection(Layers);
         }

@@ -331,8 +331,8 @@ namespace AW2
             GraphicsDeviceManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
 
             _window = WindowInitializing(this);
-            _window.ClientSizeChanged += ClientSizeChanged;
             ClientBoundsMin = new Rectangle(0, 0, _preferredWindowWidth, _preferredWindowHeight);
+            _window.ClientSizeChanged += ClientSizeChanged;
             AllowDialogs = true;
         }
 

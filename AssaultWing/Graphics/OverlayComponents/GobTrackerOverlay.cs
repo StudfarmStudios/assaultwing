@@ -36,7 +36,7 @@ namespace AW2.Graphics.OverlayComponents
             foreach (var gobTracker in _player.GobTrackerItems)
             {
                 var trackerPos = GetTrackerPos(gobTracker.TrackerGob, _player);
-                //gobTracker.Draw(spriteBatch, trackerPos, z => Viewport.GetGameToScreenMatrix(z));
+                gobTracker.Draw(spriteBatch, trackerPos, z => Viewport.GetGameToScreenMatrix(z));
             }
         }
 

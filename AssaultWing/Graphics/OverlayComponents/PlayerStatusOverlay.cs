@@ -109,14 +109,13 @@ namespace AW2.Graphics.OverlayComponents
                 ExtraDeviceChargeBarRectangle, Color.White, 0,
                 new Vector2(_barMainTexture.Width, 0) / 2,
                 1, SpriteEffects.None, 0);
-                    }
+        }
 
         private void DrawExtraDeviceChargeUsage(SpriteBatch spriteBatch)
         {
             if (_player.Ship == null) return;
-            if (_player.Ship.ExtraDevice.FireMode != AW2.Game.GobUtils.ShipDevice.FireModeType.Single) return;
             Rectangle loadAmountExtraBarRect = new Rectangle(0, 0,
-                (int)Math.Ceiling(_player.Ship.ExtraDevice.FireCharge / _player.Ship.ExtraDevice.ChargeMax
+                (int)Math.Ceiling(_player.Ship.ExtraDevice.FiringOperator.VisualChargeUsage / _player.Ship.ExtraDevice.ChargeMax
                 * _barMainTexture.Width),
                 _barMainTexture.Height);
             spriteBatch.Draw(_barLoadAmountTexture,
@@ -129,8 +128,8 @@ namespace AW2.Graphics.OverlayComponents
         private void DrawExtraDeviceLoadedness(SpriteBatch spriteBatch)
         {
             if (_player.Ship == null) return;
-            if (!_player.Ship.ExtraDevice.Loaded) return;
-            float seconds = _player.Ship.ExtraDevice.LoadedTime.SecondsAgoGameTime();
+            if (!_player.Ship.ExtraDevice.FiringOperator.Loaded) return;
+            float seconds = _player.Ship.ExtraDevice.FiringOperator.LoadedTime.SecondsAgoGameTime();
             float scale = 1;
             Color color = Color.White;
             if (seconds < 0.2f)
@@ -157,9 +156,8 @@ namespace AW2.Graphics.OverlayComponents
         private void DrawSecondaryWeaponChargeUsage(SpriteBatch spriteBatch)
         {
             if (_player.Ship == null) return;
-            if (_player.Ship.Weapon2.FireMode != AW2.Game.GobUtils.ShipDevice.FireModeType.Single) return;
             var loadAmount2BarRect = new Rectangle(0, 0,
-                (int)Math.Ceiling((_player.Ship.Weapon2.FireCharge) / _player.Ship.Weapon2.ChargeMax
+                (int)Math.Ceiling((_player.Ship.Weapon2.FiringOperator.VisualChargeUsage) / _player.Ship.Weapon2.ChargeMax
                 * _barSpecialTexture.Width),
                 _barSpecialTexture.Height);
             spriteBatch.Draw(_barLoadAmountTexture,
@@ -172,8 +170,8 @@ namespace AW2.Graphics.OverlayComponents
         private void DrawSecondaryWeaponLoadedness(SpriteBatch spriteBatch)
         {
             if (_player.Ship == null) return;
-            if (!_player.Ship.Weapon2.Loaded) return;
-            float seconds = _player.Ship.Weapon2.LoadedTime.SecondsAgoGameTime();
+            if (!_player.Ship.Weapon2.FiringOperator.Loaded) return;
+            float seconds = _player.Ship.Weapon2.FiringOperator.LoadedTime.SecondsAgoGameTime();
             float scale = 1;
             Color color = Color.White;
             if (seconds < 0.2f)

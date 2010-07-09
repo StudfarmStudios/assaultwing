@@ -109,7 +109,17 @@ namespace AW2.Game.Weapons
 
         public override void Activate()
         {
-            FireMode = fireAction == FireAction.ShootContinuously ? FireModeType.Continuous : FireModeType.Single;
+            switch (fireAction)
+            {
+                case FireAction.ShootContinuously:
+                    FiringOperator = new FiringOperatorContinuous(this);
+                    break;
+                case FireAction.Shoot:
+                case FireAction.KillAll:
+                    FiringOperator = new FiringOperatorSingle(this);
+                    break;
+                default: throw new ApplicationException("Unknown FireAction " + fireAction);
+            }
         }
 
         public override void Update()

@@ -564,29 +564,27 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public void SetDeviceLoadMultiplier(ShipDevice.OwnerHandleType g_deviceType, float g_multiplier)
+        public void SetDeviceLoadMultiplier(ShipDevice.OwnerHandleType deviceType, float multiplier)
         {
-            var device = GetDevice(g_deviceType);
-            device.LoadTimeMultiplier = g_multiplier;
+            var device = GetDevice(deviceType);
+            device.LoadTimeMultiplier = multiplier;
         }
         
-        public float GetDeviceLoadMultiplier(ShipDevice.OwnerHandleType g_deviceType)
+        public float GetDeviceLoadMultiplier(ShipDevice.OwnerHandleType deviceType)
         {
-            var device = GetDevice(g_deviceType);
+            var device = GetDevice(deviceType);
             return device.LoadTimeMultiplier;
         }
 
         private ShipDevice GetDevice(ShipDevice.OwnerHandleType deviceType)
         {
-            ShipDevice device;
             switch (deviceType)
             {
-                case ShipDevice.OwnerHandleType.PrimaryWeapon: device=Weapon1; break;
-                case ShipDevice.OwnerHandleType.SecondaryWeapon: device = Weapon2; break;
-                case ShipDevice.OwnerHandleType.ExtraDevice: device = ExtraDevice; break;
+                case ShipDevice.OwnerHandleType.PrimaryWeapon: return Weapon1;
+                case ShipDevice.OwnerHandleType.SecondaryWeapon: return Weapon2;
+                case ShipDevice.OwnerHandleType.ExtraDevice: return ExtraDevice;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
-            return device;
         }
 
         public void SetDeviceType(ShipDevice.OwnerHandleType deviceType, CanonicalString typeName)

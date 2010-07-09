@@ -18,8 +18,6 @@ namespace AW2.Game.GobUtils
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
 
-        public enum FireModeType { Single, Continuous };
-
         #region Fields
 
         private const string FIRING_FAIL_SOUND = "WeaponFail";
@@ -56,11 +54,6 @@ namespace AW2.Game.GobUtils
         protected Ship owner;
 
         /// <summary>
-        /// A handle for identifying us at the owner.
-        /// </summary>
-        protected OwnerHandleType ownerHandle;
-
-        /// <summary>
         /// The time in seconds that it takes for the weapon to fire again after being fired once.
         /// Use the property <see cref="LoadTime"/> to see the current load time
         /// with applied bonuses.
@@ -91,15 +84,13 @@ namespace AW2.Game.GobUtils
         private ChargeProvider _chargeProvider;
         private float _charge;
         private bool _flashAndBangCreated;
-        private TimeSpan nextShot;
-        private int shotsLeft;
-        private bool _cannotFireFlagged = false;
 
         #endregion
 
         #region Properties
 
         public ShipDeviceInfo DeviceInfo { get { return _deviceInfo; } set { _deviceInfo = value; } }
+
         /// <summary>
         /// Name of the icon of the weapon, to be displayed in weapon selection 
         /// and bonus display.
@@ -120,9 +111,14 @@ namespace AW2.Game.GobUtils
         public Arena Arena { get; set; }
 
         /// <summary>
-        /// The player who owns the ship who owns the weapon, or <c>null</c> if none exists.
+        /// The player who owns the ship who owns this device, or <c>null</c> if none exists.
         /// </summary>
-        private Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
+        public Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
+
+        /// <summary>
+        /// The purpose for which the owner is using this device.
+        /// </summary>
+        public OwnerHandleType OwnerHandle { get; protected set; }
 
         public float LoadTimeMultiplier { get { return loadTimeMultiplier; } set { loadTimeMultiplier = value; } }
         
@@ -131,24 +127,6 @@ namespace AW2.Game.GobUtils
         /// after being fired once.
         /// </summary>
         public float LoadTime { get { return loadTime; } }
-
-        /// <summary>
-        /// Time from which on the weapon is loaded, in game time.
-        /// </summary>
-        public TimeSpan LoadedTime { get; protected set; }
-
-        /// <summary>
-        /// Is the weapon loaded. The setter is for game clients only.
-        /// </summary>
-        public bool Loaded
-        {
-            get { return FireMode == FireModeType.Continuous || LoadedTime <= Arena.TotalTime; }
-            set
-            {
-                if (value && !Loaded) LoadedTime = Arena.TotalTime;
-                if (!value && Loaded) LoadedTime = Arena.TotalTime + TimeSpan.FromSeconds(1);
-            }
-        }
 
         /// <summary>
         /// Current amount of charge.
@@ -167,36 +145,21 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Amount of charge required to fire the weapon once.
         /// </summary>
+        // TODO: Move FireCharge and fireCharge to FiringOperatorSingle
         public float FireCharge { get { return fireCharge; } }
 
         /// <summary>
         /// Amount of charge required for one second of rapid firing the weapon.
         /// </summary>
+        // TODO: Move FireChargePerSecond and fireChargePerSecond to FiringOperatorContinuous
         public float FireChargePerSecond { get { return fireChargePerSecond; } }
 
-        public FireModeType FireMode { get; protected set; }
+        public FiringOperator FiringOperator { get; set; }
 
-        /// <summary>
-        /// <b>true</b> iff there is no obstruction to the weapon being fired.
-        /// </summary>
-        public bool CanFire
-        {
-            get
-            {
-                float neededCharge;
-                switch (FireMode)
-                {
-                    case FireModeType.Single:
-                        neededCharge = FireCharge;
-                        break;
-                    case FireModeType.Continuous:
-                        neededCharge = FireChargePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-                        break;
-                    default: throw new ApplicationException("Unexpected FireModeType: " + FireMode);
-                }
-                return Loaded && neededCharge <= Charge;
-            }
-        }
+        // TODO: Move ShotCount and shotCount to FiringOperatorSingle
+        public int ShotCount { get { return shotCount; } }
+        // TODO: Move ShotSpacing and shotSpacing to FiringOperatorSingle
+        public float ShotSpacing { get { return shotSpacing; } }
 
         #endregion Properties
 
@@ -219,8 +182,7 @@ namespace AW2.Game.GobUtils
             : base(typeName)
         {
             owner = null;
-            ownerHandle = 0;
-            LoadedTime = new TimeSpan(0);
+            OwnerHandle = 0;
             loadTimeMultiplier = 1;
         }
 
@@ -232,11 +194,11 @@ namespace AW2.Game.GobUtils
         /// <param name="ownerHandle">A handle for identifying the device at the owner.</param>
         /// <param name="ship">The ship to own the device.</param>
         /// <returns>The created device.</returns>
-        public static ShipDevice CreateDevice(CanonicalString deviceName, ShipDevice.OwnerHandleType ownerHandle, Ship ship)
+        public static ShipDevice CreateDevice(CanonicalString deviceName, OwnerHandleType ownerHandle, Ship ship)
         {
             var device = (ShipDevice)Clonable.Instantiate(deviceName);
-            if (ownerHandle == ShipDevice.OwnerHandleType.PrimaryWeapon ||
-                ownerHandle == ShipDevice.OwnerHandleType.SecondaryWeapon)
+            if (ownerHandle == OwnerHandleType.PrimaryWeapon ||
+                ownerHandle == OwnerHandleType.SecondaryWeapon)
             {
                 var boneIs = ship.GetNamedPositions("Gun");
                 if (boneIs.Length == 0) Log.Write("Warning: Ship found no gun barrels in its 3D model");
@@ -259,7 +221,7 @@ namespace AW2.Game.GobUtils
         public void AttachTo(Ship owner, OwnerHandleType ownerHandle)
         {
             this.owner = owner;
-            this.ownerHandle = ownerHandle;
+            this.OwnerHandle = ownerHandle;
             _chargeProvider = owner.GetChargeProvider(ownerHandle);
             _charge = ChargeMax;
         }
@@ -270,7 +232,7 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public virtual void Activate()
         {
-            FireMode = FireModeType.Single;
+            FiringOperator = new FiringOperatorSingle(this);
         }
 
         /// <summary>
@@ -279,75 +241,24 @@ namespace AW2.Game.GobUtils
         public void Fire(AW2.UI.ControlState triggerState)
         {
             if (owner.Disabled) return;
-            bool fail = false;
-            switch (FireMode)
-            {
-                case FireModeType.Single:
-                    if (triggerState.Pulse)
-                    {
-                        if (PermissionToFire(CanFire) && CanFire)
-                            StartFiring();
-                        else
-                            fail = true;
-                    }
-                    break;
-                case FireModeType.Continuous:
-                    if (triggerState.Force > 0)
-                    {
-                        if (PermissionToFire(CanFire) && CanFire) StartFiring();
-                        // Note: Never play fail sound in continuous firing mode, it will repeat often and be annoying
-                    }
-                    break;
-                default: throw new ApplicationException("Unknown FireMode " + FireMode);
-            }
-            if (fail) AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
+            if (!FiringOperator.IsFirePressed(triggerState)) return;
+            bool success = PermissionToFire(FiringOperator.CanFire) && FiringOperator.TryFire();
+            if (!success) AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
         }
 
         public virtual void Update()
         {
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
-            {
-                // Stuff for sending messages when device is loaded (done only for singlefire types)
-                if (FireMode == FireModeType.Single && ownerHandle != OwnerHandleType.PrimaryWeapon)
-                {
-                    if (!CanFire && !_cannotFireFlagged)
-                    {
-                        _cannotFireFlagged = true;
-                    }
-                    else if (CanFire && _cannotFireFlagged)
-                    {
-                        _cannotFireFlagged = false;
-                        PlayerOwner.SendMessage(TypeName + " ready to use", Player.PLAYER_STATUS_COLOR);
-                    }
-                }
-            }
-            
             _flashAndBangCreated = false;
             bool shootOnceAFrame = shotSpacing <= 0;
             bool shotThisFrame = false;
-            while (IsItTimeToShoot() && !(shootOnceAFrame && shotThisFrame))
+            while (FiringOperator.IsItTimeToShoot && !(shootOnceAFrame && shotThisFrame))
             {
                 shotThisFrame = true;
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Client) CreateFlashAndBang();
                 ShootImpl();
-                nextShot += TimeSpan.FromSeconds(shotSpacing);
-                switch (FireMode)
-                {
-                    case FireModeType.Single:
-                        --shotsLeft;
-                        if (shotsLeft == 0) DoneFiring();
-                        break;
-                    case FireModeType.Continuous:
-                        shotsLeft = 1;
-                        break;
-                    default: throw new ApplicationException("Unknown FireMode " + FireMode);
-                }
+                FiringOperator.ShotFired();
             }
-            if (FireMode == FireModeType.Continuous)
-            {
-                shotsLeft = 0;
-                DoneFiring();
-            }
+            FiringOperator.Update();
         }
 
         /// <summary>
@@ -355,59 +266,32 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public virtual void Dispose() { }
 
+        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                writer.Write((Half)_charge);
+                writer.Write((bool)_flashAndBangCreated);
+            }
+        }
+
+        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        {
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            {
+                _charge = reader.ReadHalf();
+                bool mustCreateFlashAndBang = reader.ReadBoolean();
+                if (mustCreateFlashAndBang) CreateFlashAndBang();
+            }
+        }
+
         #endregion Public methods
 
-        #region Protected methods
+        #region Nonpublic methods
 
         protected abstract void CreateVisuals();
         protected abstract void ShootImpl();
         protected virtual bool PermissionToFire(bool canFire) { return true; }
-
-        #endregion Protected methods
-
-        #region Private methods
-
-        private bool IsItTimeToShoot()
-        {
-            if (shotsLeft <= 0) return false;
-            if (nextShot > Arena.TotalTime) return false;
-            return true;
-        }
-
-        private void StartFiring()
-        {
-            if (!CanFire) return;
-            switch (FireMode)
-            {
-                case FireModeType.Single:
-                    Charge -= FireCharge;
-                    // Make the weapon unloaded for eternity until someone calls DoneFiring()
-                    LoadedTime = TimeSpan.MaxValue;
-                    shotsLeft = shotCount;
-                    break;
-                case FireModeType.Continuous:
-                    Charge -= FireChargePerSecond * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-                    shotsLeft = 1;
-                    break;
-                default: throw new ApplicationException("Unknown FireMode " + FireMode);
-            }
-
-            // Load time doesn't pile up
-            if (nextShot < Arena.TotalTime)
-                nextShot = Arena.TotalTime;
-        }
-
-        private void DoneFiring()
-        {
-            switch (FireMode)
-            {
-                case FireModeType.Single:
-                    LoadedTime = Arena.TotalTime + TimeSpan.FromSeconds(LoadTime * LoadTimeMultiplier);
-                    break;
-                case FireModeType.Continuous:
-                    break;
-            }
-        }
 
         private void CreateFlashAndBang()
         {
@@ -422,35 +306,6 @@ namespace AW2.Game.GobUtils
             if (fireSound != "") AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
         }
 
-        #endregion
-
-        #region INetworkSerializable Members
-
-        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
-            {
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                writer.Write((Half)_charge);
-                writer.Write((bool)_flashAndBangCreated);
-            }
-        }
-
-        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
-        {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
-            {
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                _charge = reader.ReadHalf();
-                bool mustCreateFlashAndBang = reader.ReadBoolean();
-                if (mustCreateFlashAndBang) CreateFlashAndBang();
-            }
-        }
-
-        #endregion
+        #endregion Nonpublic methods
     }
 }

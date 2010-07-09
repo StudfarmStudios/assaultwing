@@ -59,7 +59,7 @@ namespace AW2.Game.Weapons
 
         public override void Activate()
         {
-            FireMode = FireModeType.Continuous;
+            FiringOperator = new FiringOperatorContinuous(this);
         }
 
         protected override bool PermissionToFire(bool canFire)

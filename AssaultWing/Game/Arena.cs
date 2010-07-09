@@ -314,7 +314,7 @@ namespace AW2.Game
                     Name = _name,
                     FileName = FileName,
                     Dimensions = _dimensions,
-                    PreviewName = _name.ToLower() + "_preview"
+                    PreviewName = "preview_arena_" + _name.ToLower().Replace(" ", "")
                 };
             }
         }

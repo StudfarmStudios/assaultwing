@@ -287,71 +287,6 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\wall_9.X">
-      <Name>wall_9</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_8.X">
-      <Name>wall_8</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_7.X">
-      <Name>wall_7</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_6.X">
-      <Name>wall_6</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_5.X">
-      <Name>wall_5</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_4.X">
-      <Name>wall_4</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_3.X">
-      <Name>wall_3</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_2.X">
-      <Name>wall_2</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_12.X">
-      <Name>wall_12</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_11.X">
-      <Name>wall_11</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_10.X">
-      <Name>wall_10</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\wall_1.X">
-      <Name>wall_1</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\spear.X">
-      <Name>spear</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="models\snowman.X">
       <Name>snowman</Name>
       <Importer>XImporter</Importer>
@@ -422,16 +357,6 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\shield.X">
-      <Name>shield</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\orangediamond.X">
-      <Name>orangediamond</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="models\missile.X">
       <Name>missile</Name>
       <Importer>XImporter</Importer>
@@ -464,16 +389,6 @@
     </Compile>
     <Compile Include="models\junk_crate_1.X">
       <Name>junk_crate_1</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\greendiamond.X">
-      <Name>greendiamond</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\gravestone.X">
-      <Name>gravestone</Name>
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
@@ -512,11 +427,6 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
-    <Compile Include="models\demonskull.X">
-      <Name>demonskull</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
     <Compile Include="models\bullet_3.X">
       <Name>bullet_3</Name>
       <Importer>XImporter</Importer>
@@ -544,16 +454,6 @@
     </Compile>
     <Compile Include="models\bonus.X">
       <Name>bonus</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\bones.X">
-      <Name>bones</Name>
-      <Importer>XImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-    <Compile Include="models\bluediamond.X">
-      <Name>bluediamond</Name>
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>

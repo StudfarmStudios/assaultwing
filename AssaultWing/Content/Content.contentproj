@@ -2208,6 +2208,91 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="models\bloodbowl_bones.X">
+      <Name>bloodbowl_bones</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_demonskull.X">
+      <Name>bloodbowl_demonskull</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_gravestone.X">
+      <Name>bloodbowl_gravestone</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_shield.X">
+      <Name>bloodbowl_shield</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_spear.X">
+      <Name>bloodbowl_spear</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_1.X">
+      <Name>bloodbowl_wall_1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_10.X">
+      <Name>bloodbowl_wall_10</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_11.X">
+      <Name>bloodbowl_wall_11</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_12.X">
+      <Name>bloodbowl_wall_12</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_2.X">
+      <Name>bloodbowl_wall_2</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_3.X">
+      <Name>bloodbowl_wall_3</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_4.X">
+      <Name>bloodbowl_wall_4</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_5.X">
+      <Name>bloodbowl_wall_5</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_6.X">
+      <Name>bloodbowl_wall_6</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_7.X">
+      <Name>bloodbowl_wall_7</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_8.X">
+      <Name>bloodbowl_wall_8</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_wall_9.X">
+      <Name>bloodbowl_wall_9</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="textures\b_icon_add_kill.png">

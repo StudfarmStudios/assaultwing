@@ -102,6 +102,11 @@ namespace AW2
         public static event Func<AssaultWing, IWindow> WindowInitializing;
 
         /// <summary>
+        /// A hack to pass the true client area size from Arena Editor to Assault Wing window.
+        /// </summary>
+        public static Func<System.Drawing.Size> GetRealClientAreaSize;
+
+        /// <summary>
         /// Called when <see cref="GameState"/> has changed.
         /// </summary>
         public event Action<GameState> GameStateChanged;
@@ -291,6 +296,7 @@ namespace AW2
         private void ClientSizeChanged(object sender, EventArgs e)
         {
             if (ClientBounds.Width == 0 || ClientBounds.Height == 0) return;
+            if (GraphicsDevice == null) return;
             if (GraphicsDevice.PresentationParameters.BackBufferWidth != ClientBounds.Width ||
                 GraphicsDevice.PresentationParameters.BackBufferHeight != ClientBounds.Height)
             {
@@ -320,8 +326,17 @@ namespace AW2
             _preferredFullscreenWidth = displayMode.Width;
             _preferredFullscreenHeight = displayMode.Height;
             _preferredFullscreenFormat = displayMode.Format;
-            _preferredWindowWidth = Math.Min(1000, displayMode.Width);
-            _preferredWindowHeight = Math.Min(800, displayMode.Height);
+            if (GetRealClientAreaSize != null)
+            {
+                var size = GetRealClientAreaSize();
+                _preferredWindowWidth = size.Width;
+                _preferredWindowHeight = size.Height;
+            }
+            else
+            {
+                _preferredWindowWidth = Math.Min(1000, displayMode.Width);
+                _preferredWindowHeight = Math.Min(800, displayMode.Height);
+            }
             _preferredWindowFormat = displayMode.Format;
 
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -386,7 +401,7 @@ namespace AW2
         {
             var categoryName = "Assault Wing";
             var instanceName = "AW Instance " + Process.GetCurrentProcess().Id;
-            
+
             var counters = new AWCounterCreationDataCollection();
             counters.Add(new CounterCreationData("Gobs Created/f Avg/s", "Number of gobs created per frame as an average over the last second", PerformanceCounterType.AverageCount64));
             counters.Add(new CounterCreationData("Gobs Created/f Avg/s Base", "Number of frames elapsed during the latest arena", PerformanceCounterType.AverageBase));

@@ -23,6 +23,7 @@ namespace AW2
             editor = new ArenaEditor();
             editor.Show(); // needed for retrieving the window's handle
             var app = new Application();
+            AssaultWing.GetRealClientAreaSize = () => editor.ArenaView.Size;
             AssaultWing.WindowInitializing += g => editor.ArenaView;
             var game = AssaultWing.Instance;
             game.SoundEngine.Enabled = false;

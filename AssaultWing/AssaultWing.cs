@@ -33,9 +33,6 @@ namespace AW2
         /// </summary>
         private class AWCounterCreationDataCollection : CounterCreationDataCollection, IEnumerable<CounterCreationData>
         {
-            /// <summary>
-            /// Returns an enumerator for the collection.
-            /// </summary>
             public new IEnumerator<CounterCreationData> GetEnumerator()
             {
                 foreach (var x in (System.Collections.IEnumerable)this) yield return (CounterCreationData)x;
@@ -133,6 +130,7 @@ namespace AW2
             }
         }
 
+        public bool DoNotFreezeCanonicalStrings { get; set; }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
         public string[] CommandLineArgs { get; set; }
@@ -526,6 +524,18 @@ namespace AW2
             }
         }
 
+        /// <summary>
+        /// Freezes <see cref="CanonicalString"/> instances to enable sharing them over a network.
+        /// </summary>
+        private void FreezeCanonicalStrings()
+        {
+            // Type names of gobs, ship devices and particle engines are registered implicitly
+            // above while loading the types. Graphics and ShipDeviceCollection need separate handling.
+            // TODO: Loop through all textures and all 3D models available in the ContentManager.
+            foreach (var assetName in ((AWContentManager)Content).GetAssetNames()) CanonicalString.Register(assetName);
+            CanonicalString.DisableRegistering();
+        }
+
         #endregion AssaultWing private methods
 
         #region Methods for game components
@@ -763,6 +773,7 @@ namespace AW2
             }
             TargetElapsedTime = TimeSpan.FromSeconds(1 / 60.0); // 60 frames per second
             base.Initialize();
+            if (!DoNotFreezeCanonicalStrings) FreezeCanonicalStrings();
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace AW2.Game
     /// <summary>
     /// Basic implementation of game logic.
     /// </summary>
-    class LogicEngine : GameComponent
+    public class LogicEngine : GameComponent
     {
         Control fullscreenControl, escapeControl;
 #if DEBUG
@@ -54,7 +54,6 @@ namespace AW2.Game
             AssaultWing.Instance.DataEngine.ArenaInfos = arenaLoader.LoadTemplates().Cast<Arena>().Select(arena => arena.Info).ToList();
 
             SaveTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
-            FreezeCanonicalStrings();
             base.Initialize();
         }
 
@@ -111,19 +110,6 @@ namespace AW2.Game
 
                 AssaultWing.Instance.ShowDialog(dialogData);
             }
-        }
-
-        /// <summary>
-        /// Freezes <see cref="CanonicalString"/> instances to enable sharing them over a network.
-        /// </summary>
-        private static void FreezeCanonicalStrings()
-        {
-            // Type names of gobs, ship devices and particle engines are registered implicitly
-            // above while loading the types. Graphics and ShipDeviceCollection need separate handling.
-            // TODO: Loop through all textures and all 3D models available in the ContentManager.
-            var content = (AW2.Graphics.AWContentManager)AssaultWing.Instance.Content;
-            foreach (var assetName in content.GetAssetNames()) CanonicalString.Register(assetName);
-            CanonicalString.DisableRegistering();
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

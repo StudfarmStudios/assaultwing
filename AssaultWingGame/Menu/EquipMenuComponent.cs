@@ -264,14 +264,15 @@ namespace AW2.Menu
                 switch (AssaultWing.Instance.NetworkMode)
                 {
                     case NetworkMode.Client:
-                        SendSelectionsToRemote(
+                        SendPlayerSettingsToRemote(
                             p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested,
                             AssaultWing.Instance.NetworkEngine.GameServerConnection);
                         break;
                     case NetworkMode.Server:
-                        SendSelectionsToRemote(
+                        SendPlayerSettingsToRemote(
                             p => true,
                             AssaultWing.Instance.NetworkEngine.GameClientConnections);
+                        SendGameSettingsToRemote(AssaultWing.Instance.NetworkEngine.GameClientConnections);
                         break;
                 }
             }
@@ -468,7 +469,7 @@ namespace AW2.Menu
             }
         }
 
-        private static void SendSelectionsToRemote(Func<Player, bool> sendCriteria, IConnection connection)
+        private static void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, IConnection connection)
         {
             foreach (var player in AssaultWing.Instance.DataEngine.Players.Where(sendCriteria))
             {
@@ -482,6 +483,15 @@ namespace AW2.Menu
                     player.ServerRegistration = Spectator.ServerRegistrationType.Requested;
                 connection.Send(mess);
             }
+        }
+
+        private static void SendGameSettingsToRemote(IConnection connection)
+        {
+            var mess = new GameSettingsRequest
+            {
+                ArenaPlaylist = AssaultWing.Instance.DataEngine.ArenaPlaylist
+            };
+            connection.Send(mess);
         }
 
         /// <summary>
@@ -566,13 +576,6 @@ namespace AW2.Menu
                 ArenaInfo arenaInfo = AssaultWing.Instance.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
                 var content = (AWContentManager)AssaultWing.Instance.Content;
                 string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
-
-                if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                {
-                    arenaName = "To be announced";
-                    previewName = "no_preview";
-                }
-
                 var previewTexture = content.Load<Texture2D>(previewName);
 
                 spriteBatch.DrawString(_menuBigFont, "Arena info", currentPos, Color.White);
@@ -598,9 +601,7 @@ namespace AW2.Menu
                 Vector2 lineHeight = new Vector2(0, 20);
                 Vector2 infoWidth = new Vector2(320, 0);
                 Vector2 currentPos = infoDisplayPos;
-                string arenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Client
-                  ? "TBA"
-                  : AssaultWing.Instance.DataEngine.ArenaPlaylist[0];
+                string arenaName = AssaultWing.Instance.DataEngine.ArenaPlaylist[0];
 
                 spriteBatch.DrawString(_menuBigFont, "Gametype Settings", currentPos, Color.White);
                 currentPos += new Vector2(0, 50);
@@ -654,9 +655,7 @@ namespace AW2.Menu
             spriteBatch.DrawString(_menuSmallFont, "Mayhem", currentPos + new Vector2(0, 20), Color.White);
             currentPos += lineHeight;
 
-            string arenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Client
-                ? "TBA"
-                : AssaultWing.Instance.DataEngine.ArenaPlaylist[0];
+            string arenaName = AssaultWing.Instance.DataEngine.ArenaPlaylist[0];
             spriteBatch.DrawString(_menuSmallFont, EquipMenuGameSettings.Arena.ToString(), currentPos, Color.GreenYellow);
             spriteBatch.DrawString(_menuSmallFont, arenaName, currentPos + new Vector2(0, 20), Color.White);
 
@@ -861,9 +860,7 @@ namespace AW2.Menu
 
             // Setup statusdisplay texts
             string statusDisplayPlayerAmount = "" + data.Players.Count();
-            string statusDisplayArenaName = AssaultWing.Instance.NetworkMode == NetworkMode.Client
-                ? "to be announced"
-                : data.ArenaPlaylist[0];
+            string statusDisplayArenaName = data.ArenaPlaylist[0];
             string statusDisplayStatus = AssaultWing.Instance.NetworkMode == NetworkMode.Server
                 ? "server"
                 : "connected";

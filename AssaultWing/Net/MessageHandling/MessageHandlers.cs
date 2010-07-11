@@ -30,6 +30,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
+            yield return new MessageHandler<GameSettingsRequest>(false, IMessageHandler.SourceType.Server, HandleGameSettingsRequest);
             yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, mess => joinGameReplyAction());
         }
 
@@ -136,6 +137,11 @@ namespace AW2.Net.MessageHandling
         private static void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
         {
             AssaultWing.Instance.DataEngine.Spectators.Remove(spec => spec.ID == mess.PlayerID);
+        }
+
+        private static void HandleGameSettingsRequest(GameSettingsRequest mess)
+        {
+            AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
         }
 
         private static void HandleWallHoleMessage(WallHoleMessage mess)

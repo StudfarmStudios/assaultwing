@@ -266,6 +266,7 @@
     <Compile Include="Net\Messages\ConnectionClosingMessage.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
+    <Compile Include="Net\Messages\GameSettingsRequest.cs" />
     <Compile Include="Net\Messages\PlayerDeletionMessage.cs" />
     <Compile Include="Net\Messages\PlayerSettingsReply.cs" />
     <Compile Include="Net\Messages\PlayerSettingsRequest.cs" />

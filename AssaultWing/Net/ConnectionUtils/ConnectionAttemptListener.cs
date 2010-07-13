@@ -5,8 +5,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using AW2.Helpers;
+using AW2.Net.Connections;
 
-namespace AW2.Net
+namespace AW2.Net.ConnectionUtils
 {
     /// <summary>
     /// Listens to incoming connection attempts.

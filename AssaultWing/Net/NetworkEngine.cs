@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
+using AW2.Net.Connections;
+using AW2.Net.ConnectionUtils;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 

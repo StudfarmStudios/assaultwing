@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AW2.Helpers.Collections;
 
-namespace AW2.Net
+namespace AW2.Net.Connections
 {
     /// <summary>
     /// Connection to several remote hosts. There is one <see cref="Connection"/> 

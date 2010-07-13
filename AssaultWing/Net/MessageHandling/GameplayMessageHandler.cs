@@ -34,7 +34,7 @@ namespace AW2.Net.MessageHandling
         public override void HandleMessages()
         {
             if (Disposed) throw new InvalidOperationException("Cannot use disposed GameplayMessageHandler");
-            var connection = GetConnection(Source) as PingedConnection;
+            var connection = GetConnection(Source) as AW2.Net.Connections.PingedConnection;
             if (connection == null) throw new ApplicationException("GameplayMessageHandler needs a PingedConnection");
             T message = null;
             while ((message = connection.Messages.TryDequeue<T>()) != null)

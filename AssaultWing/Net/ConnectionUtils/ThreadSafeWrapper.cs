@@ -1,6 +1,6 @@
 using System;
 
-namespace AW2.Net
+namespace AW2.Net.ConnectionUtils
 {
     /// <summary>
     /// Wraps an object, making sure the programmer won't forget thread safety.

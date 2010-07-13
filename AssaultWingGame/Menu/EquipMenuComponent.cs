@@ -10,6 +10,7 @@ using AW2.Game.GobUtils;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Net;
+using AW2.Net.Connections;
 using AW2.Net.Messages;
 using AW2.UI;
 using AW2.Game.Gobs;

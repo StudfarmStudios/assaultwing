@@ -63,7 +63,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ArenaStartReply>(false, IMessageHandler.SourceType.Client, mess => idRegisterer(mess.ConnectionID));
         }
 
-        public static void IncomingConnectionHandlerOnServer(Result<Connection> result)
+        public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result)
         {
             if (!result.Successful)
                 Log.Write("Some client failed to connect: " + result.Error);

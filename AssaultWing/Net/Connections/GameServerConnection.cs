@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace AW2.Net
+namespace AW2.Net.Connections
 {
     /// <summary>
     /// A network connection to a game server.

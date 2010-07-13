@@ -10,8 +10,9 @@ using System.Threading;
 using System.Windows.Forms;
 using AW2.Helpers;
 using AW2.Helpers.Collections;
+using AW2.Net.ConnectionUtils;
 
-namespace AW2.Net
+namespace AW2.Net.Connections
 {
     /// <summary>
     /// A connection to a remote host over a network. Communication between 
@@ -63,14 +64,14 @@ namespace AW2.Net
         private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
 
         /// <summary>
-        /// The thread that is continuously reading incoming data from the remote host.
+        /// The thread that is continuously reading incoming data from the remote host via TCP.
         /// </summary>
-        private SuspendableThread _readThread;
+        private SuspendableThread _tcpReadThread;
 
         /// <summary>
-        /// The thread that is continuously sending outgoing data to the remote host.
+        /// The thread that is continuously sending outgoing data to the remote host via TCP.
         /// </summary>
-        private SuspendableThread _sendThread;
+        private SuspendableThread _tcpSendThread;
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
@@ -330,19 +331,19 @@ namespace AW2.Net
         {
             Application.ApplicationExit -= ApplicationExitCallback;
 
-            if (_readThread != null)
+            if (_tcpReadThread != null)
             {
-                _readThread.Terminate();
-                if (!_readThread.Join(TimeSpan.FromSeconds(1)))
+                _tcpReadThread.Terminate();
+                if (!_tcpReadThread.Join(TimeSpan.FromSeconds(1)))
                     AW2.Helpers.Log.Write("WARNING: Unable to kill read loop of " + Name);
-                _readThread = null;
+                _tcpReadThread = null;
             }
-            if (_sendThread != null)
+            if (_tcpSendThread != null)
             {
-                _sendThread.Terminate();
-                if (!_sendThread.Join(TimeSpan.FromSeconds(1)))
+                _tcpSendThread.Terminate();
+                if (!_tcpSendThread.Join(TimeSpan.FromSeconds(1)))
                     AW2.Helpers.Log.Write("WARNING: Unable to kill write loop of " + Name);
-                _sendThread = null;
+                _tcpSendThread = null;
             }
             if (!error)
             {
@@ -374,10 +375,10 @@ namespace AW2.Net
             _messages = new TypedQueue<Message>();
             _sendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
             _errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
-            _readThread = new MessageReadThread(_tcpSocket, ThreadExceptionHandler, MessageHandler);
-            _readThread.Start();
-            _sendThread = new MessageSendThread(_tcpSocket, _sendBuffers, ThreadExceptionHandler);
-            _sendThread.Start();
+            _tcpReadThread = new TCPMessageReadThread(_tcpSocket, ThreadExceptionHandler, MessageHandler);
+            _tcpReadThread.Start();
+            _tcpSendThread = new TCPMessageSendThread(_tcpSocket, _sendBuffers, ThreadExceptionHandler);
+            _tcpSendThread.Start();
         }
 
         private void InitializeUDPSocket(EndPoint localEndPoint, EndPoint remoteEndPoint)

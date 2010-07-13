@@ -86,7 +86,7 @@ namespace AW2.Menu
             });
         }
 
-        private static void ClientConnectedCallback(Result<Connection> result, MainMenuComponent component)
+        private static void ClientConnectedCallback(Result<AW2.Net.Connections.Connection> result, MainMenuComponent component)
         {
             if (!result.Successful)
             {

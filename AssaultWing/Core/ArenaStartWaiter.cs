@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Net;
+using AW2.Net.Connections;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 

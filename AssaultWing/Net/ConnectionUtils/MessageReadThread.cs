@@ -5,23 +5,23 @@ using System.Net.Sockets;
 using System.Threading;
 using AW2.Helpers;
 
-namespace AW2.Net
+namespace AW2.Net.ConnectionUtils
 {
     /// <summary>
     /// A thread that receives data from a remote host until the socket
     /// is closed or there is some other error condition.
     /// </summary>
-    public class MessageReadThread : SuspendableStepwiseThread
+    public abstract class MessageReadThread : SuspendableStepwiseThread
     {
         public delegate void MessageHandler(byte[] messageHeaderBuffer, byte[] messageBodyBuffer);
 
+        protected Socket _socket;
         private MessageHandler _messageHandler;
-        private Socket _socket;
         private byte[] _headerReceiveBuffer;
         private byte[] _bodyReceiveBuffer;
 
-        public MessageReadThread(Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
-            : base("Message Read Thread", exceptionHandler)
+        public MessageReadThread(string name, Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
+            : base(name, exceptionHandler)
         {
             _socket = socket;
             _messageHandler = messageHandler;
@@ -75,34 +75,6 @@ namespace AW2.Net
         /// <param name="buffer">The buffer to store the bytes in.</param>
         /// <param name="byteCount">The number of bytes to receive.</param>
         // Stepwise method. Enumerated objects are undefined.
-        private IEnumerable<object> Receive(byte[] buffer, int byteCount)
-        {
-            if (buffer == null) throw new ArgumentNullException("Cannot receive to null buffer");
-            if (byteCount < 0) throw new ArgumentException("Cannot receive negative number of bytes");
-            int totalReadBytes = 0;
-            while (totalReadBytes < byteCount)
-            {
-                if (_socket.Available == 0)
-                {
-                    // See if the socket is still connected. If Poll() shows that there
-                    // is data to read but Available is still zero, the socket must have
-                    // been closed at the remote host.
-                    if (_socket.Poll(100, SelectMode.SelectRead) && _socket.Available == 0)
-                        throw new SocketException((int)SocketError.NotConnected);
-
-                    // We are still connected but there's no data.
-                    // Let other threads do their stuff while we wait.
-                    Thread.Sleep(0);
-                }
-                else
-                {
-                    int readBytes = _socket.Receive(buffer, totalReadBytes, byteCount - totalReadBytes, SocketFlags.None);
-                    totalReadBytes += readBytes;
-                }
-                yield return null;
-            }
-            if (totalReadBytes > byteCount)
-                AW2.Helpers.Log.Write("WARNING: Read " + totalReadBytes + " bytes when only " + byteCount + " was requested");
-        }
+        protected abstract IEnumerable<object> Receive(byte[] buffer, int byteCount);
     }
 }

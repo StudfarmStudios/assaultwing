@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using NATUPNPLib;
 
-namespace AW2.Net
+namespace AW2.Net.ConnectionUtils
 {
     public static class StaticPortMapper
     {

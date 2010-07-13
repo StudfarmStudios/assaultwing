@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Net.Sockets;
+using AW2.Net.Connections;
 
-namespace AW2.Net
+namespace AW2.Net.ConnectionUtils
 {
     /// <summary>
     /// The state of an asynchronous connection attempt (incoming or outgoing).

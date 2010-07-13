@@ -4,7 +4,7 @@ using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Net.Messages;
 
-namespace AW2.Net
+namespace AW2.Net.Connections
 {
     /// <summary>
     /// A connection that has automatic ping time measuring.

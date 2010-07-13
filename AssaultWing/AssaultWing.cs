@@ -12,6 +12,7 @@ using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Menu;
 using AW2.Net;
+using AW2.Net.Connections;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.Settings;

@@ -1,6 +1,6 @@
 ﻿using AW2.Helpers.Collections;
 
-namespace AW2.Net
+namespace AW2.Net.Connections
 {
     /// <summary>
     /// A connection to a remote host over a network. Communication between 

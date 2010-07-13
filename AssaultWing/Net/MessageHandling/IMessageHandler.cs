@@ -10,7 +10,7 @@ namespace AW2.Net.MessageHandling
         public abstract void Dispose();
         public abstract void HandleMessages();
 
-        protected static IConnection GetConnection(SourceType source)
+        protected static AW2.Net.Connections.IConnection GetConnection(SourceType source)
         {
             switch (source)
             {

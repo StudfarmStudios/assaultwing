@@ -11,14 +11,14 @@ namespace AW2.Net
     /// A thread that receives data from a remote host until the socket
     /// is closed or there is some other error condition.
     /// </summary>
-    class MessageReadThread : SuspendableStepwiseThread
+    public class MessageReadThread : SuspendableStepwiseThread
     {
         public delegate void MessageHandler(byte[] messageHeaderBuffer, byte[] messageBodyBuffer);
 
-        MessageHandler _messageHandler;
-        Socket _socket;
-        byte[] _headerReceiveBuffer;
-        byte[] _bodyReceiveBuffer;
+        private MessageHandler _messageHandler;
+        private Socket _socket;
+        private byte[] _headerReceiveBuffer;
+        private byte[] _bodyReceiveBuffer;
 
         public MessageReadThread(Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
             : base("Message Read Thread", exceptionHandler)

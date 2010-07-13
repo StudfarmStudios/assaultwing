@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading;
 using AW2.Helpers;
-using System.Net.Sockets;
 
 namespace AW2.Net
 {
@@ -10,10 +10,10 @@ namespace AW2.Net
     /// A thread that sends data to the remote host until the socket
     /// is closed or there is some other error condition. 
     /// </summary>
-    class MessageSendThread : SuspendableStepwiseThread
+    public class MessageSendThread : SuspendableStepwiseThread
     {
-        Socket _socket;
-        ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
+        private Socket _socket;
+        private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
 
         public MessageSendThread(Socket socket, ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers, Action<Exception> exceptionHandler)
             : base("Message Send Thread", exceptionHandler)
@@ -26,7 +26,7 @@ namespace AW2.Net
         // Stepwise method. Enumerated objects are undefined.
         private IEnumerable<object> KeepSendingMessages()
         {
-            List<ArraySegment<byte>> sendSegments = new List<ArraySegment<byte>>();
+            var sendSegments = new List<ArraySegment<byte>>();
             while (true)
             {
                 // Gather several messages together to reach a supposedly optimal

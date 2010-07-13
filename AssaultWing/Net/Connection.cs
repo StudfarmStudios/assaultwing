@@ -50,7 +50,12 @@ namespace AW2.Net
         /// <summary>
         /// TCP socket to the connected remote host.
         /// </summary>
-        private Socket _socket;
+        private Socket _tcpSocket;
+
+        /// <summary>
+        /// UDP socket to the connected remote host.
+        /// </summary>
+        private Socket _udpSocket;
 
         /// <summary>
         /// Buffer of serialised messages waiting to be sent to the remote host.
@@ -114,7 +119,7 @@ namespace AW2.Net
                 if (IsDisposed) return null;
                 try
                 {
-                    return (IPEndPoint)_socket.LocalEndPoint;
+                    return (IPEndPoint)_tcpSocket.LocalEndPoint;
                 }
                 catch (Exception e)
                 {
@@ -135,7 +140,7 @@ namespace AW2.Net
                 if (IsDisposed) return null;
                 try
                 {
-                    return (IPEndPoint)_socket.RemoteEndPoint;
+                    return (IPEndPoint)_tcpSocket.RemoteEndPoint;
                 }
                 catch (Exception e)
                 {
@@ -340,34 +345,47 @@ namespace AW2.Net
                 _sendThread = null;
             }
             if (!error)
-                _socket.Shutdown(SocketShutdown.Both);
-            _socket.Close();
+            {
+                _tcpSocket.Shutdown(SocketShutdown.Both);
+                _udpSocket.Shutdown(SocketShutdown.Both);
+            }
+            _tcpSocket.Close();
+            _udpSocket.Close();
         }
 
         /// <summary>
         /// Creates a new connection to a remote host.
         /// </summary>
-        /// <param name="socket">An opened socket to the remote host. The
+        /// <param name="tcpSocket">An opened TCP socket to the remote host. The
         /// created connection owns the socket and will dispose of it.</param>
         /// The client program can create <see cref="Connection">Connections</see>
         /// via the static methods <see cref="StartListening(int, string)"/> and 
         /// <see cref="Connect(IPAddress, int, string)"/>.
-        protected Connection(Socket socket)
+        protected Connection(Socket tcpSocket)
         {
-            if (socket == null) throw new ArgumentNullException("Null socket argument");
-            if (!socket.Connected) throw new ArgumentException("Socket not connected");
+            if (tcpSocket == null) throw new ArgumentNullException("tcpSocket", "Null socket argument");
+            if (!tcpSocket.Connected) throw new ArgumentException("Socket not connected", "tcpSocket");
             ID = g_leastUnusedID++;
             Name = "Connection " + ID;
             Application.ApplicationExit += ApplicationExitCallback;
-            ConfigureSocket(socket);
-            _socket = socket;
+            _tcpSocket = tcpSocket;
+            ConfigureSocket(_tcpSocket);
+            InitializeUDPSocket(_tcpSocket.LocalEndPoint, _tcpSocket.RemoteEndPoint);
             _messages = new TypedQueue<Message>();
             _sendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
             _errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
-            _readThread = new MessageReadThread(socket, ThreadExceptionHandler, MessageHandler);
+            _readThread = new MessageReadThread(_tcpSocket, ThreadExceptionHandler, MessageHandler);
             _readThread.Start();
-            _sendThread = new MessageSendThread(socket, _sendBuffers, ThreadExceptionHandler);
+            _sendThread = new MessageSendThread(_tcpSocket, _sendBuffers, ThreadExceptionHandler);
             _sendThread.Start();
+        }
+
+        private void InitializeUDPSocket(EndPoint localEndPoint, EndPoint remoteEndPoint)
+        {
+            _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            _udpSocket.Bind(localEndPoint);
+            _udpSocket.Connect(remoteEndPoint);
+            ConfigureSocket(_udpSocket);
         }
 
         /// <summary>
@@ -408,7 +426,7 @@ namespace AW2.Net
             socket.Blocking = true;
             socket.ReceiveTimeout = 0; // don't time out on receiving
             socket.SendTimeout = 1000;
-            socket.NoDelay = true;
+            if (socket.ProtocolType == ProtocolType.Tcp) socket.NoDelay = true;
             // TODO: Remove this log output from public release!!!
             Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
         }
@@ -428,7 +446,9 @@ namespace AW2.Net
             try
             {
                 if ((prop.Name == "EnableBroadcast" && socket.ProtocolType != ProtocolType.Udp) ||
-                    (prop.Name == "MulticastLoopback" && socket.ProtocolType == ProtocolType.Tcp))
+                    (prop.Name == "MulticastLoopback" && socket.ProtocolType == ProtocolType.Tcp) ||
+                    (prop.Name == "NoDelay" && socket.SocketType != SocketType.Stream) ||
+                    (prop.Name == "LingerState" && socket.ProtocolType == ProtocolType.Udp))
                     return null;
                 return prop.Name + ": " + prop.GetValue(socket, null).ToString();
             }

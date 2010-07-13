@@ -10,10 +10,10 @@ namespace AW2.Net
         /// <summary>
         /// Creates a new connection to a game client.
         /// </summary>
-        /// <param name="socket">An opened socket to the remote host. The
+        /// <param name="tcpSocket">An opened TCP socket to the remote host. The
         /// created connection owns the socket and will dispose of it.</param>
-        public GameClientConnection(Socket socket)
-            : base(socket)
+        public GameClientConnection(Socket tcpSocket)
+            : base(tcpSocket)
         {
             Name = "Game Client Connection " + ID;
         }

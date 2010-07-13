@@ -6,7 +6,7 @@ namespace AW2.Helpers
     // Snatched from Peter Ritchie's MVP Blog on 2010-03-18.
     // http://msmvps.com/blogs/peterritchie/archive/2006/10/13/_2700_System.Threading.Thread.Suspend_280029002700_-is-obsolete_3A00_-_2700_Thread.Suspend-has-been-deprecated_2E002E002E00_.aspx
     // Later modified from the original.
-    abstract class SuspendableThread
+    public abstract class SuspendableThread
     {
         #region Data
 

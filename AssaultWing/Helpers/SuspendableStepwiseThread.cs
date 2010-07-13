@@ -2,10 +2,10 @@
 
 namespace AW2.Helpers
 {
-    class SuspendableStepwiseThread : SuspendableThread
+    public class SuspendableStepwiseThread : SuspendableThread
     {
-        Action<Exception> _exceptionHandler;
-        StepwiseActionBase _threadAction;
+        private Action<Exception> _exceptionHandler;
+        private StepwiseActionBase _threadAction;
 
         public SuspendableStepwiseThread(string name, Action<Exception> exceptionHandler)
             : base(name)

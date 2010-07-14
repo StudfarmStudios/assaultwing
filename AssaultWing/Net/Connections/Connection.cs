@@ -384,7 +384,6 @@ namespace AW2.Net.Connections
         private void InitializeUDPSocket(EndPoint localEndPoint, EndPoint remoteEndPoint)
         {
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _udpSocket.Bind(localEndPoint);
             _udpSocket.Connect(remoteEndPoint);
             ConfigureSocket(_udpSocket);
         }

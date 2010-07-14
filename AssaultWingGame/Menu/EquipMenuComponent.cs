@@ -38,8 +38,10 @@ namespace AW2.Menu
         private int _playerListIndex;
         private int _gameSettingsListIndex;
         private bool _playerNameChanged;
+        private bool _readyPressed;
         private TimeSpan _listCursorFadeStartTime;
         private TimeSpan _tabFadeStartTime;
+        private TimeSpan _readyFadeStartTime;
         private TimeSpan _nameInfoMoveStartTime;
 
         private const int MAX_MENU_PANES = 4;
@@ -60,8 +62,8 @@ namespace AW2.Menu
         /// Values range from 0 (transparent) to 255 (opaque).
         /// </summary>
         private Curve _cursorFade;
-
         private Curve _tabFade;
+        private Curve _readyFade;
         private Curve _nameInfoMove;
 
         /// <summary>
@@ -137,6 +139,7 @@ namespace AW2.Menu
                 base.Active = value;
                 if (value)
                 {
+                    _readyPressed = false;
                     MenuEngine.IsProgressBarVisible = false;
                     MenuEngine.IsHelpTextVisible = true;
                     CreateSelectors();
@@ -168,18 +171,20 @@ namespace AW2.Menu
         public EquipMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
+            _readyPressed = false;
             _controlActivate = new KeyboardKey(Keys.Enter);
             _controlBack = new KeyboardKey(Keys.Escape);
             _controlTab = new KeyboardKey(Keys.Tab);
             _controlListUp = new KeyboardKey(Keys.Up);
             _controlListDown = new KeyboardKey(Keys.Down);
-            _controlStartGame = new KeyboardKey(Keys.Space);
+            _controlStartGame = new KeyboardKey(Keys.F10);
             _currentTab = EquipMenuTab.Equipment;
             _playerListIndex = 0;
             _gameSettingsListIndex = 0;
             _listCursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _playerNameChanged = false;
             _tabFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            _readyFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _nameInfoMoveStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
             _pos = new Vector2(0, 0);
             _currentItems = new EquipMenuItem[MAX_MENU_PANES];
@@ -196,6 +201,12 @@ namespace AW2.Menu
             _tabFade.Keys.Add(new CurveKey(2.2f, 255));
             _tabFade.PreLoop = CurveLoopType.Cycle;
             _tabFade.PostLoop = CurveLoopType.Cycle;
+            _readyFade = new Curve();
+            _readyFade.Keys.Add(new CurveKey(0f, 240));
+            _readyFade.Keys.Add(new CurveKey(1f, 30));
+            _readyFade.Keys.Add(new CurveKey(2f, 240));
+            _readyFade.PreLoop = CurveLoopType.Cycle;
+            _readyFade.PostLoop = CurveLoopType.Cycle;
             _nameInfoMove = new Curve();
             _nameInfoMove.Keys.Add(new CurveKey(0f, 0));
             _nameInfoMove.Keys.Add(new CurveKey(0.6f, 15));
@@ -332,6 +343,7 @@ namespace AW2.Menu
             if (_controlStartGame.Pulse)
             {
                 ResetEquipMenu();
+                _readyPressed = true;
                 switch (AssaultWing.Instance.NetworkMode)
                 {
                     case NetworkMode.Server:
@@ -847,7 +859,13 @@ namespace AW2.Menu
             spriteBatch.Draw(_buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
 
             // Draw ready button hilite (same size as button)
-            spriteBatch.Draw(_buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), Color.White);
+            Color drawColor = Color.White;
+            if (!_readyPressed)
+            {
+                float readyFadeTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _readyFadeStartTime).TotalSeconds;
+                drawColor = new Color(255, 255, 255, (byte)_readyFade.Evaluate(readyFadeTime));
+            }
+            spriteBatch.Draw(_buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), drawColor);
         }
 
         private void DrawStatusDisplay(Vector2 view, SpriteBatch spriteBatch)

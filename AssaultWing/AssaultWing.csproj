@@ -252,6 +252,7 @@
     <Compile Include="Net\ConnectionUtils\TCPMessageSendThread.cs" />
     <Compile Include="Net\ConnectionUtils\TCPMessageReadThread.cs" />
     <Compile Include="Net\Connections\GameClientConnection.cs" />
+    <Compile Include="Net\MessageSendType.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\Connections\GameServerConnection.cs" />
     <Compile Include="Net\Connections\IConnection.cs" />

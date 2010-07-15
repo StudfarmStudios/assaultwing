@@ -16,6 +16,7 @@ namespace AW2.Net.ConnectionUtils
         public UDPMessageReadThread(Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
             : base("UDP Message Read Thread", socket, exceptionHandler, messageHandler)
         {
+            if (socket.ProtocolType != ProtocolType.Udp) throw new ArgumentException("Not a UDP socket", "socket");
         }
 
         protected override IEnumerable<object> ReceiveHeaderAndBody(byte[] headerAndBodyBuffer)
@@ -44,7 +45,9 @@ namespace AW2.Net.ConnectionUtils
                     }
                     catch (SocketException e)
                     {
-                        throw new MessageException("Message was larger than read buffer", e);
+                        if (e.ErrorCode == (int)SocketError.MessageSize)
+                            throw new MessageException("Message was larger than the read buffer", e);
+                        throw;
                     }
                 }
                 yield return null;

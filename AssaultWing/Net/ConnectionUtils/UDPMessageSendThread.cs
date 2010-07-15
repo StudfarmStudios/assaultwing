@@ -14,6 +14,7 @@ namespace AW2.Net.ConnectionUtils
         public UDPMessageSendThread(Socket socket, ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers, Action<Exception> exceptionHandler)
             : base("UDP Message Send Thread", socket, sendBuffers, exceptionHandler)
         {
+            if (socket.ProtocolType != ProtocolType.Udp) throw new ArgumentException("Not a UDP socket", "socket");
         }
 
         // Stepwise method. Enumerated objects are undefined.

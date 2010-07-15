@@ -17,6 +17,7 @@ namespace AW2.Net.ConnectionUtils
         public TCPMessageReadThread(Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
             : base("TCP Message Read Thread", socket, exceptionHandler, messageHandler)
         {
+            if (socket.ProtocolType != ProtocolType.Tcp) throw new ArgumentException("Not a TCP socket", "socket");
         }
 
         protected override IEnumerable<object> ReceiveHeaderAndBody(byte[] headerAndBodyBuffer)

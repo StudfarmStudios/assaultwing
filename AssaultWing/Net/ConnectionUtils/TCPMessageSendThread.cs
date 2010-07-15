@@ -14,6 +14,7 @@ namespace AW2.Net.ConnectionUtils
         public TCPMessageSendThread(Socket socket, ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers, Action<Exception> exceptionHandler)
             : base("TCP Message Send Thread", socket, sendBuffers, exceptionHandler)
         {
+            if (socket.ProtocolType != ProtocolType.Tcp) throw new ArgumentException("Not a TCP socket", "socket");
         }
 
         // Stepwise method. Enumerated objects are undefined.

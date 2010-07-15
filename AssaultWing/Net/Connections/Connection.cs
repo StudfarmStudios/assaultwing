@@ -59,9 +59,14 @@ namespace AW2.Net.Connections
         private Socket _udpSocket;
 
         /// <summary>
-        /// Buffer of serialised messages waiting to be sent to the remote host.
+        /// Buffer of serialised messages waiting to be sent to the remote host via TCP.
         /// </summary>
-        private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
+        private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _tcpSendBuffers;
+
+        /// <summary>
+        /// Buffer of serialised messages waiting to be sent to the remote host via UDP.
+        /// </summary>
+        private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _udpSendBuffers;
 
         /// <summary>
         /// The thread that is continuously reading incoming data from the remote host via TCP.
@@ -72,6 +77,16 @@ namespace AW2.Net.Connections
         /// The thread that is continuously sending outgoing data to the remote host via TCP.
         /// </summary>
         private SuspendableThread _tcpSendThread;
+
+        /// <summary>
+        /// The thread that is continuously reading incoming data from the remote host via UDP.
+        /// </summary>
+        private SuspendableThread _udpReadThread;
+
+        /// <summary>
+        /// The thread that is continuously sending outgoing data to the remote host via UDP.
+        /// </summary>
+        private SuspendableThread _udpSendThread;
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
@@ -228,8 +243,13 @@ namespace AW2.Net.Connections
                     Send(sendMessage.Serialize());
                 }
 #else
-                byte[] data = message.Serialize();
-                Send(data);
+                var data = message.Serialize();
+                switch (message.SendType)
+                {
+                    case MessageSendType.TCP: SendViaTCP(data); break;
+                    case MessageSendType.UDP: SendViaUDP(data); break;
+                    default: throw new MessageException("Unknown send type " + message.SendType);
+                }
 #endif
 #if DEBUG_SENT_BYTE_COUNT
                 if (_lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
@@ -293,7 +313,8 @@ namespace AW2.Net.Connections
         {
             if (IsDisposed) return 0;
             int count = 0;
-            _sendBuffers.Do(queue => count = queue.Sum(segment => segment.Count));
+            _tcpSendBuffers.Do(queue => count += queue.Sum(segment => segment.Count));
+            _udpSendBuffers.Do(queue => count += queue.Sum(segment => segment.Count));
             return count;
         }
 
@@ -326,21 +347,14 @@ namespace AW2.Net.Connections
         protected virtual void DisposeImpl(bool error)
         {
             Application.ApplicationExit -= ApplicationExitCallback;
-
-            if (_tcpReadThread != null)
-            {
-                _tcpReadThread.Terminate();
-                if (!_tcpReadThread.Join(TimeSpan.FromSeconds(1)))
-                    AW2.Helpers.Log.Write("WARNING: Unable to kill read loop of " + Name);
-                _tcpReadThread = null;
-            }
-            if (_tcpSendThread != null)
-            {
-                _tcpSendThread.Terminate();
-                if (!_tcpSendThread.Join(TimeSpan.FromSeconds(1)))
-                    AW2.Helpers.Log.Write("WARNING: Unable to kill write loop of " + Name);
-                _tcpSendThread = null;
-            }
+            TerminateThread(_tcpReadThread);
+            TerminateThread(_tcpSendThread);
+            TerminateThread(_udpReadThread);
+            TerminateThread(_udpSendThread);
+            _tcpReadThread = null;
+            _tcpSendThread = null;
+            _udpReadThread = null;
+            _udpSendThread = null;
             if (!error)
             {
                 _tcpSocket.Shutdown(SocketShutdown.Both);
@@ -369,12 +383,25 @@ namespace AW2.Net.Connections
             ConfigureSocket(_tcpSocket);
             InitializeUDPSocket(_tcpSocket.LocalEndPoint, _tcpSocket.RemoteEndPoint);
             _messages = new TypedQueue<Message>();
-            _sendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
+            _tcpSendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
+            _udpSendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
             _errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
             _tcpReadThread = new TCPMessageReadThread(_tcpSocket, ThreadExceptionHandler, MessageHandler);
             _tcpReadThread.Start();
-            _tcpSendThread = new TCPMessageSendThread(_tcpSocket, _sendBuffers, ThreadExceptionHandler);
+            _tcpSendThread = new TCPMessageSendThread(_tcpSocket, _tcpSendBuffers, ThreadExceptionHandler);
             _tcpSendThread.Start();
+            _udpReadThread = new UDPMessageReadThread(_udpSocket, ThreadExceptionHandler, MessageHandler);
+            _udpReadThread.Start();
+            _udpSendThread = new UDPMessageSendThread(_udpSocket, _udpSendBuffers, ThreadExceptionHandler);
+            _udpSendThread.Start();
+        }
+
+        private void TerminateThread(SuspendableThread thread)
+        {
+            if (thread == null) return;
+            thread.Terminate();
+            if (!thread.Join(TimeSpan.FromSeconds(1)))
+                AW2.Helpers.Log.Write("WARNING: " + Name + " was unable to kill " + thread.Name);
         }
 
         private void InitializeUDPSocket(EndPoint localEndPoint, EndPoint remoteEndPoint)
@@ -385,13 +412,21 @@ namespace AW2.Net.Connections
         }
 
         /// <summary>
-        /// Sends raw byte data to the remote host. The data is sent asynchronously,
+        /// Sends raw byte data to the remote host via TCP. The data is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
-        /// <param name="data">The data to send.</param>
-        private void Send(byte[] data)
+        private void SendViaTCP(byte[] data)
         {
-            _sendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
+            _tcpSendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
+        }
+
+        /// <summary>
+        /// Sends raw byte data to the remote host via UDP. The data is sent asynchronously,
+        /// so there is no guarantee when the transmission will be finished.
+        /// </summary>
+        private void SendViaUDP(byte[] data)
+        {
+            _udpSendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
         }
 
         private void ApplicationExitCallback(object caller, EventArgs args)

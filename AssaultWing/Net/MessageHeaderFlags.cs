@@ -1,18 +1,11 @@
 ﻿namespace AW2.Net
 {
     /// <summary>
-    /// Flags for message headers.
+    /// How to send a message over a network.
     /// </summary>
-    public enum MessageHeaderFlags : byte
+    public enum MessageSendType
     {
-        /// <summary>
-        /// The message is a reply to a previous message.
-        /// </summary>
-        Reply = 0x80,
-
-        /// <summary>
-        /// The message is to be sent to several recipients.
-        /// </summary>
-        Multicast = 0x40,
+        TCP,
+        UDP,
     }
 }

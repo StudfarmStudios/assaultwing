@@ -53,6 +53,11 @@ namespace AW2.Net
         public MessageType Type { get { return GetMessageType(GetType()); } }
 
         /// <summary>
+        /// How to send this message over a network.
+        /// </summary>
+        public MessageSendType SendType { get { return MessageSendType.TCP; } }
+
+        /// <summary>
         /// Message's header flags.
         /// </summary>
         public MessageHeaderFlags HeaderFlags { get { return _headerFlags; } set { _headerFlags = value; } }

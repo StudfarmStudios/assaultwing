@@ -247,6 +247,8 @@
     <Compile Include="Net\ConnectionUtils\ConnectAsyncState.cs" />
     <Compile Include="Net\Connections\Connection.cs" />
     <Compile Include="Net\ConnectionUtils\ConnectionAttemptListener.cs" />
+    <Compile Include="Net\ConnectionUtils\UDPMessageSendThread.cs" />
+    <Compile Include="Net\ConnectionUtils\UDPMessageReadThread.cs" />
     <Compile Include="Net\ConnectionUtils\TCPMessageSendThread.cs" />
     <Compile Include="Net\ConnectionUtils\TCPMessageReadThread.cs" />
     <Compile Include="Net\Connections\GameClientConnection.cs" />
@@ -256,12 +258,14 @@
     <Compile Include="Net\INetworkSerializable.cs" />
     <Compile Include="Net\Connections\ManagementServerConnection.cs" />
     <Compile Include="Net\Message.cs" />
+    <Compile Include="Net\MessageException.cs" />
     <Compile Include="Net\MessageHandling\MessageHandler.cs" />
     <Compile Include="Net\MessageHandling\MessageHandlers.cs" />
     <Compile Include="Net\MessageHandling\GameplayMessageHandler.cs" />
     <Compile Include="Net\MessageHandling\IMessageHandler.cs" />
     <Compile Include="Net\ConnectionUtils\MessageReadThread.cs" />
     <Compile Include="Net\ConnectionUtils\MessageSendThread.cs" />
+    <Compile Include="Net\MessageHeaderFlags.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
     <Compile Include="Net\Messages\ArenaStartReply.cs" />
     <Compile Include="Net\Messages\ArenaStartRequest.cs" />

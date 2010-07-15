@@ -11,6 +11,8 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public abstract class MessageSendThread : SuspendableStepwiseThread
     {
+        protected static int MaximumTransmissionUnit = 1500;
+
         protected Socket _socket;
         protected ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
 

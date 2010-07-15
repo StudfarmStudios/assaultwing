@@ -71,22 +71,12 @@ namespace AW2.Net.Messages
             ping.Timestamp = timestamp;
 
             byte[] pingData = ping.Serialize();
-            byte[] pingHeader = new byte[8];
-            byte[] pingBody = new byte[pingData.Length - 8];
-            Array.Copy(pingData, pingHeader, 8);
-            Array.Copy(pingData, 8, pingBody, 0, pingBody.Length);
-
-            var ping2 = (PingRequestMessage)Message.Deserialize(pingHeader, pingBody, 0);
+            var ping2 = (PingRequestMessage)Message.Deserialize(pingData, 0);
             TimeSpan totalGameTime = new TimeSpan(23, 45, 67);
             var pong = ping2.GetPingReplyMessage(totalGameTime);
 
             byte[] pongData = pong.Serialize();
-            byte[] pongHeader = new byte[8];
-            byte[] pongBody = new byte[pongData.Length - 8];
-            Array.Copy(pongData, pongHeader, 8);
-            Array.Copy(pongData, 8, pongBody, 0, pongBody.Length);
-
-            var pong2 = (PingReplyMessage)Message.Deserialize(pongHeader, pongBody, 0);
+            var pong2 = (PingReplyMessage)Message.Deserialize(pongData, 0);
             Assert.AreEqual(timestamp, pong2.Timestamp);
             Assert.AreEqual(totalGameTime, pong2.TotalGameTimeOnReply);
         }

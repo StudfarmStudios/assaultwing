@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -8,7 +9,7 @@ using AW2.Helpers;
 namespace AW2.Net.ConnectionUtils
 {
     /// <summary>
-    /// A thread that receives data from a remote host via TCP until the socket
+    /// A thread that receives data from a remote host via UDP until the socket
     /// is closed or there is some other error condition.
     /// </summary>
     public class TCPMessageReadThread : MessageReadThread
@@ -18,19 +19,40 @@ namespace AW2.Net.ConnectionUtils
         {
         }
 
-        /// <summary>
-        /// Receives a certain number of bytes to a buffer.
-        /// This method blocks until the required number of bytes have been received,
-        /// or until the socket is closed or there is some error condition.
-        /// However, wrapping this method in <see cref="StepwiseAction"/> enables
-        /// you to run this blocking method in small steps, effectively working around
-        /// the blocking.
-        /// </summary>
-        /// <param name="buffer">The buffer to store the bytes in.</param>
-        /// <param name="byteCount">The number of bytes to receive.</param>
-        // Stepwise method. Enumerated objects are undefined.
-        protected override IEnumerable<object> Receive(byte[] buffer, int byteCount)
+        protected override IEnumerable<object> ReceiveHeaderAndBody(byte[] headerAndBodyBuffer)
         {
+            foreach (var dummy in ReadHeader(headerAndBodyBuffer)) yield return null;
+            foreach (var dummy in ReadBody(headerAndBodyBuffer)) yield return null;
+        }
+
+        // Stepwise method. Enumerated objects are undefined.
+        private IEnumerable<object> ReadHeader(byte[] headerAndBodyBuffer)
+        {
+            foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer, 0, Message.HEADER_LENGTH))) yield return null;
+            if (!Message.IsValidHeader(headerAndBodyBuffer))
+            {
+                string headerContents = string.Join(",", headerAndBodyBuffer
+                    .Take(Message.HEADER_LENGTH)
+                    .Select(a => a.ToString("X2"))
+                    .ToArray());
+                string txt = "Connection received an invalid message header [" + headerContents + "]";
+                throw new MessageException(txt);
+            }
+        }
+
+        // Stepwise method. Enumerated objects are undefined.
+        private IEnumerable<object> ReadBody(byte[] headerAndBodyBuffer)
+        {
+            int bodyLength = Message.GetBodyLength(headerAndBodyBuffer);
+            if (Message.HEADER_LENGTH + bodyLength > Message.MAXIMUM_LENGTH) throw new MessageException("Too long message body [" + bodyLength + " bytes]");
+            foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer, Message.HEADER_LENGTH, bodyLength))) yield return null;
+        }
+
+        private IEnumerable<object> Receive(ArraySegment<byte> segment)
+        {
+            var buffer = segment.Array;
+            int byteOffset = segment.Offset;
+            int byteCount = segment.Count;
             if (buffer == null) throw new ArgumentNullException("buffer", "Cannot receive to null buffer");
             if (byteCount < 0) throw new ArgumentException("Cannot receive negative number of bytes", "byteCount");
             int totalReadBytes = 0;
@@ -50,7 +72,9 @@ namespace AW2.Net.ConnectionUtils
                 }
                 else
                 {
-                    int readBytes = _socket.Receive(buffer, totalReadBytes, byteCount - totalReadBytes, SocketFlags.None);
+                    int readOffset = byteOffset + totalReadBytes;
+                    int readCount = byteCount - totalReadBytes;
+                    int readBytes = _socket.Receive(buffer, readOffset, readCount, SocketFlags.None);
                     totalReadBytes += readBytes;
                 }
                 yield return null;

@@ -1,43 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Net;
 
 namespace AW2.Net
 {
-    /// <summary>
-    /// Exception denoting an error related to messages.
-    /// </summary>
-    /// <seealso cref="Message"/>
-    public class MessageException : Exception
-    {
-        /// <summary>
-        /// Creates a new message exception.
-        /// </summary>
-        /// <param name="explanation">Explanation of the occurred error.</param>
-        public MessageException(string explanation)
-            : base(explanation)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Flags for message headers.
-    /// </summary>
-    public enum MessageHeaderFlags : byte
-    {
-        /// <summary>
-        /// The message is a reply to a previous message.
-        /// </summary>
-        Reply = 0x80,
-
-        /// <summary>
-        /// The message is to be sent to several recipients.
-        /// </summary>
-        Multicast = 0x40,
-    }
-
     /// <summary>
     /// A message to send over a connection.
     /// </summary>
@@ -51,30 +17,7 @@ namespace AW2.Net
     /// </remarks>
     public abstract class Message
     {
-        MessageHeaderFlags headerFlags;
-
-        /// <summary>
-        /// The type identifier of the message.
-        /// </summary>
-        public MessageType Type { get { return GetMessageType(this.GetType()); } }
-
-        /// <summary>
-        /// Message's header flags.
-        /// </summary>
-        public MessageHeaderFlags HeaderFlags { get { return headerFlags; } set { headerFlags = value; } }
-
-        /// <summary>
-        /// Identifier of the connection from which this message came,
-        /// or negative if the message was created locally and was not
-        /// received from a connection.
-        /// </summary>
-        public int ConnectionID { get; private set; }
-
-        static byte protocolIdentifier = (byte)'A';
-        static byte versionIdentifier = 0x00;
-        static char[] nullCharArray = new char[] { '\0' };
-
-        enum MessageHeaderIndex
+        private enum MessageHeaderIndex
         {
             ProtocolIdentifier = 0, // byte
             MessageTopic = 1, // byte
@@ -84,17 +27,49 @@ namespace AW2.Net
             Reserved = 6, // word
         }
 
-        #region Public interface
-
         /// <summary>
         /// Length of the message header in bytes.
         /// </summary>
-        public static int HeaderLength { get { return 8; } }
+        public const int HEADER_LENGTH = 8;
+
+        /// <summary>
+        /// Maximum length of the message body in bytes.
+        /// </summary>
+        public const int BODY_MAXIMUM_LENGTH = ushort.MaxValue;
+
+        /// <summary>
+        /// Maximum length of a message in bytes.
+        /// </summary>
+        public const int MAXIMUM_LENGTH = HEADER_LENGTH + BODY_MAXIMUM_LENGTH;
+
+        private const byte PROTOCOL_IDENTIFIER = (byte)'A';
+        private const byte VERSION_IDENTIFIER = 0x00;
+
+        private MessageHeaderFlags _headerFlags;
+
+        /// <summary>
+        /// The type identifier of the message.
+        /// </summary>
+        public MessageType Type { get { return GetMessageType(GetType()); } }
+
+        /// <summary>
+        /// Message's header flags.
+        /// </summary>
+        public MessageHeaderFlags HeaderFlags { get { return _headerFlags; } set { _headerFlags = value; } }
+
+        /// <summary>
+        /// Identifier of the connection from which this message came,
+        /// or negative if the message was created locally and was not
+        /// received from a connection.
+        /// </summary>
+        public int ConnectionID { get; private set; }
+
+        #region Public interface
 
         /// <summary>
         /// Is a message header valid.
         /// </summary>
-        /// <param name="header">The header.</param>
+        /// <param name="header">Buffer containing the header (and maybe something else).</param>
         /// <returns><c>true</c> if the header is valid, or <c>false</c> otherwise.</returns>
         public static bool IsValidHeader(byte[] header)
         {
@@ -105,14 +80,13 @@ namespace AW2.Net
             // byte protocol_version
             // word message_body_length
             // word reserved
-            if (header == null)
-                throw new ArgumentNullException("Null header");
-            if (header.Length != HeaderLength) return false;
+            if (header == null) throw new ArgumentNullException("Null header");
+            if (header.Length < HEADER_LENGTH) return false;
             byte protocolIdentifier = header[(int)MessageHeaderIndex.ProtocolIdentifier];
-            if (protocolIdentifier != Message.protocolIdentifier) return false;
+            if (protocolIdentifier != Message.PROTOCOL_IDENTIFIER) return false;
             if (GetMessageSubclass(header) == null) return false;
             byte versionIdentifier = header[(int)MessageHeaderIndex.ProtocolVersion];
-            if (versionIdentifier != Message.versionIdentifier) return false;
+            if (versionIdentifier != Message.VERSION_IDENTIFIER) return false;
             // These can be anything:
             // word message_body_length
             // word reserved
@@ -122,8 +96,7 @@ namespace AW2.Net
         /// <summary>
         /// Returns the length of message body in bytes.
         /// </summary>
-        /// <param name="header">The header of the message.</param>
-        /// <returns>The length of message body in bytes.</returns>
+        /// <param name="header">Buffer containing the header of the message.</param>
         public static int GetBodyLength(byte[] header)
         {
             return unchecked((ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(header, 4)));
@@ -132,10 +105,11 @@ namespace AW2.Net
         /// <summary>
         /// Returns the message subclass referred to in a deserialised message header.
         /// </summary>
+        /// <param name="header">Buffer containing the header of the message.</param>
         public static Type GetMessageSubclass(byte[] header)
         {
             byte topicIdentifier = header[(int)MessageHeaderIndex.MessageTopic];
-            MessageHeaderFlags flags = (MessageHeaderFlags)header[(int)MessageHeaderIndex.MessageFlags];
+            var flags = (MessageHeaderFlags)header[(int)MessageHeaderIndex.MessageFlags];
             return MessageType.GetMessageSubclass(topicIdentifier, (flags & MessageHeaderFlags.Reply) != 0);
         }
 
@@ -145,7 +119,7 @@ namespace AW2.Net
         /// <returns>The serialised message.</returns>
         public byte[] Serialize()
         {
-            NetworkBinaryWriter writer = new NetworkBinaryWriter(new MemoryStream());
+            var writer = new NetworkBinaryWriter(new MemoryStream());
 
             // Message header structure:
             // byte protocol_identifier
@@ -154,23 +128,23 @@ namespace AW2.Net
             // byte protocol_version
             // word message_body_length
             // word reserved
-            writer.Write((byte)protocolIdentifier);
+            writer.Write((byte)PROTOCOL_IDENTIFIER);
             System.Reflection.BindingFlags bindingFlags = 
                 System.Reflection.BindingFlags.GetField |
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.Static;
-            MessageType messageType = (MessageType)GetType().GetField("messageType", bindingFlags).GetValue(null);
+            var messageType = (MessageType)GetType().GetField("messageType", bindingFlags).GetValue(null);
             writer.Write((byte)messageType.TopicIdentifier);
-            if (messageType.IsReply) headerFlags |= MessageHeaderFlags.Reply;
-            writer.Write((byte)headerFlags); // flags
-            writer.Write((byte)versionIdentifier);
+            if (messageType.IsReply) _headerFlags |= MessageHeaderFlags.Reply;
+            writer.Write((byte)_headerFlags); // flags
+            writer.Write((byte)VERSION_IDENTIFIER);
             writer.Write((ushort)0); // body length
             writer.Write((ushort)0); // reserved
             long headerDataLength = writer.BaseStream.Length;
 
             Serialize(writer);
-            byte[] data = ((MemoryStream)writer.BaseStream).ToArray();
+            var data = ((MemoryStream)writer.BaseStream).ToArray();
 
             // Write body length to header.
             ushort bodyDataLength = checked((ushort)(writer.BaseStream.Length - headerDataLength));
@@ -190,28 +164,17 @@ namespace AW2.Net
             return data;
         }
 
-        /// <summary>
-        /// Deserialises a message from raw bytes.
-        /// </summary>
-        /// <param name="header">Message header.</param>
-        /// <param name="body">Buffer containing the message body, 
-        /// possibly trailed with extra bytes.</param>
-        /// <param name="connectionId">Identifier of the connection 
-        /// from which the serialised data came.</param>
-        /// <see cref="Connection.ID"/>
-        public static Message Deserialize(byte[] header, byte[] body, int connectionId)
+        /// <param name="headerAndBody">Buffer containing the header and the body of the message.</param>
+        /// <param name="connectionId">Identifier of the connection where the message was received.</param>
+        public static Message Deserialize(byte[] headerAndBody, int connectionId)
         {
-            if (header == null || body == null)
-                throw new NullReferenceException("Null message header or body");
-            if (!IsValidHeader(header))
-                throw new InvalidDataException("Invalid message header");
-
-            int bodyLength = GetBodyLength(header);
-            if (bodyLength > body.Length)
-                throw new InvalidDataException("Body length mismatch (" + bodyLength + " expected, " + body.Length + " got)");
-
-            Message message = (Message)GetMessageSubclass(header).GetConstructor(System.Type.EmptyTypes).Invoke(null);
-            message.Deserialize(new NetworkBinaryReader(new MemoryStream(body)));
+            if (headerAndBody == null) throw new ArgumentNullException("headerAndBody", "Null message content");
+            if (!IsValidHeader(headerAndBody)) throw new ArgumentException("Invalid message header", "headerAndBody");
+            int bodyLength = GetBodyLength(headerAndBody);
+            int expectedLength = HEADER_LENGTH + bodyLength;
+            if (expectedLength > headerAndBody.Length) throw new ArgumentException("Message length mismatch (" + expectedLength + " expected, " + headerAndBody.Length + " got)");
+            var message = (Message)GetMessageSubclass(headerAndBody).GetConstructor(System.Type.EmptyTypes).Invoke(null);
+            message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody, HEADER_LENGTH, BODY_MAXIMUM_LENGTH)));
             message.ConnectionID = connectionId;
             return message;
         }
@@ -252,21 +215,22 @@ namespace AW2.Net
         }
         
         /// <summary>
-        /// Scans through <c>Message</c> subclasses and registers their message type identifiers
+        /// Scans through <see cref="Message"/> subclasses and registers their message type identifiers
         /// for future deserialisation.
         /// </summary>
         static Message()
         {
-            foreach (Type type in Array.FindAll<Type>(System.Reflection.Assembly.GetExecutingAssembly().GetTypes(),
-                delegate(Type t) { return typeof(Message).IsAssignableFrom(t) && !t.IsAbstract; }))
+            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
             {
+                if (!typeof(Message).IsAssignableFrom(type)) continue;
+                if (type.IsAbstract) continue;
                 try
                 {
                     MessageType.Register(GetMessageType(type), type);
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Error registering Message subclasses", e);
+                    throw new ApplicationException("Error registering Message subclasses", e);
                 }
             }
         }
@@ -280,7 +244,7 @@ namespace AW2.Net
         {
             if (!typeof(Message).IsAssignableFrom(type) || type.IsAbstract)
                 throw new ArgumentException("Only nonabstract subclasses of Message have a message type");
-            System.Reflection.BindingFlags flags =
+            var flags =
                 System.Reflection.BindingFlags.GetField |
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Public |

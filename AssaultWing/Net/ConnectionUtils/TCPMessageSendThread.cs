@@ -22,8 +22,6 @@ namespace AW2.Net.ConnectionUtils
             var sendSegments = new List<ArraySegment<byte>>();
             while (true)
             {
-                // Gather several messages together to reach a supposedly optimal
-                // TCP packet size of 1500 bytes minus some space for headers.
                 sendSegments.Clear();
                 int totalLength = 0;
                 _sendBuffers.Do(queue =>
@@ -31,7 +29,6 @@ namespace AW2.Net.ConnectionUtils
                     while (queue.Count > 0)
                     {
                         var segment = queue.Peek();
-                        if (sendSegments.Count > 0 && totalLength + segment.Count > 1400) break;
                         totalLength += segment.Count;
                         sendSegments.Add(segment);
                         queue.Dequeue();
@@ -41,7 +38,7 @@ namespace AW2.Net.ConnectionUtils
                 {
                     int bytesSent = _socket.Send(sendSegments);
                     if (bytesSent != totalLength)
-                        throw new Exception("Not all data was sent (" + bytesSent + " out of " + totalLength + " bytes)");
+                        throw new NetworkException("Not all data was sent (" + bytesSent + " out of " + totalLength + " bytes)");
                 }
                 else
                     Thread.Sleep(0);

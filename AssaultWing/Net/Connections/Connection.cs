@@ -293,11 +293,7 @@ namespace AW2.Net.Connections
         {
             if (IsDisposed) return 0;
             int count = 0;
-            _sendBuffers.Do(queue =>
-            {
-                foreach (ArraySegment<byte> segment in queue)
-                    count += segment.Count;
-            });
+            _sendBuffers.Do(queue => count = queue.Sum(segment => segment.Count));
             return count;
         }
 
@@ -412,9 +408,9 @@ namespace AW2.Net.Connections
             });
         }
 
-        private void MessageHandler(byte[] messageHeaderBuffer, byte[] messageBodyBuffer)
+        private void MessageHandler(byte[] messageHeaderAndBody)
         {
-            var message = Message.Deserialize(messageHeaderBuffer, messageBodyBuffer, ID);
+            var message = Message.Deserialize(messageHeaderAndBody, ID);
             _messages.Enqueue(message);
             lock (_messages) if (MessageCallback != null) MessageCallback();
         }

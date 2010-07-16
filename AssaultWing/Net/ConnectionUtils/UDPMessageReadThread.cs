@@ -24,13 +24,16 @@ namespace AW2.Net.ConnectionUtils
             if (headerAndBodyBuffer == null) throw new ArgumentNullException("headerAndBodyBuffer", "Cannot receive to null buffer");
             while (true)
             {
-                if (_socket.Available == 0)
+                int availableBytes = _socket.Available;
+                if (availableBytes == 0)
                 {
                     // See if the socket is still connected. If Poll() shows that there
                     // is data to read but Available is still zero, the socket must have
                     // been closed at the remote host.
-                    if (_socket.Poll(100, SelectMode.SelectRead) && _socket.Available == 0)
-                        throw new SocketException((int)SocketError.NotConnected);
+                    if (_socket.Poll(100, SelectMode.SelectRead))
+                    {
+                        if (_socket.Available == 0) throw new SocketException((int)SocketError.NotConnected);
+                    }
 
                     // We are still connected but there's no data.
                     // Let other threads do their stuff while we wait.
@@ -41,7 +44,7 @@ namespace AW2.Net.ConnectionUtils
                     // There is data to read. Therefore we can call Receive knowing that it will not block eternally.
                     try
                     {
-                        int readBytes = _socket.Receive(headerAndBodyBuffer, 0, headerAndBodyBuffer.Length, SocketFlags.None);
+                        _socket.Receive(headerAndBodyBuffer, 0, availableBytes, SocketFlags.None);
                     }
                     catch (SocketException e)
                     {

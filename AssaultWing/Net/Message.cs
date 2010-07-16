@@ -55,7 +55,7 @@ namespace AW2.Net
         /// <summary>
         /// How to send this message over a network.
         /// </summary>
-        public MessageSendType SendType { get { return MessageSendType.TCP; } }
+        public virtual MessageSendType SendType { get { return MessageSendType.TCP; } }
 
         /// <summary>
         /// Message's header flags.

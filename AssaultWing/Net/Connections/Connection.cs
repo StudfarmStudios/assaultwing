@@ -407,6 +407,8 @@ namespace AW2.Net.Connections
         private void InitializeUDPSocket(EndPoint localEndPoint, EndPoint remoteEndPoint)
         {
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Client) // HACK
+                _udpSocket.Bind(localEndPoint);
             _udpSocket.Connect(remoteEndPoint);
             ConfigureSocket(_udpSocket);
         }

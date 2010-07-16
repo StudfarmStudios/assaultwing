@@ -51,21 +51,20 @@ namespace AW2.Net.ConnectionUtils
 
         private IEnumerable<object> Receive(ArraySegment<byte> segment)
         {
-            var buffer = segment.Array;
-            int byteOffset = segment.Offset;
-            int byteCount = segment.Count;
-            if (buffer == null) throw new ArgumentNullException("buffer", "Cannot receive to null buffer");
-            if (byteCount < 0) throw new ArgumentException("Cannot receive negative number of bytes", "byteCount");
+            if (segment.Array == null) throw new ArgumentNullException("buffer", "Cannot receive to null buffer");
+            if (segment.Count < 0) throw new ArgumentException("Cannot receive negative number of bytes", "byteCount");
             int totalReadBytes = 0;
-            while (totalReadBytes < byteCount)
+            while (totalReadBytes < segment.Count)
             {
                 if (_socket.Available == 0)
                 {
                     // See if the socket is still connected. If Poll() shows that there
                     // is data to read but Available is still zero, the socket must have
                     // been closed at the remote host.
-                    if (_socket.Poll(100, SelectMode.SelectRead) && _socket.Available == 0)
-                        throw new SocketException((int)SocketError.NotConnected);
+                    if (_socket.Poll(100, SelectMode.SelectRead))
+                    {
+                        if (_socket.Available == 0) throw new SocketException((int)SocketError.NotConnected);
+                    }
 
                     // We are still connected but there's no data.
                     // Let other threads do their stuff while we wait.
@@ -73,15 +72,15 @@ namespace AW2.Net.ConnectionUtils
                 }
                 else
                 {
-                    int readOffset = byteOffset + totalReadBytes;
-                    int readCount = byteCount - totalReadBytes;
-                    int readBytes = _socket.Receive(buffer, readOffset, readCount, SocketFlags.None);
+                    int readOffset = segment.Offset + totalReadBytes;
+                    int readCount = segment.Count - totalReadBytes;
+                    int readBytes = _socket.Receive(segment.Array, readOffset, readCount, SocketFlags.None);
                     totalReadBytes += readBytes;
                 }
                 yield return null;
             }
-            if (totalReadBytes > byteCount)
-                AW2.Helpers.Log.Write("WARNING: Read " + totalReadBytes + " bytes when only " + byteCount + " was requested");
+            if (totalReadBytes > segment.Count)
+                AW2.Helpers.Log.Write("WARNING: Read " + totalReadBytes + " bytes when only " + segment.Count + " was requested");
         }
     }
 }

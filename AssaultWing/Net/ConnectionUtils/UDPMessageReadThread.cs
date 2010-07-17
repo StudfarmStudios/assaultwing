@@ -27,15 +27,6 @@ namespace AW2.Net.ConnectionUtils
                 int availableBytes = _socket.Available;
                 if (availableBytes == 0)
                 {
-                    // See if the socket is still connected. If Poll() shows that there
-                    // is data to read but Available is still zero, the socket must have
-                    // been closed at the remote host.
-                    if (_socket.Poll(100, SelectMode.SelectRead))
-                    {
-                        if (_socket.Available == 0) throw new SocketException((int)SocketError.NotConnected);
-                    }
-
-                    // We are still connected but there's no data.
                     // Let other threads do their stuff while we wait.
                     Thread.Sleep(0);
                 }
@@ -44,7 +35,8 @@ namespace AW2.Net.ConnectionUtils
                     // There is data to read. Therefore we can call Receive knowing that it will not block eternally.
                     try
                     {
-                        _socket.Receive(headerAndBodyBuffer, 0, availableBytes, SocketFlags.None);
+                        _socket.Receive(headerAndBodyBuffer);
+                        yield break;
                     }
                     catch (SocketException e)
                     {

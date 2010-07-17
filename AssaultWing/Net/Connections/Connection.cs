@@ -381,7 +381,7 @@ namespace AW2.Net.Connections
             Application.ApplicationExit += ApplicationExitCallback;
             _tcpSocket = tcpSocket;
             ConfigureSocket(_tcpSocket);
-            InitializeUDPSocket(_tcpSocket.LocalEndPoint, _tcpSocket.RemoteEndPoint);
+            InitializeUDPSocket((IPEndPoint)_tcpSocket.LocalEndPoint, (IPEndPoint)_tcpSocket.RemoteEndPoint);
             _messages = new TypedQueue<Message>();
             _tcpSendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
             _udpSendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
@@ -404,12 +404,17 @@ namespace AW2.Net.Connections
                 AW2.Helpers.Log.Write("WARNING: " + Name + " was unable to kill " + thread.Name);
         }
 
-        private void InitializeUDPSocket(EndPoint localEndPoint, EndPoint remoteEndPoint)
+        private void InitializeUDPSocket(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint)
         {
             _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Client) // HACK
-                _udpSocket.Bind(localEndPoint);
-            _udpSocket.Connect(remoteEndPoint);
+            {
+                _udpSocket.Bind(new IPEndPoint(IPAddress.Any, localEndPoint.Port));
+            }
+            if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Server) // HACK
+            {
+                _udpSocket.Connect(new IPEndPoint(remoteEndPoint.Address, remoteEndPoint.Port));
+            }
             ConfigureSocket(_udpSocket);
         }
 

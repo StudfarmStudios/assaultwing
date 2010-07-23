@@ -556,7 +556,7 @@ namespace AW2
             {
                 var message = new StartGameMessage();
                 message.ArenaPlaylist = DataEngine.ArenaPlaylist;
-                NetworkEngine.GameClientConnections.Send(message);
+                NetworkEngine.SendToGameClients(message);
             }
 
             DataEngine.ArenaPlaylist.Reset();
@@ -591,7 +591,7 @@ namespace AW2
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new ArenaFinishMessage();
-                NetworkEngine.GameClientConnections.Send(message);
+                NetworkEngine.SendToGameClients(message);
             }
         }
 
@@ -720,7 +720,7 @@ namespace AW2
             catch (System.Net.Sockets.SocketException e)
             {
                 Log.Write("Could not start client: " + e.Message);
-                NetworkMode = NetworkMode.Standalone;
+                StopClient();
             }
         }
 
@@ -944,18 +944,15 @@ namespace AW2
                 _framesSinceLastCheck = 1;
                 _lastFramerateCheck = gameTime.TotalRealTime;
 
-                if (NetworkMode != NetworkMode.Standalone)
-                    _window.Title += " [" + NetworkEngine.GetSendQueueSize() + " B send queue]";
-
                 if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
                     _window.Title += string.Format(" [{0} ms lag]",
                         (int)NetworkEngine.ServerPingTime.TotalMilliseconds);
 
                 if (NetworkMode == NetworkMode.Server)
-                    foreach (PingedConnection conn in NetworkEngine.GameClientConnections.Connections)
+                    foreach (var conn in NetworkEngine.GameClientConnections)
                         _window.Title += string.Format(" [#{0}: {1} ms lag]",
                             conn.ID,
-                            (int)conn.PingTime.TotalMilliseconds);
+                            (int)conn.PingInfo.PingTime.TotalMilliseconds);
             }
             base.Draw(GameTime);
         }

@@ -94,7 +94,7 @@ namespace AW2.Menu
                 AssaultWing.Instance.StopClient();
                 return;
             }
-            Log.Write("Client connected to " + result.Value.RemoteEndPoint);
+            Log.Write("Client connected to " + result.Value.RemoteTCPEndPoint);
 
             var net = AssaultWing.Instance.NetworkEngine;
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => component.MenuEngine.ActivateComponent(MenuComponentType.Equip)));

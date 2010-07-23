@@ -11,7 +11,7 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public class TCPMessageSendThread : MessageSendThread
     {
-        public TCPMessageSendThread(Socket socket, ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers, Action<Exception> exceptionHandler)
+        public TCPMessageSendThread(Socket socket, ThreadSafeWrapper<Queue<NetBuffer>> sendBuffers, Action<Exception> exceptionHandler)
             : base("TCP Message Send Thread", socket, sendBuffers, exceptionHandler)
         {
             if (socket.ProtocolType != ProtocolType.Tcp) throw new ArgumentException("Not a TCP socket", "socket");
@@ -29,9 +29,9 @@ namespace AW2.Net.ConnectionUtils
                 {
                     while (queue.Count > 0)
                     {
-                        var segment = queue.Peek();
-                        totalLength += segment.Count;
-                        sendSegments.Add(segment);
+                        var segment = queue.Peek().Buffer;
+                        totalLength += segment.Length;
+                        sendSegments.Add(new ArraySegment<byte>(segment));
                         queue.Dequeue();
                     }
                 });

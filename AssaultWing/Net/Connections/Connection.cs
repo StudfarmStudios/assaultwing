@@ -31,9 +31,14 @@ namespace AW2.Net.Connections
     /// (for each connection) and general error conditions (for each connection).
     /// 
     /// This class is thread safe.
-    public class Connection : IConnection
+    public class Connection
     {
         #region Fields
+
+        /// <summary>
+        /// A meta-value for <see cref="ID"/> denoting an invalid value.
+        /// </summary>
+        public const int INVALID_ID = -1;
 
         /// <summary>
         /// Least int that is known not to have been used as a connection identifier.
@@ -51,52 +56,14 @@ namespace AW2.Net.Connections
         /// <summary>
         /// TCP socket to the connected remote host.
         /// </summary>
-        private Socket _tcpSocket;
+        private AWTCPSocket _tcpSocket;
 
-        /// <summary>
-        /// UDP socket to the connected remote host.
-        /// </summary>
-        private Socket _udpSocket;
-
-        /// <summary>
-        /// Buffer of serialised messages waiting to be sent to the remote host via TCP.
-        /// </summary>
-        private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _tcpSendBuffers;
-
-        /// <summary>
-        /// Buffer of serialised messages waiting to be sent to the remote host via UDP.
-        /// </summary>
-        private ThreadSafeWrapper<Queue<ArraySegment<byte>>> _udpSendBuffers;
-
-        /// <summary>
-        /// The thread that is continuously reading incoming data from the remote host via TCP.
-        /// </summary>
-        private SuspendableThread _tcpReadThread;
-
-        /// <summary>
-        /// The thread that is continuously sending outgoing data to the remote host via TCP.
-        /// </summary>
-        private SuspendableThread _tcpSendThread;
-
-        /// <summary>
-        /// The thread that is continuously reading incoming data from the remote host via UDP.
-        /// </summary>
-        private SuspendableThread _udpReadThread;
-
-        /// <summary>
-        /// The thread that is continuously sending outgoing data to the remote host via UDP.
-        /// </summary>
-        private SuspendableThread _udpSendThread;
+        private IPEndPoint _remoteUDPEndPoint;
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
         private TypedQueue<Message> _messages;
-
-        /// <summary>
-        /// Information on general error situations.
-        /// </summary>
-        private ThreadSafeWrapper<Queue<Exception>> _errors;
 
 #if DEBUG_SENT_BYTE_COUNT
         private static TimeSpan _lastPrintTime = new TimeSpan(-1);
@@ -125,44 +92,28 @@ namespace AW2.Net.Connections
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
         /// <summary>
-        /// The local end point of the connection.
+        /// The remote TCP end point of the connection.
         /// </summary>
-        /// <see cref="System.Net.Sockets.Socket.LocalEndPoint"/>
-        public IPEndPoint LocalEndPoint
+        /// <see cref="System.Net.Sockets.Socket.RemoteEndPoint"/>
+        public IPEndPoint RemoteTCPEndPoint
         {
             get
             {
-                if (IsDisposed) return null;
-                try
-                {
-                    return (IPEndPoint)_tcpSocket.LocalEndPoint;
-                }
-                catch (Exception e)
-                {
-                    _errors.Do(queue => queue.Enqueue(e));
-                }
-                return new IPEndPoint(IPAddress.None, 0);
+                if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
+                return _tcpSocket.RemoteEndPoint;
             }
         }
 
         /// <summary>
-        /// The remote end point of the connection.
+        /// The remote UDP end point of the connection.
         /// </summary>
         /// <see cref="System.Net.Sockets.Socket.RemoteEndPoint"/>
-        public IPEndPoint RemoteEndPoint
+        public IPEndPoint RemoteUDPEndPoint
         {
             get
             {
-                if (IsDisposed) return null;
-                try
-                {
-                    return (IPEndPoint)_tcpSocket.RemoteEndPoint;
-                }
-                catch (Exception e)
-                {
-                    _errors.Do(queue => queue.Enqueue(e));
-                }
-                return new IPEndPoint(IPAddress.None, 0);
+                if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
+                return _remoteUDPEndPoint;
             }
         }
 
@@ -182,14 +133,11 @@ namespace AW2.Net.Connections
         public static ThreadSafeWrapper<Queue<Result<Connection>>> ConnectionResults { get; private set; }
 
         /// <summary>
-        /// Information about general error situations.
+        /// Information about general error situations in background threads.
         /// </summary>
-        public ThreadSafeWrapper<Queue<Exception>> Errors { get { return _errors; } }
+        public ThreadSafeWrapper<Queue<Exception>> Errors { get { return _tcpSocket.Errors; } }
 
-        /// <summary>
-        /// Called after a new element has been added to <c>Errors</c>.
-        /// </summary>
-        public event Action ErrorCallback;
+        public PingInfo PingInfo { get; private set; }
 
         #endregion Properties
 
@@ -217,10 +165,11 @@ namespace AW2.Net.Connections
         }
 
         /// <summary>
-        /// Updates the connection. Call this regularly.
+        /// Updates the connection's ping information. Call this every frame.
         /// </summary>
         public void Update()
         {
+            PingInfo.Update();
         }
 
         /// <summary>
@@ -312,10 +261,7 @@ namespace AW2.Net.Connections
         public int GetSendQueueSize()
         {
             if (IsDisposed) return 0;
-            int count = 0;
-            _tcpSendBuffers.Do(queue => count += queue.Sum(segment => segment.Count));
-            _udpSendBuffers.Do(queue => count += queue.Sum(segment => segment.Count));
-            return count;
+            return _tcpSocket.GetSendQueueSize();
         }
 
         #endregion Public interface
@@ -330,8 +276,7 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Closes the connection and frees resources it has allocated.
         /// </summary>
-        /// <param name="error">If <c>true</c> then an internal error
-        /// has occurred.</param>
+        /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
         protected void Dispose(bool error)
         {
             if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
@@ -341,27 +286,10 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Performs the actual diposing.
         /// </summary>
-        /// <param name="error">If <c>true</c> then an internal error
-        /// has occurred.</param>
-        /// <seealso cref="Dispose()"/>
+        /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
         protected virtual void DisposeImpl(bool error)
         {
-            Application.ApplicationExit -= ApplicationExitCallback;
-            TerminateThread(_tcpReadThread);
-            TerminateThread(_tcpSendThread);
-            TerminateThread(_udpReadThread);
-            TerminateThread(_udpSendThread);
-            _tcpReadThread = null;
-            _tcpSendThread = null;
-            _udpReadThread = null;
-            _udpSendThread = null;
-            if (!error)
-            {
-                _tcpSocket.Shutdown(SocketShutdown.Both);
-                _udpSocket.Shutdown(SocketShutdown.Both);
-            }
-            _tcpSocket.Close();
-            _udpSocket.Close();
+            _tcpSocket.Dispose(error);
         }
 
         /// <summary>
@@ -378,44 +306,9 @@ namespace AW2.Net.Connections
             if (!tcpSocket.Connected) throw new ArgumentException("Socket not connected", "tcpSocket");
             ID = g_leastUnusedID++;
             Name = "Connection " + ID;
-            Application.ApplicationExit += ApplicationExitCallback;
-            _tcpSocket = tcpSocket;
-            ConfigureSocket(_tcpSocket);
-            InitializeUDPSocket((IPEndPoint)_tcpSocket.LocalEndPoint, (IPEndPoint)_tcpSocket.RemoteEndPoint);
             _messages = new TypedQueue<Message>();
-            _tcpSendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
-            _udpSendBuffers = new ThreadSafeWrapper<Queue<ArraySegment<byte>>>(new Queue<ArraySegment<byte>>());
-            _errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
-            _tcpReadThread = new TCPMessageReadThread(_tcpSocket, ThreadExceptionHandler, MessageHandler);
-            _tcpReadThread.Start();
-            _tcpSendThread = new TCPMessageSendThread(_tcpSocket, _tcpSendBuffers, ThreadExceptionHandler);
-            _tcpSendThread.Start();
-            _udpReadThread = new UDPMessageReadThread(_udpSocket, ThreadExceptionHandler, MessageHandler);
-            _udpReadThread.Start();
-            _udpSendThread = new UDPMessageSendThread(_udpSocket, _udpSendBuffers, ThreadExceptionHandler);
-            _udpSendThread.Start();
-        }
-
-        private void TerminateThread(SuspendableThread thread)
-        {
-            if (thread == null) return;
-            thread.Terminate();
-            if (!thread.Join(TimeSpan.FromSeconds(1)))
-                AW2.Helpers.Log.Write("WARNING: " + Name + " was unable to kill " + thread.Name);
-        }
-
-        private void InitializeUDPSocket(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint)
-        {
-            _udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Client) // HACK
-            {
-                _udpSocket.Bind(new IPEndPoint(IPAddress.Any, localEndPoint.Port));
-            }
-            if (AssaultWing.Instance.NetworkMode == AW2.Core.NetworkMode.Server) // HACK
-            {
-                _udpSocket.Connect(new IPEndPoint(remoteEndPoint.Address, remoteEndPoint.Port));
-            }
-            ConfigureSocket(_udpSocket);
+            _tcpSocket = new AWTCPSocket(tcpSocket, HandleMessage);
+            PingInfo = new PingInfo(this);
         }
 
         /// <summary>
@@ -424,7 +317,7 @@ namespace AW2.Net.Connections
         /// </summary>
         private void SendViaTCP(byte[] data)
         {
-            _tcpSendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
+            _tcpSocket.Send(data, null);
         }
 
         /// <summary>
@@ -433,68 +326,14 @@ namespace AW2.Net.Connections
         /// </summary>
         private void SendViaUDP(byte[] data)
         {
-            _udpSendBuffers.Do(queue => queue.Enqueue(new ArraySegment<byte>(data)));
+            AssaultWing.Instance.NetworkEngine.UDPSocket.Send(data, RemoteTCPEndPoint);
         }
 
-        private void ApplicationExitCallback(object caller, EventArgs args)
+        public void HandleMessage(NetBuffer messageHeaderAndBody)
         {
-            Dispose(false);
-        }
-
-        private void ThreadExceptionHandler(Exception e)
-        {
-            _errors.Do(queue =>
-            {
-                queue.Enqueue(e);
-                if (ErrorCallback != null) ErrorCallback();
-            });
-        }
-
-        private void MessageHandler(byte[] messageHeaderAndBody)
-        {
-            var message = Message.Deserialize(messageHeaderAndBody, ID);
+            var message = Message.Deserialize(messageHeaderAndBody.Buffer, ID);
             _messages.Enqueue(message);
             lock (_messages) if (MessageCallback != null) MessageCallback();
-        }
-
-        private static void ConfigureSocket(Socket socket)
-        {
-            // TODO: Remove this log output from public release!!!
-            Log.Write("Configuring socket:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
-            socket.Blocking = true;
-            socket.ReceiveTimeout = 0; // don't time out on receiving
-            socket.SendTimeout = 1000;
-            if (socket.ProtocolType == ProtocolType.Tcp) socket.NoDelay = true;
-            // TODO: Remove this log output from public release!!!
-            Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
-        }
-
-        private static IEnumerable<string> GetSocketInfoStrings(Socket socket)
-        {
-            return
-                from p in typeof(Socket).GetProperties()
-                let s = GetProperty(p, socket)
-                where s != null
-                orderby s ascending
-                select s;
-        }
-
-        private static string GetProperty(System.Reflection.PropertyInfo prop, Socket socket)
-        {
-            try
-            {
-                if ((prop.Name == "EnableBroadcast" && socket.ProtocolType != ProtocolType.Udp) ||
-                    (prop.Name == "MulticastLoopback" && socket.ProtocolType == ProtocolType.Tcp) ||
-                    (prop.Name == "NoDelay" && socket.SocketType != SocketType.Stream) ||
-                    (prop.Name == "LingerState" && socket.ProtocolType == ProtocolType.Udp))
-                    return null;
-                return prop.Name + ": " + prop.GetValue(socket, null).ToString();
-            }
-            catch (System.Reflection.TargetInvocationException e)
-            {
-                Log.Write("Error reading Socket property " + prop.Name + ": " + e);
-            };
-            return null;
         }
 
         #endregion Non-public methods
@@ -508,7 +347,8 @@ namespace AW2.Net.Connections
         private static void ConnectCallback(IAsyncResult asyncResult)
         {
             g_connectAsyncStates.Remove((ConnectAsyncState)asyncResult.AsyncState);
-            ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateServerConnection(asyncResult), ReportResult);
+            var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateServerConnection(asyncResult));
+            if (result != null) ReportResult(result);
         }
 
         private static Connection CreateServerConnection(IAsyncResult asyncResult)

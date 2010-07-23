@@ -35,13 +35,16 @@ namespace AW2.Net.MessageHandling
         {
             if (Disposed) throw new InvalidOperationException("Cannot use disposed MessageHandler");
             T message = null;
-            while ((message = GetConnection(Source).Messages.TryDequeue<T>()) != null)
+            foreach (var connection in GetConnections(Source))
             {
-                Action(message);
-                if (OnlyOneMessage)
+                while ((message = connection.Messages.TryDequeue<T>()) != null)
                 {
-                    Disposed = true;
-                    break;
+                    Action(message);
+                    if (OnlyOneMessage)
+                    {
+                        Disposed = true;
+                        break;
+                    }
                 }
             }
         }

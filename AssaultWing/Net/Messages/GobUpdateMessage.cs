@@ -18,7 +18,7 @@ namespace AW2.Net.Messages
         /// </summary>
         protected static MessageType messageType = new MessageType(0x24, false);
 
-        public override MessageSendType SendType { get { return  _sendType; } }
+        public override MessageSendType SendType { get { return MessageSendType.TCP; /* UNDONE !!! _sendType; */ } }
 
         /// <summary>
         /// Adds a gob to the update message.

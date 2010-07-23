@@ -400,7 +400,7 @@ namespace AW2.Game
                 var message = new PlayerUpdateMessage();
                 message.PlayerID = ID;
                 message.Write(this, SerializationModeFlags.VaryingData);
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
             }
         }
 
@@ -562,7 +562,7 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && IsRemote)
             {
                 var messageMessage = new PlayerMessageMessage { PlayerID = ID, Color = messageColor, Text = message };
-                AssaultWing.Instance.NetworkEngine.GameClientConnections[ConnectionID].Send(messageMessage);
+                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(ConnectionID).Send(messageMessage);
             }
             Message msg = new Message(message);
             msg.TextColor = messageColor;

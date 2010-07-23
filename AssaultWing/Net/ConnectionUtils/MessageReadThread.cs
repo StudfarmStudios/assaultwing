@@ -11,18 +11,18 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public abstract class MessageReadThread : SuspendableStepwiseThread
     {
-        public delegate void MessageHandler(byte[] messageHeaderAndBody);
+        public delegate void MessageHandler(NetBuffer messageHeaderAndBody);
 
         protected Socket _socket;
         private MessageHandler _messageHandler;
-        private byte[] _headerAndBodyReceiveBuffer;
+        private NetBuffer _headerAndBodyReceiveBuffer;
 
         public MessageReadThread(string name, Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
             : base(name, exceptionHandler)
         {
             _socket = socket;
             _messageHandler = messageHandler;
-            _headerAndBodyReceiveBuffer = new byte[Message.MAXIMUM_LENGTH];
+            _headerAndBodyReceiveBuffer = new NetBuffer(new byte[Message.MAXIMUM_LENGTH], null);
             SetAction(new StepwiseAction(KeepReadingMessages()));
         }
 
@@ -38,10 +38,11 @@ namespace AW2.Net.ConnectionUtils
         }
 
         /// <summary>
-        /// Receives the header and the body of a message into a buffer.
+        /// Receives the header and the body of a message into a buffer
+        /// and writes down the end point where the data came.
         /// Blocks until the header and the body have been received.
         /// </summary>
         // Stepwise method. Enumerated objects are undefined.
-        protected abstract IEnumerable<object> ReceiveHeaderAndBody(byte[] headerAndBodyBuffer);
+        protected abstract IEnumerable<object> ReceiveHeaderAndBody(NetBuffer headerAndBodyBuffer);
     }
 }

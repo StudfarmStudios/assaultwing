@@ -1306,7 +1306,7 @@ namespace AW2.Game
                 message.GobTypeName = gob.TypeName;
                 message.LayerIndex = Layers.IndexOf(gob.Layer);
                 message.Write(gob, AW2.Net.SerializationModeFlags.All);
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
             }
         }
 
@@ -1324,7 +1324,7 @@ namespace AW2.Game
                 if (!IsActive) throw new Exception("Removing a gob from an inactive arena during network game");
                 var message = new GobDeletionMessage();
                 message.GobId = gob.ID;
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
             }
 
             if (IsActive)

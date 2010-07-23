@@ -485,6 +485,11 @@ namespace AW2.Helpers
             return TimeSpan.FromTicks(time.Ticks / divisor);
         }
 
+        public static TimeSpan Average(IEnumerable<TimeSpan> times)
+        {
+            return TimeSpan.FromTicks(times.Sum(time => time.Ticks) / times.Count());
+        }
+
         /// <summary>
         /// Returns a 2D unit vector pointing towards an angle in radians.
         /// </summary>

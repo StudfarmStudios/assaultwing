@@ -34,18 +34,20 @@ namespace AW2.Net.MessageHandling
         public override void HandleMessages()
         {
             if (Disposed) throw new InvalidOperationException("Cannot use disposed GameplayMessageHandler");
-            var connection = GetConnection(Source) as AW2.Net.Connections.PingedConnection;
-            if (connection == null) throw new ApplicationException("GameplayMessageHandler needs a PingedConnection");
+            var connections = GetConnections(Source);
             T message = null;
-            while ((message = connection.Messages.TryDequeue<T>()) != null)
+            foreach (var connection in connections)
             {
-                var messageAge = AssaultWing.Instance.DataEngine.ArenaTotalTime
-                    - (message.TotalGameTime + connection.RemoteGameTimeOffset);
-                Action(message, messageAge);
-                if (OnlyOneMessage)
+                while ((message = connection.Messages.TryDequeue<T>()) != null)
                 {
-                    Disposed = true;
-                    break;
+                    var messageAge = AssaultWing.Instance.DataEngine.ArenaTotalTime
+                        - (message.TotalGameTime + connection.PingInfo.RemoteGameTimeOffset);
+                    Action(message, messageAge);
+                    if (OnlyOneMessage)
+                    {
+                        Disposed = true;
+                        break;
+                    }
                 }
             }
         }

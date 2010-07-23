@@ -11,7 +11,7 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public class UDPMessageSendThread : MessageSendThread
     {
-        public UDPMessageSendThread(Socket socket, ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers, Action<Exception> exceptionHandler)
+        public UDPMessageSendThread(Socket socket, ThreadSafeWrapper<Queue<NetBuffer>> sendBuffers, Action<Exception> exceptionHandler)
             : base("UDP Message Send Thread", socket, sendBuffers, exceptionHandler)
         {
             if (socket.ProtocolType != ProtocolType.Udp) throw new ArgumentException("Not a UDP socket", "socket");
@@ -22,16 +22,16 @@ namespace AW2.Net.ConnectionUtils
         {
             while (true)
             {
-                var segment = new ArraySegment<byte>();
+                byte[] buffer = null;
                 _sendBuffers.Do(queue =>
                 {
-                    if (queue.Count > 0) segment = queue.Dequeue();
+                    if (queue.Count > 0) buffer = queue.Dequeue().Buffer;
                 });
-                if (segment.Array != null)
+                if (buffer != null)
                 {
-                    int bytesSent = _socket.Send(segment.Array, segment.Offset, segment.Count, SocketFlags.None);
-                    if (bytesSent != segment.Count)
-                        throw new NetworkException("Not all data was sent (" + bytesSent + " out of " + segment.Count + " bytes)");
+                    int bytesSent = _socket.Send(buffer);
+                    if (bytesSent != buffer.Length)
+                        throw new NetworkException("Not all data was sent (" + bytesSent + " out of " + buffer.Length + " bytes)");
                 }
                 else
                     Thread.Sleep(0);

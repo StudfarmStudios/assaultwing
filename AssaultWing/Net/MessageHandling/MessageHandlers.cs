@@ -69,7 +69,7 @@ namespace AW2.Net.MessageHandling
                 Log.Write("Some client failed to connect: " + result.Error);
             else
             {
-                Log.Write("Server obtained connection from " + result.Value.RemoteEndPoint);
+                Log.Write("Server obtained connection from " + result.Value.RemoteTCPEndPoint);
                 if (AssaultWing.Instance.GameState == AW2.Core.GameState.Gameplay ||
                     AssaultWing.Instance.GameState == AW2.Core.GameState.OverlayDialog)
                 {
@@ -199,13 +199,13 @@ namespace AW2.Net.MessageHandling
                 {
                     Info = "Cannot join server due to mismatching canonical strings!\n" + mismatchInfo
                 };
-                AssaultWing.Instance.NetworkEngine.GameClientConnections[mess.ConnectionID].Send(reply);
+                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
                 AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
             }
             else
             {
                 var reply = new JoinGameReply();
-                AssaultWing.Instance.NetworkEngine.GameClientConnections[mess.ConnectionID].Send(reply);
+                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
             }
         }
 
@@ -219,7 +219,7 @@ namespace AW2.Net.MessageHandling
                     OldPlayerID = mess.PlayerID,
                     NewPlayerID = newPlayer.ID
                 };
-                AssaultWing.Instance.NetworkEngine.GameClientConnections[mess.ConnectionID].Send(reply);
+                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
             }
             else
             {

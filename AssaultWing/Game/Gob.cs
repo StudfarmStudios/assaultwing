@@ -1218,7 +1218,7 @@ namespace AW2.Game
                 var message = new AW2.Net.Messages.GobDamageMessage();
                 message.GobID = this.ID;
                 message.DamageLevel = damage;
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
             }
 
             if (damageAmount > 0)

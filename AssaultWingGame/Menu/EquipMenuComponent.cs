@@ -278,7 +278,7 @@ namespace AW2.Menu
                     case NetworkMode.Client:
                         SendPlayerSettingsToRemote(
                             p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested,
-                            AssaultWing.Instance.NetworkEngine.GameServerConnection);
+                            new Connection[] { AssaultWing.Instance.NetworkEngine.GameServerConnection });
                         break;
                     case NetworkMode.Server:
                         SendPlayerSettingsToRemote(
@@ -482,7 +482,7 @@ namespace AW2.Menu
             }
         }
 
-        private static void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, IConnection connection)
+        private static void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, IEnumerable<Connection> connections)
         {
             foreach (var player in AssaultWing.Instance.DataEngine.Players.Where(sendCriteria))
             {
@@ -494,17 +494,17 @@ namespace AW2.Menu
                 mess.Write(player, SerializationModeFlags.ConstantData);
                 if (player.ServerRegistration == Spectator.ServerRegistrationType.No)
                     player.ServerRegistration = Spectator.ServerRegistrationType.Requested;
-                connection.Send(mess);
+                foreach (var conn in connections) conn.Send(mess);
             }
         }
 
-        private static void SendGameSettingsToRemote(IConnection connection)
+        private static void SendGameSettingsToRemote(IEnumerable<Connection> connections)
         {
             var mess = new GameSettingsRequest
             {
                 ArenaPlaylist = AssaultWing.Instance.DataEngine.ArenaPlaylist
             };
-            connection.Send(mess);
+            foreach (var conn in connections) conn.Send(mess);
         }
 
         /// <summary>
@@ -972,7 +972,7 @@ namespace AW2.Menu
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Client ||
                 !AssaultWing.Instance.NetworkEngine.IsConnectedToGameServer)
                 return new Pair<string, Color>("???", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));
-            var ping = ((PingedConnection)AssaultWing.Instance.NetworkEngine.GameServerConnection).PingTime.TotalMilliseconds;
+            var ping = AssaultWing.Instance.NetworkEngine.GameServerConnection.PingInfo.PingTime.TotalMilliseconds;
             if (ping < 35) return new Pair<string, Color>("Excellent", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Great));
             if (ping < 70) return new Pair<string, Color>("Good", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.High));
             if (ping < 120) return new Pair<string, Color>("Sufficient", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));

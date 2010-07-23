@@ -20,19 +20,19 @@ namespace AW2.Net.ConnectionUtils
             if (socket.ProtocolType != ProtocolType.Tcp) throw new ArgumentException("Not a TCP socket", "socket");
         }
 
-        protected override IEnumerable<object> ReceiveHeaderAndBody(byte[] headerAndBodyBuffer)
+        protected override IEnumerable<object> ReceiveHeaderAndBody(NetBuffer headerAndBodyBuffer)
         {
             foreach (var dummy in ReadHeader(headerAndBodyBuffer)) yield return null;
             foreach (var dummy in ReadBody(headerAndBodyBuffer)) yield return null;
         }
 
         // Stepwise method. Enumerated objects are undefined.
-        private IEnumerable<object> ReadHeader(byte[] headerAndBodyBuffer)
+        private IEnumerable<object> ReadHeader(NetBuffer headerAndBodyBuffer)
         {
-            foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer, 0, Message.HEADER_LENGTH))) yield return null;
-            if (!Message.IsValidHeader(headerAndBodyBuffer))
+            foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer.Buffer, 0, Message.HEADER_LENGTH))) yield return null;
+            if (!Message.IsValidHeader(headerAndBodyBuffer.Buffer))
             {
-                string headerContents = string.Join(",", headerAndBodyBuffer
+                string headerContents = string.Join(",", headerAndBodyBuffer.Buffer
                     .Take(Message.HEADER_LENGTH)
                     .Select(a => a.ToString("X2"))
                     .ToArray());
@@ -42,11 +42,11 @@ namespace AW2.Net.ConnectionUtils
         }
 
         // Stepwise method. Enumerated objects are undefined.
-        private IEnumerable<object> ReadBody(byte[] headerAndBodyBuffer)
+        private IEnumerable<object> ReadBody(NetBuffer headerAndBodyBuffer)
         {
-            int bodyLength = Message.GetBodyLength(headerAndBodyBuffer);
+            int bodyLength = Message.GetBodyLength(headerAndBodyBuffer.Buffer);
             if (Message.HEADER_LENGTH + bodyLength > Message.MAXIMUM_LENGTH) throw new MessageException("Too long message body [" + bodyLength + " bytes]");
-            foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer, Message.HEADER_LENGTH, bodyLength))) yield return null;
+            foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer.Buffer, Message.HEADER_LENGTH, bodyLength))) yield return null;
         }
 
         private IEnumerable<object> Receive(ArraySegment<byte> segment)
@@ -72,6 +72,7 @@ namespace AW2.Net.ConnectionUtils
                 }
                 else
                 {
+                    // Now there is data to read so Receive() should return rather quickly.
                     int readOffset = segment.Offset + totalReadBytes;
                     int readCount = segment.Count - totalReadBytes;
                     int readBytes = _socket.Receive(segment.Array, readOffset, readCount, SocketFlags.None);

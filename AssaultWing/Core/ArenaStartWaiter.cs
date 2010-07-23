@@ -11,7 +11,7 @@ namespace AW2.Core
     public class ArenaStartWaiter : IDisposable
     {
         private bool _disposed;
-        private MultiConnection _connections;
+        private IEnumerable<Connection> _connections;
         private List<int> _readyIDs;
 
         public bool IsEverybodyReady
@@ -19,11 +19,11 @@ namespace AW2.Core
             get
             {
                 CheckDisposed();
-                return _connections.Connections.All(conn => _readyIDs.Contains(conn.ID));
+                return _connections.All(conn => _readyIDs.Contains(conn.ID));
             }
         }
 
-        public ArenaStartWaiter(MultiConnection connections)
+        public ArenaStartWaiter(IEnumerable<Connection> connections)
         {
             _connections = connections;
             _readyIDs = new List<int>();
@@ -33,7 +33,7 @@ namespace AW2.Core
         {
             CheckDisposed();
             MessageHandlers.ActivateHandlers(MessageHandlers.GetServerArenaStartHandlers(_readyIDs.Add));
-            _connections.Send(new ArenaStartRequest());
+            foreach (var conn in _connections) conn.Send(new ArenaStartRequest());
         }
 
         public void EndWait()

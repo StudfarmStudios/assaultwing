@@ -244,9 +244,14 @@
     <Compile Include="Helpers\SuspendableThread.cs" />
     <Compile Include="Menu\DummyMenuEngine.cs" />
     <Compile Include="Menu\IMenuEngine.cs" />
+    <Compile Include="Net\ConnectionUtils\AWSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\AWTCPSocket.cs" />
     <Compile Include="Net\ConnectionUtils\ConnectAsyncState.cs" />
     <Compile Include="Net\Connections\Connection.cs" />
     <Compile Include="Net\ConnectionUtils\ConnectionAttemptListener.cs" />
+    <Compile Include="Net\ConnectionUtils\AWUDPSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\NetBuffer.cs" />
+    <Compile Include="Net\ConnectionUtils\PingInfo.cs" />
     <Compile Include="Net\ConnectionUtils\UDPMessageSendThread.cs" />
     <Compile Include="Net\ConnectionUtils\UDPMessageReadThread.cs" />
     <Compile Include="Net\ConnectionUtils\TCPMessageSendThread.cs" />
@@ -255,7 +260,6 @@
     <Compile Include="Net\MessageSendType.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\Connections\GameServerConnection.cs" />
-    <Compile Include="Net\Connections\IConnection.cs" />
     <Compile Include="Net\INetworkSerializable.cs" />
     <Compile Include="Net\Connections\ManagementServerConnection.cs" />
     <Compile Include="Net\Message.cs" />
@@ -291,12 +295,10 @@
     <Compile Include="Net\Messages\StartGameMessage.cs" />
     <Compile Include="Net\Messages\WallHoleMessage.cs" />
     <Compile Include="Net\MessageType.cs" />
-    <Compile Include="Net\Connections\MultiConnection.cs" />
     <Compile Include="Net\NetworkBinaryReader.cs" />
     <Compile Include="Net\NetworkBinaryWriter.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\NetworkException.cs" />
-    <Compile Include="Net\Connections\PingedConnection.cs" />
     <Compile Include="Net\Result.cs" />
     <Compile Include="Net\SerializationModeFlags.cs" />
     <Compile Include="Net\ConnectionUtils\StaticPortMapper.cs" />

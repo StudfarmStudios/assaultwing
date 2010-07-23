@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using AW2.Helpers;
@@ -19,7 +20,7 @@ namespace AW2.Net.ConnectionUtils
             if (socket.ProtocolType != ProtocolType.Udp) throw new ArgumentException("Not a UDP socket", "socket");
         }
 
-        protected override IEnumerable<object> ReceiveHeaderAndBody(byte[] headerAndBodyBuffer)
+        protected override IEnumerable<object> ReceiveHeaderAndBody(NetBuffer headerAndBodyBuffer)
         {
             if (headerAndBodyBuffer == null) throw new ArgumentNullException("headerAndBodyBuffer", "Cannot receive to null buffer");
             while (true)
@@ -35,7 +36,9 @@ namespace AW2.Net.ConnectionUtils
                     // There is data to read. Therefore we can call Receive knowing that it will not block eternally.
                     try
                     {
-                        _socket.Receive(headerAndBodyBuffer);
+                        EndPoint endPoint = headerAndBodyBuffer.EndPoint;
+                        _socket.ReceiveFrom(headerAndBodyBuffer.Buffer, ref endPoint);
+                        headerAndBodyBuffer.EndPoint = (IPEndPoint)endPoint;
                         yield break;
                     }
                     catch (SocketException e)

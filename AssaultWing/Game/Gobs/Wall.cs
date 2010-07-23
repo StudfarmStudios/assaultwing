@@ -252,7 +252,7 @@ namespace AW2.Game.Gobs
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
                 var message = new WallHoleMessage { GobID = ID, TriangleIndices = _removedTriangleIndices.ToList() };
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
             }
 
             // Remove the wall gob if all its triangles have been removed.

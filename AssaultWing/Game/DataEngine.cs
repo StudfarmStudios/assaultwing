@@ -343,7 +343,7 @@ namespace AW2.Game
                     gob.LastNetworkUpdate = now;
                     message.AddGob(gob.ID, gob, SerializationModeFlags.VaryingData);
                 }
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
             }
 
 #if DEBUG_PROFILE
@@ -514,7 +514,7 @@ namespace AW2.Game
             if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
             {
                 var message = new PlayerDeletionMessage { PlayerID = spectator.ID };
-                AssaultWing.Instance.NetworkEngine.GameClientConnections.Send(message);
+                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
             }
             spectator.Dispose();
         }

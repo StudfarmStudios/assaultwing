@@ -14,9 +14,9 @@ namespace AW2.Net.ConnectionUtils
         protected static int MaximumTransmissionUnit = 1500;
 
         protected Socket _socket;
-        protected ThreadSafeWrapper<Queue<ArraySegment<byte>>> _sendBuffers;
+        protected ThreadSafeWrapper<Queue<NetBuffer>> _sendBuffers;
 
-        public MessageSendThread(string name, Socket socket, ThreadSafeWrapper<Queue<ArraySegment<byte>>> sendBuffers, Action<Exception> exceptionHandler)
+        public MessageSendThread(string name, Socket socket, ThreadSafeWrapper<Queue<NetBuffer>> sendBuffers, Action<Exception> exceptionHandler)
             : base(name, exceptionHandler)
         {
             _socket = socket;

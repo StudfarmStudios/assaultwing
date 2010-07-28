@@ -8,6 +8,10 @@ namespace AW2.Net.Messages
     /// </summary>
     public class PingRequestMessage : Message
     {
+        protected static MessageType messageType = new MessageType(0x2a, false);
+
+        public override MessageSendType SendType { get { return MessageSendType.UDP; } }
+
         /// <summary>
         /// Timestamp to send in the message. This is the time of sending
         /// the original ping request, in real time from start of game instance.
@@ -25,14 +29,6 @@ namespace AW2.Net.Messages
             return reply;
         }
 
-        /// <summary>
-        /// Identifier of the message type.
-        /// </summary>
-        protected static MessageType messageType = new MessageType(0x2a, false);
-
-        /// <summary>
-        /// Writes the body of the message in serialised form.
-        /// </summary>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Ping request message structure (during game):
@@ -40,9 +36,6 @@ namespace AW2.Net.Messages
             writer.Write((long)Timestamp.Ticks);
         }
 
-        /// <summary>
-        /// Reads the body of the message from serialised form.
-        /// </summary>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             Timestamp = TimeSpan.FromTicks(reader.ReadInt64());

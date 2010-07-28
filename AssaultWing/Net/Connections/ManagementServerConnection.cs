@@ -18,11 +18,6 @@ namespace AW2.Net.Connections
             Name = "Management Server Connection " + ID;
         }
 
-        /// <summary>
-        /// Performs the actual diposing.
-        /// </summary>
-        /// <param name="error">If <c>true</c> then an internal error
-        /// has occurred.</param>
         protected override void DisposeImpl(bool error)
         {
             base.DisposeImpl(error);

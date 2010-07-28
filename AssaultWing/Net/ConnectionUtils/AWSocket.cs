@@ -49,6 +49,19 @@ namespace AW2.Net.ConnectionUtils
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
         /// <summary>
+        /// The local end point of the socket.
+        /// </summary>
+        /// <see cref="System.Net.Sockets.Socket.LocalEndPoint"/>
+        public IPEndPoint LocalEndPoint
+        {
+            get
+            {
+                if (IsDisposed) throw new InvalidOperationException("This socket has been disposed");
+                return (IPEndPoint)_socket.LocalEndPoint;
+            }
+        }
+
+        /// <summary>
         /// The remote end point of the socket.
         /// </summary>
         /// <see cref="System.Net.Sockets.Socket.RemoteEndPoint"/>
@@ -82,8 +95,15 @@ namespace AW2.Net.ConnectionUtils
             _sendBuffers = new ThreadSafeWrapper<Queue<NetBuffer>>(new Queue<NetBuffer>());
             Errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
             _readThread = CreateReadThread();
-            _readThread.Start();
             _sendThread = CreateWriteThread();
+        }
+
+        /// <summary>
+        /// Call this once after constructor to start message threads.
+        /// </summary>
+        public void StartThreads()
+        {
+            _readThread.Start();
             _sendThread.Start();
         }
 

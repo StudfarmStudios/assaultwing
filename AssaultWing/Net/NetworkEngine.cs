@@ -40,7 +40,7 @@ namespace AW2.Net
     /// <see cref="NetworkEngine"/> reacts to incoming messages according
     /// to message handlers that other components register.
     /// </para>
-    /// <seealso cref="Message.ConnectionId"/>
+    /// <seealso cref="Message.ConnectionID"/>
     public class NetworkEngine : GameComponent
     {
         #region Type definitions
@@ -231,12 +231,12 @@ namespace AW2.Net
         /// as the game server.
         /// </summary>
         /// <param name="error">If true, client is being dropped due to an error condition.</param>
-        public void DropClient(int connectionId, bool error)
+        public void DropClient(int connectionID, bool error)
         {
             if (AssaultWing.Instance.NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
 
-            var connection = GetGameClientConnection(connectionId);
+            var connection = GetGameClientConnection(connectionID);
             Log.Write("Dropping " + connection.Name);
             _removedClientConnections.Add(connection);
 
@@ -258,6 +258,13 @@ namespace AW2.Net
         public Connection GetGameClientConnection(int connectionID)
         {
             return _gameClientConnections.First(conn => conn.ID == connectionID);
+        }
+
+        public Connection GetConnection(int connectionID)
+        {
+            var result = AllConnections.First(conn => conn.ID == connectionID);
+            if (result == null) throw new ArgumentException("Connection not found with ID " + connectionID);
+            return result;
         }
 
         /// <summary>
@@ -349,26 +356,7 @@ namespace AW2.Net
         public override void Update(GameTime gameTime)
         {
             if (ConnectionAttemptListener.Instance.IsListening) ConnectionAttemptListener.Instance.Update();
-
-            // Handle established connections.
-            ConnectionAttemptListener.Instance.ConnectionResults.Do(queue =>
-            {
-                while (queue.Count > 0)
-                {
-                    var result = queue.Dequeue();
-                    if (result.Successful) _gameClientConnections.Add(result.Value);
-                    _startServerConnectionHandler(result);
-                }
-            });
-            Connection.ConnectionResults.Do(queue =>
-            {
-                while (queue.Count > 0)
-                {
-                    var result = queue.Dequeue();
-                    if (result.Successful) _gameServerConnection = result.Value;
-                    _startClientConnectionHandler(result);
-                }
-            });
+            HandleNewConnections();
 
             // Update ping time measurements.
             foreach (var conn in AllConnections) conn.Update();
@@ -417,6 +405,30 @@ namespace AW2.Net
                 if (_gameClientConnections != null)
                     foreach (var conn in _gameClientConnections) yield return conn;
             }
+        }
+
+        private void HandleNewConnections()
+        {
+            Connection.ConnectionResults.Do(queue =>
+            {
+                while (queue.Count > 0)
+                {
+                    var result = queue.Dequeue();
+                    switch (AssaultWing.Instance.NetworkMode)
+                    {
+                        case NetworkMode.Client:
+                            if (_gameServerConnection != null) throw new ApplicationException("Cannot have multiple game server connections");
+                            if (result.Successful) _gameServerConnection = result.Value;
+                            _startClientConnectionHandler(result);
+                            break;
+                        case NetworkMode.Server:
+                            if (result.Successful) _gameClientConnections.Add(result.Value);
+                            _startServerConnectionHandler(result);
+                            break;
+                        default: throw new ApplicationException("Invalid NetworkMode for accepting connections: " + AssaultWing.Instance.NetworkMode);
+                    }
+                }
+            });
         }
 
         private void DisposeGameServerConnection()
@@ -492,13 +504,6 @@ namespace AW2.Net
             Connection conn;
             while ((conn = _gameClientConnections.FirstOrDefault(c => c.IsDisposed)) != null)
                 _gameClientConnections.Remove(conn);
-        }
-
-        private Connection GetConnection(int connectionId)
-        {
-            var result = AllConnections.First(conn => conn.ID == connectionId);
-            if (result == null) throw new ArgumentException("Connection not found with ID " + connectionId);
-            return result;
         }
 
         #endregion Private methods

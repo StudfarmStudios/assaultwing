@@ -11,6 +11,10 @@ namespace AW2.Net.Messages
     /// </summary>
     public class PingReplyMessage : Message
     {
+        protected static MessageType messageType = new MessageType(0x2a, true);
+
+        public override MessageSendType SendType { get { return MessageSendType.UDP; } }
+
         /// <summary>
         /// Timestamp received in the message. Valid only for messages received 
         /// from the network. This is the timestamp that was first sent in the 
@@ -24,14 +28,6 @@ namespace AW2.Net.Messages
         /// </summary>
         public TimeSpan TotalGameTimeOnReply { get; set; }
 
-        /// <summary>
-        /// Identifier of the message type.
-        /// </summary>
-        protected static MessageType messageType = new MessageType(0x2a, true);
-
-        /// <summary>
-        /// Writes the body of the message in serialised form.
-        /// </summary>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Ping request message structure (during game):
@@ -41,10 +37,6 @@ namespace AW2.Net.Messages
             writer.Write((long)TotalGameTimeOnReply.Ticks);
         }
 
-        /// <summary>
-        /// Reads the body of the message from serialised form.
-        /// </summary>
-        /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             Timestamp = TimeSpan.FromTicks(reader.ReadInt64());

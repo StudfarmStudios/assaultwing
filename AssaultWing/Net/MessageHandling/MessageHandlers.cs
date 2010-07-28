@@ -5,6 +5,7 @@ using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Messages;
 using Microsoft.Xna.Framework.Graphics;
+using System.Net;
 
 namespace AW2.Net.MessageHandling
 {

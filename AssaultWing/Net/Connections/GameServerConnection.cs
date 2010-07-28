@@ -1,4 +1,6 @@
 ﻿using System.Net.Sockets;
+using AW2.Net.ConnectionUtils;
+using AW2.Net.Messages;
 
 namespace AW2.Net.Connections
 {
@@ -18,11 +20,6 @@ namespace AW2.Net.Connections
             Name = "Game Server Connection " + ID;
         }
 
-        /// <summary>
-        /// Performs the actual diposing.
-        /// </summary>
-        /// <param name="error">If <c>true</c> then an internal error
-        /// has occurred.</param>
         protected override void DisposeImpl(bool error)
         {
             if (error)

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Net.ConnectionUtils;
+using AW2.Net.Messages;
 
 namespace AW2.Net.Connections
 {
@@ -31,7 +32,7 @@ namespace AW2.Net.Connections
     /// (for each connection) and general error conditions (for each connection).
     /// 
     /// This class is thread safe.
-    public class Connection
+    public abstract class Connection
     {
         #region Fields
 
@@ -89,6 +90,12 @@ namespace AW2.Net.Connections
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Has the connection handshake been completed. Sending UDP messages is not possible before the
+        /// handshaking is complete.
+        /// </summary>
+        public bool IsHandshaked { get; private set; }
+
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
         /// <summary>
@@ -115,17 +122,13 @@ namespace AW2.Net.Connections
                 if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
                 return _remoteUDPEndPoint;
             }
+            set { _remoteUDPEndPoint = value; }
         }
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
         public ITypedQueue<Message> Messages { get { return _messages; } }
-
-        /// <summary>
-        /// Called after a new element has been added to <c>Messages</c>.
-        /// </summary>
-        public event Action MessageCallback;
 
         /// <summary>
         /// Results of connection attempts.
@@ -264,6 +267,28 @@ namespace AW2.Net.Connections
             return _tcpSocket.GetSendQueueSize();
         }
 
+        /// <summary>
+        /// Interprets a received buffer as a message from the network.
+        /// </summary>
+        public void HandleMessage(NetBuffer messageHeaderAndBody)
+        {
+            var message = Message.Deserialize(messageHeaderAndBody.Buffer, ID);
+            if (!TryHandleMessageInternally(message))
+                _messages.Enqueue(message);
+        }
+
+        public static void HandleNewConnection(Result<Connection> result)
+        {
+            if (result == null) return;
+            if (!result.Successful)
+                ReportResult(result);
+            else
+            {
+                result.Value.BeginHandshake();
+                // Result is reported in TryHandleMessageInternally on receiving a GameConnectionHandshakeMessage.
+            }
+        }
+
         #endregion Public interface
 
         #region Non-public methods
@@ -309,6 +334,7 @@ namespace AW2.Net.Connections
             _messages = new TypedQueue<Message>();
             _tcpSocket = new AWTCPSocket(tcpSocket, HandleMessage);
             PingInfo = new PingInfo(this);
+            _tcpSocket.StartThreads();
         }
 
         /// <summary>
@@ -326,14 +352,34 @@ namespace AW2.Net.Connections
         /// </summary>
         private void SendViaUDP(byte[] data)
         {
-            AssaultWing.Instance.NetworkEngine.UDPSocket.Send(data, RemoteTCPEndPoint);
+            if (!IsHandshaked) throw new InvalidOperationException("Cannot send messages via UDP before connection is handshaked");
+            AssaultWing.Instance.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
         }
 
-        public void HandleMessage(NetBuffer messageHeaderAndBody)
+        /// <summary>
+        /// Returns true if message was interpreted internally by the <see cref="Connection"/>
+        /// and needs not be added to the public message queue.
+        /// </summary>
+        private bool TryHandleMessageInternally(Message mess)
         {
-            var message = Message.Deserialize(messageHeaderAndBody.Buffer, ID);
-            _messages.Enqueue(message);
-            lock (_messages) if (MessageCallback != null) MessageCallback();
+            var gameConnectionHandshakeMessage = mess as GameConnectionHandshakeMessage;
+            if (gameConnectionHandshakeMessage != null)
+            {
+                if (!IsHandshaked)
+                {
+                    int remoteUDPPort = gameConnectionHandshakeMessage.SenderLocalUDPEndPoint.Port;
+                    RemoteUDPEndPoint = new IPEndPoint(RemoteTCPEndPoint.Address, remoteUDPPort);
+                    IsHandshaked = true;
+                    ReportResult(new Result<Connection>(this));
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public static void ReportResult(Result<Connection> result)
+        {
+            ConnectionResults.Do(queue => queue.Enqueue(result));
         }
 
         #endregion Non-public methods
@@ -348,7 +394,7 @@ namespace AW2.Net.Connections
         {
             g_connectAsyncStates.Remove((ConnectAsyncState)asyncResult.AsyncState);
             var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateServerConnection(asyncResult));
-            if (result != null) ReportResult(result);
+            HandleNewConnection(result);
         }
 
         private static Connection CreateServerConnection(IAsyncResult asyncResult)
@@ -358,9 +404,14 @@ namespace AW2.Net.Connections
             return new GameServerConnection(state.Socket);
         }
 
-        private static void ReportResult(Result<Connection> result)
+        public void BeginHandshake()
         {
-            ConnectionResults.Do(queue => queue.Enqueue(result));
+            if (IsDisposed) throw new InvalidOperationException("Cannot begin handshake on a disposed connection");
+            var mess = new GameConnectionHandshakeMessage
+            {
+                SenderLocalUDPEndPoint = AssaultWing.Instance.NetworkEngine.UDPSocket.LocalEndPoint
+            };
+            Send(mess);
         }
 
         #endregion Private callback implementations

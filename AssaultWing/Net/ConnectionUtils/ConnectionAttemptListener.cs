@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.Threading;
 using AW2.Helpers;
 using AW2.Net.Connections;
+using AW2.Net.Messages;
+using AW2.Net.MessageHandling;
 
 namespace AW2.Net.ConnectionUtils
 {
@@ -40,12 +42,8 @@ namespace AW2.Net.ConnectionUtils
         }
 
         public bool IsListening { get { return _serverSocket != null; } }
-        public ThreadSafeWrapper<Queue<Result<Connection>>> ConnectionResults { get; private set; }
 
-        private ConnectionAttemptListener()
-        {
-            ConnectionResults = new ThreadSafeWrapper<Queue<Result<Connection>>>(new Queue<Result<Connection>>());
-        }
+        private ConnectionAttemptListener() { }
 
         /// <summary>
         /// Starts listening connection attempts from remote hosts.
@@ -140,35 +138,14 @@ namespace AW2.Net.ConnectionUtils
             }
             catch (SocketException e)
             {
-                ReportResult(new Result<Connection>(e));
+                Connection.HandleNewConnection(new Result<Connection>(e));
             }
         }
 
         private void AcceptCallback(IAsyncResult asyncResult)
         {
             var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateClientConnection(asyncResult));
-            if (result != null)
-            {
-                if (!result.Successful)
-                    ReportResult(result);
-                else
-                {
-                    ReportResult(result); // TODO: don't report yet; open UDP first !!!
-                    // 1. server and client each bind a UDP socket to some available port
-                    // 2. server and client send their UDP port numbers to each other via TCP
-                    // 3. server and client receive each other's UDP port number via TCP
-                    //    - UDP end point stored to Connection.RemoteUDPEndPoint
-                    // 4. client "connects" its UDP socket to server's UDP endpoint
-                    // 5. client starts sending periodical dummy "pong" messages via UDP
-                    //    - this should make client's NAT accept incoming UDP traffic from server
-                    //    - dummy "pong" messages are replaced by proper "pong" messages when first ping arrives
-                    // 6. server receives dummy "pong" via UDP from client
-                    // 7. server starts sending periodical UDP "ping" messages
-                    //    - this should keep client's NAT happily forwarding server's UDP traffic to client
-                    // 8. server calls ReportResult(result);
-                    // 9. client starts sending UDP "pong" replies to server's "pings"
-                }
-            }
+            Connection.HandleNewConnection(result);
         }
 
         private static Connection CreateClientConnection(IAsyncResult asyncResult)
@@ -176,11 +153,6 @@ namespace AW2.Net.ConnectionUtils
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             var socketToNewHost = state.Socket.EndAccept(asyncResult);
             return new GameClientConnection(socketToNewHost);
-        }
-
-        private void ReportResult(Result<Connection> result)
-        {
-            ConnectionResults.Do(queue => queue.Enqueue(result));
         }
     }
 }

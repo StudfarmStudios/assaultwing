@@ -738,6 +738,21 @@ namespace AW2
         }
 
         /// <summary>
+        /// Turns this game instance into a standalone instance, irrespective of the current
+        /// network mode.
+        /// </summary>
+        public void CutNetworkConnections()
+        {
+            switch (NetworkMode)
+            {
+                case NetworkMode.Client: AssaultWing.Instance.StopClient(); break;
+                case NetworkMode.Server: AssaultWing.Instance.StopServer(); break;
+                case NetworkMode.Standalone: break;
+                default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);
+            }
+        }
+
+        /// <summary>
         /// Loads graphical content required by an arena to DataEngine.
         /// </summary>
         public void LoadArenaContent(Arena arena)

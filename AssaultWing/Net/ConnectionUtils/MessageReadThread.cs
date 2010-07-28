@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using AW2.Helpers;
 
@@ -22,7 +23,7 @@ namespace AW2.Net.ConnectionUtils
         {
             _socket = socket;
             _messageHandler = messageHandler;
-            _headerAndBodyReceiveBuffer = new NetBuffer(new byte[Message.MAXIMUM_LENGTH], null);
+            _headerAndBodyReceiveBuffer = new NetBuffer(new byte[Message.MAXIMUM_LENGTH], new IPEndPoint(IPAddress.Any, 0));
             SetAction(new StepwiseAction(KeepReadingMessages()));
         }
 

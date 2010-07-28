@@ -363,7 +363,7 @@ namespace AW2.Net
 
             foreach (var handler in MessageHandlers) if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
-            foreach (var conn in AllConnections) conn.HandleErrors();
+            HandleErrors();
             RemoveClosedConnections();
 
 #if DEBUG
@@ -431,6 +431,32 @@ namespace AW2.Net
             });
         }
 
+        private void HandleErrors()
+        {
+            foreach (var conn in AllConnections) conn.HandleErrors();
+            HandleUDPSocketErrors();
+        }
+
+        private void HandleUDPSocketErrors()
+        {
+            if (UDPSocket == null) return;
+            bool errorsFound = false;
+            UDPSocket.Errors.Do(queue =>
+            {
+                while (queue.Count > 0)
+                {
+                    errorsFound = true;
+                    var e = queue.Dequeue();
+                    Log.Write("Error occurred with UDP socket: " + e.Message);
+                }
+            });
+            if (errorsFound)
+            {
+                Log.Write("Closing network connections due to errors");
+                AssaultWing.Instance.CutNetworkConnections();
+            }
+        }
+
         private void DisposeGameServerConnection()
         {
             if (_gameServerConnection == null) return;
@@ -447,6 +473,7 @@ namespace AW2.Net
         private void InitializeUDPSocket()
         {
             UDPSocket = new AWUDPSocket(HandleUDPMessage);
+            UDPSocket.StartThreads();
         }
 
         private void DisposeUDPSocket()
@@ -468,7 +495,7 @@ namespace AW2.Net
         /// </summary>
         private Connection GetConnection(IPEndPoint remoteUDPEndPoint)
         {
-            return AllConnections.FirstOrDefault(conn => conn.RemoteTCPEndPoint == remoteUDPEndPoint);
+            return AllConnections.FirstOrDefault(conn => conn.RemoteUDPEndPoint.Equals(remoteUDPEndPoint));
         }
 
         private void TerminateThread(SuspendableThread thread)

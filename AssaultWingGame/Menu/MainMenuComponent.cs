@@ -43,7 +43,7 @@ namespace AW2.Menu
                     InitializeControlCallbacks();
 
                     SetItems(_itemCollections.StartItems);
-                    CutNetworkConnections();
+                    AssaultWing.Instance.CutNetworkConnections();
                 }
             }
         }
@@ -121,7 +121,7 @@ namespace AW2.Menu
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
-                CutNetworkConnections();
+                AssaultWing.Instance.CutNetworkConnections();
                 _currentItems = _itemCollections.StartItems;
             }));
         }
@@ -151,14 +151,6 @@ namespace AW2.Menu
                 _controlDown.Add(player.Controls.Down);
                 _controlSelect.Add(player.Controls.Fire1);
             }
-        }
-
-        private static void CutNetworkConnections()
-        {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
-                AssaultWing.Instance.StopClient();
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
-                AssaultWing.Instance.StopServer();
         }
 
         #endregion Private methods

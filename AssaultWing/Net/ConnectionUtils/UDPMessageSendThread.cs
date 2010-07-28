@@ -22,16 +22,16 @@ namespace AW2.Net.ConnectionUtils
         {
             while (true)
             {
-                byte[] buffer = null;
+                NetBuffer buffer = null;
                 _sendBuffers.Do(queue =>
                 {
-                    if (queue.Count > 0) buffer = queue.Dequeue().Buffer;
+                    if (queue.Count > 0) buffer = queue.Dequeue();
                 });
                 if (buffer != null)
                 {
-                    int bytesSent = _socket.Send(buffer);
-                    if (bytesSent != buffer.Length)
-                        throw new NetworkException("Not all data was sent (" + bytesSent + " out of " + buffer.Length + " bytes)");
+                    int bytesSent = _socket.SendTo(buffer.Buffer, buffer.EndPoint);
+                    if (bytesSent != buffer.Buffer.Length)
+                        throw new NetworkException("Not all data was sent (" + bytesSent + " out of " + buffer.Buffer.Length + " bytes)");
                 }
                 else
                     Thread.Sleep(0);

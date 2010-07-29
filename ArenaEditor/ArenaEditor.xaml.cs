@@ -64,7 +64,16 @@ namespace AW2
             {
                 ArenaEditorWindow.Cursor = Cursors.Wait;
                 var arenaFilename = fileDialog.FileName;
-                var arena = Arena.FromFile(arenaFilename);
+                Arena arena = null;
+                try
+                {
+                    arena = Arena.FromFile(arenaFilename);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Failed to load arena " + arenaFilename + ": " + ex);
+                    return;
+                }
                 var data = AssaultWing.Instance.DataEngine;
                 data.ProgressBar.Task = () => data.InitializeFromArena(arena, false);
                 data.ProgressBar.StartTask();
@@ -228,7 +237,7 @@ namespace AW2
             if (SelectedGob == null) return;
             var duplicate = (Gob)SelectedGob.CloneWithRuntimeState();
             duplicate.Layer = SelectedGob.Layer;
-            duplicate.Pos += new Vector2( 50, 50 );
+            duplicate.Pos += new Vector2(50, 50);
             SelectedGob.Arena.Gobs.Add(duplicate);
         }
 

@@ -450,6 +450,9 @@ namespace AW2.Game
 
         #region Public methods
 
+        /// <summary>
+        /// Loads an arena from file, or throws an exception on failure.
+        /// </summary>
         public static Arena FromFile(string filename)
         {
             return (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute));

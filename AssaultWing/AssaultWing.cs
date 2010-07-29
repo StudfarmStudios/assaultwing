@@ -549,9 +549,16 @@ namespace AW2
             if (_arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
             {
                 var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.ArenaPlaylist.Current).FileName;
-                var arena = Arena.FromFile(arenaFilename);
-                DataEngine.InitializeFromArena(arena, true);
-                StartArena();
+                try
+                {
+                    var arena = Arena.FromFile(arenaFilename);
+                    DataEngine.InitializeFromArena(arena, true);
+                    StartArena();
+                }
+                catch (Exception e)
+                {
+                    Log.Write("Arena reload failed: " + e);
+                }
             }
 
             // Frame stepping (for debugging)

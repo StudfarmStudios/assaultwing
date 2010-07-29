@@ -38,6 +38,10 @@ namespace AW2.Helpers
 
         #region Public interface
 
+        /// <summary>
+        /// Loads a type template from file. Throws <see cref="AW2.Helpers.MemberSerializationException"/>
+        /// or <see cref="System.Xml.XmlException"/> if there were errors while reading the template.
+        /// </summary>
         public static object LoadTemplate(string filename, Type baseClass, Type limitationAttribute)
         {
             var fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
@@ -51,13 +55,18 @@ namespace AW2.Helpers
             catch (MemberSerializationException e)
             {
                 Log.Write("Error in " + filename + ": " + e.Message + ", " + e.MemberName);
+                throw;
             }
             catch (System.Xml.XmlException e)
             {
                 Log.Write("Error in " + filename + ": " + e.Message);
+                throw;
             }
-            xmlReader.Close();
-            fs.Close();
+            finally
+            {
+                xmlReader.Close();
+                fs.Close();
+            }
             return template;
         }
 
@@ -87,9 +96,20 @@ namespace AW2.Helpers
 
         public IEnumerable<object> LoadTemplates()
         {
-            var templates = GetTemplateFilenames().Select(filename => LoadTemplate(filename));
+            var templates = GetTemplateFilenames().Select(filename =>
+            {
+                try
+                {
+                    return LoadTemplate(filename);
+                }
+                catch (Exception e)
+                {
+                    Log.Write("Error while reading template " + filename + ": " + e);
+                    return null;
+                }
+            });
             templates = templates.ToList(); // immediate evaluation
-            if (templates.Contains(null)) throw new ApplicationException("Error: Some templates failed to load");
+            if (templates.Contains(null)) throw new ApplicationException("Error: Some templates failed to load. Previous log entries contain the details.");
             return templates;
         }
 
@@ -135,7 +155,7 @@ namespace AW2.Helpers
             SaveTemplate(template, path, _baseClass, limitationAttribute);
         }
 
-#endregion
+        #endregion
 
         #region Nonpublic parts
 

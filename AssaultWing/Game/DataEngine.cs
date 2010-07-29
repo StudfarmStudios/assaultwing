@@ -137,9 +137,18 @@ namespace AW2.Game
             if (ArenaPlaylist.MoveNext())
             {
                 var arenaFilename = ArenaInfos.Single(info => info.Name == ArenaPlaylist.Current).FileName;
-                var arena = Arena.FromFile(arenaFilename);
-                InitializeFromArena(arena, true);
-                return true;
+                Arena arena = null;
+                try
+                {
+                    arena = Arena.FromFile(arenaFilename);
+                    InitializeFromArena(arena, true);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Log.Write("Failed to load arena: " + e);
+                    return NextArena();
+                }
             }
             else
             {

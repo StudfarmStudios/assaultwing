@@ -285,7 +285,7 @@ namespace AW2
             }
             else
 #endif
-                args.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = _window.Handle;
+            args.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = _window.Handle;
 
         }
 
@@ -535,6 +535,43 @@ namespace AW2
             // TODO: Loop through all textures and all 3D models available in the ContentManager.
             foreach (var assetName in ((AWContentManager)Content).GetAssetNames()) CanonicalString.Register(assetName);
             CanonicalString.DisableRegistering();
+        }
+
+        private void UpdateDebugKeys()
+        {
+            // Switch music off
+            if (_musicSwitch.Pulse && GameState == GameState.Gameplay)
+            {
+                SoundEngine.StopMusic();
+            }
+
+            // Instant arena reload (simple aid for hand-editing an arena)
+            if (_arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
+            {
+                var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.ArenaPlaylist.Current).FileName;
+                var arena = Arena.FromFile(arenaFilename);
+                DataEngine.InitializeFromArena(arena, true);
+                StartArena();
+            }
+
+            // Frame stepping (for debugging)
+            if (_frameRunControl.Pulse)
+            {
+                _logicEngine.Enabled = true;
+                _frameStep = false;
+            }
+            if (_frameStep)
+            {
+                if (_frameStepControl.Pulse)
+                    _logicEngine.Enabled = true;
+                else
+                    _logicEngine.Enabled = false;
+            }
+            else if (_frameStepControl.Pulse)
+            {
+                _logicEngine.Enabled = false;
+                _frameStep = true;
+            }
         }
 
         #endregion AssaultWing private methods
@@ -894,41 +931,7 @@ namespace AW2
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
                 StartArenaImpl();
             }
-
-            // Switch music off
-            if (_musicSwitch.Pulse && GameState == GameState.Gameplay)
-            {
-                SoundEngine.StopMusic();
-            }
-
-            // Instant arena reload (simple aid for hand-editing an arena)
-            if (_arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
-            {
-                var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.ArenaPlaylist.Current).FileName;
-                var arena = Arena.FromFile(arenaFilename);
-                DataEngine.InitializeFromArena(arena, true);
-                StartArena();
-            }
-
-            // Frame stepping (for debugging)
-            if (_frameRunControl.Pulse)
-            {
-                _logicEngine.Enabled = true;
-                _frameStep = false;
-            }
-            if (_frameStep)
-            {
-                if (_frameStepControl.Pulse)
-                    _logicEngine.Enabled = true;
-                else
-                    _logicEngine.Enabled = false;
-            }
-            else if (_frameStepControl.Pulse)
-            {
-                _logicEngine.Enabled = false;
-                _frameStep = true;
-            }
-
+            UpdateDebugKeys();
             GameTime = gameTime;
             if (_logicEngine.Enabled) DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
 

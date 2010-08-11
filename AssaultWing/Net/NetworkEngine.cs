@@ -11,6 +11,7 @@ using AW2.Game;
 using AW2.Helpers;
 using AW2.Net.Connections;
 using AW2.Net.ConnectionUtils;
+using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 
@@ -57,13 +58,14 @@ namespace AW2.Net
         #region Fields
 
         public const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
+        private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
 
         /// <summary>
         /// Network connection to the management server, 
         /// or <c>null</c> if no such live connection exists.
         /// </summary>
-        private Connection _managementServerConnection = null; // HACK: assignment to avoid compiler warning
+        private Connection _managementServerConnection;
 
         /// <summary>
         /// Network connection to the game server of the current game session, 
@@ -96,16 +98,13 @@ namespace AW2.Net
 
         #region Constructor
 
-        /// <summary>
-        /// Creates a network engine for a game.
-        /// </summary>
-        /// <param name="game">The game.</param>
         public NetworkEngine(Microsoft.Xna.Framework.Game game)
             : base(game)
         {
             _gameClientConnections = new List<Connection>();
             _removedClientConnections = new List<Connection>();
             MessageHandlers = new List<IMessageHandler>();
+            InitializeUDPSocket();
         }
 
         #endregion Constructor
@@ -134,7 +133,7 @@ namespace AW2.Net
         {
             get
             {
-                if (_gameClientConnections == null) throw new InvalidOperationException("No connections to game clients");
+                if (_gameClientConnections == null) throw new ConnectionException("No connections to game clients");
                 return _gameClientConnections;
             }
         }
@@ -146,7 +145,7 @@ namespace AW2.Net
         {
             get
             {
-                if (_gameServerConnection == null) throw new InvalidOperationException("No connection to game server");
+                if (_gameServerConnection == null) throw new ConnectionException("No connection to game server");
                 return _gameServerConnection;
             }
         }
@@ -158,7 +157,7 @@ namespace AW2.Net
         {
             get
             {
-                if (_managementServerConnection == null) throw new InvalidOperationException("No connection to management server");
+                if (_managementServerConnection == null) throw new ConnectionException("No connection to management server");
                 return _managementServerConnection;
             }
         }
@@ -169,6 +168,25 @@ namespace AW2.Net
         public AWUDPSocket UDPSocket { get; private set; }
 
         /// <summary>
+        /// Finds a management server and initialises <see cref="ManagementServerConnection"/>.
+        /// May use DNS and take some time to finish.
+        /// </summary>
+        public void ConnectToManagementServer()
+        {
+            try
+            {
+                var managementServerEndPoint = MiscHelper.ParseIPEndPoint(AssaultWing.Instance.Settings.Net.ManagementServerAddress);
+                if (managementServerEndPoint.Port == 0)
+                    managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
+                _managementServerConnection = new ManagementServerConnection(managementServerEndPoint);
+            }
+            catch (ArgumentException e)
+            {
+                throw new ArgumentException("ERROR: Invalid IP address for management server: " + AssaultWing.Instance.Settings.Net.ManagementServerAddress, e);
+            }
+        }
+
+        /// <summary>
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients.
         /// </summary>
@@ -176,9 +194,9 @@ namespace AW2.Net
         public void StartServer(Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Server starts listening");
-            InitializeUDPSocket();
             _startServerConnectionHandler = connectionHandler;
             ConnectionAttemptListener.Instance.StartListening(TCP_CONNECTION_PORT);
+            RegisterServerToManagementServer();
         }
 
         /// <summary>
@@ -191,26 +209,18 @@ namespace AW2.Net
             MessageHandlers.Clear();
             ConnectionAttemptListener.Instance.StopListening();
             DisposeGameClientConnections();
-            DisposeUDPSocket();
         }
 
         /// <summary>
         /// Turns this game instance into a game client by connecting to a game server.
-        /// </summary>
         /// Poll <c>Connection.ConnectionResults</c> to find out when and if
         /// the connection was successfully estblished.
-        /// <param name="serverAddress">Network address of the server.</param>
-        /// <param name="connectionHandler">Handler of connection result.</param>
-        public void StartClient(string serverAddress, Action<Result<Connection>> connectionHandler)
+        /// </summary>
+        public void StartClient(AWEndPoint serverEndPoint, Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Client starts connecting");
-            InitializeUDPSocket();
             _startClientConnectionHandler = connectionHandler;
-            IPAddress serverIp;
-            if (!System.Net.IPAddress.TryParse(serverAddress, out serverIp))
-                Log.Write("Cannot connect to an invalid IP address: " + serverAddress);
-            else
-                Connection.Connect(serverIp, TCP_CONNECTION_PORT);
+            Connection.Connect(serverEndPoint);
         }
 
         /// <summary>
@@ -223,7 +233,6 @@ namespace AW2.Net
             MessageHandlers.Clear();
             Connection.CancelConnect();
             DisposeGameServerConnection();
-            DisposeUDPSocket();
         }
 
         /// <summary>
@@ -470,6 +479,18 @@ namespace AW2.Net
             _gameClientConnections.Clear();
         }
 
+        private void RegisterServerToManagementServer()
+        {
+            var message = new RegisterGameServerMessage
+            {
+                GameServerName = "Private beta server " + Environment.MachineName,
+                MaxClients = 16,
+                TimeoutMinutes = 30,
+                TCPPort = TCP_CONNECTION_PORT
+            };
+            ManagementServerConnection.Send(message);
+        }
+
         private void InitializeUDPSocket()
         {
             UDPSocket = new AWUDPSocket(HandleUDPMessage);
@@ -485,9 +506,17 @@ namespace AW2.Net
 
         private void HandleUDPMessage(NetBuffer messageHeaderAndBody)
         {
-            var connection = GetConnection(messageHeaderAndBody.EndPoint);
-            if (connection == null) return; // silently ignoring message from an unknown source
-            connection.HandleMessage(messageHeaderAndBody);
+            if (messageHeaderAndBody.EndPoint == ManagementServerConnection.RemoteUDPEndPoint)
+            {
+                var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer);
+                ManagementServerConnection.Messages.Enqueue(message);
+            }
+            else
+            {
+                var connection = GetConnection(messageHeaderAndBody.EndPoint);
+                if (connection == null) return; // silently ignoring message from an unknown source
+                connection.HandleMessage(messageHeaderAndBody);
+            }
         }
 
         /// <summary>

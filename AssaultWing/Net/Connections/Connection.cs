@@ -138,7 +138,14 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Information about general error situations in background threads.
         /// </summary>
-        public ThreadSafeWrapper<Queue<Exception>> Errors { get { return _tcpSocket.Errors; } }
+        public ThreadSafeWrapper<Queue<Exception>> Errors
+        {
+            get
+            {
+                if (_tcpSocket == null) return null;
+                return _tcpSocket.Errors;
+            }
+        }
 
         public PingInfo PingInfo { get; private set; }
 
@@ -147,16 +154,14 @@ namespace AW2.Net.Connections
         #region Public interface
 
         /// <summary>
-        /// Starts opening a connection to a remote host at an address and port.
+        /// Starts opening a connection to a remote host.
         /// </summary>
-        /// <param name="address">Address of the remote host.</param>
-        /// <param name="port">Listening port of the remote host.</param>
-        public static void Connect(IPAddress address, int port)
+        public static void Connect(AWEndPoint remoteEndPoint)
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var asyncState = new ConnectAsyncState(socket);
+            var asyncState = new ConnectAsyncState(socket, remoteEndPoint);
             g_connectAsyncStates.Add(asyncState);
-            socket.BeginConnect(address, port, ConnectCallback, asyncState);
+            socket.BeginConnect(remoteEndPoint.TCPEndPoint, ConnectCallback, asyncState);
         }
 
         /// <summary>
@@ -180,7 +185,7 @@ namespace AW2.Net.Connections
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
         /// <param name="message">The message to send.</param>
-        public void Send(Message message)
+        public virtual void Send(Message message)
         {
             if (IsDisposed) return;
             try
@@ -241,6 +246,7 @@ namespace AW2.Net.Connections
         public void HandleErrors()
         {
             if (IsDisposed) return;
+            if (Errors == null) return;
             bool errorsFound = false;
             Errors.Do(queue =>
             {
@@ -326,15 +332,23 @@ namespace AW2.Net.Connections
         /// via the static methods <see cref="StartListening(int, string)"/> and 
         /// <see cref="Connect(IPAddress, int, string)"/>.
         protected Connection(Socket tcpSocket)
+            : this()
         {
             if (tcpSocket == null) throw new ArgumentNullException("tcpSocket", "Null socket argument");
             if (!tcpSocket.Connected) throw new ArgumentException("Socket not connected", "tcpSocket");
+            _tcpSocket = new AWTCPSocket(tcpSocket, HandleMessage);
+            _tcpSocket.StartThreads();
+        }
+
+        /// <summary>
+        /// Creates a UDP-only connection.
+        /// </summary>
+        protected Connection()
+        {
             ID = g_leastUnusedID++;
             Name = "Connection " + ID;
             _messages = new TypedQueue<Message>();
-            _tcpSocket = new AWTCPSocket(tcpSocket, HandleMessage);
             PingInfo = new PingInfo(this);
-            _tcpSocket.StartThreads();
         }
 
         /// <summary>
@@ -343,6 +357,7 @@ namespace AW2.Net.Connections
         /// </summary>
         private void SendViaTCP(byte[] data)
         {
+            if (_tcpSocket == null) throw new InvalidOperationException("Connection has no TCP socket for sending a message");
             _tcpSocket.Send(data, null);
         }
 
@@ -401,7 +416,9 @@ namespace AW2.Net.Connections
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             state.Socket.EndConnect(asyncResult);
-            return new GameServerConnection(state.Socket);
+            var connection = new GameServerConnection(state.Socket);
+            connection.RemoteUDPEndPoint = state.RemoteEndPoint.UDPEndPoint;
+            return connection;
         }
 
         public void BeginHandshake()

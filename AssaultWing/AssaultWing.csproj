@@ -244,6 +244,8 @@
     <Compile Include="Helpers\SuspendableThread.cs" />
     <Compile Include="Menu\DummyMenuEngine.cs" />
     <Compile Include="Menu\IMenuEngine.cs" />
+    <Compile Include="Net\AWEndPoint.cs" />
+    <Compile Include="Net\ConnectionException.cs" />
     <Compile Include="Net\ConnectionUtils\AWSocket.cs" />
     <Compile Include="Net\ConnectionUtils\AWTCPSocket.cs" />
     <Compile Include="Net\ConnectionUtils\ConnectAsyncState.cs" />
@@ -257,6 +259,13 @@
     <Compile Include="Net\ConnectionUtils\TCPMessageSendThread.cs" />
     <Compile Include="Net\ConnectionUtils\TCPMessageReadThread.cs" />
     <Compile Include="Net\Connections\GameClientConnection.cs" />
+    <Compile Include="Net\GameServerInfo.cs" />
+    <Compile Include="Net\ManagementMessageAttribute.cs" />
+    <Compile Include="Net\ManagementMessages\JoinGameServerReply.cs" />
+    <Compile Include="Net\ManagementMessages\JoinGameServerRequest.cs" />
+    <Compile Include="Net\ManagementMessages\GameServerListReply.cs" />
+    <Compile Include="Net\ManagementMessages\RegisterGameServerMessage.cs" />
+    <Compile Include="Net\ManagementMessages\GameServerListRequest.cs" />
     <Compile Include="Net\MessageSendType.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\Connections\GameServerConnection.cs" />
@@ -279,6 +288,7 @@
     <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
     <Compile Include="Net\Messages\GameConnectionHandshakeMessage.cs" />
     <Compile Include="Net\Messages\GameSettingsRequest.cs" />
+    <Compile Include="Net\ManagementMessage.cs" />
     <Compile Include="Net\Messages\PlayerDeletionMessage.cs" />
     <Compile Include="Net\Messages\PlayerSettingsReply.cs" />
     <Compile Include="Net\Messages\PlayerSettingsRequest.cs" />

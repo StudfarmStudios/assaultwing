@@ -6,7 +6,7 @@ namespace AW2.Net.MessageHandling
 {
     public abstract class IMessageHandler
     {
-        public enum SourceType { Client, Server };
+        public enum SourceType { Client, Server, Management };
 
         public abstract bool Disposed { get; protected set; }
         public abstract void Dispose();
@@ -18,6 +18,7 @@ namespace AW2.Net.MessageHandling
             {
                 case SourceType.Client: return AssaultWing.Instance.NetworkEngine.GameClientConnections;
                 case SourceType.Server: return new Connection[] { AssaultWing.Instance.NetworkEngine.GameServerConnection };
+                case SourceType.Management: return new Connection[] { AssaultWing.Instance.NetworkEngine.ManagementServerConnection };
                 default: throw new ApplicationException("Invalid SourceType " + source);
             }
         }

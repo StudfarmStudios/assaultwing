@@ -4,17 +4,13 @@ namespace AW2.Settings
 {
     public class NetSettings
     {
-        private string _connectAddress;
+        private string _managementServerAddress;
 
-        public string ConnectAddress { get { return _connectAddress; } set { _connectAddress = value; } }
+        public string ManagementServerAddress { get { return _managementServerAddress; } set { _managementServerAddress = value; } }
 
         public NetSettings()
         {
-#if DEBUG
-            _connectAddress = "192.168.1.100";
-#else
-            _connectAddress = "82.181.78.53"; // to make life easier during closed beta testing
-#endif
+            _managementServerAddress = "vs1164254.server4you.net";
         }
     }
 }

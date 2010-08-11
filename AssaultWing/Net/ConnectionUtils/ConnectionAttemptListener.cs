@@ -62,7 +62,6 @@ namespace AW2.Net.ConnectionUtils
                 {
                     Log.Write("Mapping server connection port with UPnP");
                     StaticPortMapper.EnsurePortMapped(port, "TCP");
-                    StaticPortMapper.EnsurePortMapped(port, "UDP");
                 }
                 else
                 {
@@ -103,7 +102,6 @@ namespace AW2.Net.ConnectionUtils
                 {
                     int port = ((IPEndPoint)_serverSocket.LocalEndPoint).Port;
                     StaticPortMapper.RemovePortMapping(port, "TCP");
-                    StaticPortMapper.RemovePortMapping(port, "UDP");
                 }
                 catch (Exception e)
                 {
@@ -134,7 +132,7 @@ namespace AW2.Net.ConnectionUtils
             if (_serverSocket == null) throw new ApplicationException("Server socket must be opened first");
             try
             {
-                _listenResult = _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(_serverSocket));
+                _listenResult = _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(_serverSocket, null));
             }
             catch (SocketException e)
             {

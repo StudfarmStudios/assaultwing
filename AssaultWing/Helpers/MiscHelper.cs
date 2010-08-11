@@ -2,8 +2,10 @@
 using NUnit.Framework;
 #endif
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -77,6 +79,37 @@ namespace AW2.Helpers
         public static Vector2 Dimensions(this Texture2D texture)
         {
             return new Vector2(texture.Width, texture.Height);
+        }
+
+        /// <summary>
+        /// Parses a string into an IP address and an optional port. The string may contain the IP address
+        /// in ASCII or a hostname that will be resolved with DNS. If DNS is used, this method may
+        /// take long to finish.
+        /// </summary>
+        public static IPEndPoint ParseIPEndPoint(string text)
+        {
+            if (text == null) throw new ArgumentNullException("text");
+            try
+            {
+                var parts = text.Split(':');
+                IPAddress ipAddress = null;
+                if (char.IsDigit(parts[0].Last()))
+                    ipAddress = IPAddress.Parse(parts[0]);
+                else
+                {
+                    var hostEntry = Dns.GetHostEntry(parts[0]); // this may take some time
+                    ipAddress = hostEntry.AddressList.First();
+                }
+                int port = parts.Length > 1 ? int.Parse(parts[1]) : 0;
+                return new IPEndPoint(ipAddress, port);
+            }
+            catch (Exception e)
+            {
+                if (e is FormatException || e is OverflowException || e is ArgumentOutOfRangeException)
+                    throw new ArgumentException("Invalid IP end point string: " + text, e);
+                else
+                    throw;
+            }
         }
 
 #if DEBUG

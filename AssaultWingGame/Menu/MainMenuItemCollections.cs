@@ -2,6 +2,7 @@
 using AW2.Core;
 using AW2.UI;
 using AW2.Helpers;
+using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.Net;
@@ -13,11 +14,6 @@ namespace AW2.Menu
     /// </summary>
     public class MainMenuItemCollections
     {
-        /// <summary>
-        /// IP address of server to connect. Used by <see cref="NetworkItems"/>.
-        /// </summary>
-        private EditableText _connectAddress;
-
         /// <summary>
         /// The very first menu when the game starts.
         /// </summary>
@@ -41,8 +37,14 @@ namespace AW2.Menu
                 Name = "Play at the Battlefront",
                 Action = component =>
                 {
+                    InitializeNetworkItems(menuEngine);
                     component.SetItems(NetworkItems);
                     AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+                    AssaultWing.Instance.NetworkEngine.ConnectToManagementServer();
+                    MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(
+                        mess => HandleGameServerListReply(mess, menuEngine),
+                        mess => HandleJoinGameServerReply(mess, menuEngine)));
+                    AssaultWing.Instance.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
                 }
             });
             StartItems.Add(new MainMenuItem(menuEngine)
@@ -55,7 +57,10 @@ namespace AW2.Menu
                 Name = "Quit",
                 Action = component => AssaultWing.Instance.Exit()
             });
+        }
 
+        private void InitializeNetworkItems(MenuEngineImpl menuEngine)
+        {
             NetworkItems = new MainMenuItemCollection("Battlefront Menu");
             NetworkItems.Add(new MainMenuItem(menuEngine)
             {
@@ -71,22 +76,30 @@ namespace AW2.Menu
                     AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
                 }
             });
-
-            _connectAddress = new EditableText(AssaultWing.Instance.Settings.Net.ConnectAddress, 15, EditableText.Keysets.IPAddressSet);
-            NetworkItems.Add(new MainMenuTextField(menuEngine, _connectAddress)
-            {
-                Name = "Connect to ",
-                Action = component =>
-                {
-                    if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
-                    AssaultWing.Instance.Settings.Net.ConnectAddress = _connectAddress.Content;
-                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-                    AssaultWing.Instance.StartClient(_connectAddress.Content, result => ClientConnectedCallback(result, component));
-                }
-            });
         }
 
-        private static void ClientConnectedCallback(Result<AW2.Net.Connections.Connection> result, MainMenuComponent component)
+        private void HandleGameServerListReply(GameServerListReply mess, MenuEngineImpl menuEngine)
+        {
+            foreach (var server in mess.GameServers)
+                NetworkItems.Add(new MainMenuItem(menuEngine)
+                {
+                    Name = string.Format("Connect to {0} [{1}/{2}] players", server.Name, server.CurrentPlayers, server.MaxPlayers),
+                    Action = component =>
+                    {
+                        if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
+                        var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
+                        AssaultWing.Instance.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+                    }
+                });
+        }
+
+        private static void HandleJoinGameServerReply(JoinGameServerReply mess, MenuEngineImpl menuEngine)
+        {
+            AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+            AssaultWing.Instance.StartClient(mess.GameServerEndPoint, result => ClientConnectedCallback(result, menuEngine));
+        }
+
+        private static void ClientConnectedCallback(Result<AW2.Net.Connections.Connection> result, MenuEngineImpl menuEngine)
         {
             if (!result.Successful)
             {
@@ -96,13 +109,13 @@ namespace AW2.Menu
             }
             Log.Write("Client connected to " + result.Value.RemoteTCPEndPoint);
 
-            var net = AssaultWing.Instance.NetworkEngine;
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => component.MenuEngine.ActivateComponent(MenuComponentType.Equip)));
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip)));
 
             // HACK: Force one local player.
             AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
 
-            net.GameServerConnection.Send(new JoinGameRequest { CanonicalStrings = CanonicalString.CanonicalForms });
+            var joinRequest = new JoinGameRequest { CanonicalStrings = CanonicalString.CanonicalForms };
+            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(joinRequest);
         }
     }
 }

@@ -122,7 +122,7 @@ namespace AW2.Net
         /// Serialises the message's content into a sequence of bytes.
         /// </summary>
         /// <returns>The serialised message.</returns>
-        public byte[] Serialize()
+        public virtual byte[] Serialize()
         {
             var writer = new NetworkBinaryWriter(new MemoryStream());
 
@@ -231,7 +231,8 @@ namespace AW2.Net
                 if (type.IsAbstract) continue;
                 try
                 {
-                    MessageType.Register(GetMessageType(type), type);
+                    var messageType = GetMessageType(type);
+                    if (messageType != null) MessageType.Register(messageType, type);
                 }
                 catch (Exception e)
                 {
@@ -241,10 +242,10 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Returns the message type identifier of a message type.
+        /// Returns the message type identifier of a message type, or null if the message type
+        /// is not to be registered.
         /// </summary>
         /// <param name="type">A message type, i.e. a nonabstract subclass of Message.</param>
-        /// <returns>The message type identifier of the message type.</returns>
         private static MessageType GetMessageType(Type type)
         {
             if (!typeof(Message).IsAssignableFrom(type) || type.IsAbstract)
@@ -254,7 +255,9 @@ namespace AW2.Net
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Public |
                 System.Reflection.BindingFlags.Static;
-            return (MessageType)type.GetField("messageType", flags).GetValue(null);
+            var field = type.GetField("messageType", flags);
+            if (field == null) return null;
+            return (MessageType)field.GetValue(null);
         }
 
         #endregion Private deserialisation stuff

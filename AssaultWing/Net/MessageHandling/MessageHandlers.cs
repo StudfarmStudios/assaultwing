@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
 using AW2.Helpers;
+using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
-using Microsoft.Xna.Framework.Graphics;
-using System.Net;
 
 namespace AW2.Net.MessageHandling
 {
@@ -22,6 +23,12 @@ namespace AW2.Net.MessageHandling
             var handlerTypesToRemove = handlers.Select(handler => handler.GetType());
             foreach (var handler in net.MessageHandlers)
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
+        }
+
+        public static IEnumerable<IMessageHandler> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply, Action<JoinGameServerReply> handleJoinGameServerReply)
+        {
+            yield return new MessageHandler<GameServerListReply>(false, IMessageHandler.SourceType.Management, handleGameServerListReply);
+            yield return new MessageHandler<JoinGameServerReply>(false, IMessageHandler.SourceType.Management, handleJoinGameServerReply);
         }
 
         public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction)

@@ -10,6 +10,7 @@ namespace AW2.Net.ConnectionUtils
     public class ConnectAsyncState
     {
         public Socket Socket { get; private set; }
+        public AWEndPoint RemoteEndPoint { get; private set; }
         public bool IsCancelled { get; private set; }
 
         /// <summary>
@@ -42,9 +43,10 @@ namespace AW2.Net.ConnectionUtils
             return result;
         }
 
-        public ConnectAsyncState(Socket socket)
+        public ConnectAsyncState(Socket socket, AWEndPoint remoteEndPoint)
         {
             Socket = socket;
+            RemoteEndPoint = remoteEndPoint;
         }
 
         public void Cancel()

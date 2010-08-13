@@ -83,7 +83,7 @@ namespace AW2.Menu
             foreach (var server in mess.GameServers)
                 NetworkItems.Add(new MainMenuItem(menuEngine)
                 {
-                    Name = string.Format("Connect to {0} [{1}/{2}] players", server.Name, server.CurrentPlayers, server.MaxPlayers),
+                    Name = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers),
                     Action = component =>
                     {
                         if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;

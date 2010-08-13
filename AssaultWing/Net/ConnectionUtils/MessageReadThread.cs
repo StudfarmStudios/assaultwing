@@ -23,7 +23,7 @@ namespace AW2.Net.ConnectionUtils
         {
             _socket = socket;
             _messageHandler = messageHandler;
-            _headerAndBodyReceiveBuffer = new NetBuffer(new byte[Message.MAXIMUM_LENGTH], new IPEndPoint(IPAddress.Any, 0));
+            _headerAndBodyReceiveBuffer = new NetBuffer(new byte[Message.MAXIMUM_LENGTH], 0, new IPEndPoint(IPAddress.Any, 0));
             SetAction(new StepwiseAction(KeepReadingMessages()));
         }
 

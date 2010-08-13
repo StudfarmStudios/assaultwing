@@ -30,6 +30,7 @@ namespace AW2.Net.ConnectionUtils
         private IEnumerable<object> ReadHeader(NetBuffer headerAndBodyBuffer)
         {
             foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer.Buffer, 0, Message.HEADER_LENGTH))) yield return null;
+            headerAndBodyBuffer.Length = Message.HEADER_LENGTH;
             if (!Message.IsValidHeader(headerAndBodyBuffer.Buffer))
             {
                 string headerContents = string.Join(",", headerAndBodyBuffer.Buffer
@@ -47,6 +48,7 @@ namespace AW2.Net.ConnectionUtils
             int bodyLength = Message.GetBodyLength(headerAndBodyBuffer.Buffer);
             if (Message.HEADER_LENGTH + bodyLength > Message.MAXIMUM_LENGTH) throw new MessageException("Too long message body [" + bodyLength + " bytes]");
             foreach (var dummy in Receive(new ArraySegment<byte>(headerAndBodyBuffer.Buffer, Message.HEADER_LENGTH, bodyLength))) yield return null;
+            headerAndBodyBuffer.Length += bodyLength;
         }
 
         private IEnumerable<object> Receive(ArraySegment<byte> segment)

@@ -20,7 +20,7 @@ namespace AW2.Net
             get
             {
                 var attribute = (ManagementMessageAttribute)GetType().GetCustomAttributes(typeof(ManagementMessageAttribute), false).First();
-                return attribute.Operation;
+                return "operation=" + attribute.Operation;
             }
         }
 
@@ -59,13 +59,14 @@ namespace AW2.Net
             return message.Split('\n')
                 .Select(line => line.Split(';')
                     .Select(token => token.Split('='))
+                    .Where(tokenSplit => tokenSplit.Length >= 2)
                     .ToDictionary(parts => parts[0], parts => parts[1]))
                 .ToList();
         }
 
-        public static ManagementMessage Deserialize(byte[] data)
+        public static ManagementMessage Deserialize(byte[] data, int byteCount)
         {
-            string text = Encoding.ASCII.GetString(data);
+            string text = Encoding.ASCII.GetString(data, 0, byteCount);
             var tokens = Tokenize(text);
             var operation = tokens[0]["operation"];
             var subclass = GetSubclass(operation);

@@ -37,7 +37,7 @@ namespace AW2.Net.ConnectionUtils
                     try
                     {
                         EndPoint endPoint = headerAndBodyBuffer.EndPoint;
-                        _socket.ReceiveFrom(headerAndBodyBuffer.Buffer, ref endPoint);
+                        headerAndBodyBuffer.Length = _socket.ReceiveFrom(headerAndBodyBuffer.Buffer, ref endPoint);
                         headerAndBodyBuffer.EndPoint = (IPEndPoint)endPoint;
                         yield break;
                     }

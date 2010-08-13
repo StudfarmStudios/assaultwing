@@ -483,7 +483,7 @@ namespace AW2.Net
         {
             var message = new RegisterGameServerMessage
             {
-                GameServerName = "Private beta server " + Environment.MachineName,
+                GameServerName = Environment.MachineName,
                 MaxClients = 16,
                 TimeoutMinutes = 30,
                 TCPPort = TCP_CONNECTION_PORT
@@ -506,9 +506,9 @@ namespace AW2.Net
 
         private void HandleUDPMessage(NetBuffer messageHeaderAndBody)
         {
-            if (messageHeaderAndBody.EndPoint == ManagementServerConnection.RemoteUDPEndPoint)
+            if (messageHeaderAndBody.EndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint))
             {
-                var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer);
+                var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer, messageHeaderAndBody.Length);
                 ManagementServerConnection.Messages.Enqueue(message);
             }
             else

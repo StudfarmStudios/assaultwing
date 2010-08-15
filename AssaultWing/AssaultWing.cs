@@ -749,14 +749,14 @@ namespace AW2
         /// <summary>
         /// Turns this game instance into a game client by connecting to a game server.
         /// </summary>
-        public void StartClient(AWEndPoint serverEndPoint, Action<Result<Connection>> connectionHandler)
+        public void StartClient(AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
         {
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Client;
             try
             {
-                NetworkEngine.StartClient(serverEndPoint, connectionHandler);
+                NetworkEngine.StartClient(serverEndPoints, connectionHandler);
                 foreach (var spectator in DataEngine.Spectators) spectator.ResetForClient();
             }
             catch (System.Net.Sockets.SocketException e)

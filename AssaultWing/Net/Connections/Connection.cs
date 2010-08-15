@@ -156,12 +156,18 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Starts opening a connection to a remote host.
         /// </summary>
-        public static void Connect(AWEndPoint remoteEndPoint)
+        /// <param name="remoteEndPoints">Alternative end points to connect to.</param>
+        public static void Connect(AWEndPoint[] remoteEndPoints)
         {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var asyncState = new ConnectAsyncState(socket, remoteEndPoint);
+            var sockets = new Socket[remoteEndPoints.Length];
+            var asyncState = new ConnectAsyncState(sockets, remoteEndPoints);
             g_connectAsyncStates.Add(asyncState);
-            socket.BeginConnect(remoteEndPoint.TCPEndPoint, ConnectCallback, asyncState);
+            for (int i = 0; i < remoteEndPoints.Length; i++)
+            {
+                int index = i;
+                sockets[i] = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                sockets[i].BeginConnect(remoteEndPoints[i].TCPEndPoint, result => ConnectCallback(result, index), asyncState);
+            }
         }
 
         /// <summary>
@@ -405,19 +411,20 @@ namespace AW2.Net.Connections
         /// Callback implementation for finishing an outgoing connection attempt.
         /// </summary>
         /// <param name="asyncResult">The result of the asynchronous operation.</param>
-        private static void ConnectCallback(IAsyncResult asyncResult)
+        /// <param name="index">Index of the connection attempt in <c>asyncResult.AsyncState</c></param>
+        private static void ConnectCallback(IAsyncResult asyncResult, int index)
         {
             g_connectAsyncStates.Remove((ConnectAsyncState)asyncResult.AsyncState);
-            var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateServerConnection(asyncResult));
+            var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateServerConnection(asyncResult, index));
             HandleNewConnection(result);
         }
 
-        private static Connection CreateServerConnection(IAsyncResult asyncResult)
+        private static Connection CreateServerConnection(IAsyncResult asyncResult, int index)
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
-            state.Socket.EndConnect(asyncResult);
-            var connection = new GameServerConnection(state.Socket);
-            connection.RemoteUDPEndPoint = state.RemoteEndPoint.UDPEndPoint;
+            state.Sockets[index].EndConnect(asyncResult);
+            var connection = new GameServerConnection(state.Sockets[index]);
+            connection.RemoteUDPEndPoint = state.RemoteEndPoints[index].UDPEndPoint;
             return connection;
         }
 

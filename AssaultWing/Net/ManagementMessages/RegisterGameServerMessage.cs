@@ -14,6 +14,7 @@ namespace AW2.Net.ManagementMessages
         public int MaxClients { get; set; }
         public int TimeoutMinutes { get; set; }
         public int TCPPort { get; set; }
+        public AWEndPoint LocalEndPoint { get; set; }
 
         protected override string[] Parameters
         {
@@ -25,6 +26,7 @@ namespace AW2.Net.ManagementMessages
                     "maxclients=" + MaxClients,
                     "timeout=" + TimeoutMinutes,
                     "tcpport=" + TCPPort,
+                    "localendpoint=" + LocalEndPoint,
                 };
             }
         }

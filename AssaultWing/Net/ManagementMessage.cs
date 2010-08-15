@@ -64,7 +64,7 @@ namespace AW2.Net
                 .ToList();
         }
 
-        public static ManagementMessage Deserialize(byte[] data, int byteCount)
+        public new static ManagementMessage Deserialize(byte[] data, int byteCount)
         {
             string text = Encoding.ASCII.GetString(data, 0, byteCount);
             var tokens = Tokenize(text);

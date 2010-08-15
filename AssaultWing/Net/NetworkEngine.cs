@@ -216,11 +216,11 @@ namespace AW2.Net
         /// Poll <c>Connection.ConnectionResults</c> to find out when and if
         /// the connection was successfully estblished.
         /// </summary>
-        public void StartClient(AWEndPoint serverEndPoint, Action<Result<Connection>> connectionHandler)
+        public void StartClient(AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Client starts connecting");
             _startClientConnectionHandler = connectionHandler;
-            Connection.Connect(serverEndPoint);
+            Connection.Connect(serverEndPoints);
         }
 
         /// <summary>
@@ -426,7 +426,7 @@ namespace AW2.Net
                     switch (AssaultWing.Instance.NetworkMode)
                     {
                         case NetworkMode.Client:
-                            if (_gameServerConnection != null) throw new ApplicationException("Cannot have multiple game server connections");
+                            if (_gameServerConnection != null) break; // silently ignore extra server connection attempts
                             if (result.Successful) _gameServerConnection = result.Value;
                             _startClientConnectionHandler(result);
                             break;
@@ -481,12 +481,15 @@ namespace AW2.Net
 
         private void RegisterServerToManagementServer()
         {
+            var addresses = Dns.GetHostAddresses(Dns.GetHostName());
+            var localIPAddress = addresses.First(address => address.AddressFamily == AddressFamily.InterNetwork); // IPv4 address
             var message = new RegisterGameServerMessage
             {
                 GameServerName = Environment.MachineName,
                 MaxClients = 16,
                 TimeoutMinutes = 30,
-                TCPPort = TCP_CONNECTION_PORT
+                TCPPort = TCP_CONNECTION_PORT,
+                LocalEndPoint = new AWEndPoint(new IPEndPoint(localIPAddress, UDPSocket.LocalEndPoint.Port), TCP_CONNECTION_PORT)
             };
             ManagementServerConnection.Send(message);
         }

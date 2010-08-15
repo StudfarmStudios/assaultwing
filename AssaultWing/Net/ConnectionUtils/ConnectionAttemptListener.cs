@@ -132,7 +132,7 @@ namespace AW2.Net.ConnectionUtils
             if (_serverSocket == null) throw new ApplicationException("Server socket must be opened first");
             try
             {
-                _listenResult = _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(_serverSocket, null));
+                _listenResult = _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(new Socket[] { _serverSocket }, null));
             }
             catch (SocketException e)
             {
@@ -149,7 +149,7 @@ namespace AW2.Net.ConnectionUtils
         private static Connection CreateClientConnection(IAsyncResult asyncResult)
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
-            var socketToNewHost = state.Socket.EndAccept(asyncResult);
+            var socketToNewHost = state.Sockets.Single().EndAccept(asyncResult);
             return new GameClientConnection(socketToNewHost);
         }
     }

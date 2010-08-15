@@ -10,8 +10,8 @@ namespace AW2.Net.ManagementMessages
     [ManagementMessage("serveraddress")]
     public class JoinGameServerReply : ManagementMessage
     {
-        public bool Success { get { return GameServerEndPoint != null; } }
-        public AWEndPoint GameServerEndPoint { get; private set; }
+        public bool Success { get { return GameServerEndPoints != null; } }
+        public AWEndPoint[] GameServerEndPoints { get; private set; }
         public string FailMessage { get; private set; }
 
         protected override void Deserialize(List<Dictionary<string, string>> tokenizedLines)
@@ -23,8 +23,13 @@ namespace AW2.Net.ManagementMessages
             }
             else
             {
-                string endPointString = tokens["server"];
-                GameServerEndPoint = AWEndPoint.Parse(endPointString);
+                string endPointString1 = tokens["server"];
+                string endPointString2 = tokens["server2"];
+                GameServerEndPoints = new AWEndPoint[]
+                {
+                    AWEndPoint.Parse(endPointString1),
+                    AWEndPoint.Parse(endPointString2),
+                };
             }
         }
     }

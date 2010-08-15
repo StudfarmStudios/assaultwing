@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 using AW2.Core;
-using AW2.UI;
 using AW2.Helpers;
+using AW2.Net;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
-using AW2.Net;
+using AW2.UI;
 
 namespace AW2.Menu
 {
@@ -95,8 +96,9 @@ namespace AW2.Menu
 
         private static void HandleJoinGameServerReply(JoinGameServerReply mess, MenuEngineImpl menuEngine)
         {
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null, null));
             AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-            AssaultWing.Instance.StartClient(mess.GameServerEndPoint, result => ClientConnectedCallback(result, menuEngine));
+            AssaultWing.Instance.StartClient(mess.GameServerEndPoints, result => ClientConnectedCallback(result, menuEngine));
         }
 
         private static void ClientConnectedCallback(Result<AW2.Net.Connections.Connection> result, MenuEngineImpl menuEngine)

@@ -22,5 +22,10 @@ namespace AW2.Net
             int tcpPort = int.Parse(text.Substring(splitIndex + 1));
             return new AWEndPoint(udpEndPoint, tcpPort);
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}:{1}", UDPEndPoint, TCPEndPoint.Port);
+        }
     }
 }

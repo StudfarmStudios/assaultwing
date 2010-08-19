@@ -163,13 +163,13 @@ namespace AW2.Net.ConnectionUtils
         private static void ConfigureSocket(Socket socket)
         {
             // TODO: Remove this log output from public release!!!
-            Log.Write("Configuring socket:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
+            // UNDONE: Log.Write("Configuring socket:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
             socket.Blocking = true;
             socket.SendTimeout = (int)SEND_TIMEOUT_MILLISECONDS.TotalMilliseconds;
             socket.ReceiveTimeout = (int)RECEIVE_TIMEOUT_MILLISECONDS.TotalMilliseconds;
             if (socket.ProtocolType == ProtocolType.Tcp) socket.NoDelay = true;
             // TODO: Remove this log output from public release!!!
-            Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
+            // UNDONE: Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
         }
 
         private static IEnumerable<string> GetSocketInfoStrings(Socket socket)

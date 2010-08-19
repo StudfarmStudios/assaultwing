@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 using AW2.Net.ConnectionUtils;
 using AW2.Net.Messages;
 
@@ -14,10 +15,12 @@ namespace AW2.Net.Connections
         /// </summary>
         /// <param name="tcpSocket">An opened TCP socket to the remote host. The
         /// created connection owns the socket and will dispose of it.</param>
-        public GameServerConnection(Socket tcpSocket)
+        public GameServerConnection(Socket tcpSocket, IPEndPoint remoteUDPEndPoint)
             : base(tcpSocket)
         {
             Name = "Game Server Connection " + ID;
+            RemoteUDPEndPoint = remoteUDPEndPoint;
+            IsHandshaked = true;
         }
 
         protected override void DisposeImpl(bool error)

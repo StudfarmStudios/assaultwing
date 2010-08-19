@@ -431,6 +431,9 @@ namespace AW2.Net
                             _startClientConnectionHandler(result);
                             break;
                         case NetworkMode.Server:
+                            // Silently ignore extra server connection attempts.
+                            // Note: This will only allow one game client behind any one NAT.
+                            if (_gameClientConnections.Any(conn => conn.RemoteIPAddress.Equals(result.Value.RemoteIPAddress))) break;
                             if (result.Successful) _gameClientConnections.Add(result.Value);
                             _startServerConnectionHandler(result);
                             break;
@@ -517,7 +520,13 @@ namespace AW2.Net
             else
             {
                 var connection = GetConnection(messageHeaderAndBody.EndPoint);
-                if (connection == null) return; // silently ignoring message from an unknown source
+                if (connection == null)
+                {
+#if DEBUG
+                    Log.Write("Note: Ignoring an UDP message from unknown source " + messageHeaderAndBody.EndPoint);
+#endif
+                    return;
+                }
                 connection.HandleMessage(messageHeaderAndBody);
             }
         }
@@ -527,7 +536,9 @@ namespace AW2.Net
         /// </summary>
         private Connection GetConnection(IPEndPoint remoteUDPEndPoint)
         {
-            return AllConnections.FirstOrDefault(conn => conn.RemoteUDPEndPoint.Equals(remoteUDPEndPoint));
+            // Compare IP address from TCP end point because UDP end point may still
+            // be unknown. IP address should be the same in both end points.
+            return AllConnections.FirstOrDefault(conn => conn.RemoteIPAddress.Equals(remoteUDPEndPoint.Address));
         }
 
         private void TerminateThread(SuspendableThread thread)

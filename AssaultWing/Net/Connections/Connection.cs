@@ -94,7 +94,7 @@ namespace AW2.Net.Connections
         /// Has the connection handshake been completed. Sending UDP messages is not possible before the
         /// handshaking is complete.
         /// </summary>
-        public bool IsHandshaked { get; private set; }
+        public bool IsHandshaked { get; protected set; }
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
@@ -123,6 +123,18 @@ namespace AW2.Net.Connections
                 return _remoteUDPEndPoint;
             }
             set { _remoteUDPEndPoint = value; }
+        }
+
+        /// <summary>
+        /// The remote IP address of the connection.
+        /// </summary>
+        public IPAddress RemoteIPAddress
+        {
+            get
+            {
+                if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
+                return _remoteUDPEndPoint != null ? _remoteUDPEndPoint.Address : _tcpSocket.RemoteEndPoint.Address;
+            }
         }
 
         /// <summary>
@@ -183,7 +195,7 @@ namespace AW2.Net.Connections
         /// </summary>
         public void Update()
         {
-            PingInfo.Update();
+            if (IsHandshaked) PingInfo.Update();
         }
 
         /// <summary>
@@ -285,7 +297,7 @@ namespace AW2.Net.Connections
         public void HandleMessage(NetBuffer messageHeaderAndBody)
         {
             var message = Message.Deserialize(messageHeaderAndBody.Buffer, ID);
-            if (!TryHandleMessageInternally(message))
+            if (!TryHandleMessageInternally(message, messageHeaderAndBody.EndPoint))
                 _messages.Enqueue(message);
         }
 
@@ -294,10 +306,21 @@ namespace AW2.Net.Connections
             if (result == null) return;
             if (!result.Successful)
                 ReportResult(result);
+            else if (result.Value.IsHandshaked)
+            {
+                // HACK'ish
+                // GameServerConnection is handshaked on creation. It must send handshake
+                // to the remote host because its GameClientConnection is not handshaked.
+                result.Value.BeginHandshake();
+                ReportResult(result);
+            }
             else
             {
-                result.Value.BeginHandshake();
-                // Result is reported in TryHandleMessageInternally on receiving a GameConnectionHandshakeMessage.
+                // GameClientConnection is handshaked when the remote host sends GameConnectionHandshakeMessage.
+                // The connection cannot send UDP messages to the remote host until TryHandleMessageInternally
+                // receives the GameConnectionHandshakeMessage. However, the result must be reported here
+                // so that we can receive that message in the first place.
+                ReportResult(result);
             }
         }
 
@@ -381,15 +404,14 @@ namespace AW2.Net.Connections
         /// Returns true if message was interpreted internally by the <see cref="Connection"/>
         /// and needs not be added to the public message queue.
         /// </summary>
-        private bool TryHandleMessageInternally(Message mess)
+        private bool TryHandleMessageInternally(Message mess, IPEndPoint remoteEndPoint)
         {
             var gameConnectionHandshakeMessage = mess as GameConnectionHandshakeMessage;
             if (gameConnectionHandshakeMessage != null)
             {
                 if (!IsHandshaked)
                 {
-                    int remoteUDPPort = gameConnectionHandshakeMessage.SenderLocalUDPEndPoint.Port;
-                    RemoteUDPEndPoint = new IPEndPoint(RemoteTCPEndPoint.Address, remoteUDPPort);
+                    RemoteUDPEndPoint = new IPEndPoint(RemoteTCPEndPoint.Address, remoteEndPoint.Port);
                     IsHandshaked = true;
                     ReportResult(new Result<Connection>(this));
                 }
@@ -423,7 +445,7 @@ namespace AW2.Net.Connections
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             state.Sockets[index].EndConnect(asyncResult);
-            var connection = new GameServerConnection(state.Sockets[index]);
+            var connection = new GameServerConnection(state.Sockets[index], state.RemoteEndPoints[index].UDPEndPoint);
             connection.RemoteUDPEndPoint = state.RemoteEndPoints[index].UDPEndPoint;
             return connection;
         }
@@ -431,11 +453,8 @@ namespace AW2.Net.Connections
         public void BeginHandshake()
         {
             if (IsDisposed) throw new InvalidOperationException("Cannot begin handshake on a disposed connection");
-            var mess = new GameConnectionHandshakeMessage
-            {
-                SenderLocalUDPEndPoint = AssaultWing.Instance.NetworkEngine.UDPSocket.LocalEndPoint
-            };
-            Send(mess);
+            Thread.Sleep(1000); // HACK !!! We give the game server some time to add the new connection to its _gameClientConnections so that the originating end point of our handshake message is recognized.
+            Send(new GameConnectionHandshakeMessage());
         }
 
         #endregion Private callback implementations

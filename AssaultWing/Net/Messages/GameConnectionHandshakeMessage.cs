@@ -13,29 +13,16 @@ namespace AW2.Net.Messages
     {
         protected static MessageType messageType = new MessageType(0x31, false);
 
-        /// <summary>
-        /// Local UDP end point of the sender of the message.
-        /// </summary>
-        public IPEndPoint SenderLocalUDPEndPoint { get; set; }
+        public override MessageSendType SendType { get { return MessageSendType.UDP; } }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            checked
-            {
-                // Game connection handshake request structure:
-                // variable length string: local IP address of the sender of the message
-                // ushort: local UDP port of the sender of the message
-                writer.Write((string)SenderLocalUDPEndPoint.Address.ToString());
-                writer.Write((ushort)SenderLocalUDPEndPoint.Port);
-            }
+            // Game connection handshake request structure:
+            // <empty>
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            string address = reader.ReadString();
-            ushort port = reader.ReadUInt16();
-            var ipAddress = IPAddress.Parse(address);
-            SenderLocalUDPEndPoint = new IPEndPoint(ipAddress, port);
         }
 
         public override string ToString()

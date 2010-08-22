@@ -437,7 +437,11 @@ namespace AW2.Net
                             if (result.Successful) _gameClientConnections.Add(result.Value);
                             _startServerConnectionHandler(result);
                             break;
-                        default: throw new ApplicationException("Invalid NetworkMode for accepting connections: " + AssaultWing.Instance.NetworkMode);
+                        default:
+                            // HACK: This happens when client connects to two server end points and both fail.
+                            // The first failure returns to NetworkMode.Standalone and the second failure comes here.
+                            Log.Write("Invalid NetworkMode for accepting connections: " + AssaultWing.Instance.NetworkMode);
+                            break;
                     }
                 }
             });

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace AW2.Net.ManagementMessages
 {
@@ -10,12 +11,17 @@ namespace AW2.Net.ManagementMessages
     public class JoinGameServerRequest : ManagementMessage
     {
         public int GameServerManagementID { get; set; }
+        public IPEndPoint PrivateUDPEndPoint { get; set; }
 
         protected override string[] Parameters
         {
             get
             {
-                return new string[] { "serverid=" + GameServerManagementID };
+                return new string[]
+                {
+                    "serverid=" + GameServerManagementID,
+                    "privateudpendpoint=" + PrivateUDPEndPoint,
+                };
             }
         }
 

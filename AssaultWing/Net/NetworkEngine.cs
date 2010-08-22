@@ -463,7 +463,7 @@ namespace AW2.Net
                 {
                     errorsFound = true;
                     var e = queue.Dequeue();
-                    Log.Write("Error occurred with UDP socket: " + e.Message);
+                    Log.Write("Error occurred with UDP socket", e);
                 }
             });
             if (errorsFound)
@@ -488,15 +488,13 @@ namespace AW2.Net
 
         private void RegisterServerToManagementServer()
         {
-            var addresses = Dns.GetHostAddresses(Dns.GetHostName());
-            var localIPAddress = addresses.First(address => address.AddressFamily == AddressFamily.InterNetwork); // IPv4 address
             var message = new RegisterGameServerMessage
             {
                 GameServerName = Environment.MachineName,
                 MaxClients = 16,
                 TimeoutMinutes = 5,
                 TCPPort = TCP_CONNECTION_PORT,
-                LocalEndPoint = new AWEndPoint(new IPEndPoint(localIPAddress, UDPSocket.LocalEndPoint.Port), TCP_CONNECTION_PORT)
+                LocalEndPoint = new AWEndPoint(UDPSocket.PrivateLocalEndPoint, TCP_CONNECTION_PORT)
             };
             ManagementServerConnection.Send(message);
         }

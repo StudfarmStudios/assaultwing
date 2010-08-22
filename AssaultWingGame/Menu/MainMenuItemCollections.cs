@@ -88,7 +88,11 @@ namespace AW2.Menu
                     Action = component =>
                     {
                         if (AssaultWing.Instance.NetworkMode != NetworkMode.Standalone) return;
-                        var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
+                        var joinRequest = new JoinGameServerRequest
+                        {
+                            GameServerManagementID = server.ManagementID,
+                            PrivateUDPEndPoint = AssaultWing.Instance.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
+                        };
                         AssaultWing.Instance.NetworkEngine.ManagementServerConnection.Send(joinRequest);
                     }
                 });
@@ -109,8 +113,6 @@ namespace AW2.Menu
                 AssaultWing.Instance.StopClient();
                 return;
             }
-            Log.Write("Client connected, remote end points: TCP " + result.Value.RemoteTCPEndPoint + ", UDP " + result.Value.RemoteUDPEndPoint);
-
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip)));
 
             // HACK: Force one local player.

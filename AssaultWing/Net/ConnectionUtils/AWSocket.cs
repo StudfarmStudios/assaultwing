@@ -49,15 +49,16 @@ namespace AW2.Net.ConnectionUtils
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
         /// <summary>
-        /// The local end point of the socket.
+        /// The local end point of the socket in this host's local network.
         /// </summary>
         /// <see cref="System.Net.Sockets.Socket.LocalEndPoint"/>
-        public IPEndPoint LocalEndPoint
+        public IPEndPoint PrivateLocalEndPoint
         {
             get
             {
-                if (IsDisposed) throw new InvalidOperationException("This socket has been disposed");
-                return (IPEndPoint)_socket.LocalEndPoint;
+                var addresses = Dns.GetHostAddresses(Dns.GetHostName());
+                var localIPAddress = addresses.First(address => address.AddressFamily == AddressFamily.InterNetwork); // IPv4 address
+                return new IPEndPoint(localIPAddress, ((IPEndPoint)_socket.LocalEndPoint).Port);
             }
         }
 

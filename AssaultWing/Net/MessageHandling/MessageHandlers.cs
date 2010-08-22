@@ -29,6 +29,9 @@ namespace AW2.Net.MessageHandling
         {
             yield return new MessageHandler<GameServerListReply>(false, IMessageHandler.SourceType.Management, handleGameServerListReply);
             yield return new MessageHandler<JoinGameServerReply>(false, IMessageHandler.SourceType.Management, handleJoinGameServerReply);
+
+            // ClientJoinMessage is only for game servers
+            yield return new MessageHandler<ClientJoinMessage>(false, IMessageHandler.SourceType.Management, HandleClientJoinMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction)
@@ -89,6 +92,28 @@ namespace AW2.Net.MessageHandling
         }
 
         #region Handler implementations
+
+        private static void HandleClientJoinMessage(ClientJoinMessage mess)
+        {
+            // TODO !!! Currently ClientUDPEndPoint is the public UDP end point as seen by the management server.
+            // We also need the private UDP end point in case the game server and the game client are behind
+            // the same NAT.
+            IPEndPoint matchingEndPoint = null;
+            var connection = AssaultWing.Instance.NetworkEngine.GameClientConnections.FirstOrDefault(conn =>
+            {
+                matchingEndPoint = mess.ClientUDPEndPoints.FirstOrDefault(endPoint => endPoint.Address.Equals(conn.RemoteIPAddress));
+                return matchingEndPoint != null;
+            });
+            if (connection == null)
+            {
+                // TODO: The connection is probably going to be created soon. Store the port somewhere else.
+                throw new NotImplementedException("Got game client UDP end point before connection was created");
+            }
+            else
+            {
+                connection.RemoteUDPEndPoint = matchingEndPoint;
+            }
+        }
 
         private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {

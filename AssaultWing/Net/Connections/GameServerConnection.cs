@@ -21,7 +21,6 @@ namespace AW2.Net.Connections
         {
             Name = "Game Server Connection " + ID;
             RemoteUDPEndPoint = remoteUDPEndPoint;
-            IsHandshaked = true;
         }
 
         protected override void DisposeImpl(bool error)

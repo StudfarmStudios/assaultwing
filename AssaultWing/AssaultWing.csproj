@@ -261,6 +261,7 @@
     <Compile Include="Net\Connections\GameClientConnection.cs" />
     <Compile Include="Net\GameServerInfo.cs" />
     <Compile Include="Net\ManagementMessageAttribute.cs" />
+    <Compile Include="Net\ManagementMessages\ClientJoinMessage.cs" />
     <Compile Include="Net\ManagementMessages\JoinGameServerReply.cs" />
     <Compile Include="Net\ManagementMessages\JoinGameServerRequest.cs" />
     <Compile Include="Net\ManagementMessages\GameServerListReply.cs" />

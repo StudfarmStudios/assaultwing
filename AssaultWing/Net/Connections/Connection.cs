@@ -94,7 +94,7 @@ namespace AW2.Net.Connections
         /// Has the connection handshake been completed. Sending UDP messages is not possible before the
         /// handshaking is complete.
         /// </summary>
-        public bool IsHandshaked { get; protected set; }
+        public bool IsHandshaked { get { return RemoteUDPEndPoint != null; } }
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
@@ -122,7 +122,11 @@ namespace AW2.Net.Connections
                 if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
                 return _remoteUDPEndPoint;
             }
-            set { _remoteUDPEndPoint = value; }
+            set
+            {
+                _remoteUDPEndPoint = value;
+                Log.Write("!!! " + Name + " got remote UDP end point " + value);
+            }
         }
 
         /// <summary>
@@ -392,11 +396,7 @@ namespace AW2.Net.Connections
             // HACK: All we want is, on the game server, to read the sender's (which is a game client)
             // UDP end point from the message. We happen to know that PingRequestMessage is sent via UDP.
             if (!IsHandshaked && mess is PingRequestMessage)
-            {
-                RemoteUDPEndPoint = new IPEndPoint(RemoteTCPEndPoint.Address, remoteEndPoint.Port);
-                IsHandshaked = true;
-                Log.Write("!!! UDP handshake completed, end point is " + RemoteUDPEndPoint);
-            }
+                RemoteUDPEndPoint = remoteEndPoint;
             return false;
         }
 

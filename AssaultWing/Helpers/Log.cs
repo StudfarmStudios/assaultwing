@@ -55,9 +55,6 @@ namespace AW2.Helpers
             Write("Log opened. The date and time is " + DateTime.Now.ToString("o"));
         }
 
-        /// <summary>
-        /// Writes a LogType and info/error message string to the Log file
-        /// </summary>
         public static void Write(string message)
         {
 #if DEBUG
@@ -80,6 +77,11 @@ namespace AW2.Helpers
                 Console.WriteLine(s);
 #endif
             }
+        }
+
+        public static void Write(string message, Exception e)
+        {
+            Log.Write(string.Format("{0}:\n{1}\n{2}\n{1}", message, new string('-', 40), e));
         }
 
         /// <summary>

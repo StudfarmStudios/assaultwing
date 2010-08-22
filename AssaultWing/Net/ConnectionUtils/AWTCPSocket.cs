@@ -16,7 +16,10 @@ namespace AW2.Net.ConnectionUtils
 
         public override void Dispose(bool error)
         {
-            if (!error) _socket.Shutdown(SocketShutdown.Both);
+            if (!error)
+            {
+                if (_socket.Connected) _socket.Shutdown(SocketShutdown.Both);
+            }
             base.Dispose(error);
         }
 

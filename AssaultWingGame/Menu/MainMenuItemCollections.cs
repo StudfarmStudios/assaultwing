@@ -109,7 +109,7 @@ namespace AW2.Menu
                 AssaultWing.Instance.StopClient();
                 return;
             }
-            Log.Write("Client connected to " + result.Value.RemoteTCPEndPoint);
+            Log.Write("Client connected, remote end points: TCP " + result.Value.RemoteTCPEndPoint + ", UDP " + result.Value.RemoteUDPEndPoint);
 
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip)));
 

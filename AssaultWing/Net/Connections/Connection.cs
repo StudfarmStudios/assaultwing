@@ -395,6 +395,7 @@ namespace AW2.Net.Connections
             {
                 RemoteUDPEndPoint = new IPEndPoint(RemoteTCPEndPoint.Address, remoteEndPoint.Port);
                 IsHandshaked = true;
+                Log.Write("!!! UDP handshake completed, end point is " + RemoteUDPEndPoint);
             }
             return false;
         }

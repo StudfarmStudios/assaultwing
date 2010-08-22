@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using AW2.Net.ConnectionUtils;
 using AW2.Net.Messages;
+using AW2.Helpers;
 
 namespace AW2.Net.Connections
 {

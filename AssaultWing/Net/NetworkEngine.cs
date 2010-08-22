@@ -490,7 +490,7 @@ namespace AW2.Net
             {
                 GameServerName = Environment.MachineName,
                 MaxClients = 16,
-                TimeoutMinutes = 30,
+                TimeoutMinutes = 5,
                 TCPPort = TCP_CONNECTION_PORT,
                 LocalEndPoint = new AWEndPoint(new IPEndPoint(localIPAddress, UDPSocket.LocalEndPoint.Port), TCP_CONNECTION_PORT)
             };

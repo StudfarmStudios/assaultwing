@@ -567,6 +567,7 @@ namespace AW2.Game
             Message msg = new Message(message);
             msg.TextColor = messageColor;
             Messages.Add(msg);
+            AssaultWing.Instance.SoundEngine.PlaySound("PlayerMessage");
 
             // Throw away very old messages.
             if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)

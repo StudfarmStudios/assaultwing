@@ -669,6 +669,7 @@ namespace AW2
             if (!AllowDialogs) return;
             _overlayDialog.Data = dialogData;
             GameState = GameState.OverlayDialog;
+            SoundEngine.PlaySound("MenuPopup");
         }
 
         /// <summary>

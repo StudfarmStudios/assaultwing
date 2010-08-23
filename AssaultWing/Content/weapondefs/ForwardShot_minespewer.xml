@@ -24,8 +24,8 @@
   <!--  <Item type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">madgun</Item> -->
   </upgradeNames>
   <iconName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_mines</iconName>
-  <fireSound type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Cannon</fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
+  <fireSound type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">MineDrop</fireSound>
+  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Once</fireSoundType>
   <shotTypeName type="System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">mine</shotTypeName>
   <shotSpeed type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">60</shotSpeed>
   <loadTime type="System.Single, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">6</loadTime>

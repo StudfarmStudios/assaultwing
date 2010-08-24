@@ -363,6 +363,11 @@ namespace AW2.Game
         public TimeSpan TotalTime { get; set; }
 
         /// <summary>
+        /// Current frame number, or the number of frames elapsed since gameplay started in the arena.
+        /// </summary>
+        public int FrameNumber { get; set; }
+
+        /// <summary>
         /// Layers of the arena.
         /// </summary>
         public List<ArenaLayer> Layers { get { return layers; } }
@@ -418,9 +423,8 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Creates an uninitialised arena.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Arena()
         {
             _name = "dummyarena";
@@ -492,8 +496,19 @@ namespace AW2.Game
         public void Reset()
         {
             TotalTime = TimeSpan.Zero;
+            FrameNumber = 0;
             InitializeCollisionAreas();
             InitializeGobs();
+        }
+
+        /// <summary>
+        /// Moves the given gob and performs physical collisions in order to
+        /// maintain overlap consistency as specified in <b>CollisionArea.CannotOverlap</b>
+        /// of the moving gob's physical collision area.
+        /// </summary>
+        public void Move(Gob gob, int frameCount, bool allowSideEffects)
+        {
+            Move(gob, AssaultWing.Instance.TargetElapsedTime.Multiply(frameCount), allowSideEffects);
         }
 
         /// <summary>
@@ -505,6 +520,7 @@ namespace AW2.Game
         /// <param name="moveTime">Duration of the move</param>
         /// <param name="allowSideEffects">Should effects other than changing the gob's
         /// position and movement be allowed.</param>
+        [Obsolete("Use Move(Gob, int, bool) instead")]
         public void Move(Gob gob, TimeSpan moveTime, bool allowSideEffects)
         {
             if (!gob.Movable) return;

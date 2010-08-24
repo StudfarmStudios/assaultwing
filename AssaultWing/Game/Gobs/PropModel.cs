@@ -77,9 +77,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 propModelName = new CanonicalString(reader.ReadInt32());

@@ -216,13 +216,13 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, reducedMode);
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
             // HACK to reduce network traffic
             var reducedMode = (mode & AW2.Net.SerializationModeFlags.ConstantData) != 0
                 ? AW2.Net.SerializationModeFlags.All
                 : AW2.Net.SerializationModeFlags.None;
-            base.Deserialize(reader, reducedMode, messageAge);
+            base.Deserialize(reader, reducedMode, framesAgo);
         }
 
         public WallIndexMap CreateIndexMap()

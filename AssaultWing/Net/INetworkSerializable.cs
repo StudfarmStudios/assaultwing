@@ -24,7 +24,7 @@ namespace AW2.Net
         /// before performing their own deserialisation.
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        /// <param name="messageAge">How long time ago was the data current.</param>
-        void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge);
+        /// <param name="framesAgo">How long time ago was the data current.</param>
+        void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo);
     }
 }

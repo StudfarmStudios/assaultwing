@@ -939,7 +939,12 @@ namespace AW2
             }
             UpdateDebugKeys();
             GameTime = gameTime;
-            if (_logicEngine.Enabled) DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
+            if (_logicEngine.Enabled)
+            {
+                if (gameTime.ElapsedGameTime != TargetElapsedTime) throw new ApplicationException("Timestep expected " + TargetElapsedTime.TotalSeconds + " s but was " + gameTime.ElapsedGameTime + " s");
+                DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
+                DataEngine.Arena.FrameNumber++;
+            }
 
             base.Update(GameTime);
             if (_logicEngine.Enabled)

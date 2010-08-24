@@ -147,14 +147,14 @@ namespace AW2.Net.MessageHandling
             }
             else if (spectator.IsRemote)
             {
-                mess.Read(spectator, SerializationModeFlags.ConstantData, TimeSpan.Zero);
+                mess.Read(spectator, SerializationModeFlags.ConstantData, 0);
             }
             else
             {
                 // Be careful not to overwrite our most recent name and equipment choices
                 // with something older from the server.
                 var tempPlayer = GetTempPlayer();
-                mess.Read(tempPlayer, SerializationModeFlags.ConstantData, TimeSpan.Zero);
+                mess.Read(tempPlayer, SerializationModeFlags.ConstantData, 0);
                 if (spectator is Player) ((Player)spectator).PlayerColor = tempPlayer.PlayerColor;
             }
         }
@@ -206,10 +206,10 @@ namespace AW2.Net.MessageHandling
 
         private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)
         {
-            var messageAge = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
+            var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
             var player = AssaultWing.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null) throw new NetworkException("Update for unknown player ID " + mess.PlayerID);
-            mess.Read(player, SerializationModeFlags.VaryingData, messageAge);
+            mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
         }
 
         private static void HandleGobDamageMessage(GobDamageMessage mess)
@@ -266,7 +266,7 @@ namespace AW2.Net.MessageHandling
                 {
                     // Be careful not to overwrite the player's color with something silly from the client.
                     var oldColor = player is Player ? (Color?)((Player)player).PlayerColor : null;
-                    mess.Read(player, SerializationModeFlags.ConstantData, TimeSpan.Zero);
+                    mess.Read(player, SerializationModeFlags.ConstantData, 0);
                     if (oldColor.HasValue) ((Player)player).PlayerColor = oldColor.Value;
                 }
             }
@@ -288,7 +288,7 @@ namespace AW2.Net.MessageHandling
         private static Player CreateAndAddNewPlayer(PlayerSettingsRequest mess)
         {
             var newPlayer = new Player("<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
-            mess.Read(newPlayer, SerializationModeFlags.ConstantData, TimeSpan.Zero);
+            mess.Read(newPlayer, SerializationModeFlags.ConstantData, 0);
             AssaultWing.Instance.DataEngine.Spectators.Add(newPlayer);
             return newPlayer;
         }

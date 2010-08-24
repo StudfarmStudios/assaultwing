@@ -243,7 +243,7 @@ namespace AW2.Game
             }
         }
 
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
@@ -252,7 +252,7 @@ namespace AW2.Game
                 _cannotOverlap = (CollisionAreaType)reader.ReadInt32();
                 _name = reader.ReadString(32);
                 _collisionMaterial = (CollisionMaterialType)reader.ReadByte();
-                _area.Deserialize(reader, SerializationModeFlags.All, messageAge);
+                _area.Deserialize(reader, SerializationModeFlags.All, framesAgo);
             }
         }
     }

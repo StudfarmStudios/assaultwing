@@ -227,7 +227,7 @@ namespace AW2.Helpers.Geometric
         /// <summary>
         /// Deserialises the object from a binary writer.
         /// </summary>
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {

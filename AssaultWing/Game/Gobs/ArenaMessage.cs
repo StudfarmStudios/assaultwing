@@ -136,9 +136,9 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 int canonical = reader.ReadInt32();

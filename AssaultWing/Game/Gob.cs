@@ -749,7 +749,7 @@ namespace AW2.Game
         /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
-            Arena.Move(this, AssaultWing.Instance.GameTime.ElapsedGameTime, true);
+            Arena.Move(this, 1, true);
         }
 
         /// <summary>
@@ -964,7 +964,7 @@ namespace AW2.Game
         /// before performing their own deserialisation.
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
@@ -978,7 +978,7 @@ namespace AW2.Game
             {
                 var newPos = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
                 var newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
-                ExtrapolatePosAndMove(newPos, newMove, messageAge);
+                ExtrapolatePosAndMove(newPos, newMove, framesAgo);
                 byte rotationAsByte = reader.ReadByte();
                 rotation = rotationAsByte * MathHelper.TwoPi / 256;
             }
@@ -988,6 +988,18 @@ namespace AW2.Game
         /// Sets the gob's position and movement by computing it from a known position
         /// and movement some time ago.
         /// </summary>
+        public void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, int frameCount)
+        {
+            pos = oldPos;
+            move = oldMove;
+            if (Arena != null) Arena.Move(this, frameCount, false);
+        }
+
+        /// <summary>
+        /// Sets the gob's position and movement by computing it from a known position
+        /// and movement some time ago.
+        /// </summary>
+        [Obsolete("Use ExtrapolatePosAndMove(Vector2, Vector2, int) instead")]
         public void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, TimeSpan gameTimeAgo)
         {
             pos = oldPos;

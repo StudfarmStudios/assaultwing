@@ -47,7 +47,7 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
@@ -238,14 +238,14 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 Shooter.SetId(reader.ReadInt32());
                 ShooterBoneIndex = reader.ReadInt32();
-                Target.Deserialize(reader, mode, messageAge);
+                Target.Deserialize(reader, mode, framesAgo);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {

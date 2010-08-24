@@ -338,14 +338,19 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Returns the amount of game time elapsed since the message was sent.
-        /// This takes into account the shift in game time between different game instances.
+        /// Returns the number of frames elapsed since the message was sent.
         /// </summary>
-        public TimeSpan GetMessageAge(GameplayMessage message)
+        public int GetMessageAge(GameplayMessage message)
         {
-            return AssaultWing.Instance.DataEngine.ArenaTotalTime
-                - message.TotalGameTime
-                - GetConnection(message.ConnectionID).PingInfo.RemoteGameTimeOffset;
+            return AssaultWing.Instance.DataEngine.ArenaFrameCount - message.FrameNumber;
+        }
+
+        /// <summary>
+        /// Returns the total game time at which the message was current.
+        /// </summary>
+        public TimeSpan GetMessageGameTime(GameplayMessage message)
+        {
+            return AssaultWing.Instance.TargetElapsedTime.Multiply(message.FrameNumber);
         }
 
         #endregion Public interface

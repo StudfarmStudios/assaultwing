@@ -415,9 +415,9 @@ namespace AW2.Game.Gobs
             ExtraDevice.Serialize(writer, mode);
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 var typeName = (CanonicalString)reader.ReadInt32();
@@ -431,9 +431,9 @@ namespace AW2.Game.Gobs
                 if (thrustForce > 0)
                     Thrust(thrustForce, AssaultWing.Instance.GameTime.ElapsedGameTime, Rotation);
             }
-            if (Weapon1 != null) Weapon1.Deserialize(reader, mode, messageAge);
-            if (Weapon2 != null) Weapon2.Deserialize(reader, mode, messageAge);
-            if (ExtraDevice != null) ExtraDevice.Deserialize(reader, mode, messageAge);
+            if (Weapon1 != null) Weapon1.Deserialize(reader, mode, framesAgo);
+            if (Weapon2 != null) Weapon2.Deserialize(reader, mode, framesAgo);
+            if (ExtraDevice != null) ExtraDevice.Deserialize(reader, mode, framesAgo);
         }
 
         #endregion Methods related to serialisation

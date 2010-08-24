@@ -107,7 +107,7 @@ namespace AW2.Game
             }
         }
 
-        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {

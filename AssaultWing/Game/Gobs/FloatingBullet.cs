@@ -97,16 +97,17 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
                 bool movementChanged = reader.ReadBoolean();
                 if (movementChanged)
                 {
                     float thrustSeconds = reader.ReadHalf();
-                    _thrustEndGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(thrustSeconds) - messageAge;
+                    _thrustEndGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(thrustSeconds)
+                        - AssaultWing.Instance.TargetElapsedTime.Multiply(framesAgo);
                     _thrustForce = reader.ReadHalfVector2();
                 }
             }

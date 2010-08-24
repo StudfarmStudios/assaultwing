@@ -147,11 +147,11 @@ namespace AW2.Net
         /// <param name="serializable">The object to adopt the serialised state.</param>
         /// <param name="mode">What kind of state we are deserialising. Must match 
         /// the mode the data was written in.</param>
-        /// <param name="messageAge">How long ago was the message current.</param>
-        public void Read(INetworkSerializable serializable, SerializationModeFlags mode, TimeSpan messageAge)
+        /// <param name="framesAgo">How long ago was the message current.</param>
+        public void Read(INetworkSerializable serializable, SerializationModeFlags mode, int framesAgo)
         {
             SetDataModeToRead();
-            serializable.Deserialize(_reader, mode, messageAge);
+            serializable.Deserialize(_reader, mode, framesAgo);
 
             // The reader will be closed when the message goes to garbage collection.
             // For now, we leave it open for successive calls to Read().

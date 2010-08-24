@@ -66,7 +66,7 @@ namespace AW2.UI
                 SetRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
             var playerPlayer = player as Player;
             if (playerPlayer != null && playerPlayer.Ship != null)
-                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageAge(mess));
+                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageGameTime(mess));
         }
 
         private static void SetRemoteControlState(RemoteControl control, ControlState state)

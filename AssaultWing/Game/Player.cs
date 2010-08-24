@@ -614,9 +614,9 @@ namespace AW2.Game
             }
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 ShipName = new CanonicalString(reader.ReadInt32());
@@ -633,7 +633,7 @@ namespace AW2.Game
                 PostprocessEffectNames.Clear();
                 for (int i = 0; i < effectNameCount; ++i)
                     PostprocessEffectNames.Add(new CanonicalString(reader.ReadInt32()));
-                BonusActions.Deserialize(reader, mode, messageAge);
+                BonusActions.Deserialize(reader, mode, framesAgo);
             }
         }
 

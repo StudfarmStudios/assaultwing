@@ -11,10 +11,9 @@ namespace AW2.Net
     public abstract class GameplayMessage : StreamMessage
     {
         /// <summary>
-        /// Total elapsed game time at the point in game time the message is 
-        /// current, measured at the game instance who sent the message.
+        /// The game frame at which the message was current.
         /// </summary>
-        public TimeSpan TotalGameTime { get; set; }
+        public int FrameNumber { get; set; }
 
         /// <summary>
         /// Creates a gameplay message, initialising its timestamp to the
@@ -22,25 +21,17 @@ namespace AW2.Net
         /// </summary>
         public GameplayMessage()
         {
-            TotalGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+            FrameNumber = AssaultWing.Instance.DataEngine.ArenaFrameCount;
         }
 
-        /// <summary>
-        /// Writes the body of the message in serialised form.
-        /// </summary>
-        /// <param name="writer">Writer of serialised data.</param>
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            writer.Write((long)TotalGameTime.Ticks);
+            writer.Write((int)FrameNumber);
         }
 
-        /// <summary>
-        /// Reads the body of the message from serialised form.
-        /// </summary>
-        /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            TotalGameTime = new TimeSpan(reader.ReadInt64());
+            FrameNumber = reader.ReadInt32();
         }
     }
 }

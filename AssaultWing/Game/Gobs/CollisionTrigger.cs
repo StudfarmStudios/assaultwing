@@ -108,9 +108,9 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Deserialises the gob from a binary reader.
         /// </summary>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 actionGobName = reader.ReadString(32);

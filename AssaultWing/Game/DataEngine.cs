@@ -69,6 +69,7 @@ namespace AW2.Game
         public Arena Arena { get; private set; }
 
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
+        public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
 
         #endregion Properties
 
@@ -303,12 +304,12 @@ namespace AW2.Game
                     GobUpdateMessage message = null;
                     while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobUpdateMessage>()) != null)
                     {
-                        var messageAge = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
+                        var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
                         message.ReadGobs(gobId =>
                         {
                             var theGob = Arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                             return theGob == null || theGob.IsDisposed ? null : theGob;
-                        }, SerializationModeFlags.VaryingData, messageAge);
+                        }, SerializationModeFlags.VaryingData, framesAgo);
                     }
                 }
             }
@@ -360,10 +361,10 @@ namespace AW2.Game
 #endif
         }
 
-        public void ProcessGobCreationMessage(GobCreationMessage message, TimeSpan messageAge)
+        public void ProcessGobCreationMessage(GobCreationMessage message, int framesAgo)
         {
             Gob gob = (Gob)Clonable.Instantiate(message.GobTypeName);
-            message.Read(gob, SerializationModeFlags.All, messageAge);
+            message.Read(gob, SerializationModeFlags.All, framesAgo);
             if (message.CreateToNextArena)
             {
                 gob.Layer = _preparedArena.Layers[message.LayerIndex];

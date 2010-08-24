@@ -70,7 +70,7 @@ namespace AW2.Game.GobUtils
             }
         }
 
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, TimeSpan messageAge)
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -80,7 +80,7 @@ namespace AW2.Game.GobUtils
                 {
                     var typeID = reader.ReadInt32();
                     var item = GameAction.CreateGameAction(typeID);
-                    item.Deserialize(reader, SerializationModeFlags.All, messageAge);
+                    item.Deserialize(reader, SerializationModeFlags.All, framesAgo);
                     item.Player = _owner;
                     currentItems.Add(item);
                 }

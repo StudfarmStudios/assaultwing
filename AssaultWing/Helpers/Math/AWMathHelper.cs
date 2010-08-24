@@ -477,9 +477,11 @@ namespace AW2.Helpers
                 v.Y * cosRadians + v.X * sinRadians);
         }
 
-        /// <summary>
-        /// Divides the <see cref="TimeSpan"/> by an integer.
-        /// </summary>
+        public static TimeSpan Multiply(this TimeSpan time, int multiplier)
+        {
+            return TimeSpan.FromTicks(time.Ticks * multiplier);
+        }
+
         public static TimeSpan Divide(this TimeSpan time, int divisor)
         {
             return TimeSpan.FromTicks(time.Ticks / divisor);

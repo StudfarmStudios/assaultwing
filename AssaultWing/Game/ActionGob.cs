@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using AW2.Helpers;
 
 namespace AW2.Game
@@ -21,17 +18,13 @@ namespace AW2.Game
         public string ActionGobName { get { return actionGobName; } }
 
         /// <summary>
-        /// Creates an uninitialised ActionGob.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public ActionGob()
         {
             actionGobName = "dummyactiongob";
         }
 
-        /// <summary>
-        /// Creates a gob of the specified gob type.
-        /// </summary>
         public ActionGob(CanonicalString typeName)
             : base(typeName)
         {
@@ -42,11 +35,6 @@ namespace AW2.Game
         /// </summary>
         public abstract void Act();
 
-        #region Methods related to serialisation
-
-        /// <summary>
-        /// Serialises the gob to a binary writer.
-        /// </summary>
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
@@ -56,18 +44,13 @@ namespace AW2.Game
             }
         }
 
-        /// <summary>
-        /// Deserialises the gob from a binary reader.
-        /// </summary>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, TimeSpan messageAge)
+        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
         {
-            base.Deserialize(reader, mode, messageAge);
+            base.Deserialize(reader, mode, framesAgo);
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 actionGobName = reader.ReadString(32);
             }
         }
-
-        #endregion Methods related to serialisation
     }
 }

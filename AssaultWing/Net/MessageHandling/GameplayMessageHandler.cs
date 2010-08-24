@@ -7,8 +7,10 @@ namespace AW2.Net.MessageHandling
     /// </summary>
     public class GameplayMessageHandler<T> : IMessageHandler where T : GameplayMessage
     {
+        public delegate void GameplayMessageAction(T message, int framesAgo);
+
         private bool OnlyOneMessage { get; set; }
-        private Action<T, TimeSpan> Action { get; set; }
+        private GameplayMessageAction Action { get; set; }
         private SourceType Source { get; set; }
 
         public override bool Disposed { get; protected set; }
@@ -19,7 +21,7 @@ namespace AW2.Net.MessageHandling
         /// <param name="onlyOneMessage">Should the handler disactive itself after receiving one message.</param>
         /// <param name="source">The type of source to receive messages from.</param>
         /// <param name="action">What to do for each received message, given the age of the message.</param>
-        public GameplayMessageHandler(bool onlyOneMessage, SourceType source, Action<T, TimeSpan> action)
+        public GameplayMessageHandler(bool onlyOneMessage, SourceType source, GameplayMessageAction action)
         {
             OnlyOneMessage = onlyOneMessage;
             Source = source;
@@ -40,9 +42,8 @@ namespace AW2.Net.MessageHandling
             {
                 while ((message = connection.Messages.TryDequeue<T>()) != null)
                 {
-                    var messageAge = AssaultWing.Instance.DataEngine.ArenaTotalTime
-                        - (message.TotalGameTime + connection.PingInfo.RemoteGameTimeOffset);
-                    Action(message, messageAge);
+                    var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
+                    Action(message, framesAgo);
                     if (OnlyOneMessage)
                     {
                         Disposed = true;

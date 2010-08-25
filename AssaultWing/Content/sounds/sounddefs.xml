@@ -1,0 +1,33 @@
+<!-- 
+	AW sound definitions 
+	
+	Supported tags: name, volume, loop
+-->
+
+<group name="sfx">
+	<sound name="bad"/>
+	<sound name="bazooka"/>
+	<sound name="blink"/>
+	<sound name="bonusCollection"/>
+	<sound name="collision"/>
+	<sound name="dropMines"/>
+	<sound name="dummySound"/>
+	<sound name="engine" loop="true"/>
+	<sound name="escPause"/>
+	<sound name="explosion"/>
+	<sound name="good"/>
+	<sound name="hisss"/>
+	<sound name="homeBaseLoop" loop="true"/>
+	<sound name="lightningWeapon"/>
+	<sound name="menuBrowseItem"/>
+	<sound name="menuChangeEnd"/>
+	<sound name="menuChangeItem"/>
+	<sound name="menuChangeStart"/>  
+	<sound name="missile"/>
+  <sound name="missileHit"/>
+	<sound name="newCraft"/>
+	<sound name="playerMessage"/>
+  <sound name="talon"/>
+	<sound name="weaponFail"/>
+	<sound name="venomSpray"/>
+</group>

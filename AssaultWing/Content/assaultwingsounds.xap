@@ -816,7 +816,7 @@ Wave Bank
     Wave
     {
         Name = blink01;
-        File = sounds\blink01.wav;
+        File = sounds\talon01.wav;
         Build Settings Last Modified Low = 2133141775;
         Build Settings Last Modified High = 30081060;
 
@@ -839,7 +839,7 @@ Wave Bank
     Wave
     {
         Name = blink02;
-        File = sounds\blink02.wav;
+        File = sounds\talon02.wav;
         Build Settings Last Modified Low = 2133141775;
         Build Settings Last Modified High = 30081060;
 
@@ -862,7 +862,7 @@ Wave Bank
     Wave
     {
         Name = blink03;
-        File = sounds\blink03.wav;
+        File = sounds\talon03.wav;
         Build Settings Last Modified Low = 2133151776;
         Build Settings Last Modified High = 30081060;
 
@@ -885,7 +885,7 @@ Wave Bank
     Wave
     {
         Name = blink04;
-        File = sounds\blink04.wav;
+        File = sounds\talon04.wav;
         Build Settings Last Modified Low = 2133151776;
         Build Settings Last Modified High = 30081060;
 
@@ -908,7 +908,7 @@ Wave Bank
     Wave
     {
         Name = blink05;
-        File = sounds\blink05.wav;
+        File = sounds\talon05.wav;
         Build Settings Last Modified Low = 2133151776;
         Build Settings Last Modified High = 30081060;
 
@@ -931,7 +931,7 @@ Wave Bank
     Wave
     {
         Name = blink06;
-        File = sounds\blink06.wav;
+        File = sounds\talon06.wav;
         Build Settings Last Modified Low = 2133161776;
         Build Settings Last Modified High = 30081060;
 
@@ -954,7 +954,7 @@ Wave Bank
     Wave
     {
         Name = blink07;
-        File = sounds\blink07.wav;
+        File = sounds\talon07.wav;
         Build Settings Last Modified Low = 2133161776;
         Build Settings Last Modified High = 30081060;
 
@@ -977,7 +977,7 @@ Wave Bank
     Wave
     {
         Name = blink08;
-        File = sounds\blink08.wav;
+        File = sounds\talon08.wav;
         Build Settings Last Modified Low = 2133161776;
         Build Settings Last Modified High = 30081060;
 
@@ -1000,7 +1000,7 @@ Wave Bank
     Wave
     {
         Name = blink09;
-        File = sounds\blink09.wav;
+        File = sounds\talon09.wav;
         Build Settings Last Modified Low = 2133171777;
         Build Settings Last Modified High = 30081060;
 
@@ -1023,7 +1023,7 @@ Wave Bank
     Wave
     {
         Name = blink10;
-        File = sounds\blink10.wav;
+        File = sounds\talon10.wav;
         Build Settings Last Modified Low = 2133171777;
         Build Settings Last Modified High = 30081060;
 
@@ -1092,7 +1092,7 @@ Wave Bank
     Wave
     {
         Name = collision03;
-        File = sounds\collision03.wav;
+        File = sounds\shipcollision01.wav;
         Build Settings Last Modified Low = 2133181778;
         Build Settings Last Modified High = 30081060;
 
@@ -1115,7 +1115,7 @@ Wave Bank
     Wave
     {
         Name = collision04;
-        File = sounds\collision04.wav;
+        File = sounds\shipcollision02.wav;
         Build Settings Last Modified Low = 2133191778;
         Build Settings Last Modified High = 30081060;
 
@@ -1138,7 +1138,7 @@ Wave Bank
     Wave
     {
         Name = collision05;
-        File = sounds\collision05.wav;
+        File = sounds\shipcollision03.wav;
         Build Settings Last Modified Low = 2133191778;
         Build Settings Last Modified High = 30081060;
 
@@ -1253,7 +1253,7 @@ Wave Bank
     Wave
     {
         Name = joku01;
-        File = sounds\joku01.wav;
+        File = sounds\bonusCollection01.wav;
         Build Settings Last Modified Low = 2133211779;
         Build Settings Last Modified High = 30081060;
 
@@ -1276,7 +1276,7 @@ Wave Bank
     Wave
     {
         Name = joku02;
-        File = sounds\joku02.wav;
+        File = sounds\bonusCollection02.wav;
         Build Settings Last Modified Low = 2133221780;
         Build Settings Last Modified High = 30081060;
 
@@ -1437,7 +1437,7 @@ Wave Bank
     Wave
     {
         Name = blink;
-        File = sounds\blink11.wav;
+        File = sounds\blink01.wav;
         Build Settings Last Modified Low = 2133251782;
         Build Settings Last Modified High = 30081060;
 
@@ -1460,7 +1460,7 @@ Wave Bank
     Wave
     {
         Name = blink2;
-        File = sounds\blink12.wav;
+        File = sounds\blink02.wav;
         Build Settings Last Modified Low = 2133261782;
         Build Settings Last Modified High = 30081060;
 
@@ -5248,7 +5248,7 @@ Sound Bank
 
     Cue
     {
-        Name = Docking;
+        Name = HomeBaseLoop;
 
         Variation
         {
@@ -5279,7 +5279,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = joku02;
+            Name = BonusCollection02;
             Index = 39;
             Weight Min = 0;
             Weight Max = 255;
@@ -5287,7 +5287,7 @@ Sound Bank
 
         Sound Entry
         {
-            Name = joku01;
+            Name = BonusCollection01;
             Index = 38;
             Weight Min = 0;
             Weight Max = 255;
@@ -5296,7 +5296,7 @@ Sound Bank
 
     Cue
     {
-        Name = TalonSwoop;
+        Name = Talon;
 
         Variation
         {
@@ -5388,7 +5388,7 @@ Sound Bank
 
     Cue
     {
-        Name = RocketExplosion;
+        Name = MissileHit;
 
         Variation
         {
@@ -5424,7 +5424,7 @@ Sound Bank
 
     Cue
     {
-        Name = VenomSpit;
+        Name = VenomSpray;
 
         Variation
         {
@@ -5561,7 +5561,7 @@ Sound Bank
 
     Cue
     {
-        Name = ShipBirth;
+        Name = NewCraft;
 
         Variation
         {
@@ -5653,7 +5653,7 @@ Sound Bank
 
     Cue
     {
-        Name = Thruster;
+        Name = Engine;
 
         Variation
         {
@@ -5673,7 +5673,7 @@ Sound Bank
 
     Cue
     {
-        Name = MineDrop;
+        Name = DropMines;
 
         Variation
         {
@@ -5713,7 +5713,7 @@ Sound Bank
 
     Cue
     {
-        Name = MenuPopup;
+        Name = EscPause;
 
         Variation
         {

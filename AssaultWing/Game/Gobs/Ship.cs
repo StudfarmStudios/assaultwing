@@ -17,8 +17,8 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Ship : Gob
     {
-        private const string SHIP_BIRTH_SOUND = "ShipBirth";
-        private const string SHIP_THRUST_SOUND = "Thruster";
+        private const string SHIP_BIRTH_SOUND = "NewCraft";
+        private const string SHIP_THRUST_SOUND = "Engine";
 
         #region Ship fields related to flying
 
@@ -40,7 +40,7 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _maxSpeed;
 
-        private AWSound _thrusterSound;
+        private SoundInstance _thrusterSound;
 
         #endregion Ship fields related to flying
 
@@ -330,7 +330,7 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _isActivated = true;
-            _thrusterSound = new AWSound(SHIP_THRUST_SOUND);
+            _thrusterSound = AssaultWing.Instance.SoundEngine.CreateSound(SHIP_THRUST_SOUND);
 
             // Deferred initialization of ship devices
             if (Weapon1 == null && Weapon1Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
@@ -629,8 +629,14 @@ namespace AW2.Game.Gobs
         protected override void SwitchEngineFlashAndBang(bool active)
         {
             base.SwitchEngineFlashAndBang(active);
-            if (active) _thrusterSound.EnsureIsPlaying();
-            else _thrusterSound.EnsureIsStopped(Microsoft.Xna.Framework.Audio.AudioStopOptions.AsAuthored);
+            if (active) 
+            {
+                _thrusterSound.EnsureIsPlaying();
+            }            
+            else 
+            {
+                _thrusterSound.Stop();
+            }
         }
 
         private void UpdateRoll()

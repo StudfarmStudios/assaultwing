@@ -323,6 +323,11 @@
     <Compile Include="Sound\BackgroundMusic.cs" />
     <Compile Include="Sound\AWMusic.cs" />
     <Compile Include="Sound\SoundEngine.cs" />
+    <Compile Include="Sound\SoundEngineXACT.cs" />
+    <Compile Include="Sound\SoundEngineXNA.cs" />
+    <Compile Include="Sound\SoundInstance.cs" />
+    <Compile Include="Sound\SoundInstanceXACT.cs" />
+    <Compile Include="Sound\SoundInstanceXNA.cs" />
     <Compile Include="UI\Control.cs" />
     <Compile Include="UI\Mouse\MouseButton.cs" />
     <Compile Include="UI\Mouse\MouseButtons.cs" />

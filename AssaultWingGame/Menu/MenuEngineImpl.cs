@@ -9,6 +9,7 @@ using AW2.Graphics;
 using AW2.UI;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
+using AW2.Sound;
 
 namespace AW2.Menu
 {
@@ -40,7 +41,7 @@ namespace AW2.Menu
         private Vector2 _view; // center of menu view in menu system coordinates
         private Vector2 _viewTarget;
         private MovementCurve _viewCurve;
-        private Cue _menuChangeCue;
+        private SoundInstance _menuChangeSound;
         private int _viewWidth, _viewHeight; // how many pixels to show scaled down to the screen
         private int _screenWidth, _screenHeight; // last known dimensions of client bounds
         private TimeSpan _cursorFadeStartTime;
@@ -222,13 +223,12 @@ namespace AW2.Menu
             _viewCurve.SetTarget(_viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, duration,
                 MovementCurve.Curvature.FastSlow);
 
-            if (_menuChangeCue != null)
+            if (_menuChangeSound != null)
             {
-                _menuChangeCue.Stop(AudioStopOptions.Immediate);
-                _menuChangeCue.Dispose();
+                _menuChangeSound.Stop();
+                _menuChangeSound.Dispose();
             }
-            _menuChangeCue = AssaultWing.Instance.SoundEngine.GetCue("MenuChangeStart");
-            if (_menuChangeCue != null) _menuChangeCue.Play();
+            _menuChangeSound = AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeStart");
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             _activeComponentSoundPlayedOnce = _activeComponentActivatedOnce = false;
@@ -280,7 +280,7 @@ namespace AW2.Menu
             if (!_activeComponentSoundPlayedOnce && Vector2.Distance(_view, _viewTarget) < 1)
             {
                 _activeComponentSoundPlayedOnce = true;
-                if (_menuChangeCue != null) _menuChangeCue.Stop(AudioStopOptions.AsAuthored);
+                if (_menuChangeSound != null) _menuChangeSound.Stop();
                 AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeEnd");
             }
 

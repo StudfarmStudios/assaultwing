@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using AW2.Sound;
 
 namespace AW2.Game.Gobs
 {
@@ -92,6 +93,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             AssaultWing.Instance.SoundEngine.PlaySound(_sound.ToString());
+
             CreateParticleEngines();
             _flowEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_flowTime);
             Arena.MakeHole(Pos, _impactHoleRadius);

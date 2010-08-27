@@ -84,7 +84,21 @@ namespace AW2.Graphics
                 else if (type == typeof(Model)) assetPath = Paths.MODELS;
                 else if (type == typeof(SpriteFont)) assetPath = Paths.FONTS;
                 else if (type == typeof(Effect)) assetPath = Paths.SHADERS;
-                else if (type == typeof(Song) || type == typeof(SoundEffect)) assetPath = Paths.MUSIC;
+                else if (type == typeof(Song) || type == typeof(SoundEffect))
+                {
+                    // Hack!
+                    // Everything which ends with 2 digits + extension is a sound
+                    char[] chars = assetName.ToCharArray(assetName.Length - 2, 2);
+
+                    if (Char.IsNumber(chars[0]) && Char.IsNumber(chars[1]))
+                    {
+                        assetPath = Paths.SOUNDS;
+                    }
+                    else
+                    {
+                        assetPath = Paths.MUSIC;
+                    }
+                }
                 else if (type == typeof(Video)) assetPath = Paths.VIDEO;
                 else throw new ArgumentException("Cannot load content of unexpected type " + type.Name);
                 assetFullName = Path.Combine(assetPath, assetName);

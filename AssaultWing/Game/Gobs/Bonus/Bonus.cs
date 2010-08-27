@@ -88,7 +88,7 @@ namespace AW2.Game.Gobs.Bonus
             {
                 if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
                     DoBonusAction(theirArea.Owner.Owner);
-                AssaultWing.Instance.SoundEngine.PlaySound("BonusCollection");
+                AssaultWing.Instance.SoundEngine.PlaySound("bonusCollection");
                 Die(new DeathCause());
             }
         }

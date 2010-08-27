@@ -36,7 +36,7 @@ namespace AW2.Game.Gobs
         private float _weapon2ChargeSpeed;
 
         private TimeSpan _lastDockSoundTime;
-        private AWSound _dockSound;
+        private SoundInstance _dockSound;
 
         #endregion Dock fields
 
@@ -62,13 +62,13 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _dockSound = new AWSound("Docking");
+            _dockSound = AssaultWing.Instance.SoundEngine.CreateSound("HomeBaseLoop");
         }
 
         public override void Update()
         {
             base.Update();
-            if (MustBeSilent) _dockSound.EnsureIsStopped(AudioStopOptions.AsAuthored);
+            if (MustBeSilent) _dockSound.Stop();
         }
 
         public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);

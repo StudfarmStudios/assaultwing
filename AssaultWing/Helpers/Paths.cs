@@ -63,7 +63,7 @@ namespace AW2.Helpers
         /// <summary>
         /// Path to sound effects and music.
         /// </summary>
-        public static readonly string SOUNDS = @"Content";
+        public static readonly string SOUNDS = @"Content\sounds";
 
         /// <summary>
         /// Path to videos.

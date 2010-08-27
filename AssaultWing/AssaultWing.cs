@@ -354,7 +354,7 @@ namespace AW2
         {
             _uiEngine = new UIEngineImpl(this);
             _logicEngine = new LogicEngine(this);
-            SoundEngine = new SoundEngine(this);
+            SoundEngine = new SoundEngineXACT(this);
             GraphicsEngine = new GraphicsEngineImpl(this);
             _introEngine = new IntroEngine(this);
             MenuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
@@ -669,7 +669,7 @@ namespace AW2
             if (!AllowDialogs) return;
             _overlayDialog.Data = dialogData;
             GameState = GameState.OverlayDialog;
-            SoundEngine.PlaySound("MenuPopup");
+            SoundEngine.PlaySound("EscPause");
         }
 
         /// <summary>

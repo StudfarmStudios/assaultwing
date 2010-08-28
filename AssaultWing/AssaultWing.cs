@@ -982,6 +982,11 @@ namespace AW2
                         _window.Title += string.Format(" [#{0}: {1} ms lag]",
                             conn.ID,
                             (int)conn.PingInfo.PingTime.TotalMilliseconds);
+
+#if DEBUG
+                if (DataEngine.ArenaFrameCount > 0)
+                    _window.Title += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
+#endif
             }
             base.Draw(GameTime);
         }

@@ -342,7 +342,22 @@ namespace AW2.Net
         /// </summary>
         public int GetMessageAge(GameplayMessage message)
         {
-            return AssaultWing.Instance.DataEngine.ArenaFrameCount - message.FrameNumber;
+            return GetMessageAge(message, GetConnection(message.ConnectionID));
+        }
+
+        /// <summary>
+        /// Returns the number of frames elapsed since the message was sent,
+        /// given the connection the message was sent on.
+        /// </summary>
+        public int GetMessageAge(GameplayMessage message, Connection connection)
+        {
+            // TODO: Assuming the remote and local game instances are frame synchronized,
+            // we can do without the parameter 'connection' as 'remoteGameTimeOffsetFrames' will be zero.
+            if (connection.ID != message.ConnectionID) throw new ArgumentException("Wrong connection");
+            int remoteGameTimeOffsetFrames = (int)(connection.PingInfo.RemoteGameTimeOffset.Ticks / ((AssaultWing.Instance.TargetElapsedTime.Ticks * 3) / 2));
+            var messageAge = AssaultWing.Instance.DataEngine.ArenaFrameCount
+                - (message.FrameNumber + remoteGameTimeOffsetFrames);
+            return messageAge;
         }
 
         /// <summary>

@@ -995,18 +995,6 @@ namespace AW2.Game
             if (Arena != null) Arena.Move(this, frameCount, false);
         }
 
-        /// <summary>
-        /// Sets the gob's position and movement by computing it from a known position
-        /// and movement some time ago.
-        /// </summary>
-        [Obsolete("Use ExtrapolatePosAndMove(Vector2, Vector2, int) instead")]
-        public void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, TimeSpan gameTimeAgo)
-        {
-            pos = oldPos;
-            move = oldMove;
-            if (Arena != null) Arena.Move(this, gameTimeAgo, false);
-        }
-
         public void ForceNetworkUpdate()
         {
             LastNetworkUpdate = Arena.TotalTime - NetworkUpdatePeriod;

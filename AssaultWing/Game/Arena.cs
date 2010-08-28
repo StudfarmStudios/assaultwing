@@ -512,16 +512,9 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Moves the given gob and performs physical collisions in order to
-        /// maintain overlap consistency as specified in <b>CollisionArea.CannotOverlap</b>
-        /// of the moving gob's physical collision area.
+        /// As <see cref="Move(Gob, int, bool)"/> but time delta is specified in game time.
         /// </summary>
-        /// <param name="gob">The gob to move.</param>
-        /// <param name="moveTime">Duration of the move</param>
-        /// <param name="allowSideEffects">Should effects other than changing the gob's
-        /// position and movement be allowed.</param>
-        [Obsolete("Use Move(Gob, int, bool) instead")]
-        public void Move(Gob gob, TimeSpan moveTime, bool allowSideEffects)
+        private void Move(Gob gob, TimeSpan moveTime, bool allowSideEffects)
         {
             if (!gob.Movable) return;
             if (gob.Disabled) return;

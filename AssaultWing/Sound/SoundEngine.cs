@@ -1,20 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 
 namespace AW2.Sound
 {
-
-    /// <summary>
-    /// Sound engine. Works as an extra abstraction for XACT audio engine.
-    /// </summary>
-    public abstract class SoundEngine : GameComponent
+    public abstract class SoundEngine : AWGameComponent
     {
-        /// <summary>
-        /// Creates a sound engine for the given game.
-        /// </summary>
-        public SoundEngine(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public SoundEngine()
         {
         }
 

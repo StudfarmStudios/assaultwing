@@ -42,7 +42,7 @@ namespace AW2.Net
     /// to message handlers that other components register.
     /// </para>
     /// <seealso cref="Message.ConnectionID"/>
-    public class NetworkEngine : GameComponent
+    public class NetworkEngine : AWGameComponent
     {
         #region Type definitions
 
@@ -98,8 +98,7 @@ namespace AW2.Net
 
         #region Constructor
 
-        public NetworkEngine(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public NetworkEngine()
         {
             _gameClientConnections = new List<Connection>();
             _removedClientConnections = new List<Connection>();
@@ -382,7 +381,7 @@ namespace AW2.Net
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             if (ConnectionAttemptListener.Instance.IsListening) ConnectionAttemptListener.Instance.Update();
             HandleNewConnections();
@@ -412,11 +411,11 @@ namespace AW2.Net
 #endif
         }
 
-        protected override void Dispose(bool disposing)
+        public override void Dispose()
         {
             DisposeGameClientConnections();
             DisposeUDPSocket();
-            base.Dispose(disposing);
+            base.Dispose();
         }
 
         #endregion GameComponent methods
@@ -573,7 +572,7 @@ namespace AW2.Net
 
         private void ApplicationExitCallback(object caller, EventArgs args)
         {
-            Dispose(false);
+            Dispose();
         }
 
         private void RemoveDisposedMessageHandlers()

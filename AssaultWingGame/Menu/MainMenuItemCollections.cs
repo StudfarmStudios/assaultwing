@@ -56,7 +56,7 @@ namespace AW2.Menu
             StartItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Quit",
-                Action = component => AssaultWing.Instance.Exit()
+                Action = component => AssaultWingProgram.Instance.Exit()
             });
         }
 

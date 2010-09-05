@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Helpers;
+using Microsoft.Xna.Framework.Input;
+using AW2.Core;
 using AW2.Game;
 using AW2.Graphics;
-using AW2.UI;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Audio;
+using AW2.Helpers;
 using AW2.Sound;
+using AW2.UI;
 
 namespace AW2.Menu
 {
@@ -24,7 +24,7 @@ namespace AW2.Menu
     /// 
     /// The menu system draws some static text on top of the menu view. This includes
     /// an optional help text and an optional progress bar.
-    public class MenuEngineImpl : DrawableGameComponent, IMenuEngine
+    public class MenuEngineImpl : IMenuEngine
     {
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -100,12 +100,7 @@ namespace AW2.Menu
             g_cursorFade.PostLoop = CurveLoopType.Cycle;
         }
 
-        /// <summary>
-        /// Creates a menu system.
-        /// </summary>
-        /// <param name="game"></param>
-        public MenuEngineImpl(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public MenuEngineImpl()
         {
             MenuContent = new MenuContent();
             _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
@@ -125,7 +120,7 @@ namespace AW2.Menu
             _cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
         }
 
-        protected override void LoadContent()
+        public override void LoadContent()
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
             _spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
@@ -149,7 +144,7 @@ namespace AW2.Menu
             base.LoadContent();
         }
 
-        protected override void UnloadContent()
+        public override void UnloadContent()
         {
             if (_spriteBatch != null)
             {
@@ -194,13 +189,13 @@ namespace AW2.Menu
         /// <summary>
         /// Activates the menu system.
         /// </summary>
-        public void Activate()
+        public override void Activate()
         {
             ActivateComponent(MenuComponentType.Main);
             AssaultWing.Instance.SoundEngine.PlayMusic("menu music", 1);
         }
 
-        public void Deactivate()
+        public override void Deactivate()
         {
             AssaultWing.Instance.SoundEngine.StopMusic(TimeSpan.FromSeconds(2));
             _components[(int)_activeComponent].Active = false;
@@ -243,7 +238,7 @@ namespace AW2.Menu
         /// <param name="asyncAction">The action to perform asynchronously.</param>
         /// <param name="finishAction">Action to perform synchronously
         /// when the asynchronous action completes.</param>
-        public void ProgressBarAction(Action asyncAction, Action finishAction)
+        public override void ProgressBarAction(Action asyncAction, Action finishAction)
         {
             var data = AssaultWing.Instance.DataEngine;
             this._finishAction = finishAction;
@@ -254,11 +249,7 @@ namespace AW2.Menu
             data.ProgressBar.StartTask();
         }
 
-        /// <summary>
-        /// Updates the menu system.
-        /// </summary>
-        /// <param name="gameTime">Time elapsed since the last call to Microsoft.Xna.Framework.GameComponent.Update(Microsoft.Xna.Framework.GameTime)</param>
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             if (IsProgressBarVisible && AssaultWing.Instance.DataEngine.ProgressBar.TaskCompleted)
             {
@@ -289,13 +280,7 @@ namespace AW2.Menu
                 component.Update();
         }
 
-        /// <summary>
-        /// Draws the menu system.
-        /// </summary>
-        /// <param name="gameTime">
-        /// Time passed since the last call to Microsoft.Xna.Framework.DrawableGameComponent.Draw(Microsoft.Xna.Framework.GameTime).
-        /// </param>
-        public override void Draw(GameTime gameTime)
+        public override void Draw()
         {
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
             Viewport screen = gfx.Viewport;
@@ -414,7 +399,7 @@ namespace AW2.Menu
         /// This method should be called after the window size changes in windowed mode,
         /// or after the screen resolution changes in fullscreen mode,
         /// or after switching between windowed and fullscreen mode.
-        public void WindowResize()
+        public override void WindowResize()
         {
             _screenWidth = AssaultWing.Instance.ClientBounds.Width;
             _screenHeight = AssaultWing.Instance.ClientBounds.Height;

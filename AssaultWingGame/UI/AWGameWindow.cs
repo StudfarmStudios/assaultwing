@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 
-namespace AW2
+namespace AW2.UI
 {
     /// <summary>
     /// A wrapper for <see cref="Microsoft.Xna.Framework.GameWindow"/>.
     /// </summary>
     public class AWGameWindow : AW2.Graphics.IWindow
     {
-        private GameWindow _window;
+        private GameForm _window;
         private Form _windowForm;
-        private GraphicsDeviceManager _graphics;
         private Rectangle _windowedSize;
 
-        public AWGameWindow(GameWindow window, GraphicsDeviceManager graphics)
+        public AWGameWindow(GameForm window)
         {
             _window = window;
-            _window.AllowUserResizing = true;
             _windowForm = (Form)Form.FromHandle(window.Handle);
-            _graphics = graphics;
         }
 
         #region IWindow Members
@@ -29,7 +27,8 @@ namespace AW2
         /// </summary>
         public string Title { get { return _window.Title; } set { _window.Title = value; } }
 
-        public bool IsFullscreen { get { return _graphics.IsFullScreen; } }
+        [Obsolete("Consider using GraphicsDeviceService.Instance.GraphicsDevice.PresentationParameters.IsFullScreen instead")]
+        public bool IsFullscreen { get { return GraphicsDeviceService.Instance.GraphicsDevice.PresentationParameters.IsFullScreen; } }
 
         /// <summary>
         /// Dimensions of the area the game can draw on.
@@ -72,20 +71,17 @@ namespace AW2
         public void ToggleFullscreen()
         {
             // Set our window size and format preferences before switching.
-            if (_graphics.IsFullScreen)
+            if (GraphicsDeviceService.Instance.GraphicsDevice.PresentationParameters.IsFullScreen)
             {
-                _graphics.PreferredBackBufferWidth = _windowedSize.Width;
-                _graphics.PreferredBackBufferHeight = _windowedSize.Height;
+                GraphicsDeviceService.Instance.SetWindowed(_windowedSize.Width, _windowedSize.Height);
             }
             else
             {
                 _windowedSize.Width = ClientBounds.Width;
                 _windowedSize.Height = ClientBounds.Height;
-                var displayMode = _graphics.GraphicsDevice.DisplayMode;
-                _graphics.PreferredBackBufferWidth = displayMode.Width;
-                _graphics.PreferredBackBufferHeight = displayMode.Height;
+                var displayMode = GraphicsDeviceService.Instance.GraphicsDevice.DisplayMode;
+                GraphicsDeviceService.Instance.SetFullScreen(displayMode.Width, displayMode.Height);
             }
-            _graphics.ToggleFullScreen();
         }
 
         #endregion

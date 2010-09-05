@@ -69,6 +69,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
@@ -85,8 +86,17 @@
   <ItemGroup>
     <Compile Include="Core\ArenaStartWaiter.cs" />
     <Compile Include="AssaultWing.cs" />
+    <Compile Include="Core\AWGame.cs">
+    </Compile>
+    <Compile Include="Core\AWGameComponent.cs" />
+    <Compile Include="Core\AWGameRunner.cs" />
     <Compile Include="Core\GameState.cs" />
+    <Compile Include="Core\GraphicsDeviceControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Core\GraphicsDeviceService.cs" />
     <Compile Include="Core\NetworkMode.cs" />
+    <Compile Include="Core\Waiter.cs" />
     <Compile Include="Game\ArenaBin.cs" />
     <Compile Include="Game\ArenaLoadException.cs" />
     <Compile Include="Game\ArenaMenuInfo.cs" />

@@ -1,6 +1,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core;
 using AW2.Game;
 using AW2.Net.Messages;
 
@@ -9,7 +10,7 @@ namespace AW2.UI
     /// <summary>
     /// Basic user interface implementation.
     /// </summary>
-    public class UIEngineImpl : GameComponent
+    public class UIEngineImpl : AWGameComponent
     {
         /// <summary>
         /// The state of input controls in the previous frame.
@@ -28,18 +29,13 @@ namespace AW2.UI
         /// </summary>
         public bool MouseControlsEnabled { get { return _eatMouse; } set { _eatMouse = value; } }
 
-        public UIEngineImpl(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public UIEngineImpl()
         {
             _oldState = InputState.GetState();
             _eatMouse = false;
         }
 
-        /// <summary>
-        /// Reacts to user input.
-        /// </summary>
-        /// <param name="gameTime">Time elapsed since the last call to Update</param>
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             var newState = InputState.GetState();
 

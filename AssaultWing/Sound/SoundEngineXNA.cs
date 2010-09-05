@@ -50,11 +50,7 @@ namespace AW2.Sound
 
         #endregion
 
-        /// <summary>
-        /// Creates a sound engine for the given game.
-        /// </summary>
-        public SoundEngineXNA(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public SoundEngineXNA()
         {
         }
 
@@ -108,7 +104,7 @@ namespace AW2.Sound
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             if (_volumeFadeAction != null) _volumeFadeAction();
             if (_music != null) _music.Volume = ActualMusicVolume;

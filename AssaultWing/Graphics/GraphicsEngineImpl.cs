@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Core;
 using AW2.Game;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
@@ -11,23 +12,22 @@ namespace AW2.Graphics
     /// <summary>
     /// Gameplay graphics implementation.
     /// </summary>
-    public class GraphicsEngineImpl : DrawableGameComponent
+    public class GraphicsEngineImpl : AWGameComponent
     {
         private SpriteBatch _spriteBatch;
 
         public GameContent GameContent { get; private set; }
 
-        public GraphicsEngineImpl(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public GraphicsEngineImpl()
         {
             GameContent = new GameContent();
         }
 
-        protected override void LoadContent()
+        public override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");
             var data = AssaultWing.Instance.DataEngine;
-            _spriteBatch = new SpriteBatch(this.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDeviceService.Instance.GraphicsDevice);
             GameContent.LoadContent();
 
             // Loop through gob types and load all the 3D models and textures they need.
@@ -91,7 +91,7 @@ namespace AW2.Graphics
                     AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
         }
 
-        protected override void UnloadContent()
+        public override void UnloadContent()
         {
             Log.Write("Graphics engine unloading graphics content.");
             var data = AssaultWing.Instance.DataEngine;
@@ -113,11 +113,7 @@ namespace AW2.Graphics
             base.UnloadContent();
         }
 
-        /// <summary>
-        /// Draws players' views to game world and static graphics around them.
-        /// </summary>
-        /// <param name="gameTime">Time passed since the last call to Draw.</param>
-        public override void Draw(GameTime gameTime)
+        public override void Draw()
         {
             AssaultWing.Instance.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;

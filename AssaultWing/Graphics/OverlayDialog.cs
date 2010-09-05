@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core;
 using AW2.Game;
 using AW2.Graphics.OverlayComponents;
 using AW2.UI;
@@ -16,14 +17,13 @@ namespace AW2.Graphics
     /// This sets up the visual contents of the dialog and sets which controls perform
     /// which actions.
     /// <seealso cref="OverlayDialogData"/>
-    public class OverlayDialog : Microsoft.Xna.Framework.DrawableGameComponent
+    public class OverlayDialog : AWGameComponent
     {
         private OverlayDialogData _dialogData;
         private SpriteBatch _spriteBatch;
         private Texture2D _dialogTexture;
 
-        public OverlayDialog(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public OverlayDialog()
         {
         }
 
@@ -36,9 +36,9 @@ namespace AW2.Graphics
 
         #endregion Public interface
 
-        #region Overridden methods from DrawableGameComponent
+        #region AWGameComponent overrides
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             // Check our controls and react to them.
             _dialogData.Update();
@@ -61,16 +61,16 @@ namespace AW2.Graphics
             }
 #endif
 
-            base.Update(gameTime);
+            base.Update();
         }
 
-        protected override void LoadContent()
+        public override void LoadContent()
         {
             _dialogTexture = AssaultWing.Instance.Content.Load<Texture2D>("ingame_dialog");
-            _spriteBatch = new SpriteBatch(this.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDeviceService.Instance.GraphicsDevice);
         }
 
-        protected override void UnloadContent()
+        public override void UnloadContent()
         {
             if (_spriteBatch != null)
             {
@@ -79,7 +79,7 @@ namespace AW2.Graphics
             }
         }
 
-        public override void Draw(GameTime gameTime)
+        public override void Draw()
         {
             // Set viewport exactly to the dialog's area.
             GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
@@ -98,6 +98,6 @@ namespace AW2.Graphics
             _dialogData.Draw(_spriteBatch);
         }
 
-        #endregion Overridden methods from DrawableGameComponent
+        #endregion
     }
 }

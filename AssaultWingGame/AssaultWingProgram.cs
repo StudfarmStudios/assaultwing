@@ -3,28 +3,27 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Windows.Forms;
+using AW2.Core;
 using AW2.Helpers;
-using AW2.Menu;
+using AW2.UI;
 
 namespace AW2
 {
-    static class AssaultWingProgram
+    public class AssaultWingProgram
     {
+        private GameForm _form;
+
+        public static AssaultWingProgram Instance { get; private set; }
+
         [STAThread]
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
 #if !DEBUG
             try
             {
 #endif
-                Log.Write("Assault Wing started");
-                AssaultWing.MenuEngineInitializing += game => new MenuEngineImpl(game);
-                AssaultWing.WindowInitializing += game => new AWGameWindow(((Microsoft.Xna.Framework.Game)game).Window, game.GraphicsDeviceManager);
-                using (var game = AssaultWing.Instance)
-                {
-                    game.CommandLineArgs = args;
-                    game.Run();
-                }
+            Instance = new AssaultWingProgram(args);
+            Instance.Run();
 #if !DEBUG
             }
             catch (Exception e)
@@ -34,6 +33,25 @@ namespace AW2
                 ReportException(e);
             }
 #endif
+        }
+
+        public AssaultWingProgram(string[] args)
+        {
+            Log.Write("Assault Wing started");
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            _form = new GameForm(args);
+            _form.GameView.Draw += AssaultWing.Instance.Draw;
+        }
+
+        public void Run()
+        {
+            Application.Run(_form);
+        }
+
+        public void Exit()
+        {
+            _form.Close();
         }
 
         private static void ReportException(Exception e)

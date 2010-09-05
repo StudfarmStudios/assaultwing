@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using AW2.Core;
 using AW2.Helpers;
 using AW2.UI;
 
@@ -12,14 +13,13 @@ namespace AW2.Graphics
     /// <summary>
     /// Game intro graphics implementation.
     /// </summary>
-    public class IntroEngine : DrawableGameComponent
+    public class IntroEngine : AWGameComponent
     {
         private Control _skipControl;
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
 
-        public IntroEngine(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public IntroEngine()
         {
         }
 
@@ -41,13 +41,13 @@ namespace AW2.Graphics
             _introVideo = new AWVideo("aw_intro");
         }
 
-        protected override void LoadContent()
+        public override void LoadContent()
         {
             base.LoadContent();
-            _spriteBatch = new SpriteBatch(Game.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDeviceService.Instance.GraphicsDevice);
         }
 
-        protected override void UnloadContent()
+        public override void UnloadContent()
         {
             if (_spriteBatch != null)
             {
@@ -58,13 +58,13 @@ namespace AW2.Graphics
             base.UnloadContent();
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             if (_skipControl.Pulse) EndIntro();
             if (_introVideo.IsFinished) EndIntro();
         }
 
-        public override void Draw(GameTime gameTime)
+        public override void Draw()
         {
             var gfx = AssaultWing.Instance.GraphicsDevice;
             gfx.Clear(Color.Black);

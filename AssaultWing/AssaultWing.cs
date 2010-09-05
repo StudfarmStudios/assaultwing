@@ -26,7 +26,7 @@ namespace AW2
     /// The main class of the Assault Wing game. A singleton class.
     /// </summary>
     /// Game components can be requested from the AssaultWing.Services property.
-    public class AssaultWing : Microsoft.Xna.Framework.Game
+    public class AssaultWing : AWGame
     {
         /// <summary>
         /// Wraps <see cref="CounterCreationDataCollection"/>, adding to it an implementation
@@ -91,7 +91,7 @@ namespace AW2
         /// The event handler should return the menu engine of the game instance.
         /// If no handlers have been added, a dummy menu engine is used.
         /// </summary>
-        public static event Func<AssaultWing, IMenuEngine> MenuEngineInitializing;
+        public static event Func<IMenuEngine> MenuEngineInitializing;
 
         /// <summary>
         /// Called during initialisation of the game instance.
@@ -186,17 +186,6 @@ namespace AW2
         }
 
         /// <summary>
-        /// The <see cref="Microsoft.Xna.Framework.Game.Window"/> property inherited from
-        /// <see cref="Microsoft.Xna.Framework.Game"/> is dangerously confusable with
-        /// the private <see cref="_window"/> field. Thus, access to
-        /// <see cref="Microsoft.Xna.Framework.Game.Window"/> is limited only to
-        /// references of type <see cref="Microsoft.Xna.Framework.Game"/>.
-        /// </summary>
-        public new GameWindow Window { get { throw new ApplicationException("Use either ((Microsoft.Xna.Framework.Game)AssaultWing).Window or AssaultWing._window"); } }
-
-        public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
-
-        /// <summary>
         /// Are overlay dialogs allowed.
         /// </summary>
         public bool AllowDialogs { get; set; }
@@ -261,32 +250,11 @@ namespace AW2
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
 
-            Content = new AWContentManager(Services);
             GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
             GameTime = new GameTime();
 
             InitializeComponents();
-        }
-
-        /// <summary>
-        /// If there is an NVIDIA PerfHUD adapter, sets the GraphicsDeviceManager 
-        /// to use that adapter and a reference device.
-        /// </summary>
-        private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs args)
-        {
-#if DEBUG
-            var adapter = GraphicsAdapter.Adapters.FirstOrDefault(ada => ada.Description == "NVIDIA PerfHUD");
-            if (adapter != null)
-            {
-                args.GraphicsDeviceInformation.DeviceType = DeviceType.Reference;
-                args.GraphicsDeviceInformation.Adapter = adapter;
-                Log.Write("Found NVIDIA PerfHUD device, PerfHUD now enabled.");
-            }
-            else
-#endif
-            args.GraphicsDeviceInformation.PresentationParameters.DeviceWindowHandle = _window.Handle;
-
         }
 
         /// <summary>
@@ -338,12 +306,6 @@ namespace AW2
             }
             _preferredWindowFormat = displayMode.Format;
 
-            GraphicsDeviceManager = new GraphicsDeviceManager(this);
-            GraphicsDeviceManager.IsFullScreen = false;
-            GraphicsDeviceManager.PreferredBackBufferWidth = _preferredWindowWidth;
-            GraphicsDeviceManager.PreferredBackBufferHeight = _preferredWindowHeight;
-            GraphicsDeviceManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
-
             _window = WindowInitializing(this);
             ClientBoundsMin = new Rectangle(0, 0, _preferredWindowWidth, _preferredWindowHeight);
             _window.ClientSizeChanged += ClientSizeChanged;
@@ -352,14 +314,14 @@ namespace AW2
 
         private void InitializeComponents()
         {
-            _uiEngine = new UIEngineImpl(this);
-            _logicEngine = new LogicEngine(this);
-            SoundEngine = new SoundEngineXACT(this);
-            GraphicsEngine = new GraphicsEngineImpl(this);
-            _introEngine = new IntroEngine(this);
-            MenuEngine = MenuEngineInitializing != null ? MenuEngineInitializing(this) : new DummyMenuEngine();
-            NetworkEngine = new NetworkEngine(this);
-            _overlayDialog = new OverlayDialog(this);
+            _uiEngine = new UIEngineImpl();
+            _logicEngine = new LogicEngine();
+            SoundEngine = new SoundEngineXACT();
+            GraphicsEngine = new GraphicsEngineImpl();
+            _introEngine = new IntroEngine();
+            MenuEngine = MenuEngineInitializing != null ? MenuEngineInitializing() : new DummyMenuEngine();
+            NetworkEngine = new NetworkEngine();
+            _overlayDialog = new OverlayDialog();
             DataEngine = new DataEngine();
             PhysicsEngine = new PhysicsEngine();
 
@@ -387,8 +349,8 @@ namespace AW2
             // Disable all optional components
             foreach (var component in Components)
             {
-                if (component is DrawableGameComponent) ((DrawableGameComponent)component).Visible = false;
-                if (component is GameComponent) ((GameComponent)component).Enabled = false;
+                component.Visible = false;
+                component.Enabled = false;
             }
             NetworkEngine.Enabled = true;
             _uiEngine.Enabled = true;
@@ -813,7 +775,7 @@ namespace AW2
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
         /// </summary>
-        protected override void Initialize()
+        public override void Initialize()
         {
             Log.Write("Assault Wing initializing");
             try
@@ -838,7 +800,7 @@ namespace AW2
         /// <summary>
         /// Called after all components are initialized but before the first update in the game loop. 
         /// </summary>
-        protected override void BeginRun()
+        public override void BeginRun()
         {
             Log.Write("Assault Wing begins to run");
 
@@ -895,12 +857,14 @@ namespace AW2
         /// <summary>
         /// Called after the game loop has stopped running before exiting. 
         /// </summary>
-        protected override void EndRun()
+        public override void EndRun()
         {
             Log.Write("Assault Wing ends the run");
 
             Log.Write("Saving settings to file");
             Settings.ToFile();
+
+            GraphicsDeviceService.Instance.Dispose();
 
 #if DEBUG_PROFILE
             // HACK: profiling printout for gnuplot
@@ -927,7 +891,7 @@ namespace AW2
             base.EndRun();
         }
 
-        protected override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             if (_arenaStartWaiter != null && _arenaStartWaiter.IsEverybodyReady)
             {
@@ -954,9 +918,9 @@ namespace AW2
             }
         }
 
-        protected override void Draw(GameTime gameTime)
+        public override void Draw()
         {
-            if ((gameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds < 1)
+            if ((GameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds < 1)
             {
                 FramesDrawnPerSecondCounter.Increment();
                 ++_framesSinceLastCheck;
@@ -971,7 +935,7 @@ namespace AW2
 #endif
                 _window.Title = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
                 _framesSinceLastCheck = 1;
-                _lastFramerateCheck = gameTime.TotalRealTime;
+                _lastFramerateCheck = GameTime.TotalRealTime;
 
                 if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
                     _window.Title += string.Format(" [{0} ms lag]",
@@ -988,7 +952,7 @@ namespace AW2
                     _window.Title += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
 #endif
             }
-            base.Draw(GameTime);
+            base.Draw();
         }
 
         protected override void OnExiting(object sender, EventArgs args)

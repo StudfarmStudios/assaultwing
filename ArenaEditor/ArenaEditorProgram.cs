@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
+using Microsoft.Xna.Framework.Input;
+using AW2.Core;
+using AW2.Game;
 using AW2.Helpers;
 using AW2.UI;
-using AW2.Game;
-using Microsoft.Xna.Framework.Input;
 
 namespace AW2
 {
@@ -32,10 +31,13 @@ namespace AW2
             game.AllowDialogs = false;
             game.ClientBoundsMin = new Microsoft.Xna.Framework.Rectangle(0, 0, 1, 1);
             game.RunBegan += Initialize;
-            var xnaWindow = System.Windows.Forms.Control.FromHandle(((Microsoft.Xna.Framework.Game)game).Window.Handle);
+            var xnaWindow = System.Windows.Forms.Control.FromHandle(editor.ArenaViewHost.Handle);
             xnaWindow.VisibleChanged += (sender, eventArgs) => xnaWindow.Visible = false;
-            app.Startup += (sender, eventArgs) => game.Run();
-            app.Exit += (sender, eventArgs) => game.Exit();
+            var runner = new AWGameRunner(game,
+                () => editor.ArenaView.BeginInvoke((Action)editor.ArenaView.Invalidate),
+                gameTime => editor.ArenaView.BeginInvoke((Action)(() => AssaultWing.Instance.Update(gameTime))));
+            app.Startup += (sender, eventArgs) => runner.Run();
+            app.Exit += (sender, eventArgs) => runner.Exit();
             app.Run(editor);
         }
 

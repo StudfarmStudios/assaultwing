@@ -15,15 +15,14 @@ namespace AW2.Game
     /// <summary>
     /// Basic implementation of game logic.
     /// </summary>
-    public class LogicEngine : GameComponent
+    public class LogicEngine : AWGameComponent
     {
         Control fullscreenControl, escapeControl;
 #if DEBUG
         Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 #endif
 
-        public LogicEngine(Microsoft.Xna.Framework.Game game)
-            : base(game)
+        public LogicEngine()
         {
             escapeControl = new KeyboardKey(Keys.Escape);
             fullscreenControl = new KeyboardKey(Keys.F10);
@@ -57,11 +56,7 @@ namespace AW2.Game
             base.Initialize();
         }
 
-        /// <summary>
-        /// Performs game logic.
-        /// </summary>
-        /// <param name="gameTime">Time elapsed since the last call to Update</param>
-        public override void Update(GameTime gameTime)
+        public override void Update()
         {
             var data = AssaultWing.Instance.DataEngine;
             UpdateControls();

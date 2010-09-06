@@ -69,12 +69,12 @@ namespace AW2.Core
 
         public void SetFullScreen(int width, int height)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("GraphicsDeviceService.SetFullScreen not implemented");
         }
 
         public void SetWindowed(int width, int height)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("GraphicsDeviceService.SetWindowed not implemented");
         }
 
         public void Dispose()

@@ -888,24 +888,25 @@ namespace AW2
             }
             else
             {
-                _window.Title = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
+                var newTitle = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
                 _framesSinceLastCheck = 1;
                 _lastFramerateCheck = GameTime.TotalRealTime;
 
                 if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
-                    _window.Title += string.Format(" [{0} ms lag]",
+                    newTitle += string.Format(" [{0} ms lag]",
                         (int)NetworkEngine.ServerPingTime.TotalMilliseconds);
 
                 if (NetworkMode == NetworkMode.Server)
                     foreach (var conn in NetworkEngine.GameClientConnections)
-                        _window.Title += string.Format(" [#{0}: {1} ms lag]",
+                        newTitle += string.Format(" [#{0}: {1} ms lag]",
                             conn.ID,
                             (int)conn.PingInfo.PingTime.TotalMilliseconds);
 
 #if DEBUG
                 if (DataEngine.ArenaFrameCount > 0)
-                    _window.Title += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
+                    newTitle += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
 #endif
+                _window.Title = newTitle;
             }
             base.Draw();
         }

@@ -33,7 +33,7 @@ namespace AW2.UI
             AssaultWing.WindowInitializing += game => new AWGameWindow(this);
             AssaultWing.Instance.CommandLineArgs = args;
             _runner = new AWGameRunner(AssaultWing.Instance,
-                () => _gameView.BeginInvoke((Action)_gameView.Invalidate), // TODO !!! exception on exit: BeginInvoke cannot be called when Handle hasn't been created
+                () => _gameView.BeginInvoke((Action)_gameView.Invalidate),
                 gameTime => _gameView.BeginInvoke((Action)(() => AssaultWing.Instance.Update(gameTime))));
         }
 

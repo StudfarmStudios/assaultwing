@@ -63,20 +63,6 @@ namespace AW2
         private Control _frameRunControl;
         private bool _frameStep;
 
-#if DEBUG_PROFILE
-        /// <summary>
-        /// Gob count for the current frame.
-        /// </summary>
-        public int GobCount { get; set; }
-        /// <summary>
-        /// Collision count for the current frame.
-        /// </summary>
-        public int CollisionCount { get; set; }
-        private List<int> _frameCounts = new List<int>();
-        private List<int> _gobCounts = new List<int>();
-        private List<int> _collisionCounts = new List<int>();
-#endif
-
         /// <summary>
         /// The only existing instance of this class.
         /// </summary>
@@ -860,34 +846,9 @@ namespace AW2
         public override void EndRun()
         {
             Log.Write("Assault Wing ends the run");
-
             Log.Write("Saving settings to file");
             Settings.ToFile();
-
             GraphicsDeviceService.Instance.Dispose();
-
-#if DEBUG_PROFILE
-            // HACK: profiling printout for gnuplot
-            using (System.IO.StreamWriter sw = System.IO.File.CreateText("framecounts.txt"))
-            {
-                foreach (int x in _frameCounts)
-                    sw.WriteLine(x);
-                sw.Close();
-            }
-            using (System.IO.StreamWriter sw = System.IO.File.CreateText("gobcounts.txt"))
-            {
-                foreach (int x in _gobCounts)
-                    sw.WriteLine(x);
-                sw.Close();
-            }
-            using (System.IO.StreamWriter sw = System.IO.File.CreateText("collisioncounts.txt"))
-            {
-                foreach (int x in _collisionCounts)
-                    sw.WriteLine(x);
-                sw.Close();
-            }
-#endif
-
             base.EndRun();
         }
 
@@ -927,12 +888,6 @@ namespace AW2
             }
             else
             {
-#if DEBUG_PROFILE
-                _frameCounts.Add(_framesSinceLastCheck);
-                _gobCounts.Add(GobCount);
-                _collisionCounts.Add(CollisionCount);
-                GobCount = CollisionCount = 0;
-#endif
                 _window.Title = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
                 _framesSinceLastCheck = 1;
                 _lastFramerateCheck = GameTime.TotalRealTime;

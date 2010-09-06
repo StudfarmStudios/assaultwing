@@ -66,7 +66,6 @@ namespace AW2.Core
                     totalGameTime += updateInterval;
                 }
             }
-            _exited = true;
         }
 
         private void BackgroundLoopEnd(IAsyncResult result)
@@ -75,6 +74,7 @@ namespace AW2.Core
             deleg.EndInvoke(result);
             _game.EndRun();
             _game.Dispose();
+            _exited = true;
         }
     }
 }

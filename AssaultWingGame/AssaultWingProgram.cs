@@ -29,7 +29,6 @@ namespace AW2
             catch (Exception e)
             {
                 Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
-                AssaultWing.Instance.IsMouseVisible = true;
                 ReportException(e);
             }
 #endif

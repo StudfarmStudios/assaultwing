@@ -13,6 +13,7 @@ namespace AW2.Core
         private Action _draw;
         private Action<GameTime> _update;
         private bool _exiting;
+        private bool _exited;
 
         public AWGameRunner(AWGame game, Action draw, Action<GameTime> update)
         {
@@ -34,6 +35,8 @@ namespace AW2.Core
         public void Exit()
         {
             _exiting = true;
+            // Wait for BackgroundLoop to finish
+            while (!_exited) Thread.Sleep(100);
         }
 
         private void BackgroundLoop()
@@ -57,11 +60,13 @@ namespace AW2.Core
                     var gameTime = new GameTime(timer.Elapsed, now - lastUpdate, totalGameTime, updateInterval);
                     _update(gameTime);
                     if (now < nextNextUpdate) _draw();
+
                     nextUpdate = nextNextUpdate;
                     lastUpdate = now;
                     totalGameTime += updateInterval;
                 }
             }
+            _exited = true;
         }
 
         private void BackgroundLoopEnd(IAsyncResult result)

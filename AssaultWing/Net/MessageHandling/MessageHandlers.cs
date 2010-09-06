@@ -95,9 +95,6 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleClientJoinMessage(ClientJoinMessage mess)
         {
-            // TODO !!! Currently ClientUDPEndPoint is the public UDP end point as seen by the management server.
-            // We also need the private UDP end point in case the game server and the game client are behind
-            // the same NAT.
             IPEndPoint matchingEndPoint = null;
             var connection = AssaultWing.Instance.NetworkEngine.GameClientConnections.FirstOrDefault(conn =>
             {

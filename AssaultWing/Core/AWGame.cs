@@ -76,7 +76,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void EndRun()
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>

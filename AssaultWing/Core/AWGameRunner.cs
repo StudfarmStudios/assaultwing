@@ -49,7 +49,7 @@ namespace AW2.Core
             while (!_exiting)
             {
                 var now = timer.Elapsed;
-                if (now < nextUpdate)
+                if (now + Waiter.PRECISION < nextUpdate)
                 {
                     Waiter.Instance.Sleep(nextUpdate - now);
                 }

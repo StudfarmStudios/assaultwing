@@ -848,7 +848,6 @@ namespace AW2
             Log.Write("Assault Wing ends the run");
             Log.Write("Saving settings to file");
             Settings.ToFile();
-            GraphicsDeviceService.Instance.Dispose();
             base.EndRun();
         }
 

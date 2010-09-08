@@ -24,6 +24,7 @@ namespace AW2
 #endif
             Instance = new AssaultWingProgram(args);
             Instance.Run();
+            GraphicsDeviceService.Instance.Dispose();
 #if !DEBUG
             }
             catch (Exception e)

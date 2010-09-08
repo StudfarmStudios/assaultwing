@@ -49,10 +49,11 @@ namespace AW2.UI
             _runner.Run();
         }
 
-        protected override void OnClosed(EventArgs e)
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             _runner.Exit();
-            base.OnClosed(e);
+            Application.DoEvents(); // finish processing BeginInvoke()d Update() and Draw() calls
+            base.OnClosing(e);
         }
     }
 }

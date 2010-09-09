@@ -17,7 +17,7 @@ namespace AW2.UI
             set { BeginInvoke((Action)(() => Text = value)); }
         }
         public bool IsFullscreen { get { return GraphicsDeviceService.Instance.GraphicsDevice.PresentationParameters.IsFullScreen; } }
-        public Rectangle ClientBounds { get { return new Rectangle(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height); } }
+        public Rectangle ClientBounds { get { return new Rectangle(ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Width, ClientRectangle.Height); } }
         public Rectangle ClientBoundsMin
         {
             get { return new Rectangle(0, 0, MinimumSize.Width, MinimumSize.Height); }

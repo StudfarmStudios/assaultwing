@@ -49,6 +49,27 @@ namespace AW2.UI
             _runner.Run();
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+#if false
+            // Constants from windows.h
+            const int WM_KEYDOWN = 0x100;
+            const int WM_KEYUP = 0x101;
+            const int WM_CHAR = 0x102;
+            const int WM_DEADCHAR = 0x103;
+            const int WM_SYSKEYDOWN = 0x104;
+            const int WM_SYSKEYUP = 0x105;
+            const int WM_SYSCHAR = 0x106;
+            const int WM_SYSDEADCHAR = 0x107;
+            switch (msg.Msg)
+            {
+                case WM_KEYDOWN: ...
+                // Here we could update our internal keyboard state
+            }
+#endif
+            return true; // the message won't be processed further; prevents window menu from opening
+        }
+
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             _runner.Exit();

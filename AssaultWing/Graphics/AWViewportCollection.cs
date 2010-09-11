@@ -16,8 +16,8 @@ namespace AW2.Graphics
 
         public IEnumerable<ViewportSeparator> Separators { get { return _separators; } }
 
-        private static int WindowWidth { get { return AssaultWing.Instance.ClientBounds.Width; } }
-        private static int WindowHeight { get { return AssaultWing.Instance.ClientBounds.Height; } }
+        private static int WindowWidth { get { return AssaultWingCore.Instance.ClientBounds.Width; } }
+        private static int WindowHeight { get { return AssaultWingCore.Instance.ClientBounds.Height; } }
 
         #region Public methods
 

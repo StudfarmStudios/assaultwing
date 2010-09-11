@@ -55,6 +55,11 @@ namespace AW2.Helpers
             Write("Log opened. The date and time is " + DateTime.Now.ToString("o"));
         }
 
+        public static void Write(string format, params object[] args)
+        {
+            Write(string.Format(format, args));
+        }
+        
         public static void Write(string message)
         {
 #if DEBUG

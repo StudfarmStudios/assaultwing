@@ -53,7 +53,7 @@ namespace AW2.Graphics
             {
                 // Shake only if gameplay is on. Otherwise freeze because
                 // shake won't be attenuated either.
-                if (AssaultWing.Instance.GameState == GameState.Gameplay)
+                if (AssaultWingCore.Instance.GameState == GameState.Gameplay)
                     shakeSign = -shakeSign;
 
                 float viewShake = shakeSign * player.Shake;

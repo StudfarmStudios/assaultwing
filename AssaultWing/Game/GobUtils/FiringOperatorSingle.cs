@@ -41,7 +41,7 @@ namespace AW2.Game.GobUtils
 
         public override void Update()
         {
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client)
             {
                 if (Device.OwnerHandle != ShipDevice.OwnerHandleType.PrimaryWeapon)
                 {

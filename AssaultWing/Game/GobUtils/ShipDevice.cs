@@ -231,7 +231,7 @@ namespace AW2.Game.GobUtils
             }
             else
                 device.AttachTo(ship, ownerHandle);
-            AssaultWing.Instance.DataEngine.Devices.Add(device);
+            AssaultWingCore.Instance.DataEngine.Devices.Add(device);
             return device;
         }
 
@@ -269,7 +269,7 @@ namespace AW2.Game.GobUtils
                 if (fireSoundType == FiringSoundType.Once) PlayFiringSound();
             }
             else
-                AssaultWing.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
+                AssaultWingCore.Instance.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
         }
 
         public virtual void Update()
@@ -326,21 +326,21 @@ namespace AW2.Game.GobUtils
 
         private void CreateVisuals()
         {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client) return;
             CreateVisualsImpl();
             _visualsCreatedThisFrame = true;
         }
 
         private void PlayFiringSound()
         {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client) return;
             PlayFiringSoundImpl();
             _soundPlayedThisFrame = true;
         }
 
         private void PlayFiringSoundImpl()
         {
-            if (fireSound != "") AssaultWing.Instance.SoundEngine.PlaySound(fireSound);
+            if (fireSound != "") AssaultWingCore.Instance.SoundEngine.PlaySound(fireSound);
         }
 
         #endregion Nonpublic methods

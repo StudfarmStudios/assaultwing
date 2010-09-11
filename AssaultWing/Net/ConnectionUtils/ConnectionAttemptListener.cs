@@ -115,7 +115,7 @@ namespace AW2.Net.ConnectionUtils
 
         private static void CheckThread()
         {
-            if (Thread.CurrentThread.ManagedThreadId != AssaultWing.Instance.ManagedThreadID)
+            if (Thread.CurrentThread.ManagedThreadId != AssaultWingCore.Instance.ManagedThreadID)
                 throw new InvalidOperationException("Method called from outside the main thread");
         }
 

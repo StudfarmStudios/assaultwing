@@ -35,7 +35,7 @@ namespace AW2.Graphics.OverlayComponents
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
             Vector2 textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
             Vector2 textSize = font.MeasureString(text);
             spriteBatch.DrawString(font, text, AWMathHelper.Round(textCenter - textSize / 2), Color.White);
@@ -43,7 +43,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            font = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontBig");
+            font = AssaultWingCore.Instance.Content.Load<SpriteFont>("MenuFontBig");
         }
     }
 }

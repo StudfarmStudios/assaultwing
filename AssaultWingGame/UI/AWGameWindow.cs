@@ -27,9 +27,6 @@ namespace AW2.UI
         /// </summary>
         public string Title { get { return _window.Title; } set { _window.Title = value; } }
 
-        [Obsolete("Consider using GraphicsDeviceService.Instance.GraphicsDevice.PresentationParameters.IsFullScreen instead")]
-        public bool IsFullscreen { get { return GraphicsDeviceService.Instance.GraphicsDevice.PresentationParameters.IsFullScreen; } }
-
         /// <summary>
         /// Dimensions of the area the game can draw on.
         /// </summary>
@@ -63,25 +60,6 @@ namespace AW2.UI
         {
             add { _window.ClientSizeChanged += value; }
             remove { _window.ClientSizeChanged -= value; }
-        }
-
-        /// <summary>
-        /// Toggles between fullscreen and windowed mode.
-        /// </summary>
-        public void ToggleFullscreen()
-        {
-            // Set our window size and format preferences before switching.
-            if (GraphicsDeviceService.Instance.GraphicsDevice.PresentationParameters.IsFullScreen)
-            {
-                GraphicsDeviceService.Instance.SetWindowed(_windowedSize.Width, _windowedSize.Height);
-            }
-            else
-            {
-                _windowedSize.Width = ClientBounds.Width;
-                _windowedSize.Height = ClientBounds.Height;
-                var displayMode = GraphicsDeviceService.Instance.GraphicsDevice.DisplayMode;
-                GraphicsDeviceService.Instance.SetFullScreen(displayMode.Width, displayMode.Height);
-            }
         }
 
         #endregion

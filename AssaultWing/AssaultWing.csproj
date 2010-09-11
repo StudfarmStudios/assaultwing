@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ArenaStartWaiter.cs" />
-    <Compile Include="AssaultWing.cs" />
+    <Compile Include="Core\AssaultWingCore.cs" />
     <Compile Include="Core\AWGame.cs">
     </Compile>
     <Compile Include="Core\AWGameComponent.cs" />

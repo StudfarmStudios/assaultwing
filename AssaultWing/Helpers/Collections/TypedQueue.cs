@@ -39,7 +39,7 @@ namespace AW2.Helpers.Collections
                 Queue<Pair<T, TimeSpan>> subqueue;
                 if (!queues.TryGetValue(elementType, out subqueue))
                     subqueue = queues[elementType] = new Queue<Pair<T, TimeSpan>>();
-                TimeSpan now = AssaultWing.Instance.GameTime.TotalRealTime;
+                TimeSpan now = AssaultWingCore.Instance.GameTime.TotalRealTime;
                 subqueue.Enqueue(new Pair<T, TimeSpan>(element, now));
             }
         }
@@ -96,7 +96,7 @@ namespace AW2.Helpers.Collections
             lock (queues)
             {
                 // NOTE: The element's timestamp is refreshed.
-                TimeSpan now = AssaultWing.Instance.GameTime.TotalRealTime;
+                TimeSpan now = AssaultWingCore.Instance.GameTime.TotalRealTime;
                 Queue<Pair<T, TimeSpan>> oldQueue;
                 var newQueue = new Queue<Pair<T, TimeSpan>>();
                 newQueue.Enqueue(new Pair<T, TimeSpan>(element, now));
@@ -132,7 +132,7 @@ namespace AW2.Helpers.Collections
         /// <param name="timeout">Elements older than this are purged.</param>
         public void Prune(TimeSpan timeout, Action<T> action)
         {
-            TimeSpan now = AssaultWing.Instance.GameTime.TotalRealTime;
+            TimeSpan now = AssaultWingCore.Instance.GameTime.TotalRealTime;
             lock (queues)
             {
                 foreach (var type in queues.Keys.ToArray())

@@ -17,7 +17,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override Point Dimensions
         {
-            get { return new Point(_scoreBackgroundTexture.Width, 10 + (AssaultWing.Instance.DataEngine.Players.Count() * scoreLineSpacing)); }
+            get { return new Point(_scoreBackgroundTexture.Width, 10 + (AssaultWingCore.Instance.DataEngine.Players.Count() * scoreLineSpacing)); }
         }
 
         public ScoreOverlay(PlayerViewport viewport)
@@ -36,7 +36,7 @@ namespace AW2.Graphics.OverlayComponents
             int playerNameWidth = 115;
             int textMargin = 10;
 
-            var standings = AssaultWing.Instance.DataEngine.GameplayMode.GetStandings(AssaultWing.Instance.DataEngine.Players);
+            var standings = AssaultWingCore.Instance.DataEngine.GameplayMode.GetStandings(AssaultWingCore.Instance.DataEngine.Players);
             int line = 0;
 
             foreach (var entry in standings)
@@ -64,7 +64,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = AssaultWingCore.Instance.Content;
             _scoreBackgroundTexture = content.Load<Texture2D>("gui_radar_bg");
             _scoreFont = content.Load<SpriteFont>("ConsoleFont");
         }

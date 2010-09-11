@@ -47,13 +47,13 @@ namespace AW2.Graphics.OverlayComponents
 
         private static void DrawWalls(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(AssaultWing.Instance.DataEngine.ArenaRadarSilhouette, RADAR_DISPLAY_TOP_LEFT, ARENA_RADAR_SILHOUETTE_COLOR);
+            spriteBatch.Draw(AssaultWingCore.Instance.DataEngine.ArenaRadarSilhouette, RADAR_DISPLAY_TOP_LEFT, ARENA_RADAR_SILHOUETTE_COLOR);
         }
 
         private void DrawDocks(SpriteBatch spriteBatch)
         {
-            var arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
-            foreach (var dock in AssaultWing.Instance.DataEngine.Arena.Gobs.OfType<Dock>())
+            var arenaToRadarTransform = AssaultWingCore.Instance.DataEngine.ArenaToRadarTransform;
+            foreach (var dock in AssaultWingCore.Instance.DataEngine.Arena.Gobs.OfType<Dock>())
             {
                 var posInArena = dock.Pos;
                 var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
@@ -64,8 +64,8 @@ namespace AW2.Graphics.OverlayComponents
 
         private void DrawShips(SpriteBatch spriteBatch)
         {
-            var arenaToRadarTransform = AssaultWing.Instance.DataEngine.ArenaToRadarTransform;
-            foreach (var player in AssaultWing.Instance.DataEngine.Players)
+            var arenaToRadarTransform = AssaultWingCore.Instance.DataEngine.ArenaToRadarTransform;
+            foreach (var player in AssaultWingCore.Instance.DataEngine.Players)
             {
                 if (player.Ship == null || player.Ship.Dead) continue;
                 var posInArena = player.Ship.Pos;
@@ -86,9 +86,9 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            _radarDisplayTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_radar_bg");
-            _shipOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
-            _dockOnRadarTexture = AssaultWing.Instance.Content.Load<Texture2D>("p_green_box");
+            _radarDisplayTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("gui_radar_bg");
+            _shipOnRadarTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
+            _dockOnRadarTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("p_green_box");
         }
     }
 }

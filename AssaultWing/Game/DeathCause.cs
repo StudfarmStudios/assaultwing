@@ -58,7 +58,7 @@ namespace AW2.Game
             {
                 if (_dead == null || _dead.Owner == null) return false;
                 if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager && 
-                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWing.Instance.DataEngine.ArenaTotalTime)
+                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
                 {
                     _other = _dead.LastDamager.Ship;
                     return false;
@@ -77,7 +77,7 @@ namespace AW2.Game
             {
                 if (_dead == null || _dead.Owner == null) return false;
                 if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager &&
-                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWing.Instance.DataEngine.ArenaTotalTime)
+                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
                 {
                     _other = _dead.LastDamager.Ship;
                     return true;

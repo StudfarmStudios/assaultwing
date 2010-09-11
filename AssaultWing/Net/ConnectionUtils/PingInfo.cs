@@ -50,7 +50,7 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void Update()
         {
-            var now = AssaultWing.Instance.GameTime.TotalRealTime;
+            var now = AssaultWingCore.Instance.GameTime.TotalRealTime;
 
             // Send ping requests every now and then.
             if (now >= _nextPingSend)
@@ -65,7 +65,7 @@ namespace AW2.Net.ConnectionUtils
             var pingReceive = BaseConnection.Messages.TryDequeue<PingRequestMessage>();
             if (pingReceive != null)
             {
-                var pongSend = pingReceive.GetPingReplyMessage(AssaultWing.Instance.DataEngine.ArenaTotalTime);
+                var pongSend = pingReceive.GetPingReplyMessage(AssaultWingCore.Instance.DataEngine.ArenaTotalTime);
                 BaseConnection.Send(pongSend);
             }
 
@@ -76,7 +76,7 @@ namespace AW2.Net.ConnectionUtils
                 var pingTime = now - pongReceive.Timestamp;
                 _pingTimes[_nextIndex] = pingTime;
                 _remoteGameTimeOffsets[_nextIndex] =
-                    AssaultWing.Instance.DataEngine.ArenaTotalTime
+                    AssaultWingCore.Instance.DataEngine.ArenaTotalTime
                     - pongReceive.TotalGameTimeOnReply
                     - pingTime.Divide(2);
                 _nextIndex = (_nextIndex + 1) % _pingTimes.Length;

@@ -117,7 +117,7 @@ namespace AW2.Game.Gobs
 
         public override void LoadContent()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             _vertexDeclaration = _vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             base.LoadContent();
         }
@@ -149,7 +149,7 @@ namespace AW2.Game.Gobs
 #endif
                 drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
-            AssaultWing.Instance.DataEngine.ProgressBar.SubtaskCompleted();
+            AssaultWingCore.Instance.DataEngine.ProgressBar.SubtaskCompleted();
         }
 
         public override void Draw(Matrix view, Matrix projection)
@@ -159,7 +159,7 @@ namespace AW2.Game.Gobs
                 base.Draw(view, projection);
                 return;
             }
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
             gfx.VertexDeclaration = _vertexDeclaration;
             Effect.World = Matrix.Identity;
             Effect.Projection = projection;
@@ -188,8 +188,8 @@ namespace AW2.Game.Gobs
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-            var silhouetteEffect = AssaultWing.Instance.GraphicsEngine.GameContent.WallSilhouetteEffect;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var silhouetteEffect = AssaultWingCore.Instance.GraphicsEngine.GameContent.WallSilhouetteEffect;
             gfx.VertexDeclaration = _vertexDeclaration;
             silhouetteEffect.Projection = projection;
             silhouetteEffect.View = view;
@@ -242,17 +242,17 @@ namespace AW2.Game.Gobs
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return;
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client) return;
 
             // Eat a round hole.
             Vector2 posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
             _removedTriangleIndices.Clear();
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), _indexMap.Remove);
 
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
                 var message = new WallHoleMessage { GobID = ID, TriangleIndices = _removedTriangleIndices.ToList() };
-                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
+                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
             }
 
             // Remove the wall gob if all its triangles have been removed.

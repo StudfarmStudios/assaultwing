@@ -12,7 +12,7 @@ namespace AW2.Menu
 
         public void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = AssaultWingCore.Instance.Content;
             FontBig = content.Load<SpriteFont>("MenuFontBig");
             MainCursor = content.Load<Texture2D>("menu_main_cursor");
             MainBackground = content.Load<Texture2D>("menu_main_bg");

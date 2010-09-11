@@ -37,7 +37,7 @@ namespace AW2.UI
             proceedControl.Clear();
             proceedControl.Add(enterControl);
             proceedControl.Add(escapeControl);
-            foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
+            foreach (var player in AssaultWingCore.Instance.DataEngine.Spectators)
                 proceedControl.Add(player.Controls.Fire1);
             return proceedControl;
         }

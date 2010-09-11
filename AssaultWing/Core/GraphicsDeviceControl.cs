@@ -69,7 +69,7 @@ namespace AW2.Core
             // largest of these controls. But what if we are currently drawing
             // a smaller control? To avoid unwanted stretching, we set the
             // viewport to only use the top left portion of the full backbuffer.
-            AssaultWing.Instance.GraphicsDevice.Viewport = new Viewport
+            AssaultWingCore.Instance.GraphicsDevice.Viewport = new Viewport
             {
                 X = 0,
                 Y = 0,
@@ -112,7 +112,7 @@ namespace AW2.Core
         private string HandleDeviceReset()
         {
             bool deviceNeedsReset = false;
-            switch (AssaultWing.Instance.GraphicsDevice.GraphicsDeviceStatus)
+            switch (AssaultWingCore.Instance.GraphicsDevice.GraphicsDeviceStatus)
             {
                 case GraphicsDeviceStatus.Lost:
                     // If the graphics device is lost, we cannot use it at all.
@@ -123,7 +123,7 @@ namespace AW2.Core
                     break;
                 default:
                     // If the device state is ok, check whether it is big enough.
-                    var pp = AssaultWing.Instance.GraphicsDevice.PresentationParameters;
+                    var pp = AssaultWingCore.Instance.GraphicsDevice.PresentationParameters;
                     deviceNeedsReset = (ClientSize.Width > pp.BackBufferWidth) ||
                                        (ClientSize.Height > pp.BackBufferHeight);
                     break;

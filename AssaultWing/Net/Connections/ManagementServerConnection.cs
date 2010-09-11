@@ -25,7 +25,7 @@ namespace AW2.Net.Connections
         {
             var managementMessage = message as ManagementMessage;
             if (managementMessage == null) return; // !!! HACK, UNDONE this check: throw new ArgumentException("Only ManagementMessage instances can be sent to management server", "message");
-            AssaultWing.Instance.NetworkEngine.UDPSocket.Send(managementMessage.Serialize(), RemoteUDPEndPoint);
+            AssaultWingCore.Instance.NetworkEngine.UDPSocket.Send(managementMessage.Serialize(), RemoteUDPEndPoint);
         }
     }
 }

@@ -422,7 +422,7 @@ namespace AW2.Helpers
         /// </summary>
         public static float SecondsAgoGameTime(this TimeSpan time1)
         {
-            return (float)(AssaultWing.Instance.DataEngine.ArenaTotalTime - time1).TotalSeconds;
+            return (float)(AssaultWingCore.Instance.DataEngine.ArenaTotalTime - time1).TotalSeconds;
         }
 
         /// <summary>
@@ -431,7 +431,7 @@ namespace AW2.Helpers
         /// </summary>
         public static float SecondsAgoRealTime(this TimeSpan time1)
         {
-            return (float)(AssaultWing.Instance.GameTime.TotalRealTime - time1).TotalSeconds;
+            return (float)(AssaultWingCore.Instance.GameTime.TotalRealTime - time1).TotalSeconds;
         }
 
         /// <summary>

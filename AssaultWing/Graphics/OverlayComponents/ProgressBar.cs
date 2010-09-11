@@ -193,7 +193,7 @@ namespace AW2.Graphics.OverlayComponents
             // Draw flow pattern.
             float flowSpeed = 45; // flow speed in pixels per second
             float flowPassTime = _flowTexture.Width / flowSpeed; // how many seconds it takes to flow one texture width
-            int flowDisplacement = (int)(_flowTexture.Width * (AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds % flowPassTime) / flowPassTime);
+            int flowDisplacement = (int)(_flowTexture.Width * (AssaultWingCore.Instance.GameTime.TotalRealTime.TotalSeconds % flowPassTime) / flowPassTime);
             Vector2 flowPos = barPos;
             Rectangle flowRectangle = new Rectangle(
                 _flowTexture.Width - flowDisplacement,
@@ -214,7 +214,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = AssaultWingCore.Instance.Content;
             _backgroundTexture = content.Load<Texture2D>("menu_progressbar_bg");
             _barTexture = content.Load<Texture2D>("menu_progressbar_fill");
             _flowTexture = content.Load<Texture2D>("menu_progressbar_advancer");

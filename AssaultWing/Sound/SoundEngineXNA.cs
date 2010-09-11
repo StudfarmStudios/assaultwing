@@ -61,7 +61,7 @@ namespace AW2.Sound
             try
             {
                 Log.Write("Sound engine initialized.");
-                string filePath = AssaultWing.Instance.Content.RootDirectory + "\\content\\sounds\\sounddefs.xml";
+                string filePath = AssaultWingCore.Instance.Content.RootDirectory + "\\content\\sounds\\sounddefs.xml";
 
                 List<string> allSounds = new List<string>();
                 
@@ -80,7 +80,7 @@ namespace AW2.Sound
 
                     // Find all variations for a sound
                     List<SoundEffect> effects = new List<SoundEffect>();
-                    AWContentManager manager = (AWContentManager)AssaultWing.Instance.Content;
+                    AWContentManager manager = (AWContentManager)AssaultWingCore.Instance.Content;
                     
                     for (int i = 1; i <= 99; i++)
                     {
@@ -163,7 +163,7 @@ namespace AW2.Sound
         {
             if (!Enabled) return;
             if (_music == null || !_music.IsPlaying) return;
-            var now = AssaultWing.Instance.GameTime.TotalRealTime;
+            var now = AssaultWingCore.Instance.GameTime.TotalRealTime;
             float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
             _volumeFadeAction = () =>
             {

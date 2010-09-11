@@ -27,7 +27,7 @@ namespace AW2.Graphics
 
         public TexturePostprocessor(GraphicsDevice gfx, Action<ICollection<Effect>> effectContainerUpdater)
         {
-            _basicShaders = AssaultWing.Instance.Content.Load<Effect>("basicshaders");
+            _basicShaders = AssaultWingCore.Instance.Content.Load<Effect>("basicshaders");
             _gfx = gfx;
             Func<AutoRenderTarget2D.CreationData> getRenderTargetCreationData = () => new AutoRenderTarget2D.CreationData
             {
@@ -137,7 +137,7 @@ namespace AW2.Graphics
         private void PrepareEffect(Effect effect)
         {
             var tex = _targets[_sourceIndex].GetTexture();
-            effect.Parameters["T"].SetValue((float)AssaultWing.Instance.DataEngine.ArenaTotalTime.TotalSeconds);
+            effect.Parameters["T"].SetValue((float)AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds);
             effect.Parameters["Texture"].SetValue(tex);
             effect.Parameters["TextureWidth"].SetValue(tex.Width);
             effect.Parameters["TextureHeight"].SetValue(tex.Height);

@@ -21,7 +21,7 @@ namespace AW2.Net
         /// </summary>
         public GameplayMessage()
         {
-            FrameNumber = AssaultWing.Instance.DataEngine.ArenaFrameCount;
+            FrameNumber = AssaultWingCore.Instance.DataEngine.ArenaFrameCount;
         }
 
         protected override void Serialize(NetworkBinaryWriter writer)

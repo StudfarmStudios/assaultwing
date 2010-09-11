@@ -171,7 +171,7 @@ namespace AW2.Game
 
             Arena = _preparedArena;
             _preparedArena = null;
-            AssaultWing.Instance.GobsCounter.SetRawValue(Arena.Gobs.Count);
+            AssaultWingCore.Instance.GobsCounter.SetRawValue(Arena.Gobs.Count);
             if (Arena.IsForPlaying)
             {
                 RefreshArenaToRadarTransform();
@@ -191,7 +191,7 @@ namespace AW2.Game
             _preparedArena = arena;
             _preparedArena.IsForPlaying = initializeForPlaying;
             if (initializeForPlaying) _preparedArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, _preparedArena.BinFilename));
-            AssaultWing.Instance.LoadArenaContent(_preparedArena);
+            AssaultWingCore.Instance.LoadArenaContent(_preparedArena);
             int wallCount = _preparedArena.Gobs.Count(gob => gob is Wall);
             _progressBar.SetSubtaskCount(wallCount);
             _preparedArena.Reset(); // this usually takes several seconds
@@ -240,9 +240,9 @@ namespace AW2.Game
 
         public void RearrangeViewports()
         {
-            var localPlayers = AssaultWing.Instance.DataEngine.Spectators.Where(player => player.NeedsViewport);
+            var localPlayers = AssaultWingCore.Instance.DataEngine.Spectators.Where(player => player.NeedsViewport);
             var playerEnumerator = localPlayers.GetEnumerator();
-            AssaultWing.Instance.DataEngine.Viewports = new AWViewportCollection(localPlayers.Count(), rectangle =>
+            AssaultWingCore.Instance.DataEngine.Viewports = new AWViewportCollection(localPlayers.Count(), rectangle =>
             {
                 if (!playerEnumerator.MoveNext()) throw new ApplicationException("Ran out of players when assigning viewports");
                 return playerEnumerator.Current.CreateViewport(rectangle);
@@ -256,8 +256,8 @@ namespace AW2.Game
         /// </summary>
         public void RearrangeViewports(int privilegedPlayer)
         {
-            var player = AssaultWing.Instance.DataEngine.Spectators[privilegedPlayer];
-            AssaultWing.Instance.DataEngine.Viewports = new AWViewportCollection(1, viewport => player.CreateViewport(viewport));
+            var player = AssaultWingCore.Instance.DataEngine.Spectators[privilegedPlayer];
+            AssaultWingCore.Instance.DataEngine.Viewports = new AWViewportCollection(1, viewport => player.CreateViewport(viewport));
         }
 
         #endregion viewports
@@ -298,13 +298,13 @@ namespace AW2.Game
         public void CommitPending()
         {
             // Game client updates gobs and players as told by the game server.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client)
             {
                 {
                     GobUpdateMessage message = null;
-                    while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobUpdateMessage>()) != null)
+                    while ((message = AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobUpdateMessage>()) != null)
                     {
-                        var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(message);
+                        var framesAgo = AssaultWingCore.Instance.NetworkEngine.GetMessageAge(message);
                         message.ReadGobs(gobId =>
                         {
                             var theGob = Arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
@@ -320,10 +320,10 @@ namespace AW2.Game
             CustomOperations = null;
 
             // Game client removes gobs as told by the game server.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client)
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client)
             {
                 GobDeletionMessage message = null;
-                while ((message = AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobDeletionMessage>()) != null)
+                while ((message = AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobDeletionMessage>()) != null)
                 {
                     Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.ID == message.GobId);
                     if (gob == null)
@@ -333,7 +333,7 @@ namespace AW2.Game
                         // the creation and deletion messages arrived just after we 
                         // finished receiving creation messages but right before we 
                         // started receiving deletion messages for this frame.
-                        AssaultWing.Instance.NetworkEngine.GameServerConnection.Messages.Requeue(message);
+                        AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Messages.Requeue(message);
                         break;
                     }
                     gob.DieOnClient();
@@ -341,7 +341,7 @@ namespace AW2.Game
             }
 
             // Game server sends state updates about gobs to game clients.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server)
             {
                 var now = ArenaTotalTime;
                 var message = new GobUpdateMessage();
@@ -353,7 +353,7 @@ namespace AW2.Game
                     gob.LastNetworkUpdate = now;
                     message.AddGob(gob.ID, gob, SerializationModeFlags.VaryingData);
                 }
-                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
+                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
             }
 
 #if DEBUG_PROFILE
@@ -429,7 +429,7 @@ namespace AW2.Game
             }
 
             // Draw arena walls in one color in a radar-sized texture.
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
             GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
             int targetWidth = (int)_arenaDimensionsOnRadar.X;
             int targetHeight = (int)_arenaDimensionsOnRadar.Y;
@@ -512,7 +512,7 @@ namespace AW2.Game
         {
             spectator.ID = GetFreeSpectatorID();
             var player = spectator as Player;
-            if (player != null && AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+            if (player != null && AssaultWingCore.Instance.NetworkMode != NetworkMode.Client)
             {
                 player.PlayerColor = Color.Black; // reset to a color that won't affect free color picking
                 player.PlayerColor = GetFreePlayerColor();
@@ -521,10 +521,10 @@ namespace AW2.Game
 
         private void SpectatorRemoved(Spectator spectator)
         {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server)
             {
                 var message = new PlayerDeletionMessage { PlayerID = spectator.ID };
-                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
+                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
             }
             spectator.Dispose();
         }

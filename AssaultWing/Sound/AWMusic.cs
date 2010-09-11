@@ -44,7 +44,7 @@ namespace AW2.Sound
         {
             get
             {
-                if (!MusicTrackAlive) _musicTrack = AssaultWing.Instance.Content.Load<SoundEffect>(_musicName);
+                if (!MusicTrackAlive) _musicTrack = AssaultWingCore.Instance.Content.Load<SoundEffect>(_musicName);
                 return _musicTrack;
             }
         }

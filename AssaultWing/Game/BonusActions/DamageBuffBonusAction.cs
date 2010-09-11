@@ -47,8 +47,8 @@ namespace AW2.Game.BonusActions
             // Workaround: delay InflictDamage by using DataEngine.CustomOperations.
             // A more beautiful way around this would be to share deletion logic from Gob to other
             // similar classes such as BonusAction and Weapon. !!!
-            float damage = AssaultWing.Instance.PhysicsEngine.ApplyChange(_damagePerSecond, AssaultWing.Instance.GameTime.ElapsedGameTime);
-            AssaultWing.Instance.DataEngine.CustomOperations += () =>
+            float damage = AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_damagePerSecond, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+            AssaultWingCore.Instance.DataEngine.CustomOperations += () =>
             {
                 if (Player.Ship != null) Player.Ship.InflictDamage(damage, new DeathCause(Player.Ship, DeathCauseType.Damage));
             };

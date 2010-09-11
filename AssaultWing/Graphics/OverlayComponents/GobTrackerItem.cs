@@ -45,7 +45,7 @@ namespace AW2.Graphics.OverlayComponents
 
             if (ScaleByDistance)
             {
-                var farDistance = AssaultWing.Instance.DataEngine.Arena.Dimensions.Length();
+                var farDistance = AssaultWingCore.Instance.DataEngine.Arena.Dimensions.Length();
                 var distance = Vector2.Distance(Gob.Pos, trackerPos);
                 scale = MathHelper.Max(0, (farDistance - distance) / farDistance);
             }
@@ -55,13 +55,13 @@ namespace AW2.Graphics.OverlayComponents
             }
             if (StickToBorders)
             {
-                var gfx = AssaultWing.Instance.GraphicsDevice;
+                var gfx = AssaultWingCore.Instance.GraphicsDevice;
                 var max = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height);
                 gobPosOnScreen = AW2.Helpers.Geometric.Geometry.CropLineSegment(trackerPosOnScreen, gobPosOnScreen, Vector2.Zero, max);
             }
             if ((gobPosOnScreen != origGobPosOnScreen && StickToBorders) || (gobPosOnScreen == origGobPosOnScreen && ShowWhileTargetOnScreen))
             {
-                Texture2D texture = AssaultWing.Instance.Content.Load<Texture2D>(Texture);
+                Texture2D texture = AssaultWingCore.Instance.Content.Load<Texture2D>(Texture);
                 spriteBatch.Draw(texture, gobPosOnScreen, null, DrawColor, rotation, new Vector2(texture.Width, texture.Height) / 2, scale, SpriteEffects.None, 0);
             }
         }

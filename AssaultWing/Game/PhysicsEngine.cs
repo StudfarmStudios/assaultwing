@@ -39,7 +39,7 @@ namespace AW2.Game
         /// <param name="force">The force to apply, measured in Newtons.</param>
         public void ApplyForce(Gob gob, Vector2 force)
         {
-            gob.Move += force / gob.Mass * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            gob.Move += force / gob.Mass * (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
         }
 
         /// <summary>

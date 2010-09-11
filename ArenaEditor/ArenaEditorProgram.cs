@@ -22,9 +22,9 @@ namespace AW2
             editor = new ArenaEditor();
             editor.Show(); // needed for retrieving the window's handle
             var app = new Application();
-            AssaultWing.GetRealClientAreaSize = () => editor.ArenaView.Size;
-            AssaultWing.WindowInitializing += g => editor.ArenaView;
-            var game = AssaultWing.Instance;
+            AssaultWingCore.GetRealClientAreaSize = () => editor.ArenaView.Size;
+            AssaultWingCore.WindowInitializing += g => editor.ArenaView;
+            var game = AssaultWingCore.Instance;
             game.DoNotFreezeCanonicalStrings = true;
             game.SoundEngine.Enabled = false;
             game.CommandLineArgs = args;
@@ -35,7 +35,7 @@ namespace AW2
             xnaWindow.VisibleChanged += (sender, eventArgs) => xnaWindow.Visible = false;
             var runner = new AWGameRunner(game,
                 () => editor.ArenaView.BeginInvoke((Action)editor.ArenaView.Invalidate),
-                gameTime => editor.ArenaView.BeginInvoke((Action)(() => AssaultWing.Instance.Update(gameTime))));
+                gameTime => editor.ArenaView.BeginInvoke((Action)(() => AssaultWingCore.Instance.Update(gameTime))));
             app.Startup += (sender, eventArgs) => runner.Run();
             app.Exit += (sender, eventArgs) => runner.Exit();
             app.Run(editor);
@@ -43,7 +43,7 @@ namespace AW2
 
         private static void Initialize()
         {
-            AssaultWing.Instance.DataEngine.Spectators.Clear();
+            AssaultWingCore.Instance.DataEngine.Spectators.Clear();
             var spectatorControls = new PlayerControls
             {
                 Thrust = new KeyboardKey(Keys.Up),
@@ -55,7 +55,7 @@ namespace AW2
                 Extra = new KeyboardKey(Keys.Enter)
             };
             var spectator = new EditorSpectator(spectatorControls);
-            AssaultWing.Instance.DataEngine.Spectators.Add(spectator);
+            AssaultWingCore.Instance.DataEngine.Spectators.Add(spectator);
         }
     }
 }

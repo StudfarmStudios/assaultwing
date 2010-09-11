@@ -33,7 +33,7 @@ namespace AW2.Graphics
         private void CircleSmallAndInvisibleGobs()
         {
             var view = ViewMatrix;
-            foreach (var layer in AssaultWing.Instance.DataEngine.Arena.Layers)
+            foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
             {
                 var projection = GetProjectionMatrix(layer.Z);
                 foreach (var gob in layer.Gobs)

@@ -103,7 +103,7 @@ namespace AW2.Game.Pengs
         {
             Textures = new Texture2D[TextureNames.Length];
             for (int i = 0; i < TextureNames.Length; ++i)
-                Textures[i] = AssaultWing.Instance.Content.Load<Texture2D>(TextureNames[i]);
+                Textures[i] = AssaultWingCore.Instance.Content.Load<Texture2D>(TextureNames[i]);
         }
 
         public void UnloadContent()

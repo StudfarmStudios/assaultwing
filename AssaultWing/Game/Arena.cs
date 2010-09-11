@@ -399,7 +399,7 @@ namespace AW2.Game
         /// </summary>
         public List<BackgroundMusic> BackgroundMusic { get { return _backgroundMusic; } }
 
-        private bool IsActive { get { return this == AssaultWing.Instance.DataEngine.Arena; } }
+        private bool IsActive { get { return this == AssaultWingCore.Instance.DataEngine.Arena; } }
 
         #endregion // Arena properties
 
@@ -508,7 +508,7 @@ namespace AW2.Game
         /// </summary>
         public void Move(Gob gob, int frameCount, bool allowSideEffects)
         {
-            Move(gob, AssaultWing.Instance.TargetElapsedTime.Multiply(frameCount), allowSideEffects);
+            Move(gob, AssaultWingCore.Instance.TargetElapsedTime.Multiply(frameCount), allowSideEffects);
         }
 
         /// <summary>
@@ -539,7 +539,7 @@ namespace AW2.Game
             while (moveTime > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
             {
                 var oldMove = gob.Move;
-                var gobFrameMove = gob.Move * (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                var gobFrameMove = gob.Move * (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
                 int moveChunkCount = (int)Math.Ceiling(gobFrameMove.Length() / MOVE_LENGTH_MAXIMUM);
                 if (moveChunkCount == 0) moveChunkCount = 1;
                 var chunkMoveTime = moveTime.Divide(moveChunkCount);
@@ -1072,7 +1072,7 @@ namespace AW2.Game
             if (moveDelta.Length() < MINIMUM_COLLISION_DELTA) return;
 
             if (!(gob is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            AssaultWing.Instance.SoundEngine.PlaySound("Collision");
+            AssaultWingCore.Instance.SoundEngine.PlaySound("Collision");
         }
 
         private static void PlayGobCollisionSound(Gob gob1, Gob gob2, Vector2 move1Delta, Vector2 move2Delta)
@@ -1081,7 +1081,7 @@ namespace AW2.Game
             if (move1Delta.Length() < MINIMUM_COLLISION_DELTA && move2Delta.Length() < MINIMUM_COLLISION_DELTA) return;
 
             if (!(gob1 is Gobs.Ship) && !(gob2 is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            AssaultWing.Instance.SoundEngine.PlaySound("Shipcollision");
+            AssaultWingCore.Instance.SoundEngine.PlaySound("Shipcollision");
         }
 
         private float CollisionDamage(Gob gob, Vector2 moveDelta, float damageMultiplier)
@@ -1255,7 +1255,7 @@ namespace AW2.Game
         {
             var trackerItem = new GobTrackerItem(ship, null, GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
 
-            foreach (var plr in AssaultWing.Instance.DataEngine.Players)
+            foreach (var plr in AssaultWingCore.Instance.DataEngine.Players)
             {
                 if (!plr.IsRemote && plr.ID != ship.Owner.ID)
                 {
@@ -1268,7 +1268,7 @@ namespace AW2.Game
         {
             var trackerItem = new GobTrackerItem(dock, null, GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
 
-            foreach (var plr in AssaultWing.Instance.DataEngine.Players)
+            foreach (var plr in AssaultWingCore.Instance.DataEngine.Players)
             {
                 if (!plr.IsRemote)
                 {
@@ -1281,7 +1281,7 @@ namespace AW2.Game
         {
             var trackerItem = new GobTrackerItem(bonus, null, GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
             
-            foreach (var plr in AssaultWing.Instance.DataEngine.Players)
+            foreach (var plr in AssaultWingCore.Instance.DataEngine.Players)
             {
                 if (!plr.IsRemote)
                 {
@@ -1294,7 +1294,7 @@ namespace AW2.Game
 
         private void GobAdded(Gob gob)
         {
-            if (IsActive) AssaultWing.Instance.GobsCounter.Increment();
+            if (IsActive) AssaultWingCore.Instance.GobsCounter.Increment();
             Prepare(gob);
 
             if (gob is AW2.Game.Gobs.Ship)
@@ -1311,36 +1311,36 @@ namespace AW2.Game
             }
 
             // Game server notifies game clients of the new gob.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
             {
                 var message = new GobCreationMessage();
                 message.CreateToNextArena = !IsActive;
                 message.GobTypeName = gob.TypeName;
                 message.LayerIndex = Layers.IndexOf(gob.Layer);
                 message.Write(gob, AW2.Net.SerializationModeFlags.All);
-                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
+                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
             }
         }
 
         private bool GobRemoving(Gob gob)
         {
             // Game client removes relevant gobs only when the server says so.
-            return AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant;
+            return AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant;
         }
 
         private void GobRemoved(Gob gob)
         {
             // Game server notifies game clients of the removal of relevant gobs.
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
             {
                 if (!IsActive) throw new Exception("Removing a gob from an inactive arena during network game");
                 var message = new GobDeletionMessage();
                 message.GobId = gob.ID;
-                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
+                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
             }
 
             if (IsActive)
-                AssaultWing.Instance.GobsCounter.Decrement();
+                AssaultWingCore.Instance.GobsCounter.Decrement();
             if (gob.Layer == Gobs.GameplayLayer)
                 Unregister(gob);
             gob.Dispose();

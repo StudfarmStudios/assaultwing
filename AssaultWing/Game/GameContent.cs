@@ -10,7 +10,7 @@ namespace AW2.Game
 
         public void LoadContent()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             WallSilhouetteEffect = new BasicEffect(gfx, null);
             WallSilhouetteEffect.World = Matrix.Identity;
             WallSilhouetteEffect.VertexColorEnabled = false;

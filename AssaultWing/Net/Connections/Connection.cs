@@ -384,7 +384,7 @@ namespace AW2.Net.Connections
         private void SendViaUDP(byte[] data)
         {
             if (!IsHandshaked) throw new InvalidOperationException("Cannot send messages via UDP before connection is handshaked");
-            AssaultWing.Instance.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
+            AssaultWingCore.Instance.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
         }
 
         /// <summary>

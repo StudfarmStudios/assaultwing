@@ -651,7 +651,7 @@ namespace AW2.Game
         {
             T gob = Clonable.Instantiate(typeName) as T;
             if (gob == null) throw new ApplicationException("Gob type template " + typeName + " wasn't of expected type " + typeof(T).Name);
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
+            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
 
@@ -691,7 +691,7 @@ namespace AW2.Game
         public static void CreateGob(Gob runtimeState, Action<Gob> init)
         {
             Gob gob = CreateGob(runtimeState);
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
+            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
 
@@ -704,7 +704,7 @@ namespace AW2.Game
         /// </summary>
         public virtual void LoadContent()
         {
-            Model = AssaultWing.Instance.Content.Load<Model>(ModelName);
+            Model = AssaultWingCore.Instance.Content.Load<Model>(ModelName);
         }
 
         /// <summary>
@@ -763,7 +763,7 @@ namespace AW2.Game
         /// <param name="cause">The cause of death.</param>
         public virtual void Die(DeathCause cause)
         {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client && IsRelevant) return;
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client && IsRelevant) return;
             DieImpl(cause, false);
         }
 
@@ -820,7 +820,7 @@ namespace AW2.Game
                     be.Alpha = _alpha;
 
                     // Modify render state.
-                    AssaultWing.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = true;
+                    AssaultWingCore.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = true;
                 }
 
                 foreach (BasicEffect be in mesh.Effects)
@@ -840,7 +840,7 @@ namespace AW2.Game
                     be.Alpha = oldAlpha;
 
                     // Restore render state.
-                    AssaultWing.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = false;
+                    AssaultWingCore.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = false;
                 }
 
                 // Blend towards white if required.
@@ -853,7 +853,7 @@ namespace AW2.Game
                     BasicEffect be = (BasicEffect)mesh.Effects[0];
 
                     // Modify render state.
-                    RenderState renderState = AssaultWing.Instance.GraphicsDevice.RenderState;
+                    RenderState renderState = AssaultWingCore.Instance.GraphicsDevice.RenderState;
                     renderState.AlphaBlendEnable = true;
                     renderState.DepthBufferEnable = false;
 
@@ -972,7 +972,7 @@ namespace AW2.Game
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
                 int ownerId = reader.ReadSByte();
-                _owner = AssaultWing.Instance.DataEngine.Players.FirstOrDefault(player => player.ID == ownerId);
+                _owner = AssaultWingCore.Instance.DataEngine.Players.FirstOrDefault(player => player.ID == ownerId);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1168,7 +1168,7 @@ namespace AW2.Game
         /// </summary>
         protected void RemoveCollisionAreas(Predicate<CollisionArea> wantToRemove)
         {
-            AssaultWing.Instance.DataEngine.CustomOperations += () =>
+            AssaultWingCore.Instance.DataEngine.CustomOperations += () =>
             {
                 Arena.Unregister(this);
                 collisionAreas = Array.FindAll(collisionAreas, area => !wantToRemove(area));
@@ -1200,25 +1200,25 @@ namespace AW2.Game
         /// <param name="cause">Cause of death if the damage results in death.</param>
         public virtual void InflictDamage(float damageAmount, DeathCause cause)
         {
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Client) return;
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client) return;
 
             if (cause.Killer != null &&
                 cause.Killer.Owner != null &&
                 damageAmount > 0)
             {
                 LastDamager = cause.Killer.Owner;
-                LastDamagerTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                LastDamagerTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
             }
             
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
 
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server)
             {
                 var message = new AW2.Net.Messages.GobDamageMessage();
                 message.GobID = this.ID;
                 message.DamageLevel = damage;
-                AssaultWing.Instance.NetworkEngine.SendToGameClients(message);
+                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
             }
 
             if (damageAmount > 0)
@@ -1371,7 +1371,7 @@ namespace AW2.Game
 
         private void SetID()
         {
-            ID = AssaultWing.Instance.NetworkMode == NetworkMode.Client
+            ID = AssaultWingCore.Instance.NetworkMode == NetworkMode.Client
                 ? g_leastUnusedIrrelevantId--
                 : g_leastUnusedId++;
         }
@@ -1385,7 +1385,7 @@ namespace AW2.Game
         /// </summary>
         public override void Cloned()
         {
-            AssaultWing.Instance.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
+            AssaultWingCore.Instance.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
             foreach (var area in collisionAreas) area.Owner = this;
         }
 

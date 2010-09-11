@@ -42,8 +42,8 @@ namespace AW2.UI
             // Reset mouse cursor to the middle of the game window.
             if (_eatMouse)
                 Microsoft.Xna.Framework.Input.Mouse.SetPosition(
-                    AssaultWing.Instance.ClientBounds.Width / 2,
-                    AssaultWing.Instance.ClientBounds.Height / 2);
+                    AssaultWingCore.Instance.ClientBounds.Width / 2,
+                    AssaultWingCore.Instance.ClientBounds.Height / 2);
 
             Control.SetState(ref _oldState, ref newState);
             _oldState = newState;
@@ -51,7 +51,7 @@ namespace AW2.UI
 
         public static void HandlePlayerControlsMessage(PlayerControlsMessage mess)
         {
-            var player = AssaultWing.Instance.DataEngine.Spectators.First(plr => plr.ID == mess.PlayerID);
+            var player = AssaultWingCore.Instance.DataEngine.Spectators.First(plr => plr.ID == mess.PlayerID);
             if (player.ConnectionID != mess.ConnectionID)
             {
                 // A client sent controls for a player that lives on another game instance.
@@ -62,7 +62,7 @@ namespace AW2.UI
                 SetRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
             var playerPlayer = player as Player;
             if (playerPlayer != null && playerPlayer.Ship != null)
-                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageGameTime(mess));
+                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWingCore.Instance.NetworkEngine.GetMessageGameTime(mess));
         }
 
         private static void SetRemoteControlState(RemoteControl control, ControlState state)

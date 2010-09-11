@@ -331,7 +331,7 @@ namespace AW2.Game.Gobs
         /// <param name="scale">Scale of graphics.</param>
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            Viewport gfxViewport = AssaultWing.Instance.GraphicsDevice.Viewport;
+            Viewport gfxViewport = AssaultWingCore.Instance.GraphicsDevice.Viewport;
             Vector3 viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
             Matrix pengToGame = WorldMatrix;
             Color pengColor = new Color(new Vector3(1, 1, 1));

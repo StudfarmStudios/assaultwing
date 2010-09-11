@@ -120,9 +120,9 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            _icon = AssaultWing.Instance.Content.Load<Texture2D>(IconName);
-            _iconBackground = AssaultWing.Instance.Content.Load<Texture2D>(g_iconBackgroundName);
-            _messageFont = AssaultWing.Instance.Content.Load<SpriteFont>("ConsoleFont");
+            _icon = AssaultWingCore.Instance.Content.Load<Texture2D>(IconName);
+            _iconBackground = AssaultWingCore.Instance.Content.Load<Texture2D>(g_iconBackgroundName);
+            _messageFont = AssaultWingCore.Instance.Content.Load<SpriteFont>("ConsoleFont");
         }
 
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)

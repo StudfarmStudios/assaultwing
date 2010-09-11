@@ -174,14 +174,14 @@ namespace AW2.Net
         {
             try
             {
-                var managementServerEndPoint = MiscHelper.ParseIPEndPoint(AssaultWing.Instance.Settings.Net.ManagementServerAddress);
+                var managementServerEndPoint = MiscHelper.ParseIPEndPoint(AssaultWingCore.Instance.Settings.Net.ManagementServerAddress);
                 if (managementServerEndPoint.Port == 0)
                     managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
                 _managementServerConnection = new ManagementServerConnection(managementServerEndPoint);
             }
             catch (ArgumentException e)
             {
-                throw new ArgumentException("ERROR: Invalid IP address for management server: " + AssaultWing.Instance.Settings.Net.ManagementServerAddress, e);
+                throw new ArgumentException("ERROR: Invalid IP address for management server: " + AssaultWingCore.Instance.Settings.Net.ManagementServerAddress, e);
             }
         }
 
@@ -241,8 +241,8 @@ namespace AW2.Net
         /// <param name="error">If true, client is being dropped due to an error condition.</param>
         public void DropClient(int connectionID, bool error)
         {
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Server)
-                throw new InvalidOperationException("Cannot drop client in mode " + AssaultWing.Instance.NetworkMode);
+            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Server)
+                throw new InvalidOperationException("Cannot drop client in mode " + AssaultWingCore.Instance.NetworkMode);
 
             var connection = GetGameClientConnection(connectionID);
             Log.Write("Dropping " + connection.Name);
@@ -252,15 +252,15 @@ namespace AW2.Net
             if (error)
             {
                 List<string> droppedPlayerNames = new List<string>();
-                foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
+                foreach (var player in AssaultWingCore.Instance.DataEngine.Spectators)
                     if (player.ConnectionID == connection.ID)
                         droppedPlayerNames.Add(player.Name);
                 string message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
-                foreach (var player in AssaultWing.Instance.DataEngine.Players)
+                foreach (var player in AssaultWingCore.Instance.DataEngine.Players)
                     if (!player.IsRemote)
                         player.SendMessage(message);
             }
-            AssaultWing.Instance.DataEngine.Spectators.Remove(player => player.ConnectionID == connection.ID);
+            AssaultWingCore.Instance.DataEngine.Spectators.Remove(player => player.ConnectionID == connection.ID);
         }
 
         public Connection GetGameClientConnection(int connectionID)
@@ -353,8 +353,8 @@ namespace AW2.Net
             // TODO: Assuming the remote and local game instances are frame synchronized,
             // we can do without the parameter 'connection' as 'remoteGameTimeOffsetFrames' will be zero.
             if (connection.ID != message.ConnectionID) throw new ArgumentException("Wrong connection");
-            int remoteGameTimeOffsetFrames = (int)(connection.PingInfo.RemoteGameTimeOffset.Ticks / ((AssaultWing.Instance.TargetElapsedTime.Ticks * 3) / 2));
-            var messageAge = AssaultWing.Instance.DataEngine.ArenaFrameCount
+            int remoteGameTimeOffsetFrames = (int)(connection.PingInfo.RemoteGameTimeOffset.Ticks / ((AssaultWingCore.Instance.TargetElapsedTime.Ticks * 3) / 2));
+            var messageAge = AssaultWingCore.Instance.DataEngine.ArenaFrameCount
                 - (message.FrameNumber + remoteGameTimeOffsetFrames);
             return messageAge;
         }
@@ -364,7 +364,7 @@ namespace AW2.Net
         /// </summary>
         public TimeSpan GetMessageGameTime(GameplayMessage message)
         {
-            return AssaultWing.Instance.TargetElapsedTime.Multiply(message.FrameNumber);
+            return AssaultWingCore.Instance.TargetElapsedTime.Multiply(message.FrameNumber);
         }
 
         #endregion Public interface
@@ -442,7 +442,7 @@ namespace AW2.Net
                 while (queue.Count > 0)
                 {
                     var result = queue.Dequeue();
-                    switch (AssaultWing.Instance.NetworkMode)
+                    switch (AssaultWingCore.Instance.NetworkMode)
                     {
                         case NetworkMode.Client:
                             if (_gameServerConnection != null) break; // silently ignore extra server connection attempts
@@ -459,7 +459,7 @@ namespace AW2.Net
                         default:
                             // HACK: This happens when client connects to two server end points and both fail.
                             // The first failure returns to NetworkMode.Standalone and the second failure comes here.
-                            Log.Write("Invalid NetworkMode for accepting connections: " + AssaultWing.Instance.NetworkMode);
+                            Log.Write("Invalid NetworkMode for accepting connections: " + AssaultWingCore.Instance.NetworkMode);
                             break;
                     }
                 }
@@ -488,7 +488,7 @@ namespace AW2.Net
             if (errorsFound)
             {
                 Log.Write("Closing network connections due to errors");
-                AssaultWing.Instance.CutNetworkConnections();
+                AssaultWingCore.Instance.CutNetworkConnections();
             }
         }
 

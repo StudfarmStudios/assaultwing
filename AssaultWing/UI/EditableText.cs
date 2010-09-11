@@ -48,7 +48,7 @@ namespace AW2.UI
         /// </summary>
         public string Content { get; private set; }
 
-        private bool TimeToRepeatKey { get { return _nextKeyRepeat != TimeSpan.Zero && _nextKeyRepeat <= AssaultWing.Instance.GameTime.TotalRealTime; } }
+        private bool TimeToRepeatKey { get { return _nextKeyRepeat != TimeSpan.Zero && _nextKeyRepeat <= AssaultWingCore.Instance.GameTime.TotalRealTime; } }
 
         public EditableText(string content, int maxLength, Keysets allowedKeysets)
         {
@@ -73,7 +73,7 @@ namespace AW2.UI
             IEnumerable<Keys> pressedKeys = null;
             if (!_lastPressedKey.HasValue)
             {
-                _nextKeyRepeat = AssaultWing.Instance.GameTime.TotalRealTime + REPEAT_DELAY;
+                _nextKeyRepeat = AssaultWingCore.Instance.GameTime.TotalRealTime + REPEAT_DELAY;
                 pressedKeys = state.GetPressedKeys();
             }
             else
@@ -82,7 +82,7 @@ namespace AW2.UI
                     _lastPressedKey = null;
                 else if (TimeToRepeatKey)
                 {
-                    _nextKeyRepeat = AssaultWing.Instance.GameTime.TotalRealTime + REPEAT_INTERVAL;
+                    _nextKeyRepeat = AssaultWingCore.Instance.GameTime.TotalRealTime + REPEAT_INTERVAL;
                     pressedKeys = new Keys[] { _lastPressedKey.Value };
                 }
             }

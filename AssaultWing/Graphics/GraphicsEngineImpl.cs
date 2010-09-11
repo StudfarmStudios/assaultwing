@@ -26,7 +26,7 @@ namespace AW2.Graphics
         public override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
             _spriteBatch = new SpriteBatch(GraphicsDeviceService.Instance.GraphicsDevice);
             GameContent.LoadContent();
 
@@ -35,9 +35,9 @@ namespace AW2.Graphics
             data.ForEachTypeTemplate<Gob>(gobTemplate =>
             {
                 foreach (var modelName in gobTemplate.ModelNames)
-                    AssaultWing.Instance.Content.Load<Model>(modelName);
+                    AssaultWingCore.Instance.Content.Load<Model>(modelName);
                 foreach (var textureName in gobTemplate.TextureNames)
-                    AssaultWing.Instance.Content.Load<Texture2D>(textureName);
+                    AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
             });
 
             // Load all textures that each weapon needs.
@@ -45,14 +45,14 @@ namespace AW2.Graphics
             data.ForEachTypeTemplate<Weapon>(weaponTemplate =>
             {
                 foreach (var textureName in weaponTemplate.TextureNames)
-                    AssaultWing.Instance.Content.Load<Texture2D>(textureName);
+                    AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
             });
 
             // Load arena previews.
             // The purpose of this is to load from disk here and cache the content for fast access later.
-            AssaultWing.Instance.Content.Load<Texture2D>("no_preview");
+            AssaultWingCore.Instance.Content.Load<Texture2D>("no_preview");
             foreach (var name in data.ArenaPlaylist)
-                try { AssaultWing.Instance.Content.Load<Texture2D>(name.ToLower() + "_preview"); }
+                try { AssaultWingCore.Instance.Content.Load<Texture2D>(name.ToLower() + "_preview"); }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException) { }
 
             // Load arena related content if an arena is being played right now.
@@ -71,30 +71,30 @@ namespace AW2.Graphics
         public void LoadArenaContent(Arena arenaTemplate)
         {
             // NOTE !!! This method has very little to do with GraphicsEngineImpl. Refactor into Arena.LoadContent() !!!
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
 
             foreach (var gob in arenaTemplate.Gobs)
             {
                 // Load the layer's gob types.
                 foreach (var modelName in gob.ModelNames)
-                    AssaultWing.Instance.Content.Load<Model>(modelName);
+                    AssaultWingCore.Instance.Content.Load<Model>(modelName);
 
                 // Load the layer's gobs' textures.
                 foreach (var textureName in gob.TextureNames)
-                    AssaultWing.Instance.Content.Load<Texture2D>(textureName);
+                    AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
 
                 gob.LoadContent();
             }
 
             foreach (ArenaLayer layer in arenaTemplate.Layers)
                 if (layer.ParallaxName != "")
-                    AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                    AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
         }
 
         public override void UnloadContent()
         {
             Log.Write("Graphics engine unloading graphics content.");
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
             GameContent.UnloadContent();
 
             if (_spriteBatch != null)
@@ -115,27 +115,27 @@ namespace AW2.Graphics
 
         public override void Draw()
         {
-            AssaultWing.Instance.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            AssaultWingCore.Instance.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
+            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
 
             Viewport screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
-            screen.Width = AssaultWing.Instance.ClientBounds.Width;
-            screen.Height = AssaultWing.Instance.ClientBounds.Height;
+            screen.Width = AssaultWingCore.Instance.ClientBounds.Width;
+            screen.Height = AssaultWingCore.Instance.ClientBounds.Height;
             gfx.Viewport = screen;
             gfx.Clear(new Color(0x40, 0x40, 0x40));
 
-            foreach (var viewport in AssaultWing.Instance.DataEngine.Viewports) viewport.Draw();
+            foreach (var viewport in AssaultWingCore.Instance.DataEngine.Viewports) viewport.Draw();
 
             // Restore viewport to the whole client window.
             gfx.Viewport = screen;
 
             // Draw viewport separators.
             _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-            foreach (var separator in AssaultWing.Instance.DataEngine.Viewports.Separators)
+            foreach (var separator in AssaultWingCore.Instance.DataEngine.Viewports.Separators)
             {
-                Texture2D separatorTexture = AssaultWing.Instance.Content.Load<Texture2D>("viewport_border_vertical");
+                Texture2D separatorTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("viewport_border_vertical");
                 Vector2 separatorOrigin = new Vector2(separatorTexture.Width, 0) / 2;
                 if (separator.Vertical)
                 {
@@ -174,7 +174,7 @@ namespace AW2.Graphics
         /// or after switching between windowed and fullscreen mode.
         public void WindowResize()
         {
-            AssaultWing.Instance.DataEngine.RearrangeViewports();
+            AssaultWingCore.Instance.DataEngine.RearrangeViewports();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace AW2.Game.BonusActions
     {
         public override bool DoAction()
         {
-            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.Ship.Weapon2Name);
+            var weapon2 = (Weapon)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.Ship.Weapon2Name);
             if (weapon2.UpgradeNames == null || weapon2.UpgradeNames.Length == 0) return false;
             var weaponUpgrade = weapon2.UpgradeNames[0];
             UpgradeWeapon(weaponUpgrade);

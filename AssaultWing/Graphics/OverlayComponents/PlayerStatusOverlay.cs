@@ -76,7 +76,7 @@ namespace AW2.Graphics.OverlayComponents
             Color damageBarColor = Color.White;
             if (_player.Ship.DamageLevel / _player.Ship.MaxDamageLevel >= 0.8f)
             {
-                float seconds = (float)AssaultWing.Instance.GameTime.TotalRealTime.TotalSeconds;
+                float seconds = (float)AssaultWingCore.Instance.GameTime.TotalRealTime.TotalSeconds;
                 if (seconds % 0.5f < 0.25f)
                     damageBarColor = Color.Red;
             }
@@ -187,7 +187,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = AssaultWingCore.Instance.Content;
             _statusDisplayTexture = content.Load<Texture2D>("gui_playerinfo_bg");
             _barShipTexture = content.Load<Texture2D>("gui_playerinfo_bar_ship");
             _iconShipTexture = content.Load<Texture2D>("gui_playerinfo_ship");

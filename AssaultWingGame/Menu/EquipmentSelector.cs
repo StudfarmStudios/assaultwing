@@ -76,14 +76,14 @@ namespace AW2.Menu
         public ShipSelector(Player player, Vector2 pos)
             : base(player, pos)
         {
-            Values = AssaultWing.Instance.DataEngine.GameplayMode.ShipTypes;
+            Values = AssaultWingCore.Instance.DataEngine.GameplayMode.ShipTypes;
             CurrentValue = Values.IndexOf(player.ShipName);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var ship = (Ship)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.ShipName);
-            var shipTexture = AssaultWing.Instance.Content.Load<Texture2D>(ship.ShipInfo.IconEquipName);
+            var ship = (Ship)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.ShipName);
+            var shipTexture = AssaultWingCore.Instance.Content.Load<Texture2D>(ship.ShipInfo.IconEquipName);
             spriteBatch.Draw(shipTexture, Pos - view, Color.White);
         }
 
@@ -98,14 +98,14 @@ namespace AW2.Menu
         public ExtraDeviceSelector(Player player, Vector2 pos)
             : base(player, pos)
         {
-            Values = AssaultWing.Instance.DataEngine.GameplayMode.ExtraDeviceTypes;
+            Values = AssaultWingCore.Instance.DataEngine.GameplayMode.ExtraDeviceTypes;
             CurrentValue = Values.IndexOf(player.ExtraDeviceName);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var extraDevice = (ShipDevice)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.ExtraDeviceName);
-            var extraDeviceTexture = AssaultWing.Instance.Content.Load<Texture2D>(extraDevice.DeviceInfo.IconEquipName);
+            var extraDevice = (ShipDevice)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.ExtraDeviceName);
+            var extraDeviceTexture = AssaultWingCore.Instance.Content.Load<Texture2D>(extraDevice.DeviceInfo.IconEquipName);
             spriteBatch.Draw(extraDeviceTexture, Pos - view, Color.White);
         }
 
@@ -120,14 +120,14 @@ namespace AW2.Menu
         public Weapon2Selector(Player player, Vector2 pos)
             : base(player, pos)
         {
-            Values = AssaultWing.Instance.DataEngine.GameplayMode.Weapon2Types;
+            Values = AssaultWingCore.Instance.DataEngine.GameplayMode.Weapon2Types;
             CurrentValue = Values.IndexOf(player.Weapon2Name);
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
-            var weapon2 = (Weapon)AssaultWing.Instance.DataEngine.GetTypeTemplate(Player.Weapon2Name);
-            var weapon2Texture = AssaultWing.Instance.Content.Load<Texture2D>(weapon2.DeviceInfo.IconEquipName);
+            var weapon2 = (Weapon)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.Weapon2Name);
+            var weapon2Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(weapon2.DeviceInfo.IconEquipName);
             spriteBatch.Draw(weapon2Texture, Pos - view, Color.White);
         }
 

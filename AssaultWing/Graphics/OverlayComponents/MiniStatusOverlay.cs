@@ -34,7 +34,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = AssaultWingCore.Instance.Content;
             _barFillTexture = content.Load<Texture2D>("mini_hpbar_fill");
             _barBackgroundTexture = content.Load<Texture2D>("mini_hpbar_bg");
             _healthFont = content.Load<SpriteFont>("ConsoleFont");
@@ -48,11 +48,11 @@ namespace AW2.Graphics.OverlayComponents
             float relativeHealth = 1 - _player.Ship.DamageLevel / _player.Ship.MaxDamageLevel;
             if (_lastRelativeHealth != relativeHealth)
             {
-                _fadeoutFinishTime = AssaultWing.Instance.DataEngine.ArenaTotalTime +
+                _fadeoutFinishTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime +
                     TimeSpan.FromSeconds(OPAQUE_DURATION + FADEOUT_DURATION);
                 _lastRelativeHealth = relativeHealth;
             }
-            float alpha = MathHelper.Clamp((float)(_fadeoutFinishTime - AssaultWing.Instance.DataEngine.ArenaTotalTime).TotalSeconds / FADEOUT_DURATION, 0, 1);
+            float alpha = MathHelper.Clamp((float)(_fadeoutFinishTime - AssaultWingCore.Instance.DataEngine.ArenaTotalTime).TotalSeconds / FADEOUT_DURATION, 0, 1);
             DrawHealthBar(spriteBatch, relativeHealth, alpha);
             DrawHealthPercentage(spriteBatch, relativeHealth, alpha);
         }

@@ -63,7 +63,7 @@ namespace AW2.Graphics
         /// <param name="spriteBatch">The sprite batch whose <c>Begin</c> to call.</param>
         public void BeginDraw(SpriteBatch spriteBatch)
         {
-            RenderState renderState = AssaultWing.Instance.GraphicsDevice.RenderState;
+            RenderState renderState = AssaultWingCore.Instance.GraphicsDevice.RenderState;
             switch (type)
             {
                 case DrawModeType2D.None:
@@ -106,7 +106,7 @@ namespace AW2.Graphics
                     break;
                 case DrawModeType2D.Subtractive:
                     spriteBatch.End();
-                    AssaultWing.Instance.GraphicsDevice.RenderState.BlendFunction = BlendFunction.Add;
+                    AssaultWingCore.Instance.GraphicsDevice.RenderState.BlendFunction = BlendFunction.Add;
                     break;
                 default:
                     throw new Exception("DrawMode2D: Unknown type of draw mode, " + type);

@@ -31,7 +31,7 @@ namespace AW2.Graphics
         private void EndIntro()
         {
             _introVideo.Stop();
-            AssaultWing.Instance.ShowMenu();
+            AssaultWingCore.Instance.ShowMenu();
         }
 
         public override void Initialize()
@@ -66,7 +66,7 @@ namespace AW2.Graphics
 
         public override void Draw()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             gfx.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)

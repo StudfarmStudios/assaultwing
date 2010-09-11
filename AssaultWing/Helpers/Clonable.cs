@@ -73,7 +73,7 @@ namespace AW2.Helpers
         /// </summary>
         public static Clonable Instantiate(CanonicalString typeName)
         {
-            var template = (Clonable)AssaultWing.Instance.DataEngine.GetTypeTemplate(typeName);
+            var template = (Clonable)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(typeName);
             return template.Clone();
         }
 

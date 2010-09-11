@@ -58,13 +58,13 @@ namespace AW2.UI.Mouse
             switch (_direction)
             {
                 case MouseDirections.Left:
-                    return Math.Max(-(NewState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2), 0);
+                    return Math.Max(-(NewState.Mouse.X - AssaultWingCore.Instance.ClientBounds.Width / 2), 0);
                 case MouseDirections.Right:
-                    return Math.Max(NewState.Mouse.X - AssaultWing.Instance.ClientBounds.Width / 2, 0);
+                    return Math.Max(NewState.Mouse.X - AssaultWingCore.Instance.ClientBounds.Width / 2, 0);
                 case MouseDirections.Up:
-                    return Math.Max(-(NewState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2), 0);
+                    return Math.Max(-(NewState.Mouse.Y - AssaultWingCore.Instance.ClientBounds.Height / 2), 0);
                 case MouseDirections.Down:
-                    return Math.Max(NewState.Mouse.Y - AssaultWing.Instance.ClientBounds.Height / 2, 0);
+                    return Math.Max(NewState.Mouse.Y - AssaultWingCore.Instance.ClientBounds.Height / 2, 0);
                 default: throw new Exception("Unhandled mouse direction " + _direction);
             }
         }

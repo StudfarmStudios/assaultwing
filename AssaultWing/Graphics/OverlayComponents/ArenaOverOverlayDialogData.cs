@@ -28,17 +28,17 @@ namespace AW2.Graphics.OverlayComponents
         public ArenaOverOverlayDialogData(string arenaName)
             : base()
         {
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
             this.arenaName = arenaName;
 
-            if (AssaultWing.Instance.NetworkMode != NetworkMode.Client)
+            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client)
             {
                 Actions = new TriggeredCallback[] 
                 {
                     new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() 
                     {
                         if (arenaLoaded)
-                            AssaultWing.Instance.StartArena();
+                            AssaultWingCore.Instance.StartArena();
                     })
                 };
             }
@@ -51,7 +51,7 @@ namespace AW2.Graphics.OverlayComponents
             data.ProgressBar.HorizontalAlignment = HorizontalAlignment.Center;
             data.ProgressBar.VerticalAlignment = VerticalAlignment.Top;
             data.ProgressBar.CustomAlignment = new Vector2(0, 270);
-            data.ProgressBar.Task = AssaultWing.Instance.PrepareNextArena;
+            data.ProgressBar.Task = AssaultWingCore.Instance.PrepareNextArena;
             data.ProgressBar.SetSubtaskCount(10); // just something until DataEngine sets the real value
             data.ProgressBar.StartTask();
         }
@@ -62,9 +62,9 @@ namespace AW2.Graphics.OverlayComponents
         public override void Update()
         {
             // Update our status based on the progress of arena loading.
-            if (!arenaLoaded && AssaultWing.Instance.DataEngine.ProgressBar.TaskCompleted)
+            if (!arenaLoaded && AssaultWingCore.Instance.DataEngine.ProgressBar.TaskCompleted)
             {
-                AssaultWing.Instance.DataEngine.ProgressBar.FinishTask();
+                AssaultWingCore.Instance.DataEngine.ProgressBar.FinishTask();
                 arenaLoaded = true;
             }
 
@@ -90,7 +90,7 @@ namespace AW2.Graphics.OverlayComponents
             textPos += new Vector2(0, fontBig.LineSpacing);
 
             // List players and their scores sorted decreasing by score.
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
             var standings = data.GameplayMode.GetStandings(data.Players);
             int line = 0;
             foreach (var entry in standings)
@@ -108,7 +108,7 @@ namespace AW2.Graphics.OverlayComponents
             {
                 spriteBatch.DrawString(fontSmall, "Loading next arena: " + arenaName, loadTextPos, Color.White);
                 spriteBatch.End();
-                AssaultWing.Instance.DataEngine.ProgressBar.Draw(spriteBatch);
+                AssaultWingCore.Instance.DataEngine.ProgressBar.Draw(spriteBatch);
                 spriteBatch.Begin();
             }
             else
@@ -121,8 +121,8 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            fontBig = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontBig");
-            fontSmall = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontSmall");
+            fontBig = AssaultWingCore.Instance.Content.Load<SpriteFont>("MenuFontBig");
+            fontSmall = AssaultWingCore.Instance.Content.Load<SpriteFont>("MenuFontSmall");
         }
     }
 }

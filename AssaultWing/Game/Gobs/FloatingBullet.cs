@@ -50,15 +50,15 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (_thrustEndGameTime < AssaultWing.Instance.DataEngine.ArenaTotalTime)
+            if (_thrustEndGameTime < AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
             {
                 Move *= 0.957f;
-                if (AssaultWing.Instance.NetworkMode != NetworkMode.Client && Move.LengthSquared() < 1 * 1)
+                if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client && Move.LengthSquared() < 1 * 1)
                     RandomizeNewTargetPos();
             }
             else
             {
-                AssaultWing.Instance.PhysicsEngine.ApplyForce(this, _thrustForce);
+                AssaultWingCore.Instance.PhysicsEngine.ApplyForce(this, _thrustForce);
             }
         }
 
@@ -106,8 +106,8 @@ namespace AW2.Game.Gobs
                 if (movementChanged)
                 {
                     float thrustSeconds = reader.ReadHalf();
-                    _thrustEndGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(thrustSeconds)
-                        - AssaultWing.Instance.TargetElapsedTime.Multiply(framesAgo);
+                    _thrustEndGameTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(thrustSeconds)
+                        - AssaultWingCore.Instance.TargetElapsedTime.Multiply(framesAgo);
                     _thrustForce = reader.ReadHalfVector2();
                 }
             }
@@ -116,7 +116,7 @@ namespace AW2.Game.Gobs
         private void MoveTowards(Vector2 target, float force)
         {
             var forceVector = force * Vector2.Normalize(target - Pos);
-            AssaultWing.Instance.PhysicsEngine.ApplyForce(this, forceVector);
+            AssaultWingCore.Instance.PhysicsEngine.ApplyForce(this, forceVector);
             _targetCircle = null;
         }
 
@@ -126,8 +126,8 @@ namespace AW2.Game.Gobs
             var targetPos = Geometry.GetRandomLocation(_targetCircle);
             _thrustForce = _hoverThrust * Vector2.Normalize(targetPos - Pos);
             _thrustSeconds = RandomHelper.GetRandomFloat(1.2f, 1.9f);
-            _thrustEndGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(_thrustSeconds.Value);
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server) ForceNetworkUpdate();
+            _thrustEndGameTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(_thrustSeconds.Value);
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server) ForceNetworkUpdate();
         }
     }
 }

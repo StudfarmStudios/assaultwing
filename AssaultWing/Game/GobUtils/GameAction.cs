@@ -59,7 +59,7 @@ namespace AW2.Game.GobUtils
 
         public void SetDuration(float duration)
         {
-            BeginTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+            BeginTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
             EndTime = BeginTime + TimeSpan.FromSeconds(duration);
         }
 
@@ -68,8 +68,8 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public virtual bool DoAction()
         {
-            BonusIcon = AssaultWing.Instance.Content.Load<Texture2D>(BonusIconName);
-            if (AssaultWing.Instance.NetworkMode == NetworkMode.Server)
+            BonusIcon = AssaultWingCore.Instance.Content.Load<Texture2D>(BonusIconName);
+            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server)
                 Player.MustUpdateToClients = true;
             return true;
         }
@@ -96,7 +96,7 @@ namespace AW2.Game.GobUtils
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 var duration = reader.ReadTimeSpan();
-                BeginTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                BeginTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
                 EndTime = BeginTime + duration;
             }
         }

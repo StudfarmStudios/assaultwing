@@ -27,7 +27,7 @@ namespace AW2.Sound
         {
             get
             {
-                float userMusicVolume = AssaultWing.Instance.Settings.Sound.MusicVolume;
+                float userMusicVolume = AssaultWingCore.Instance.Settings.Sound.MusicVolume;
                 return userMusicVolume * RelativeMusicVolume * InternalMusicVolume;
             }
         }

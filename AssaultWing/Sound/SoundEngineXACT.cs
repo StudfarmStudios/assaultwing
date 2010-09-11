@@ -51,7 +51,7 @@ namespace AW2.Sound
             if (_volumeFadeAction != null) _volumeFadeAction();
             if (_music != null) _music.Volume = ActualMusicVolume;
             _audioEngine.Update();
-            _soundEffectCategory.SetVolume(AssaultWing.Instance.Settings.Sound.SoundVolume);
+            _soundEffectCategory.SetVolume(AssaultWingCore.Instance.Settings.Sound.SoundVolume);
         }
 
         #endregion
@@ -102,7 +102,7 @@ namespace AW2.Sound
         {
             if (!Enabled) return;
             if (_music == null || !_music.IsPlaying) return;
-            var now = AssaultWing.Instance.GameTime.TotalRealTime;
+            var now = AssaultWingCore.Instance.GameTime.TotalRealTime;
             float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
             _volumeFadeAction = () =>
             {

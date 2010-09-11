@@ -83,7 +83,7 @@ namespace AW2.Game.Pengs
         {
             // Note: This method is run potentially very often. It must be kept quick.
 
-            TimeSpan now = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+            TimeSpan now = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
 
             // Initialise custom particle fields
             if (particle.Timeout == TimeSpan.Zero)
@@ -93,7 +93,7 @@ namespace AW2.Game.Pengs
             if (particle.Timeout <= now) return true;
 
             // Update particle fields
-            float elapsedSeconds = (float)AssaultWing.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            float elapsedSeconds = (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
             float lifePos = (now - particle.BirthTime).Ticks / (float)(particle.Timeout - particle.BirthTime).Ticks;
             particle.LayerDepth = lifePos;
 

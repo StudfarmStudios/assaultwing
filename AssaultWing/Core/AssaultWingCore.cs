@@ -22,11 +22,7 @@ using AW2.UI.Mouse;
 
 namespace AW2
 {
-    /// <summary>
-    /// The main class of the Assault Wing game. A singleton class.
-    /// </summary>
-    /// Game components can be requested from the AssaultWing.Services property.
-    public class AssaultWing : AWGame
+    public class AssaultWingCore : AWGame
     {
         /// <summary>
         /// Wraps <see cref="CounterCreationDataCollection"/>, adding to it an implementation
@@ -66,7 +62,7 @@ namespace AW2
         /// <summary>
         /// The only existing instance of this class.
         /// </summary>
-        private static AssaultWing g_instance;
+        private static AssaultWingCore g_instance;
 
         #endregion AssaultWing fields
 
@@ -83,7 +79,7 @@ namespace AW2
         /// Called during initialisation of the game instance.
         /// The event handler should return a window where AssaultWing can draw itself.
         /// </summary>
-        public static event Func<AssaultWing, IWindow> WindowInitializing;
+        public static event Func<AssaultWingCore, IWindow> WindowInitializing;
 
         /// <summary>
         /// A hack to pass the true client area size from Arena Editor to Assault Wing window.
@@ -104,18 +100,7 @@ namespace AW2
 
         #region AssaultWing properties
 
-        /// <summary>
-        /// Returns (after creating) the only instance of class AssaultWing.
-        /// </summary>
-        public static AssaultWing Instance
-        {
-            get
-            {
-                if (g_instance == null)
-                    g_instance = new AssaultWing();
-                return g_instance;
-            }
-        }
+        public static AssaultWingCore Instance { get; set; }
 
         public bool DoNotFreezeCanonicalStrings { get; set; }
         public int ManagedThreadID { get; private set; }
@@ -160,8 +145,6 @@ namespace AW2
         /// </summary>
         public Rectangle ClientBounds { get { return _window.ClientBounds; } }
 
-        public bool IsFullscreen { get { return _window.IsFullscreen; } }
-
         /// <summary>
         /// The minimum allowed screen dimensions of the game window's client rectangle.
         /// </summary>
@@ -183,43 +166,36 @@ namespace AW2
         /// <summary>
         /// Number of gobs created per frame, averaged over one second.
         /// </summary>
-        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondCounter { get; private set; }
+        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondCounter { get; protected set; }
 
         /// <summary>
         /// Number of elapsed frames.
         /// </summary>
-        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondBaseCounter { get; private set; }
+        public AWPerformanceCounter GobsCreatedPerFrameAvgPerSecondBaseCounter { get; protected set; }
 
         /// <summary>
         /// Number of gobs drawn per frame, averaged over one second.
         /// </summary>
-        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondCounter { get; private set; }
+        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondCounter { get; protected set; }
 
         /// <summary>
         /// Number of elapsed frames.
         /// </summary>
-        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondBaseCounter { get; private set; }
+        public AWPerformanceCounter GobsDrawnPerFrameAvgPerSecondBaseCounter { get; protected set; }
 
         /// <summary>
         /// Number of drawn frames per second.
         /// </summary>
-        public AWPerformanceCounter FramesDrawnPerSecondCounter { get; private set; }
+        public AWPerformanceCounter FramesDrawnPerSecondCounter { get; protected set; }
 
         /// <summary>
         /// Number of gobs currently alive.
         /// </summary>
-        public AWPerformanceCounter GobsCounter { get; private set; }
+        public AWPerformanceCounter GobsCounter { get; protected set; }
 
         #endregion
 
-        #region AssaultWing private methods
-
-        /// <summary>
-        /// Creates a new Assault Wing - Galactic Battlefront game instance.
-        /// </summary>
-        /// This constructor is not meant to be called from outside this class.
-        /// To obtain an AssaultWing instance, use <b>AssaultWing.Instance</b>.
-        private AssaultWing()
+        public AssaultWingCore()
         {
             Log.Write("Creating an Assault Wing instance");
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -243,24 +219,7 @@ namespace AW2
             InitializeComponents();
         }
 
-        /// <summary>
-        /// Reacts to a client window resize event.
-        /// </summary>
-        private void ClientSizeChanged(object sender, EventArgs e)
-        {
-            if (ClientBounds.Width == 0 || ClientBounds.Height == 0) return;
-            if (GraphicsDevice == null) return;
-            if (GraphicsDevice.PresentationParameters.BackBufferWidth != ClientBounds.Width ||
-                GraphicsDevice.PresentationParameters.BackBufferHeight != ClientBounds.Height)
-            {
-                // This happens in ArenaEditor where the draw buffer is not hosted by an XNA window.
-                GraphicsDevice.PresentationParameters.BackBufferWidth = ClientBounds.Width;
-                GraphicsDevice.PresentationParameters.BackBufferHeight = ClientBounds.Height;
-                GraphicsDevice.Reset(GraphicsDevice.PresentationParameters); // WARNING: This may trigger ContentManager.Unload()
-            }
-            if (GraphicsEngine != null) GraphicsEngine.WindowResize();
-            if (MenuEngine != null) MenuEngine.WindowResize();
-        }
+        #region AssaultWing private methods
 
         private void StartArenaImpl()
         {
@@ -294,7 +253,6 @@ namespace AW2
 
             _window = WindowInitializing(this);
             ClientBoundsMin = new Rectangle(0, 0, _preferredWindowWidth, _preferredWindowHeight);
-            _window.ClientSizeChanged += ClientSizeChanged;
             AllowDialogs = true;
         }
 
@@ -634,14 +592,6 @@ namespace AW2
         }
 
         /// <summary>
-        /// Toggles between fullscreen and windowed mode.
-        /// </summary>
-        public void ToggleFullscreen()
-        {
-            _window.ToggleFullscreen();
-        }
-
-        /// <summary>
         /// Rearranges player viewports, optionally so that 
         /// the whole screen area is given to only one player.
         /// </summary>
@@ -736,8 +686,8 @@ namespace AW2
         {
             switch (NetworkMode)
             {
-                case NetworkMode.Client: AssaultWing.Instance.StopClient(); break;
-                case NetworkMode.Server: AssaultWing.Instance.StopServer(); break;
+                case NetworkMode.Client: AssaultWingCore.Instance.StopClient(); break;
+                case NetworkMode.Server: AssaultWingCore.Instance.StopServer(); break;
                 case NetworkMode.Standalone: break;
                 default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);
             }

@@ -62,7 +62,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _dockSound = AssaultWing.Instance.SoundEngine.CreateSound("HomeBaseLoop");
+            _dockSound = AssaultWingCore.Instance.SoundEngine.CreateSound("HomeBaseLoop");
         }
 
         public override void Update()
@@ -85,7 +85,7 @@ namespace AW2.Game.Gobs
                 // If the ship is not null and the player hasn't taken damage for long enough time then set canDock to true (player can dock)
                 if (ship != null)
                 {
-                    TimeSpan totalGameTime = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                    TimeSpan totalGameTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
 
                     if (ship.LastDamageTaken == TimeSpan.Zero || 
                         totalGameTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED)
@@ -98,9 +98,9 @@ namespace AW2.Game.Gobs
 
                 if (ship != null && canDock)
                 {
-                    ship.InflictDamage(AssaultWing.Instance.PhysicsEngine.ApplyChange(_repairSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime), new DeathCause());
-                    ship.ExtraDevice.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
-                    ship.Weapon2.Charge += AssaultWing.Instance.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, AssaultWing.Instance.GameTime.ElapsedGameTime);
+                    ship.InflictDamage(AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_repairSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime), new DeathCause());
+                    ship.ExtraDevice.Charge += AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+                    ship.Weapon2.Charge += AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
                 }
             }
         }

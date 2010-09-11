@@ -237,7 +237,7 @@ namespace AW2.Graphics
         /// </summary>
         public void Draw()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             gfx.Viewport = Viewport;
             gfx.Clear(Color.Black);
             Draw_InitializeParallaxIn3D();
@@ -247,7 +247,7 @@ namespace AW2.Graphics
 
         private void DrawOverlayComponents()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             gfx.Viewport = Viewport;
             foreach (var component in _overlayComponents) component.Draw(_spriteBatch);
         }
@@ -262,10 +262,10 @@ namespace AW2.Graphics
 
         protected virtual void RenderGameWorld()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             var view = ViewMatrix;
             gfx.Clear(Color.Black);
-            foreach (var layer in AssaultWing.Instance.DataEngine.Arena.Layers)
+            foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
                 float layerScale = GetScale(layer.Z);
@@ -282,7 +282,7 @@ namespace AW2.Graphics
                     var bounds = gob.DrawBounds;
                     if (bounds.Radius > 0 && Intersects(bounds, layer.Z))
                     {
-                        AssaultWing.Instance.GobsDrawnPerFrameAvgPerSecondCounter.Increment();
+                        AssaultWingCore.Instance.GobsDrawnPerFrameAvgPerSecondCounter.Increment();
                         if (gob.IsVisible) gob.Draw(view, projection);
                     }
                 }
@@ -312,14 +312,14 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDevice);
             Action<ICollection<Effect>> effectContainerUpdater = container =>
             {
                 container.Clear();
                 foreach (var name in _getPostprocessEffectNames())
-                    container.Add(AssaultWing.Instance.Content.Load<Effect>(name));
+                    container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
             };
-            _postprocessor = new TexturePostprocessor(AssaultWing.Instance.GraphicsDevice, effectContainerUpdater);
+            _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDevice, effectContainerUpdater);
             foreach (var component in _overlayComponents) component.LoadContent();
         }
 
@@ -358,7 +358,7 @@ namespace AW2.Graphics
         private void Draw_InitializeParallaxIn3D()
         {
             if (_effect != null) return;
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             _effect = new BasicEffect(gfx, null);
             _effect.World = Matrix.Identity;
             _effect.Projection = Matrix.Identity;
@@ -383,7 +383,7 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_IN_3D")]
         private void Draw_DrawParallaxIn3D(AW2.Game.ArenaLayer layer)
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             // Modify renderstate for parallax.
             gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
             gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
@@ -399,7 +399,7 @@ namespace AW2.Graphics
                 // Render looping parallax as two huge triangles.
                 gfx.RenderState.DepthBufferEnable = false;
                 gfx.VertexDeclaration = _vertexDeclaration;
-                _effect.Texture = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                 var texCenter = GetScale(layer.Z) * GetLookAtPos() / _effect.Texture.Dimensions();
                 var texCornerOffset = new Vector2(
                     Viewport.Width / (2f * _effect.Texture.Width),
@@ -426,12 +426,12 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_WITH_SPRITE_BATCH")]
         private void Draw_DrawParallaxWithSpriteBatch(ArenaLayer layer)
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
             if (layer.ParallaxName != "")
             {
                 _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
                 gfx.RenderState.AlphaTestEnable = false;
-                var tex = AssaultWing.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                var tex = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                 var lookAtPosScaled = GetScale(layer.Z) * GetLookAtPos();
                 float texCenterX = lookAtPosScaled.X.Modulo(tex.Width);
                 float texCenterY = (-lookAtPosScaled.Y).Modulo(tex.Height);

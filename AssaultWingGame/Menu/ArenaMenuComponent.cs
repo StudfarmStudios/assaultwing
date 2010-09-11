@@ -50,7 +50,7 @@ namespace AW2.Menu
         /// </summary>
         int arenaListStart;
 
-        List<ArenaInfo> ArenaInfos { get { return AssaultWing.Instance.DataEngine.ArenaInfos; } }
+        List<ArenaInfo> ArenaInfos { get { return AssaultWingCore.Instance.DataEngine.ArenaInfos; } }
         List<string> selectedArenaNames;
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace AW2.Menu
         /// </summary>
         public override void LoadContent()
         {
-            var content = (AWContentManager)AssaultWing.Instance.Content;
+            var content = (AWContentManager)AssaultWingCore.Instance.Content;
             menuBigFont = content.Load<SpriteFont>("MenuFontBig");
             menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
             backgroundTexture = content.Load<Texture2D>("menu_levels_bg");
@@ -182,10 +182,10 @@ namespace AW2.Menu
             Vector2 infoBoxLineHeight = new Vector2(0, 14);
             Vector2 infoBoxColumnWidth = new Vector2(220, 0);
             ArenaMenuInfo menuInfo = _selectedArena.MenuInfo;
-            var content = (AWContentManager)AssaultWing.Instance.Content;
+            var content = (AWContentManager)AssaultWingCore.Instance.Content;
             string previewName = content.Exists<Texture2D>(menuInfo.PreviewName) ? menuInfo.PreviewName : "no_preview";
             var previewTexture = content.Load<Texture2D>(previewName);
-            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
+            float cursorTime = (float)(AssaultWingCore.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
 
             spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
@@ -216,7 +216,7 @@ namespace AW2.Menu
             controlCallbacks = new TriggeredCallbackCollection();
             controlCallbacks.TriggeredCallback = () =>
             {
-                cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                cursorFadeStartTime = AssaultWingCore.Instance.GameTime.TotalRealTime;
             };
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlBack, () =>
             { 
@@ -228,7 +228,7 @@ namespace AW2.Menu
                 if (currentArena >= 0 && currentArena < ArenaInfos.Count)
                 {
                     SelectCurrentArena();
-                    AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+                    AssaultWingCore.Instance.SoundEngine.PlaySound("MenuChangeItem");
                     MenuEngine.ActivateComponent(MenuComponentType.Equip);
                 }
             }));
@@ -236,13 +236,13 @@ namespace AW2.Menu
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () =>
             {
                 --currentArena;
-                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                AssaultWingCore.Instance.SoundEngine.PlaySound("MenuBrowseItem");
                 
             }));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () =>
             {
                 ++currentArena;
-                AssaultWing.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                AssaultWingCore.Instance.SoundEngine.PlaySound("MenuBrowseItem");
             }));
         }
 
@@ -255,7 +255,7 @@ namespace AW2.Menu
                 {
                     selectedArenaNames.Clear();
                     selectedArenaNames.Add(name);
-                    AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
+                    AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
                     return true;
                 }
             }
@@ -280,7 +280,7 @@ namespace AW2.Menu
             controlDown = new MultiControl();
             controlDown.Add(new KeyboardKey(Keys.Down));
 
-            foreach (var player in AssaultWing.Instance.DataEngine.Spectators)
+            foreach (var player in AssaultWingCore.Instance.DataEngine.Spectators)
             {
                 controlUp.Add(player.Controls.Thrust);
                 controlDown.Add(player.Controls.Down);

@@ -139,7 +139,7 @@ namespace AW2.Game.GobUtils
         {
             Vector2 momentum = new Vector2((float)Math.Cos(owner.Rotation), (float)Math.Sin(owner.Rotation))
                 * -recoilMomentum;
-            AssaultWing.Instance.DataEngine.CustomOperations += () => { AssaultWing.Instance.PhysicsEngine.ApplyMomentum(owner, momentum); };
+            AssaultWingCore.Instance.DataEngine.CustomOperations += () => { AssaultWingCore.Instance.PhysicsEngine.ApplyMomentum(owner, momentum); };
         }
 
         protected void ForEachShipBarrel(ShipBarrelTypes barrelTypes, ShipBarrelAction action)

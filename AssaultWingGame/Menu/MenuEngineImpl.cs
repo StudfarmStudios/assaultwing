@@ -82,7 +82,7 @@ namespace AW2.Menu
                 _showProgressBar = value;
                 if (value)
                 {
-                    var progressBar = AssaultWing.Instance.DataEngine.ProgressBar;
+                    var progressBar = AssaultWingCore.Instance.DataEngine.ProgressBar;
                     progressBar.HorizontalAlignment = HorizontalAlignment.Center;
                     progressBar.VerticalAlignment = VerticalAlignment.Bottom;
                     progressBar.CustomAlignment = new Vector2(0, -2);
@@ -111,19 +111,19 @@ namespace AW2.Menu
 
         public float GetCursorFade()
         {
-            float cursorTime = (float)(AssaultWing.Instance.GameTime.TotalRealTime - _cursorFadeStartTime).TotalSeconds;
+            float cursorTime = (float)(AssaultWingCore.Instance.GameTime.TotalRealTime - _cursorFadeStartTime).TotalSeconds;
             return g_cursorFade.Evaluate(cursorTime);
         }
 
         public void ResetCursorFade()
         {
-            _cursorFadeStartTime = AssaultWing.Instance.GameTime.TotalRealTime;
+            _cursorFadeStartTime = AssaultWingCore.Instance.GameTime.TotalRealTime;
         }
 
         public override void LoadContent()
         {
-            var gfx = AssaultWing.Instance.GraphicsDevice;
-            _spriteBatch = new SpriteBatch(AssaultWing.Instance.GraphicsDevice);
+            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDevice);
             _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
             _effect = new BasicEffect(gfx, null);
             _effect.FogEnabled = false;
@@ -132,14 +132,14 @@ namespace AW2.Menu
             _effect.World = Matrix.Identity;
             _effect.VertexColorEnabled = true;
             _effect.TextureEnabled = false;
-            _backgroundTexture = AssaultWing.Instance.Content.Load<Texture2D>("menu_rustywall_bg");
-            _smallFont = AssaultWing.Instance.Content.Load<SpriteFont>("MenuFontSmall");
+            _backgroundTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("menu_rustywall_bg");
+            _smallFont = AssaultWingCore.Instance.Content.Load<SpriteFont>("MenuFontSmall");
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
             MenuContent.LoadContent();
             foreach (var component in _components) component.LoadContent();
-            AssaultWing.Instance.DataEngine.ProgressBar.LoadContent();
+            AssaultWingCore.Instance.DataEngine.ProgressBar.LoadContent();
 
             base.LoadContent();
         }
@@ -167,15 +167,15 @@ namespace AW2.Menu
             // contain references to graphics content.
             foreach (MenuComponent component in _components)
                 if (component != null) component.UnloadContent();
-            AssaultWing.Instance.DataEngine.ProgressBar.UnloadContent();
+            AssaultWingCore.Instance.DataEngine.ProgressBar.UnloadContent();
 
             base.UnloadContent();
         }
 
         public override void Initialize()
         {
-            _screenWidth = AssaultWing.Instance.ClientBounds.Width;
-            _screenHeight = AssaultWing.Instance.ClientBounds.Height;
+            _screenWidth = AssaultWingCore.Instance.ClientBounds.Width;
+            _screenHeight = AssaultWingCore.Instance.ClientBounds.Height;
 
             _components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             _components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
@@ -192,12 +192,12 @@ namespace AW2.Menu
         public override void Activate()
         {
             ActivateComponent(MenuComponentType.Main);
-            AssaultWing.Instance.SoundEngine.PlayMusic("menu music", 1);
+            AssaultWingCore.Instance.SoundEngine.PlayMusic("menu music", 1);
         }
 
         public override void Deactivate()
         {
-            AssaultWing.Instance.SoundEngine.StopMusic(TimeSpan.FromSeconds(2));
+            AssaultWingCore.Instance.SoundEngine.StopMusic(TimeSpan.FromSeconds(2));
             _components[(int)_activeComponent].Active = false;
         }
 
@@ -215,7 +215,7 @@ namespace AW2.Menu
             // Make menu view scroll to the new component's position.
             _viewTarget = newComponent.Center;
             float duration = RandomHelper.GetRandomFloat(0.9f, 1.1f);
-            _viewCurve.SetTarget(_viewTarget, AssaultWing.Instance.GameTime.TotalRealTime, duration,
+            _viewCurve.SetTarget(_viewTarget, AssaultWingCore.Instance.GameTime.TotalRealTime, duration,
                 MovementCurve.Curvature.FastSlow);
 
             if (_menuChangeSound != null)
@@ -223,7 +223,7 @@ namespace AW2.Menu
                 _menuChangeSound.Stop();
                 _menuChangeSound.Dispose();
             }
-            _menuChangeSound = AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeStart");
+            _menuChangeSound = AssaultWingCore.Instance.SoundEngine.PlaySound("MenuChangeStart");
 
             // The new component will be activated in 'Update()' when the view is closer to its center.
             _activeComponentSoundPlayedOnce = _activeComponentActivatedOnce = false;
@@ -240,7 +240,7 @@ namespace AW2.Menu
         /// when the asynchronous action completes.</param>
         public override void ProgressBarAction(Action asyncAction, Action finishAction)
         {
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
             this._finishAction = finishAction;
             IsHelpTextVisible = false;
             IsProgressBarVisible = true;
@@ -251,14 +251,14 @@ namespace AW2.Menu
 
         public override void Update()
         {
-            if (IsProgressBarVisible && AssaultWing.Instance.DataEngine.ProgressBar.TaskCompleted)
+            if (IsProgressBarVisible && AssaultWingCore.Instance.DataEngine.ProgressBar.TaskCompleted)
             {
-                AssaultWing.Instance.DataEngine.ProgressBar.FinishTask();
+                AssaultWingCore.Instance.DataEngine.ProgressBar.FinishTask();
                 IsProgressBarVisible = false;
                 IsHelpTextVisible = true;
                 _finishAction();
             }
-            _view = _viewCurve.Evaluate(AssaultWing.Instance.GameTime.TotalRealTime);
+            _view = _viewCurve.Evaluate(AssaultWingCore.Instance.GameTime.TotalRealTime);
 
             // Activate 'activeComponent' if the view has just come close enough to its center.
             if (!_activeComponentActivatedOnce && Vector2.Distance(_view, _viewTarget) < 200)
@@ -272,7 +272,7 @@ namespace AW2.Menu
             {
                 _activeComponentSoundPlayedOnce = true;
                 if (_menuChangeSound != null) _menuChangeSound.Stop();
-                AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeEnd");
+                AssaultWingCore.Instance.SoundEngine.PlaySound("MenuChangeEnd");
             }
 
             // Update menu components.
@@ -282,7 +282,7 @@ namespace AW2.Menu
 
         public override void Draw()
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
             Viewport screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
@@ -347,7 +347,7 @@ namespace AW2.Menu
 
             // Draw progress bar if wanted.
             if (_showProgressBar)
-                AssaultWing.Instance.DataEngine.ProgressBar.Draw(_spriteBatch);
+                AssaultWingCore.Instance.DataEngine.ProgressBar.Draw(_spriteBatch);
 
             // Draw static text.
             _spriteBatch.Begin();
@@ -401,8 +401,8 @@ namespace AW2.Menu
         /// or after switching between windowed and fullscreen mode.
         public override void WindowResize()
         {
-            _screenWidth = AssaultWing.Instance.ClientBounds.Width;
-            _screenHeight = AssaultWing.Instance.ClientBounds.Height;
+            _screenWidth = AssaultWingCore.Instance.ClientBounds.Width;
+            _screenHeight = AssaultWingCore.Instance.ClientBounds.Height;
 
             int oldViewWidth = _viewWidth;
             int oldViewHeight = _viewHeight;
@@ -420,8 +420,8 @@ namespace AW2.Menu
         {
             // If client bounds are very small, scale the menu view down
             // to fit more in the screen.
-            _viewWidth = AssaultWing.Instance.ClientBounds.Width;
-            _viewHeight = AssaultWing.Instance.ClientBounds.Height;
+            _viewWidth = AssaultWingCore.Instance.ClientBounds.Width;
+            _viewHeight = AssaultWingCore.Instance.ClientBounds.Height;
 
             if (_screenWidth == 0 || _screenHeight == 0)
                 return;

@@ -116,7 +116,7 @@ namespace AW2.Game.Gobs
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 wallModelName = new CanonicalString(reader.ReadInt32());
-                var model = AssaultWing.Instance.Content.Load<Model>(wallModelName);
+                var model = AssaultWingCore.Instance.Content.Load<Model>(wallModelName);
                 Effect = GetEffect(model);
                 Texture = GetTexture(model);
             }
@@ -136,7 +136,7 @@ namespace AW2.Game.Gobs
         void Set3DModel()
         {
             // Recover wall data from its 3D model.
-            Model model = AssaultWing.Instance.Content.Load<Model>(wallModelName);
+            Model model = AssaultWingCore.Instance.Content.Load<Model>(wallModelName);
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
             Graphics3D.GetModelData(model, out vertexData, out indexData);
@@ -150,7 +150,7 @@ namespace AW2.Game.Gobs
 
             // Take a copy of the effect so that we won't mess 
             // with the wall model template in the future.
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
             BasicEffect effectCopy = (BasicEffect)effect.Clone(gfx);
 
             Set3DModel(vertexData, indexData, effectCopy.Texture, effectCopy);

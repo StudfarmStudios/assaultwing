@@ -16,8 +16,6 @@ namespace AW2.Graphics
         /// </summary>
         string Title { get; set; }
 
-        bool IsFullscreen { get; }
-
         /// <summary>
         /// Width and height of the area to draw on, in pixels.
         /// </summary>
@@ -37,10 +35,5 @@ namespace AW2.Graphics
         /// Called when <see cref="ClientBounds"/> has changed.
         /// </summary>
         event EventHandler ClientSizeChanged;
-
-        /// <summary>
-        /// Toggles between fullscreen and windowed mode.
-        /// </summary>
-        void ToggleFullscreen();
     }
 }

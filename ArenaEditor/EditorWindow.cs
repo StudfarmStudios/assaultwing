@@ -14,8 +14,6 @@ namespace AW2
     {
         public string Title { get; set; }
 
-        public bool IsFullscreen { get { return false; } }
-
         public Rectangle ClientBounds { get { return new Rectangle(Left, Top, Width, Height); } }
 
         public Rectangle ClientBoundsMin
@@ -30,11 +28,6 @@ namespace AW2
         {
             add { SizeChanged += value; }
             remove { SizeChanged -= value; }
-        }
-
-        public void ToggleFullscreen()
-        {
-            // silently ignored
         }
     }
 }

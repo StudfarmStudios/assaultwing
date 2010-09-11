@@ -93,7 +93,7 @@ namespace AW2.Game
 
         public void ResetForClient()
         {
-            if (AssaultWing.Instance.NetworkMode != AW2.Core.NetworkMode.Client) throw new InvalidOperationException("Not a client game instance");
+            if (AssaultWingCore.Instance.NetworkMode != AW2.Core.NetworkMode.Client) throw new InvalidOperationException("Not a client game instance");
             ServerRegistration = ServerRegistrationType.No;
         }
 

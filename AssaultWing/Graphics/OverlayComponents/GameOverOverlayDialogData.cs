@@ -13,20 +13,20 @@ namespace AW2.Graphics.OverlayComponents
         private SpriteFont _fontHuge, _fontBig, _fontSmall;
 
         public GameOverOverlayDialogData()
-            : base(new TriggeredCallback(TriggeredCallback.GetProceedControl(), AssaultWing.Instance.ShowMenu))
+            : base(new TriggeredCallback(TriggeredCallback.GetProceedControl(), AssaultWingCore.Instance.ShowMenu))
         {
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
             float textLeftEdge = 100; // left edge of left-aligned text
             Vector2 textCenter = new Vector2(gfx.Viewport.Width / 2, 50); // text line top center
             Vector2 textSize = _fontHuge.MeasureString("Game Over");
             spriteBatch.DrawString(_fontHuge, "Game Over", textCenter - new Vector2(textSize.X / 2, 0), Color.White);
             textCenter += new Vector2(0, 2 * _fontHuge.LineSpacing);
 
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
             var standings = data.GameplayMode.GetStandings(data.Players);
             int line = 0;
             foreach (var entry in standings)
@@ -46,7 +46,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = AssaultWingCore.Instance.Content;
             _fontHuge = content.Load<SpriteFont>("MenuFontHuge");
             _fontBig = content.Load<SpriteFont>("MenuFontBig");
             _fontSmall = content.Load<SpriteFont>("MenuFontSmall");

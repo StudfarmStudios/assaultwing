@@ -18,7 +18,7 @@ namespace AW2.Graphics
 
         public AWVideo(string videoName)
         {
-            var video = AssaultWing.Instance.Content.Load<Video>(videoName);
+            var video = AssaultWingCore.Instance.Content.Load<Video>(videoName);
             _videoPlayer = new VideoPlayer();
             _videoPlayer.Play(video);
             _videoPlayer.Pause();

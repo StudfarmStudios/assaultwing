@@ -114,7 +114,7 @@ namespace AW2.Helpers
             {
                 if (debugEffect == null)
                 {
-                    debugEffect = new BasicEffect(AssaultWing.Instance.GraphicsDevice, null);
+                    debugEffect = new BasicEffect(AssaultWingCore.Instance.GraphicsDevice, null);
                     debugEffect.TextureEnabled = false;
                     debugEffect.VertexColorEnabled = true;
                     debugEffect.LightingEnabled = false;
@@ -658,12 +658,12 @@ namespace AW2.Helpers
             DebugEffect.View = view;
             DebugEffect.Projection = projection;
             DebugEffect.World = world;
-            AssaultWing.Instance.GraphicsDevice.VertexDeclaration = new VertexDeclaration(AssaultWing.Instance.GraphicsDevice, VertexPositionColor.VertexElements);
+            AssaultWingCore.Instance.GraphicsDevice.VertexDeclaration = new VertexDeclaration(AssaultWingCore.Instance.GraphicsDevice, VertexPositionColor.VertexElements);
             DebugEffect.Begin(SaveStateMode.SaveState);
             foreach (EffectPass pass in DebugEffect.CurrentTechnique.Passes)
             {
                 pass.Begin();
-                AssaultWing.Instance.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
+                AssaultWingCore.Instance.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
                     PrimitiveType.LineStrip, vertexData, 0, vertexData.Length - 1);
                 pass.End();
             }

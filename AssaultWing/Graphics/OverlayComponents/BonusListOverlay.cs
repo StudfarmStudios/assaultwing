@@ -22,7 +22,7 @@ namespace AW2.Graphics.OverlayComponents
             {
                 bonusEntryDirection = DisplayDirection.Enter;
                 bonusEntryPosAdjustment = Vector2.Zero;
-                bonusEntryTimeIn = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                bonusEntryTimeIn = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
                 gameActionData = action;
             }
 
@@ -110,7 +110,7 @@ namespace AW2.Graphics.OverlayComponents
             {
                 // Our dimensions are changing and most often they involve fractions.
                 // Therefore it's easiest to keep the viewport as it is.
-                GraphicsDevice gfx = AssaultWing.Instance.GraphicsDevice;
+                GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
                 return new Point(gfx.Viewport.Width, gfx.Viewport.Height);
             }
         }
@@ -178,7 +178,7 @@ namespace AW2.Graphics.OverlayComponents
             // Draw bonus duration meter.
             float startSeconds = (float)bonusAction.BeginTime.TotalSeconds;
             float endSeconds = (float)bonusAction.EndTime.TotalSeconds;
-            float nowSeconds = (float)AssaultWing.Instance.DataEngine.ArenaTotalTime.TotalSeconds;
+            float nowSeconds = (float)AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds;
             float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
             int durationHeight = (int)Math.Round(duration * _bonusDurationTexture.Height);
             int durationY = _bonusDurationTexture.Height - durationHeight;
@@ -203,7 +203,7 @@ namespace AW2.Graphics.OverlayComponents
         /// method returns.</param>
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var data = AssaultWing.Instance.DataEngine;
+            var data = AssaultWingCore.Instance.DataEngine;
             //Remove expired bonusOverlays from the queue
             for (int i = _displayQueue.Count - 1; i >= 1; i--)
             {
@@ -241,7 +241,7 @@ namespace AW2.Graphics.OverlayComponents
             for (int i = 1; i < _displayQueue.Count; i++)
             {
                 BonusOverlay bonusOverlay = _displayQueue[i];
-                float slideTime = (float)(AssaultWing.Instance.DataEngine.ArenaTotalTime.TotalSeconds
+                float slideTime = (float)(AssaultWingCore.Instance.DataEngine.ArenaTotalTime.TotalSeconds
                 - bonusOverlay.bonusEntryTimeIn.TotalSeconds);
 
                 Vector2 adjustment = bonusOverlay.bonusEntryPosAdjustment;
@@ -270,7 +270,7 @@ namespace AW2.Graphics.OverlayComponents
                 if (!_player.BonusActions.Contains(bonusOverlay.gameActionData) && bonusOverlay.bonusEntryDirection == DisplayDirection.Enter)
                 {
                     bonusOverlay.bonusEntryPosAdjustment = relativePos;
-                    bonusOverlay.bonusEntryTimeIn = AssaultWing.Instance.DataEngine.ArenaTotalTime;
+                    bonusOverlay.bonusEntryTimeIn = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
                     bonusOverlay.bonusEntryDirection = DisplayDirection.Exit;
                 }
 
@@ -329,7 +329,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void LoadContent()
         {
-            var content = AssaultWing.Instance.Content;
+            var content = AssaultWingCore.Instance.Content;
             _bonusBackgroundTexture = content.Load<Texture2D>("gui_bonus_bg");
             _bonusDurationTexture = content.Load<Texture2D>("gui_bonus_duration");
             _bonusFont = content.Load<SpriteFont>("ConsoleFont");

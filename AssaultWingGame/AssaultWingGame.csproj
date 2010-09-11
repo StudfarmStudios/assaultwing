@@ -121,6 +121,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\AssaultWing.cs" />
     <Compile Include="UI\AWGameWindow.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />

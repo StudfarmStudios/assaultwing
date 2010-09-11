@@ -52,7 +52,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void LoadContent()
         {
-            Texture = AssaultWing.Instance.Content.Load<Texture2D>(textureName);
+            Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
         }
 
         #endregion Methods related to gobs' functionality in the game world

@@ -58,9 +58,7 @@ namespace AW2.Graphics
 
                 float viewShake = shakeSign * player.Shake;
                 return Matrix.CreateLookAt(new Vector3(GetLookAtPos(), 1000), new Vector3(GetLookAtPos(), 0),
-                    new Vector3((float)Math.Cos(MathHelper.PiOver2 + viewShake),
-                                (float)Math.Sin(MathHelper.PiOver2 + viewShake),
-                                0));
+                    new Vector3(AWMathHelper.GetUnitVector2(MathHelper.PiOver2 + viewShake), 0));
             }
         }
 

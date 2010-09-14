@@ -42,7 +42,6 @@ namespace AW2
             Application.SetCompatibleTextRenderingDefault(false);
             _form = new GameForm(args);
             _form.GameView.Draw += AssaultWingCore.Instance.Draw;
-            AssaultWingCore.Instance.Components.Add(new Menu.MenuEngineImpl());
         }
 
         public void Run()

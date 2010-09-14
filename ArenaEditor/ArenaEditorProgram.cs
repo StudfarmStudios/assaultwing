@@ -25,6 +25,8 @@ namespace AW2
             AssaultWingCore.GetRealClientAreaSize = () => editor.ArenaView.Size;
             AssaultWingCore.WindowInitializing += g => editor.ArenaView;
             var game = AssaultWingCore.Instance;
+            GraphicsDeviceService.Instance.DeviceResetting += (sender, eventArgs) => game.UnloadContent();
+            GraphicsDeviceService.Instance.DeviceReset += (sender, eventArgs) => game.LoadContent();
             game.DoNotFreezeCanonicalStrings = true;
             game.SoundEngine.Enabled = false;
             game.CommandLineArgs = args;

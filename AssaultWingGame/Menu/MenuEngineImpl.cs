@@ -24,7 +24,7 @@ namespace AW2.Menu
     /// 
     /// The menu system draws some static text on top of the menu view. This includes
     /// an optional help text and an optional progress bar.
-    public class MenuEngineImpl : IMenuEngine
+    public class MenuEngineImpl : AWGameComponent
     {
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
@@ -186,16 +186,13 @@ namespace AW2.Menu
             base.Initialize();
         }
 
-        /// <summary>
-        /// Activates the menu system.
-        /// </summary>
-        public override void Activate()
+        public void Activate()
         {
             ActivateComponent(MenuComponentType.Main);
             AssaultWingCore.Instance.SoundEngine.PlayMusic("menu music", 1);
         }
 
-        public override void Deactivate()
+        public void Deactivate()
         {
             AssaultWingCore.Instance.SoundEngine.StopMusic(TimeSpan.FromSeconds(2));
             _components[(int)_activeComponent].Active = false;
@@ -238,7 +235,7 @@ namespace AW2.Menu
         /// <param name="asyncAction">The action to perform asynchronously.</param>
         /// <param name="finishAction">Action to perform synchronously
         /// when the asynchronous action completes.</param>
-        public override void ProgressBarAction(Action asyncAction, Action finishAction)
+        public void ProgressBarAction(Action asyncAction, Action finishAction)
         {
             var data = AssaultWingCore.Instance.DataEngine;
             this._finishAction = finishAction;
@@ -399,7 +396,7 @@ namespace AW2.Menu
         /// This method should be called after the window size changes in windowed mode,
         /// or after the screen resolution changes in fullscreen mode,
         /// or after switching between windowed and fullscreen mode.
-        public override void WindowResize()
+        public void WindowResize()
         {
             _screenWidth = AssaultWingCore.Instance.ClientBounds.Width;
             _screenHeight = AssaultWingCore.Instance.ClientBounds.Height;

@@ -10,7 +10,6 @@ using AW2.Game;
 using AW2.Graphics;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
-using AW2.Menu;
 using AW2.Net;
 using AW2.Net.Connections;
 using AW2.Net.MessageHandling;
@@ -70,13 +69,6 @@ namespace AW2
 
         /// <summary>
         /// Called during initialisation of the game instance.
-        /// The event handler should return the menu engine of the game instance.
-        /// If no handlers have been added, a dummy menu engine is used.
-        /// </summary>
-        public static event Func<IMenuEngine> MenuEngineInitializing;
-
-        /// <summary>
-        /// Called during initialisation of the game instance.
         /// The event handler should return a window where AssaultWing can draw itself.
         /// </summary>
         public static event Func<AssaultWingCore, IWindow> WindowInitializing;
@@ -100,6 +92,9 @@ namespace AW2
 
         #region AssaultWing properties
 
+        /// <summary>
+        /// The AssaultWingCore instance. Avoid using this remnant of the old times.
+        /// </summary>
         public static AssaultWingCore Instance { get; set; }
 
         public bool DoNotFreezeCanonicalStrings { get; set; }
@@ -111,7 +106,8 @@ namespace AW2
         public NetworkEngine NetworkEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
-        public IMenuEngine MenuEngine { get; private set; }
+        [Obsolete("Use AssaultWing.MenuEngine in assembly AssaultWingGame")]
+        public AWGameComponent MenuEngine_OLD { get { return (AWGameComponent)Components.First(c => c.GetType().Name.Contains("Menu")); } }
 
         /// <summary>
         /// The current state of the game.
@@ -263,7 +259,6 @@ namespace AW2
             SoundEngine = new SoundEngineXACT();
             GraphicsEngine = new GraphicsEngineImpl();
             _introEngine = new IntroEngine();
-            MenuEngine = MenuEngineInitializing != null ? MenuEngineInitializing() : new DummyMenuEngine();
             NetworkEngine = new NetworkEngine();
             _overlayDialog = new OverlayDialog();
             DataEngine = new DataEngine();
@@ -276,7 +271,6 @@ namespace AW2
             GraphicsEngine.UpdateOrder = 4;
             _introEngine.UpdateOrder = 4;
             _overlayDialog.UpdateOrder = 5;
-            MenuEngine.UpdateOrder = 6;
 
             Components.Add(_logicEngine);
             Components.Add(GraphicsEngine);
@@ -284,8 +278,6 @@ namespace AW2
             Components.Add(_overlayDialog);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
-            Components.Add(MenuEngine);
-            Components.Add(NetworkEngine);
             Services.AddService(typeof(NetworkEngine), NetworkEngine);
             Services.AddService(typeof(DataEngine), DataEngine);
             Services.AddService(typeof(PhysicsEngine), PhysicsEngine);
@@ -390,8 +382,8 @@ namespace AW2
                     GraphicsEngine.Visible = true;
                     break;
                 case GameState.Menu:
-                    MenuEngine.Enabled = true;
-                    MenuEngine.Visible = true;
+                    MenuEngine_OLD.Enabled = true;
+                    MenuEngine_OLD.Visible = true;
                     break;
                 case GameState.OverlayDialog:
                     _overlayDialog.Enabled = true;
@@ -418,8 +410,8 @@ namespace AW2
                     GraphicsEngine.Visible = false;
                     break;
                 case GameState.Menu:
-                    MenuEngine.Enabled = false;
-                    MenuEngine.Visible = false;
+                    MenuEngine_OLD.Enabled = false;
+                    MenuEngine_OLD.Visible = false;
                     break;
                 case GameState.OverlayDialog:
                     _overlayDialog.Enabled = false;
@@ -587,7 +579,8 @@ namespace AW2
             if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
             if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             DataEngine.ClearGameState();
-            MenuEngine.Activate();
+            // !!! MenuEngine.Activate();
+            MenuEngine_OLD.GetType().GetMethod("Activate").Invoke(MenuEngine_OLD, null); // HACK !!!
             GameState = GameState.Menu;
         }
 

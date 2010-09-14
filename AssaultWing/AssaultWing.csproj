@@ -252,8 +252,6 @@
     <Compile Include="Helpers\StepwiseAction.cs" />
     <Compile Include="Helpers\SuspendableStepwiseThread.cs" />
     <Compile Include="Helpers\SuspendableThread.cs" />
-    <Compile Include="Menu\DummyMenuEngine.cs" />
-    <Compile Include="Menu\IMenuEngine.cs" />
     <Compile Include="Net\AWEndPoint.cs" />
     <Compile Include="Net\ConnectionException.cs" />
     <Compile Include="Net\ConnectionUtils\AWSocket.cs" />

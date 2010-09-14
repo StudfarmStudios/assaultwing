@@ -126,10 +126,15 @@ namespace AW2.Net.MessageHandling
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null));
 
             // Prepare and start playing the game.
-            var menuEngine = AssaultWingCore.Instance.MenuEngine;
+            var menuEngine = AssaultWingCore.Instance.MenuEngine_OLD;
+            /* !!!
             menuEngine.ProgressBarAction(AssaultWingCore.Instance.PrepareFirstArena,
                 () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers()));
             menuEngine.Deactivate();
+             */
+            menuEngine.GetType().GetMethod("ProgressBarAction").Invoke(menuEngine, new object[] { (Action)AssaultWingCore.Instance.PrepareFirstArena,
+                (Action)(() => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers())) }); // HACK !!!
+            menuEngine.GetType().GetMethod("Deactivate").Invoke(menuEngine, null); // HACK !!!
         }
 
         private static void HandlePlayerSettingsRequestOnClient(PlayerSettingsRequest mess)

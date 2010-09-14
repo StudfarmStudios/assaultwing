@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
-using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 
 namespace AW2.Core
@@ -29,9 +28,12 @@ namespace AW2.Core
         {
             _game.Initialize();
             _game.BeginRun();
-            ((Action)BackgroundLoop).BeginInvoke(BackgroundLoopEnd, null);
+            ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
         }
 
+        /// <summary>
+        /// Exits the previously started thread that updates and draws the game.
+        /// </summary>
         public void Exit()
         {
             _exiting = true;
@@ -39,7 +41,7 @@ namespace AW2.Core
             while (!_exited) Thread.Sleep(100);
         }
 
-        private void BackgroundLoop()
+        private void GameUpdateAndDrawLoop()
         {
             var nextUpdate = TimeSpan.Zero;
             var lastUpdate = TimeSpan.Zero;
@@ -60,7 +62,6 @@ namespace AW2.Core
                     var gameTime = new GameTime(timer.Elapsed, now - lastUpdate, totalGameTime, updateInterval);
                     _update(gameTime);
                     if (now < nextNextUpdate) _draw();
-
                     nextUpdate = nextNextUpdate;
                     lastUpdate = now;
                     totalGameTime += updateInterval;
@@ -68,7 +69,7 @@ namespace AW2.Core
             }
         }
 
-        private void BackgroundLoopEnd(IAsyncResult result)
+        private void GameUpdateAndDrawLoopEnd(IAsyncResult result)
         {
             var deleg = (Action)((AsyncResult)result).AsyncDelegate;
             deleg.EndInvoke(result);

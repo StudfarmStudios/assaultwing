@@ -78,7 +78,7 @@ namespace AW2.Core
             {
                 ResetDevice(width, height);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 SetWindowed(oldWidth, oldHeight);
                 throw;

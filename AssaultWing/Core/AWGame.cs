@@ -44,6 +44,24 @@ namespace AW2.Core
         }
 
         /// <summary>
+        /// Called when unmanaged content is to be loaded such as after graphics device reset.
+        /// </summary>
+        public virtual void LoadContent()
+        {
+            foreach (var component in Components) component.LoadContent();
+        }
+
+        /// <summary>
+        /// Called when unmanaged content is to be disposed such as before graphics device reset.
+        /// It is very important to dispose all disposable graphics content here. Failure to do so
+        /// may cause unexpected exceptions at graphics device reset.
+        /// </summary>
+        public virtual void UnloadContent()
+        {
+            foreach (var component in Components) component.UnloadContent();
+        }
+
+        /// <summary>
         /// Called after all components are initialized but before the first update in the game loop.
         /// </summary>
         public virtual void BeginRun()

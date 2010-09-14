@@ -9,6 +9,7 @@ namespace AW2.UI
 {
     public partial class GameForm : Form, IWindow
     {
+        private AssaultWing _game;
         private AWGameRunner _runner;
 
         public string Title
@@ -28,13 +29,21 @@ namespace AW2.UI
         {
             InitializeComponent();
             GraphicsDeviceService.Instance.SetWindow(Handle);
-            AssaultWingCore.MenuEngineInitializing += () => new MenuEngineImpl();
+
+            // Make the device large enough for any conceivable purpose -- avoid unnecessary graphics device resets later
+            var screen = Screen.GetWorkingArea(this);
+            GraphicsDeviceService.Instance.ResetDevice(screen.Width, screen.Height);
+
             AssaultWingCore.WindowInitializing += game => new AWGameWindow(this);
-            AssaultWing.Instance = new AssaultWing();
-            AssaultWingCore.Instance.CommandLineArgs = args;
+            _game = new AssaultWing();
+            AssaultWing.Instance = _game; // support older code that uses the static instance
+            _game.CommandLineArgs = args;
+            GraphicsDeviceService.Instance.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
+            GraphicsDeviceService.Instance.DeviceReset += (sender, eventArgs) => _game.LoadContent();
+            // FIXME: Game update delegate is run in Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
             _runner = new AWGameRunner(AssaultWingCore.Instance,
                 () => _gameView.BeginInvoke((Action)_gameView.Invalidate),
-                gameTime => _gameView.BeginInvoke((Action)(() => AssaultWingCore.Instance.Update(gameTime))));
+                gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
         }
 
         protected override void OnCreateControl()
@@ -46,8 +55,11 @@ namespace AW2.UI
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-//!!!            AssaultWingCore.Instance.MenuEngine.WindowResize();
-//!!!            AssaultWingCore.Instance.DataEngine.RearrangeViewports();
+            if (_game != null)
+            {
+                _game.MenuEngine.WindowResize();
+                _game.DataEngine.RearrangeViewports();
+            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

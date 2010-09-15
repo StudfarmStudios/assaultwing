@@ -69,7 +69,7 @@ namespace AW2.Menu
                 Action = component =>
                 {
                     if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Standalone) return;
-                    if (!AssaultWingCore.Instance.StartServer(MessageHandlers.IncomingConnectionHandlerOnServer)) return;
+                    if (!AssaultWingCore.Instance.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, AllowNewConnection))) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player and Amazonas as the only arena.
@@ -77,6 +77,12 @@ namespace AW2.Menu
                     AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
                 }
             });
+        }
+
+        private bool AllowNewConnection()
+        {
+            return AssaultWingCore.Instance.GameState == AW2.Core.GameState.Gameplay
+                || AssaultWingCore.Instance.GameState == AW2.Core.GameState.OverlayDialog;
         }
 
         private void HandleGameServerListReply(GameServerListReply mess, MenuEngineImpl menuEngine)

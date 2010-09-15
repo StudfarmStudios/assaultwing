@@ -51,10 +51,8 @@ namespace AW2.Graphics
         {
             get
             {
-                // Shake only if gameplay is on. Otherwise freeze because
-                // shake won't be attenuated either.
-                if (AssaultWingCore.Instance.GameState == GameState.Gameplay)
-                    shakeSign = -shakeSign;
+                // TODO: Shake only if gameplay is on. Otherwise freeze because shake won't be attenuated either.
+                shakeSign = -shakeSign;
 
                 float viewShake = shakeSign * player.Shake;
                 return Matrix.CreateLookAt(new Vector3(GetLookAtPos(), 1000), new Vector3(GetLookAtPos(), 0),

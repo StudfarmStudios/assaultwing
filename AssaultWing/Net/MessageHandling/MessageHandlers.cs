@@ -74,17 +74,16 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ArenaStartReply>(false, IMessageHandler.SourceType.Client, mess => idRegisterer(mess.ConnectionID));
         }
 
-        public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result)
+        public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)
         {
             if (!result.Successful)
                 Log.Write("Some client failed to connect: " + result.Error);
             else
             {
                 Log.Write("Server obtained connection from " + result.Value.RemoteTCPEndPoint);
-                if (AssaultWingCore.Instance.GameState == AW2.Core.GameState.Gameplay ||
-                    AssaultWingCore.Instance.GameState == AW2.Core.GameState.OverlayDialog)
+                if (!allowNewConnection())
                 {
-                    var mess = new ConnectionClosingMessage { Info = "Game is already running, you're late!" };
+                    var mess = new ConnectionClosingMessage { Info = "Game server doesn't allow joining right now" };
                     result.Value.Send(mess);
                     result.Value.Dispose();
                 }

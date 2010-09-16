@@ -47,21 +47,8 @@ namespace AW2
         private SurfaceFormat _preferredFullscreenFormat;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
-        private GameState _gameState;
         private IWindow _window; // use this and not Game.Window
         private ArenaStartWaiter _arenaStartWaiter;
-
-        // HACK: Debug keys
-        private Control _musicSwitch;
-        private Control _arenaReload;
-        private Control _frameStepControl;
-        private Control _frameRunControl;
-        private bool _frameStep;
-
-        /// <summary>
-        /// The only existing instance of this class.
-        /// </summary>
-        private static AssaultWingCore g_instance;
 
         #endregion AssaultWing fields
 
@@ -77,11 +64,6 @@ namespace AW2
         /// A hack to pass the true client area size from Arena Editor to Assault Wing window.
         /// </summary>
         public static Func<System.Drawing.Size> GetRealClientAreaSize;
-
-        /// <summary>
-        /// Called when <see cref="GameState"/> has changed.
-        /// </summary>
-        public event Action<GameState> GameStateChanged;
 
         /// <summary>
         /// Called when <see cref="BeginRun"/> is complete.
@@ -108,23 +90,6 @@ namespace AW2
         public SoundEngine SoundEngine { get; private set; }
         [Obsolete("Use AssaultWing.MenuEngine in assembly AssaultWingGame")]
         public AWGameComponent MenuEngine_OLD { get { return (AWGameComponent)Components.First(c => c.GetType().Name.Contains("Menu")); } }
-
-        /// <summary>
-        /// The current state of the game.
-        /// </summary>
-        public GameState GameState
-        {
-            get { return _gameState; }
-            private set
-            {
-                DisableCurrentGameState();
-                EnableGameState(value);
-                var oldState = _gameState;
-                _gameState = value;
-                if (GameStateChanged != null && _gameState != oldState)
-                    GameStateChanged(_gameState);
-            }
-        }
 
         /// <summary>
         /// The current mode of network operation of the game.
@@ -202,13 +167,6 @@ namespace AW2
             Settings = AWSettings.FromFile();
             InitializeGraphics();
 
-            _musicSwitch = new KeyboardKey(Keys.F5);
-            _arenaReload = new KeyboardKey(Keys.F6);
-            _frameStepControl = new KeyboardKey(Keys.F8);
-            _frameRunControl = new KeyboardKey(Keys.F7);
-            _frameStep = false;
-
-            GameState = GameState.Initializing;
             NetworkMode = NetworkMode.Standalone;
             GameTime = new GameTime();
 
@@ -217,12 +175,12 @@ namespace AW2
 
         #region AssaultWing private methods
 
-        private void StartArenaImpl()
+        [Obsolete("Move to AssaultWing")]
+        protected virtual void StartArenaImpl()
         {
             Log.Write("Starting arena");
             DataEngine.StartArena();
             DataEngine.RearrangeViewports();
-            GameState = GameState.Gameplay;
             SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
             Log.Write("...started arena " + DataEngine.Arena.Name);
         }
@@ -364,65 +322,6 @@ namespace AW2
                 + "Counter";
         }
 
-        private void EnableGameState(GameState value)
-        {
-            switch (value)
-            {
-                case GameState.Initializing:
-                    break;
-                case GameState.Intro:
-                    _introEngine.Enabled = true;
-                    _introEngine.Visible = true;
-                    _introEngine.BeginIntro();
-                    break;
-                case GameState.Gameplay:
-                    Log.Write("Saving settings to file");
-                    Settings.ToFile();
-                    _logicEngine.Enabled = DataEngine.Arena.IsForPlaying;
-                    GraphicsEngine.Visible = true;
-                    break;
-                case GameState.Menu:
-                    MenuEngine_OLD.Enabled = true;
-                    MenuEngine_OLD.Visible = true;
-                    break;
-                case GameState.OverlayDialog:
-                    _overlayDialog.Enabled = true;
-                    _overlayDialog.Visible = true;
-                    GraphicsEngine.Visible = true;
-                    break;
-                default:
-                    throw new ApplicationException("Cannot change to unexpected game state " + value);
-            }
-        }
-
-        private void DisableCurrentGameState()
-        {
-            switch (_gameState)
-            {
-                case GameState.Initializing:
-                    break;
-                case GameState.Intro:
-                    _introEngine.Enabled = false;
-                    _introEngine.Visible = false;
-                    break;
-                case GameState.Gameplay:
-                    _logicEngine.Enabled = false;
-                    GraphicsEngine.Visible = false;
-                    break;
-                case GameState.Menu:
-                    MenuEngine_OLD.Enabled = false;
-                    MenuEngine_OLD.Visible = false;
-                    break;
-                case GameState.OverlayDialog:
-                    _overlayDialog.Enabled = false;
-                    _overlayDialog.Visible = false;
-                    GraphicsEngine.Visible = false;
-                    break;
-                default:
-                    throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
-            }
-        }
-
         /// <summary>
         /// Freezes <see cref="CanonicalString"/> instances to enable sharing them over a network.
         /// </summary>
@@ -433,50 +332,6 @@ namespace AW2
             // TODO: Loop through all textures and all 3D models available in the ContentManager.
             foreach (var assetName in ((AWContentManager)Content).GetAssetNames()) CanonicalString.Register(assetName);
             CanonicalString.DisableRegistering();
-        }
-
-        private void UpdateDebugKeys()
-        {
-            // Switch music off
-            if (_musicSwitch.Pulse && GameState == GameState.Gameplay)
-            {
-                SoundEngine.StopMusic();
-            }
-
-            // Instant arena reload (simple aid for hand-editing an arena)
-            if (_arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
-            {
-                var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.ArenaPlaylist.Current).FileName;
-                try
-                {
-                    var arena = Arena.FromFile(arenaFilename);
-                    DataEngine.InitializeFromArena(arena, true);
-                    StartArena();
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Arena reload failed: " + e);
-                }
-            }
-
-            // Frame stepping (for debugging)
-            if (_frameRunControl.Pulse)
-            {
-                _logicEngine.Enabled = true;
-                _frameStep = false;
-            }
-            if (_frameStep)
-            {
-                if (_frameStepControl.Pulse)
-                    _logicEngine.Enabled = true;
-                else
-                    _logicEngine.Enabled = false;
-            }
-            else if (_frameStepControl.Pulse)
-            {
-                _logicEngine.Enabled = false;
-                _frameStep = true;
-            }
         }
 
         #endregion AssaultWing private methods
@@ -550,38 +405,22 @@ namespace AW2
                 throw new InvalidOperationException("There is no next arena to play");
         }
 
-        /// <summary>
-        /// Resumes playing the current arena, closing the dialog if it's visible.
-        /// </summary>
-        public void ResumePlay()
+        [Obsolete("Move to AssaultWing")]
+        public virtual void ResumePlay()
         {
-            GameState = GameState.Gameplay;
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Displays the dialog on top of the game and stops updating the game logic.
-        /// </summary>
-        /// <param name="dialogData">The contents and actions for the dialog.</param>
-        public void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
+        [Obsolete("Move to AssaultWing")]
+        public virtual void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
         {
-            if (!AllowDialogs) return;
-            _overlayDialog.Data = dialogData;
-            GameState = GameState.OverlayDialog;
-            SoundEngine.PlaySound("EscPause");
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Displays the main menu and stops any ongoing gameplay.
-        /// </summary>
-        public void ShowMenu()
+        [Obsolete("Move to AssaultWing")]
+        public virtual void ShowMenu()
         {
-            Log.Write("Entering menus");
-            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
-            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            DataEngine.ClearGameState();
-            // !!! MenuEngine.Activate();
-            MenuEngine_OLD.GetType().GetMethod("Activate").Invoke(MenuEngine_OLD, null); // HACK !!!
-            GameState = GameState.Menu;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -726,59 +565,8 @@ namespace AW2
             if (!DoNotFreezeCanonicalStrings) FreezeCanonicalStrings();
         }
 
-        /// <summary>
-        /// Called after all components are initialized but before the first update in the game loop. 
-        /// </summary>
         public override void BeginRun()
         {
-            Log.Write("Assault Wing begins to run");
-
-            // Hardcoded for now!!!
-
-            PlayerControls plr1Controls;
-            plr1Controls.Thrust = new KeyboardKey(Keys.Up);
-            plr1Controls.Left = new KeyboardKey(Keys.Left);
-            plr1Controls.Right = new KeyboardKey(Keys.Right);
-            plr1Controls.Down = new KeyboardKey(Keys.Down);
-            plr1Controls.Fire1 = new KeyboardKey(Keys.RightControl);
-            plr1Controls.Fire2 = new KeyboardKey(Keys.RightShift);
-            plr1Controls.Extra = new KeyboardKey(Keys.Down);
-
-            PlayerControls plr2Controls;
-#if false // mouse control
-            //plr2Controls.Thrust = new MouseDirection(MouseDirections.Up, 2, 7, 5);
-            plr2Controls.Thrust = new MouseButton(MouseButtons.Left);
-            plr2Controls.Left = new MouseDirection(MouseDirections.Left, 2, 9, 5);
-            plr2Controls.Right = new MouseDirection(MouseDirections.Right, 2, 9, 5);
-            plr2Controls.Down = new MouseDirection(MouseDirections.Down, 2, 12, 5);
-            //plr2Controls.Fire1 = new MouseDirection(MouseDirections.Down, 0, 12, 20);
-            //plr2Controls.Fire2 = new MouseButton(MouseButtons.Right);
-            plr2Controls.Fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1);
-            plr2Controls.Fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1);
-            plr2Controls.Extra = new KeyboardKey(Keys.CapsLock);
-            _uiEngine.MouseControlsEnabled = true;
-#else
-            plr2Controls.Thrust = new KeyboardKey(Keys.W);
-            plr2Controls.Left = new KeyboardKey(Keys.A);
-            plr2Controls.Right = new KeyboardKey(Keys.D);
-            plr2Controls.Down = new KeyboardKey(Keys.X);
-            plr2Controls.Fire1 = new KeyboardKey(Keys.LeftControl);
-            plr2Controls.Fire2 = new KeyboardKey(Keys.LeftShift);
-            plr2Controls.Extra = new KeyboardKey(Keys.X);
-            _uiEngine.MouseControlsEnabled = false;
-#endif
-
-            Player player1 = new Player("Newbie", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
-            Player player2 = new Player("Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
-            DataEngine.Spectators.Add(player1);
-            DataEngine.Spectators.Add(player2);
-
-            DataEngine.GameplayMode = new GameplayMode();
-            DataEngine.GameplayMode.ShipTypes = new string[] { "Windlord", "Bugger", "Plissken" };
-            DataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
-            DataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets", "mines" };
-
-            GameState = GameState.Intro;
             base.BeginRun();
             if (RunBegan != null) RunBegan();
         }
@@ -804,7 +592,6 @@ namespace AW2
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
                 StartArenaImpl();
             }
-            UpdateDebugKeys();
             GameTime = gameTime;
             if (_logicEngine.Enabled)
             {

@@ -88,8 +88,6 @@ namespace AW2
         public NetworkEngine NetworkEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
-        [Obsolete("Use AssaultWing.MenuEngine in assembly AssaultWingGame")]
-        public AWGameComponent MenuEngine_OLD { get { return (AWGameComponent)Components.First(c => c.GetType().Name.Contains("Menu")); } }
 
         /// <summary>
         /// The current mode of network operation of the game.

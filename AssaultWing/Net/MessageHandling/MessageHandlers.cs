@@ -34,10 +34,10 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ClientJoinMessage>(false, IMessageHandler.SourceType.Management, HandleClientJoinMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction)
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction, Action<StartGameMessage> handleStartGameMessage)
         {
             yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
-            yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, HandleStartGameMessage);
+            yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, handleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
@@ -118,23 +118,6 @@ namespace AW2.Net.MessageHandling
             var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
                 new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), AssaultWingCore.Instance.ShowMenu));
             AssaultWingCore.Instance.ShowDialog(dialogData);
-        }
-
-        private static void HandleStartGameMessage(StartGameMessage mess)
-        {
-            AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null));
-
-            // Prepare and start playing the game.
-            var menuEngine = AssaultWingCore.Instance.MenuEngine_OLD;
-            /* !!!
-            menuEngine.ProgressBarAction(AssaultWingCore.Instance.PrepareFirstArena,
-                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers()));
-            menuEngine.Deactivate();
-             */
-            menuEngine.GetType().GetMethod("ProgressBarAction").Invoke(menuEngine, new object[] { (Action)AssaultWingCore.Instance.PrepareFirstArena,
-                (Action)(() => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers())) }); // HACK !!!
-            menuEngine.GetType().GetMethod("Deactivate").Invoke(menuEngine, null); // HACK !!!
         }
 
         private static void HandlePlayerSettingsRequestOnClient(PlayerSettingsRequest mess)

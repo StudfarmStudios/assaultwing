@@ -118,13 +118,25 @@ namespace AW2.Menu
                 AssaultWingCore.Instance.StopClient();
                 return;
             }
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip)));
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip), HandleStartGameMessage));
 
             // HACK: Force one local player.
             AssaultWingCore.Instance.DataEngine.Spectators.Remove(player => AssaultWingCore.Instance.DataEngine.Spectators.Count > 1);
 
             var joinRequest = new JoinGameRequest { CanonicalStrings = CanonicalString.CanonicalForms };
             AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Send(joinRequest);
+        }
+
+        private static void HandleStartGameMessage(StartGameMessage mess)
+        {
+            AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null));
+
+            // Prepare and start playing the game.
+            var menuEngine = ((AssaultWing)AssaultWingCore.Instance).MenuEngine;
+            menuEngine.ProgressBarAction(AssaultWingCore.Instance.PrepareFirstArena,
+                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers()));
+            menuEngine.Deactivate();
         }
     }
 }

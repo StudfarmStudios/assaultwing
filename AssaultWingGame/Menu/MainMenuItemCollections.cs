@@ -81,8 +81,7 @@ namespace AW2.Menu
 
         private bool AllowNewConnection()
         {
-            return ((AssaultWing)AssaultWing.Instance).GameState == AW2.Core.GameState.Gameplay
-                || ((AssaultWing)AssaultWing.Instance).GameState == AW2.Core.GameState.OverlayDialog;
+            return ((AssaultWing)AssaultWing.Instance).GameState == AW2.Core.GameState.Menu;
         }
 
         private void HandleGameServerListReply(GameServerListReply mess, MenuEngineImpl menuEngine)

@@ -85,7 +85,7 @@ namespace AW2.Net.MessageHandling
                 {
                     var mess = new ConnectionClosingMessage { Info = "Game server doesn't allow joining right now" };
                     result.Value.Send(mess);
-                    result.Value.Dispose();
+                    AssaultWingCore.Instance.NetworkEngine.DropClient(result.Value.ID, false);
                 }
             }
         }

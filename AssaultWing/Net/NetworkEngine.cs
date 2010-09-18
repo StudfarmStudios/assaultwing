@@ -94,6 +94,8 @@ namespace AW2.Net
         /// </summary>
         private Action<Result<Connection>> _startServerConnectionHandler;
 
+        private List<NetBuffer> _udpMessagesToHandle;
+
         #endregion Fields
 
         #region Constructor
@@ -102,6 +104,7 @@ namespace AW2.Net
         {
             _gameClientConnections = new List<Connection>();
             _removedClientConnections = new List<Connection>();
+            _udpMessagesToHandle = new List<NetBuffer>();
             MessageHandlers = new List<IMessageHandler>();
             InitializeUDPSocket();
         }
@@ -245,6 +248,7 @@ namespace AW2.Net
                 throw new InvalidOperationException("Cannot drop client in mode " + AssaultWingCore.Instance.NetworkMode);
 
             var connection = GetGameClientConnection(connectionID);
+            if (_removedClientConnections.Contains(connection)) return;
             Log.Write("Dropping " + connection.Name);
             _removedClientConnections.Add(connection);
 
@@ -385,6 +389,7 @@ namespace AW2.Net
         {
             if (ConnectionAttemptListener.Instance.IsListening) ConnectionAttemptListener.Instance.Update();
             HandleNewConnections();
+            HandleUDPMessages();
 
             // Update ping time measurements.
             foreach (var conn in AllConnections) conn.Update();
@@ -533,22 +538,34 @@ namespace AW2.Net
 
         private void HandleUDPMessage(NetBuffer messageHeaderAndBody)
         {
-            if (messageHeaderAndBody.EndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint))
+            lock (_udpMessagesToHandle) _udpMessagesToHandle.Add(messageHeaderAndBody);
+        }
+
+        private void HandleUDPMessages()
+        {
+            lock (_udpMessagesToHandle)
             {
-                var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer, messageHeaderAndBody.Length);
-                ManagementServerConnection.Messages.Enqueue(message);
-            }
-            else
-            {
-                var connection = GetConnection(messageHeaderAndBody.EndPoint);
-                if (connection == null)
+                foreach (var messageHeaderAndBody in _udpMessagesToHandle)
                 {
+                    if (messageHeaderAndBody.EndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint))
+                    {
+                        var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer, messageHeaderAndBody.Length);
+                        ManagementServerConnection.Messages.Enqueue(message);
+                    }
+                    else
+                    {
+                        var connection = GetConnection(messageHeaderAndBody.EndPoint);
+                        if (connection == null)
+                        {
 #if DEBUG
-                    Log.Write("Note: Ignoring an UDP message from unknown source " + messageHeaderAndBody.EndPoint);
+                            Log.Write("Note: Ignoring an UDP message from unknown source " + messageHeaderAndBody.EndPoint);
 #endif
-                    return;
+                            return;
+                        }
+                        connection.HandleMessage(messageHeaderAndBody);
+                    }
                 }
-                connection.HandleMessage(messageHeaderAndBody);
+                _udpMessagesToHandle.Clear();
             }
         }
 

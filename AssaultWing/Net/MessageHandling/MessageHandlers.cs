@@ -102,8 +102,9 @@ namespace AW2.Net.MessageHandling
             });
             if (connection == null)
             {
+                // Received game client UDP end point before the connection to the game client was created.
                 // TODO: The connection is probably going to be created soon. Store the port somewhere else.
-                throw new NotImplementedException("Got game client UDP end point before connection was created");
+                // OR, more likely the connection was closed immediately (e.g. because the game server is full).
             }
             else
             {

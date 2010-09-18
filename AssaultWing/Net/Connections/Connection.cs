@@ -122,11 +122,7 @@ namespace AW2.Net.Connections
                 if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
                 return _remoteUDPEndPoint;
             }
-            set
-            {
-                _remoteUDPEndPoint = value;
-                Log.Write("!!! " + Name + " got remote UDP end point " + value);
-            }
+            set { _remoteUDPEndPoint = value; }
         }
 
         /// <summary>

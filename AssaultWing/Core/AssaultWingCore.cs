@@ -236,9 +236,7 @@ namespace AW2
             Components.Add(_overlayDialog);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
-            Services.AddService(typeof(NetworkEngine), NetworkEngine);
-            Services.AddService(typeof(DataEngine), DataEngine);
-            Services.AddService(typeof(PhysicsEngine), PhysicsEngine);
+            Components.Add(NetworkEngine);
 
             // Disable all optional components
             foreach (var component in Components)

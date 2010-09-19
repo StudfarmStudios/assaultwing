@@ -134,7 +134,7 @@ namespace AW2.Game.Gobs
             while (_nextSpawn <= Arena.TotalTime)
             {
                 _nextSpawn = Arena.TotalTime + TimeSpan.FromSeconds(_spawnInterval);
-                Gob.CreateGob<Gob>(GetRandomSpawnType(), newGob =>
+                Gob.CreateGob<Gob>(Game, GetRandomSpawnType(), newGob =>
                 {
                     var spawnPos = Arena.GetFreePosition(newGob, _spawnArea);
                     newGob.Pos = spawnPos;

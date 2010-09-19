@@ -46,7 +46,8 @@ namespace AW2.Game
     /// are not part of the game state should not be marked with either attribute.
     /// 
     /// Each Gob subclass must provide a parameterless constructor that initialises all
-    /// of its type parameters to descriptive and exemplary default values.
+    /// of its type parameters to descriptive and exemplary default values. Always create
+    /// subclass instances by calling <see cref="AW2.Game.Gob.CreateGob"/>.
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
@@ -331,9 +332,8 @@ namespace AW2.Game
         /// </summary>
         public int StaticID { get { return _staticID; } set { _staticID = value; } }
 
-        /// <summary>
-        /// The arena in which the gob lives.
-        /// </summary>
+        public AssaultWingCore Game { get; private set; }
+
         public Arena Arena { get; set; }
 
         /// <summary>
@@ -647,10 +647,11 @@ namespace AW2.Game
         /// <param name="typeName">Template type name of the gob</param>
         /// <param name="init">Initialisation to perform on the gob</param>
         /// <seealso cref="CreateGob(CanonicalString)"/>
-        public static void CreateGob<T>(CanonicalString typeName, Action<T> init) where T : Gob
+        public static void CreateGob<T>(AssaultWingCore game, CanonicalString typeName, Action<T> init) where T : Gob
         {
             T gob = Clonable.Instantiate(typeName) as T;
             if (gob == null) throw new ApplicationException("Gob type template " + typeName + " wasn't of expected type " + typeof(T).Name);
+            gob.Game = game;
             if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
@@ -688,9 +689,10 @@ namespace AW2.Game
         /// <returns>The newly created gob.</returns>
         /// <param name="init">Initialisation to perform on the gob.</param>
         /// <seealso cref="CreateGob(Gob)"/>
-        public static void CreateGob(Gob runtimeState, Action<Gob> init)
+        public static void CreateGob(AssaultWingCore game, Gob runtimeState, Action<Gob> init)
         {
-            Gob gob = CreateGob(runtimeState);
+            var gob = CreateGob(runtimeState);
+            gob.Game = game;
             if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
@@ -800,10 +802,10 @@ namespace AW2.Game
         /// <param name="projection">The projection matrix.</param>
         public virtual void Draw(Matrix view, Matrix projection)
         {
-            Matrix world = WorldMatrix;
+            var world = WorldMatrix;
 
             // Draw each mesh in the 3D model.
-            foreach (ModelMesh mesh in Model.Meshes)
+            foreach (var mesh in Model.Meshes)
             {
                 if (mesh.Name.StartsWith("mesh_Collision"))
                     continue;
@@ -815,7 +817,7 @@ namespace AW2.Game
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     if (mesh.Effects.Count > 1)
                         throw new Exception("Error: Several effects on a gob with alpha effect. Programmer must use arrays for saving BasicEffect state.");
-                    BasicEffect be = (BasicEffect)mesh.Effects[0];
+                    var be = (BasicEffect)mesh.Effects[0];
                     oldAlpha = be.Alpha;
                     be.Alpha = _alpha;
 
@@ -836,7 +838,7 @@ namespace AW2.Game
                 if (_alpha < 1)
                 {
                     // For now we assume only one ModelMeshPart. (Laziness.)
-                    BasicEffect be = (BasicEffect)mesh.Effects[0];
+                    var be = (BasicEffect)mesh.Effects[0];
                     be.Alpha = oldAlpha;
 
                     // Restore render state.
@@ -850,10 +852,10 @@ namespace AW2.Game
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     if (mesh.Effects.Count > 1)
                         throw new Exception("Error: Several effects on a flashing gob. Programmer must use arrays for saving BasicEffect state.");
-                    BasicEffect be = (BasicEffect)mesh.Effects[0];
+                    var be = (BasicEffect)mesh.Effects[0];
 
                     // Modify render state.
-                    RenderState renderState = AssaultWingCore.Instance.GraphicsDevice.RenderState;
+                    var renderState = AssaultWingCore.Instance.GraphicsDevice.RenderState;
                     renderState.AlphaBlendEnable = true;
                     renderState.DepthBufferEnable = false;
 
@@ -861,7 +863,7 @@ namespace AW2.Game
                     bool oldLightingEnabled = be.LightingEnabled;
                     bool oldTextureEnabled = be.TextureEnabled;
                     bool oldVertexColorEnabled = be.VertexColorEnabled;
-                    Vector3 oldDiffuseColor = be.DiffuseColor;
+                    var oldDiffuseColor = be.DiffuseColor;
                     oldAlpha = be.Alpha;
 
                     // Set effect state to bleach.
@@ -1093,7 +1095,7 @@ namespace AW2.Game
             for (int thrustI = 0; thrustI < boneIs.Length; ++thrustI)
                 for (int tempI = 0; tempI < templates; ++tempI)
                 {
-                    Gob.CreateGob<Gobs.Peng>(exhaustEngineNames[tempI], gob =>
+                    Gob.CreateGob<Gobs.Peng>(Game, exhaustEngineNames[tempI], gob =>
                     {
                         gob.Leader = this;
                         gob.LeaderBone = boneIs[thrustI].Value;
@@ -1238,7 +1240,7 @@ namespace AW2.Game
         {
             foreach (var gobType in birthGobTypes)
             {
-                CreateGob<Gob>(gobType, gob =>
+                CreateGob<Gob>(Game, gobType, gob =>
                 {
                     gob.ResetPos(Pos, Vector2.Zero, Rotation);
                     var peng = gob as Gobs.Peng;
@@ -1270,7 +1272,7 @@ namespace AW2.Game
                     Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + modelName);
                     continue;
                 }
-                Gob.CreateGob<Gobs.Peng>((CanonicalString)tokens[1], gob =>
+                Gob.CreateGob<Gobs.Peng>(Game, (CanonicalString)tokens[1], gob =>
                 {
                     gob.Leader = this;
                     gob.LeaderBone = pos.Value;
@@ -1330,7 +1332,7 @@ namespace AW2.Game
             // Create death gobs.
             foreach (var gobType in deathGobTypes)
             {
-                CreateGob<Gob>(gobType, gob =>
+                CreateGob<Gob>(Game, gobType, gob =>
                 {
                     gob.ResetPos(Pos, Vector2.Zero, Rotation);
                     gob.Owner = Owner;

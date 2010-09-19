@@ -50,7 +50,8 @@ namespace AW2.Sound
 
         #endregion
 
-        public SoundEngineXNA()
+        public SoundEngineXNA(AW2.Core.AWGame game)
+            : base(game)
         {
         }
 

@@ -17,12 +17,13 @@ namespace AW2.Game
     /// </summary>
     public class LogicEngine : AWGameComponent
     {
-        Control escapeControl;
+        private Control escapeControl;
 #if DEBUG
-        Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
+        private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 #endif
 
-        public LogicEngine()
+        public LogicEngine(AWGame game)
+            : base(game)
         {
             escapeControl = new KeyboardKey(Keys.Escape);
 #if DEBUG

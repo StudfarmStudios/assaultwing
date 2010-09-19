@@ -20,6 +20,8 @@ namespace AW2.Game
         /// </summary>
         public ServerRegistrationType ServerRegistration { get; set; }
 
+        public AssaultWingCore Game { get; set; }
+
         /// <summary>
         /// The player's unique identifier.
         /// </summary>
@@ -53,13 +55,14 @@ namespace AW2.Game
         /// </summary>
         public virtual bool NeedsViewport { get { return true; } }
 
-        public Spectator(PlayerControls controls)
-            : this(controls, -1)
+        public Spectator(AssaultWingCore game, PlayerControls controls)
+            : this(game, controls, -1)
         {
         }
 
-        public Spectator(PlayerControls controls, int connectionId)
+        public Spectator(AssaultWingCore game, PlayerControls controls, int connectionId)
         {
+            Game = game;
             Controls = controls;
             ConnectionID = connectionId;
         }

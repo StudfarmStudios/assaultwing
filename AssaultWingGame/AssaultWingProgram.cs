@@ -22,9 +22,11 @@ namespace AW2
             try
             {
 #endif
-            Instance = new AssaultWingProgram(args);
-            Instance.Run();
-            GraphicsDeviceService.Instance.Dispose();
+            using (var graphicsDeviceService = new GraphicsDeviceService())
+            {
+                Instance = new AssaultWingProgram(graphicsDeviceService, args);
+                Instance.Run();
+            }
 #if !DEBUG
             }
             catch (Exception e)
@@ -35,12 +37,12 @@ namespace AW2
 #endif
         }
 
-        public AssaultWingProgram(string[] args)
+        public AssaultWingProgram(GraphicsDeviceService graphicsDeviceService, string[] args)
         {
             Log.Write("Assault Wing started");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            _form = new GameForm(args);
+            _form = new GameForm(graphicsDeviceService, args);
             _form.GameView.Draw += AssaultWingCore.Instance.Draw;
         }
 

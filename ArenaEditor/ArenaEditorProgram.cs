@@ -11,6 +11,7 @@ namespace AW2
     static class ArenaEditorProgram
     {
         private static ArenaEditor editor;
+        private static AssaultWingCore game;
 
         /// <summary>
         /// The main entry point for Assault Wing Arena Editor.
@@ -19,14 +20,16 @@ namespace AW2
         public static void Main(string[] args)
         {
             Log.Write("Assault Wing Arena Editor started");
+            var graphicsDeviceService = new GraphicsDeviceService();
             editor = new ArenaEditor();
             editor.Show(); // needed for retrieving the window's handle
             var app = new Application();
             AssaultWingCore.GetRealClientAreaSize = () => editor.ArenaView.Size;
             AssaultWingCore.WindowInitializing += g => editor.ArenaView;
-            var game = AssaultWingCore.Instance;
-            GraphicsDeviceService.Instance.DeviceResetting += (sender, eventArgs) => game.UnloadContent();
-            GraphicsDeviceService.Instance.DeviceReset += (sender, eventArgs) => game.LoadContent();
+            game = new AssaultWingCore(graphicsDeviceService);
+            AssaultWingCore.Instance = game; // HACK: support oldschool singleton usage
+            graphicsDeviceService.DeviceResetting += (sender, eventArgs) => game.UnloadContent();
+            graphicsDeviceService.DeviceReset += (sender, eventArgs) => game.LoadContent();
             game.DoNotFreezeCanonicalStrings = true;
             game.SoundEngine.Enabled = false;
             game.CommandLineArgs = args;
@@ -37,7 +40,7 @@ namespace AW2
             xnaWindow.VisibleChanged += (sender, eventArgs) => xnaWindow.Visible = false;
             var runner = new AWGameRunner(game,
                 () => editor.ArenaView.BeginInvoke((Action)editor.ArenaView.Invalidate),
-                gameTime => editor.ArenaView.BeginInvoke((Action)(() => AssaultWingCore.Instance.Update(gameTime))));
+                gameTime => editor.ArenaView.BeginInvoke((Action)(() => game.Update(gameTime))));
             app.Startup += (sender, eventArgs) => runner.Run();
             app.Exit += (sender, eventArgs) => runner.Exit();
             app.Run(editor);
@@ -45,7 +48,7 @@ namespace AW2
 
         private static void Initialize()
         {
-            AssaultWingCore.Instance.DataEngine.Spectators.Clear();
+            game.DataEngine.Spectators.Clear();
             var spectatorControls = new PlayerControls
             {
                 Thrust = new KeyboardKey(Keys.Up),
@@ -56,8 +59,8 @@ namespace AW2
                 Fire2 = new KeyboardKey(Keys.RightShift),
                 Extra = new KeyboardKey(Keys.Enter)
             };
-            var spectator = new EditorSpectator(spectatorControls);
-            AssaultWingCore.Instance.DataEngine.Spectators.Add(spectator);
+            var spectator = new EditorSpectator(game, spectatorControls);
+            game.DataEngine.Spectators.Add(spectator);
         }
     }
 }

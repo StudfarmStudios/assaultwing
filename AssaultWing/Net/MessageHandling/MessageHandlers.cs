@@ -261,7 +261,7 @@ namespace AW2.Net.MessageHandling
 
         private static Player GetTempPlayer()
         {
-            return new Player("dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
+            return new Player(null, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
         }
 
         private static bool ClientPlayerCriteria(Spectator spectator, int oldPlayerID)
@@ -272,7 +272,7 @@ namespace AW2.Net.MessageHandling
 
         private static Player CreateAndAddNewPlayer(PlayerSettingsRequest mess)
         {
-            var newPlayer = new Player("<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
+            var newPlayer = new Player(null, "<uninitialised>", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, mess.ConnectionID);
             mess.Read(newPlayer, SerializationModeFlags.ConstantData, 0);
             AssaultWingCore.Instance.DataEngine.Spectators.Add(newPlayer);
             return newPlayer;

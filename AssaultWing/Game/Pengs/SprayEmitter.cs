@@ -161,7 +161,7 @@ namespace AW2.Game.Pengs
                 if (emitType < textureNames.Length)
                     emittedThingInit(null);
                 else
-                    Gob.CreateGob<Gob>(gobTypeNames[emitType - textureNames.Length], emittedThingInit);
+                    Gob.CreateGob<Gob>(Peng.Game, gobTypeNames[emitType - textureNames.Length], emittedThingInit);
             }
             return particles;
         }

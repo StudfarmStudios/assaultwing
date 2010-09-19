@@ -12,8 +12,9 @@ namespace AW2.Core
     /// </summary>
     public class AWGame : IDisposable
     {
-        [Obsolete("Use GraphicsDeviceService.Instance.GraphicsDevice instead")]
-        public GraphicsDevice GraphicsDevice { get { return GraphicsDeviceService.Instance.GraphicsDevice; } }
+        [Obsolete("Use GraphicsDeviceService.GraphicsDevice instead")]
+        public GraphicsDevice GraphicsDevice { get { return GraphicsDeviceService.GraphicsDevice; } }
+        public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
         public List<AWGameComponent> Components { get; private set; }
@@ -21,9 +22,11 @@ namespace AW2.Core
 
         public event EventHandler Exiting;
 
-        public AWGame()
+        public AWGame(GraphicsDeviceService graphicsDeviceService)
         {
+            GraphicsDeviceService = graphicsDeviceService;
             Services = new GameServiceContainer();
+            Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new List<AWGameComponent>();
             TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60);
         }
@@ -38,9 +41,9 @@ namespace AW2.Core
         /// </summary>
         public virtual void Initialize()
         {
-            Services.AddService(typeof(IGraphicsDeviceService), GraphicsDeviceService.Instance);
             Content = new AWContentManager(Services);
             foreach (var component in Components) component.Initialize();
+            LoadContent();
         }
 
         /// <summary>

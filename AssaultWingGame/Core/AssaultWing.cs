@@ -45,9 +45,10 @@ namespace AW2.Core
         private OverlayDialog OverlayDialog { get { return (OverlayDialog)Components.First(c => c is OverlayDialog); } }
         private UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
 
-        public AssaultWing()
+        public AssaultWing(GraphicsDeviceService graphicsDeviceService)
+            : base(graphicsDeviceService)
         {
-            MenuEngine = new MenuEngineImpl();
+            MenuEngine = new MenuEngineImpl(this);
             Components.Add(MenuEngine);
             GameState = GameState.Initializing;
             _musicSwitch = new KeyboardKey(Keys.F5);
@@ -247,8 +248,8 @@ namespace AW2.Core
             UIEngine.MouseControlsEnabled = false;
 #endif
 
-            Player player1 = new Player("Newbie", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
-            Player player2 = new Player("Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
+            var player1 = new Player(this, "Newbie", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
+            var player2 = new Player(this, "Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
             DataEngine.Spectators.Add(player1);
             DataEngine.Spectators.Add(player2);
 

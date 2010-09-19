@@ -26,6 +26,11 @@ namespace AW2.Core
     /// </summary>
     public class GraphicsDeviceControl : Control
     {
+        /// <summary>
+        /// The GraphicsDeviceService to use. Must be set after construction.
+        /// </summary>
+        public GraphicsDeviceService GraphicsDeviceService { get; set; }
+
         public event Action Draw;
 
         public virtual void OnDraw()
@@ -69,7 +74,7 @@ namespace AW2.Core
             // largest of these controls. But what if we are currently drawing
             // a smaller control? To avoid unwanted stretching, we set the
             // viewport to only use the top left portion of the full backbuffer.
-            AssaultWingCore.Instance.GraphicsDevice.Viewport = new Viewport
+            GraphicsDeviceService.GraphicsDevice.Viewport = new Viewport
             {
                 X = 0,
                 Y = 0,
@@ -93,7 +98,7 @@ namespace AW2.Core
             try
             {
                 var sourceRectangle = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
-                GraphicsDeviceService.Instance.GraphicsDevice.Present(sourceRectangle, null, Handle);
+                GraphicsDeviceService.GraphicsDevice.Present(sourceRectangle, null, Handle);
             }
             catch (DeviceLostException)
             {
@@ -112,7 +117,7 @@ namespace AW2.Core
         private string HandleDeviceReset()
         {
             bool deviceNeedsReset = false;
-            switch (AssaultWingCore.Instance.GraphicsDevice.GraphicsDeviceStatus)
+            switch (GraphicsDeviceService.GraphicsDevice.GraphicsDeviceStatus)
             {
                 case GraphicsDeviceStatus.Lost:
                     // If the graphics device is lost, we cannot use it at all.
@@ -123,7 +128,7 @@ namespace AW2.Core
                     break;
                 default:
                     // If the device state is ok, check whether it is big enough.
-                    var pp = AssaultWingCore.Instance.GraphicsDevice.PresentationParameters;
+                    var pp = GraphicsDeviceService.GraphicsDevice.PresentationParameters;
                     deviceNeedsReset = (ClientSize.Width > pp.BackBufferWidth) ||
                                        (ClientSize.Height > pp.BackBufferHeight);
                     break;
@@ -132,7 +137,7 @@ namespace AW2.Core
             {
                 try
                 {
-                    GraphicsDeviceService.Instance.ResetDevice(ClientSize.Width, ClientSize.Height);
+                    GraphicsDeviceService.ResetDevice(ClientSize.Width, ClientSize.Height);
                 }
                 catch (Exception e)
                 {

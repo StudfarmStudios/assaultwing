@@ -100,7 +100,8 @@ namespace AW2.Menu
             g_cursorFade.PostLoop = CurveLoopType.Cycle;
         }
 
-        public MenuEngineImpl()
+        public MenuEngineImpl(AWGame game)
+            : base(game)
         {
             MenuContent = new MenuContent();
             _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];

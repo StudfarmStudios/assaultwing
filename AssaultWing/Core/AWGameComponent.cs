@@ -7,9 +7,15 @@ namespace AW2.Core
     /// </summary>
     public abstract class AWGameComponent : IDisposable
     {
+        public AWGame Game { get; private set; }
         public bool Enabled { get; set; }
         public bool Visible { get; set; }
         public int UpdateOrder { get; set; }
+
+        public AWGameComponent(AWGame game)
+        {
+            Game = game;
+        }
 
         public virtual void Initialize() { }
         public virtual void LoadContent() { }

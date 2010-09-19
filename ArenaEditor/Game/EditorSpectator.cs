@@ -15,8 +15,8 @@ namespace AW2.Game
         /// </summary>
         public Vector2 LookAtPos { get; set; }
 
-        public EditorSpectator(PlayerControls controls)
-            : base(controls)
+        public EditorSpectator(AssaultWingCore game, PlayerControls controls)
+            : base(game, controls)
         {
         }
 

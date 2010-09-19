@@ -100,7 +100,8 @@ namespace AW2.Net
 
         #region Constructor
 
-        public NetworkEngine()
+        public NetworkEngine(AWGame game)
+            : base(game)
         {
             _gameClientConnections = new List<Connection>();
             _removedClientConnections = new List<Connection>();

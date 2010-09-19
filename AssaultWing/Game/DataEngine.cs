@@ -25,7 +25,7 @@ namespace AW2.Game
     /// There is also another special layer; the gameplay backlayer. It is
     /// at the same depth as the gameplay layer but is drawn behind it.
     /// The gameplay backlayer is for 2D graphics that needs to be behind gobs.
-    public class DataEngine
+    public class DataEngine : AWGameComponent
     {
         #region Fields
 
@@ -73,7 +73,8 @@ namespace AW2.Game
 
         #endregion Properties
 
-        public DataEngine()
+        public DataEngine(AWGame game)
+            : base(game)
         {
             Spectators = new IndexedItemCollection<Spectator>();
             Spectators.Added += SpectatorAdded;
@@ -142,6 +143,7 @@ namespace AW2.Game
                 try
                 {
                     arena = Arena.FromFile(arenaFilename);
+                    arena.Game = (AssaultWingCore)Game;
                     InitializeFromArena(arena, true);
                     return true;
                 }
@@ -429,24 +431,24 @@ namespace AW2.Game
             }
 
             // Draw arena walls in one color in a radar-sized texture.
-            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
-            GraphicsDeviceCapabilities gfxCaps = gfx.GraphicsDeviceCapabilities;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            var gfxCaps = gfx.GraphicsDeviceCapabilities;
             int targetWidth = (int)_arenaDimensionsOnRadar.X;
             int targetHeight = (int)_arenaDimensionsOnRadar.Y;
-            GraphicsAdapter gfxAdapter = gfx.CreationParameters.Adapter;
+            var gfxAdapter = gfx.CreationParameters.Adapter;
             if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
                 TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
                 throw new Exception("Cannot create render target of type SurfaceFormat.Color");
-            RenderTarget2D maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight,
+            var maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight,
                 1, SurfaceFormat.Color);
 
             // Set up graphics device.
-            DepthStencilBuffer oldDepthStencilBuffer = gfx.DepthStencilBuffer;
+            var oldDepthStencilBuffer = gfx.DepthStencilBuffer;
             gfx.DepthStencilBuffer = null;
 
             // Set up draw matrices.
-            Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0, Arena.Dimensions.X,
+            var view = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
+            var projection = Matrix.CreateOrthographicOffCenter(0, Arena.Dimensions.X,
                 0, Arena.Dimensions.Y, 10, 1000);
 
             // Set and clear our own render target.
@@ -454,7 +456,8 @@ namespace AW2.Game
             gfx.Clear(ClearOptions.Target, Color.TransparentBlack, 0, 0);
 
             // Draw the arena's walls.
-            SpriteBatch spriteBatch = new SpriteBatch(gfx);
+            // TODO: Reuse one SpriteBatch instance. Creating a new one is slow.
+            var spriteBatch = new SpriteBatch(gfx);
             spriteBatch.Begin();
             foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
             {
@@ -463,12 +466,13 @@ namespace AW2.Game
                     wall.DrawSilhouette(view, projection, spriteBatch);
             }
             spriteBatch.End();
+            spriteBatch.Dispose();
 
             // Restore render target so what we can extract drawn pixels.
             // Create a copy of the texture in local memory so that a graphics device
             // reset (e.g. when changing resolution) doesn't lose the texture.
             gfx.SetRenderTarget(0, null);
-            Color[] textureData = new Color[targetHeight * targetWidth];
+            var textureData = new Color[targetHeight * targetWidth];
             maskTarget.GetTexture().GetData(textureData);
             _arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, 1, TextureUsage.None, SurfaceFormat.Color);
             _arenaRadarSilhouette.SetData(textureData);
@@ -510,6 +514,7 @@ namespace AW2.Game
 
         private void SpectatorAdded(Spectator spectator)
         {
+            spectator.Game = (AssaultWingCore)this.Game;
             spectator.ID = GetFreeSpectatorID();
             var player = spectator as Player;
             if (player != null && AssaultWingCore.Instance.NetworkMode != NetworkMode.Client)

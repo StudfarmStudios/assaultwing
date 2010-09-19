@@ -34,6 +34,7 @@ namespace AW2.Core
         private static GraphicsDeviceService g_instance;
         private PresentationParameters _parameters;
 
+        [Obsolete("GraphicsDeviceService.Instance property is to be removed")]
         public static GraphicsDeviceService Instance
         {
             get
@@ -51,7 +52,7 @@ namespace AW2.Core
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
-        private GraphicsDeviceService() { }
+        public GraphicsDeviceService() { }
 
         public void SetWindow(IntPtr windowHandle)
         {

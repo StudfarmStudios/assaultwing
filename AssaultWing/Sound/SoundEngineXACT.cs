@@ -23,7 +23,8 @@ namespace AW2.Sound
 
         #endregion
 
-        public SoundEngineXACT()
+        public SoundEngineXACT(AW2.Core.AWGame game)
+            : base(game)
         {
         }
 

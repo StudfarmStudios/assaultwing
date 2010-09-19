@@ -25,7 +25,7 @@ namespace AW2.Game.Weapons
         {
             owner.InflictDamage(owner.MaxDamageLevel - owner.DamageLevel - 1, new DeathCause(owner, DeathCauseType.Damage, owner));
             foreach (var gobType in deathGobTypes)
-                Gob.CreateGob<Gob>(gobType, gob =>
+                Gob.CreateGob<Gob>(owner.Game, gobType, gob =>
                 {
                     gob.ResetPos(owner.Pos, Vector2.Zero, owner.Rotation);
                     gob.Owner = owner.Owner;

@@ -23,7 +23,8 @@ namespace AW2.Graphics
         private SpriteBatch _spriteBatch;
         private Texture2D _dialogTexture;
 
-        public OverlayDialog()
+        public OverlayDialog(AWGame game)
+            : base(game)
         {
         }
 
@@ -67,7 +68,7 @@ namespace AW2.Graphics
         public override void LoadContent()
         {
             _dialogTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("ingame_dialog");
-            _spriteBatch = new SpriteBatch(GraphicsDeviceService.Instance.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
         }
 
         public override void UnloadContent()

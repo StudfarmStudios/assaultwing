@@ -137,7 +137,7 @@ namespace AW2.Game.Gobs
         {
             for (int i = 0; i < _particleEngineNames.Length; ++i)
             {
-                Gob.CreateGob<Gob>(_particleEngineNames[i], gob =>
+                Gob.CreateGob<Gob>(Game, _particleEngineNames[i], gob =>
                 {
                     gob.ResetPos(this.Pos, gob.Move, gob.Rotation);
                     Arena.Gobs.Add(gob);

@@ -154,7 +154,8 @@ namespace AW2
 
         #endregion
 
-        public AssaultWingCore()
+        public AssaultWingCore(GraphicsDeviceService graphicsDeviceService)
+            : base(graphicsDeviceService)
         {
             Log.Write("Creating an Assault Wing instance");
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -210,14 +211,14 @@ namespace AW2
 
         private void InitializeComponents()
         {
-            _uiEngine = new UIEngineImpl();
-            _logicEngine = new LogicEngine();
-            SoundEngine = new SoundEngineXACT();
-            GraphicsEngine = new GraphicsEngineImpl();
-            _introEngine = new IntroEngine();
-            NetworkEngine = new NetworkEngine();
-            _overlayDialog = new OverlayDialog();
-            DataEngine = new DataEngine();
+            _uiEngine = new UIEngineImpl(this);
+            _logicEngine = new LogicEngine(this);
+            SoundEngine = new SoundEngineXACT(this);
+            GraphicsEngine = new GraphicsEngineImpl(this);
+            _introEngine = new IntroEngine(this);
+            NetworkEngine = new NetworkEngine(this);
+            _overlayDialog = new OverlayDialog(this);
+            DataEngine = new DataEngine(this);
             PhysicsEngine = new PhysicsEngine();
 
             NetworkEngine.UpdateOrder = 0;

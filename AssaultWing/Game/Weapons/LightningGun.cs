@@ -53,7 +53,7 @@ namespace AW2.Game.Weapons
 
         private void CreateShot(Gob target, int boneIndex)
         {
-            Gob.CreateGob<Lightning>(shotTypeName, shot =>
+            Gob.CreateGob<Lightning>(owner.Game, shotTypeName, shot =>
             {
                 shot.Owner = owner.Owner;
                 shot.ResetPos(owner.GetNamedPosition(boneIndex), Vector2.Zero, owner.Rotation);

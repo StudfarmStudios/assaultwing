@@ -11,6 +11,7 @@ namespace AW2.UI
     {
         private AssaultWing _game;
         private AWGameRunner _runner;
+        private GraphicsDeviceService _graphicsDeviceService;
 
         public string Title
         {
@@ -25,21 +26,23 @@ namespace AW2.UI
         }
         public GraphicsDeviceControl GameView { get { return _gameView; } }
 
-        public GameForm(string[] args)
+        public GameForm(GraphicsDeviceService graphicsDeviceService, string[] args)
         {
             InitializeComponent();
-            GraphicsDeviceService.Instance.SetWindow(Handle);
+            _graphicsDeviceService = graphicsDeviceService;
+            _gameView.GraphicsDeviceService = graphicsDeviceService;
+            graphicsDeviceService.SetWindow(Handle);
 
             // Make the device large enough for any conceivable purpose -- avoid unnecessary graphics device resets later
             var screen = Screen.GetWorkingArea(this);
-            GraphicsDeviceService.Instance.ResetDevice(screen.Width, screen.Height);
+            graphicsDeviceService.ResetDevice(screen.Width, screen.Height);
 
             AssaultWingCore.WindowInitializing += game => new AWGameWindow(this);
-            _game = new AssaultWing();
-            AssaultWing.Instance = _game; // support older code that uses the static instance
+            _game = new AssaultWing(graphicsDeviceService);
+            AssaultWing.Instance = _game; // HACK: support older code that uses the static instance
             _game.CommandLineArgs = args;
-            GraphicsDeviceService.Instance.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
-            GraphicsDeviceService.Instance.DeviceReset += (sender, eventArgs) => _game.LoadContent();
+            graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
+            graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
             // FIXME: Game update delegate is run in Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
             _runner = new AWGameRunner(AssaultWingCore.Instance,
                 () => _gameView.BeginInvoke((Action)_gameView.Invalidate),
@@ -78,8 +81,8 @@ namespace AW2.UI
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
-            if (keyCode == Keys.PageUp) GraphicsDeviceService.Instance.SetFullScreen(1280, 1024);
-            if (keyCode == Keys.PageDown) GraphicsDeviceService.Instance.SetWindowed(1000, 800);
+            if (keyCode == Keys.PageUp) _graphicsDeviceService.SetFullScreen(1280, 1024);
+            if (keyCode == Keys.PageDown) _graphicsDeviceService.SetWindowed(1000, 800);
             return true; // the message won't be processed further; prevents window menu from opening
         }
 

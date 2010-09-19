@@ -325,6 +325,8 @@ namespace AW2.Game
             }
         }
 
+        public AssaultWingCore Game { get; set; }
+
         /// <summary>
         /// The name of the arena.
         /// </summary>
@@ -1209,7 +1211,7 @@ namespace AW2.Game
             Gobs = new GobCollection(layers);
             FindGameplayLayer();
             foreach (var gob in new GobCollection(oldLayers))
-                Gob.CreateGob(gob, gobb =>
+                Gob.CreateGob(Game, gob, gobb =>
                 {
                     gobb.Layer = layers[oldLayers.IndexOf(gob.Layer)];
                     Gobs.Add(gobb);

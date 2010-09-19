@@ -29,7 +29,7 @@ namespace AW2.Game.Gobs.Bonus
                 return;
             }
 
-            Gob.CreateGob<ArenaMessage>((CanonicalString)"bonusmessage", gob =>
+            Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
             {
                 gob.ResetPos(Pos, gob.Move, gob.Rotation);
                 gob.Message = gameAction.BonusText;

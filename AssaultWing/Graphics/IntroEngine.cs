@@ -19,7 +19,8 @@ namespace AW2.Graphics
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
 
-        public IntroEngine()
+        public IntroEngine(AWGame game)
+            : base(game)
         {
         }
 
@@ -44,7 +45,7 @@ namespace AW2.Graphics
         public override void LoadContent()
         {
             base.LoadContent();
-            _spriteBatch = new SpriteBatch(GraphicsDeviceService.Instance.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
         }
 
         public override void UnloadContent()
@@ -66,15 +67,14 @@ namespace AW2.Graphics
 
         public override void Draw()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
-            gfx.Clear(Color.Black);
+            Game.GraphicsDeviceService.GraphicsDevice.Clear(Color.Black);
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)
             {
                 _spriteBatch.Begin();
                 int width = videoFrame.Width;
                 int height = videoFrame.Height;
-                var titleSafeArea = gfx.Viewport.TitleSafeArea;
+                var titleSafeArea = Game.GraphicsDeviceService.GraphicsDevice.Viewport.TitleSafeArea;
                 titleSafeArea.Clamp(ref width, ref height);
                 var destinationRect = new Rectangle((titleSafeArea.Width - width) / 2, (titleSafeArea.Height - height) / 2, width, height);
                 _spriteBatch.Draw(videoFrame, destinationRect, Color.White);

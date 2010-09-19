@@ -18,16 +18,17 @@ namespace AW2.Graphics
 
         public GameContent GameContent { get; private set; }
 
-        public GraphicsEngineImpl()
+        public GraphicsEngineImpl(AWGame game)
+            : base(game)
         {
-            GameContent = new GameContent();
+            GameContent = new GameContent(game);
         }
 
         public override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");
             var data = AssaultWingCore.Instance.DataEngine;
-            _spriteBatch = new SpriteBatch(GraphicsDeviceService.Instance.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             GameContent.LoadContent();
 
             // Loop through gob types and load all the 3D models and textures they need.
@@ -116,9 +117,9 @@ namespace AW2.Graphics
         public override void Draw()
         {
             AssaultWingCore.Instance.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
-            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
 
-            Viewport screen = gfx.Viewport;
+            var screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
             screen.Width = AssaultWingCore.Instance.ClientBounds.Width;

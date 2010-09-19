@@ -261,9 +261,9 @@ namespace AW2.Game
         /// <param name="weapon2Name">Name of the type of secondary weapon.</param>
         /// <param name="extraDeviceName">Name of the type of extra device.</param>
         /// <param name="controls">Player's in-game controls.</param>
-        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
+        public Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, PlayerControls controls)
-            : this(name, shipTypeName, weapon2Name, extraDeviceName, controls, -1)
+            : this(game, name, shipTypeName, weapon2Name, extraDeviceName, controls, -1)
         {
         }
 
@@ -277,9 +277,9 @@ namespace AW2.Game
         /// <param name="connectionId">Identifier of the connection to the remote game instance
         /// at which the player lives.</param>
         /// <see cref="AW2.Net.Connection.ID"/>
-        public Player(string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
+        public Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, int connectionId)
-            : this(name, shipTypeName, weapon2Name, extraDeviceName, new PlayerControls
+            : this(game, name, shipTypeName, weapon2Name, extraDeviceName, new PlayerControls
             {
                 Thrust = new RemoteControl(),
                 Left = new RemoteControl(),
@@ -292,9 +292,9 @@ namespace AW2.Game
         {
         }
 
-        private Player(string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
+        private Player(AssaultWingCore game, string name, CanonicalString shipTypeName, CanonicalString weapon2Name,
             CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
-            : base(controls, connectionId)
+            : base(game, controls, connectionId)
         {
             KillsWithoutDying = 0;
             Name = name;
@@ -409,8 +409,8 @@ namespace AW2.Game
             string iconName = "b_icon_add_kill";
 
             if (isSuicide) iconName = "b_icon_take_life";
-            
-            Gob.CreateGob<ArenaMessage>((CanonicalString)"deathmessage", gob =>
+
+            Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"deathmessage", gob =>
             {
                 gob.ResetPos(Pos, gob.Move, gob.Rotation);
                 gob.Message = message;
@@ -681,7 +681,7 @@ namespace AW2.Game
             // Gain ownership over the ship only after its position has been set.
             // This way the ship won't be affecting its own spawn position.
             Ship = null;
-            Gob.CreateGob<Ship>(ShipName, newShip =>
+            Gob.CreateGob<Ship>(Game, ShipName, newShip =>
             {
                 newShip.Owner = this;
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);

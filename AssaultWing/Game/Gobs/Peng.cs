@@ -320,35 +320,26 @@ namespace AW2.Game.Gobs
                 Die(new DeathCause());
         }
 
-        /// <summary>
-        /// Draws the gob's 2D graphics.
-        /// </summary>
-        /// Assumes that the sprite batch has been Begun already and will be
-        /// Ended later by someone else.
-        /// <param name="gameToScreen">Transformation from game coordinates 
-        /// to screen coordinates (pixels).</param>
-        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
-        /// <param name="scale">Scale of graphics.</param>
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            Viewport gfxViewport = AssaultWingCore.Instance.GraphicsDevice.Viewport;
-            Vector3 viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
-            Matrix pengToGame = WorldMatrix;
-            Color pengColor = new Color(new Vector3(1, 1, 1));
+            var gfxViewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
+            var viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
+            var pengToGame = WorldMatrix;
+            var pengColor = new Color(new Vector3(1, 1, 1));
             if (this.PlayerRelated)
                 pengColor = this.Owner.PlayerColor;
-            foreach (Particle particle in particles)
+            foreach (var particle in particles)
             {
                 // Find out particle's center's position on screen.
-                Vector2 posCenter = particle.Pos;
+                var posCenter = particle.Pos;
                 if (coordinateSystem == CoordinateSystem.Peng)
                     posCenter = Vector2.Transform(posCenter, pengToGame);
-                Vector2 screenCenter = Vector2.Transform(posCenter, gameToScreen);
+                var screenCenter = Vector2.Transform(posCenter, gameToScreen);
 
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
-                Texture2D texture = emitter.Textures[particle.TextureIndex];
+                var texture = emitter.Textures[particle.TextureIndex];
                 float drawRotation = coordinateSystem == CoordinateSystem.Game
                     ? particle.Rotation
                     : particle.Rotation + Rotation;

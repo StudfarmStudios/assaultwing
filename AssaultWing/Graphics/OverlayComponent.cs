@@ -116,7 +116,7 @@ namespace AW2.Graphics
         public void Draw(SpriteBatch spriteBatch)
         {
             if (!Visible) return;
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             var oldViewport = gfx.Viewport;
             var newViewport = oldViewport;
             var dimensions = Dimensions;

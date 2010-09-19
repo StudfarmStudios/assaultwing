@@ -110,7 +110,7 @@ namespace AW2.Graphics.OverlayComponents
             {
                 // Our dimensions are changing and most often they involve fractions.
                 // Therefore it's easiest to keep the viewport as it is.
-                GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
+                var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
                 return new Point(gfx.Viewport.Width, gfx.Viewport.Height);
             }
         }

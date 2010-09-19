@@ -136,22 +136,22 @@ namespace AW2.Game.Gobs
         void Set3DModel()
         {
             // Recover wall data from its 3D model.
-            Model model = AssaultWingCore.Instance.Content.Load<Model>(wallModelName);
+            var model = AssaultWingCore.Instance.Content.Load<Model>(wallModelName);
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
             Graphics3D.GetModelData(model, out vertexData, out indexData);
-            Matrix worldMatrix = AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
+            var worldMatrix = AWMathHelper.CreateWorldMatrix(Scale, Rotation, Pos);
             for (int i = 0; i < vertexData.Length; ++i)
             {
                 vertexData[i].Position = Vector3.Transform(vertexData[i].Position, worldMatrix);
                 vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
             }
-            BasicEffect effect = GetEffect(model);
+            var effect = GetEffect(model);
 
             // Take a copy of the effect so that we won't mess 
             // with the wall model template in the future.
-            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
-            BasicEffect effectCopy = (BasicEffect)effect.Clone(gfx);
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            var effectCopy = (BasicEffect)effect.Clone(gfx);
 
             Set3DModel(vertexData, indexData, effectCopy.Texture, effectCopy);
         }

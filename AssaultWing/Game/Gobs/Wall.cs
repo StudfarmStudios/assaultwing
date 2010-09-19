@@ -117,7 +117,7 @@ namespace AW2.Game.Gobs
 
         public override void LoadContent()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             _vertexDeclaration = _vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
             base.LoadContent();
         }
@@ -159,7 +159,7 @@ namespace AW2.Game.Gobs
                 base.Draw(view, projection);
                 return;
             }
-            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.VertexDeclaration = _vertexDeclaration;
             Effect.World = Matrix.Identity;
             Effect.Projection = projection;
@@ -168,7 +168,7 @@ namespace AW2.Game.Gobs
             Effect.TextureEnabled = true;
             Arena.PrepareEffect(Effect);
             Effect.Begin();
-            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
+            foreach (var pass in Effect.CurrentTechnique.Passes)
             {
                 pass.Begin();
                 gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
@@ -188,7 +188,7 @@ namespace AW2.Game.Gobs
         /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var silhouetteEffect = AssaultWingCore.Instance.GraphicsEngine.GameContent.WallSilhouetteEffect;
             gfx.VertexDeclaration = _vertexDeclaration;
             silhouetteEffect.Projection = projection;

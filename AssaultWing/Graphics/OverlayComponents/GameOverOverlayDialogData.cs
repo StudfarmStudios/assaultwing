@@ -19,7 +19,7 @@ namespace AW2.Graphics.OverlayComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             float textLeftEdge = 100; // left edge of left-aligned text
             Vector2 textCenter = new Vector2(gfx.Viewport.Width / 2, 50); // text line top center
             Vector2 textSize = _fontHuge.MeasureString("Game Over");

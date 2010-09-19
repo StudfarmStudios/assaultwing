@@ -164,7 +164,7 @@ namespace AW2.Game.Gobs
         {
             base.LoadContent();
             _texture = AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
             g_effect = g_effect ?? new BasicEffect(gfx, null);
             g_effect.World = Matrix.Identity;
@@ -202,7 +202,7 @@ namespace AW2.Game.Gobs
 
         public override void Draw(Matrix view, Matrix projection)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.VertexDeclaration = _vertexDeclaration;
             gfx.RenderState.AlphaBlendEnable = true;
             gfx.RenderState.SourceBlend = Blend.SourceAlpha;

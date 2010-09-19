@@ -12,8 +12,6 @@ namespace AW2.Core
     /// </summary>
     public class AWGame : IDisposable
     {
-        [Obsolete("Use GraphicsDeviceService.GraphicsDevice instead")]
-        public GraphicsDevice GraphicsDevice { get { return GraphicsDeviceService.GraphicsDevice; } }
         public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }

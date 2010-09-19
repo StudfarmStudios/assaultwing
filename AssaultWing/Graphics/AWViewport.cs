@@ -237,7 +237,7 @@ namespace AW2.Graphics
         /// </summary>
         public void Draw()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             gfx.Viewport = Viewport;
             gfx.Clear(Color.Black);
             Draw_InitializeParallaxIn3D();
@@ -247,7 +247,7 @@ namespace AW2.Graphics
 
         private void DrawOverlayComponents()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             gfx.Viewport = Viewport;
             foreach (var component in _overlayComponents) component.Draw(_spriteBatch);
         }
@@ -262,7 +262,7 @@ namespace AW2.Graphics
 
         protected virtual void RenderGameWorld()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             var view = ViewMatrix;
             gfx.Clear(Color.Black);
             foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
@@ -296,14 +296,14 @@ namespace AW2.Graphics
                     if (!drawMode.HasValue || drawMode.Value.CompareTo(gob.DrawMode2D) != 0)
                     {
                         if (drawMode.HasValue)
-                            drawMode.Value.EndDraw(_spriteBatch);
+                            drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
                         drawMode = gob.DrawMode2D;
-                        drawMode.Value.BeginDraw(_spriteBatch);
+                        drawMode.Value.BeginDraw(AssaultWingCore.Instance, _spriteBatch);
                     }
                     gob.Draw2D(GetGameToScreenMatrix(layer.Z), _spriteBatch, layerScale * ZoomRatio);
                 });
                 if (drawMode.HasValue)
-                    drawMode.Value.EndDraw(_spriteBatch);
+                    drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
             }
         }
 
@@ -312,14 +312,14 @@ namespace AW2.Graphics
         /// </summary>
         public virtual void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDevice);
+            _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice);
             Action<ICollection<Effect>> effectContainerUpdater = container =>
             {
                 container.Clear();
                 foreach (var name in _getPostprocessEffectNames())
                     container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
             };
-            _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDevice, effectContainerUpdater);
+            _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, effectContainerUpdater);
             foreach (var component in _overlayComponents) component.LoadContent();
         }
 
@@ -358,7 +358,7 @@ namespace AW2.Graphics
         private void Draw_InitializeParallaxIn3D()
         {
             if (_effect != null) return;
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             _effect = new BasicEffect(gfx, null);
             _effect.World = Matrix.Identity;
             _effect.Projection = Matrix.Identity;
@@ -383,7 +383,7 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_IN_3D")]
         private void Draw_DrawParallaxIn3D(AW2.Game.ArenaLayer layer)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             // Modify renderstate for parallax.
             gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
             gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
@@ -426,7 +426,7 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_WITH_SPRITE_BATCH")]
         private void Draw_DrawParallaxWithSpriteBatch(ArenaLayer layer)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             if (layer.ParallaxName != "")
             {
                 _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);

@@ -83,8 +83,6 @@ namespace AW2.Graphics
                 // Load the layer's gobs' textures.
                 foreach (var textureName in gob.TextureNames)
                     AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
-
-                gob.LoadContent();
             }
 
             foreach (ArenaLayer layer in arenaTemplate.Layers)

@@ -123,8 +123,8 @@ namespace AW2.Menu
 
         public override void LoadContent()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDevice;
-            _spriteBatch = new SpriteBatch(AssaultWingCore.Instance.GraphicsDevice);
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
             _effect = new BasicEffect(gfx, null);
             _effect.FogEnabled = false;
@@ -280,8 +280,8 @@ namespace AW2.Menu
 
         public override void Draw()
         {
-            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
-            Viewport screen = gfx.Viewport;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            var screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
             screen.Width = _viewWidth;

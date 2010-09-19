@@ -822,7 +822,7 @@ namespace AW2.Game
                     be.Alpha = _alpha;
 
                     // Modify render state.
-                    AssaultWingCore.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = true;
+                    Game.GraphicsDeviceService.GraphicsDevice.RenderState.AlphaBlendEnable = true;
                 }
 
                 foreach (BasicEffect be in mesh.Effects)
@@ -842,7 +842,7 @@ namespace AW2.Game
                     be.Alpha = oldAlpha;
 
                     // Restore render state.
-                    AssaultWingCore.Instance.GraphicsDevice.RenderState.AlphaBlendEnable = false;
+                    Game.GraphicsDeviceService.GraphicsDevice.RenderState.AlphaBlendEnable = false;
                 }
 
                 // Blend towards white if required.
@@ -855,7 +855,7 @@ namespace AW2.Game
                     var be = (BasicEffect)mesh.Effects[0];
 
                     // Modify render state.
-                    var renderState = AssaultWingCore.Instance.GraphicsDevice.RenderState;
+                    var renderState = Game.GraphicsDeviceService.GraphicsDevice.RenderState;
                     renderState.AlphaBlendEnable = true;
                     renderState.DepthBufferEnable = false;
 

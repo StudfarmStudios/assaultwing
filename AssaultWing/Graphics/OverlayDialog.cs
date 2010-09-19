@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game;
 using AW2.Graphics.OverlayComponents;
-using AW2.UI;
 
 namespace AW2.Graphics
 {
@@ -36,8 +33,6 @@ namespace AW2.Graphics
         public OverlayDialogData Data { set { _dialogData = value; } }
 
         #endregion Public interface
-
-        #region AWGameComponent overrides
 
         public override void Update()
         {
@@ -83,9 +78,9 @@ namespace AW2.Graphics
         public override void Draw()
         {
             // Set viewport exactly to the dialog's area.
-            GraphicsDevice gfx = AssaultWingCore.Instance.GraphicsDevice;
-            Rectangle screen = AssaultWingCore.Instance.ClientBounds;
-            Viewport newViewport = gfx.Viewport;
+            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            var screen = AssaultWingCore.Instance.ClientBounds;
+            var newViewport = gfx.Viewport;
             newViewport.X = (screen.Width - _dialogTexture.Width) / 2;
             newViewport.Y = (screen.Height - _dialogTexture.Height) / 2;
             newViewport.Width = _dialogTexture.Width;
@@ -98,7 +93,5 @@ namespace AW2.Graphics
             _spriteBatch.End();
             _dialogData.Draw(_spriteBatch);
         }
-
-        #endregion
     }
 }

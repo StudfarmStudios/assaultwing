@@ -55,7 +55,7 @@ namespace AW2.Graphics.OverlayComponents
             }
             if (StickToBorders)
             {
-                var gfx = AssaultWingCore.Instance.GraphicsDevice;
+                var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
                 var max = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height);
                 gobPosOnScreen = AW2.Helpers.Geometric.Geometry.CropLineSegment(trackerPosOnScreen, gobPosOnScreen, Vector2.Zero, max);
             }

@@ -114,7 +114,7 @@ namespace AW2.Helpers
             {
                 if (debugEffect == null)
                 {
-                    debugEffect = new BasicEffect(AssaultWingCore.Instance.GraphicsDevice, null);
+                    debugEffect = new BasicEffect(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, null);
                     debugEffect.TextureEnabled = false;
                     debugEffect.VertexColorEnabled = true;
                     debugEffect.LightingEnabled = false;
@@ -653,18 +653,18 @@ namespace AW2.Helpers
         /// </summary>
         public static void DebugDraw(BoundingSphere sphere, Matrix view, Matrix projection, Matrix world)
         {
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             VertexPositionColor[] vertexData;
             Graphics3D.GetWireframeModelData(sphere, 300, Color.Aquamarine, out vertexData);
             DebugEffect.View = view;
             DebugEffect.Projection = projection;
             DebugEffect.World = world;
-            AssaultWingCore.Instance.GraphicsDevice.VertexDeclaration = new VertexDeclaration(AssaultWingCore.Instance.GraphicsDevice, VertexPositionColor.VertexElements);
+            gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
             DebugEffect.Begin(SaveStateMode.SaveState);
-            foreach (EffectPass pass in DebugEffect.CurrentTechnique.Passes)
+            foreach (var pass in DebugEffect.CurrentTechnique.Passes)
             {
                 pass.Begin();
-                AssaultWingCore.Instance.GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(
-                    PrimitiveType.LineStrip, vertexData, 0, vertexData.Length - 1);
+                gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineStrip, vertexData, 0, vertexData.Length - 1);
                 pass.End();
             }
             DebugEffect.End();

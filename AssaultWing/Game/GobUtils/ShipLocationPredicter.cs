@@ -24,7 +24,7 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public void StoreControlStates(IList<ControlState> state, TimeSpan gameTime)
         {
-            var halfFrameTime = AssaultWingCore.Instance.TargetElapsedTime.Divide(2);
+            var halfFrameTime = _ship.Game.TargetElapsedTime.Divide(2);
             int entryIndex = _shipLocations.FindLastIndex(entry => entry.GameTime - halfFrameTime < gameTime);
             if (entryIndex == -1) return; // too old controls are useless
             if (entryIndex == _shipLocations.Count - 1) return; // controls appear in the future, cannot apply them :(
@@ -87,7 +87,7 @@ namespace AW2.Game.GobUtils
             {
                 return new ShipLocationEntry
                 {
-                    GameTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime,
+                    GameTime = _ship.Game.DataEngine.ArenaTotalTime,
                     Pos = _ship.Pos,
                     Move = _ship.Move,
                     Rotation = _ship.Rotation

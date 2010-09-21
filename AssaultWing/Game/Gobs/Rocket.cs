@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using AW2.Graphics;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
@@ -229,14 +228,14 @@ namespace AW2.Game.Gobs
         {
             float rotationGoal = AWMathHelper.Angle(direction);
             Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal,
-                AssaultWingCore.Instance.PhysicsEngine.ApplyChange(rotationSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime));
+                Game.PhysicsEngine.ApplyChange(rotationSpeed, Game.GameTime.ElapsedGameTime));
         }
 
         private void Thrust()
         {
             var forceVector = _thrustForce * AWMathHelper.GetUnitVector2(Rotation);
-            AssaultWingCore.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed,
-                AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+            Game.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed,
+                Game.GameTime.ElapsedGameTime);
         }
 
         private Gob FindBestTarget()
@@ -254,12 +253,12 @@ namespace AW2.Game.Gobs
 
         private void UpdateTarget()
         {
-            if (AssaultWingCore.Instance.NetworkMode == AW2.Core.NetworkMode.Client) return;
+            if (Game.NetworkMode == AW2.Core.NetworkMode.Client) return;
             var oldTarget = _target;
             var newBestTarget = FindBestTarget();
             _target = newBestTarget ?? _target;
             UpdateGobTrackers();
-            if (AssaultWingCore.Instance.NetworkMode == AW2.Core.NetworkMode.Server && _target != oldTarget)
+            if (Game.NetworkMode == AW2.Core.NetworkMode.Server && _target != oldTarget)
                 ForceNetworkUpdate();
         }
 

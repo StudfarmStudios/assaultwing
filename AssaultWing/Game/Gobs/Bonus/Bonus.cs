@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
-using AW2.Net.Messages;
 
 namespace AW2.Game.Gobs.Bonus
 {
@@ -86,9 +84,9 @@ namespace AW2.Game.Gobs.Bonus
             // bonus collection. That means that the other gob is a ship.
             if (myArea.Type == CollisionAreaType.Receptor)
             {
-                if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client)
+                if (Game.NetworkMode != NetworkMode.Client)
                     DoBonusAction(theirArea.Owner.Owner);
-                AssaultWingCore.Instance.SoundEngine.PlaySound("bonusCollection");
+                Game.SoundEngine.PlaySound("bonusCollection");
                 Die(new DeathCause());
             }
         }

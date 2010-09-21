@@ -7,7 +7,7 @@ namespace AW2.Sound
 {
     public abstract class SoundEngine : AWGameComponent
     {
-        public SoundEngine(AWGame game)
+        public SoundEngine(AssaultWingCore game)
             : base(game)
         {
         }
@@ -28,7 +28,7 @@ namespace AW2.Sound
         {
             get
             {
-                float userMusicVolume = AssaultWingCore.Instance.Settings.Sound.MusicVolume;
+                float userMusicVolume = Game.Settings.Sound.MusicVolume;
                 return userMusicVolume * RelativeMusicVolume * InternalMusicVolume;
             }
         }

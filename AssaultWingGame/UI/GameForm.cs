@@ -41,10 +41,11 @@ namespace AW2.UI
             _game = new AssaultWing(graphicsDeviceService);
             AssaultWing.Instance = _game; // HACK: support older code that uses the static instance
             _game.CommandLineArgs = args;
+            _gameView.Draw += _game.Draw;
             graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
             graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
             // FIXME: Game update delegate is run in Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
-            _runner = new AWGameRunner(AssaultWingCore.Instance,
+            _runner = new AWGameRunner(_game,
                 () => _gameView.BeginInvoke((Action)_gameView.Invalidate),
                 gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
         }

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
-using AW2.Helpers.Geometric;
 
 namespace AW2.Game.Gobs
 {
@@ -59,7 +54,7 @@ namespace AW2.Game.Gobs
         {
             // We assume that we have only one collision area which collides with movables.
             if (theirArea.Owner.Gravitating)
-                AssaultWingCore.Instance.PhysicsEngine.ApplyForce(theirArea.Owner, force * theirArea.Owner.Mass);
+                Game.PhysicsEngine.ApplyForce(theirArea.Owner, force * theirArea.Owner.Mass);
         }
 
         #region Methods related to serialisation

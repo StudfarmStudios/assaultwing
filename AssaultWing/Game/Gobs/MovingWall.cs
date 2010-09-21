@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using AW2.Helpers;
 using Microsoft.Xna.Framework;
+using AW2.Helpers;
 
 namespace AW2.Game.Gobs
 {
@@ -109,7 +108,7 @@ namespace AW2.Game.Gobs
             if (startTime.Ticks >= 0)
             {
                 var nextPos = movingCurve.Evaluate(Arena.TotalTime);
-                move = (nextPos - pos) / (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                move = (nextPos - pos) / (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
                 move = move.Clamp(0, 500); // limit movement speed to reasonable bounds
             }
             base.Update();

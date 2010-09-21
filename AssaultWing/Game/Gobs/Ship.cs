@@ -318,7 +318,7 @@ namespace AW2.Game.Gobs
             {
                 gob.Owner = Owner;
                 gob.Leader = this;
-                AssaultWingCore.Instance.DataEngine.Arena.Gobs.Add(gob);
+                Game.DataEngine.Arena.Gobs.Add(gob);
             });
         }
 
@@ -330,7 +330,7 @@ namespace AW2.Game.Gobs
         {
             base.Activate();
             _isActivated = true;
-            _thrusterSound = AssaultWingCore.Instance.SoundEngine.CreateSound(SHIP_THRUST_SOUND);
+            _thrusterSound = Game.SoundEngine.CreateSound(SHIP_THRUST_SOUND);
 
             // Deferred initialization of ship devices
             if (Weapon1 == null && Weapon1Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
@@ -343,7 +343,7 @@ namespace AW2.Game.Gobs
             CreateGlow();
             Disable(); // re-enabled in Update()
             _isBirthFlashing = true;
-            AssaultWingCore.Instance.SoundEngine.PlaySound(SHIP_BIRTH_SOUND);
+            Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND);
         }
 
         public override void Update()
@@ -351,7 +351,7 @@ namespace AW2.Game.Gobs
             UpdateRoll();
             LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
             {
-                GameTime = Arena.TotalTime - AssaultWingCore.Instance.GameTime.ElapsedGameTime,
+                GameTime = Arena.TotalTime - Game.GameTime.ElapsedGameTime,
                 Pos = Pos,
                 Move = Move,
                 Rotation = Rotation
@@ -378,9 +378,9 @@ namespace AW2.Game.Gobs
 
         public override void Dispose()
         {
-            AssaultWingCore.Instance.DataEngine.Devices.Remove(Weapon1);
-            AssaultWingCore.Instance.DataEngine.Devices.Remove(Weapon2);
-            AssaultWingCore.Instance.DataEngine.Devices.Remove(ExtraDevice);
+            Game.DataEngine.Devices.Remove(Weapon1);
+            Game.DataEngine.Devices.Remove(Weapon2);
+            Game.DataEngine.Devices.Remove(ExtraDevice);
             _thrusterSound.Dispose();
             base.Dispose();
         }
@@ -429,7 +429,7 @@ namespace AW2.Game.Gobs
             {
                 float thrustForce = reader.ReadHalf();
                 if (thrustForce > 0)
-                    Thrust(thrustForce, AssaultWingCore.Instance.GameTime.ElapsedGameTime, Rotation);
+                    Thrust(thrustForce, Game.GameTime.ElapsedGameTime, Rotation);
             }
             if (Weapon1 != null) Weapon1.Deserialize(reader, mode, framesAgo);
             if (Weapon2 != null) Weapon2.Deserialize(reader, mode, framesAgo);
@@ -448,7 +448,7 @@ namespace AW2.Game.Gobs
         {
             if (Disabled) return;
             Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * _thrustForce;
-            AssaultWingCore.Instance.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed, duration);
+            Game.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed, duration);
             _visualThrustForce = force;
             Thrusting(force);
             SwitchEngineFlashAndBang(true);
@@ -475,7 +475,7 @@ namespace AW2.Game.Gobs
         private void Turn(float force, TimeSpan duration)
         {
             force = MathHelper.Clamp(force, -1f, 1f);
-            float deltaRotation = AssaultWingCore.Instance.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
+            float deltaRotation = Game.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
             Rotation += deltaRotation;
             Turning(deltaRotation);
 
@@ -512,7 +512,7 @@ namespace AW2.Game.Gobs
         {
             base.LoadContent();
 
-            var content = AssaultWingCore.Instance.Content;
+            var content = Game.Content;
             playerNameFont = content.Load<SpriteFont>("ConsoleFont");
 
         }
@@ -539,7 +539,7 @@ namespace AW2.Game.Gobs
             // that a dock can check whether the player can actually dock.
             if (damageAmount > 0)
             {
-                LastDamageTaken = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
+                LastDamageTaken = Game.DataEngine.ArenaTotalTime;
             }
 
             float realDamage = _armour.Evaluate(damageAmount);
@@ -615,7 +615,7 @@ namespace AW2.Game.Gobs
                 case ShipDevice.OwnerHandleType.ExtraDevice: oldDevice = ExtraDevice; break;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
-            if (oldDevice != null) AssaultWingCore.Instance.DataEngine.Devices.Remove(oldDevice);
+            if (oldDevice != null) Game.DataEngine.Devices.Remove(oldDevice);
             var newDevice = ShipDevice.CreateDevice(typeName, deviceType, this);
             switch (deviceType)
             {
@@ -641,7 +641,7 @@ namespace AW2.Game.Gobs
 
         private void UpdateRoll()
         {
-            _rollAngle.Step = AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_rollSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+            _rollAngle.Step = Game.PhysicsEngine.ApplyChange(_rollSpeed, Game.GameTime.ElapsedGameTime);
             _rollAngle.Advance();
             if (!_rollAngleGoalUpdated)
                 _rollAngle.Target = 0;
@@ -668,7 +668,7 @@ namespace AW2.Game.Gobs
 
         private void UpdateCharges()
         {
-            float elapsedSeconds = (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            float elapsedSeconds = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
             ExtraDevice.Charge += _extraDeviceChargeSpeed * elapsedSeconds;
             Weapon2.Charge += _weapon2ChargeSpeed * elapsedSeconds;
         }

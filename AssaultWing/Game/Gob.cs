@@ -76,7 +76,7 @@ namespace AW2.Game
         /// A gob ID that will not be used by any actual gob.
         /// </summary>
         /// <seealso cref="ID"/>
-        public const int INVALID_ID = -1;
+        public const int INVALID_ID = 0;
 
         /// <summary>
         /// Default rotation of gobs. Points up in the game world.
@@ -332,7 +332,7 @@ namespace AW2.Game
         /// </summary>
         public int StaticID { get { return _staticID; } set { _staticID = value; } }
 
-        public AssaultWingCore Game { get; private set; }
+        public AssaultWingCore Game { get; set; }
 
         public Arena Arena { get; set; }
 
@@ -590,7 +590,6 @@ namespace AW2.Game
         /// </summary>
         public Gob()
         {
-            ID = -1;
             depthLayer2D = 0.5f;
             drawMode2D = new DrawMode2D(DrawModeType2D.None);
             layerPreference = LayerPreferenceType.Front;
@@ -621,7 +620,6 @@ namespace AW2.Game
             : base(typeName)
         {
             _gravitating = true;
-            SetID();
             _owner = null;
             ResetPos(Vector2.Zero, Vector2.Zero, Gob.defaultRotation); // also translates collPrimitives
             _modelPartTransforms = null;
@@ -652,7 +650,7 @@ namespace AW2.Game
             T gob = Clonable.Instantiate(typeName) as T;
             if (gob == null) throw new ApplicationException("Gob type template " + typeName + " wasn't of expected type " + typeof(T).Name);
             gob.Game = game;
-            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
+            if (game.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
 
@@ -693,7 +691,7 @@ namespace AW2.Game
         {
             var gob = CreateGob(runtimeState);
             gob.Game = game;
-            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
+            if (game.NetworkMode != NetworkMode.Client || !gob.IsRelevant)
                 init(gob);
         }
 
@@ -706,7 +704,7 @@ namespace AW2.Game
         /// </summary>
         public virtual void LoadContent()
         {
-            Model = AssaultWingCore.Instance.Content.Load<Model>(ModelName);
+            Model = Game.Content.Load<Model>(ModelName);
         }
 
         /// <summary>
@@ -724,6 +722,8 @@ namespace AW2.Game
         /// an ongoing play of the game.
         public virtual void Activate()
         {
+            EnsureHasID();
+            Game.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
             birthTime = Arena.TotalTime;
             LastNetworkUpdate = Arena.TotalTime;
             IsVisible = true;
@@ -765,7 +765,7 @@ namespace AW2.Game
         /// <param name="cause">The cause of death.</param>
         public virtual void Die(DeathCause cause)
         {
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client && IsRelevant) return;
+            if (Game.NetworkMode == NetworkMode.Client && IsRelevant) return;
             DieImpl(cause, false);
         }
 
@@ -974,7 +974,7 @@ namespace AW2.Game
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
                 int ownerId = reader.ReadSByte();
-                _owner = AssaultWingCore.Instance.DataEngine.Players.FirstOrDefault(player => player.ID == ownerId);
+                _owner = Game.DataEngine.Players.FirstOrDefault(player => player.ID == ownerId);
             }
             if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
             {
@@ -1170,7 +1170,7 @@ namespace AW2.Game
         /// </summary>
         protected void RemoveCollisionAreas(Predicate<CollisionArea> wantToRemove)
         {
-            AssaultWingCore.Instance.DataEngine.CustomOperations += () =>
+            Game.DataEngine.CustomOperations += () =>
             {
                 Arena.Unregister(this);
                 collisionAreas = Array.FindAll(collisionAreas, area => !wantToRemove(area));
@@ -1202,25 +1202,25 @@ namespace AW2.Game
         /// <param name="cause">Cause of death if the damage results in death.</param>
         public virtual void InflictDamage(float damageAmount, DeathCause cause)
         {
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client) return;
+            if (Game.NetworkMode == NetworkMode.Client) return;
 
             if (cause.Killer != null &&
                 cause.Killer.Owner != null &&
                 damageAmount > 0)
             {
                 LastDamager = cause.Killer.Owner;
-                LastDamagerTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
+                LastDamagerTime = Game.DataEngine.ArenaTotalTime;
             }
             
             damage += damageAmount;
             damage = MathHelper.Clamp(damage, 0, maxDamage);
 
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server)
+            if (Game.NetworkMode == NetworkMode.Server)
             {
                 var message = new AW2.Net.Messages.GobDamageMessage();
                 message.GobID = this.ID;
                 message.DamageLevel = damage;
-                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
+                Game.NetworkEngine.SendToGameClients(message);
             }
 
             if (damageAmount > 0)
@@ -1371,9 +1371,10 @@ namespace AW2.Game
             return _previousBleach;
         }
 
-        private void SetID()
+        private void EnsureHasID()
         {
-            ID = AssaultWingCore.Instance.NetworkMode == NetworkMode.Client
+            if (ID != INVALID_ID) return;
+            ID = Game.NetworkMode == NetworkMode.Client
                 ? g_leastUnusedIrrelevantId--
                 : g_leastUnusedId++;
         }
@@ -1387,7 +1388,6 @@ namespace AW2.Game
         /// </summary>
         public override void Cloned()
         {
-            AssaultWingCore.Instance.GobsCreatedPerFrameAvgPerSecondCounter.Increment();
             foreach (var area in collisionAreas) area.Owner = this;
         }
 
@@ -1407,7 +1407,7 @@ namespace AW2.Game
                 for (int i = 0; i < collisionAreas.Length; ++i)
                     if ((collisionAreas[i].Type & CollisionAreaType.Physical) != 0)
                     {
-                        CollisionArea swap = collisionAreas[i];
+                        var swap = collisionAreas[i];
                         collisionAreas[i] = collisionAreas[0];
                         collisionAreas[0] = swap;
                         break;
@@ -1415,10 +1415,6 @@ namespace AW2.Game
 
                 // Make physical attributes sensible.
                 mass = Math.Max(0.001f, mass); // strictly positive mass
-            }
-            if (limitationAttribute == typeof(RuntimeStateAttribute))
-            {
-                SetID();
             }
         }
 

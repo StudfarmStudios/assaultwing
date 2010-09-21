@@ -12,18 +12,18 @@ namespace AW2.Graphics
     /// "TextureWidth" takes the input texture width in texels,
     /// "TextureHeight" takes the input texture height in texels.
     /// </summary>
-    class TexturePostprocessor : IDisposable
+    public class TexturePostprocessor : IDisposable
     {
-        Effect _basicShaders;
-        AutoRenderTarget2D[] _targets;
-        int _sourceIndex, _targetIndex;
-        GraphicsDevice _gfx;
-        VertexPositionTexture[] _vertexData;
-        VertexDeclaration _vertexDeclaration;
-        DepthStencilBuffer _oldDepthStencilBuffer;
-        Viewport _oldViewport;
-        List<Effect> _effects;
-        Action<ICollection<Effect>> _effectContainerUpdater;
+        private Effect _basicShaders;
+        private AutoRenderTarget2D[] _targets;
+        private int _sourceIndex, _targetIndex;
+        private GraphicsDevice _gfx;
+        private VertexPositionTexture[] _vertexData;
+        private VertexDeclaration _vertexDeclaration;
+        private DepthStencilBuffer _oldDepthStencilBuffer;
+        private Viewport _oldViewport;
+        private List<Effect> _effects;
+        private Action<ICollection<Effect>> _effectContainerUpdater;
 
         public TexturePostprocessor(GraphicsDevice gfx, Action<ICollection<Effect>> effectContainerUpdater)
         {

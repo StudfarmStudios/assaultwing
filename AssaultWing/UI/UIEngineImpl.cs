@@ -29,7 +29,7 @@ namespace AW2.UI
         /// </summary>
         public bool MouseControlsEnabled { get { return _eatMouse; } set { _eatMouse = value; } }
 
-        public UIEngineImpl(AWGame game)
+        public UIEngineImpl(AssaultWingCore game)
             : base(game)
         {
             _oldState = InputState.GetState();
@@ -42,9 +42,7 @@ namespace AW2.UI
 
             // Reset mouse cursor to the middle of the game window.
             if (_eatMouse)
-                Microsoft.Xna.Framework.Input.Mouse.SetPosition(
-                    AssaultWingCore.Instance.ClientBounds.Width / 2,
-                    AssaultWingCore.Instance.ClientBounds.Height / 2);
+                Microsoft.Xna.Framework.Input.Mouse.SetPosition(Game.ClientBounds.Width / 2, Game.ClientBounds.Height / 2);
 
             Control.SetState(ref _oldState, ref newState);
             _oldState = newState;

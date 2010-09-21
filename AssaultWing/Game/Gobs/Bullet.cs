@@ -98,7 +98,7 @@ namespace AW2.Game.Gobs
             base.Update();
             if (_isRotating)
             {
-                Rotation += _rotationSpeed * (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                Rotation += _rotationSpeed * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
             }
             else
             {

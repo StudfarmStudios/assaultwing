@@ -1,7 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
-using AW2.Sound;
 
 namespace AW2.Game.Gobs
 {
@@ -92,7 +91,7 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            AssaultWingCore.Instance.SoundEngine.PlaySound(_sound.ToString());
+            Game.SoundEngine.PlaySound(_sound.ToString());
 
             CreateParticleEngines();
             _flowEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_flowTime);
@@ -123,7 +122,7 @@ namespace AW2.Game.Gobs
                 float differenceLength = difference.Length();
                 Vector2 flow = difference / differenceLength *
                     _flowSpeed.Evaluate(differenceLength);
-                AssaultWingCore.Instance.PhysicsEngine.ApplyDrag(theirArea.Owner, flow, 0.003f);
+                Game.PhysicsEngine.ApplyDrag(theirArea.Owner, flow, 0.003f);
             }
             else if (myArea.Name == "Hit")
             {

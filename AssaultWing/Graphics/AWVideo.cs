@@ -16,9 +16,8 @@ namespace AW2.Graphics
 
         public bool IsFinished { get { CheckState(); return _isFinished; } }
 
-        public AWVideo(string videoName)
+        public AWVideo(Video video)
         {
-            var video = AssaultWingCore.Instance.Content.Load<Video>(videoName);
             _videoPlayer = new VideoPlayer();
             _videoPlayer.Play(video);
             _videoPlayer.Pause();

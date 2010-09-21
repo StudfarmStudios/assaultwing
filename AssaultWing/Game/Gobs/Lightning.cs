@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -163,7 +162,7 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            _texture = AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
+            _texture = Game.Content.Load<Texture2D>(textureName);
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
             g_effect = g_effect ?? new BasicEffect(gfx, null);

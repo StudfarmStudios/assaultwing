@@ -149,7 +149,7 @@ namespace AW2.Game.Gobs
 #endif
                 drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
-            AssaultWingCore.Instance.DataEngine.ProgressBar.SubtaskCompleted();
+            Game.DataEngine.ProgressBar.SubtaskCompleted();
         }
 
         public override void Draw(Matrix view, Matrix projection)
@@ -189,7 +189,7 @@ namespace AW2.Game.Gobs
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var silhouetteEffect = AssaultWingCore.Instance.GraphicsEngine.GameContent.WallSilhouetteEffect;
+            var silhouetteEffect = Game.GraphicsEngine.GameContent.WallSilhouetteEffect;
             gfx.VertexDeclaration = _vertexDeclaration;
             silhouetteEffect.Projection = projection;
             silhouetteEffect.View = view;
@@ -242,17 +242,17 @@ namespace AW2.Game.Gobs
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return;
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client) return;
+            if (Game.NetworkMode == NetworkMode.Client) return;
 
             // Eat a round hole.
             Vector2 posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
             _removedTriangleIndices.Clear();
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), _indexMap.Remove);
 
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
+            if (Game.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
                 var message = new WallHoleMessage { GobID = ID, TriangleIndices = _removedTriangleIndices.ToList() };
-                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
+                Game.NetworkEngine.SendToGameClients(message);
             }
 
             // Remove the wall gob if all its triangles have been removed.

@@ -20,7 +20,7 @@ namespace AW2.Graphics
         private SpriteBatch _spriteBatch;
         private Texture2D _dialogTexture;
 
-        public OverlayDialog(AWGame game)
+        public OverlayDialog(AssaultWingCore game)
             : base(game)
         {
         }
@@ -45,15 +45,15 @@ namespace AW2.Graphics
             if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
             {
                 // K + P = kill players
-                foreach (var player in AssaultWingCore.Instance.DataEngine.Spectators)
+                foreach (var player in Game.DataEngine.Spectators)
                     if (player is Player && ((Player)player).Ship != null)
                         ((Player)player).Ship.Die(new DeathCause());
             }
 
             if (keys.IsKeyDown(Keys.L) && keys.IsKeyDown(Keys.E))
             {
-                if (!AssaultWingCore.Instance.DataEngine.ProgressBar.TaskRunning)
-                    AssaultWingCore.Instance.FinishArena();
+                if (!Game.DataEngine.ProgressBar.TaskRunning)
+                    Game.FinishArena();
             }
 #endif
 
@@ -62,7 +62,7 @@ namespace AW2.Graphics
 
         public override void LoadContent()
         {
-            _dialogTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("ingame_dialog");
+            _dialogTexture = Game.Content.Load<Texture2D>("ingame_dialog");
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
         }
 
@@ -79,7 +79,7 @@ namespace AW2.Graphics
         {
             // Set viewport exactly to the dialog's area.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var screen = AssaultWingCore.Instance.ClientBounds;
+            var screen = Game.ClientBounds;
             var newViewport = gfx.Viewport;
             newViewport.X = (screen.Width - _dialogTexture.Width) / 2;
             newViewport.Y = (screen.Height - _dialogTexture.Height) / 2;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
@@ -60,7 +59,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            var model = AssaultWingCore.Instance.Content.Load<Model>(ModelName);
+            var model = Game.Content.Load<Model>(ModelName);
             tailIndices = model.Bones
                 .Where(bone => bone.Name != null && bone.Name.StartsWith("Tail"))
                 .OrderBy(bone => bone.Name)
@@ -94,7 +93,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            float elapsedTime = (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            float elapsedTime = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
             wiggleMainPhase = (wiggleMainPhase - elapsedTime * MathHelper.Pi * wiggleFrequency) % MathHelper.TwoPi;
             if (advanceTailTurns)
                 foreach (int i in tailIndices)

@@ -50,7 +50,7 @@ namespace AW2.Sound
 
         #endregion
 
-        public SoundEngineXNA(AW2.Core.AWGame game)
+        public SoundEngineXNA(AssaultWingCore game)
             : base(game)
         {
         }
@@ -62,39 +62,36 @@ namespace AW2.Sound
             try
             {
                 Log.Write("Sound engine initialized.");
-                string filePath = AssaultWingCore.Instance.Content.RootDirectory + "\\content\\sounds\\sounddefs.xml";
+                string filePath = Game.Content.RootDirectory + "\\content\\sounds\\sounddefs.xml";
 
-                List<string> allSounds = new List<string>();
-                
-                XmlDocument document = new XmlDocument();
+                var allSounds = new List<string>();
+
+                var document = new XmlDocument();
                 document.Load(filePath);
-                XmlNodeList soundNodes = document.SelectNodes("group/sound");
-                foreach(XmlNode sound in soundNodes)
+                var soundNodes = document.SelectNodes("group/sound");
+                foreach (XmlNode sound in soundNodes)
                 {
                     string baseName = sound.Attributes["name"].Value.ToLower();
-                    
-                    XmlAttribute loopAttribute = sound.Attributes["loop"];
+
+                    var loopAttribute = sound.Attributes["loop"];
                     bool loop = (loopAttribute != null ? Boolean.Parse(loopAttribute.Value) : false);
-                    
-                    XmlAttribute volumeAttribute = sound.Attributes["volume"];
+
+                    var volumeAttribute = sound.Attributes["volume"];
                     float volume = (volumeAttribute != null ? (float)Double.Parse(volumeAttribute.Value) : 1.0f);
 
                     // Find all variations for a sound
-                    List<SoundEffect> effects = new List<SoundEffect>();
-                    AWContentManager manager = (AWContentManager)AssaultWingCore.Instance.Content;
-                    
+                    var effects = new List<SoundEffect>();
+                    var manager = Game.Content;
+
                     for (int i = 1; i <= 99; i++)
                     {
                         string name = string.Format("{0}{1:00}", baseName, i);
-                        if (!manager.Exists<SoundEffect>(name))
-                        {
-                            break;
-                        }
+                        if (!manager.Exists<SoundEffect>(name)) break;
 
-                        SoundEffect effect = manager.Load<SoundEffect>(name);
+                        var effect = manager.Load<SoundEffect>(name);
                         effects.Add(effect);
                     }
-                    SoundCue cue = new SoundCue(effects.ToArray(), volume, loop);
+                    var cue = new SoundCue(effects.ToArray(), volume, loop);
                     _soundCues.Add(baseName, cue);
                 }
             }
@@ -110,10 +107,10 @@ namespace AW2.Sound
             if (_volumeFadeAction != null) _volumeFadeAction();
             if (_music != null) _music.Volume = ActualMusicVolume;
 
-         /*   
+            /*   
             
-            _audioEngine.Update();
-            _soundEffectCategory.SetVolume(AssaultWing.Instance.Settings.Sound.SoundVolume);*/
+               _audioEngine.Update();
+               _soundEffectCategory.SetVolume(AssaultWing.Instance.Settings.Sound.SoundVolume);*/
         }
 
         #endregion
@@ -142,7 +139,7 @@ namespace AW2.Sound
             StopMusic();
             RelativeMusicVolume = trackVolume;
             InternalMusicVolume = 1;
-            _music = new AWMusic(trackName) { Volume = ActualMusicVolume };
+            _music = new AWMusic(Game.Content, trackName) { Volume = ActualMusicVolume };
             _music.EnsureIsPlaying();
         }
 
@@ -164,7 +161,7 @@ namespace AW2.Sound
         {
             if (!Enabled) return;
             if (_music == null || !_music.IsPlaying) return;
-            var now = AssaultWingCore.Instance.GameTime.TotalRealTime;
+            var now = Game.GameTime.TotalRealTime;
             float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
             _volumeFadeAction = () =>
             {
@@ -185,13 +182,13 @@ namespace AW2.Sound
 
             if (!_soundCues.ContainsKey(soundName))
             {
-                throw new ArgumentException("Sound " + soundName + " does not exist!");                
+                throw new ArgumentException("Sound " + soundName + " does not exist!");
             }
-            
+
             SoundCue cue = _soundCues[soundName.ToLower()];
 
             SoundEffect soundEffect = cue.GetEffect();
-            
+
             SoundEffectInstance instance = soundEffect.CreateInstance();
             instance.Volume = cue._volume;
             instance.IsLooped = cue._loop;

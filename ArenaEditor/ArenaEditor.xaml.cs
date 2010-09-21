@@ -36,7 +36,11 @@ namespace AW2
         private Point _lastMouseLocation, _dragStartLocation;
         private bool _isDragging;
 
-        private EditorSpectator Spectator { get { return (EditorSpectator)AssaultWingCore.Instance.DataEngine.Spectators.First(); } }
+        /// <summary>
+        /// Must be set right after creation.
+        /// </summary>
+        public AssaultWingCore Game { get; set; }
+        private EditorSpectator Spectator { get { return (EditorSpectator)Game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
 
@@ -74,12 +78,12 @@ namespace AW2
                     Log.Write("Failed to load arena " + arenaFilename + ": " + ex);
                     return;
                 }
-                var data = AssaultWingCore.Instance.DataEngine;
+                var data = Game.DataEngine;
                 data.ProgressBar.Task = () => data.InitializeFromArena(arena, false);
                 data.ProgressBar.StartTask();
                 while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
                 data.ProgressBar.FinishTask();
-                AssaultWingCore.Instance.StartArena();
+                Game.StartArena();
                 UpdateControlsFromArena();
                 ApplyViewSettingsToAllViewports();
             }
@@ -91,7 +95,7 @@ namespace AW2
 
         private void SaveArena_Click(object sender, RoutedEventArgs e)
         {
-            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            var arena = Game.DataEngine.Arena;
             if (arena == null) return;
             arena.Name = ArenaName.Text;
             var fileDialog = new SaveFileDialog
@@ -159,7 +163,7 @@ namespace AW2
                 // Left mouse button click selects gobs.
                 if (!_isDragging && e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    if (AssaultWingCore.Instance.DataEngine.Arena == null) return;
+                    if (Game.DataEngine.Arena == null) return;
                     GobNames.Items.Clear();
                     var pointInViewport = new Vector2(e.Location.X, e.Location.Y);
                     var viewport = GetViewport(e.Location);
@@ -259,7 +263,7 @@ namespace AW2
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
             int layerIndex = 0;
-            foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
+            foreach (var layer in Game.DataEngine.Arena.Layers)
             {
                 var ray = viewport.ToRay(pointInViewport, layer.Z);
                 foreach (var gob in layer.Gobs)
@@ -304,20 +308,20 @@ namespace AW2
         /// positive X pointing right and positive Y pointing down.
         private AWViewport GetViewport(Point location)
         {
-            var viewports = AssaultWingCore.Instance.DataEngine.Viewports;
+            var viewports = Game.DataEngine.Viewports;
             return viewports.FirstOrDefault(vp => vp.OnScreen.Contains(location.X, location.Y));
         }
 
         private void ForEachEditorViewport(Action<EditorViewport> action)
         {
-            foreach (var viewport in AssaultWingCore.Instance.DataEngine.Viewports)
+            foreach (var viewport in Game.DataEngine.Viewports)
                 if (viewport is EditorViewport)
                     action((EditorViewport)viewport);
         }
 
         private void UpdateControlsFromArena()
         {
-            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            var arena = Game.DataEngine.Arena;
             ArenaName.Text = arena.Name;
 
             // Put arena layers on display.
@@ -330,7 +334,7 @@ namespace AW2
 
         private void ApplyViewSettingsToAllViewports()
         {
-            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            var arena = Game.DataEngine.Arena;
             if (arena != null && EnableFog.IsChecked.HasValue)
                 arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
             ForEachEditorViewport(viewport => ApplyViewSettings(viewport));

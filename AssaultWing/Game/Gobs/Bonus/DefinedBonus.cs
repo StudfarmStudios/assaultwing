@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs.Bonus
@@ -35,7 +33,7 @@ namespace AW2.Game.Gobs.Bonus
                 gob.Message = gameAction.BonusText;
                 gob.IconName = gameAction.BonusIconName;
                 gob.DrawColor = gameAction.Player.PlayerColor;
-                AssaultWingCore.Instance.DataEngine.Arena.Gobs.Add(gob);
+                Game.DataEngine.Arena.Gobs.Add(gob);
             });
             player.BonusActions.AddOrReplace(gameAction);
             player.SendMessage("You collected " + gameAction.BonusText, player.PlayerColor);

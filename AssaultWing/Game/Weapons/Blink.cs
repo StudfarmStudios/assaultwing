@@ -49,7 +49,7 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_targetPos.HasValue)
             {
-                float blinkMoveStep = AssaultWingCore.Instance.PhysicsEngine.ApplyChange(blinkMoveSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+                float blinkMoveStep = owner.Game.PhysicsEngine.ApplyChange(blinkMoveSpeed, owner.Game.GameTime.ElapsedGameTime);
                 var pos = AWMathHelper.InterpolateTowards(owner.Pos, _targetPos.Value, blinkMoveStep);
                 owner.ResetPos(pos, owner.Move, owner.Rotation);
                 if (pos == _targetPos.Value)
@@ -70,7 +70,7 @@ namespace AW2.Game.Weapons
         protected override bool PermissionToFire(bool canFire)
         {
             // Blink is totally controlled by the server because of complex visual effects.
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Client) return false;
+            if (owner.Game.NetworkMode == NetworkMode.Client) return false;
 
             if (!canFire) return false;
             var transform =

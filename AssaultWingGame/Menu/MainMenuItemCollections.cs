@@ -40,12 +40,12 @@ namespace AW2.Menu
                 {
                     InitializeNetworkItems(menuEngine);
                     component.SetItems(NetworkItems);
-                    AssaultWingCore.Instance.SoundEngine.PlaySound("MenuChangeItem");
-                    AssaultWingCore.Instance.NetworkEngine.ConnectToManagementServer();
+                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    menuEngine.Game.NetworkEngine.ConnectToManagementServer();
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(
                         mess => HandleGameServerListReply(mess, menuEngine),
                         mess => HandleJoinGameServerReply(mess, menuEngine)));
-                    AssaultWingCore.Instance.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
+                    menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
                 }
             });
             StartItems.Add(new MainMenuItem(menuEngine)
@@ -68,13 +68,13 @@ namespace AW2.Menu
                 Name = "Play as Server",
                 Action = component =>
                 {
-                    if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Standalone) return;
-                    if (!AssaultWingCore.Instance.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, AllowNewConnection))) return;
+                    if (menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
+                    if (!menuEngine.Game.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, AllowNewConnection))) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player and Amazonas as the only arena.
-                    AssaultWingCore.Instance.DataEngine.Spectators.Remove(player => AssaultWingCore.Instance.DataEngine.Spectators.Count > 1);
-                    AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
+                    menuEngine.Game.DataEngine.Spectators.Remove(player => menuEngine.Game.DataEngine.Spectators.Count > 1);
+                    menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
                 }
             });
         }
@@ -92,13 +92,13 @@ namespace AW2.Menu
                     Name = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers),
                     Action = component =>
                     {
-                        if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Standalone) return;
+                        if (menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
                         var joinRequest = new JoinGameServerRequest
                         {
                             GameServerManagementID = server.ManagementID,
-                            PrivateUDPEndPoint = AssaultWingCore.Instance.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
+                            PrivateUDPEndPoint = menuEngine.Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
                         };
-                        AssaultWingCore.Instance.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+                        menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
                     }
                 });
         }
@@ -106,8 +106,8 @@ namespace AW2.Menu
         private static void HandleJoinGameServerReply(JoinGameServerReply mess, MenuEngineImpl menuEngine)
         {
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null, null));
-            AssaultWingCore.Instance.SoundEngine.PlaySound("MenuChangeItem");
-            AssaultWingCore.Instance.StartClient(mess.GameServerEndPoints, result => ClientConnectedCallback(result, menuEngine));
+            menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            menuEngine.Game.StartClient(mess.GameServerEndPoints, result => ClientConnectedCallback(result, menuEngine));
         }
 
         private static void ClientConnectedCallback(Result<AW2.Net.Connections.Connection> result, MenuEngineImpl menuEngine)
@@ -115,26 +115,25 @@ namespace AW2.Menu
             if (!result.Successful)
             {
                 Log.Write("Failed to connect to server: " + result.Error);
-                AssaultWingCore.Instance.StopClient();
+                menuEngine.Game.StopClient();
                 return;
             }
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip), HandleStartGameMessage));
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip), mess => HandleStartGameMessage(mess, menuEngine)));
 
             // HACK: Force one local player.
-            AssaultWingCore.Instance.DataEngine.Spectators.Remove(player => AssaultWingCore.Instance.DataEngine.Spectators.Count > 1);
+            menuEngine.Game.DataEngine.Spectators.Remove(player => menuEngine.Game.DataEngine.Spectators.Count > 1);
 
             var joinRequest = new JoinGameRequest { CanonicalStrings = CanonicalString.CanonicalForms };
-            AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Send(joinRequest);
+            menuEngine.Game.NetworkEngine.GameServerConnection.Send(joinRequest);
         }
 
-        private static void HandleStartGameMessage(StartGameMessage mess)
+        private static void HandleStartGameMessage(StartGameMessage mess, MenuEngineImpl menuEngine)
         {
-            AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
+            menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null));
 
             // Prepare and start playing the game.
-            var menuEngine = ((AssaultWing)AssaultWingCore.Instance).MenuEngine;
-            menuEngine.ProgressBarAction(AssaultWingCore.Instance.PrepareFirstArena,
+            menuEngine.ProgressBarAction(menuEngine.Game.PrepareFirstArena,
                 () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers()));
             menuEngine.Deactivate();
         }

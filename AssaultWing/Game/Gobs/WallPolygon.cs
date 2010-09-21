@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using AW2.Helpers;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Helpers;
 
 namespace AW2.Game.Gobs
 {
@@ -52,7 +50,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public override void LoadContent()
         {
-            Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
+            Texture = Game.Content.Load<Texture2D>(textureName);
         }
 
         #endregion Methods related to gobs' functionality in the game world

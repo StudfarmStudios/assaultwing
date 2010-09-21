@@ -15,43 +15,41 @@ namespace AW2.Menu
     /// <summary>
     /// The arena selection menu component where players can choose which arenas to play.
     /// </summary>
-    class ArenaMenuComponent : MenuComponent
+    public class ArenaMenuComponent : MenuComponent
     {
-        const int MENU_ITEM_COUNT = 8; // number of items that fit in the menu at once
+        private const int MENU_ITEM_COUNT = 8; // number of items that fit in the menu at once
 
-        Control controlBack, controlDone;
-        MultiControl controlUp, controlDown;
-        TriggeredCallbackCollection controlCallbacks;
-        Vector2 pos; // position of the component's background texture in menu system coordinates
-        SpriteFont menuBigFont, menuSmallFont;
-        Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture, infoBackgroundTexture;
+        private Control controlBack, controlDone;
+        private MultiControl controlUp, controlDown;
+        private TriggeredCallbackCollection controlCallbacks;
+        private Vector2 pos; // position of the component's background texture in menu system coordinates
+        private SpriteFont menuBigFont, menuSmallFont;
+        private Texture2D backgroundTexture, cursorTexture, highlightTexture, tagTexture, infoBackgroundTexture;
 
         /// <summary>
         /// Cursor fade curve as a function of time in seconds.
         /// Values range from 0 (transparent) to 255 (opaque).
         /// </summary>
-        Curve cursorFade;
+        private Curve cursorFade;
 
         /// <summary>
         /// Time at which the cursor started fading.
         /// </summary>
-        TimeSpan cursorFadeStartTime;
+        private TimeSpan cursorFadeStartTime;
 
         /// <summary>
         /// Index of currently highlighted arena in the arena name list.
         /// </summary>
-        int currentArena;
+        private int currentArena;
         private Arena _selectedArena;
-
-
 
         /// <summary>
         /// Index of first arena in the arena name list that is visible on screen.
         /// </summary>
-        int arenaListStart;
+        private int arenaListStart;
 
-        List<ArenaInfo> ArenaInfos { get { return AssaultWingCore.Instance.DataEngine.ArenaInfos; } }
-        List<string> selectedArenaNames;
+        private List<ArenaInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
+        private List<string> selectedArenaNames;
 
         /// <summary>
         /// Does the menu component react to input.
@@ -96,12 +94,9 @@ namespace AW2.Menu
             _selectedArena = (Arena)TypeLoader.LoadTemplate(ArenaInfos[currentArena].FileName, typeof(Arena), typeof(TypeParameterAttribute));
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be loaded.
-        /// </summary>
         public override void LoadContent()
         {
-            var content = (AWContentManager)AssaultWingCore.Instance.Content;
+            var content = MenuEngine.Game.Content;
             menuBigFont = content.Load<SpriteFont>("MenuFontBig");
             menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
             backgroundTexture = content.Load<Texture2D>("menu_levels_bg");
@@ -111,17 +106,6 @@ namespace AW2.Menu
             infoBackgroundTexture = content.Load<Texture2D>("menu_levels_infobox");
         }
 
-        /// <summary>
-        /// Called when graphics resources need to be unloaded.
-        /// </summary>
-        public override void UnloadContent()
-        {
-            // The textures and fonts we reference will be disposed by GraphicsEngine.
-        }
-
-        /// <summary>
-        /// Updates the menu component.
-        /// </summary>
         public override void Update()
         {
             // Check our controls and react to them.
@@ -144,13 +128,6 @@ namespace AW2.Menu
             }
         }
 
-        /// <summary>
-        /// Draws the menu component.
-        /// </summary>
-        /// <param name="view">Top left corner of the menu view in menu system coordinates.</param>
-        /// <param name="spriteBatch">The sprite batch to use. <c>Begin</c> is assumed
-        /// to have been called and <c>End</c> is assumed to be called after this
-        /// method returns.</param>
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
@@ -182,10 +159,10 @@ namespace AW2.Menu
             Vector2 infoBoxLineHeight = new Vector2(0, 14);
             Vector2 infoBoxColumnWidth = new Vector2(220, 0);
             ArenaMenuInfo menuInfo = _selectedArena.MenuInfo;
-            var content = (AWContentManager)AssaultWingCore.Instance.Content;
+            var content = MenuEngine.Game.Content;
             string previewName = content.Exists<Texture2D>(menuInfo.PreviewName) ? menuInfo.PreviewName : "no_preview";
             var previewTexture = content.Load<Texture2D>(previewName);
-            float cursorTime = (float)(AssaultWingCore.Instance.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
+            float cursorTime = (float)(MenuEngine.Game.GameTime.TotalRealTime - cursorFadeStartTime).TotalSeconds;
 
             spriteBatch.Draw(highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(cursorTexture, cursorPos, new Color(255, 255, 255, (byte)cursorFade.Evaluate(cursorTime)));
@@ -216,7 +193,7 @@ namespace AW2.Menu
             controlCallbacks = new TriggeredCallbackCollection();
             controlCallbacks.TriggeredCallback = () =>
             {
-                cursorFadeStartTime = AssaultWingCore.Instance.GameTime.TotalRealTime;
+                cursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             };
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlBack, () =>
             { 
@@ -228,7 +205,7 @@ namespace AW2.Menu
                 if (currentArena >= 0 && currentArena < ArenaInfos.Count)
                 {
                     SelectCurrentArena();
-                    AssaultWingCore.Instance.SoundEngine.PlaySound("MenuChangeItem");
+                    MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                     MenuEngine.ActivateComponent(MenuComponentType.Equip);
                 }
             }));
@@ -236,13 +213,13 @@ namespace AW2.Menu
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlUp, () =>
             {
                 --currentArena;
-                AssaultWingCore.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 
             }));
             controlCallbacks.Callbacks.Add(new TriggeredCallback(controlDown, () =>
             {
                 ++currentArena;
-                AssaultWingCore.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
         }
 
@@ -255,7 +232,7 @@ namespace AW2.Menu
                 {
                     selectedArenaNames.Clear();
                     selectedArenaNames.Add(name);
-                    AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
+                    MenuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
                     return true;
                 }
             }
@@ -280,7 +257,7 @@ namespace AW2.Menu
             controlDown = new MultiControl();
             controlDown.Add(new KeyboardKey(Keys.Down));
 
-            foreach (var player in AssaultWingCore.Instance.DataEngine.Spectators)
+            foreach (var player in MenuEngine.Game.DataEngine.Spectators)
             {
                 controlUp.Add(player.Controls.Thrust);
                 controlDown.Add(player.Controls.Down);

@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using AW2.Helpers;
 using AW2.Sound;
 
@@ -62,7 +59,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _dockSound = AssaultWingCore.Instance.SoundEngine.CreateSound("HomeBaseLoop");
+            _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoop");
         }
 
         public override void Update()
@@ -85,7 +82,7 @@ namespace AW2.Game.Gobs
                 // If the ship is not null and the player hasn't taken damage for long enough time then set canDock to true (player can dock)
                 if (ship != null)
                 {
-                    TimeSpan totalGameTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
+                    TimeSpan totalGameTime = Game.DataEngine.ArenaTotalTime;
 
                     if (ship.LastDamageTaken == TimeSpan.Zero || 
                         totalGameTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED)
@@ -98,9 +95,9 @@ namespace AW2.Game.Gobs
 
                 if (ship != null && canDock)
                 {
-                    ship.InflictDamage(AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_repairSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime), new DeathCause());
-                    ship.ExtraDevice.Charge += AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
-                    ship.Weapon2.Charge += AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+                    ship.InflictDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, Game.GameTime.ElapsedGameTime), new DeathCause());
+                    ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, Game.GameTime.ElapsedGameTime);
+                    ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, Game.GameTime.ElapsedGameTime);
                 }
             }
         }

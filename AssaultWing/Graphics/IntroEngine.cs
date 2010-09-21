@@ -19,7 +19,7 @@ namespace AW2.Graphics
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
 
-        public IntroEngine(AWGame game)
+        public IntroEngine(AssaultWingCore game)
             : base(game)
         {
         }
@@ -32,14 +32,14 @@ namespace AW2.Graphics
         private void EndIntro()
         {
             _introVideo.Stop();
-            AssaultWingCore.Instance.ShowMenu();
+            Game.ShowMenu();
         }
 
         public override void Initialize()
         {
             base.Initialize();
             _skipControl = new KeyboardKey(Microsoft.Xna.Framework.Input.Keys.Escape);
-            _introVideo = new AWVideo("aw_intro");
+            _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"));
         }
 
         public override void LoadContent()

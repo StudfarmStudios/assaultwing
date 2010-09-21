@@ -43,7 +43,7 @@ namespace AW2.Menu
                     InitializeControlCallbacks();
 
                     SetItems(_itemCollections.StartItems);
-                    AssaultWingCore.Instance.CutNetworkConnections();
+                    MenuEngine.Game.CutNetworkConnections();
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace AW2.Menu
         public override void Update()
         {
             if (!Active) return;
-            if (_currentItems != _itemCollections.NetworkItems && AssaultWingCore.Instance.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + AssaultWingCore.Instance.NetworkMode);
+            if (_currentItems != _itemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode);
             _commonCallbacks.Update();
             foreach (var menuItem in _currentItems) menuItem.Update();
         }
@@ -107,13 +107,13 @@ namespace AW2.Menu
             {
                 if (_currentItem > 0)
                     --_currentItem;
-                AssaultWingCore.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
             {
                 if (_currentItem < _currentItems.Count - 1)
                     ++_currentItem;
-                AssaultWingCore.Instance.SoundEngine.PlaySound("MenuBrowseItem");
+                MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () =>
             {
@@ -121,7 +121,7 @@ namespace AW2.Menu
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
-                AssaultWingCore.Instance.CutNetworkConnections();
+                MenuEngine.Game.CutNetworkConnections();
                 _currentItems = _itemCollections.StartItems;
             }));
         }
@@ -144,7 +144,7 @@ namespace AW2.Menu
             _controlSelect = new MultiControl();
             _controlSelect.Add(new KeyboardKey(Keys.Enter));
 
-            foreach (var player in AssaultWingCore.Instance.DataEngine.Spectators)
+            foreach (var player in MenuEngine.Game.DataEngine.Spectators)
             {
                 if (player.IsRemote) continue;
                 _controlUp.Add(player.Controls.Thrust);

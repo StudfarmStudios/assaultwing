@@ -72,7 +72,7 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            var duration = AssaultWingCore.Instance.GameTime.ElapsedGameTime;
+            var duration = owner.Game.GameTime.ElapsedGameTime;
             float direction = reverse ? owner.Rotation + MathHelper.Pi : owner.Rotation;
             float thrustForce = _extraForceEnd > Arena.TotalTime
                 ? thrustForceFactor * 2

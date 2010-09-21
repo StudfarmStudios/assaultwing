@@ -23,7 +23,7 @@ namespace AW2.Sound
 
         #endregion
 
-        public SoundEngineXACT(AW2.Core.AWGame game)
+        public SoundEngineXACT(AssaultWingCore game)
             : base(game)
         {
         }
@@ -52,7 +52,7 @@ namespace AW2.Sound
             if (_volumeFadeAction != null) _volumeFadeAction();
             if (_music != null) _music.Volume = ActualMusicVolume;
             _audioEngine.Update();
-            _soundEffectCategory.SetVolume(AssaultWingCore.Instance.Settings.Sound.SoundVolume);
+            _soundEffectCategory.SetVolume(Game.Settings.Sound.SoundVolume);
         }
 
         #endregion
@@ -81,7 +81,7 @@ namespace AW2.Sound
             StopMusic();
             RelativeMusicVolume = trackVolume;
             InternalMusicVolume = 1;
-            _music = new AWMusic(trackName) { Volume = ActualMusicVolume };
+            _music = new AWMusic(Game.Content, trackName) { Volume = ActualMusicVolume };
             _music.EnsureIsPlaying();
         }
 
@@ -103,7 +103,7 @@ namespace AW2.Sound
         {
             if (!Enabled) return;
             if (_music == null || !_music.IsPlaying) return;
-            var now = AssaultWingCore.Instance.GameTime.TotalRealTime;
+            var now = Game.GameTime.TotalRealTime;
             float fadeoutSeconds = (float)fadeoutTime.TotalSeconds;
             _volumeFadeAction = () =>
             {
@@ -123,7 +123,7 @@ namespace AW2.Sound
             return new SoundInstanceXACT(cue, _soundBank);
         }
 
-  
+
         #endregion
     }
 }

@@ -22,7 +22,7 @@ namespace AW2.Game
         private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 #endif
 
-        public LogicEngine(AWGame game)
+        public LogicEngine(AssaultWingCore game)
             : base(game)
         {
             escapeControl = new KeyboardKey(Keys.Escape);
@@ -45,12 +45,12 @@ namespace AW2.Game
             DeleteTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
 
             foreach (Gob gob in gobLoader.LoadTemplates())
-                AssaultWingCore.Instance.DataEngine.AddTypeTemplate(gob.TypeName, gob);
+                Game.DataEngine.AddTypeTemplate(gob.TypeName, gob);
             foreach (ShipDevice device in deviceLoader.LoadTemplates())
-                AssaultWingCore.Instance.DataEngine.AddTypeTemplate(device.TypeName, device);
+                Game.DataEngine.AddTypeTemplate(device.TypeName, device);
             foreach (Gob particleEngine in particleLoader.LoadTemplates())
-                AssaultWingCore.Instance.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
-            AssaultWingCore.Instance.DataEngine.ArenaInfos = arenaLoader.LoadTemplates().Cast<Arena>().Select(arena => arena.Info).ToList();
+                Game.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
+            Game.DataEngine.ArenaInfos = arenaLoader.LoadTemplates().Cast<Arena>().Select(arena => arena.Info).ToList();
 
             SaveTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
             base.Initialize();
@@ -58,7 +58,7 @@ namespace AW2.Game
 
         public override void Update()
         {
-            var data = AssaultWingCore.Instance.DataEngine;
+            var data = Game.DataEngine;
             UpdateControls();
 
             // Update gobs, weapons and players.
@@ -66,13 +66,13 @@ namespace AW2.Game
             foreach (var device in data.Devices) device.Update();
             foreach (var player in data.Spectators) player.Update();
 
-            AssaultWingCore.Instance.DataEngine.Arena.PerformNonphysicalCollisions();
+            Game.DataEngine.Arena.PerformNonphysicalCollisions();
 
             // Check for arena end. Network games end when the game server presses Esc.
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Standalone)
+            if (Game.NetworkMode == NetworkMode.Standalone)
             {
                 if (data.GameplayMode.ArenaFinished(data.Arena, data.Players))
-                    AssaultWingCore.Instance.FinishArena();
+                    Game.FinishArena();
             }
         }
 
@@ -83,32 +83,32 @@ namespace AW2.Game
         {
 #if DEBUG
             if (showEverybodyControl.Pulse)
-                AssaultWingCore.Instance.ShowOnlyPlayer(-1);
+                Game.ShowOnlyPlayer(-1);
             if (showOnlyPlayer1Control.Pulse)
-                AssaultWingCore.Instance.ShowOnlyPlayer(0);
-            if (showOnlyPlayer2Control.Pulse && AssaultWingCore.Instance.DataEngine.Spectators.Count > 1)
-                AssaultWingCore.Instance.ShowOnlyPlayer(1);
+                Game.ShowOnlyPlayer(0);
+            if (showOnlyPlayer2Control.Pulse && Game.DataEngine.Spectators.Count > 1)
+                Game.ShowOnlyPlayer(1);
 #endif
             if (escapeControl.Pulse)
             {
-                var dialogData = AssaultWingCore.Instance.NetworkMode == NetworkMode.Server
+                var dialogData = Game.NetworkMode == NetworkMode.Server
                     ? new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
                         "Finish Arena? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.GetYesControl(), AssaultWingCore.Instance.FinishArena),
-                        new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWingCore.Instance.ResumePlay))
+                        new TriggeredCallback(TriggeredCallback.GetYesControl(), Game.FinishArena),
+                        new TriggeredCallback(TriggeredCallback.GetNoControl(), Game.ResumePlay))
                     : new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
                         "Quit to Main Menu? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.GetYesControl(), AssaultWingCore.Instance.ShowMenu),
-                        new TriggeredCallback(TriggeredCallback.GetNoControl(), AssaultWingCore.Instance.ResumePlay));
+                        new TriggeredCallback(TriggeredCallback.GetYesControl(), Game.ShowMenu),
+                        new TriggeredCallback(TriggeredCallback.GetNoControl(), Game.ResumePlay));
 
-                AssaultWingCore.Instance.ShowDialog(dialogData);
+                Game.ShowDialog(dialogData);
             }
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
         private void DeleteTemplates(params TypeLoader[] typeLoaders)
         {
-            if (!AssaultWingCore.Instance.CommandLineArgs.Contains("-deletetemplates")) return;
+            if (!Game.CommandLineArgs.Contains("-deletetemplates")) return;
             Log.Write("Parameter -deletetemplates given, deleting templates now...");
             foreach (var typeLoader in typeLoaders) typeLoader.DeleteTemplates();
             Log.Write("...templates deleted");
@@ -117,7 +117,7 @@ namespace AW2.Game
         [System.Diagnostics.Conditional("DEBUG")]
         private void SaveTemplates(params TypeLoader[] typeLoaders)
         {
-            if (!AssaultWingCore.Instance.CommandLineArgs.Contains("-savetemplates")) return;
+            if (!Game.CommandLineArgs.Contains("-savetemplates")) return;
             Log.Write("Parameter -savetemplates given, saving templates now...");
             foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplateExamples();
             Log.Write("...templates saved");

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
@@ -120,9 +118,9 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            _icon = AssaultWingCore.Instance.Content.Load<Texture2D>(IconName);
-            _iconBackground = AssaultWingCore.Instance.Content.Load<Texture2D>(g_iconBackgroundName);
-            _messageFont = AssaultWingCore.Instance.Content.Load<SpriteFont>("ConsoleFont");
+            _icon = Game.Content.Load<Texture2D>(IconName);
+            _iconBackground = Game.Content.Load<Texture2D>(g_iconBackgroundName);
+            _messageFont = Game.Content.Load<SpriteFont>("ConsoleFont");
         }
 
         public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)

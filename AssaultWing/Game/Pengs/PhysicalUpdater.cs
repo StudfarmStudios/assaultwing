@@ -83,7 +83,7 @@ namespace AW2.Game.Pengs
         {
             // Note: This method is run potentially very often. It must be kept quick.
 
-            TimeSpan now = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
+            var now = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
 
             // Initialise custom particle fields
             if (particle.Timeout == TimeSpan.Zero)

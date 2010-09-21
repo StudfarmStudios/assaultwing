@@ -25,14 +25,21 @@ namespace AW2.Game
             public TimeSpan GameTime { get; private set; }
             public string Text { get; private set; }
             public Color TextColor;
-            public Message(string text)
+            public Message(TimeSpan gameTime, string text)
             {
-                GameTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
+                GameTime = gameTime;
                 Text = text;
             }
         }
 
         #region Player constants
+
+        public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f, 1f);
+        public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f, 1f);
+        public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f, 1f);
+        public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f, 1f);
+        public static readonly Color KILLING_SPREE_COLOR = new Color(255, 228, 0);
+        public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
 
         private const int MESSAGE_KEEP_COUNT = 100;
 
@@ -166,18 +173,18 @@ namespace AW2.Game
         {
             get
             {
-                if (AssaultWingCore.Instance.DataEngine.ArenaTotalTime > _shakeUpdateTime)
+                if (Game.DataEngine.ArenaTotalTime > _shakeUpdateTime)
                 {
                     // Attenuate shake damage for any skipped frames.
-                    float skippedTime = (float)(AssaultWingCore.Instance.DataEngine.ArenaTotalTime - AssaultWingCore.Instance.GameTime.ElapsedGameTime - _shakeUpdateTime).TotalSeconds;
+                    float skippedTime = (float)(Game.DataEngine.ArenaTotalTime - Game.GameTime.ElapsedGameTime - _shakeUpdateTime).TotalSeconds;
                     AttenuateShake(skippedTime);
 
                     // Calculate new shake.
                     _shake = _shakeCurve.Evaluate(_relativeShakeDamage);
-                    _shakeUpdateTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
+                    _shakeUpdateTime = Game.DataEngine.ArenaTotalTime;
 
                     // Attenuate shake damage for the current frame.
-                    AttenuateShake((float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds);
+                    AttenuateShake((float)Game.GameTime.ElapsedGameTime.TotalSeconds);
                 }
                 return _shake;
             }
@@ -210,7 +217,7 @@ namespace AW2.Game
             get
             {
                 if (_ship != null) return _ship.Weapon1Name;
-                var shipType = (Ship)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(ShipName);
+                var shipType = (Ship)Game.DataEngine.GetTypeTemplate(ShipName);
                 return shipType.Weapon1Name;
             }
         }
@@ -366,16 +373,16 @@ namespace AW2.Game
             foreach (var action in BonusActions)
             {
                 action.Update();
-                if (action.EndTime <= AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
+                if (action.EndTime <= Game.DataEngine.ArenaTotalTime)
                     BonusActions.RemoveLater(action);
             }
             BonusActions.CommitRemoves();
 
-            if (AssaultWingCore.Instance.NetworkMode != NetworkMode.Client)
+            if (Game.NetworkMode != NetworkMode.Client)
             {
                 // Give birth to a new ship if it's time.
                 if (Ship == null && _lives != 0 &&
-                    _shipSpawnTime <= AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
+                    _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)
                 {
                     CreateShip();
                 }
@@ -394,13 +401,13 @@ namespace AW2.Game
             }
 
             // Game server sends state updates about players to game clients.
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && MustUpdateToClients)
+            if (Game.NetworkMode == NetworkMode.Server && MustUpdateToClients)
             {
                 MustUpdateToClients = false;
                 var message = new PlayerUpdateMessage();
                 message.PlayerID = ID;
                 message.Write(this, SerializationModeFlags.VaryingData);
-                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
+                Game.NetworkEngine.SendToGameClients(message);
             }
         }
 
@@ -416,13 +423,13 @@ namespace AW2.Game
                 gob.Message = message;
                 gob.IconName = iconName;
                 gob.DrawColor = messageColor;
-                AssaultWingCore.Instance.DataEngine.Arena.Gobs.Add(gob);
+                Game.DataEngine.Arena.Gobs.Add(gob);
             });
         }
 
         private void SendDeathMessageToBystanders(DeathCause cause, string bystanderMessage)
         {
-            foreach (Player plr in AssaultWingCore.Instance.DataEngine.Players)
+            foreach (var plr in Game.DataEngine.Players)
             {
                 if (plr.ID != ID)
                 {
@@ -448,7 +455,7 @@ namespace AW2.Game
                 message = player.Name + " IS UNSTOPPABLE! (" + player.KillsWithoutDying + " kills) OMG!";
             }
 
-            foreach (Player plr in AssaultWingCore.Instance.DataEngine.Players)
+            foreach (var plr in Game.DataEngine.Players)
             {
                 plr.SendMessage(message, KILLING_SPREE_COLOR);
             }
@@ -465,7 +472,7 @@ namespace AW2.Game
             if (cause.IsKill)
             {
                 ++cause.Killer.Owner._kills;
-                if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server)
+                if (Game.NetworkMode == NetworkMode.Server)
                     cause.Killer.Owner.MustUpdateToClients = true;
             }
             
@@ -503,9 +510,9 @@ namespace AW2.Game
             SendMessage("Death by " + cause.ToPersonalizedString(this), DEATH_COLOR);
 
             // Schedule the making of a new ship, lives permitting.
-            _shipSpawnTime = AssaultWingCore.Instance.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
+            _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
 
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server)
+            if (Game.NetworkMode == NetworkMode.Server)
                 MustUpdateToClients = true;
         }
 
@@ -532,18 +539,11 @@ namespace AW2.Game
             _shakeUpdateTime = TimeSpan.Zero;
             _relativeShakeDamage = 0;
             KillsWithoutDying = 0;
-            Lives = AssaultWingCore.Instance.DataEngine.GameplayMode.StartLives;
+            Lives = Game.DataEngine.GameplayMode.StartLives;
             BonusActions.Clear();
             Messages.Clear();
             Ship = null;
         }
-
-        public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f, 1f);
-        public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f, 1f);
-        public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f, 1f);
-        public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f, 1f);
-        public static readonly Color KILLING_SPREE_COLOR = new Color(255, 228, 0);
-        public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
 
         public void SendMessage(string message)
         {
@@ -559,15 +559,15 @@ namespace AW2.Game
             message = message.Replace("\n", " ");
             message = message.Capitalize();
 
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && IsRemote)
+            if (Game.NetworkMode == NetworkMode.Server && IsRemote)
             {
                 var messageMessage = new PlayerMessageMessage { PlayerID = ID, Color = messageColor, Text = message };
-                AssaultWingCore.Instance.NetworkEngine.GetGameClientConnection(ConnectionID).Send(messageMessage);
+                Game.NetworkEngine.GetGameClientConnection(ConnectionID).Send(messageMessage);
             }
-            Message msg = new Message(message);
+            var msg = new Message(Game.DataEngine.ArenaTotalTime, message);
             msg.TextColor = messageColor;
             Messages.Add(msg);
-            AssaultWingCore.Instance.SoundEngine.PlaySound("PlayerMessage");
+            Game.SoundEngine.PlaySound("PlayerMessage");
 
             // Throw away very old messages.
             if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)
@@ -648,11 +648,11 @@ namespace AW2.Game
         {
             if (Ship == null || Ship.IsDisposed) return;
             if (Controls.Thrust.Force > 0)
-                Ship.Thrust(Controls.Thrust.Force, AssaultWingCore.Instance.GameTime.ElapsedGameTime, Ship.Rotation);
+                Ship.Thrust(Controls.Thrust.Force, Game.GameTime.ElapsedGameTime, Ship.Rotation);
             if (Controls.Left.Force > 0)
-                Ship.TurnLeft(Controls.Left.Force, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+                Ship.TurnLeft(Controls.Left.Force, Game.GameTime.ElapsedGameTime);
             if (Controls.Right.Force > 0)
-                Ship.TurnRight(Controls.Right.Force, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
+                Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
             if (Controls.Fire1.Pulse || Controls.Fire1.Force > 0)
                 Ship.Weapon1.Fire(Controls.Fire1.State);
             if (Controls.Fire2.Pulse || Controls.Fire2.Force > 0)
@@ -666,11 +666,11 @@ namespace AW2.Game
         /// </summary>
         private void SendControlsToServer()
         {
-            PlayerControlsMessage message = new PlayerControlsMessage();
+            var message = new PlayerControlsMessage();
             message.PlayerID = ID;
             foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
                 message.SetControlState(controlType, Controls[controlType].State);
-            AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Send(message);
+            Game.NetworkEngine.GameServerConnection.Send(message);
         }
 
         /// <summary>
@@ -688,14 +688,14 @@ namespace AW2.Game
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
                 PositionShip(newShip);
-                AssaultWingCore.Instance.DataEngine.Arena.Gobs.Add(newShip);
+                Game.DataEngine.Arena.Gobs.Add(newShip);
                 Ship = newShip;
             });
         }
 
         private void PositionShip(Ship ship)
         {
-            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            var arena = Game.DataEngine.Arena;
 
             // Use player spawn areas if there's any. Otherwise just randomise a position.
             var spawns =

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 using AW2.Helpers;
 
 namespace AW2.Game
@@ -7,9 +8,12 @@ namespace AW2.Game
     /// <summary>
     /// A physics engine.
     /// </summary>
-    public class PhysicsEngine
+    public class PhysicsEngine : AWGameComponent
     {
-        public PhysicsEngine() { }
+        public PhysicsEngine(AssaultWingCore game)
+            : base(game)
+        {
+        }
 
         #region Public interface
 
@@ -39,7 +43,7 @@ namespace AW2.Game
         /// <param name="force">The force to apply, measured in Newtons.</param>
         public void ApplyForce(Gob gob, Vector2 force)
         {
-            gob.Move += force / gob.Mass * (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            gob.Move += force / gob.Mass * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
         }
 
         /// <summary>

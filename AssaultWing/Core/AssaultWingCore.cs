@@ -219,7 +219,7 @@ namespace AW2
             NetworkEngine = new NetworkEngine(this);
             _overlayDialog = new OverlayDialog(this);
             DataEngine = new DataEngine(this);
-            PhysicsEngine = new PhysicsEngine();
+            PhysicsEngine = new PhysicsEngine(this);
 
             NetworkEngine.UpdateOrder = 0;
             _uiEngine.UpdateOrder = 1;
@@ -515,8 +515,8 @@ namespace AW2
         {
             switch (NetworkMode)
             {
-                case NetworkMode.Client: AssaultWingCore.Instance.StopClient(); break;
-                case NetworkMode.Server: AssaultWingCore.Instance.StopServer(); break;
+                case NetworkMode.Client: StopClient(); break;
+                case NetworkMode.Server: StopServer(); break;
                 case NetworkMode.Standalone: break;
                 default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);
             }

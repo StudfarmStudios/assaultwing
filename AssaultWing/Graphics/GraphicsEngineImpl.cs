@@ -18,7 +18,7 @@ namespace AW2.Graphics
 
         public GameContent GameContent { get; private set; }
 
-        public GraphicsEngineImpl(AWGame game)
+        public GraphicsEngineImpl(AssaultWingCore game)
             : base(game)
         {
             GameContent = new GameContent(game);
@@ -27,7 +27,7 @@ namespace AW2.Graphics
         public override void LoadContent()
         {
             Log.Write("Graphics engine loading graphics content.");
-            var data = AssaultWingCore.Instance.DataEngine;
+            var data = Game.DataEngine;
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
             GameContent.LoadContent();
 
@@ -36,9 +36,9 @@ namespace AW2.Graphics
             data.ForEachTypeTemplate<Gob>(gobTemplate =>
             {
                 foreach (var modelName in gobTemplate.ModelNames)
-                    AssaultWingCore.Instance.Content.Load<Model>(modelName);
+                    Game.Content.Load<Model>(modelName);
                 foreach (var textureName in gobTemplate.TextureNames)
-                    AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
+                    Game.Content.Load<Texture2D>(textureName);
             });
 
             // Load all textures that each weapon needs.
@@ -46,14 +46,14 @@ namespace AW2.Graphics
             data.ForEachTypeTemplate<Weapon>(weaponTemplate =>
             {
                 foreach (var textureName in weaponTemplate.TextureNames)
-                    AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
+                    Game.Content.Load<Texture2D>(textureName);
             });
 
             // Load arena previews.
             // The purpose of this is to load from disk here and cache the content for fast access later.
-            AssaultWingCore.Instance.Content.Load<Texture2D>("no_preview");
+            Game.Content.Load<Texture2D>("no_preview");
             foreach (var name in data.ArenaPlaylist)
-                try { AssaultWingCore.Instance.Content.Load<Texture2D>(name.ToLower() + "_preview"); }
+                try { Game.Content.Load<Texture2D>(name.ToLower() + "_preview"); }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException) { }
 
             // Load arena related content if an arena is being played right now.
@@ -72,28 +72,28 @@ namespace AW2.Graphics
         public void LoadArenaContent(Arena arenaTemplate)
         {
             // NOTE !!! This method has very little to do with GraphicsEngineImpl. Refactor into Arena.LoadContent() !!!
-            var data = AssaultWingCore.Instance.DataEngine;
+            var data = Game.DataEngine;
 
             foreach (var gob in arenaTemplate.Gobs)
             {
                 // Load the layer's gob types.
                 foreach (var modelName in gob.ModelNames)
-                    AssaultWingCore.Instance.Content.Load<Model>(modelName);
+                    Game.Content.Load<Model>(modelName);
 
                 // Load the layer's gobs' textures.
                 foreach (var textureName in gob.TextureNames)
-                    AssaultWingCore.Instance.Content.Load<Texture2D>(textureName);
+                    Game.Content.Load<Texture2D>(textureName);
             }
 
-            foreach (ArenaLayer layer in arenaTemplate.Layers)
+            foreach (var layer in arenaTemplate.Layers)
                 if (layer.ParallaxName != "")
-                    AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+                    Game.Content.Load<Texture2D>(layer.ParallaxName);
         }
 
         public override void UnloadContent()
         {
             Log.Write("Graphics engine unloading graphics content.");
-            var data = AssaultWingCore.Instance.DataEngine;
+            var data = Game.DataEngine;
             GameContent.UnloadContent();
 
             if (_spriteBatch != null)
@@ -114,28 +114,28 @@ namespace AW2.Graphics
 
         public override void Draw()
         {
-            AssaultWingCore.Instance.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
+            Game.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
 
             var screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
-            screen.Width = AssaultWingCore.Instance.ClientBounds.Width;
-            screen.Height = AssaultWingCore.Instance.ClientBounds.Height;
+            screen.Width = Game.ClientBounds.Width;
+            screen.Height = Game.ClientBounds.Height;
             gfx.Viewport = screen;
             gfx.Clear(new Color(0x40, 0x40, 0x40));
 
-            foreach (var viewport in AssaultWingCore.Instance.DataEngine.Viewports) viewport.Draw();
+            foreach (var viewport in Game.DataEngine.Viewports) viewport.Draw();
 
             // Restore viewport to the whole client window.
             gfx.Viewport = screen;
 
             // Draw viewport separators.
             _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-            foreach (var separator in AssaultWingCore.Instance.DataEngine.Viewports.Separators)
+            foreach (var separator in Game.DataEngine.Viewports.Separators)
             {
-                Texture2D separatorTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("viewport_border_vertical");
-                Vector2 separatorOrigin = new Vector2(separatorTexture.Width, 0) / 2;
+                var separatorTexture = Game.Content.Load<Texture2D>("viewport_border_vertical");
+                var separatorOrigin = new Vector2(separatorTexture.Width, 0) / 2;
                 if (separator.Vertical)
                 {
                     // Loop the texture vertically, centered on the screen.
@@ -173,7 +173,7 @@ namespace AW2.Graphics
         /// or after switching between windowed and fullscreen mode.
         public void WindowResize()
         {
-            AssaultWingCore.Instance.DataEngine.RearrangeViewports();
+            Game.DataEngine.RearrangeViewports();
         }
     }
 }

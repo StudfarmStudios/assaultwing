@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
@@ -116,7 +114,7 @@ namespace AW2.Game.Gobs
             if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
             {
                 wallModelName = new CanonicalString(reader.ReadInt32());
-                var model = AssaultWingCore.Instance.Content.Load<Model>(wallModelName);
+                var model = Game.Content.Load<Model>(wallModelName);
                 Effect = GetEffect(model);
                 Texture = GetTexture(model);
             }
@@ -136,7 +134,7 @@ namespace AW2.Game.Gobs
         void Set3DModel()
         {
             // Recover wall data from its 3D model.
-            var model = AssaultWingCore.Instance.Content.Load<Model>(wallModelName);
+            var model = Game.Content.Load<Model>(wallModelName);
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
             Graphics3D.GetModelData(model, out vertexData, out indexData);

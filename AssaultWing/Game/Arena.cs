@@ -134,13 +134,14 @@ namespace AW2.Game
 
         #region General fields
 
+        private AssaultWingCore _game;
         private GobCollection _gobs;
 
         /// <summary>
         /// Layers of the arena.
         /// </summary>
         [TypeParameter]
-        private List<ArenaLayer> layers;
+        private List<ArenaLayer> _layers;
 
         /// <summary>
         /// Human-readable name of the arena.
@@ -325,7 +326,15 @@ namespace AW2.Game
             }
         }
 
-        public AssaultWingCore Game { get; set; }
+        public AssaultWingCore Game
+        {
+            get { return _game; }
+            set
+            {
+                _game = value;
+                foreach (var gob in Gobs) gob.Game = value;
+            }
+        }
 
         /// <summary>
         /// The name of the arena.
@@ -372,7 +381,7 @@ namespace AW2.Game
         /// <summary>
         /// Layers of the arena.
         /// </summary>
-        public List<ArenaLayer> Layers { get { return layers; } }
+        public List<ArenaLayer> Layers { get { return _layers; } }
 
         /// <summary>
         /// Is the arena meant to be played. Otherwise it is only for looking at.
@@ -401,7 +410,7 @@ namespace AW2.Game
         /// </summary>
         public List<BackgroundMusic> BackgroundMusic { get { return _backgroundMusic; } }
 
-        private bool IsActive { get { return this == AssaultWingCore.Instance.DataEngine.Arena; } }
+        private bool IsActive { get { return this == Game.DataEngine.Arena; } }
 
         #endregion // Arena properties
 
@@ -431,9 +440,9 @@ namespace AW2.Game
         {
             _name = "dummyarena";
             _dimensions = new Vector2(4000, 4000);
-            layers = new List<ArenaLayer>();
-            layers.Add(new ArenaLayer());
-            Gobs = new GobCollection(layers);
+            _layers = new List<ArenaLayer>();
+            _layers.Add(new ArenaLayer());
+            Gobs = new GobCollection(_layers);
             Bin = new ArenaBin();
             _backgroundMusic = new List<BackgroundMusic>();
             light0DiffuseColor = Vector3.Zero;
@@ -510,7 +519,7 @@ namespace AW2.Game
         /// </summary>
         public void Move(Gob gob, int frameCount, bool allowSideEffects)
         {
-            Move(gob, AssaultWingCore.Instance.TargetElapsedTime.Multiply(frameCount), allowSideEffects);
+            Move(gob, Game.TargetElapsedTime.Multiply(frameCount), allowSideEffects);
         }
 
         /// <summary>
@@ -541,7 +550,7 @@ namespace AW2.Game
             while (moveTime > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
             {
                 var oldMove = gob.Move;
-                var gobFrameMove = gob.Move * (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+                var gobFrameMove = gob.Move * (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
                 int moveChunkCount = (int)Math.Ceiling(gobFrameMove.Length() / MOVE_LENGTH_MAXIMUM);
                 if (moveChunkCount == 0) moveChunkCount = 1;
                 var chunkMoveTime = moveTime.Divide(moveChunkCount);
@@ -1068,22 +1077,22 @@ namespace AW2.Game
             }
         }
 
-        private static void PlayWallCollisionSound(Gob gob, Vector2 moveDelta)
+        private void PlayWallCollisionSound(Gob gob, Vector2 moveDelta)
         {
             // Be silent on mild collisions.
             if (moveDelta.Length() < MINIMUM_COLLISION_DELTA) return;
 
             if (!(gob is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            AssaultWingCore.Instance.SoundEngine.PlaySound("Collision");
+            Game.SoundEngine.PlaySound("Collision");
         }
 
-        private static void PlayGobCollisionSound(Gob gob1, Gob gob2, Vector2 move1Delta, Vector2 move2Delta)
+        private void PlayGobCollisionSound(Gob gob1, Gob gob2, Vector2 move1Delta, Vector2 move2Delta)
         {
             // Be silent on mild collisions.
             if (move1Delta.Length() < MINIMUM_COLLISION_DELTA && move2Delta.Length() < MINIMUM_COLLISION_DELTA) return;
 
             if (!(gob1 is Gobs.Ship) && !(gob2 is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            AssaultWingCore.Instance.SoundEngine.PlaySound("Shipcollision");
+            Game.SoundEngine.PlaySound("Shipcollision");
         }
 
         private float CollisionDamage(Gob gob, Vector2 moveDelta, float damageMultiplier)
@@ -1169,6 +1178,7 @@ namespace AW2.Game
 
         public void MakeConsistent(Type limitationAttribute)
         {
+            Gobs = new GobCollection(Layers);
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 _dimensions = Vector2.Max(_dimensions, new Vector2(500));
@@ -1185,8 +1195,12 @@ namespace AW2.Game
                 fogEnd = MathHelper.Max(fogEnd, 0);
                 fogStart = MathHelper.Max(fogStart, 0);
                 _menuInfo.Name = Name;
+                foreach (var gob in Gobs)
+                {
+                    gob.Arena = this;
+                    gob.Game = Game;
+                }
             }
-            Gobs = new GobCollection(Layers);
         }
 
         #endregion
@@ -1200,20 +1214,20 @@ namespace AW2.Game
         private void InitializeGobs()
         {
             FindGameplayLayer(); // makes sure there is a gameplay backlayer
-            var oldLayers = layers;
-            layers = new List<ArenaLayer>();
+            var oldLayers = _layers;
+            _layers = new List<ArenaLayer>();
             foreach (var layer in oldLayers)
             {
-                layers.Add(layer.EmptyCopy());
+                _layers.Add(layer.EmptyCopy());
                 foreach (var gob in layer.Gobs)
                     gob.Layer = layer;
             }
-            Gobs = new GobCollection(layers);
+            Gobs = new GobCollection(_layers);
             FindGameplayLayer();
             foreach (var gob in new GobCollection(oldLayers))
                 Gob.CreateGob(Game, gob, gobb =>
                 {
-                    gobb.Layer = layers[oldLayers.IndexOf(gob.Layer)];
+                    gobb.Layer = _layers[oldLayers.IndexOf(gob.Layer)];
                     Gobs.Add(gobb);
                 });
         }
@@ -1257,7 +1271,7 @@ namespace AW2.Game
         {
             var trackerItem = new GobTrackerItem(ship, null, GobTrackerItem.PLAYER_TEXTURE, true, true, false, true, ship.Owner.PlayerColor);
 
-            foreach (var plr in AssaultWingCore.Instance.DataEngine.Players)
+            foreach (var plr in Game.DataEngine.Players)
             {
                 if (!plr.IsRemote && plr.ID != ship.Owner.ID)
                 {
@@ -1270,7 +1284,7 @@ namespace AW2.Game
         {
             var trackerItem = new GobTrackerItem(dock, null, GobTrackerItem.DOCK_TEXTURE, true, true, false, true, Color.White);
 
-            foreach (var plr in AssaultWingCore.Instance.DataEngine.Players)
+            foreach (var plr in Game.DataEngine.Players)
             {
                 if (!plr.IsRemote)
                 {
@@ -1282,8 +1296,8 @@ namespace AW2.Game
         private void AddBonusTrackerToViewports(AW2.Game.Gobs.Bonus.Bonus bonus)
         {
             var trackerItem = new GobTrackerItem(bonus, null, GobTrackerItem.BONUS_TEXTURE, true, true, false, true, Color.White);
-            
-            foreach (var plr in AssaultWingCore.Instance.DataEngine.Players)
+
+            foreach (var plr in Game.DataEngine.Players)
             {
                 if (!plr.IsRemote)
                 {
@@ -1296,7 +1310,7 @@ namespace AW2.Game
 
         private void GobAdded(Gob gob)
         {
-            if (IsActive) AssaultWingCore.Instance.GobsCounter.Increment();
+            if (IsActive) Game.GobsCounter.Increment();
             Prepare(gob);
 
             if (gob is AW2.Game.Gobs.Ship)
@@ -1313,36 +1327,36 @@ namespace AW2.Game
             }
 
             // Game server notifies game clients of the new gob.
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+            if (Game.NetworkMode == NetworkMode.Server && gob.IsRelevant)
             {
                 var message = new GobCreationMessage();
                 message.CreateToNextArena = !IsActive;
                 message.GobTypeName = gob.TypeName;
                 message.LayerIndex = Layers.IndexOf(gob.Layer);
                 message.Write(gob, AW2.Net.SerializationModeFlags.All);
-                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
+                Game.NetworkEngine.SendToGameClients(message);
             }
         }
 
         private bool GobRemoving(Gob gob)
         {
             // Game client removes relevant gobs only when the server says so.
-            return AssaultWingCore.Instance.NetworkMode != NetworkMode.Client || !gob.IsRelevant;
+            return Game.NetworkMode != NetworkMode.Client || !gob.IsRelevant;
         }
 
         private void GobRemoved(Gob gob)
         {
             // Game server notifies game clients of the removal of relevant gobs.
-            if (AssaultWingCore.Instance.NetworkMode == NetworkMode.Server && gob.IsRelevant)
+            if (Game.NetworkMode == NetworkMode.Server && gob.IsRelevant)
             {
                 if (!IsActive) throw new Exception("Removing a gob from an inactive arena during network game");
                 var message = new GobDeletionMessage();
                 message.GobId = gob.ID;
-                AssaultWingCore.Instance.NetworkEngine.SendToGameClients(message);
+                Game.NetworkEngine.SendToGameClients(message);
             }
 
             if (IsActive)
-                AssaultWingCore.Instance.GobsCounter.Decrement();
+                Game.GobsCounter.Decrement();
             if (gob.Layer == Gobs.GameplayLayer)
                 Unregister(gob);
             gob.Dispose();

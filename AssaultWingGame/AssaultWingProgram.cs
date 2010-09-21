@@ -43,7 +43,6 @@ namespace AW2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             _form = new GameForm(graphicsDeviceService, args);
-            _form.GameView.Draw += AssaultWingCore.Instance.Draw;
         }
 
         public void Run()

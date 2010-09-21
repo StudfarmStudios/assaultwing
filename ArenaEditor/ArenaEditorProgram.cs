@@ -21,13 +21,13 @@ namespace AW2
         {
             Log.Write("Assault Wing Arena Editor started");
             var graphicsDeviceService = new GraphicsDeviceService();
-            editor = new ArenaEditor();
+            game = new AssaultWingCore(graphicsDeviceService);
+            AssaultWingCore.Instance = game; // HACK: support oldschool singleton usage
+            editor = new ArenaEditor { Game = game };
             editor.Show(); // needed for retrieving the window's handle
             var app = new Application();
             AssaultWingCore.GetRealClientAreaSize = () => editor.ArenaView.Size;
             AssaultWingCore.WindowInitializing += g => editor.ArenaView;
-            game = new AssaultWingCore(graphicsDeviceService);
-            AssaultWingCore.Instance = game; // HACK: support oldschool singleton usage
             graphicsDeviceService.DeviceResetting += (sender, eventArgs) => game.UnloadContent();
             graphicsDeviceService.DeviceReset += (sender, eventArgs) => game.LoadContent();
             game.DoNotFreezeCanonicalStrings = true;

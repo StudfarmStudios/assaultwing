@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
+using AW2.Graphics;
 
 namespace AW2.Sound
 {
@@ -13,6 +14,7 @@ namespace AW2.Sound
     /// </summary>
     public class AWMusic
     {
+        private AWContentManager _content;
         private string _musicName;
         private SoundEffect _musicTrack;
         private SoundEffectInstance _musicInstance;
@@ -44,13 +46,14 @@ namespace AW2.Sound
         {
             get
             {
-                if (!MusicTrackAlive) _musicTrack = AssaultWingCore.Instance.Content.Load<SoundEffect>(_musicName);
+                if (!MusicTrackAlive) _musicTrack = _content.Load<SoundEffect>(_musicName);
                 return _musicTrack;
             }
         }
 
-        public AWMusic(string musicName)
+        public AWMusic(AWContentManager content, string musicName)
         {
+            _content = content;
             _musicName = musicName;
         }
 

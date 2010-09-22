@@ -47,18 +47,11 @@ namespace AW2
         private SurfaceFormat _preferredFullscreenFormat;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
-        private IWindow _window; // use this and not Game.Window
         private ArenaStartWaiter _arenaStartWaiter;
 
         #endregion AssaultWing fields
 
         #region Callbacks
-
-        /// <summary>
-        /// Called during initialisation of the game instance.
-        /// The event handler should return a window where AssaultWing can draw itself.
-        /// </summary>
-        public static event Func<AssaultWingCore, IWindow> WindowInitializing;
 
         /// <summary>
         /// A hack to pass the true client area size from Arena Editor to Assault Wing window.
@@ -98,15 +91,6 @@ namespace AW2
         /// The game time on this frame.
         /// </summary>
         public GameTime GameTime { get; private set; }
-
-        /// <summary>
-        /// The minimum allowed screen dimensions of the game window's client rectangle.
-        /// </summary>
-        public Rectangle ClientBoundsMin
-        {
-            get { return _window.ClientBoundsMin; }
-            set { _window.ClientBoundsMin = value; }
-        }
 
         /// <summary>
         /// Are overlay dialogs allowed.
@@ -156,8 +140,6 @@ namespace AW2
         {
             Log.Write("Creating an Assault Wing instance");
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            if (WindowInitializing == null)
-                throw new ApplicationException("AssaultWing.WindowInitializing must be set before first reference to AssaultWing.Instance");
 
             Log.Write("Loading settings from file");
             Settings = AWSettings.FromFile();
@@ -200,9 +182,6 @@ namespace AW2
                 _preferredWindowHeight = Math.Min(800, displayMode.Height);
             }
             _preferredWindowFormat = displayMode.Format;
-
-            _window = WindowInitializing(this);
-            ClientBoundsMin = new Rectangle(0, 0, _preferredWindowWidth, _preferredWindowHeight);
             AllowDialogs = true;
         }
 

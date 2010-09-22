@@ -201,7 +201,6 @@
     <Compile Include="Graphics\DrawMode2D.cs" />
     <Compile Include="Graphics\OverlayComponents\GameOverOverlayDialogData.cs" />
     <Compile Include="Graphics\GraphicsEngineImpl.cs" />
-    <Compile Include="Graphics\IWindow.cs" />
     <Compile Include="Graphics\OverlayComponents\MiniStatusOverlay.cs" />
     <Compile Include="Graphics\OverlayComponent.cs" />
     <Compile Include="Graphics\OverlayDialog.cs" />

@@ -27,14 +27,12 @@ namespace AW2
             editor.Show(); // needed for retrieving the window's handle
             var app = new Application();
             AssaultWingCore.GetRealClientAreaSize = () => editor.ArenaView.Size;
-            AssaultWingCore.WindowInitializing += g => editor.ArenaView;
             graphicsDeviceService.DeviceResetting += (sender, eventArgs) => game.UnloadContent();
             graphicsDeviceService.DeviceReset += (sender, eventArgs) => game.LoadContent();
             game.DoNotFreezeCanonicalStrings = true;
             game.SoundEngine.Enabled = false;
             game.CommandLineArgs = args;
             game.AllowDialogs = false;
-            game.ClientBoundsMin = new Microsoft.Xna.Framework.Rectangle(0, 0, 1, 1);
             game.RunBegan += Initialize;
             var xnaWindow = System.Windows.Forms.Control.FromHandle(editor.ArenaViewHost.Handle);
             xnaWindow.VisibleChanged += (sender, eventArgs) => xnaWindow.Visible = false;

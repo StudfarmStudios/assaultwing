@@ -7,7 +7,7 @@ using AW2.Menu;
 
 namespace AW2.UI
 {
-    public partial class GameForm : Form, IWindow
+    public partial class GameForm : Form
     {
         private AssaultWing _game;
         private AWGameRunner _runner;
@@ -24,6 +24,7 @@ namespace AW2.UI
         {
             _graphicsDeviceService = graphicsDeviceService;
             InitializeComponent();
+            Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _gameView.GraphicsDeviceService = graphicsDeviceService;
             graphicsDeviceService.SetWindow(Handle);
 
@@ -31,7 +32,6 @@ namespace AW2.UI
             var screen = Screen.GetWorkingArea(this);
             graphicsDeviceService.ResetDevice(screen.Width, screen.Height);
 
-            AssaultWingCore.WindowInitializing += game => new AWGameWindow(this);
             _game = new AssaultWing(graphicsDeviceService);
             AssaultWing.Instance = _game; // HACK: support older code that uses the static instance
             _game.CommandLineArgs = args;
@@ -54,7 +54,7 @@ namespace AW2.UI
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, Size.Width, Size.Height);
+            _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
             if (_game != null)
             {
                 _game.MenuEngine.WindowResize();

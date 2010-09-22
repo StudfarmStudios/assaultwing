@@ -99,9 +99,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditorWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="ArenaEditorProgram.cs" />
     <Compile Include="Game\EditorSpectator.cs" />
     <Compile Include="Graphics\EditorViewport.cs" />

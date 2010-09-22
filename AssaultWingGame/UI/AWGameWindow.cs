@@ -43,20 +43,6 @@ namespace AW2.UI
             }
         }
 
-        /// <summary>
-        /// Low-level handle to the area the game can draw on.
-        /// </summary>
-        public IntPtr Handle { get { return _window.Handle; } }
-
-        /// <summary>
-        /// Called when the dimensions of the drawable area has changed.
-        /// </summary>
-        public event EventHandler ClientSizeChanged
-        {
-            add { _window.ClientSizeChanged += value; }
-            remove { _window.ClientSizeChanged -= value; }
-        }
-
         #endregion
     }
 }

@@ -20,15 +20,5 @@ namespace AW2.Graphics
         /// Minimum allowed width and height of the area to draw on, in pixels.
         /// </summary>
         Rectangle ClientBoundsMin { get; set; }
-
-        /// <summary>
-        /// The low-level handle to the window.
-        /// </summary>
-        IntPtr Handle { get; }
-
-        /// <summary>
-        /// Called when <see cref="ClientBounds"/> has changed.
-        /// </summary>
-        event EventHandler ClientSizeChanged;
     }
 }

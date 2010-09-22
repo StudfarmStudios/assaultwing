@@ -19,13 +19,5 @@ namespace AW2
             get { return new Rectangle(0, 0, MinimumSize.Width, MinimumSize.Height); }
             set { MinimumSize = new System.Drawing.Size(value.Width, value.Height); }
         }
-
-        public new IntPtr Handle { get { return base.Handle; } }
-
-        public new event EventHandler ClientSizeChanged
-        {
-            add { SizeChanged += value; }
-            remove { SizeChanged -= value; }
-        }
     }
 }

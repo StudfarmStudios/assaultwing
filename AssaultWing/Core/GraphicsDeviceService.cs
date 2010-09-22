@@ -31,18 +31,7 @@ namespace AW2.Core
     /// </summary>
     public class GraphicsDeviceService : IGraphicsDeviceService, IDisposable
     {
-        private static GraphicsDeviceService g_instance;
         private PresentationParameters _parameters;
-
-        [Obsolete("GraphicsDeviceService.Instance property is to be removed")]
-        public static GraphicsDeviceService Instance
-        {
-            get
-            {
-                if (g_instance == null) g_instance = new GraphicsDeviceService();
-                return g_instance;
-            }
-        }
 
         // IGraphicsDeviceService events.
         public event EventHandler DeviceCreated;

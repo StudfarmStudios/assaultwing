@@ -23,11 +23,6 @@ namespace AW2.UI
         #region IWindow Members
 
         /// <summary>
-        /// The title of the window.
-        /// </summary>
-        public string Title { get { return _window.Title; } set { _window.Title = value; } }
-
-        /// <summary>
         /// Dimensions of the area the game can draw on.
         /// </summary>
         public Rectangle ClientBounds { get { return _window.ClientBounds; } }

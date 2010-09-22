@@ -12,11 +12,6 @@ namespace AW2.Graphics
     public interface IWindow
     {
         /// <summary>
-        /// Title of the window, displayed to the end-user.
-        /// </summary>
-        string Title { get; set; }
-
-        /// <summary>
         /// Width and height of the area to draw on, in pixels.
         /// </summary>
         Rectangle ClientBounds { get; }

@@ -13,11 +13,6 @@ namespace AW2.UI
         private AWGameRunner _runner;
         private GraphicsDeviceService _graphicsDeviceService;
 
-        public string Title
-        {
-            get { return Text; }
-            set { BeginInvoke((Action)(() => Text = value)); }
-        }
         public Rectangle ClientBounds { get { return new Rectangle(ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Width, ClientRectangle.Height); } }
         public Rectangle ClientBoundsMin
         {
@@ -41,6 +36,7 @@ namespace AW2.UI
             _game = new AssaultWing(graphicsDeviceService);
             AssaultWing.Instance = _game; // HACK: support older code that uses the static instance
             _game.CommandLineArgs = args;
+            _game.StatusTextChanged += text => BeginInvoke((Action)(() => Text = "Assault Wing " + text));
             _gameView.Draw += _game.Draw;
             graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
             graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
@@ -82,8 +78,8 @@ namespace AW2.UI
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
-            if (keyCode == Keys.PageUp) _graphicsDeviceService.SetFullScreen(1280, 1024);
-            if (keyCode == Keys.PageDown) _graphicsDeviceService.SetWindowed(1000, 800);
+            if (keyCode == Keys.PageUp) _graphicsDeviceService.SetFullScreen(1280, 1024); // HACK !!!
+            if (keyCode == Keys.PageDown) _graphicsDeviceService.SetWindowed(1000, 800); // HACK !!!
             return true; // the message won't be processed further; prevents window menu from opening
         }
 

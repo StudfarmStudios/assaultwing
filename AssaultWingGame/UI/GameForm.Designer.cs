@@ -36,6 +36,7 @@
             // 
             this._gameView.CausesValidation = false;
             this._gameView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._gameView.GraphicsDeviceService = null;
             this._gameView.Location = new System.Drawing.Point(0, 0);
             this._gameView.Margin = new System.Windows.Forms.Padding(0);
             this._gameView.Name = "_gameView";
@@ -52,7 +53,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1000, 800);
             this.Name = "GameForm";
-            this.Text = "GameWindow";
+            this.Text = "Assault Wing";
             this.ResumeLayout(false);
 
         }

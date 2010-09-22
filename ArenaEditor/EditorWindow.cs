@@ -12,8 +12,6 @@ namespace AW2
     /// </summary>
     public class EditorWindow : PictureBox, IWindow
     {
-        public string Title { get; set; }
-
         public Rectangle ClientBounds { get { return new Rectangle(Left, Top, Width, Height); } }
 
         public Rectangle ClientBoundsMin

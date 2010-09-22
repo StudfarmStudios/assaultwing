@@ -118,6 +118,8 @@ namespace AW2
         /// </summary>
         public bool AllowDialogs { get; set; }
 
+        public event Action<string> StatusTextChanged;
+
         #endregion AssaultWing properties
 
         #region AssaultWing performance counters
@@ -607,32 +609,36 @@ namespace AW2
 
         public override void Draw()
         {
-            if ((GameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds < 1)
+            var secondsSinceLastFramerateCheck = (GameTime.TotalRealTime - _lastFramerateCheck).TotalSeconds;
+            if (secondsSinceLastFramerateCheck < 1)
             {
                 FramesDrawnPerSecondCounter.Increment();
                 ++_framesSinceLastCheck;
             }
             else
             {
-                var newTitle = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
+                var newStatusText = "[~" + _framesSinceLastCheck + " fps]";
                 _framesSinceLastCheck = 1;
-                _lastFramerateCheck = GameTime.TotalRealTime;
+                if (secondsSinceLastFramerateCheck < 2)
+                    _lastFramerateCheck += TimeSpan.FromSeconds(1);
+                else
+                    _lastFramerateCheck = GameTime.TotalRealTime;
 
                 if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
-                    newTitle += string.Format(" [{0} ms lag]",
+                    newStatusText += string.Format(" [{0} ms lag]",
                         (int)NetworkEngine.ServerPingTime.TotalMilliseconds);
 
                 if (NetworkMode == NetworkMode.Server)
                     foreach (var conn in NetworkEngine.GameClientConnections)
-                        newTitle += string.Format(" [#{0}: {1} ms lag]",
+                        newStatusText += string.Format(" [#{0}: {1} ms lag]",
                             conn.ID,
                             (int)conn.PingInfo.PingTime.TotalMilliseconds);
 
 #if DEBUG
                 if (DataEngine.ArenaFrameCount > 0)
-                    newTitle += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
+                    newStatusText += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
 #endif
-                _window.Title = newTitle;
+                if (StatusTextChanged != null) StatusTextChanged(newStatusText);
             }
             base.Draw();
         }

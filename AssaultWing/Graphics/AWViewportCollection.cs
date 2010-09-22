@@ -6,24 +6,27 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Viewport = AW2.Graphics.AWViewport;
+using AW2.Core;
 
 namespace AW2.Graphics
 {
     public class AWViewportCollection : IEnumerable<Viewport>
     {
+        private GraphicsDeviceService _graphicsDeviceService;
         private List<Viewport> _items;
         private List<ViewportSeparator> _separators;
 
         public IEnumerable<ViewportSeparator> Separators { get { return _separators; } }
 
-        private static int WindowWidth { get { return AssaultWingCore.Instance.ClientBounds.Width; } }
-        private static int WindowHeight { get { return AssaultWingCore.Instance.ClientBounds.Height; } }
+        private int WindowWidth { get { return _graphicsDeviceService.ClientBounds.Width; } }
+        private int WindowHeight { get { return _graphicsDeviceService.ClientBounds.Height; } }
 
         #region Public methods
 
-        public AWViewportCollection(int viewports, Func<Rectangle, Viewport> viewportConstructor)
+        public AWViewportCollection(GraphicsDeviceService graphicsDeviceService, int viewports, Func<Rectangle, Viewport> viewportConstructor)
         {
             if (viewports < 0) throw new ArgumentException("Nonnegative number of viewports required");
+            _graphicsDeviceService = graphicsDeviceService;
             _items = new List<AWViewport>();
             _separators = new List<ViewportSeparator>();
             if (viewports == 0) return;
@@ -61,7 +64,7 @@ namespace AW2.Graphics
         /// An optimal arrangement of viewports preferably has this condition:
         /// - each viewport is as wide as tall.
         /// </summary>
-        private static void FindOptimalArrangement(int viewports, out int bestRows, out int bestColumns)
+        private void FindOptimalArrangement(int viewports, out int bestRows, out int bestColumns)
         {
             float bestAspectRatio = Single.MaxValue;
             bestRows = 1;

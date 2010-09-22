@@ -120,8 +120,8 @@ namespace AW2.Graphics
             var screen = gfx.Viewport;
             screen.X = 0;
             screen.Y = 0;
-            screen.Width = Game.ClientBounds.Width;
-            screen.Height = Game.ClientBounds.Height;
+            screen.Width = Game.GraphicsDeviceService.ClientBounds.Width;
+            screen.Height = Game.GraphicsDeviceService.ClientBounds.Height;
             gfx.Viewport = screen;
             gfx.Clear(new Color(0x40, 0x40, 0x40));
 

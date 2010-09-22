@@ -13,7 +13,6 @@ namespace AW2.UI
         private AWGameRunner _runner;
         private GraphicsDeviceService _graphicsDeviceService;
 
-        public Rectangle ClientBounds { get { return new Rectangle(ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Width, ClientRectangle.Height); } }
         public Rectangle ClientBoundsMin
         {
             get { return new Rectangle(0, 0, MinimumSize.Width, MinimumSize.Height); }
@@ -23,8 +22,8 @@ namespace AW2.UI
 
         public GameForm(GraphicsDeviceService graphicsDeviceService, string[] args)
         {
-            InitializeComponent();
             _graphicsDeviceService = graphicsDeviceService;
+            InitializeComponent();
             _gameView.GraphicsDeviceService = graphicsDeviceService;
             graphicsDeviceService.SetWindow(Handle);
 
@@ -55,6 +54,7 @@ namespace AW2.UI
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, Size.Width, Size.Height);
             if (_game != null)
             {
                 _game.MenuEngine.WindowResize();

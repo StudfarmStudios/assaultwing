@@ -12,11 +12,6 @@ namespace AW2.Graphics
     public interface IWindow
     {
         /// <summary>
-        /// Width and height of the area to draw on, in pixels.
-        /// </summary>
-        Rectangle ClientBounds { get; }
-
-        /// <summary>
         /// Minimum allowed width and height of the area to draw on, in pixels.
         /// </summary>
         Rectangle ClientBoundsMin { get; set; }

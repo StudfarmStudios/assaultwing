@@ -160,6 +160,7 @@ namespace AW2.Game.Gobs
                 return;
             }
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
+            if (_vertexDeclaration == null) throw new ApplicationException("Null vertex declaration, this should not happen");
             gfx.VertexDeclaration = _vertexDeclaration;
             Effect.World = Matrix.Identity;
             Effect.Projection = projection;

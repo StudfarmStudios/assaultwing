@@ -79,7 +79,7 @@ namespace AW2.Graphics
         {
             // Set viewport exactly to the dialog's area.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var screen = Game.ClientBounds;
+            var screen = Game.GraphicsDeviceService.ClientBounds;
             var newViewport = gfx.Viewport;
             newViewport.X = (screen.Width - _dialogTexture.Width) / 2;
             newViewport.Y = (screen.Height - _dialogTexture.Height) / 2;

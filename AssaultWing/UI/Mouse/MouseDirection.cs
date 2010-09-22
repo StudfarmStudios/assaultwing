@@ -8,6 +8,8 @@ namespace AW2.UI.Mouse
     /// </summary>
     public class MouseDirection : Control
     {
+        private const int MOUSE_MOVEVEMENT_MAXIMUM_RADIUS = 200;
+
         /// <summary>
         /// The mouse pointer direction that determines the control's state.
         /// </summary>
@@ -58,13 +60,13 @@ namespace AW2.UI.Mouse
             switch (_direction)
             {
                 case MouseDirections.Left:
-                    return Math.Max(-(NewState.Mouse.X - AssaultWingCore.Instance.ClientBounds.Width / 2), 0);
+                    return Math.Max(-(NewState.Mouse.X - MOUSE_MOVEVEMENT_MAXIMUM_RADIUS), 0);
                 case MouseDirections.Right:
-                    return Math.Max(NewState.Mouse.X - AssaultWingCore.Instance.ClientBounds.Width / 2, 0);
+                    return Math.Max(NewState.Mouse.X - MOUSE_MOVEVEMENT_MAXIMUM_RADIUS, 0);
                 case MouseDirections.Up:
-                    return Math.Max(-(NewState.Mouse.Y - AssaultWingCore.Instance.ClientBounds.Height / 2), 0);
+                    return Math.Max(-(NewState.Mouse.Y - MOUSE_MOVEVEMENT_MAXIMUM_RADIUS), 0);
                 case MouseDirections.Down:
-                    return Math.Max(NewState.Mouse.Y - AssaultWingCore.Instance.ClientBounds.Height / 2, 0);
+                    return Math.Max(NewState.Mouse.Y - MOUSE_MOVEVEMENT_MAXIMUM_RADIUS, 0);
                 default: throw new Exception("Unhandled mouse direction " + _direction);
             }
         }

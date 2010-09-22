@@ -1,17 +1,14 @@
-﻿#region File Description
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 // GraphicsDeviceService.cs
 //
 // Microsoft XNA Community Game Platform
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //-----------------------------------------------------------------------------
-#endregion
 
-#region Using Statements
 using System;
 using System.Threading;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-#endregion
 
 // The IGraphicsDeviceService interface requires a DeviceCreated event, but we
 // always just create the device inside our constructor, so we have no place to
@@ -40,6 +37,7 @@ namespace AW2.Core
         public event EventHandler DeviceResetting;
 
         public GraphicsDevice GraphicsDevice { get; private set; }
+        public Rectangle ClientBounds { get; set; }
 
         public GraphicsDeviceService() { }
 

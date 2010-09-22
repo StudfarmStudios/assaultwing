@@ -175,8 +175,8 @@ namespace AW2.Menu
 
         public override void Initialize()
         {
-            _screenWidth = Game.ClientBounds.Width;
-            _screenHeight = Game.ClientBounds.Height;
+            _screenWidth = Game.GraphicsDeviceService.ClientBounds.Width;
+            _screenHeight = Game.GraphicsDeviceService.ClientBounds.Height;
 
             _components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             _components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
@@ -398,8 +398,8 @@ namespace AW2.Menu
         /// or after switching between windowed and fullscreen mode.
         public void WindowResize()
         {
-            _screenWidth = Game.ClientBounds.Width;
-            _screenHeight = Game.ClientBounds.Height;
+            _screenWidth = Game.GraphicsDeviceService.ClientBounds.Width;
+            _screenHeight = Game.GraphicsDeviceService.ClientBounds.Height;
 
             int oldViewWidth = _viewWidth;
             int oldViewHeight = _viewHeight;
@@ -417,8 +417,8 @@ namespace AW2.Menu
         {
             // If client bounds are very small, scale the menu view down
             // to fit more in the screen.
-            _viewWidth = Game.ClientBounds.Width;
-            _viewHeight = Game.ClientBounds.Height;
+            _viewWidth = Game.GraphicsDeviceService.ClientBounds.Width;
+            _viewHeight = Game.GraphicsDeviceService.ClientBounds.Height;
 
             if (_screenWidth == 0 || _screenHeight == 0)
                 return;

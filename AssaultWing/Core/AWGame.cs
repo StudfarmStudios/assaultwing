@@ -12,7 +12,7 @@ namespace AW2.Core
     /// </summary>
     public class AWGame : IDisposable
     {
-        public IGraphicsDeviceService GraphicsDeviceService { get; private set; }
+        public GraphicsDeviceService GraphicsDeviceService { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
         public List<AWGameComponent> Components { get; private set; }

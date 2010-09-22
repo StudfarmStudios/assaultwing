@@ -88,7 +88,7 @@ namespace AW2.Game
             };
             Devices.Removed += device => device.Dispose();
 
-            Viewports = new AWViewportCollection(0, null);
+            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
             _templates = new List<object>();
             ArenaPlaylist = new Playlist(new string[] { "Amazonas" });
         }
@@ -244,7 +244,7 @@ namespace AW2.Game
         {
             var localPlayers = Game.DataEngine.Spectators.Where(player => player.NeedsViewport);
             var playerEnumerator = localPlayers.GetEnumerator();
-            Viewports = new AWViewportCollection(localPlayers.Count(), rectangle =>
+            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, localPlayers.Count(), rectangle =>
             {
                 if (!playerEnumerator.MoveNext()) throw new ApplicationException("Ran out of players when assigning viewports");
                 return playerEnumerator.Current.CreateViewport(rectangle);
@@ -259,7 +259,7 @@ namespace AW2.Game
         public void RearrangeViewports(int privilegedPlayer)
         {
             var player = Game.DataEngine.Spectators[privilegedPlayer];
-            Viewports = new AWViewportCollection(1, viewport => player.CreateViewport(viewport));
+            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 1, viewport => player.CreateViewport(viewport));
         }
 
         #endregion viewports
@@ -395,7 +395,7 @@ namespace AW2.Game
         {
             if (Arena != null) Arena.Dispose();
             Arena = null;
-            Viewports = new AWViewportCollection(0, null);
+            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
             foreach (var player in Spectators) player.ResetForArena();
         }
 

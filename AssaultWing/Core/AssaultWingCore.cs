@@ -100,11 +100,6 @@ namespace AW2
         public GameTime GameTime { get; private set; }
 
         /// <summary>
-        /// The screen dimensions of the game window's client rectangle.
-        /// </summary>
-        public Rectangle ClientBounds { get { return _window.ClientBounds; } }
-
-        /// <summary>
         /// The minimum allowed screen dimensions of the game window's client rectangle.
         /// </summary>
         public Rectangle ClientBoundsMin

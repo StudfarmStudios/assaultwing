@@ -42,7 +42,7 @@ namespace AW2.UI
 
             // Reset mouse cursor to the middle of the game window.
             if (_eatMouse)
-                Microsoft.Xna.Framework.Input.Mouse.SetPosition(Game.ClientBounds.Width / 2, Game.ClientBounds.Height / 2);
+                Microsoft.Xna.Framework.Input.Mouse.SetPosition(Game.GraphicsDeviceService.ClientBounds.Width / 2, Game.GraphicsDeviceService.ClientBounds.Height / 2);
 
             Control.SetState(ref _oldState, ref newState);
             _oldState = newState;

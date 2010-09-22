@@ -23,11 +23,6 @@ namespace AW2.UI
         #region IWindow Members
 
         /// <summary>
-        /// Dimensions of the area the game can draw on.
-        /// </summary>
-        public Rectangle ClientBounds { get { return _window.ClientBounds; } }
-
-        /// <summary>
         /// Minimum dimensions of the area the game can draw on.
         /// </summary>
         public Rectangle ClientBoundsMin

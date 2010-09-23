@@ -8,10 +8,10 @@ using AW2.UI;
 
 namespace AW2
 {
-    static class ArenaEditorProgram
+    public class ArenaEditorProgram
     {
-        private static ArenaEditor editor;
-        private static AssaultWingCore game;
+        private GraphicsDeviceService _graphicsDeviceService;
+        private ArenaEditor _editor;
 
         /// <summary>
         /// The main entry point for Assault Wing Arena Editor.
@@ -19,47 +19,25 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            Log.Write("Assault Wing Arena Editor started");
-            var graphicsDeviceService = new GraphicsDeviceService();
-            game = new AssaultWingCore(graphicsDeviceService);
-            AssaultWingCore.Instance = game; // HACK: support oldschool singleton usage
-            editor = new ArenaEditor { Game = game };
-            editor.Show(); // needed for retrieving the window's handle
-            graphicsDeviceService.SetWindow(editor.ArenaView.Handle);
-            var app = new Application();
-            AssaultWingCore.GetRealClientAreaSize = () => editor.ArenaView.Size;
-            graphicsDeviceService.DeviceResetting += (sender, eventArgs) => game.UnloadContent();
-            graphicsDeviceService.DeviceReset += (sender, eventArgs) => game.LoadContent();
-            game.DoNotFreezeCanonicalStrings = true;
-            game.SoundEngine.Enabled = false;
-            game.CommandLineArgs = args;
-            game.AllowDialogs = false;
-            game.RunBegan += Initialize;
-            var xnaWindow = System.Windows.Forms.Control.FromHandle(editor.ArenaViewHost.Handle);
-            xnaWindow.VisibleChanged += (sender, eventArgs) => xnaWindow.Visible = false;
-            var runner = new AWGameRunner(game,
-                () => editor.ArenaView.BeginInvoke((Action)editor.ArenaView.Invalidate),
-                gameTime => editor.ArenaView.BeginInvoke((Action)(() => game.Update(gameTime))));
-            app.Startup += (sender, eventArgs) => runner.Run();
-            app.Exit += (sender, eventArgs) => runner.Exit();
-            app.Run(editor);
+            using (var graphicsDeviceService = new GraphicsDeviceService())
+            {
+                var editor = new ArenaEditorProgram(graphicsDeviceService, args);
+                editor.Run();
+            }
         }
 
-        private static void Initialize()
+        public ArenaEditorProgram(GraphicsDeviceService graphicsDeviceService, string[] args)
         {
-            game.DataEngine.Spectators.Clear();
-            var spectatorControls = new PlayerControls
-            {
-                Thrust = new KeyboardKey(Keys.Up),
-                Left = new KeyboardKey(Keys.Left),
-                Right = new KeyboardKey(Keys.Right),
-                Down = new KeyboardKey(Keys.Down),
-                Fire1 = new KeyboardKey(Keys.RightControl),
-                Fire2 = new KeyboardKey(Keys.RightShift),
-                Extra = new KeyboardKey(Keys.Enter)
-            };
-            var spectator = new EditorSpectator(game, spectatorControls);
-            game.DataEngine.Spectators.Add(spectator);
+            Log.Write("Assault Wing Arena Editor started");
+            _graphicsDeviceService = graphicsDeviceService;
+            _editor = new ArenaEditor(graphicsDeviceService, args);
+        }
+
+        public void Run()
+        {
+            AssaultWingCore.GetRealClientAreaSize = () => _editor.ArenaView.Size;
+            var app = new Application();
+            app.Run(_editor);
         }
     }
 }

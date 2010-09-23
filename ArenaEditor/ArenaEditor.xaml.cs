@@ -14,6 +14,7 @@ using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 using Microsoft.Win32;
 using System.Windows.Input;
+using AW2.Core;
 
 namespace AW2
 {
@@ -32,6 +33,9 @@ namespace AW2
             }
         }
 
+        private GraphicsDeviceService _graphicsDeviceService;
+        private AssaultWingCore _game;
+        private AWGameRunner _runner;
         private System.Windows.Forms.MouseButtons _mouseButtons;
         private Point _lastMouseLocation, _dragStartLocation;
         private bool _isDragging;
@@ -39,17 +43,48 @@ namespace AW2
         /// <summary>
         /// Must be set right after creation.
         /// </summary>
-        public AssaultWingCore Game { get; set; }
-        private EditorSpectator Spectator { get { return (EditorSpectator)Game.DataEngine.Spectators.First(); } }
+        private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
 
-        public ArenaEditor()
+        public ArenaEditor(GraphicsDeviceService graphicsDeviceService, string[] args)
         {
+            _graphicsDeviceService = graphicsDeviceService;
             InitializeComponent();
+            graphicsDeviceService.SetWindow(ArenaView.Handle);
+            _game = new AssaultWingCore(graphicsDeviceService);
+            AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
+            _graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
+            _graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
+            _game.CommandLineArgs = args;
+            _game.DoNotFreezeCanonicalStrings = true;
+            _game.SoundEngine.Enabled = false;
+            _game.AllowDialogs = false;
+            _game.RunBegan += InitializeGame;
+            ArenaView.GraphicsDeviceService = graphicsDeviceService;
+            ArenaView.Draw += _game.Draw;
+            _runner = new AWGameRunner(_game,
+                () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
+                gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));
+            Loaded += (sender, eventArgs) => _runner.Run();
+            Unloaded += (sender, eventArgs) => _runner.Exit();
         }
 
         #region Control event handlers
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+            _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
+            if (_game != null) _game.DataEngine.RearrangeViewports();
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            _runner.Exit();
+            DoEvents(); // finish processing BeginInvoke()d Update() and Draw() calls
+            base.OnClosing(e);
+        }
 
         private void LoadArena_Click(object sender, RoutedEventArgs e)
         {
@@ -78,12 +113,12 @@ namespace AW2
                     Log.Write("Failed to load arena " + arenaFilename + ": " + ex);
                     return;
                 }
-                var data = Game.DataEngine;
+                var data = _game.DataEngine;
                 data.ProgressBar.Task = () => data.InitializeFromArena(arena, false);
                 data.ProgressBar.StartTask();
                 while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
                 data.ProgressBar.FinishTask();
-                Game.StartArena();
+                _game.StartArena();
                 UpdateControlsFromArena();
                 ApplyViewSettingsToAllViewports();
             }
@@ -95,7 +130,7 @@ namespace AW2
 
         private void SaveArena_Click(object sender, RoutedEventArgs e)
         {
-            var arena = Game.DataEngine.Arena;
+            var arena = _game.DataEngine.Arena;
             if (arena == null) return;
             arena.Name = ArenaName.Text;
             var fileDialog = new SaveFileDialog
@@ -163,7 +198,7 @@ namespace AW2
                 // Left mouse button click selects gobs.
                 if (!_isDragging && e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
-                    if (Game.DataEngine.Arena == null) return;
+                    if (_game.DataEngine.Arena == null) return;
                     GobNames.Items.Clear();
                     var pointInViewport = new Vector2(e.Location.X, e.Location.Y);
                     var viewport = GetViewport(e.Location);
@@ -260,10 +295,16 @@ namespace AW2
 
         #region Helpers
 
+        private void DoEvents()
+        {
+            // Invoke() returns after all pending events are processed.
+            Dispatcher.Invoke((Action)(() => { }));
+        }
+
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
             int layerIndex = 0;
-            foreach (var layer in Game.DataEngine.Arena.Layers)
+            foreach (var layer in _game.DataEngine.Arena.Layers)
             {
                 var ray = viewport.ToRay(pointInViewport, layer.Z);
                 foreach (var gob in layer.Gobs)
@@ -308,20 +349,20 @@ namespace AW2
         /// positive X pointing right and positive Y pointing down.
         private AWViewport GetViewport(Point location)
         {
-            var viewports = Game.DataEngine.Viewports;
+            var viewports = _game.DataEngine.Viewports;
             return viewports.FirstOrDefault(vp => vp.OnScreen.Contains(location.X, location.Y));
         }
 
         private void ForEachEditorViewport(Action<EditorViewport> action)
         {
-            foreach (var viewport in Game.DataEngine.Viewports)
+            foreach (var viewport in _game.DataEngine.Viewports)
                 if (viewport is EditorViewport)
                     action((EditorViewport)viewport);
         }
 
         private void UpdateControlsFromArena()
         {
-            var arena = Game.DataEngine.Arena;
+            var arena = _game.DataEngine.Arena;
             ArenaName.Text = arena.Name;
 
             // Put arena layers on display.
@@ -334,7 +375,7 @@ namespace AW2
 
         private void ApplyViewSettingsToAllViewports()
         {
-            var arena = Game.DataEngine.Arena;
+            var arena = _game.DataEngine.Arena;
             if (arena != null && EnableFog.IsChecked.HasValue)
                 arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
             ForEachEditorViewport(viewport => ApplyViewSettings(viewport));
@@ -345,6 +386,26 @@ namespace AW2
             viewport.ZoomRatio = (float)ZoomRatio;
             if (CircleGobs.IsChecked.HasValue)
                 viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
+        }
+
+        private void InitializeGame()
+        {
+            _game.DataEngine.Spectators.Clear();
+            var spectatorControls = new PlayerControls
+            {
+                Thrust = new KeyboardKey(Keys.Up),
+                Left = new KeyboardKey(Keys.Left),
+                Right = new KeyboardKey(Keys.Right),
+                Down = new KeyboardKey(Keys.Down),
+                Fire1 = new KeyboardKey(Keys.RightControl),
+                Fire2 = new KeyboardKey(Keys.RightShift),
+                Extra = new KeyboardKey(Keys.Enter)
+            };
+            var spectator = new EditorSpectator(_game, spectatorControls);
+            _game.DataEngine.Spectators.Add(spectator);
+            _game.DataEngine.Enabled = true;
+            _game.GraphicsEngine.Enabled = true;
+            _game.GraphicsEngine.Visible = true;
         }
 
         #endregion Helpers

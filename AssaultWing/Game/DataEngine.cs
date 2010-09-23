@@ -143,7 +143,6 @@ namespace AW2.Game
                 try
                 {
                     arena = Arena.FromFile(arenaFilename);
-                    arena.Game = Game;
                     InitializeFromArena(arena, true);
                     return true;
                 }
@@ -192,6 +191,7 @@ namespace AW2.Game
             CustomOperations = null;
             _preparedArena = arena;
             _preparedArena.IsForPlaying = initializeForPlaying;
+            _preparedArena.Game = Game;
             if (initializeForPlaying) _preparedArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, _preparedArena.BinFilename));
             Game.LoadArenaContent(_preparedArena);
             int wallCount = _preparedArena.Gobs.Count(gob => gob is Wall);

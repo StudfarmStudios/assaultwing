@@ -25,6 +25,7 @@ namespace AW2
             AssaultWingCore.Instance = game; // HACK: support oldschool singleton usage
             editor = new ArenaEditor { Game = game };
             editor.Show(); // needed for retrieving the window's handle
+            graphicsDeviceService.SetWindow(editor.ArenaView.Handle);
             var app = new Application();
             AssaultWingCore.GetRealClientAreaSize = () => editor.ArenaView.Size;
             graphicsDeviceService.DeviceResetting += (sender, eventArgs) => game.UnloadContent();

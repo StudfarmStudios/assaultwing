@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Pengs
 {
@@ -18,7 +19,7 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// Type of initial particle facing.
         /// </summary>
-        enum FacingType
+        private enum FacingType
         {
             /// <summary>
             /// Particles face the average emission direction.

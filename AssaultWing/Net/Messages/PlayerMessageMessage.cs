@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Game;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
 {

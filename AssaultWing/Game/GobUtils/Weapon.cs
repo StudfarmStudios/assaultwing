@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game.Weapons;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using Ship = AW2.Game.Gobs.Ship;
 
 namespace AW2.Game.GobUtils

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using AW2.Helpers;
-using AW2.Net;
+using AW2.Helpers.Serialization;
 using AW2.UI;
 
 namespace AW2.Game
@@ -102,7 +101,7 @@ namespace AW2.Game
 
         #region INetworkSerializable
 
-        public virtual void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {

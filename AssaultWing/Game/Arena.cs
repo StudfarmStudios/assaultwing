@@ -7,6 +7,7 @@ using AW2.Core;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Helpers.Serialization;
 using AW2.Net.Messages;
 using AW2.Sound;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
@@ -1333,7 +1334,7 @@ namespace AW2.Game
                 message.CreateToNextArena = !IsActive;
                 message.GobTypeName = gob.TypeName;
                 message.LayerIndex = Layers.IndexOf(gob.Layer);
-                message.Write(gob, AW2.Net.SerializationModeFlags.All);
+                message.Write(gob, SerializationModeFlags.All);
                 Game.NetworkEngine.SendToGameClients(message);
             }
         }

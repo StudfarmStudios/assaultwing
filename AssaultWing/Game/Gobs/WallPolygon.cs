@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -15,7 +16,7 @@ namespace AW2.Game.Gobs
         /// The name indexes the static texture bank in DataEngine.
         /// </summary>
         [RuntimeState]
-        CanonicalString textureName;
+        private CanonicalString textureName;
 
         /// <summary>
         /// Names of all textures that this gob type will ever use.

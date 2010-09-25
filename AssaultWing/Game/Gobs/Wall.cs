@@ -8,6 +8,7 @@ using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Helpers.Serialization;
 using AW2.Net.Messages;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
@@ -208,21 +209,21 @@ namespace AW2.Game.Gobs
 
         #endregion Methods related to gobs' functionality in the game world
 
-        public override void Serialize(Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             // HACK to reduce network traffic
-            var reducedMode = (mode & AW2.Net.SerializationModeFlags.ConstantData) != 0
-                ? AW2.Net.SerializationModeFlags.All
-                : AW2.Net.SerializationModeFlags.None;
+            var reducedMode = (mode & SerializationModeFlags.ConstantData) != 0
+                ? SerializationModeFlags.All
+                : SerializationModeFlags.None;
             base.Serialize(writer, reducedMode);
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             // HACK to reduce network traffic
-            var reducedMode = (mode & AW2.Net.SerializationModeFlags.ConstantData) != 0
-                ? AW2.Net.SerializationModeFlags.All
-                : AW2.Net.SerializationModeFlags.None;
+            var reducedMode = (mode & SerializationModeFlags.ConstantData) != 0
+                ? SerializationModeFlags.All
+                : SerializationModeFlags.None;
             base.Deserialize(reader, reducedMode, framesAgo);
         }
 

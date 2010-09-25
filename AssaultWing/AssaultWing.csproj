@@ -180,9 +180,9 @@
     <Compile Include="Graphics\OverlayComponents\GobTrackerOverlay.cs" />
     <Compile Include="Graphics\IntroEngine.cs" />
     <Compile Include="Graphics\OverlayComponents\ScoreOverlay.cs" />
-    <Compile Include="Helpers\IAWSerializable.cs" />
+    <Compile Include="Helpers\Serialization\IAWSerializable.cs" />
     <Compile Include="Helpers\MiscHelper.cs" />
-    <Compile Include="Helpers\TypeLoader.cs" />
+    <Compile Include="Helpers\Serialization\TypeLoader.cs" />
     <Compile Include="Game\GobUtils\Weapon.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
     <Compile Include="Game\Weapons\SelfDestruct.cs" />
@@ -246,7 +246,7 @@
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
-    <Compile Include="Helpers\Serialization.cs" />
+    <Compile Include="Helpers\Serialization\Serialization.cs" />
     <Compile Include="Helpers\SpatialGrid.cs" />
     <Compile Include="Helpers\StepwiseAction.cs" />
     <Compile Include="Helpers\SuspendableStepwiseThread.cs" />
@@ -277,7 +277,7 @@
     <Compile Include="Net\MessageSendType.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\Connections\GameServerConnection.cs" />
-    <Compile Include="Net\INetworkSerializable.cs" />
+    <Compile Include="Helpers\Serialization\INetworkSerializable.cs" />
     <Compile Include="Net\Connections\ManagementServerConnection.cs" />
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\MessageException.cs" />
@@ -313,12 +313,12 @@
     <Compile Include="Net\Messages\StartGameMessage.cs" />
     <Compile Include="Net\Messages\WallHoleMessage.cs" />
     <Compile Include="Net\MessageType.cs" />
-    <Compile Include="Net\NetworkBinaryReader.cs" />
-    <Compile Include="Net\NetworkBinaryWriter.cs" />
+    <Compile Include="Helpers\Serialization\NetworkBinaryReader.cs" />
+    <Compile Include="Helpers\Serialization\NetworkBinaryWriter.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\NetworkException.cs" />
     <Compile Include="Net\Result.cs" />
-    <Compile Include="Net\SerializationModeFlags.cs" />
+    <Compile Include="Helpers\Serialization\SerializationModeFlags.cs" />
     <Compile Include="Net\ConnectionUtils\StaticPortMapper.cs" />
     <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Net\ConnectionUtils\ThreadSafeWrapper.cs" />

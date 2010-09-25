@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers
 {
@@ -16,16 +16,16 @@ namespace AW2.Helpers
     public abstract class Clonable
     {
         [TypeParameter, RuntimeState]
-        CanonicalString typeName;
+        private CanonicalString typeName;
 
-        delegate void CloneDelegate(Clonable clone);
-        delegate Clonable ConstructorDelegate();
-        static Dictionary<Type, DynamicMethod> g_cloneMethods = new Dictionary<Type, DynamicMethod>();
-        static Dictionary<Type, DynamicMethod> g_cloneMethodsWithRuntimeState = new Dictionary<Type, DynamicMethod>();
-        static Dictionary<Type, DynamicMethod> g_constructors = new Dictionary<Type, DynamicMethod>();
-        List<CloneDelegate> _cloneDelegates;
-        List<CloneDelegate> _cloneDelegatesWithRuntimeState;
-        ConstructorDelegate _constructorDelegate;
+        private delegate void CloneDelegate(Clonable clone);
+        private delegate Clonable ConstructorDelegate();
+        private static Dictionary<Type, DynamicMethod> g_cloneMethods = new Dictionary<Type, DynamicMethod>();
+        private static Dictionary<Type, DynamicMethod> g_cloneMethodsWithRuntimeState = new Dictionary<Type, DynamicMethod>();
+        private static Dictionary<Type, DynamicMethod> g_constructors = new Dictionary<Type, DynamicMethod>();
+        private List<CloneDelegate> _cloneDelegates;
+        private List<CloneDelegate> _cloneDelegatesWithRuntimeState;
+        private ConstructorDelegate _constructorDelegate;
 
         public CanonicalString TypeName { get { return typeName; } }
 
@@ -120,7 +120,7 @@ namespace AW2.Helpers
             return clone;
         }
 
-        static void CreateCloneMethods()
+        private static void CreateCloneMethods()
         {
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
@@ -131,7 +131,7 @@ namespace AW2.Helpers
             }
         }
 
-        static DynamicMethod CreateConstructor(Type type)
+        private static DynamicMethod CreateConstructor(Type type)
         {
             Type returnType = typeof(Clonable);
             Type[] parameterTypes = { typeof(Clonable) };
@@ -151,16 +151,16 @@ namespace AW2.Helpers
             return dyna;
         }
 
-        static DynamicMethod CreateCloneMethod(Type type, params Type[] cloneFieldAttributes)
+        private static DynamicMethod CreateCloneMethod(Type type, params Type[] cloneFieldAttributes)
         {
             Type returnType = null;
             Type[] parameterTypes = { typeof(Clonable), typeof(Clonable) };
             var dyna = new DynamicMethod("Clone", returnType, parameterTypes, type);
             var generator = dyna.GetILGenerator();
-            var deepCopyMethod = typeof(Serialization).GetMethod("DeepCopy");
+            var deepCopyMethod = typeof(AW2.Helpers.Serialization.Serialization).GetMethod("DeepCopy");
 
             // copy all fields from this to parameter
-            var fields = cloneFieldAttributes.SelectMany(att => Serialization.GetDeclaredFields(type, att, null));
+            var fields = cloneFieldAttributes.SelectMany(att => AW2.Helpers.Serialization.Serialization.GetDeclaredFields(type, att, null));
             foreach (var field in fields) EmitFieldCopyIL(generator, deepCopyMethod, field);
             generator.Emit(OpCodes.Ret);
             return dyna;

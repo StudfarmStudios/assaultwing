@@ -1,5 +1,6 @@
 using System;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using AW2.Sound;
 
 namespace AW2.Game.Gobs

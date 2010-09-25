@@ -9,6 +9,7 @@ using AW2.Game;
 using AW2.Game.GobUtils;
 using AW2.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using AW2.Net;
 using AW2.Net.Connections;
 using AW2.Net.Messages;

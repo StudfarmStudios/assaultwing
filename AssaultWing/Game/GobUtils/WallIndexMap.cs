@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using AWRectangle = AW2.Helpers.Geometric.Rectangle;
 using IndexMapData = AW2.Game.GobUtils.WallIndexMap.ArrayPlusArrayOfArraysData;
 using TriInt = System.Int16;

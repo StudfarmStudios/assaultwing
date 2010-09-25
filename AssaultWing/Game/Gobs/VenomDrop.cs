@@ -1,6 +1,7 @@
 ﻿using System;
 using AW2.Game.BonusActions;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {

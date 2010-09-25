@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -17,7 +17,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Note: This field overrides the type parameter Gob.modelName.
         [RuntimeState]
-        CanonicalString propModelName;
+        private CanonicalString propModelName;
 
         /// <summary>
         /// Names of all models that this gob type will ever use.
@@ -63,10 +63,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)propModelName.Canonical);
             }
@@ -77,10 +77,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 propModelName = new CanonicalString(reader.ReadInt32());
                 base.ModelName = propModelName;

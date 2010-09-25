@@ -4,9 +4,8 @@ using NUnit.Framework;
 #endif
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
-using AW2.Net;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
 {

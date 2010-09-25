@@ -1,14 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers.Geometric
 {
     /// <summary>
     /// Interface for a geometric primitive.
     /// </summary>
-    public interface IGeomPrimitive : AW2.Net.INetworkSerializable
+    public interface IGeomPrimitive : INetworkSerializable
     {
         /// <summary>
         /// A rectangle that contains the geometric primitive.

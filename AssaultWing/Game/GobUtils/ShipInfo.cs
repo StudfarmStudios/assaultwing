@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.GobUtils
 {
@@ -32,9 +29,5 @@ namespace AW2.Game.GobUtils
         public EquipInfoAmountType Steering { get { return _steering; } set { _steering = value; } }
         public EquipInfoAmountType ModEnergy { get { return _modEnergy; } set { _modEnergy = value; } }
         public EquipInfoAmountType SpecialEnergy { get { return _specialEnergy; } set { _specialEnergy = value; } }
-
-        public ShipInfo()
-        {
-        }
     }
 }

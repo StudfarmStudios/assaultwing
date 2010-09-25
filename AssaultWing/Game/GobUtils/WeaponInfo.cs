@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.GobUtils
 {

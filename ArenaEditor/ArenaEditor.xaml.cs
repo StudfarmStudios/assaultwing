@@ -9,6 +9,7 @@ using AW2.Game;
 using AW2.Game.Gobs;
 using AW2.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using AW2.UI;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;

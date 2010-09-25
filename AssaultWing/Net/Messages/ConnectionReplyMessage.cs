@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
 {

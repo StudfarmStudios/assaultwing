@@ -1,27 +1,15 @@
 using System;
 using System.Linq;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs.Bonus
 {
-
-
     /// <summary>
     /// A bonus that can be collected by a player.
     /// </summary>
     public class RandomBonus : Bonus
     {
-        /*TODO: Randon bonus needs to be refactored*/
-        #region Bonus fields
-/*
-        /// <summary>
-        /// The possibile bonus actions that collecting the bonus can activate.
-        /// </summary>
-        [TypeParameter, ShallowCopy]
-        BonusActionPossibility[] possibilities;
-*/        
-        #endregion Bonus fields
-
         /// This constructor is only for serialisation.
         public RandomBonus()
         {
@@ -29,10 +17,6 @@ namespace AW2.Game.Gobs.Bonus
             deathTime = new TimeSpan(0, 1, 20);
         }
 
-        /// <summary>
-        /// Creates a new bonus.
-        /// </summary>
-        /// <param name="typeName">Type of the bonus.</param>
         public RandomBonus(CanonicalString typeName)
             : base(typeName)
         {

@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
-using AW2.Net;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -38,7 +38,7 @@ namespace AW2.Game.Gobs
 
         #region INetworkSerializable Members
 
-        public void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
@@ -47,7 +47,7 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, int framesAgo)
+        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
@@ -159,10 +159,10 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 // TODO: Deserialise 'spawnArea'
                 _spawnInterval = reader.ReadSingle();

@@ -2,6 +2,7 @@
 using System.Deployment.Application;
 using System.IO;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Settings
 {

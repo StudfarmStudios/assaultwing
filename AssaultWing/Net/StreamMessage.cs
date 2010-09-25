@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Net
 {

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using AW2.Helpers;
 
-namespace AW2.Helpers
+namespace AW2.Helpers.Serialization
 {
     /// <summary>
     /// Handles loading and saving template instances that represent user-defined types

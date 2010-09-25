@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -15,7 +16,7 @@ namespace AW2.Game.Gobs
         /// Area in which spawning takes place.
         /// </summary>
         [RuntimeState]
-        IGeomPrimitive _spawnArea;
+        private IGeomPrimitive _spawnArea;
 
         /// <summary>
         /// Bounding volume of the 3D visuals of the gob, in world coordinates.

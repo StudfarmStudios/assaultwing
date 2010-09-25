@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -123,10 +124,10 @@ namespace AW2.Game.Gobs
             _messageFont = Game.Content.Load<SpriteFont>("ConsoleFont");
         }
 
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)((CanonicalString)IconName).Canonical);
                 writer.Write((Color)DrawColor);
@@ -134,10 +135,10 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 int canonical = reader.ReadInt32();
                 IconName = (CanonicalString)canonical;

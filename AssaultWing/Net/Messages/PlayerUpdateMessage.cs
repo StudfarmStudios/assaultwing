@@ -1,4 +1,6 @@
-﻿namespace AW2.Net.Messages
+﻿using AW2.Helpers.Serialization;
+
+namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client updating

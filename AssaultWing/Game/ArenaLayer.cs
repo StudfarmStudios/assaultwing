@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game
 {
@@ -15,17 +16,17 @@ namespace AW2.Game
     public class ArenaLayer : IConsistencyCheckable
     {
         [TypeParameter]
-        bool isGameplayLayer;
+        private bool isGameplayLayer;
         [TypeParameter]
-        float z;
+        private float z;
         [TypeParameter]
-        CanonicalString parallaxName;
+        private CanonicalString parallaxName;
 
         // This field will be serialised so that the gobs have their runtime state
         // (positions, movements, etc.) serialised and not their type parameters.
         [TypeParameter]
         [LimitationSwitch(typeof(TypeParameterAttribute), typeof(RuntimeStateAttribute))]
-        ArenaLayerGobCollection gobs;
+        private ArenaLayerGobCollection gobs;
 
         /// <summary>
         /// The gobs on this arena layer.

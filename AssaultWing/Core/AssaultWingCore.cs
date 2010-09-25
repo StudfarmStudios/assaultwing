@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game;
 using AW2.Graphics;
@@ -17,7 +16,6 @@ using AW2.Net.Messages;
 using AW2.Settings;
 using AW2.Sound;
 using AW2.UI;
-using AW2.UI.Mouse;
 
 namespace AW2
 {

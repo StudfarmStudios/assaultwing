@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game
 {

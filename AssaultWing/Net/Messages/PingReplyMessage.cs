@@ -2,6 +2,7 @@
 using NUnit.Framework;
 #endif
 using System;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AW2.Net
+namespace AW2.Helpers.Serialization
 {
     /// <summary>
     /// An entity that supports serialisation for sending over a network

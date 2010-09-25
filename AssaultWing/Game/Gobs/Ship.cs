@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using AW2.Sound;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Game.Gobs
 {
@@ -395,17 +396,17 @@ namespace AW2.Game.Gobs
             _exhaustAmountUpdated = false;
         }
 
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 if (Weapon2 != null) writer.Write((int)Weapon2.TypeName.Canonical);
                 else writer.Write((int)CanonicalString.Null.Canonical);
                 if (ExtraDevice != null) writer.Write((int)ExtraDevice.TypeName.Canonical);
                 else writer.Write((int)CanonicalString.Null.Canonical);
             }
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((Half)_visualThrustForce);
                 _visualThrustForce = 0;
@@ -415,17 +416,17 @@ namespace AW2.Game.Gobs
             ExtraDevice.Serialize(writer, mode);
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 var typeName = (CanonicalString)reader.ReadInt32();
                 if (!typeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, typeName);
                 typeName = (CanonicalString)reader.ReadInt32();
                 if (!typeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, typeName);
             }
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 float thrustForce = reader.ReadHalf();
                 if (thrustForce > 0)

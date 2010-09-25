@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using AW2.Net;
 
 namespace AW2.Game.Gobs
@@ -223,30 +224,30 @@ namespace AW2.Game.Gobs
 
         #region Methods related to serialisation
 
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)Shooter.Gob.ID);
                 writer.Write((int)ShooterBoneIndex);
                 Target.Serialize(writer, mode);
             }
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
             }
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 Shooter.SetId(reader.ReadInt32());
                 ShooterBoneIndex = reader.ReadInt32();
                 Target.Deserialize(reader, mode, framesAgo);
             }
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
             }
         }

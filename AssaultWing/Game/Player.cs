@@ -8,7 +8,7 @@ using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
-using AW2.Net;
+using AW2.Helpers.Serialization;
 using AW2.Net.Messages;
 using AW2.UI;
 
@@ -592,7 +592,7 @@ namespace AW2.Game
         /// before performing their own serialisation.
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
@@ -614,7 +614,7 @@ namespace AW2.Game
             }
         }
 
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)

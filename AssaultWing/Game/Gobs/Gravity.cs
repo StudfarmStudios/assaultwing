@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -12,8 +13,8 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// The gravitational acceleration vector of the gravitational pull, in m/s^2.
         /// </summary>
-        [Helpers.RuntimeState]
-        Vector2 force;
+        [RuntimeState]
+        private Vector2 force;
 
         /// <summary>
         /// Bounding volume of the 3D visuals of the gob, in world coordinates.
@@ -27,7 +28,7 @@ namespace AW2.Game.Gobs
         public Gravity() : base() 
         {
             force = new Vector2(0, -10);
-            base.collisionAreas = new CollisionArea[0];
+            collisionAreas = new CollisionArea[0];
         }
 
         /// <summary>
@@ -64,10 +65,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((float)force.X);
                 writer.Write((float)force.Y);
@@ -79,10 +80,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 Vector2 newForce = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
                 force = newForce;

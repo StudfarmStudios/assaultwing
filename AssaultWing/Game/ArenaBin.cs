@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.IO.Compression;
-using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game
 {

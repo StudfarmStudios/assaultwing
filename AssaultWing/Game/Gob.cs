@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Helpers;
-using AW2.Helpers.Geometric;
+using AW2.Helpers.Serialization;
 using AW2.Graphics;
-using AW2.Net;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace AW2.Game
 {
@@ -52,7 +49,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("ID:{ID} typeName:{typeName} pos:{pos} move:{move}")]
-    public class Gob : Clonable, IConsistencyCheckable, Net.INetworkSerializable
+    public class Gob : Clonable, IConsistencyCheckable, INetworkSerializable
     {
         /// <summary>
         /// Type of a gob's preferred placement to arena layers.
@@ -935,9 +932,9 @@ namespace AW2.Game
         /// before performing their own serialisation.
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public virtual void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)ID);
                 byte flags = StaticID == 0 ? (byte)0x00 : (byte)0x01;
@@ -948,7 +945,7 @@ namespace AW2.Game
                 else
                     writer.Write((sbyte)-1);
             }
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((Half)pos.X);
                 writer.Write((Half)pos.Y);
@@ -966,9 +963,9 @@ namespace AW2.Game
         /// before performing their own deserialisation.
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public virtual void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public virtual void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 ID = reader.ReadInt32();
                 byte flags = reader.ReadByte();
@@ -976,7 +973,7 @@ namespace AW2.Game
                 int ownerId = reader.ReadSByte();
                 _owner = Game.DataEngine.Players.FirstOrDefault(player => player.ID == ownerId);
             }
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 var newPos = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
                 var newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -16,34 +17,34 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Note: This field overrides the type parameter <see cref="Gob.modelName"/>.
         [RuntimeState]
-        CanonicalString wallModelName;
+        private CanonicalString wallModelName;
 
         /// <summary>
         /// Collision primitives, translated according to the gob's location.
         /// </summary>
         /// Note: This field overrides the type parameter <see cref="Gob.collisionAreas"/>.
         [RuntimeState, LimitationSwitch(typeof(RuntimeStateAttribute), typeof(TypeParameterAttribute))]
-        CollisionArea[] wallCollisionAreas;
+        private CollisionArea[] wallCollisionAreas;
 
         /// <summary>
         /// Target of the move.
         /// </summary>
         [RuntimeState]
-        Vector2 targetPos;
+        private Vector2 targetPos;
 
         /// <summary>
         /// Amount of time it takes to move, in game time seconds.
         /// </summary>
-        const float movementTime = 2;
+        private const float movementTime = 2;
 
         /// <summary>
         /// Original starting position.
         /// </summary>
-        Vector2 startPos;
+        private Vector2 startPos;
 
-        MovementCurve movingCurve;
-        TimeSpan startTime;
-        bool goingToTarget; // if false, then going to startPos
+        private MovementCurve movingCurve;
+        private TimeSpan startTime;
+        private bool goingToTarget; // if false, then going to startPos
 
         /// <summary>
         /// Names of all models that this gob type will ever use.
@@ -116,30 +117,22 @@ namespace AW2.Game.Gobs
 
         #region Methods related to serialisation
 
-        /// <summary>
-        /// Serialises the gob for to a binary writer.
-        /// </summary>
-        /// <param name="writer">The writer where to write the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to serialise.</param>
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)wallModelName.Canonical);
                 writer.Write((byte)wallCollisionAreas.Length);
                 foreach (var area in wallCollisionAreas)
-                    area.Serialize(writer, AW2.Net.SerializationModeFlags.All);
+                    area.Serialize(writer, SerializationModeFlags.All);
             }
         }
 
-        /// <summary>
-        /// Deserialises the gob from a binary writer.
-        /// </summary>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 ModelName = wallModelName = new CanonicalString(reader.ReadInt32());
                 int collisionAreaCount = reader.ReadByte();
@@ -147,7 +140,7 @@ namespace AW2.Game.Gobs
                 for (int i = 0; i < collisionAreaCount; ++i)
                 {
                     wallCollisionAreas[i] = new CollisionArea();
-                    wallCollisionAreas[i].Deserialize(reader, AW2.Net.SerializationModeFlags.All, framesAgo);
+                    wallCollisionAreas[i].Deserialize(reader, SerializationModeFlags.All, framesAgo);
                 }
                 foreach (var area in wallCollisionAreas) area.Owner = this;
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -23,7 +24,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// Note: This field overrides the type parameter Gob.modelName.
         [RuntimeState]
-        CanonicalString wallModelName;
+        private CanonicalString wallModelName;
 
         #endregion // WallModel Fields
 
@@ -43,7 +44,7 @@ namespace AW2.Game.Gobs
         /// Creates an uninitialised piece of wall.
         /// </summary>
         /// This constructor is only for serialisation.
-        public WallModel() : base() 
+        public WallModel()
         {
             wallModelName = (CanonicalString)"dummymodel";
         }
@@ -55,7 +56,7 @@ namespace AW2.Game.Gobs
         public WallModel(CanonicalString typeName)
             : base(typeName)
         {
-            this.wallModelName = (CanonicalString)"dummymodel";
+            wallModelName = (CanonicalString)"dummymodel";
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -94,10 +95,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public override void Serialize(Net.NetworkBinaryWriter writer, Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((int)wallModelName.Canonical);
             }
@@ -108,10 +109,10 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// <param name="reader">The reader where to read the serialised data.</param>
         /// <param name="mode">Which parts of the gob to deserialise.</param>
-        public override void Deserialize(Net.NetworkBinaryReader reader, Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.ConstantData) != 0)
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 wallModelName = new CanonicalString(reader.ReadInt32());
                 var model = Game.Content.Load<Model>(wallModelName);
@@ -131,7 +132,7 @@ namespace AW2.Game.Gobs
         /// <summary>
         /// Sets the wall's 3D model based on 'wallModelName'.
         /// </summary>
-        void Set3DModel()
+        private void Set3DModel()
         {
             // Recover wall data from its 3D model.
             var model = Game.Content.Load<Model>(wallModelName);

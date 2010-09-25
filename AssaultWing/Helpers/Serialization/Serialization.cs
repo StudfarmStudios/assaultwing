@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TypeTriple = AW2.Helpers.Triple<System.Type, System.Type, System.Type>;
 
-namespace AW2.Helpers
+namespace AW2.Helpers.Serialization
 {
     /// <summary>
     /// Marks a field of a class as describing a property of a user-defined type,

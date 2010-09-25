@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
-using AW2.Net;
-using AW2.Net.Messages;
+using AW2.Helpers.Serialization;
 using AW2.UI;
 
 namespace AW2.Game
@@ -35,7 +31,7 @@ namespace AW2.Game
 
         public override void Initialize()
         {
-            Helpers.Log.Write("Loading user-defined types");
+            Log.Write("Loading user-defined types");
 
             var gobLoader = new TypeLoader(typeof(Gob), Helpers.Paths.GOBS);
             var deviceLoader = new TypeLoader(typeof(ShipDevice), Helpers.Paths.DEVICES);

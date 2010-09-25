@@ -9,17 +9,14 @@ using System.IO;
 using System.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Helpers;
 
-namespace AW2.Net
+namespace AW2.Helpers.Serialization
 {
     /// <summary>
     /// Writes primitive types in binary to a network stream 
     /// and supports writing strings in a specific encoding.
-    /// Specially crafted for <c>NetworkEngine</c> and related
-    /// classes. Takes care of byte order.
+    /// Takes care of byte order.
     /// </summary>
-    /// <seealso>AW2.Net.Message</seealso>
     public class NetworkBinaryWriter : BinaryWriter
     {
         /// <summary>

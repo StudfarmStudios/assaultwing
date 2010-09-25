@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -151,20 +152,20 @@ namespace AW2.Game.Gobs
 
         #region Methods related to serialisation
 
-        public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 int targetID = _target != null ? _target.ID : Gob.INVALID_ID;
                 writer.Write((int)targetID);
             }
         }
 
-        public override void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 int targetID = reader.ReadInt32();
                 if (targetID == Gob.INVALID_ID) _target = null;

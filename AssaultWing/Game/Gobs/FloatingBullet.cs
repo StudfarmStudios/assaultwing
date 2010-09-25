@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
@@ -80,10 +81,10 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Serialize(AW2.Net.NetworkBinaryWriter writer, AW2.Net.SerializationModeFlags mode)
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 if (!_thrustSeconds.HasValue)
                     writer.Write((bool)false);
@@ -97,10 +98,10 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public override void Deserialize(AW2.Net.NetworkBinaryReader reader, AW2.Net.SerializationModeFlags mode, int framesAgo)
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
-            if ((mode & AW2.Net.SerializationModeFlags.VaryingData) != 0)
+            if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 bool movementChanged = reader.ReadBoolean();
                 if (movementChanged)

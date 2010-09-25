@@ -11,7 +11,6 @@ using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Helpers.Serialization;
-using AW2.Net;
 using AW2.Net.Messages;
 
 namespace AW2.Game

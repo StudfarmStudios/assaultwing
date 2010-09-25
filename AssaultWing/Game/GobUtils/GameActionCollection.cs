@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AW2.Helpers.Serialization;
-using AW2.Net;
 
 namespace AW2.Game.GobUtils
 {
     public class GameActionCollection : IEnumerable<GameAction>, INetworkSerializable
     {
-        List<GameAction> _items;
-        List<GameAction> _toRemove;
-        Player _owner;
+        private List<GameAction> _items;
+        private List<GameAction> _toRemove;
+        private Player _owner;
 
         public GameActionCollection(Player owner)
         {

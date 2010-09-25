@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Helpers.Serialization;
-using AW2.Net;
 
 namespace AW2.Game.GobUtils
 {

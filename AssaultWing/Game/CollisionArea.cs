@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
-using AW2.Net;
 
 namespace AW2.Game
 {

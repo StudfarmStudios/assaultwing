@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using AW2.Net;
 
 namespace AW2.Game.Gobs
 {

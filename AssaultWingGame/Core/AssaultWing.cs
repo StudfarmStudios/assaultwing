@@ -131,7 +131,7 @@ namespace AW2.Core
                 var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.ArenaPlaylist.Current).FileName;
                 try
                 {
-                    var arena = Arena.FromFile(arenaFilename);
+                    var arena = Arena.FromFile(this, arenaFilename);
                     DataEngine.InitializeFromArena(arena, true);
                     StartArena();
                 }

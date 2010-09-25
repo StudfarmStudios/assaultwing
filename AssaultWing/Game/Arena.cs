@@ -330,10 +330,10 @@ namespace AW2.Game
         public AssaultWingCore Game
         {
             get { return _game; }
-            set
+            private set
             {
                 _game = value;
-                foreach (var gob in Gobs) gob.Game = value;
+                SetGameAndArenaToGobs();
             }
         }
 
@@ -469,9 +469,11 @@ namespace AW2.Game
         /// <summary>
         /// Loads an arena from file, or throws an exception on failure.
         /// </summary>
-        public static Arena FromFile(string filename)
+        public static Arena FromFile(AssaultWingCore game, string filename)
         {
-            return (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute));
+            var arena = (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute));
+            arena.Game = game;
+            return arena;
         }
 
         /// <summary>
@@ -1196,15 +1198,20 @@ namespace AW2.Game
                 fogEnd = MathHelper.Max(fogEnd, 0);
                 fogStart = MathHelper.Max(fogStart, 0);
                 _menuInfo.Name = Name;
-                foreach (var gob in Gobs)
-                {
-                    gob.Arena = this;
-                    gob.Game = Game;
-                }
+                SetGameAndArenaToGobs();
             }
         }
 
         #endregion
+
+        private void SetGameAndArenaToGobs()
+        {
+            foreach (var gob in Gobs)
+            {
+                gob.Arena = this;
+                gob.Game = Game;
+            }
+        }
 
         /// <summary>
         /// Initialises the gobs that are initially contained in the arena for playing the arena.

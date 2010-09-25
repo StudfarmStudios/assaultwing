@@ -107,7 +107,7 @@ namespace AW2
                 Arena arena = null;
                 try
                 {
-                    arena = Arena.FromFile(arenaFilename);
+                    arena = Arena.FromFile(_game, arenaFilename);
                 }
                 catch (Exception ex)
                 {
@@ -276,6 +276,7 @@ namespace AW2
         {
             if (SelectedGob == null) return;
             var duplicate = (Gob)SelectedGob.CloneWithRuntimeState();
+            duplicate.Game = _game;
             duplicate.Layer = SelectedGob.Layer;
             duplicate.Pos += new Vector2(50, 50);
             SelectedGob.Arena.Gobs.Add(duplicate);

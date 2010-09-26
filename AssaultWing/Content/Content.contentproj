@@ -2693,6 +2693,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\bloodbowl_axe.X">
+      <Name>bloodbowl_axe</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="sounds\sounddefs.xml">
       <Name>sounddefs</Name>
       <Importer>XmlImporter</Importer>

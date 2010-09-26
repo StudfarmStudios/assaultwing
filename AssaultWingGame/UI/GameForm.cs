@@ -1,12 +1,8 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.Xna.Framework;
 using AW2.Core;
-using AW2.Graphics;
-using AW2.Menu;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Point = System.Drawing.Point;
-using Size = System.Drawing.Size;
 
 namespace AW2.UI
 {
@@ -72,6 +68,9 @@ namespace AW2.UI
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
+#if !DEBUG
+            SetFullScreen();
+#endif
             _runner.Run();
         }
 

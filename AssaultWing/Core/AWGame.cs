@@ -4,6 +4,7 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Graphics;
+using AW2.Helpers;
 
 namespace AW2.Core
 {
@@ -40,7 +41,11 @@ namespace AW2.Core
         public virtual void Initialize()
         {
             Content = new AWContentManager(Services);
-            foreach (var component in Components) component.Initialize();
+            foreach (var component in Components)
+            {
+                Log.Write("Initializing " + component.GetType().Name);
+                component.Initialize();
+            }
             LoadContent();
         }
 

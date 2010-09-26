@@ -26,8 +26,6 @@ namespace AW2.Core
         /// </summary>
         public void Run()
         {
-            _game.Initialize();
-            _game.BeginRun();
             ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
         }
 
@@ -43,6 +41,8 @@ namespace AW2.Core
 
         private void GameUpdateAndDrawLoop()
         {
+            _game.Initialize();
+            _game.BeginRun();
             var nextUpdate = TimeSpan.Zero;
             var lastUpdate = TimeSpan.Zero;
             var totalGameTime = TimeSpan.Zero;

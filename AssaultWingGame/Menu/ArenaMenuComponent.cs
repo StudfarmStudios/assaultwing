@@ -61,6 +61,7 @@ namespace AW2.Menu
                 base.Active = value;
                 if (value)
                 {
+                    if (!selectedArenaNames.Any()) selectedArenaNames.Add(ArenaInfos.First().Name);
                     InitializeControls();
                     InitializeControlCallbacks();
                 }
@@ -84,14 +85,13 @@ namespace AW2.Menu
             pos = new Vector2(1220, 698);
 
             selectedArenaNames = new List<string>();
-            selectedArenaNames.Add(ArenaInfos.First().Name);
             cursorFade = new Curve();
             cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
             cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
             cursorFade.Keys.Add(new CurveKey(1, 255, 0, 0, CurveContinuity.Step));
             cursorFade.PreLoop = CurveLoopType.Cycle;
             cursorFade.PostLoop = CurveLoopType.Cycle;
-            _selectedArena = (Arena)TypeLoader.LoadTemplate(ArenaInfos[currentArena].FileName, typeof(Arena), typeof(TypeParameterAttribute));
+            currentArena = -1;
         }
 
         public override void LoadContent()
@@ -131,6 +131,7 @@ namespace AW2.Menu
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(backgroundTexture, pos - view, Color.White);
+            if (!Active) return;
 
             // Draw arena list.
             Vector2 lineDeltaPos = new Vector2(0, 40);

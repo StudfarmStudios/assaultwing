@@ -265,6 +265,7 @@ namespace AW2.Graphics
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             var view = ViewMatrix;
             gfx.Clear(Color.Black);
+            if (AssaultWingCore.Instance.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
             foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
             {
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);

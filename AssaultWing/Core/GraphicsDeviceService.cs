@@ -55,30 +55,6 @@ namespace AW2.Core
             GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, DeviceType.Hardware, windowHandle, _parameters);
         }
 
-        public void SetFullScreen(int width, int height)
-        {
-            int oldWidth = _parameters.BackBufferWidth;
-            int oldHeight = _parameters.BackBufferHeight;
-            _parameters.IsFullScreen = true;
-            _parameters.BackBufferWidth = width;
-            _parameters.BackBufferHeight = height;
-            try
-            {
-                ResetDevice(width, height);
-            }
-            catch (Exception)
-            {
-                SetWindowed(oldWidth, oldHeight);
-                throw;
-            }
-        }
-
-        public void SetWindowed(int width, int height)
-        {
-            _parameters.IsFullScreen = false;
-            ResetDevice(width, height);
-        }
-
         public void Dispose()
         {
             if (DeviceDisposing != null) DeviceDisposing(this, EventArgs.Empty);

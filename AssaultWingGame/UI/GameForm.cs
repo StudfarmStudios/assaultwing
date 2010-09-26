@@ -4,14 +4,37 @@ using Microsoft.Xna.Framework;
 using AW2.Core;
 using AW2.Graphics;
 using AW2.Menu;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
 
 namespace AW2.UI
 {
     public partial class GameForm : Form
     {
+        private struct FormParameters
+        {
+            public FormWindowState WindowState { get; private set; }
+            public FormBorderStyle BorderStyle { get; private set; }
+            public Point Location { get; private set; }
+            public Size Size { get; private set; }
+
+            public FormParameters(FormWindowState windowState, FormBorderStyle borderStyle, Point location, Size size)
+                : this()
+            {
+                WindowState = windowState;
+                BorderStyle = borderStyle;
+                Location = location;
+                Size = size;
+            }
+        }
+
         private AssaultWing _game;
         private AWGameRunner _runner;
         private GraphicsDeviceService _graphicsDeviceService;
+        
+        private bool _isFullScreen;
+        private FormParameters _previousWindowedModeParameters;
 
         public Rectangle ClientBoundsMin
         {
@@ -25,6 +48,7 @@ namespace AW2.UI
             _graphicsDeviceService = graphicsDeviceService;
             InitializeComponent();
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
+            _previousWindowedModeParameters = GetCurrentFormParameters();
             _gameView.GraphicsDeviceService = graphicsDeviceService;
             graphicsDeviceService.SetWindow(Handle);
 
@@ -78,8 +102,8 @@ namespace AW2.UI
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
-            if (keyCode == Keys.PageUp) _graphicsDeviceService.SetFullScreen(1280, 1024); // HACK !!!
-            if (keyCode == Keys.PageDown) _graphicsDeviceService.SetWindowed(1000, 800); // HACK !!!
+            if (keyCode == Keys.PageUp) SetFullScreen(); // HACK !!!
+            if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
             return true; // the message won't be processed further; prevents window menu from opening
         }
 
@@ -88,6 +112,40 @@ namespace AW2.UI
             _runner.Exit();
             Application.DoEvents(); // finish processing BeginInvoke()d Update() and Draw() calls
             base.OnClosing(e);
+        }
+
+        private void SetWindowed()
+        {
+            if (!_isFullScreen) return;
+            _isFullScreen = false;
+            SetFormParameters(_previousWindowedModeParameters);
+        }
+
+        private void SetFullScreen()
+        {
+            if (_isFullScreen) return;
+            _isFullScreen = true;
+            _previousWindowedModeParameters = GetCurrentFormParameters();
+            SetFormParameters(GetFullScreenFormParameters());
+        }
+
+        private static FormParameters GetFullScreenFormParameters()
+        {
+            var screenArea = Screen.PrimaryScreen.Bounds;
+            return new FormParameters(FormWindowState.Normal, FormBorderStyle.None, Point.Empty, new Size(screenArea.Width, screenArea.Height));
+        }
+
+        private FormParameters GetCurrentFormParameters()
+        {
+            return new FormParameters(WindowState, FormBorderStyle, Location, ClientSize);
+        }
+
+        private void SetFormParameters(FormParameters parameters)
+        {
+            WindowState = parameters.WindowState;
+            FormBorderStyle = parameters.BorderStyle;
+            Location = parameters.Location;
+            ClientSize = parameters.Size;
         }
     }
 }

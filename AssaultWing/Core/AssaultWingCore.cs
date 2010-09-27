@@ -45,7 +45,6 @@ namespace AW2
         private SurfaceFormat _preferredFullscreenFormat;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
-        private ArenaStartWaiter _arenaStartWaiter;
 
         #endregion AssaultWing fields
 
@@ -150,16 +149,6 @@ namespace AW2
         }
 
         #region AssaultWing private methods
-
-        [Obsolete("Move to AssaultWing")]
-        protected virtual void StartArenaImpl()
-        {
-            Log.Write("Starting arena");
-            DataEngine.StartArena();
-            DataEngine.RearrangeViewports();
-            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
-            Log.Write("...started arena " + DataEngine.Arena.Name);
-        }
 
         private void InitializeGraphics()
         {
@@ -314,19 +303,10 @@ namespace AW2
         /// Call <c>StartArena</c> after this method returns to start
         /// playing the arena.
         /// </summary>
-        public void PrepareFirstArena()
+        public virtual void PrepareFirstArena()
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
-
-            // Notify game clients if we are the game server.
-            if (NetworkMode == NetworkMode.Server)
-            {
-                var message = new StartGameMessage();
-                message.ArenaPlaylist = DataEngine.ArenaPlaylist;
-                NetworkEngine.SendToGameClients(message);
-            }
-
             DataEngine.ArenaPlaylist.Reset();
             PrepareNextArena();
         }
@@ -334,15 +314,13 @@ namespace AW2
         /// <summary>
         /// Starts playing a previously prepared arena.
         /// </summary>
-        public void StartArena()
+        public virtual void StartArena()
         {
-            if (NetworkMode == NetworkMode.Server)
-            {
-                _arenaStartWaiter = new ArenaStartWaiter(NetworkEngine.GameClientConnections);
-                _arenaStartWaiter.BeginWait();
-            }
-            else
-                StartArenaImpl();
+            Log.Write("Starting arena");
+            DataEngine.StartArena();
+            DataEngine.RearrangeViewports();
+            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
+            Log.Write("...started arena " + DataEngine.Arena.Name);
         }
 
         /// <summary>
@@ -376,19 +354,19 @@ namespace AW2
                 throw new InvalidOperationException("There is no next arena to play");
         }
 
-        [Obsolete("Move to AssaultWing")]
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public virtual void ResumePlay()
         {
             throw new NotImplementedException();
         }
 
-        [Obsolete("Move to AssaultWing")]
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public virtual void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
         {
             throw new NotImplementedException();
         }
 
-        [Obsolete("Move to AssaultWing")]
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public virtual void ShowMenu()
         {
             throw new NotImplementedException();
@@ -414,6 +392,7 @@ namespace AW2
         /// </summary>
         /// <param name="connectionHandler">Handler of connection result.</param>
         /// <returns>True on success, false on failure</returns>
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public bool StartServer(Action<Result<Connection>> connectionHandler)
         {
             if (NetworkMode != NetworkMode.Standalone)
@@ -438,6 +417,7 @@ namespace AW2
         /// Turns this game server into a standalone game instance and disposes of
         /// any connections to game clients.
         /// </summary>
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public void StopServer()
         {
             if (NetworkMode != NetworkMode.Server)
@@ -451,6 +431,7 @@ namespace AW2
         /// <summary>
         /// Turns this game instance into a game client by connecting to a game server.
         /// </summary>
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public void StartClient(AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
         {
             if (NetworkMode != NetworkMode.Standalone)
@@ -472,6 +453,7 @@ namespace AW2
         /// Turns this game client into a standalone game instance by disconnecting
         /// from the game server.
         /// </summary>
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public void StopClient()
         {
             if (NetworkMode != NetworkMode.Client)
@@ -485,6 +467,7 @@ namespace AW2
         /// Turns this game instance into a standalone instance, irrespective of the current
         /// network mode.
         /// </summary>
+        [Obsolete("Move to AW2.Core.AssaultWing")]
         public void CutNetworkConnections()
         {
             switch (NetworkMode)
@@ -555,14 +538,6 @@ namespace AW2
 
         public override void Update(GameTime gameTime)
         {
-            if (_arenaStartWaiter != null && _arenaStartWaiter.IsEverybodyReady)
-            {
-                _arenaStartWaiter.EndWait();
-                _arenaStartWaiter = null;
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
-                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-                StartArenaImpl();
-            }
             GameTime = gameTime;
             if (_logicEngine.Enabled)
             {

@@ -36,27 +36,7 @@ namespace AW2.Graphics
 
         public override void Update()
         {
-            // Check our controls and react to them.
             _dialogData.Update();
-
-#if DEBUG
-            // Check for cheat codes.
-            KeyboardState keys = Keyboard.GetState();
-            if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
-            {
-                // K + P = kill players
-                foreach (var player in Game.DataEngine.Spectators)
-                    if (player is Player && ((Player)player).Ship != null)
-                        ((Player)player).Ship.Die(new DeathCause());
-            }
-
-            if (keys.IsKeyDown(Keys.L) && keys.IsKeyDown(Keys.E))
-            {
-                if (!Game.DataEngine.ProgressBar.TaskRunning)
-                    Game.FinishArena();
-            }
-#endif
-
             base.Update();
         }
 

@@ -264,6 +264,7 @@ namespace AW2.Core
             }
         }
 
+        [System.Diagnostics.Conditional("DEBUG")]
         private void UpdateDebugKeys()
         {
             // Switch music off
@@ -305,6 +306,25 @@ namespace AW2.Core
             {
                 LogicEngine.Enabled = false;
                 _frameStep = true;
+            }
+
+            // Cheat codes during dialog.
+            if (GameState == GameState.OverlayDialog)
+            {
+                var keys = Keyboard.GetState();
+                if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
+                {
+                    // K + P = kill players
+                    foreach (var player in DataEngine.Spectators.Where(s => s is Player).Cast<Player>())
+                        if (player.Ship != null) player.Ship.Die(new DeathCause());
+                }
+
+                if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
+                {
+                    // E + A = end arena
+                    if (!DataEngine.ProgressBar.TaskRunning)
+                        FinishArena();
+                }
             }
         }
 

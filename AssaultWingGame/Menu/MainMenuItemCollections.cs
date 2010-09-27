@@ -111,7 +111,7 @@ namespace AW2.Menu
             if (!result.Successful)
             {
                 Log.Write("Failed to connect to server: " + result.Error);
-                menuEngine.Game.StopClient();
+                menuEngine.Game.StopClient("Failed to connect to server");
                 return;
             }
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip), mess => HandleStartGameMessage(mess, menuEngine)));

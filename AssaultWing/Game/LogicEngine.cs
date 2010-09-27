@@ -13,7 +13,6 @@ namespace AW2.Game
     /// </summary>
     public class LogicEngine : AWGameComponent
     {
-        private Control escapeControl;
 #if DEBUG
         private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 #endif
@@ -21,7 +20,6 @@ namespace AW2.Game
         public LogicEngine(AssaultWingCore game)
             : base(game)
         {
-            escapeControl = new KeyboardKey(Keys.Escape);
 #if DEBUG
             showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
             showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
@@ -85,20 +83,6 @@ namespace AW2.Game
             if (showOnlyPlayer2Control.Pulse && Game.DataEngine.Spectators.Count > 1)
                 Game.ShowOnlyPlayer(1);
 #endif
-            if (escapeControl.Pulse)
-            {
-                var dialogData = Game.NetworkMode == NetworkMode.Server
-                    ? new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
-                        "Finish Arena? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.GetYesControl(), Game.FinishArena),
-                        new TriggeredCallback(TriggeredCallback.GetNoControl(), Game.ResumePlay))
-                    : new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
-                        "Quit to Main Menu? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.GetYesControl(), Game.ShowMenu),
-                        new TriggeredCallback(TriggeredCallback.GetNoControl(), Game.ResumePlay));
-
-                Game.ShowDialog(dialogData);
-            }
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

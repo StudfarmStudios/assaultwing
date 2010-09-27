@@ -16,6 +16,7 @@ namespace AW2.Core
     {
         private GameState _gameState;
         private ArenaStartWaiter _arenaStartWaiter;
+        private Control _escapeControl;
 
         // HACK: Debug keys
         private Control _musicSwitch;
@@ -53,6 +54,7 @@ namespace AW2.Core
             MenuEngine = new MenuEngineImpl(this);
             Components.Add(MenuEngine);
             GameState = GameState.Initializing;
+            _escapeControl = new KeyboardKey(Keys.Escape);
             _musicSwitch = new KeyboardKey(Keys.F5);
             _arenaReload = new KeyboardKey(Keys.F6);
             _frameStepControl = new KeyboardKey(Keys.F8);
@@ -63,16 +65,9 @@ namespace AW2.Core
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
             base.Update(gameTime);
+            UpdateSpecialKeys();
             UpdateDebugKeys();
             UpdateArenaStartWaiter();
-        }
-
-        /// <summary>
-        /// Resumes playing the current arena, closing the dialog if it's visible.
-        /// </summary>
-        public override void ResumePlay()
-        {
-            GameState = GameState.Gameplay;
         }
 
         /// <summary>
@@ -240,6 +235,32 @@ namespace AW2.Core
                     break;
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
+            }
+        }
+
+        /// <summary>
+        /// Resumes playing the current arena, closing the dialog if it's visible.
+        /// </summary>
+        private void ResumePlay()
+        {
+            GameState = GameState.Gameplay;
+        }
+
+        private void UpdateSpecialKeys()
+        {
+            if (GameState == GameState.Gameplay && _escapeControl.Pulse)
+            {
+                var dialogData = NetworkMode == NetworkMode.Server
+                    ? new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
+                        "Finish Arena? (Yes/No)",
+                        new TriggeredCallback(TriggeredCallback.GetYesControl(), FinishArena),
+                        new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay))
+                    : new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
+                        "Quit to Main Menu? (Yes/No)",
+                        new TriggeredCallback(TriggeredCallback.GetYesControl(), ShowMenu),
+                        new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay));
+
+                ShowDialog(dialogData);
             }
         }
 

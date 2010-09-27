@@ -25,15 +25,7 @@ namespace AW2.Net.Connections
 
         protected override void DisposeImpl(bool error)
         {
-            if (error)
-            {
-                AssaultWingCore.Instance.StopClient();
-                var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
-                    "Connection to server lost!\nPress Enter to return to Main Menu",
-                    new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(),
-                        AssaultWingCore.Instance.ShowMenu));
-                AssaultWingCore.Instance.ShowDialog(dialogData);
-            }
+            AssaultWingCore.Instance.StopClient("Connection to server lost");
             base.DisposeImpl(error);
         }
     }

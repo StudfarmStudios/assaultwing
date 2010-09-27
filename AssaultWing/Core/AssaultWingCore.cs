@@ -355,12 +355,6 @@ namespace AW2
         }
 
         [Obsolete("Move to AW2.Core.AssaultWing")]
-        public virtual void ResumePlay()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Obsolete("Move to AW2.Core.AssaultWing")]
         public virtual void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
         {
             throw new NotImplementedException();
@@ -445,7 +439,7 @@ namespace AW2
             catch (System.Net.Sockets.SocketException e)
             {
                 Log.Write("Could not start client: " + e.Message);
-                StopClient();
+                StopClient(null);
             }
         }
 
@@ -454,13 +448,20 @@ namespace AW2
         /// from the game server.
         /// </summary>
         [Obsolete("Move to AW2.Core.AssaultWing")]
-        public void StopClient()
+        public void StopClient(string errorOrNull)
         {
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
             DataEngine.RemoveRemoteSpectators();
+            if (errorOrNull != null)
+            {
+                var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
+                    errorOrNull + "\nPress Enter to return to Main Menu",
+                    new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
+                ShowDialog(dialogData);
+            }
         }
 
         /// <summary>
@@ -472,7 +473,7 @@ namespace AW2
         {
             switch (NetworkMode)
             {
-                case NetworkMode.Client: StopClient(); break;
+                case NetworkMode.Client: StopClient(null); break;
                 case NetworkMode.Server: StopServer(); break;
                 case NetworkMode.Standalone: break;
                 default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);

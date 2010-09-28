@@ -224,6 +224,40 @@ namespace AW2.Core
             return false;
         }
 
+        /// <summary>
+        /// Turns this game server into a standalone game instance and disposes of
+        /// any connections to game clients.
+        /// </summary>
+        public void StopServer()
+        {
+            if (NetworkMode != NetworkMode.Server)
+                throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            NetworkEngine.StopServer();
+            NetworkMode = NetworkMode.Standalone;
+            DataEngine.RemoveRemoteSpectators();
+        }
+
+        /// <summary>
+        /// Turns this game instance into a game client by connecting to a game server.
+        /// </summary>
+        public void StartClient(AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
+        {
+            if (NetworkMode != NetworkMode.Standalone)
+                throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
+            NetworkMode = NetworkMode.Client;
+            try
+            {
+                NetworkEngine.StartClient(serverEndPoints, connectionHandler);
+                foreach (var spectator in DataEngine.Spectators) spectator.ResetForClient();
+            }
+            catch (System.Net.Sockets.SocketException e)
+            {
+                Log.Write("Could not start client: " + e.Message);
+                StopClient(null);
+            }
+        }
+
         public override void StopClient(string errorOrNull)
         {
             base.StopClient(errorOrNull);
@@ -238,6 +272,17 @@ namespace AW2.Core
                     errorOrNull + "\nPress Enter to return to Main Menu",
                     new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
                 ShowDialog(dialogData);
+            }
+        }
+
+        public override void CutNetworkConnections()
+        {
+            switch (NetworkMode)
+            {
+                case NetworkMode.Client: StopClient(null); break;
+                case NetworkMode.Server: StopServer(); break;
+                case NetworkMode.Standalone: break;
+                default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);
             }
         }
 

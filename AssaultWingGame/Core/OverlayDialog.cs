@@ -1,11 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using AW2.Core;
-using AW2.Game;
+using AW2.Core.OverlayDialogs;
 using AW2.Graphics.OverlayComponents;
 
-namespace AW2.Graphics
+namespace AW2.Core
 {
     /// <summary>
     /// Game overlay dialog. It displays text on top of the game display.

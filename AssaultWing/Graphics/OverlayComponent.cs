@@ -5,58 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 namespace AW2.Graphics
 {
     /// <summary>
-    /// Type of horizontal alignment.
-    /// </summary>
-    public enum HorizontalAlignment
-    {
-        /// <summary>
-        /// Aligned to the left.
-        /// </summary>
-        Left,
-
-        /// <summary>
-        /// Horizontally centered.
-        /// </summary>
-        Center,
-
-        /// <summary>
-        /// Aligned to the right.
-        /// </summary>
-        Right,
-
-        /// <summary>
-        /// Covers all available horizontal space.
-        /// </summary>
-        Stretch,
-    }
-
-    /// <summary>
-    /// Type of vertical alignment.
-    /// </summary>
-    public enum VerticalAlignment
-    {
-        /// <summary>
-        /// Aligned to the top.
-        /// </summary>
-        Top,
-
-        /// <summary>
-        /// Vertically centered.
-        /// </summary>
-        Center,
-
-        /// <summary>
-        /// Aligned to the bottom.
-        /// </summary>
-        Bottom,
-
-        /// <summary>
-        /// Covers all available vertical space.
-        /// </summary>
-        Stretch,
-    }
-
-    /// <summary>
     /// An overlay graphics component, for example in player's screen during play.
     /// </summary>
     /// An overlay component is drawn onto an <see cref="AWViewport"/>.

@@ -36,7 +36,6 @@ namespace AW2
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
-        private OverlayDialog _overlayDialog;
         private LogicEngine _logicEngine;
         private int _preferredWindowWidth, _preferredWindowHeight;
         private SurfaceFormat _preferredWindowFormat;
@@ -178,7 +177,6 @@ namespace AW2
             SoundEngine = new SoundEngineXACT(this);
             GraphicsEngine = new GraphicsEngineImpl(this);
             NetworkEngine = new NetworkEngine(this);
-            _overlayDialog = new OverlayDialog(this);
             DataEngine = new DataEngine(this);
             PhysicsEngine = new PhysicsEngine(this);
 
@@ -187,11 +185,9 @@ namespace AW2
             _logicEngine.UpdateOrder = 2;
             SoundEngine.UpdateOrder = 3;
             GraphicsEngine.UpdateOrder = 4;
-            _overlayDialog.UpdateOrder = 5;
 
             Components.Add(_logicEngine);
             Components.Add(GraphicsEngine);
-            Components.Add(_overlayDialog);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
             Components.Add(NetworkEngine);

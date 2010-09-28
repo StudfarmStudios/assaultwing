@@ -124,6 +124,11 @@
     <Compile Include="Core\ArenaStartWaiter.cs" />
     <Compile Include="Core\AssaultWing.cs" />
     <Compile Include="Core\IntroEngine.cs" />
+    <Compile Include="Core\OverlayDialog.cs" />
+    <Compile Include="Core\OverlayDialogs\ArenaOverOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayDialogs\CustomOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayDialogs\GameOverOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayDialogs\OverlayDialogData.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />

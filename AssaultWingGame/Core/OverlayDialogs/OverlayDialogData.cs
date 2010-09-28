@@ -1,7 +1,8 @@
 using Microsoft.Xna.Framework;
+using AW2.Graphics;
 using AW2.UI;
 
-namespace AW2.Graphics.OverlayComponents
+namespace AW2.Core.OverlayDialogs
 {
     /// <summary>
     /// Content and action data for an overlay dialog.

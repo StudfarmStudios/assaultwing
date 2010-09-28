@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core.OverlayDialogs;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Graphics.OverlayComponents;
@@ -46,14 +47,16 @@ namespace AW2.Core
 
         private IntroEngine IntroEngine { get; set; }
         private LogicEngine LogicEngine { get { return (LogicEngine)Components.First(c => c is LogicEngine); } }
-        private OverlayDialog OverlayDialog { get { return (OverlayDialog)Components.First(c => c is OverlayDialog); } }
+        private OverlayDialog OverlayDialog { get; set; }
         private UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService)
             : base(graphicsDeviceService)
         {
-            MenuEngine = new MenuEngineImpl(this);
-            IntroEngine = new IntroEngine(this);
+            OverlayDialog = new OverlayDialog(this) { UpdateOrder = 5 };
+            MenuEngine = new MenuEngineImpl(this) { UpdateOrder = 6 };
+            IntroEngine = new IntroEngine(this) { UpdateOrder = 7 };
+            Components.Add(OverlayDialog);
             Components.Add(MenuEngine);
             Components.Add(IntroEngine);
             GameState = GameState.Initializing;
@@ -77,7 +80,7 @@ namespace AW2.Core
         /// Displays the dialog on top of the game and stops updating the game logic.
         /// </summary>
         /// <param name="dialogData">The contents and actions for the dialog.</param>
-        public void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
+        public void ShowDialog(OverlayDialogData dialogData)
         {
             if (!AllowDialogs) return;
             OverlayDialog.Data = dialogData;
@@ -202,7 +205,7 @@ namespace AW2.Core
             DataEngine.RemoveRemoteSpectators();
             if (errorOrNull != null)
             {
-                var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
+                var dialogData = new CustomOverlayDialogData(
                     errorOrNull + "\nPress Enter to return to Main Menu",
                     new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
                 ShowDialog(dialogData);
@@ -287,11 +290,11 @@ namespace AW2.Core
             if (GameState == GameState.Gameplay && _escapeControl.Pulse)
             {
                 var dialogData = NetworkMode == NetworkMode.Server
-                    ? new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
+                    ? new CustomOverlayDialogData(
                         "Finish Arena? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.GetYesControl(), FinishArena),
                         new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay))
-                    : new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
+                    : new CustomOverlayDialogData(
                         "Quit to Main Menu? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.GetYesControl(), ShowMenu),
                         new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay));

@@ -114,7 +114,10 @@ namespace AW2.Menu
                 menuEngine.Game.StopClient("Failed to connect to server");
                 return;
             }
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(() => menuEngine.ActivateComponent(MenuComponentType.Equip), mess => HandleStartGameMessage(mess, menuEngine)));
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(
+                () => menuEngine.ActivateComponent(MenuComponentType.Equip),
+                mess => HandleStartGameMessage(mess, menuEngine),
+                mess => HandleConnectionClosingMessage(mess, menuEngine)));
 
             // HACK: Force one local player.
             menuEngine.Game.DataEngine.Spectators.Remove(player => menuEngine.Game.DataEngine.Spectators.Count > 1);
@@ -126,12 +129,20 @@ namespace AW2.Menu
         private static void HandleStartGameMessage(StartGameMessage mess, MenuEngineImpl menuEngine)
         {
             menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
 
             // Prepare and start playing the game.
             menuEngine.ProgressBarAction(menuEngine.Game.PrepareFirstArena,
-                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers()));
+                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(mesg => HandleConnectionClosingMessage(mesg, menuEngine))));
             menuEngine.Deactivate();
+        }
+
+        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess, MenuEngineImpl menuEngine)
+        {
+            Log.Write("Server is going to close the connection, reason: " + mess.Info);
+            var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
+                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), menuEngine.Game.ShowMenu));
+            ((AssaultWing)menuEngine.Game).ShowDialog(dialogData);
         }
     }
 }

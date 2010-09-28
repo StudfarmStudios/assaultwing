@@ -36,7 +36,6 @@ namespace AW2
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
-        private IntroEngine _introEngine;
         private OverlayDialog _overlayDialog;
         private LogicEngine _logicEngine;
         private int _preferredWindowWidth, _preferredWindowHeight;
@@ -82,7 +81,7 @@ namespace AW2
         /// <summary>
         /// The current mode of network operation of the game.
         /// </summary>
-        public NetworkMode NetworkMode { get; private set; }
+        public NetworkMode NetworkMode { get; protected set; }
 
         /// <summary>
         /// The game time on this frame.
@@ -178,7 +177,6 @@ namespace AW2
             _logicEngine = new LogicEngine(this);
             SoundEngine = new SoundEngineXACT(this);
             GraphicsEngine = new GraphicsEngineImpl(this);
-            _introEngine = new IntroEngine(this);
             NetworkEngine = new NetworkEngine(this);
             _overlayDialog = new OverlayDialog(this);
             DataEngine = new DataEngine(this);
@@ -189,12 +187,10 @@ namespace AW2
             _logicEngine.UpdateOrder = 2;
             SoundEngine.UpdateOrder = 3;
             GraphicsEngine.UpdateOrder = 4;
-            _introEngine.UpdateOrder = 4;
             _overlayDialog.UpdateOrder = 5;
 
             Components.Add(_logicEngine);
             Components.Add(GraphicsEngine);
-            Components.Add(_introEngine);
             Components.Add(_overlayDialog);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
@@ -326,19 +322,8 @@ namespace AW2
         /// <summary>
         /// Finishes playing the current arena.
         /// </summary>
-        public void FinishArena()
+        public virtual void FinishArena()
         {
-            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
-            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            if (DataEngine.ArenaPlaylist.HasNext)
-                ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
-            else
-                ShowDialog(new GameOverOverlayDialogData());
-            if (NetworkMode == NetworkMode.Server)
-            {
-                var message = new ArenaFinishMessage();
-                NetworkEngine.SendToGameClients(message);
-            }
         }
 
         /// <summary>
@@ -352,12 +337,6 @@ namespace AW2
         {
             if (!DataEngine.NextArena())
                 throw new InvalidOperationException("There is no next arena to play");
-        }
-
-        [Obsolete("Move to AW2.Core.AssaultWing")]
-        public virtual void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
-        {
-            throw new NotImplementedException();
         }
 
         [Obsolete("Move to AW2.Core.AssaultWing")]
@@ -448,20 +427,8 @@ namespace AW2
         /// from the game server.
         /// </summary>
         [Obsolete("Move to AW2.Core.AssaultWing")]
-        public void StopClient(string errorOrNull)
+        public virtual void StopClient(string errorOrNull)
         {
-            if (NetworkMode != NetworkMode.Client)
-                throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
-            NetworkMode = NetworkMode.Standalone;
-            NetworkEngine.StopClient();
-            DataEngine.RemoveRemoteSpectators();
-            if (errorOrNull != null)
-            {
-                var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
-                    errorOrNull + "\nPress Enter to return to Main Menu",
-                    new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
-                ShowDialog(dialogData);
-            }
         }
 
         /// <summary>

@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
-using AW2.Core;
+using AW2.Graphics;
 using AW2.Helpers;
 using AW2.UI;
 
-namespace AW2.Graphics
+namespace AW2.Core
 {
     /// <summary>
-    /// Game intro graphics implementation.
+    /// Game intro sequence implementation.
     /// </summary>
     public class IntroEngine : AWGameComponent
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
 using AW2.Graphics;
+using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Menu;
 using AW2.Net.MessageHandling;
@@ -43,7 +44,7 @@ namespace AW2.Core
 
         public event Action<GameState> GameStateChanged;
 
-        private IntroEngine IntroEngine { get { return (IntroEngine)Components.First(c => c is IntroEngine); } }
+        private IntroEngine IntroEngine { get; set; }
         private LogicEngine LogicEngine { get { return (LogicEngine)Components.First(c => c is LogicEngine); } }
         private OverlayDialog OverlayDialog { get { return (OverlayDialog)Components.First(c => c is OverlayDialog); } }
         private UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
@@ -52,7 +53,9 @@ namespace AW2.Core
             : base(graphicsDeviceService)
         {
             MenuEngine = new MenuEngineImpl(this);
+            IntroEngine = new IntroEngine(this);
             Components.Add(MenuEngine);
+            Components.Add(IntroEngine);
             GameState = GameState.Initializing;
             _escapeControl = new KeyboardKey(Keys.Escape);
             _musicSwitch = new KeyboardKey(Keys.F5);
@@ -74,7 +77,7 @@ namespace AW2.Core
         /// Displays the dialog on top of the game and stops updating the game logic.
         /// </summary>
         /// <param name="dialogData">The contents and actions for the dialog.</param>
-        public override void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
+        public void ShowDialog(AW2.Graphics.OverlayComponents.OverlayDialogData dialogData)
         {
             if (!AllowDialogs) return;
             OverlayDialog.Data = dialogData;
@@ -88,7 +91,7 @@ namespace AW2.Core
         public override void ShowMenu()
         {
             Log.Write("Entering menus");
-            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers());
+            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
             if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             DataEngine.ClearGameState();
             MenuEngine.Activate();
@@ -171,6 +174,39 @@ namespace AW2.Core
             }
             else
                 StartArenaImpl();
+        }
+
+        public override void FinishArena()
+        {
+            base.FinishArena();
+            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            if (DataEngine.ArenaPlaylist.HasNext)
+                ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
+            else
+                ShowDialog(new GameOverOverlayDialogData());
+            if (NetworkMode == NetworkMode.Server)
+            {
+                var message = new ArenaFinishMessage();
+                NetworkEngine.SendToGameClients(message);
+            }
+        }
+
+        public override void StopClient(string errorOrNull)
+        {
+            base.StopClient(errorOrNull);
+            if (NetworkMode != NetworkMode.Client)
+                throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
+            NetworkMode = NetworkMode.Standalone;
+            NetworkEngine.StopClient();
+            DataEngine.RemoveRemoteSpectators();
+            if (errorOrNull != null)
+            {
+                var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData(
+                    errorOrNull + "\nPress Enter to return to Main Menu",
+                    new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
+                ShowDialog(dialogData);
+            }
         }
 
         private void StartArenaImpl()

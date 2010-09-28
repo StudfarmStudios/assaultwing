@@ -177,7 +177,6 @@
     <Compile Include="Graphics\AWVideo.cs" />
     <Compile Include="Graphics\OverlayComponents\GobTrackerItem.cs" />
     <Compile Include="Graphics\OverlayComponents\GobTrackerOverlay.cs" />
-    <Compile Include="Graphics\IntroEngine.cs" />
     <Compile Include="Graphics\OverlayComponents\ScoreOverlay.cs" />
     <Compile Include="Helpers\Serialization\IAWSerializable.cs" />
     <Compile Include="Helpers\MiscHelper.cs" />

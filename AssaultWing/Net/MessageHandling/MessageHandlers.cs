@@ -35,9 +35,9 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<ClientJoinMessage>(false, IMessageHandler.SourceType.Management, HandleClientJoinMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction, Action<StartGameMessage> handleStartGameMessage)
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction, Action<StartGameMessage> handleStartGameMessage, Action<ConnectionClosingMessage> handleConnectionClosingMessage)
         {
-            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
+            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, handleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, handleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
@@ -46,9 +46,9 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, mess => joinGameReplyAction());
         }
 
-        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers()
+        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(Action<ConnectionClosingMessage> handleConnectionClosingMessage)
         {
-            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
+            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, handleConnectionClosingMessage);
             yield return new MessageHandler<WallHoleMessage>(false, IMessageHandler.SourceType.Server, HandleWallHoleMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, AssaultWingCore.Instance.DataEngine.ProcessGobCreationMessage);
             yield return new MessageHandler<ArenaStartRequest>(false, IMessageHandler.SourceType.Server, HandleArenaStartRequest);
@@ -111,14 +111,6 @@ namespace AW2.Net.MessageHandling
             {
                 connection.RemoteUDPEndPoint = matchingEndPoint;
             }
-        }
-
-        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
-        {
-            Log.Write("Server is going to close the connection, reason: " + mess.Info);
-            var dialogData = new AW2.Graphics.OverlayComponents.CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
-                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), AssaultWingCore.Instance.ShowMenu));
-            AssaultWingCore.Instance.ShowDialog(dialogData);
         }
 
         private static void HandlePlayerSettingsRequestOnClient(PlayerSettingsRequest mess)

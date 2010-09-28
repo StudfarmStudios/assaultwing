@@ -335,12 +335,6 @@ namespace AW2
                 throw new InvalidOperationException("There is no next arena to play");
         }
 
-        [Obsolete("Move to AW2.Core.AssaultWing")]
-        public virtual void ShowMenu()
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Rearranges player viewports, optionally so that 
         /// the whole screen area is given to only one player.

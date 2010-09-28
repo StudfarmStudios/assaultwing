@@ -92,7 +92,7 @@ namespace AW2.Core
         /// <summary>
         /// Displays the main menu and stops any ongoing gameplay.
         /// </summary>
-        public override void ShowMenu()
+        public void ShowMenu()
         {
             Log.Write("Entering menus");
             if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
@@ -188,7 +188,7 @@ namespace AW2.Core
             if (DataEngine.ArenaPlaylist.HasNext)
                 ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
             else
-                ShowDialog(new GameOverOverlayDialogData());
+                ShowDialog(new GameOverOverlayDialogData(this));
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new ArenaFinishMessage();

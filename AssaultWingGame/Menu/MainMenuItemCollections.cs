@@ -142,7 +142,7 @@ namespace AW2.Menu
         {
             Log.Write("Server is going to close the connection, reason: " + mess.Info);
             var dialogData = new CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
-                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), menuEngine.Game.ShowMenu));
+                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), ((AssaultWing)menuEngine.Game).ShowMenu));
             ((AssaultWing)menuEngine.Game).ShowDialog(dialogData);
         }
     }

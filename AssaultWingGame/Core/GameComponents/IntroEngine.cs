@@ -29,7 +29,7 @@ namespace AW2.Core.GameComponents
         private void EndIntro()
         {
             _introVideo.Stop();
-            Game.ShowMenu();
+            ((AssaultWing)Game).ShowMenu();
         }
 
         public override void Initialize()

@@ -16,7 +16,9 @@ namespace AW2.Core.GameComponents
         private AWVideo _introVideo;
         private SpriteBatch _spriteBatch;
 
-        public IntroEngine(AssaultWingCore game)
+        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
+
+        public IntroEngine(AssaultWing game)
             : base(game)
         {
         }
@@ -29,7 +31,7 @@ namespace AW2.Core.GameComponents
         private void EndIntro()
         {
             _introVideo.Stop();
-            ((AssaultWing)Game).ShowMenu();
+            Game.ShowMenu();
         }
 
         public override void Initialize()

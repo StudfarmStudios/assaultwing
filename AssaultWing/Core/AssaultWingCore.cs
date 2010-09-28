@@ -350,33 +350,6 @@ namespace AW2
         }
 
         /// <summary>
-        /// Turns this game instance into a game server to whom other game instances
-        /// can connect as game clients.
-        /// </summary>
-        /// <param name="connectionHandler">Handler of connection result.</param>
-        /// <returns>True on success, false on failure</returns>
-        [Obsolete("Move to AW2.Core.AssaultWing")]
-        public bool StartServer(Action<Result<Connection>> connectionHandler)
-        {
-            if (NetworkMode != NetworkMode.Standalone)
-                throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
-            NetworkMode = NetworkMode.Server;
-            try
-            {
-                NetworkEngine.StartServer(connectionHandler);
-                var handlers = MessageHandlers.GetServerMenuHandlers();
-                NetworkEngine.MessageHandlers.AddRange(handlers);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Log.Write("Could not start server: " + e);
-                NetworkMode = NetworkMode.Standalone;
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Turns this game server into a standalone game instance and disposes of
         /// any connections to game clients.
         /// </summary>

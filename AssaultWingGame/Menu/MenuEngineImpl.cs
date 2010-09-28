@@ -56,6 +56,7 @@ namespace AW2.Menu
         private Texture2D _backgroundTexture;
         private SpriteFont _smallFont;
 
+        public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
         public MenuContent MenuContent { get; private set; }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace AW2.Menu
             g_cursorFade.PostLoop = CurveLoopType.Cycle;
         }
 
-        public MenuEngineImpl(AssaultWingCore game)
+        public MenuEngineImpl(AssaultWing game)
             : base(game)
         {
             MenuContent = new MenuContent();

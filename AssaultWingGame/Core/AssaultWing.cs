@@ -9,6 +9,8 @@ using AW2.Graphics;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Menu;
+using AW2.Net;
+using AW2.Net.Connections;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
@@ -194,6 +196,32 @@ namespace AW2.Core
                 var message = new ArenaFinishMessage();
                 NetworkEngine.SendToGameClients(message);
             }
+        }
+
+        /// <summary>
+        /// Turns this game instance into a game server to whom other game instances
+        /// can connect as game clients.
+        /// </summary>
+        /// <param name="connectionHandler">Handler of connection result.</param>
+        /// <returns>True on success, false on failure</returns>
+        public bool StartServer(Action<Result<Connection>> connectionHandler)
+        {
+            if (NetworkMode != NetworkMode.Standalone)
+                throw new InvalidOperationException("Cannot start server while in mode " + NetworkMode);
+            NetworkMode = NetworkMode.Server;
+            try
+            {
+                NetworkEngine.StartServer(connectionHandler);
+                var handlers = MessageHandlers.GetServerMenuHandlers();
+                NetworkEngine.MessageHandlers.AddRange(handlers);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Write("Could not start server: " + e);
+                NetworkMode = NetworkMode.Standalone;
+            }
+            return false;
         }
 
         public override void StopClient(string errorOrNull)

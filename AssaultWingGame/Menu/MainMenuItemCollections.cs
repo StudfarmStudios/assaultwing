@@ -4,6 +4,7 @@ using AW2.Helpers;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
+using AW2.UI;
 
 namespace AW2.Menu
 {
@@ -12,6 +13,8 @@ namespace AW2.Menu
     /// </summary>
     public class MainMenuItemCollections
     {
+        private MenuEngineImpl _menuEngine;
+
         /// <summary>
         /// The very first menu when the game starts.
         /// </summary>
@@ -24,6 +27,7 @@ namespace AW2.Menu
 
         public MainMenuItemCollections(MenuEngineImpl menuEngine)
         {
+            _menuEngine = menuEngine;
             StartItems = new MainMenuItemCollection("Start Menu");
             StartItems.Add(new MainMenuItem(menuEngine)
             {
@@ -35,13 +39,13 @@ namespace AW2.Menu
                 Name = "Play at the Battlefront",
                 Action = component =>
                 {
-                    InitializeNetworkItems(menuEngine);
+                    InitializeNetworkItems();
                     component.SetItems(NetworkItems);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                     menuEngine.Game.NetworkEngine.ConnectToManagementServer();
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(
-                        mess => HandleGameServerListReply(mess, menuEngine),
-                        mess => HandleJoinGameServerReply(mess, menuEngine)));
+                        HandleGameServerListReply,
+                        HandleJoinGameServerReply));
                     menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
                 }
             });
@@ -57,93 +61,92 @@ namespace AW2.Menu
             });
         }
 
-        private void InitializeNetworkItems(MenuEngineImpl menuEngine)
+        private void InitializeNetworkItems()
         {
             NetworkItems = new MainMenuItemCollection("Battlefront Menu");
-            NetworkItems.Add(new MainMenuItem(menuEngine)
+            NetworkItems.Add(new MainMenuItem(_menuEngine)
             {
                 Name = "Play as Server",
                 Action = component =>
                 {
-                    if (menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
-                    if (!menuEngine.Game.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, AllowNewConnection))) return;
+                    if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
+                    if (!_menuEngine.Game.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, AllowNewConnection))) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player and Amazonas as the only arena.
-                    menuEngine.Game.DataEngine.Spectators.Remove(player => menuEngine.Game.DataEngine.Spectators.Count > 1);
-                    menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
+                    _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
+                    _menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
                 }
             });
         }
 
         private bool AllowNewConnection()
         {
-            return ((AssaultWing)AssaultWing.Instance).GameState == AW2.Core.GameState.Menu;
+            return _menuEngine.Game.GameState == GameState.Menu;
         }
 
-        private void HandleGameServerListReply(GameServerListReply mess, MenuEngineImpl menuEngine)
+        private void HandleGameServerListReply(GameServerListReply mess)
         {
             foreach (var server in mess.GameServers)
-                NetworkItems.Add(new MainMenuItem(menuEngine)
+                NetworkItems.Add(new MainMenuItem(_menuEngine)
                 {
                     Name = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers),
                     Action = component =>
                     {
-                        if (menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
+                        if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
                         var joinRequest = new JoinGameServerRequest
                         {
                             GameServerManagementID = server.ManagementID,
-                            PrivateUDPEndPoint = menuEngine.Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
+                            PrivateUDPEndPoint = _menuEngine.Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
                         };
-                        menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
+                        _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
                     }
                 });
         }
 
-        private static void HandleJoinGameServerReply(JoinGameServerReply mess, MenuEngineImpl menuEngine)
+        private void HandleJoinGameServerReply(JoinGameServerReply mess)
         {
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null, null));
-            menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-            menuEngine.Game.StartClient(mess.GameServerEndPoints, result => ClientConnectedCallback(result, menuEngine));
+            _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            _menuEngine.Game.StartClient(mess.GameServerEndPoints, ClientConnectedCallback);
         }
 
-        private static void ClientConnectedCallback(AW2.Net.Result<AW2.Net.Connections.Connection> result, MenuEngineImpl menuEngine)
+        private void ClientConnectedCallback(AW2.Net.Result<AW2.Net.Connections.Connection> result)
         {
             if (!result.Successful)
             {
                 Log.Write("Failed to connect to server: " + result.Error);
-                menuEngine.Game.StopClient("Failed to connect to server");
+                _menuEngine.Game.StopClient("Failed to connect to server");
                 return;
             }
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(
-                () => menuEngine.ActivateComponent(MenuComponentType.Equip),
-                mess => HandleStartGameMessage(mess, menuEngine),
-                mess => HandleConnectionClosingMessage(mess, menuEngine)));
+                () => _menuEngine.ActivateComponent(MenuComponentType.Equip),
+                HandleStartGameMessage, HandleConnectionClosingMessage));
 
             // HACK: Force one local player.
-            menuEngine.Game.DataEngine.Spectators.Remove(player => menuEngine.Game.DataEngine.Spectators.Count > 1);
+            _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
 
             var joinRequest = new JoinGameRequest { CanonicalStrings = CanonicalString.CanonicalForms };
-            menuEngine.Game.NetworkEngine.GameServerConnection.Send(joinRequest);
+            _menuEngine.Game.NetworkEngine.GameServerConnection.Send(joinRequest);
         }
 
-        private static void HandleStartGameMessage(StartGameMessage mess, MenuEngineImpl menuEngine)
+        private void HandleStartGameMessage(StartGameMessage mess)
         {
-            menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
+            _menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
 
             // Prepare and start playing the game.
-            menuEngine.ProgressBarAction(menuEngine.Game.PrepareFirstArena,
-                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(mesg => HandleConnectionClosingMessage(mesg, menuEngine))));
-            menuEngine.Deactivate();
+            _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareFirstArena,
+                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage)));
+            _menuEngine.Deactivate();
         }
 
-        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess, MenuEngineImpl menuEngine)
+        private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
             Log.Write("Server is going to close the connection, reason: " + mess.Info);
             var dialogData = new CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
-                new AW2.UI.TriggeredCallback(AW2.UI.TriggeredCallback.GetProceedControl(), ((AssaultWing)menuEngine.Game).ShowMenu));
-            ((AssaultWing)menuEngine.Game).ShowDialog(dialogData);
+                new TriggeredCallback(TriggeredCallback.GetProceedControl(), _menuEngine.Game.ShowMenu));
+            _menuEngine.Game.ShowDialog(dialogData);
         }
     }
 }

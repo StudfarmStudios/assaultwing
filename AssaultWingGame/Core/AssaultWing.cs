@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core.GameComponents;
 using AW2.Core.OverlayDialogs;
 using AW2.Game;
 using AW2.Graphics;

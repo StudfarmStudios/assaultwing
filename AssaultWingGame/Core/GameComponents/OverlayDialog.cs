@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Core.OverlayDialogs;
 using AW2.Graphics.OverlayComponents;
 
-namespace AW2.Core
+namespace AW2.Core.GameComponents
 {
     /// <summary>
     /// Game overlay dialog. It displays text on top of the game display.

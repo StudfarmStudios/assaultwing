@@ -5,7 +5,7 @@ using AW2.Graphics;
 using AW2.Helpers;
 using AW2.UI;
 
-namespace AW2.Core
+namespace AW2.Core.GameComponents
 {
     /// <summary>
     /// Game intro sequence implementation.

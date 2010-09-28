@@ -123,8 +123,8 @@
   <ItemGroup>
     <Compile Include="Core\ArenaStartWaiter.cs" />
     <Compile Include="Core\AssaultWing.cs" />
-    <Compile Include="Core\IntroEngine.cs" />
-    <Compile Include="Core\OverlayDialog.cs" />
+    <Compile Include="Core\GameComponents\IntroEngine.cs" />
+    <Compile Include="Core\GameComponents\OverlayDialog.cs" />
     <Compile Include="Core\OverlayDialogs\ArenaOverOverlayDialogData.cs" />
     <Compile Include="Core\OverlayDialogs\CustomOverlayDialogData.cs" />
     <Compile Include="Core\OverlayDialogs\GameOverOverlayDialogData.cs" />

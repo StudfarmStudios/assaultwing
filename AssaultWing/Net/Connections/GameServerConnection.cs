@@ -25,7 +25,7 @@ namespace AW2.Net.Connections
 
         protected override void DisposeImpl(bool error)
         {
-            AssaultWingCore.Instance.StopClient("Connection to server lost");
+            if (error) AssaultWingCore.Instance.StopClient("Connection to server lost");
             base.DisposeImpl(error);
         }
     }

@@ -24,8 +24,13 @@ namespace AW2.Net.Connections
         public override void Send(Message message)
         {
             var managementMessage = message as ManagementMessage;
-            if (managementMessage == null) return; // !!! HACK, UNDONE this check: throw new ArgumentException("Only ManagementMessage instances can be sent to management server", "message");
+            if (managementMessage == null) throw new ArgumentException("Only ManagementMessage instances can be sent to management server", "message");
             AssaultWingCore.Instance.NetworkEngine.UDPSocket.Send(managementMessage.Serialize(), RemoteUDPEndPoint);
+        }
+
+        public override void Update()
+        {
+            // Not updating ping
         }
     }
 }

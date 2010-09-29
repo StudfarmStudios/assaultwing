@@ -72,7 +72,7 @@ namespace AW2.Net.ConnectionUtils
             }
             catch (Exception)
             {
-                StopListeningImpl();
+                StopListeningImpl(port);
                 throw;
             }
         }
@@ -95,12 +95,17 @@ namespace AW2.Net.ConnectionUtils
 
         private void StopListeningImpl()
         {
+            int port = ((IPEndPoint)_serverSocket.LocalEndPoint).Port;
+            StopListeningImpl(port);
+        }
+
+        private void StopListeningImpl(int port)
+        {
             if (StaticPortMapper.IsSupported)
             {
                 Log.Write("Removing previous UPnP port mapping");
                 try
                 {
-                    int port = ((IPEndPoint)_serverSocket.LocalEndPoint).Port;
                     StaticPortMapper.RemovePortMapping(port, "TCP");
                 }
                 catch (Exception e)

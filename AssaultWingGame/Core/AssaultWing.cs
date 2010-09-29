@@ -48,6 +48,7 @@ namespace AW2.Core
 
         public event Action<GameState> GameStateChanged;
 
+        private StartupScreen StartupScreen { get; set; }
         private IntroEngine IntroEngine { get; set; }
         private LogicEngine LogicEngine { get { return (LogicEngine)Components.First(c => c is LogicEngine); } }
         private OverlayDialog OverlayDialog { get; set; }
@@ -56,9 +57,11 @@ namespace AW2.Core
         public AssaultWing(GraphicsDeviceService graphicsDeviceService)
             : base(graphicsDeviceService)
         {
+            StartupScreen = new StartupScreen(this) { UpdateOrder = -1 };
             OverlayDialog = new OverlayDialog(this) { UpdateOrder = 5 };
             MenuEngine = new MenuEngineImpl(this) { UpdateOrder = 6 };
             IntroEngine = new IntroEngine(this) { UpdateOrder = 7 };
+            Components.Add(StartupScreen);
             Components.Add(OverlayDialog);
             Components.Add(MenuEngine);
             Components.Add(IntroEngine);
@@ -297,6 +300,8 @@ namespace AW2.Core
             switch (value)
             {
                 case GameState.Initializing:
+                    StartupScreen.Enabled = true;
+                    StartupScreen.Visible = true;
                     break;
                 case GameState.Intro:
                     IntroEngine.Enabled = true;
@@ -328,6 +333,8 @@ namespace AW2.Core
             switch (_gameState)
             {
                 case GameState.Initializing:
+                    StartupScreen.Enabled = false;
+                    StartupScreen.Visible = false;
                     break;
                 case GameState.Intro:
                     IntroEngine.Enabled = false;

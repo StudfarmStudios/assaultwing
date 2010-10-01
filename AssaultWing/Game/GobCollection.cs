@@ -205,10 +205,12 @@ namespace AW2.Game
                 --_isEnumerating;
                 if (_isEnumerating == 0)
                 {
-                    foreach (var gob in _addedGobs) Add(gob);
-                    foreach (var gob in _removedGobs) Remove(gob, true);
-                    _addedGobs.Clear();
-                    _removedGobs.Clear();
+                    var oldAddedGobs = _addedGobs;
+                    var oldRemovedGobs = _removedGobs;
+                    _addedGobs = new List<Gob>();
+                    _removedGobs = new List<Gob>();
+                    foreach (var gob in oldAddedGobs) Add(gob);
+                    foreach (var gob in oldRemovedGobs) Remove(gob, true);
                 }
             }
         }

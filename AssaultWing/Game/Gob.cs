@@ -991,6 +991,7 @@ namespace AW2.Game
         {
             pos = oldPos;
             move = oldMove;
+            if (frameCount > 0) frameCount = 0; // UNDONE !!! games must have the frame count during network game for this to work
             if (Arena != null) Arena.Move(this, frameCount, false);
         }
 

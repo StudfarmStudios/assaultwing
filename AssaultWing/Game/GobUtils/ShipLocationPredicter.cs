@@ -8,6 +8,7 @@ using AW2.UI;
 
 namespace AW2.Game.GobUtils
 {
+    // TODO: Remove this class or make it do something. Currently it just eats data but gives nothing out.
     public class ShipLocationPredicter
     {
         private ShipLocations _shipLocations;

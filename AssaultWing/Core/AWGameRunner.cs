@@ -42,6 +42,7 @@ namespace AW2.Core
         private void GameUpdateAndDrawLoop()
         {
             _game.Initialize();
+            _game.LoadContent();
             _game.BeginRun();
             var nextUpdate = TimeSpan.Zero;
             var lastUpdate = TimeSpan.Zero;

@@ -34,6 +34,8 @@ namespace AW2
             }
         }
 
+        private event Action RenderSizeChanged;
+
         private GraphicsDeviceService _graphicsDeviceService;
         private AssaultWingCore _game;
         private AWGameRunner _runner;
@@ -48,36 +50,22 @@ namespace AW2
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
 
-        public ArenaEditor(GraphicsDeviceService graphicsDeviceService, string[] args)
+        public ArenaEditor(string[] args)
         {
-            _graphicsDeviceService = graphicsDeviceService;
             InitializeComponent();
-            graphicsDeviceService.SetWindow(ArenaView.Handle);
-            _game = new AssaultWingCore(graphicsDeviceService);
-            AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
-            _graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
-            _graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
-            _game.CommandLineArgs = args;
-            _game.DoNotFreezeCanonicalStrings = true;
-            _game.SoundEngine.Enabled = false;
-            _game.AllowDialogs = false;
-            _game.RunBegan += InitializeGame;
-            ArenaView.GraphicsDeviceService = graphicsDeviceService;
-            ArenaView.Draw += _game.Draw;
-            _runner = new AWGameRunner(_game,
-                () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
-                gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));
-            Loaded += (sender, eventArgs) => _runner.Run();
-            Unloaded += (sender, eventArgs) => _runner.Exit();
+            Loaded += (sender, eventArgs) =>
+            {
+                InitializeGraphicsDeviceService();
+                InitializeGame(args);
+                InitializeArenaView();
+            };
+            Closed += (sender, eventArgs) => _runner.Exit();
         }
-
-        #region Control event handlers
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-            _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
-            if (_game != null) _game.DataEngine.RearrangeViewports();
+            if (RenderSizeChanged != null) RenderSizeChanged();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -86,6 +74,8 @@ namespace AW2
             DoEvents(); // finish processing BeginInvoke()d Update() and Draw() calls
             base.OnClosing(e);
         }
+
+        #region Control event handlers
 
         private void LoadArena_Click(object sender, RoutedEventArgs e)
         {
@@ -161,17 +151,6 @@ namespace AW2
             {
                 ArenaEditorWindow.Cursor = oldCursor;
             }
-        }
-
-        private static void UpdateArenaBin(Arena arena)
-        {
-            arena.Bin.Clear();
-            foreach (var gob in arena.Gobs.GameplayLayer.Gobs)
-                if (gob is Wall)
-                {
-                    gob.StaticID = gob.ID;
-                    arena.Bin.Add(gob.StaticID, ((Wall)gob).CreateIndexMap());
-                }
         }
 
         private void ArenaView_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -288,14 +267,78 @@ namespace AW2
             SelectedGob.Arena.Gobs.Remove(SelectedGob);
         }
 
+        #endregion Control event handlers
+
+        #region Helpers
+
+        private void InitializeArenaView()
+        {
+            RenderSizeChanged += () => _game.DataEngine.RearrangeViewports();
+            ArenaView.Draw += _game.Draw;
+            ArenaView.GraphicsDeviceService = _graphicsDeviceService;
+            RenderSizeChanged(); // react to the initial render size
+            _runner = new AWGameRunner(_game,
+                () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
+                gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));
+            _runner.Run();
+        }
+
+        private void InitializeGame(string[] args)
+        {
+            _game = new AssaultWingCore(_graphicsDeviceService);
+            AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
+            _game.CommandLineArgs = args;
+            _game.DoNotFreezeCanonicalStrings = true;
+            _game.SoundEngine.Enabled = false;
+            _game.AllowDialogs = false;
+
+            // Spectators/players can be initialized not until RunBegan because their AWViewports try to LoadContent.
+            _game.RunBegan += () =>
+            {
+                _game.DataEngine.Spectators.Clear();
+                var spectatorControls = new PlayerControls
+                {
+                    Thrust = new KeyboardKey(Keys.Up),
+                    Left = new KeyboardKey(Keys.Left),
+                    Right = new KeyboardKey(Keys.Right),
+                    Down = new KeyboardKey(Keys.Down),
+                    Fire1 = new KeyboardKey(Keys.RightControl),
+                    Fire2 = new KeyboardKey(Keys.RightShift),
+                    Extra = new KeyboardKey(Keys.Enter)
+                };
+                var spectator = new EditorSpectator(_game, spectatorControls);
+                _game.DataEngine.Spectators.Add(spectator);
+                _game.DataEngine.Enabled = true;
+                _game.GraphicsEngine.Enabled = true;
+                _game.GraphicsEngine.Visible = true;
+            };
+        }
+
+        private void InitializeGraphicsDeviceService()
+        {
+            var windowHandle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            _graphicsDeviceService = new GraphicsDeviceService();
+            _graphicsDeviceService.SetWindow(windowHandle);
+            _graphicsDeviceService.DeviceResetting += (sender2, eventArgs2) => _game.UnloadContent();
+            _graphicsDeviceService.DeviceReset += (sender2, eventArgs2) => _game.LoadContent();
+            RenderSizeChanged += () => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
+        }
+
+        private static void UpdateArenaBin(Arena arena)
+        {
+            arena.Bin.Clear();
+            foreach (var gob in arena.Gobs.GameplayLayer.Gobs)
+                if (gob is Wall)
+                {
+                    gob.StaticID = gob.ID;
+                    arena.Bin.Add(gob.StaticID, ((Wall)gob).CreateIndexMap());
+                }
+        }
+
         private void ApplyViewSettings(object sender, RoutedEventArgs e)
         {
             ApplyViewSettingsToAllViewports();
         }
-
-        #endregion Control event handlers
-
-        #region Helpers
 
         private void DoEvents()
         {
@@ -388,26 +431,6 @@ namespace AW2
             viewport.ZoomRatio = (float)ZoomRatio;
             if (CircleGobs.IsChecked.HasValue)
                 viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
-        }
-
-        private void InitializeGame()
-        {
-            _game.DataEngine.Spectators.Clear();
-            var spectatorControls = new PlayerControls
-            {
-                Thrust = new KeyboardKey(Keys.Up),
-                Left = new KeyboardKey(Keys.Left),
-                Right = new KeyboardKey(Keys.Right),
-                Down = new KeyboardKey(Keys.Down),
-                Fire1 = new KeyboardKey(Keys.RightControl),
-                Fire2 = new KeyboardKey(Keys.RightShift),
-                Extra = new KeyboardKey(Keys.Enter)
-            };
-            var spectator = new EditorSpectator(_game, spectatorControls);
-            _game.DataEngine.Spectators.Add(spectator);
-            _game.DataEngine.Enabled = true;
-            _game.GraphicsEngine.Enabled = true;
-            _game.GraphicsEngine.Visible = true;
         }
 
         #endregion Helpers

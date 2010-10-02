@@ -46,7 +46,6 @@ namespace AW2.Core
                 Log.Write("Initializing " + component.GetType().Name);
                 component.Initialize();
             }
-            LoadContent();
         }
 
         /// <summary>

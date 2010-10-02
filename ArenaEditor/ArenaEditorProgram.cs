@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Windows;
-using Microsoft.Xna.Framework.Input;
 using AW2.Core;
-using AW2.Game;
 using AW2.Helpers;
-using AW2.UI;
 
 namespace AW2
 {
     public class ArenaEditorProgram
     {
-        private GraphicsDeviceService _graphicsDeviceService;
         private ArenaEditor _editor;
 
         /// <summary>
@@ -19,23 +15,17 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            using (var graphicsDeviceService = new GraphicsDeviceService())
-            {
-                var program = new ArenaEditorProgram(graphicsDeviceService, args);
-                program.Run();
-            }
+            new ArenaEditorProgram(args).Run();
         }
 
-        public ArenaEditorProgram(GraphicsDeviceService graphicsDeviceService, string[] args)
+        public ArenaEditorProgram(string[] args)
         {
             Log.Write("Assault Wing Arena Editor started");
-            _graphicsDeviceService = graphicsDeviceService;
-            _editor = new ArenaEditor(graphicsDeviceService, args);
+            _editor = new ArenaEditor(args);
         }
 
         public void Run()
         {
-            AssaultWingCore.GetRealClientAreaSize = () => _editor.ArenaView.Size;
             var app = new Application();
             app.Run(_editor);
         }

@@ -33,21 +33,12 @@ namespace AW2
 
         private UIEngineImpl _uiEngine;
         private LogicEngine _logicEngine;
-        private int _preferredWindowWidth, _preferredWindowHeight;
-        private SurfaceFormat _preferredWindowFormat;
-        private int _preferredFullscreenWidth, _preferredFullscreenHeight;
-        private SurfaceFormat _preferredFullscreenFormat;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
 
         #endregion AssaultWing fields
 
         #region Callbacks
-
-        /// <summary>
-        /// A hack to pass the true client area size from Arena Editor to Assault Wing window.
-        /// </summary>
-        public static Func<System.Drawing.Size> GetRealClientAreaSize;
 
         /// <summary>
         /// Called when <see cref="BeginRun"/> is complete.
@@ -146,23 +137,6 @@ namespace AW2
 
         private void InitializeGraphics()
         {
-            // Decide on preferred windowed and fullscreen sizes and formats.
-            DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
-            _preferredFullscreenWidth = displayMode.Width;
-            _preferredFullscreenHeight = displayMode.Height;
-            _preferredFullscreenFormat = displayMode.Format;
-            if (GetRealClientAreaSize != null)
-            {
-                var size = GetRealClientAreaSize();
-                _preferredWindowWidth = size.Width;
-                _preferredWindowHeight = size.Height;
-            }
-            else
-            {
-                _preferredWindowWidth = Math.Min(1000, displayMode.Width);
-                _preferredWindowHeight = Math.Min(800, displayMode.Height);
-            }
-            _preferredWindowFormat = displayMode.Format;
             AllowDialogs = true;
         }
 

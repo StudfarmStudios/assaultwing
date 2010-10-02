@@ -41,8 +41,7 @@ namespace AW2.UI
 
         public GameForm(string[] args)
         {
-            _graphicsDeviceService = new GraphicsDeviceService();
-            _graphicsDeviceService.SetWindow(Handle);
+            _graphicsDeviceService = new GraphicsDeviceService(Handle);
             InitializeComponent();
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _previousWindowedModeParameters = GetCurrentFormParameters();

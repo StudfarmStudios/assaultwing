@@ -271,16 +271,13 @@ namespace AW2
 
         #region Helpers
 
-        private void InitializeArenaView()
+        private void InitializeGraphicsDeviceService()
         {
-            RenderSizeChanged += () => _game.DataEngine.RearrangeViewports();
-            ArenaView.Draw += _game.Draw;
-            ArenaView.GraphicsDeviceService = _graphicsDeviceService;
-            RenderSizeChanged(); // react to the initial render size
-            _runner = new AWGameRunner(_game,
-                () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
-                gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));
-            _runner.Run();
+            var windowHandle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
+            _graphicsDeviceService.DeviceResetting += (sender2, eventArgs2) => _game.UnloadContent();
+            _graphicsDeviceService.DeviceReset += (sender2, eventArgs2) => _game.LoadContent();
+            RenderSizeChanged += () => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
         }
 
         private void InitializeGame(string[] args)
@@ -314,14 +311,16 @@ namespace AW2
             };
         }
 
-        private void InitializeGraphicsDeviceService()
+        private void InitializeArenaView()
         {
-            var windowHandle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-            _graphicsDeviceService = new GraphicsDeviceService();
-            _graphicsDeviceService.SetWindow(windowHandle);
-            _graphicsDeviceService.DeviceResetting += (sender2, eventArgs2) => _game.UnloadContent();
-            _graphicsDeviceService.DeviceReset += (sender2, eventArgs2) => _game.LoadContent();
-            RenderSizeChanged += () => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
+            RenderSizeChanged += () => _game.DataEngine.RearrangeViewports();
+            ArenaView.Draw += _game.Draw;
+            ArenaView.GraphicsDeviceService = _graphicsDeviceService;
+            RenderSizeChanged(); // react to the initial render size
+            _runner = new AWGameRunner(_game,
+                () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
+                gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));
+            _runner.Run();
         }
 
         private static void UpdateArenaBin(Arena arena)

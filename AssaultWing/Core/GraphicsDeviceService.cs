@@ -39,20 +39,9 @@ namespace AW2.Core
         public GraphicsDevice GraphicsDevice { get; private set; }
         public Rectangle ClientBounds { get; set; }
 
-        public GraphicsDeviceService() { }
-
-        public void SetWindow(IntPtr windowHandle)
+        public GraphicsDeviceService(IntPtr windowHandle)
         {
-            _parameters = new PresentationParameters
-            {
-                BackBufferWidth = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width,
-                BackBufferHeight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height,
-                BackBufferFormat = SurfaceFormat.Color,
-                EnableAutoDepthStencil = true,
-                AutoDepthStencilFormat = DepthFormat.Depth24,
-            };
-            if (GraphicsDevice != null) GraphicsDevice.Dispose();
-            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, DeviceType.Hardware, windowHandle, _parameters);
+            SetWindow(windowHandle);
         }
 
         public void Dispose()
@@ -74,6 +63,21 @@ namespace AW2.Core
             _parameters.BackBufferHeight = Math.Max(_parameters.BackBufferHeight, height);
             GraphicsDevice.Reset(_parameters);
             if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
+        }
+
+        private void SetWindow(IntPtr windowHandle)
+        {
+            var screenBounds = System.Windows.Forms.Screen.FromHandle(windowHandle).Bounds;
+            _parameters = new PresentationParameters
+            {
+                BackBufferWidth = screenBounds.Width,
+                BackBufferHeight = screenBounds.Height,
+                BackBufferFormat = SurfaceFormat.Color,
+                EnableAutoDepthStencil = true,
+                AutoDepthStencilFormat = DepthFormat.Depth24,
+            };
+            if (GraphicsDevice != null) GraphicsDevice.Dispose();
+            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, DeviceType.Hardware, windowHandle, _parameters);
         }
     }
 }

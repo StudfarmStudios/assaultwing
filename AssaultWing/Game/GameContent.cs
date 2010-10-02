@@ -28,7 +28,11 @@ namespace AW2.Game
 
         public void UnloadContent()
         {
-            WallSilhouetteEffect.Dispose();
+            if (WallSilhouetteEffect != null)
+            {
+                WallSilhouetteEffect.Dispose();
+                WallSilhouetteEffect = null;
+            }
         }
     }
 }

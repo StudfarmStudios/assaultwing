@@ -45,8 +45,8 @@ namespace AW2.Core
         {
             _parameters = new PresentationParameters
             {
-                BackBufferWidth = 1,
-                BackBufferHeight = 1,
+                BackBufferWidth = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width,
+                BackBufferHeight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height,
                 BackBufferFormat = SurfaceFormat.Color,
                 EnableAutoDepthStencil = true,
                 AutoDepthStencilFormat = DepthFormat.Depth24,

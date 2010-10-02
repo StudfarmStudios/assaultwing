@@ -21,8 +21,8 @@ namespace AW2
         {
             using (var graphicsDeviceService = new GraphicsDeviceService())
             {
-                var editor = new ArenaEditorProgram(graphicsDeviceService, args);
-                editor.Run();
+                var program = new ArenaEditorProgram(graphicsDeviceService, args);
+                program.Run();
             }
         }
 

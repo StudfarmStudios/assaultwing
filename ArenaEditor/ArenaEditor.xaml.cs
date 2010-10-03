@@ -47,6 +47,10 @@ namespace AW2
         private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
+        private IEnumerable<EditorViewport> EditorViewports
+        {
+            get { return _game.DataEngine.Viewports.Where(vp => vp is EditorViewport).Cast<EditorViewport>(); }
+        }
 
         public ArenaEditor(string[] args)
         {
@@ -390,13 +394,6 @@ namespace AW2
             return viewports.FirstOrDefault(vp => vp.OnScreen.Contains(location.X, location.Y));
         }
 
-        private void ForEachEditorViewport(Action<EditorViewport> action)
-        {
-            foreach (var viewport in _game.DataEngine.Viewports)
-                if (viewport is EditorViewport)
-                    action((EditorViewport)viewport);
-        }
-
         private void UpdateControlsFromArena()
         {
             var arena = _game.DataEngine.Arena;
@@ -412,10 +409,11 @@ namespace AW2
 
         private void ApplyViewSettingsToAllViewports()
         {
+            if (_game == null) return;
             var arena = _game.DataEngine.Arena;
             if (arena != null && EnableFog.IsChecked.HasValue)
                 arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
-            ForEachEditorViewport(viewport => ApplyViewSettings(viewport));
+            foreach (var viewport in EditorViewports) ApplyViewSettings(viewport);
         }
 
         private void ApplyViewSettings(EditorViewport viewport)

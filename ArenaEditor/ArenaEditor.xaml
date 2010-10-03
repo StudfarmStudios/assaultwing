@@ -73,7 +73,7 @@
 
             <TextBlock x:Name="CursorCoordinates" DockPanel.Dock="Bottom">X: ??? Y: ???</TextBlock>
         </DockPanel>
-        <WindowsFormsHost x:Name="ArenaViewHost">
+        <WindowsFormsHost x:Name="ArenaViewHost" SizeChanged="ApplyViewSettings">
             <aw:GraphicsDeviceControl x:Name="ArenaView"
                              MouseClick="ArenaView_MouseClick"
                              MouseMove="ArenaView_MouseMove"

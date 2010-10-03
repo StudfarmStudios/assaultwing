@@ -238,11 +238,12 @@ namespace AW2.Graphics
         public void Draw()
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+            var oldViewport = gfx.Viewport;
             gfx.Viewport = Viewport;
-            gfx.Clear(Color.Black);
             Draw_InitializeParallaxIn3D();
             _postprocessor.ProcessToScreen(RenderGameWorld);
             DrawOverlayComponents();
+            gfx.Viewport = oldViewport;
         }
 
         private void DrawOverlayComponents()

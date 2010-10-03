@@ -116,21 +116,15 @@ namespace AW2.Graphics
         {
             Game.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-
-            var screen = gfx.Viewport;
-            screen.X = 0;
-            screen.Y = 0;
-            screen.Width = Game.GraphicsDeviceService.ClientBounds.Width;
-            screen.Height = Game.GraphicsDeviceService.ClientBounds.Height;
-            gfx.Viewport = screen;
-            gfx.Clear(new Color(0x40, 0x40, 0x40));
-
+            gfx.Clear(Color.Black);
             foreach (var viewport in Game.DataEngine.Viewports) viewport.Draw();
+            DrawViewportSeparators();
+        }
 
-            // Restore viewport to the whole client window.
-            gfx.Viewport = screen;
-
-            // Draw viewport separators.
+        private void DrawViewportSeparators()
+        {
+            int viewportHeight = Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height;
+            int viewportWidth = Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width;
             _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
             foreach (var separator in Game.DataEngine.Viewports.Separators)
             {
@@ -142,9 +136,9 @@ namespace AW2.Graphics
                     // 'extraLength' is how many pixels more is the least sufficiently long 
                     // multiple of a pair of the separator texture than the screen height;
                     // it helps us center the looping separator texture.
-                    int extraLength = 2 * separatorTexture.Height - screen.Height % (2 * separatorTexture.Height);
+                    int extraLength = 2 * separatorTexture.Height - viewportHeight % (2 * separatorTexture.Height);
                     for (Vector2 pos = new Vector2(separator.Coordinate, -extraLength / 2);
-                        pos.Y < screen.Height; pos.Y += separatorTexture.Height)
+                        pos.Y < viewportHeight; pos.Y += separatorTexture.Height)
                         _spriteBatch.Draw(separatorTexture, pos, null, Color.White, 0,
                             separatorOrigin, 1, SpriteEffects.None, 0);
                 }
@@ -155,25 +149,14 @@ namespace AW2.Graphics
                     // 'extraLength' is how many pixels more is the least sufficiently long 
                     // multiple of a pair of the separator texture than the screen width;
                     // it helps us center the looping separator texture.
-                    int extraLength = 2 * separatorTexture.Height - screen.Width % (2 * separatorTexture.Height);
+                    int extraLength = 2 * separatorTexture.Height - viewportWidth % (2 * separatorTexture.Height);
                     for (Vector2 pos = new Vector2(-extraLength / 2, separator.Coordinate);
-                        pos.X < screen.Width; pos.X += separatorTexture.Height)
+                        pos.X < viewportWidth; pos.X += separatorTexture.Height)
                         _spriteBatch.Draw(separatorTexture, pos, null, Color.White, -MathHelper.PiOver2,
                             separatorOrigin, 1, SpriteEffects.None, 0);
                 }
             }
             _spriteBatch.End();
-        }
-
-        /// <summary>
-        /// Reacts to a system window resize.
-        /// </summary>
-        /// This method should be called after the window size changes in windowed mode,
-        /// or after the screen resolution changes in fullscreen mode,
-        /// or after switching between windowed and fullscreen mode.
-        public void WindowResize()
-        {
-            Game.DataEngine.RearrangeViewports();
         }
     }
 }

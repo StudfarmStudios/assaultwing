@@ -12,28 +12,36 @@ namespace AW2.Graphics
 {
     public class AWViewportCollection : IEnumerable<Viewport>
     {
+        public delegate Viewport ViewportConstructor(int viewportIndex, Rectangle viewportArea);
+
         private GraphicsDeviceService _graphicsDeviceService;
         private List<Viewport> _items;
         private List<ViewportSeparator> _separators;
+        private Point _lastGraphicsDeviceViewportSize;
+        private int _viewportCount;
+        private ViewportConstructor _viewportConstructor;
 
         public IEnumerable<ViewportSeparator> Separators { get { return _separators; } }
 
-        private int WindowWidth { get { return _graphicsDeviceService.ClientBounds.Width; } }
-        private int WindowHeight { get { return _graphicsDeviceService.ClientBounds.Height; } }
+        private int WindowWidth { get { return _graphicsDeviceService.GraphicsDevice.Viewport.Width; } }
+        private int WindowHeight { get { return _graphicsDeviceService.GraphicsDevice.Viewport.Height; } }
+        private Point CurrentGraphicsDeviceViewportSize
+        {
+            get { return new Point(_graphicsDeviceService.GraphicsDevice.Viewport.Width, _graphicsDeviceService.GraphicsDevice.Viewport.Height); }
+        }
 
         #region Public methods
 
-        public AWViewportCollection(GraphicsDeviceService graphicsDeviceService, int viewports, Func<Rectangle, Viewport> viewportConstructor)
+        public AWViewportCollection(GraphicsDeviceService graphicsDeviceService, int viewports, ViewportConstructor viewportConstructor)
         {
             if (viewports < 0) throw new ArgumentException("Nonnegative number of viewports required");
             _graphicsDeviceService = graphicsDeviceService;
+            _viewportCount = viewports;
+            _viewportConstructor = viewportConstructor;
             _items = new List<AWViewport>();
             _separators = new List<ViewportSeparator>();
             if (viewports == 0) return;
-            int rows, columns;
-            FindOptimalArrangement(viewports, out rows, out columns);
-            CreateViewports(viewports, viewportConstructor, rows, columns);
-            CreateViewportSeparators(rows, columns);
+            CreateAll(viewports, viewportConstructor);
         }
 
         public void Dispose()
@@ -43,17 +51,27 @@ namespace AW2.Graphics
 
         public IEnumerator<AWViewport> GetEnumerator()
         {
+            if (_lastGraphicsDeviceViewportSize != CurrentGraphicsDeviceViewportSize) CreateAll(_viewportCount, _viewportConstructor);
             return _items.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return _items.GetEnumerator();
+            return GetEnumerator();
         }
 
         #endregion Public methods
 
         #region Private methods
+
+        private void CreateAll(int viewports, ViewportConstructor viewportConstructor)
+        {
+            _lastGraphicsDeviceViewportSize = CurrentGraphicsDeviceViewportSize;
+            int rows, columns;
+            FindOptimalArrangement(viewports, out rows, out columns);
+            CreateViewports(viewports, viewportConstructor, rows, columns);
+            CreateViewportSeparators(rows, columns);
+        }
 
         /// <summary>
         /// Finds an optimal arrangement by going through viewport arrangements in
@@ -109,8 +127,9 @@ namespace AW2.Graphics
             return 0;
         }
 
-        private void CreateViewports(int viewports, Func<Rectangle, Viewport> viewportConstructor, int bestRows, int bestColumns)
+        private void CreateViewports(int viewports, ViewportConstructor viewportConstructor, int bestRows, int bestColumns)
         {
+            _items.Clear();
             for (int viewportI = 0; viewportI < viewports; ++viewportI)
             {
                 int viewportX = viewportI % bestColumns;
@@ -120,7 +139,7 @@ namespace AW2.Graphics
                 int onScreenX2 = WindowWidth * (viewportX + 1) / bestColumns;
                 int onScreenY2 = WindowHeight * (viewportY + 1) / bestRows;
                 var onScreen = new Rectangle(onScreenX1, onScreenY1, onScreenX2 - onScreenX1, onScreenY2 - onScreenY1);
-                var viewport = viewportConstructor(onScreen);
+                var viewport = viewportConstructor(viewportI, onScreen);
                 viewport.LoadContent();
                 _items.Add(viewport);
             }
@@ -128,6 +147,7 @@ namespace AW2.Graphics
 
         private void CreateViewportSeparators(int bestRows, int bestColumns)
         {
+            _separators.Clear();
             for (int i = 1; i < bestColumns; ++i)
                 _separators.Add(new ViewportSeparator(true, WindowWidth * i / bestColumns));
             for (int i = 1; i < bestRows; ++i)

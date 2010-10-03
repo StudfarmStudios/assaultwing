@@ -241,14 +241,9 @@ namespace AW2.Game
 
         public void RearrangeViewports()
         {
-            var localPlayers = Game.DataEngine.Spectators.Where(player => player.NeedsViewport);
-            var playerEnumerator = localPlayers.GetEnumerator();
-            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, localPlayers.Count(), rectangle =>
-            {
-                if (!playerEnumerator.MoveNext()) throw new ApplicationException("Ran out of players when assigning viewports");
-                return playerEnumerator.Current.CreateViewport(rectangle);
-            });
-            playerEnumerator.Dispose();
+            var localPlayers = Game.DataEngine.Spectators.Where(player => player.NeedsViewport).ToList();
+            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, localPlayers.Count(),
+                (index, rectangle) => localPlayers[index].CreateViewport(rectangle));
         }
 
         /// <summary>
@@ -258,7 +253,7 @@ namespace AW2.Game
         public void RearrangeViewports(int privilegedPlayer)
         {
             var player = Game.DataEngine.Spectators[privilegedPlayer];
-            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 1, viewport => player.CreateViewport(viewport));
+            Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 1, (index, viewport) => player.CreateViewport(viewport));
         }
 
         #endregion viewports

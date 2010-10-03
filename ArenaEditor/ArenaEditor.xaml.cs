@@ -34,8 +34,6 @@ namespace AW2
             }
         }
 
-        private event Action RenderSizeChanged;
-
         private GraphicsDeviceService _graphicsDeviceService;
         private AssaultWingCore _game;
         private AWGameRunner _runner;
@@ -55,17 +53,12 @@ namespace AW2
             InitializeComponent();
             Loaded += (sender, eventArgs) =>
             {
+                // GraphicsDeviceService needs a window handle which is only available after the window is visible
                 InitializeGraphicsDeviceService();
                 InitializeGame(args);
                 InitializeArenaView();
             };
             Closed += (sender, eventArgs) => _runner.Exit();
-        }
-
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-        {
-            base.OnRenderSizeChanged(sizeInfo);
-            if (RenderSizeChanged != null) RenderSizeChanged();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -275,9 +268,7 @@ namespace AW2
         {
             var windowHandle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
             _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-            _graphicsDeviceService.DeviceResetting += (sender2, eventArgs2) => _game.UnloadContent();
-            _graphicsDeviceService.DeviceReset += (sender2, eventArgs2) => _game.LoadContent();
-            RenderSizeChanged += () => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
+            ArenaView.ClientSizeChanged += (sender, eventArgs) => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
         }
 
         private void InitializeGame(string[] args)
@@ -288,6 +279,8 @@ namespace AW2
             _game.DoNotFreezeCanonicalStrings = true;
             _game.SoundEngine.Enabled = false;
             _game.AllowDialogs = false;
+            _graphicsDeviceService.DeviceResetting += (sender2, eventArgs2) => _game.UnloadContent();
+            _graphicsDeviceService.DeviceReset += (sender2, eventArgs2) => _game.LoadContent();
 
             // Spectators/players can be initialized not until RunBegan because their AWViewports try to LoadContent.
             _game.RunBegan += () =>
@@ -313,10 +306,10 @@ namespace AW2
 
         private void InitializeArenaView()
         {
-            RenderSizeChanged += () => _game.DataEngine.RearrangeViewports();
+            ArenaView.ClientSizeChanged += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
             ArenaView.Draw += _game.Draw;
             ArenaView.GraphicsDeviceService = _graphicsDeviceService;
-            RenderSizeChanged(); // react to the initial render size
+            ArenaView.ClientSize = ArenaView.ClientSize; // trigger ArenaView.ClientSizeChanged to react to the initial ArenaView size
             _runner = new AWGameRunner(_game,
                 () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
                 gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));

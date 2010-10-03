@@ -41,27 +41,12 @@ namespace AW2.UI
 
         public GameForm(string[] args)
         {
-            _graphicsDeviceService = new GraphicsDeviceService(Handle);
             InitializeComponent();
-            Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
-            _previousWindowedModeParameters = GetCurrentFormParameters();
-            _gameView.GraphicsDeviceService = _graphicsDeviceService;
-
-            // Make the device large enough for any conceivable purpose -- avoid unnecessary graphics device resets later
-            var screen = Screen.GetWorkingArea(this);
-            _graphicsDeviceService.ResetDevice(screen.Width, screen.Height);
-
-            _game = new AssaultWing(_graphicsDeviceService);
-            AssaultWing.Instance = _game; // HACK: support older code that uses the static instance
-            _game.CommandLineArgs = args;
-            _game.StatusTextChanged += text => BeginInvoke((Action)(() => Text = "Assault Wing " + text));
-            _gameView.Draw += _game.Draw;
-            _graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
-            _graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
-            // FIXME: Game update delegate is run in Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
-            _runner = new AWGameRunner(_game,
-                () => _gameView.BeginInvoke((Action)_gameView.Invalidate),
-                gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
+            InitializeGameForm();
+            InitializeGraphicsDeviceService();
+            InitializeGame(args);
+            InitializeGameView();
+            InitializeRunner();
         }
 
         protected override void OnCreateControl()
@@ -71,17 +56,6 @@ namespace AW2.UI
             SetFullScreen();
 #endif
             _runner.Run();
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
-            if (_game != null)
-            {
-                _game.MenuEngine.WindowResize();
-                _game.DataEngine.RearrangeViewports();
-            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -112,6 +86,47 @@ namespace AW2.UI
             _graphicsDeviceService.Dispose();
             _graphicsDeviceService = null;
             base.OnClosing(e);
+        }
+
+        private void InitializeGameForm()
+        {
+            Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
+            _previousWindowedModeParameters = GetCurrentFormParameters();
+        }
+
+        private void InitializeGraphicsDeviceService()
+        {
+            _graphicsDeviceService = new GraphicsDeviceService(Handle);
+            _gameView.Resize += (sender, eventArgs) => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
+        }
+
+        private void InitializeGame(string[] args)
+        {
+            _game = new AssaultWing(_graphicsDeviceService);
+            AssaultWing.Instance = _game; // HACK: support older code that uses the static instance
+            _game.CommandLineArgs = args;
+            _game.StatusTextChanged += text => BeginInvoke((Action)(() => Text = "Assault Wing " + text));
+            _gameView.Draw += _game.Draw;
+            _gameView.Resize += (sender, eventArgs) =>
+            {
+                _game.MenuEngine.WindowResize();
+                _game.DataEngine.RearrangeViewports();
+            };
+            _graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
+            _graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
+        }
+
+        private void InitializeGameView()
+        {
+            _gameView.GraphicsDeviceService = _graphicsDeviceService;
+        }
+
+        private void InitializeRunner()
+        {
+            // FIXME: Game update delegate is run in the Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
+            _runner = new AWGameRunner(_game,
+                () => _gameView.BeginInvoke((Action)_gameView.Invalidate),
+                gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
         }
 
         private void SetWindowed()

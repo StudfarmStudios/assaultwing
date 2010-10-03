@@ -107,11 +107,7 @@ namespace AW2.UI
             _game.CommandLineArgs = args;
             _game.StatusTextChanged += text => BeginInvoke((Action)(() => Text = "Assault Wing " + text));
             _gameView.Draw += _game.Draw;
-            _gameView.Resize += (sender, eventArgs) =>
-            {
-                _game.MenuEngine.WindowResize();
-                _game.DataEngine.RearrangeViewports();
-            };
+            _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
             _graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
             _graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
         }

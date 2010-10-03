@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Sound;
-using AW2.UI;
 
 namespace AW2.Menu
 {
@@ -42,8 +39,6 @@ namespace AW2.Menu
         private Vector2 _viewTarget;
         private MovementCurve _viewCurve;
         private SoundInstance _menuChangeSound;
-        private int _viewWidth, _viewHeight; // how many pixels to show scaled down to the screen
-        private int _screenWidth, _screenHeight; // last known dimensions of client bounds
         private TimeSpan _cursorFadeStartTime;
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
@@ -51,6 +46,8 @@ namespace AW2.Menu
         private int[] _shadowIndexData; // stored as a triangle list
         private VertexDeclaration _vertexDeclaration;
         private BasicEffect _effect;
+        private Curve _alphaCurve;
+        private Point _shadowSize;
 
         private SpriteBatch _spriteBatch;
         private Texture2D _backgroundTexture;
@@ -89,6 +86,27 @@ namespace AW2.Menu
                     progressBar.CustomAlignment = new Vector2(0, -2);
                 }
             }
+        }
+
+        private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
+        private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
+        private Curve AlphaCurve
+        {
+            get
+            {
+                if (_alphaCurve == null)
+                {
+                    _alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
+                    _alphaCurve.Keys.Add(new CurveKey(0, 0));
+                    _alphaCurve.Keys.Add(new CurveKey(500, 120));
+                    _alphaCurve.Keys.Add(new CurveKey(1000, 255));
+                    _alphaCurve.PreLoop = CurveLoopType.Constant;
+                    _alphaCurve.PostLoop = CurveLoopType.Constant;
+                    _alphaCurve.ComputeTangents(CurveTangent.Smooth);
+                }
+                return _alphaCurve;
+            }
+            set { _alphaCurve = value; }
         }
 
         static MenuEngineImpl()
@@ -176,15 +194,10 @@ namespace AW2.Menu
 
         public override void Initialize()
         {
-            _screenWidth = Game.GraphicsDeviceService.ClientBounds.Width;
-            _screenHeight = Game.GraphicsDeviceService.ClientBounds.Height;
-
             _components[(int)MenuComponentType.Main] = new MainMenuComponent(this);
             _components[(int)MenuComponentType.Equip] = new EquipMenuComponent(this);
             _components[(int)MenuComponentType.Arena] = new ArenaMenuComponent(this);
             _viewCurve = new MovementCurve(_components[(int)MenuComponentType.Main].Center);
-
-            WindowResize();
             base.Initialize();
         }
 
@@ -209,7 +222,7 @@ namespace AW2.Menu
         {
             _components[(int)_activeComponent].Active = false;
             _activeComponent = component;
-            MenuComponent newComponent = _components[(int)_activeComponent];
+            var newComponent = _components[(int)_activeComponent];
 
             // Make menu view scroll to the new component's position.
             _viewTarget = newComponent.Center;
@@ -280,166 +293,13 @@ namespace AW2.Menu
 
         public override void Draw()
         {
-            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var screen = gfx.Viewport;
-            screen.X = 0;
-            screen.Y = 0;
-            screen.Width = _viewWidth;
-            screen.Height = _viewHeight;
-
-            // If client bounds are very small, render everything
-            // to a separate render target of reasonable size, 
-            // then scale the target to the screen.
-            RenderTarget2D renderTarget = null;
-            DepthStencilBuffer oldDepthStencilBuffer = null;
-            if (_screenWidth < _viewWidth || _screenHeight < _viewHeight)
-            {
-                renderTarget = new RenderTarget2D(gfx, _viewWidth, _viewHeight, 1, gfx.DisplayMode.Format);
-
-                // Set up graphics device.
-                oldDepthStencilBuffer = gfx.DepthStencilBuffer;
-                gfx.DepthStencilBuffer = null;
-
-                // Set our own render target.
-                gfx.SetRenderTarget(0, renderTarget);
-            }
-
-            // Begin drawing.
-            gfx.Viewport = screen;
-            gfx.Clear(ClearOptions.Target, Color.DimGray, 0, 0);
             _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-
-            // Draw background looping all over the screen.
-            float yStart = _view.Y < 0
-                ? -(_view.Y % _backgroundTexture.Height) - _backgroundTexture.Height
-                : -(_view.Y % _backgroundTexture.Height);
-            float xStart = _view.X < 0
-                ? -(_view.X % _backgroundTexture.Width) - _backgroundTexture.Width
-                : -(_view.X % _backgroundTexture.Width);
-            for (float y = yStart; y < screen.Height; y += _backgroundTexture.Height)
-                for (float x = xStart; x < screen.Width; x += _backgroundTexture.Width)
-                    _spriteBatch.Draw(_backgroundTexture, new Vector2(x, y), Color.White);
-
-            // Draw menu components.
-            foreach (MenuComponent component in _components)
-                component.Draw(_view - new Vector2(_viewWidth, _viewHeight) / 2, _spriteBatch);
-
+            DrawBackground();
+            DrawMenuComponents();
             _spriteBatch.End();
-
-            // Draw menu focus shadow.
-            gfx.VertexDeclaration = _vertexDeclaration;
-            _effect.Projection = Matrix.CreateOrthographicOffCenter(
-                -screen.Width / 2, screen.Width / 2,
-                -screen.Height, 0,
-                1, 500);
-            _effect.Begin();
-            foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
-            {
-                pass.Begin();
-                gfx.DrawUserIndexedPrimitives<VertexPositionColor>(PrimitiveType.TriangleList,
-                    _shadowVertexData, 0, _shadowVertexData.Length,
-                    _shadowIndexData, 0, _shadowIndexData.Length / 3);
-                pass.End();
-            }
-            _effect.End();
-
-            // Draw progress bar if wanted.
-            if (_showProgressBar)
-                Game.DataEngine.ProgressBar.Draw(_spriteBatch);
-
-            // Draw static text.
-            _spriteBatch.Begin();
-            _spriteBatch.DrawString(_smallFont, "4th Milestone 2010-05-15",
-                new Vector2(10, _viewHeight - _smallFont.LineSpacing), Color.White);
-            if (_showHelpText)
-            {
-                Vector2 helpTextPos = new Vector2(
-                    (int)(((float)_viewWidth - _smallFont.MeasureString(_helpText).X) / 2),
-                    _viewHeight - _smallFont.LineSpacing);
-                _spriteBatch.DrawString(_smallFont, _helpText, helpTextPos, Color.White);
-            }
-            string copyrightText = "Studfarm Studios";
-            Vector2 copyrightTextPos = new Vector2(
-                _viewWidth - (int)_smallFont.MeasureString(copyrightText).X - 10,
-                _viewHeight - _smallFont.LineSpacing);
-            _spriteBatch.DrawString(_smallFont, copyrightText, copyrightTextPos, Color.White);
-            _spriteBatch.End();
-
-            // If we're stretching the view, take the temporary render target
-            // and draw its contents to the screen.
-            if (_screenWidth < _viewWidth || _screenHeight < _viewHeight)
-            {
-                // Restore render target so what we can extract drawn pixels.
-                gfx.SetRenderTarget(0, null);
-                Texture2D renderTexture = renderTarget.GetTexture();
-
-                // Restore the graphics device to the real backbuffer.
-                screen.Width = _screenWidth;
-                screen.Height = _screenHeight;
-                gfx.Viewport = screen;
-                gfx.DepthStencilBuffer = oldDepthStencilBuffer;
-
-                // Draw the texture stretched on the screen.
-                Rectangle destination = new Rectangle(0, 0, screen.Width, screen.Height);
-                _spriteBatch.Begin();
-                _spriteBatch.Draw(renderTexture, destination, Color.White);
-                _spriteBatch.End();
-
-                // Dispose of needless data.
-                renderTexture.Dispose();
-                renderTarget.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Reacts to a system window resize.
-        /// </summary>
-        /// This method should be called after the window size changes in windowed mode,
-        /// or after the screen resolution changes in fullscreen mode,
-        /// or after switching between windowed and fullscreen mode.
-        public void WindowResize()
-        {
-            _screenWidth = Game.GraphicsDeviceService.ClientBounds.Width;
-            _screenHeight = Game.GraphicsDeviceService.ClientBounds.Height;
-
-            int oldViewWidth = _viewWidth;
-            int oldViewHeight = _viewHeight;
-            SetViewDimensions();
-            InitializeShadow();
-        }
-
-        /// <summary>
-        /// Sets view dimensions (<c>viewWidth</c> and <c>viewHeight</c>)
-        /// based on current screen dimensions (<c>screenWidth</c> and <c>screenHeight</c>).
-        /// </summary>
-        /// This method decides if the menu view will be shrunk down to fit
-        /// more information on a small screen.
-        private void SetViewDimensions()
-        {
-            // If client bounds are very small, scale the menu view down
-            // to fit more in the screen.
-            _viewWidth = Game.GraphicsDeviceService.ClientBounds.Width;
-            _viewHeight = Game.GraphicsDeviceService.ClientBounds.Height;
-
-            if (_screenWidth == 0 || _screenHeight == 0)
-                return;
-
-            int screenWidthMin = 1; // least screen width that doesn't require scaling
-            int screenHeightMin = 1; // least screen height that doesn't require scaling
-            if (_screenWidth < screenWidthMin)
-            {
-                _viewWidth = screenWidthMin;
-                _viewHeight = _viewWidth * _screenHeight / _screenWidth;
-            }
-            if (_screenHeight < screenHeightMin)
-            {
-                // Follow the stronger scale if there is a limitation both by width and by height.
-                if (_viewHeight < screenHeightMin)
-                {
-                    _viewHeight = screenHeightMin;
-                    _viewWidth = _viewHeight * _screenWidth / _screenHeight;
-                }
-            }
+            DrawShadow();
+            if (_showProgressBar) Game.DataEngine.ProgressBar.Draw(_spriteBatch);
+            DrawStaticText();
         }
 
         /// <summary>
@@ -451,27 +311,20 @@ namespace AW2.Menu
             // The shadow is a rectangle that spans a grid of vertices, each
             // of them black but with different levels of alpha.
             // The origin of the shadow 3D model is at the top center.
-            Vector2 shadowDimensions = new Vector2(_viewWidth, _viewHeight);
+            var shadowDimensions = new Vector2(ViewportWidth, ViewportHeight);
             int gridWidth = (int)shadowDimensions.X / 30;
             int gridHeight = (int)shadowDimensions.Y / 30;
-            Curve alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
-            alphaCurve.Keys.Add(new CurveKey(0, 0));
-            alphaCurve.Keys.Add(new CurveKey(500, 120));
-            alphaCurve.Keys.Add(new CurveKey(1000, 255));
-            alphaCurve.PreLoop = CurveLoopType.Constant;
-            alphaCurve.PostLoop = CurveLoopType.Constant;
-            alphaCurve.ComputeTangents(CurveTangent.Smooth);
-            List<VertexPositionColor> vertexData = new List<VertexPositionColor>();
-            List<int> indexData = new List<int>();
+            var vertexData = new List<VertexPositionColor>();
+            var indexData = new List<int>();
             for (int y = 0; y < gridHeight; ++y)
                 for (int x = 0; x < gridWidth; ++x)
                 {
-                    Vector2 posInShadow = shadowDimensions *
+                    var posInShadow = shadowDimensions *
                         new Vector2((float)x / (gridWidth - 1) - 0.5f, (float)-y / (gridHeight - 1));
                     float distance = posInShadow.Length();
                     vertexData.Add(new VertexPositionColor(
                         new Vector3(posInShadow, 0),
-                        new Color(0, 0, 0, (byte)alphaCurve.Evaluate(distance))));
+                        new Color(0, 0, 0, (byte)AlphaCurve.Evaluate(distance))));
                     if (y > 0)
                     {
                         if (x > 0)
@@ -490,6 +343,67 @@ namespace AW2.Menu
                 }
             _shadowVertexData = vertexData.ToArray();
             _shadowIndexData = indexData.ToArray();
+        }
+
+        private void DrawBackground()
+        {
+            float yStart = _view.Y < 0
+                ? -(_view.Y % _backgroundTexture.Height) - _backgroundTexture.Height
+                : -(_view.Y % _backgroundTexture.Height);
+            float xStart = _view.X < 0
+                ? -(_view.X % _backgroundTexture.Width) - _backgroundTexture.Width
+                : -(_view.X % _backgroundTexture.Width);
+            for (float y = yStart; y < ViewportHeight; y += _backgroundTexture.Height)
+                for (float x = xStart; x < ViewportWidth; x += _backgroundTexture.Width)
+                    _spriteBatch.Draw(_backgroundTexture, new Vector2(x, y), Color.White);
+        }
+
+        private void DrawMenuComponents()
+        {
+            foreach (var component in _components)
+                component.Draw(_view - new Vector2(ViewportWidth, ViewportHeight) / 2, _spriteBatch);
+        }
+
+        private void DrawShadow()
+        {
+            if (_shadowSize != new Point(Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width, Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height))
+                InitializeShadow();
+            Game.GraphicsDeviceService.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
+            _effect.Projection = Matrix.CreateOrthographicOffCenter(
+                -ViewportWidth / 2, ViewportWidth / 2,
+                -ViewportHeight, 0,
+                1, 500);
+            _effect.Begin();
+            foreach (var pass in _effect.CurrentTechnique.Passes)
+            {
+                pass.Begin();
+                Game.GraphicsDeviceService.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(
+                    PrimitiveType.TriangleList,
+                    _shadowVertexData, 0, _shadowVertexData.Length,
+                    _shadowIndexData, 0, _shadowIndexData.Length / 3);
+                pass.End();
+            }
+            _effect.End();
+        }
+
+        private void DrawStaticText()
+        {
+            _spriteBatch.Begin();
+            _spriteBatch.DrawString(_smallFont, "4th Milestone 2010-05-15",
+                new Vector2(10, ViewportHeight - _smallFont.LineSpacing), Color.White);
+            if (_showHelpText)
+            {
+                var helpTextPos = new Vector2(
+                    (int)(((float)ViewportWidth - _smallFont.MeasureString(_helpText).X) / 2),
+                    ViewportHeight - _smallFont.LineSpacing);
+                _spriteBatch.DrawString(_smallFont, _helpText, helpTextPos, Color.White);
+            }
+            string copyrightText = "Studfarm Studios";
+            var copyrightTextPos = new Vector2(
+                ViewportWidth - (int)_smallFont.MeasureString(copyrightText).X - 10,
+                ViewportHeight - _smallFont.LineSpacing);
+            _spriteBatch.DrawString(_smallFont, copyrightText, copyrightTextPos, Color.White);
+            _spriteBatch.End();
         }
     }
 }

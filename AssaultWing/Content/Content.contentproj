@@ -2698,6 +2698,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\bloodbowl_metalbar.X">
+      <Name>bloodbowl_metalbar</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="sounds\sounddefs.xml">
       <Name>sounddefs</Name>
       <Importer>XmlImporter</Importer>

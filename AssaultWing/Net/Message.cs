@@ -180,7 +180,7 @@ namespace AW2.Net
             int expectedLength = HEADER_LENGTH + bodyLength;
             if (expectedLength > headerAndBody.Length) throw new ArgumentException("Message length mismatch (" + expectedLength + " expected, " + headerAndBody.Length + " got)");
             var message = (Message)GetMessageSubclass(headerAndBody).GetConstructor(System.Type.EmptyTypes).Invoke(null);
-            message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody, HEADER_LENGTH, BODY_MAXIMUM_LENGTH)));
+            message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody, HEADER_LENGTH, BODY_MAXIMUM_LENGTH, false)));
             message.ConnectionID = connectionId;
             return message;
         }

@@ -16,14 +16,12 @@ namespace AW2.Net.ConnectionUtils
 
         protected Socket _socket;
         private MessageHandler _messageHandler;
-        private NetBuffer _headerAndBodyReceiveBuffer;
 
         public MessageReadThread(string name, Socket socket, Action<Exception> exceptionHandler, MessageHandler messageHandler)
             : base(name, exceptionHandler)
         {
             _socket = socket;
             _messageHandler = messageHandler;
-            _headerAndBodyReceiveBuffer = new NetBuffer(new byte[Message.MAXIMUM_LENGTH], 0, new IPEndPoint(IPAddress.Any, 0));
             SetAction(new StepwiseAction(KeepReadingMessages()));
         }
 
@@ -32,8 +30,9 @@ namespace AW2.Net.ConnectionUtils
         {
             while (true)
             {
-                foreach (var dummy in ReceiveHeaderAndBody(_headerAndBodyReceiveBuffer)) yield return null;
-                _messageHandler(_headerAndBodyReceiveBuffer);
+                var headerAndBodyReceiveBuffer = new NetBuffer(new byte[Message.MAXIMUM_LENGTH], 0, new IPEndPoint(IPAddress.Any, 0));
+                foreach (var dummy in ReceiveHeaderAndBody(headerAndBodyReceiveBuffer)) yield return null;
+                _messageHandler(headerAndBodyReceiveBuffer);
                 yield return null;
             }
         }

@@ -37,6 +37,7 @@ namespace AW2
         public AssaultWingProgram(string[] args)
         {
             Log.Write("Assault Wing started");
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             _form = new GameForm(args);

@@ -252,7 +252,7 @@ namespace AW2.Menu
         public void ProgressBarAction(Action asyncAction, Action finishAction)
         {
             var data = Game.DataEngine;
-            this._finishAction = finishAction;
+            _finishAction = finishAction;
             IsHelpTextVisible = false;
             IsProgressBarVisible = true;
             data.ProgressBar.Task = asyncAction;

@@ -309,70 +309,9 @@ namespace AW2.Menu
 
         private void CheckGeneralControls()
         {
-            if (_controlTab.Pulse)
-            {
-                if (_currentTab == EquipMenuTab.GameSettings)
-                {
-                    _currentTab = EquipMenuTab.Equipment;
-                }
-                else
-                {
-                    ++_currentTab;
-
-                    // There is no chat in standalone mode
-                    if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone && _currentTab == EquipMenuTab.Chat)
-                        ++_currentTab;
-                }
-                // If someone drops of or whatever, set the playerListIndex to Zero for safety
-                if (_currentTab == EquipMenuTab.Players)
-                {
-                    ResetPlayerList();
-                }
-                MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-                _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
-                return;
-            }
-            if (_controlBack.Pulse)
-            {
-                ResetEquipMenu();
-                MenuEngine.ActivateComponent(MenuComponentType.Main);
-                return;
-            }
-
-            if (_controlStartGame.Pulse)
-            {
-                ResetEquipMenu();
-                _readyPressed = true;
-                switch (MenuEngine.Game.NetworkMode)
-                {
-                    case NetworkMode.Server:
-                        // HACK: Server has a fixed arena playlist
-                        // Start loading the first arena and display its progress.
-                        MenuEngine.ProgressBarAction(
-                            MenuEngine.Game.PrepareFirstArena,
-                            MenuEngine.Game.StartArena);
-                        MenuEngine.Deactivate();
-                        break;
-                    case NetworkMode.Client:
-                        // Client advances only when the server says so.
-                        break;
-                    case NetworkMode.Standalone:
-                        if (MenuEngine.Game.DataEngine.ArenaPlaylist.Count > 0)
-                        {
-                            /*
-                            selectedArenaNames.Sort();
-                            AssaultWing.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
-                            */
-                            MenuEngine.ProgressBarAction(
-                                MenuEngine.Game.PrepareFirstArena,
-                                MenuEngine.Game.StartArena);
-                            MenuEngine.Deactivate();
-                        }
-                        break;
-                    default: throw new Exception("Unexpected network mode " + MenuEngine.Game.NetworkMode);
-                }
-
-            }
+            if (_controlTab.Pulse) ChangeTab();
+            else if (_controlBack.Pulse) BackOutFromMenu();
+            else if (_controlStartGame.Pulse) StartGame();
         }
 
         private void CheckGameSettingsTabControls()
@@ -516,6 +455,62 @@ namespace AW2.Menu
             if (soundName != null) MenuEngine.Game.SoundEngine.PlaySound(soundName);
             action();
         }
+
+        private void ChangeTab()
+        {
+            if (_currentTab == EquipMenuTab.GameSettings)
+                _currentTab = EquipMenuTab.Equipment;
+            else
+            {
+                ++_currentTab;
+
+                // There is no chat in standalone mode
+                if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone && _currentTab == EquipMenuTab.Chat)
+                    ++_currentTab;
+            }
+            // If someone drops of or whatever, set the playerListIndex to Zero for safety
+            if (_currentTab == EquipMenuTab.Players) ResetPlayerList();
+            MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
+        }
+
+        private void BackOutFromMenu()
+        {
+            ResetEquipMenu();
+            MenuEngine.ActivateComponent(MenuComponentType.Main);
+        }
+
+        private void StartGame()
+        {
+            ResetEquipMenu();
+            _readyPressed = true;
+            switch (MenuEngine.Game.NetworkMode)
+            {
+                case NetworkMode.Server:
+                    // HACK: Server has a fixed arena playlist
+                    // Start loading the first arena and display its progress.
+                    MenuEngine.ProgressBarAction(
+                        MenuEngine.Game.PrepareFirstArena,
+                        MenuEngine.Game.StartArena);
+                    MenuEngine.Deactivate();
+                    break;
+                case NetworkMode.Client:
+                    // Client advances only when the server says so.
+                    break;
+                case NetworkMode.Standalone:
+                    if (MenuEngine.Game.DataEngine.ArenaPlaylist.Count > 0)
+                    {
+                        MenuEngine.ProgressBarAction(
+                            MenuEngine.Game.PrepareFirstArena,
+                            MenuEngine.Game.StartArena);
+                        MenuEngine.Deactivate();
+                    }
+                    break;
+                default: throw new Exception("Unexpected network mode " + MenuEngine.Game.NetworkMode);
+            }
+        }
+
+        #region Drawing methods
 
         /// <summary>
         /// Draws the menu component.
@@ -978,5 +973,7 @@ namespace AW2.Menu
             if (ping < 200) return new Pair<string, Color>("Poor", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Low));
             return new Pair<string, Color>("Dreadful", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Poor));
         }
+
+        #endregion Drawing methods
     }
 }

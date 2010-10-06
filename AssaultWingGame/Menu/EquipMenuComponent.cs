@@ -482,29 +482,21 @@ namespace AW2.Menu
 
         private void StartGame()
         {
+            if (MenuEngine.Game.DataEngine.ArenaPlaylist.Count == 0) return;
             ResetEquipMenu();
             _readyPressed = true;
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    // HACK: Server has a fixed arena playlist
-                    // Start loading the first arena and display its progress.
-                    MenuEngine.ProgressBarAction(
-                        MenuEngine.Game.PrepareFirstArena,
-                        MenuEngine.Game.StartArena);
+                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArena);
                     MenuEngine.Deactivate();
                     break;
                 case NetworkMode.Client:
                     // Client advances only when the server says so.
                     break;
                 case NetworkMode.Standalone:
-                    if (MenuEngine.Game.DataEngine.ArenaPlaylist.Count > 0)
-                    {
-                        MenuEngine.ProgressBarAction(
-                            MenuEngine.Game.PrepareFirstArena,
-                            MenuEngine.Game.StartArena);
-                        MenuEngine.Deactivate();
-                    }
+                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArena);
+                    MenuEngine.Deactivate();
                     break;
                 default: throw new Exception("Unexpected network mode " + MenuEngine.Game.NetworkMode);
             }

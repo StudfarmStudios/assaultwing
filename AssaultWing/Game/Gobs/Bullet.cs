@@ -104,7 +104,7 @@ namespace AW2.Game.Gobs
             else
             {
                 // Fly nose first, but only if we're moving fast enough.
-                if (move.LengthSquared() > 1 * 1) {
+                if (_move.LengthSquared() > 1 * 1) {
                     float rotationGoal = (float)Math.Acos( Move.X / Move.Length() );
                     if (Move.Y < 0)
                         rotationGoal = MathHelper.TwoPi - rotationGoal;

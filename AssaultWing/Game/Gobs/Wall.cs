@@ -81,7 +81,7 @@ namespace AW2.Game.Gobs
             get
             {
                 return Arena.IsForPlaying
-                    ? drawBounds
+                    ? _drawBounds
                     : base.DrawBounds;
             }
         }
@@ -111,7 +111,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             _removedTriangleIndices = new List<int>();
-            movable = false;
+            _movable = false;
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -148,7 +148,7 @@ namespace AW2.Game.Gobs
 #if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
                 RemoveVerySmallTrianglesFromCollisionAreas();
 #endif
-                drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
+                _drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
             Game.DataEngine.ProgressBar.SubtaskCompleted();
         }
@@ -289,7 +289,7 @@ namespace AW2.Game.Gobs
 
         private void RemoveVerySmallTrianglesFromCollisionAreas()
         {
-            foreach (int index in _indexMap.GetVerySmallTriangles()) collisionAreas[index] = null;
+            foreach (int index in _indexMap.GetVerySmallTriangles()) _collisionAreas[index] = null;
             TriangleCount -= _indexMap.GetVerySmallTriangles().Count();
         }
 
@@ -301,7 +301,7 @@ namespace AW2.Game.Gobs
             _indexData[3 * index + 2] = 0;
 
             _removedTriangleIndices.Add(index);
-            Arena.Unregister(collisionAreas[index]);
+            Arena.Unregister(_collisionAreas[index]);
             --TriangleCount;
         }
 
@@ -317,7 +317,7 @@ namespace AW2.Game.Gobs
         private void CreateCollisionAreas()
         {
             // Create one collision area for each triangle in the wall's 3D model.
-            collisionAreas = new CollisionArea[_indexData.Length / 3 + 1];
+            _collisionAreas = new CollisionArea[_indexData.Length / 3 + 1];
             for (int i = 0; i + 2 < _indexData.Length; i += 3)
             {
                 // Create a physical collision area for this triangle.
@@ -328,12 +328,12 @@ namespace AW2.Game.Gobs
                     new Vector2(v1.X, v1.Y),
                     new Vector2(v2.X, v2.Y),
                     new Vector2(v3.X, v3.Y));
-                collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
+                _collisionAreas[i / 3] = new CollisionArea("General", triangleArea, this,
                     CollisionAreaType.PhysicalWall, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
             }
 
             // Create a collision bounding volume for the whole wall.
-            collisionAreas[collisionAreas.Length - 1] = new CollisionArea("Bounding", GetBoundingBox(), this,
+            _collisionAreas[_collisionAreas.Length - 1] = new CollisionArea("Bounding", GetBoundingBox(), this,
                 CollisionAreaType.WallBounds, CollisionAreaType.None, CollisionAreaType.None, CollisionMaterialType.Rough);
         }
 

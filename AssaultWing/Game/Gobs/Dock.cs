@@ -54,7 +54,7 @@ namespace AW2.Game.Gobs
         public Dock(CanonicalString typeName)
             : base(typeName)
         {
-            movable = false;
+            _movable = false;
         }
 
         public override void Activate()

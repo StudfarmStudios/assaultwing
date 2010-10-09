@@ -284,7 +284,7 @@
     <Compile Include="Net\ConnectionUtils\MessageSendThread.cs" />
     <Compile Include="Net\MessageHeaderFlags.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
-    <Compile Include="Net\Messages\ArenaLoadReply.cs" />
+    <Compile Include="Net\Messages\ArenaLoadedMessage.cs" />
     <Compile Include="Net\Messages\ArenaStartRequest.cs" />
     <Compile Include="Net\Messages\ConnectionClosingMessage.cs" />
     <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />

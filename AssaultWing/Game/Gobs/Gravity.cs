@@ -28,7 +28,7 @@ namespace AW2.Game.Gobs
         public Gravity() : base() 
         {
             force = new Vector2(0, -10);
-            collisionAreas = new CollisionArea[0];
+            _collisionAreas = new CollisionArea[0];
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace AW2.Game.Gobs
         public Gravity(AW2.Helpers.CanonicalString typeName)
             : base(typeName)
         {
-            movable = false;
+            _movable = false;
         }
 
         /// <summary>

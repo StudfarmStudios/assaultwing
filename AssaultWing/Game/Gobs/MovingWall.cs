@@ -94,9 +94,9 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             ModelName = wallModelName;
-            collisionAreas = wallCollisionAreas;
+            _collisionAreas = wallCollisionAreas;
             foreach (var area in wallCollisionAreas) area.Owner = this;
-            startPos = pos;
+            startPos = _pos;
             movingCurve = new MovementCurve(startPos);
             base.Activate();
         }
@@ -109,8 +109,8 @@ namespace AW2.Game.Gobs
             if (startTime.Ticks >= 0)
             {
                 var nextPos = movingCurve.Evaluate(Arena.TotalTime);
-                move = (nextPos - pos) / (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-                move = move.Clamp(0, 500); // limit movement speed to reasonable bounds
+                _move = (nextPos - _pos) / (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+                _move = _move.Clamp(0, 500); // limit movement speed to reasonable bounds
             }
             base.Update();
         }
@@ -136,7 +136,7 @@ namespace AW2.Game.Gobs
             {
                 ModelName = wallModelName = new CanonicalString(reader.ReadInt32());
                 int collisionAreaCount = reader.ReadByte();
-                collisionAreas = wallCollisionAreas = new CollisionArea[collisionAreaCount];
+                _collisionAreas = wallCollisionAreas = new CollisionArea[collisionAreaCount];
                 for (int i = 0; i < collisionAreaCount; ++i)
                 {
                     wallCollisionAreas[i] = new CollisionArea();

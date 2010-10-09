@@ -131,7 +131,7 @@ namespace AW2.Game.Gobs
             get
             {
                 // TODO: Update oldPos from pos when Arena.TotalTime has advanced
-                if (float.IsNaN(oldPos.X)) return pos;
+                if (float.IsNaN(oldPos.X)) return _pos;
                 return oldPos;
             }
         }
@@ -240,11 +240,11 @@ namespace AW2.Game.Gobs
 
             // Set better defaults than class Gob does.
             DrawMode2D = new DrawMode2D(DrawModeType2D.Transparent);
-            movable = false;
+            _movable = false;
 
             // Remove default collision areas set by class Gob so that we don't need to explicitly state
             // in each peng's XML definition that there are no collision areas.
-            collisionAreas = new CollisionArea[0];
+            _collisionAreas = new CollisionArea[0];
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            movable = false; // Peng stays put or moves with its leader
+            _movable = false; // Peng stays put or moves with its leader
         }
 
         public override void LoadContent()

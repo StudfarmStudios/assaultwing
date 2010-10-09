@@ -99,7 +99,6 @@ namespace AW2.UI
         private void InitializeGraphicsDeviceService()
         {
             _graphicsDeviceService = new GraphicsDeviceService(Handle);
-            _gameView.Resize += (sender, eventArgs) => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
         }
 
         private void InitializeGame(string[] args)

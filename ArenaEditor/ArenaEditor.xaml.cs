@@ -272,7 +272,6 @@ namespace AW2
         {
             var windowHandle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
             _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
-            ArenaView.ClientSizeChanged += (sender, eventArgs) => _graphicsDeviceService.ClientBounds = new Rectangle(0, 0, ArenaView.ClientSize.Width, ArenaView.ClientSize.Height);
         }
 
         private void InitializeGame(string[] args)

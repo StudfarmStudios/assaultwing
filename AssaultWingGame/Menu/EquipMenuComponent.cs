@@ -488,7 +488,7 @@ namespace AW2.Menu
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArena);
+                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArenaOnServer);
                     MenuEngine.Deactivate();
                     break;
                 case NetworkMode.Client:

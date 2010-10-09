@@ -395,7 +395,8 @@ namespace AW2.Net
             // Update ping time measurements.
             foreach (var conn in AllConnections) conn.Update();
 
-            foreach (var handler in MessageHandlers) if (!handler.Disposed) handler.HandleMessages();
+            foreach (var handler in MessageHandlers.ToList()) // enumerate over a copy to allow adding MessageHandlers during enumeration
+                if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
             HandleErrors();
             RemoveClosedConnections();

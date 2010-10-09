@@ -39,7 +39,7 @@ namespace AW2.Core.OverlayDialogs
                     new TriggeredCallback(TriggeredCallback.GetProceedControl(), delegate() 
                     {
                         if (arenaLoaded)
-                            AssaultWingCore.Instance.StartArena();
+                            AssaultWingCore.Instance.StartArena(); // FIXME: This probably doesn't work in network play
                     })
                 };
             }

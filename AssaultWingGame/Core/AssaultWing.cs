@@ -100,7 +100,7 @@ namespace AW2.Core
         public void ShowMenu()
         {
             Log.Write("Entering menus");
-            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            DeactivateAllMessageHandlers();
             if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             DataEngine.ClearGameState();
             MenuEngine.Activate();
@@ -167,6 +167,9 @@ namespace AW2.Core
         {
             if (NetworkMode == NetworkMode.Server)
             {
+                // Arena loading is heavy and would show up in ping measurements.
+                // Ping measurement is unfreezed by ArenaStartWaiter.
+                foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = true;
                 var message = new StartGameMessage();
                 message.ArenaPlaylist = DataEngine.ArenaPlaylist;
                 NetworkEngine.SendToGameClients(message);
@@ -174,22 +177,28 @@ namespace AW2.Core
             base.PrepareFirstArena();
         }
 
+        /// <summary>
+        /// Starts a process on a game server that eventually leads to
+        /// <see cref="StartArena"/> begin called simultaneously on the
+        /// game server and all game clients.
+        /// </summary>
+        public void StartArenaOnServer()
+        {
+            if (NetworkMode != NetworkMode.Server) throw new InvalidOperationException("Should have been NetworkMode.Server but was " + NetworkMode);
+            _arenaStartWaiter = new ArenaStartWaiter(NetworkEngine.GameClientConnections);
+            _arenaStartWaiter.BeginWait(); // StartArenaImpl() eventually called in UpdateArenaStartWaiter()
+        }
+
         public override void StartArena()
         {
-            if (NetworkMode == NetworkMode.Server)
-            {
-                _arenaStartWaiter = new ArenaStartWaiter(NetworkEngine.GameClientConnections);
-                _arenaStartWaiter.BeginWait(); // will eventually call StartArenaImpl()
-            }
-            else
-                StartArenaImpl();
+            base.StartArena();
+            GameState = GameState.Gameplay;
         }
 
         public override void FinishArena()
         {
             base.FinishArena();
-            if (NetworkMode == NetworkMode.Client) MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
-            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            DeactivateAllMessageHandlers();
             if (DataEngine.ArenaPlaylist.HasNext)
                 ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
             else
@@ -287,12 +296,6 @@ namespace AW2.Core
                 case NetworkMode.Standalone: break;
                 default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);
             }
-        }
-
-        private void StartArenaImpl()
-        {
-            base.StartArena();
-            GameState = GameState.Gameplay;
         }
 
         private void EnableGameState(GameState value)
@@ -435,8 +438,8 @@ namespace AW2.Core
                 if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))
                 {
                     // K + P = kill players
-                    foreach (var player in DataEngine.Spectators.Where(s => s is Player).Cast<Player>())
-                        if (player.Ship != null) player.Ship.Die(new DeathCause());
+                    var ships = DataEngine.Players.Select(p => p.Ship).Where(s => s != null);
+                    foreach (var ship in ships) ship.Die(new DeathCause());
                 }
 
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
@@ -452,11 +455,24 @@ namespace AW2.Core
         {
             if (_arenaStartWaiter != null && _arenaStartWaiter.IsEverybodyReady)
             {
-                _arenaStartWaiter.EndWait();
+                var startDelay = _arenaStartWaiter.EndWait();
                 _arenaStartWaiter = null;
                 MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-                StartArenaImpl();
+                base.StartArena(startDelay);
+            }
+        }
+
+        private void DeactivateAllMessageHandlers()
+        {
+            if (NetworkMode == NetworkMode.Client)
+            {
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientArenaActionHandlers());
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            }
+            if (NetworkMode == NetworkMode.Server)
+            {
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             }
         }
     }

@@ -38,6 +38,11 @@ namespace AW2.Net.ConnectionUtils
         /// Adding the offset to the remote game time gives our game time.
         public TimeSpan RemoteGameTimeOffset { get { return AWMathHelper.Average(_remoteGameTimeOffsets); } }
 
+        /// <summary>
+        /// If true, ping time won't be updated. The old results will remaing unchanged.
+        /// </summary>
+        public bool IsMeasuringFreezed { get; set; }
+
         public PingInfo(Connection baseConnection)
         {
             BaseConnection = baseConnection;
@@ -51,36 +56,38 @@ namespace AW2.Net.ConnectionUtils
         public void Update()
         {
             var now = AssaultWingCore.Instance.GameTime.TotalRealTime;
+            SendPing(now);
+            ReceivePingAndSendPong();
+            ReceivePong(now);
+        }
 
-            // Send ping requests every now and then.
-            if (now >= _nextPingSend)
-            {
-                _nextPingSend = now + PING_INTERVAL;
-                var pingSend = new PingRequestMessage();
-                pingSend.Timestamp = now;
-                BaseConnection.Send(pingSend);
-            }
+        private void SendPing(TimeSpan now)
+        {
+            if (now < _nextPingSend || IsMeasuringFreezed) return;
+            _nextPingSend = now + PING_INTERVAL;
+            var pingSend = new PingRequestMessage { Timestamp = now };
+            BaseConnection.Send(pingSend);
+        }
 
-            // Respond to received ping requests.
+        private void ReceivePingAndSendPong()
+        {
             var pingReceive = BaseConnection.Messages.TryDequeue<PingRequestMessage>();
-            if (pingReceive != null)
-            {
-                var pongSend = pingReceive.GetPingReplyMessage(AssaultWingCore.Instance.DataEngine.ArenaTotalTime);
-                BaseConnection.Send(pongSend);
-            }
+            if (pingReceive == null) return;
+            var pongSend = pingReceive.GetPingReplyMessage(AssaultWingCore.Instance.DataEngine.ArenaTotalTime);
+            BaseConnection.Send(pongSend);
+        }
 
-            // Respond to received ping replies.
+        private void ReceivePong(TimeSpan now)
+        {
             var pongReceive = BaseConnection.Messages.TryDequeue<PingReplyMessage>();
-            if (pongReceive != null)
-            {
-                var pingTime = now - pongReceive.Timestamp;
-                _pingTimes[_nextIndex] = pingTime;
-                _remoteGameTimeOffsets[_nextIndex] =
-                    AssaultWingCore.Instance.DataEngine.ArenaTotalTime
-                    - pongReceive.TotalGameTimeOnReply
-                    - pingTime.Divide(2);
-                _nextIndex = (_nextIndex + 1) % _pingTimes.Length;
-            }
+            if (pongReceive == null || IsMeasuringFreezed) return;
+            var pingTime = now - pongReceive.Timestamp;
+            _pingTimes[_nextIndex] = pingTime;
+            _remoteGameTimeOffsets[_nextIndex] =
+                AssaultWingCore.Instance.DataEngine.ArenaTotalTime
+                - pongReceive.TotalGameTimeOnReply
+                - pingTime.Divide(2);
+            _nextIndex = (_nextIndex + 1) % _pingTimes.Length;
         }
     }
 }

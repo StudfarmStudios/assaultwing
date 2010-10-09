@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AW2.Helpers;
 using AW2.Net.Connections;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
@@ -32,13 +33,24 @@ namespace AW2.Core
         {
             CheckDisposed();
             MessageHandlers.ActivateHandlers(MessageHandlers.GetServerArenaStartHandlers(_readyIDs.Add));
-            foreach (var conn in _connections) conn.Send(new ArenaStartRequest());
         }
 
-        public void EndWait()
+        /// <summary>
+        /// Finishes waiting. To be called when <see cref="IsFinished"/> is true.
+        /// Returns the amount of time to wait before starting the arena.
+        /// </summary>
+        public TimeSpan EndWait()
         {
             CheckDisposed();
+            var maxDelay = _connections.Count() == 0 ? TimeSpan.Zero : _connections.Max(conn => conn.PingInfo.PingTime).Divide(2);
+            foreach (var conn in _connections)
+            {
+                conn.PingInfo.IsMeasuringFreezed = false;
+                var startDelay = maxDelay - conn.PingInfo.PingTime.Divide(2);
+                conn.Send(new ArenaStartRequest { StartDelay = startDelay });
+            }
             Dispose();
+            return maxDelay;
         }
 
         public void Dispose()

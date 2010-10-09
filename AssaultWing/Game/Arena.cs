@@ -1337,8 +1337,7 @@ namespace AW2.Game
             // Game server notifies game clients of the new gob.
             if (Game.NetworkMode == NetworkMode.Server && gob.IsRelevant)
             {
-                var message = new GobCreationMessage();
-                message.CreateToNextArena = !IsActive;
+                var message = IsActive ? (GobCreationMessageBase)new GobCreationMessage() : new GobPreCreationMessage();
                 message.GobTypeName = gob.TypeName;
                 message.LayerIndex = Layers.IndexOf(gob.Layer);
                 message.Write(gob, SerializationModeFlags.All);

@@ -35,6 +35,7 @@ namespace AW2
         private LogicEngine _logicEngine;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
+        private TimeSpan? _arenaStartTime;
 
         #endregion AssaultWing fields
 
@@ -274,6 +275,14 @@ namespace AW2
         }
 
         /// <summary>
+        /// Starts playing a previously prepared arena after a delay.
+        /// </summary>
+        public void StartArena(TimeSpan startDelay)
+        {
+            _arenaStartTime = GameTime.TotalRealTime + startDelay;
+        }
+
+        /// <summary>
         /// Starts playing a previously prepared arena.
         /// </summary>
         public virtual void StartArena()
@@ -397,6 +406,11 @@ namespace AW2
         public override void Update(GameTime gameTime)
         {
             GameTime = gameTime;
+            if (_arenaStartTime.HasValue && _arenaStartTime.Value <= GameTime.TotalRealTime)
+            {
+                _arenaStartTime = null;
+                StartArena();
+            }
             if (_logicEngine.Enabled)
             {
                 if (gameTime.ElapsedGameTime != TargetElapsedTime) throw new ApplicationException("Timestep expected " + TargetElapsedTime.TotalSeconds + " s but was " + gameTime.ElapsedGameTime + " s");

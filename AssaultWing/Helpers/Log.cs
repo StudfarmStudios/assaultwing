@@ -16,6 +16,11 @@ namespace AW2.Helpers
         private const int ROTATE_COUNT = 5;
 
         /// <summary>
+        /// Triggered when something has been written to the log.
+        /// </summary>
+        public static event Action<string> Written;
+
+        /// <summary>
         /// Opens a new log file, rotating old ones.
         /// </summary>
         static Log()
@@ -82,11 +87,12 @@ namespace AW2.Helpers
                 Console.WriteLine(s);
 #endif
             }
+            if (Written != null) Written(s);
         }
 
         public static void Write(string message, Exception e)
         {
-            Log.Write(string.Format("{0}:\n{1}\n{2}\n{1}", message, new string('-', 40), e));
+            Write(string.Format("{0}:\n{1}\n{2}\n{1}", message, new string('-', 40), e));
         }
 
         /// <summary>

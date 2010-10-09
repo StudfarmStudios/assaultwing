@@ -76,6 +76,7 @@ namespace AW2.UI
             var modifiers = keyData & Keys.Modifiers;
             if (keyCode == Keys.PageUp) SetFullScreen(); // HACK !!!
             if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
+            if (keyCode == Keys.Oem5) splitContainer1.Panel2Collapsed ^= true; // the § key on a Finnish keyboard
             return true; // the message won't be processed further; prevents window menu from opening
         }
 
@@ -92,6 +93,7 @@ namespace AW2.UI
         {
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _previousWindowedModeParameters = GetCurrentFormParameters();
+            AW2.Helpers.Log.Written += text => _logView.BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
         }
 
         private void InitializeGraphicsDeviceService()

@@ -308,6 +308,7 @@ namespace AW2.Menu
         /// </summary>
         private void InitializeShadow()
         {
+            _shadowSize = new Point(ViewportWidth, ViewportHeight);
             // The shadow is a rectangle that spans a grid of vertices, each
             // of them black but with different levels of alpha.
             // The origin of the shadow 3D model is at the top center.
@@ -366,7 +367,7 @@ namespace AW2.Menu
 
         private void DrawShadow()
         {
-            if (_shadowSize != new Point(Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width, Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height))
+            if (_shadowSize != new Point(ViewportWidth, ViewportHeight))
                 InitializeShadow();
             Game.GraphicsDeviceService.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
             _effect.Projection = Matrix.CreateOrthographicOffCenter(

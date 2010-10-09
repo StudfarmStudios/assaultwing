@@ -227,9 +227,9 @@ namespace AW2.Net.Connections
                 }
 #endif
 #if DEBUG_SENT_BYTE_COUNT
-                if (_lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWing.Instance.GameTime.TotalRealTime)
+                if (_lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWingCore.Instance.GameTime.TotalRealTime)
                 {
-                    _lastPrintTime = AssaultWing.Instance.GameTime.TotalRealTime;
+                    _lastPrintTime = AssaultWingCore.Instance.GameTime.TotalRealTime;
                     AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
                     foreach (var pair in _messageSizes)
                         AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");

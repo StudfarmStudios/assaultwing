@@ -562,7 +562,7 @@ namespace AW2.Net
 #if DEBUG
                             Log.Write("Note: Ignoring an UDP message from unknown source " + messageHeaderAndBody.EndPoint);
 #endif
-                            return;
+                            break;
                         }
                         connection.HandleMessage(messageHeaderAndBody);
                     }

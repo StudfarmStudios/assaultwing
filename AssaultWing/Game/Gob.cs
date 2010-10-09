@@ -220,10 +220,11 @@ namespace AW2.Game
 
         /// <summary>
         /// Preferred maximum time between the gob's state updates
-        /// from the game server to game clients, in real time.
+        /// from the game server to game clients, in real time,
+        /// or zero if there are no periodic network updates.
         /// </summary>
         [TypeParameter]
-        TimeSpan _networkUpdatePeriod;
+        private TimeSpan _networkUpdatePeriod;
 
         /// <summary>
         /// Access only through <see cref="ModelPartTransforms"/>.
@@ -556,6 +557,8 @@ namespace AW2.Game
         /// from the game server to game clients, in real time.
         /// </summary>
         public TimeSpan NetworkUpdatePeriod { get { return _networkUpdatePeriod; } set { _networkUpdatePeriod = value; } }
+
+        public bool ForcedNetworkUpdate { get; set; }
 
         /// <summary>
         /// Time of last network update, in real time. Used only on the game server.
@@ -993,11 +996,6 @@ namespace AW2.Game
             _move = oldMove;
             if (frameCount > 0) frameCount = 0; // UNDONE !!! games must have the frame count during network game for this to work
             if (Arena != null) Arena.Move(this, frameCount, false);
-        }
-
-        public void ForceNetworkUpdate()
-        {
-            LastNetworkUpdate = Arena.TotalTime - NetworkUpdatePeriod;
         }
 
         #endregion Methods related to serialisation

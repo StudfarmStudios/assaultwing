@@ -128,7 +128,7 @@ namespace AW2.Game.Gobs
             _thrustForce = _hoverThrust * Vector2.Normalize(targetPos - Pos);
             _thrustSeconds = RandomHelper.GetRandomFloat(1.2f, 1.9f);
             _thrustEndGameTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(_thrustSeconds.Value);
-            if (Game.NetworkMode == NetworkMode.Server) ForceNetworkUpdate();
+            if (Game.NetworkMode == NetworkMode.Server) ForcedNetworkUpdate = true;
         }
     }
 }

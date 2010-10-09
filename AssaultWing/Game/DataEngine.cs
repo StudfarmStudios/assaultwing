@@ -343,9 +343,13 @@ namespace AW2.Game
                 var message = new GobUpdateMessage();
                 foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
                 {
-                    if (!gob.IsRelevant) continue;
-                    if (!gob.Movable) continue;
-                    if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
+                    if (!gob.ForcedNetworkUpdate)
+                    {
+                        if (!gob.IsRelevant) continue;
+                        if (!gob.Movable) continue;
+                        if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
+                        if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
+                    }
                     gob.LastNetworkUpdate = now;
                     message.AddGob(gob.ID, gob, SerializationModeFlags.VaryingData);
                 }

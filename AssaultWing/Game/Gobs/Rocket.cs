@@ -254,13 +254,12 @@ namespace AW2.Game.Gobs
 
         private void UpdateTarget()
         {
-            if (Game.NetworkMode == AW2.Core.NetworkMode.Client) return;
             var oldTarget = _target;
             var newBestTarget = FindBestTarget();
             _target = newBestTarget ?? _target;
             UpdateGobTrackers();
             if (Game.NetworkMode == AW2.Core.NetworkMode.Server && _target != oldTarget)
-                ForceNetworkUpdate();
+                ForcedNetworkUpdate = true;
         }
 
         private void UpdateGobTrackers()

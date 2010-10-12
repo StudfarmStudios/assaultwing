@@ -19,9 +19,12 @@ namespace AW2.Core
 {
     public class AssaultWing : AssaultWingCore
     {
+        private static readonly TimeSpan FRAME_NUMBER_SYNCHRONIZATION_INTERVAL = TimeSpan.FromSeconds(3);
+
         private GameState _gameState;
         private ArenaStartWaiter _arenaStartWaiter;
         private Control _escapeControl;
+        private TimeSpan _nextFrameNumberSynchronize;
 
         // HACK: Debug keys
         private Control _musicSwitch;
@@ -80,6 +83,7 @@ namespace AW2.Core
             UpdateSpecialKeys();
             UpdateDebugKeys();
             UpdateArenaStartWaiter();
+            SynchronizeFrameNumber();
         }
 
         /// <summary>
@@ -461,6 +465,16 @@ namespace AW2.Core
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
                 base.StartArena(startDelay);
             }
+        }
+
+        private void SynchronizeFrameNumber()
+        {
+            if (NetworkMode != NetworkMode.Client || GameState != GameState.Gameplay) return;
+            if (GameTime.TotalRealTime < _nextFrameNumberSynchronize) return;
+            _nextFrameNumberSynchronize = GameTime.TotalRealTime + FRAME_NUMBER_SYNCHRONIZATION_INTERVAL;
+            var MINIMUM_ACCEPTABLE_FRAME_NUMBER_OFFSET = 1;
+            if (Math.Abs(NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset) > MINIMUM_ACCEPTABLE_FRAME_NUMBER_OFFSET)
+                DataEngine.Arena.FrameNumber -= NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
         }
 
         private void DeactivateAllMessageHandlers()

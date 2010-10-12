@@ -11,7 +11,7 @@ namespace AW2.Net.ConnectionUtils
     public class PingInfo
     {
         private static readonly TimeSpan PING_INTERVAL = TimeSpan.FromSeconds(1);
-        private const int PING_AVERAGED_COUNT = 3;
+        private const int PING_AVERAGED_COUNT = 4;
 
         /// <summary>
         /// Time at which the next ping request should be sent, in real time.
@@ -20,7 +20,8 @@ namespace AW2.Net.ConnectionUtils
 
         private TimeSpan[] _pingTimes;
         private TimeSpan[] _remoteGameTimeOffsets;
-        private int _nextIndex; // indexes _pingTimes and _remoteGameTimeOffsets
+        private int[] _remoteFrameNumberOffsets;
+        private int _nextIndex; // indexes _pingTimes and _remoteGameTimeOffsets and _remoteFrameNumberOffsets
 
         /// <summary>
         /// The connection whose ping this instance is measuring.
@@ -30,13 +31,17 @@ namespace AW2.Net.ConnectionUtils
         /// <summary>
         /// Round-trip ping time of the underlying connection.
         /// </summary>
-        public TimeSpan PingTime { get { return AWMathHelper.Average(_pingTimes); } }
+        public TimeSpan PingTime { get { return AWMathHelper.AverageWithoutExtremes(_pingTimes); } }
 
         /// <summary>
-        /// Offset of game time on the remote game instance compared to this game instance.
+        /// What needs to be added to the remote game time to get local game time.
         /// </summary>
-        /// Adding the offset to the remote game time gives our game time.
-        public TimeSpan RemoteGameTimeOffset { get { return AWMathHelper.Average(_remoteGameTimeOffsets); } }
+        public TimeSpan RemoteGameTimeOffset { get { return AWMathHelper.AverageWithoutExtremes(_remoteGameTimeOffsets); } }
+
+        /// <summary>
+        /// What needs to be added to the current remote frame number to get the current local frame number.
+        /// </summary>
+        public int RemoteFrameNumberOffset { get { return AWMathHelper.AverageWithoutExtremes(_remoteFrameNumberOffsets); } }
 
         /// <summary>
         /// If true, ping time won't be updated. The old results will remaing unchanged.
@@ -48,6 +53,7 @@ namespace AW2.Net.ConnectionUtils
             BaseConnection = baseConnection;
             _pingTimes = new TimeSpan[PING_AVERAGED_COUNT];
             _remoteGameTimeOffsets = new TimeSpan[PING_AVERAGED_COUNT];
+            _remoteFrameNumberOffsets = new int[PING_AVERAGED_COUNT];
         }
 
         /// <summary>
@@ -73,7 +79,7 @@ namespace AW2.Net.ConnectionUtils
         {
             var pingReceive = BaseConnection.Messages.TryDequeue<PingRequestMessage>();
             if (pingReceive == null) return;
-            var pongSend = pingReceive.GetPingReplyMessage(AssaultWingCore.Instance.DataEngine.ArenaTotalTime);
+            var pongSend = pingReceive.GetPingReplyMessage(AssaultWingCore.Instance.DataEngine.ArenaTotalTime, AssaultWingCore.Instance.DataEngine.ArenaFrameCount);
             BaseConnection.Send(pongSend);
         }
 
@@ -87,6 +93,10 @@ namespace AW2.Net.ConnectionUtils
                 AssaultWingCore.Instance.DataEngine.ArenaTotalTime
                 - pongReceive.TotalGameTimeOnReply
                 - pingTime.Divide(2);
+            _remoteFrameNumberOffsets[_nextIndex] =
+                AssaultWingCore.Instance.DataEngine.ArenaFrameCount
+                - pongReceive.FrameNumberOnReply
+                - (int)Math.Round(pingTime.Divide(2).Divide(AssaultWingCore.Instance.TargetElapsedTime));
             _nextIndex = (_nextIndex + 1) % _pingTimes.Length;
         }
     }

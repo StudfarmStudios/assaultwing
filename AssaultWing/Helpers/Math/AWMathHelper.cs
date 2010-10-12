@@ -487,9 +487,28 @@ namespace AW2.Helpers
             return TimeSpan.FromTicks(time.Ticks / divisor);
         }
 
-        public static TimeSpan Average(IEnumerable<TimeSpan> times)
+        public static float Divide(this TimeSpan time, TimeSpan divisor)
         {
-            return TimeSpan.FromTicks(times.Sum(time => time.Ticks) / times.Count());
+            return time.Ticks / (float)divisor.Ticks;
+        }
+
+        /// <summary>
+        /// Returns the average of all values except the maximum and the minimum.
+        /// </summary>
+        public static TimeSpan AverageWithoutExtremes(IEnumerable<TimeSpan> times)
+        {
+            var ticks = times.Select(time => time.Ticks);
+            if (ticks.Count() < 3) throw new ArgumentException("Need at least three values");
+            return TimeSpan.FromTicks((ticks.Sum() - ticks.Min() - ticks.Max()) / (ticks.Count() - 2));
+        }
+
+        /// <summary>
+        /// Returns the average of all values except the maximum and the minimum.
+        /// </summary>
+        public static int AverageWithoutExtremes(IEnumerable<int> values)
+        {
+            if (values.Count() < 3) throw new ArgumentException("Need at least three values");
+            return (values.Sum() - values.Min() - values.Max()) / (values.Count() - 2);
         }
 
         /// <summary>
@@ -763,6 +782,22 @@ namespace AW2.Helpers
                 Assert.AreEqual(-3, (-14).DivRound(4));
                 Assert.AreEqual(-4, (-15).DivRound(4));
                 Assert.AreEqual(-4, (-16).DivRound(4));
+            }
+
+            [Test]
+            public void TestAverageWithoutExtremes()
+            {
+                var t = TimeSpan.FromSeconds(1);
+                var tBig = TimeSpan.FromSeconds(3);
+                var tSmall = TimeSpan.FromSeconds(0.1);
+                Assert.Throws<ArgumentException>(() => AverageWithoutExtremes(new TimeSpan[] { t, t }));
+                Assert.AreEqual(t, AverageWithoutExtremes(new TimeSpan[] { t, t, t, t }));
+                Assert.AreEqual(t, AverageWithoutExtremes(new TimeSpan[] { tBig, t, t, t }));
+                Assert.AreEqual(t, AverageWithoutExtremes(new TimeSpan[] { t, tBig, t }));
+                Assert.AreEqual(t, AverageWithoutExtremes(new TimeSpan[] { tSmall, t, t, t }));
+                Assert.AreEqual(t, AverageWithoutExtremes(new TimeSpan[] { t, t, tSmall, }));
+                Assert.AreEqual(t, AverageWithoutExtremes(new TimeSpan[] { t, tSmall, tBig }));
+                Assert.AreEqual(tBig, AverageWithoutExtremes(new TimeSpan[] { tBig, tBig, tSmall, }));
             }
 
             [Test]

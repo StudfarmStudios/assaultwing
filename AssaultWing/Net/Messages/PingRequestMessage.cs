@@ -22,11 +22,14 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Returns a ping reply message corresponding to this received message.
         /// </summary>
-        public PingReplyMessage GetPingReplyMessage(TimeSpan totalGameTime)
+        public PingReplyMessage GetPingReplyMessage(TimeSpan totalGameTime, int frameNumber)
         {
-            var reply = new PingReplyMessage();
-            reply.Timestamp = Timestamp;
-            reply.TotalGameTimeOnReply = totalGameTime;
+            var reply = new PingReplyMessage
+            {
+                Timestamp = Timestamp,
+                TotalGameTimeOnReply = totalGameTime,
+                FrameNumberOnReply = frameNumber,
+            };
             return reply;
         }
 

@@ -29,19 +29,27 @@ namespace AW2.Net.Messages
         /// </summary>
         public TimeSpan TotalGameTimeOnReply { get; set; }
 
+        /// <summary>
+        /// Frame number at the remote game instance at the time the reply was sent.
+        /// </summary>
+        public int FrameNumberOnReply { get; set; }
+
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Ping request message structure (during game):
-            // long: timestamp originally sent in a ping request message
-            // long: total game time when reply was sent, on the instance who sent the reply
-            writer.Write((long)Timestamp.Ticks);
-            writer.Write((long)TotalGameTimeOnReply.Ticks);
+            // TimeSpan: timestamp originally sent in a ping request message
+            // TimeSpan: total game time when reply was sent, on the instance who sent the reply
+            // int: frame number when reply was sent, on the instance who sent the reply
+            writer.Write((TimeSpan)Timestamp);
+            writer.Write((TimeSpan)TotalGameTimeOnReply);
+            writer.Write((int)FrameNumberOnReply);
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            Timestamp = TimeSpan.FromTicks(reader.ReadInt64());
-            TotalGameTimeOnReply = TimeSpan.FromTicks(reader.ReadInt64());
+            Timestamp = reader.ReadTimeSpan();
+            TotalGameTimeOnReply = reader.ReadTimeSpan();
+            FrameNumberOnReply = reader.ReadInt32();
         }
     }
 
@@ -59,19 +67,21 @@ namespace AW2.Net.Messages
         [Test]
         public void TestPingTimestamp()
         {
-            TimeSpan timestamp = new TimeSpan(12, 34, 56);
+            var timestamp = new TimeSpan(12, 34, 56);
             var ping = new PingRequestMessage();
             ping.Timestamp = timestamp;
 
-            byte[] pingData = ping.Serialize();
+            var pingData = ping.Serialize();
             var ping2 = (PingRequestMessage)Message.Deserialize(pingData, 0);
-            TimeSpan totalGameTime = new TimeSpan(23, 45, 67);
-            var pong = ping2.GetPingReplyMessage(totalGameTime);
+            var totalGameTime = new TimeSpan(23, 45, 67);
+            var frameNumber = 123;
+            var pong = ping2.GetPingReplyMessage(totalGameTime, frameNumber);
 
             byte[] pongData = pong.Serialize();
             var pong2 = (PingReplyMessage)Message.Deserialize(pongData, 0);
             Assert.AreEqual(timestamp, pong2.Timestamp);
             Assert.AreEqual(totalGameTime, pong2.TotalGameTimeOnReply);
+            Assert.AreEqual(frameNumber, pong2.FrameNumberOnReply);
         }
     }
 #endif

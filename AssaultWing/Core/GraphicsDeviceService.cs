@@ -37,8 +37,6 @@ namespace AW2.Core
         public event EventHandler DeviceResetting;
 
         public GraphicsDevice GraphicsDevice { get; private set; }
-        [Obsolete("Use GraphicsDevice.Viewport instead")]
-        public Rectangle ClientBounds { get; set; }
 
         public GraphicsDeviceService(IntPtr windowHandle)
         {

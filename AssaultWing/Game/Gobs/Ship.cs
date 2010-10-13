@@ -185,7 +185,7 @@ namespace AW2.Game.Gobs
                     scale*cosRota, scale*sinRota, 0, 0,
                     -scaledCosRoll*sinRota, scaledCosRoll*cosRota, scaledSinRoll, 0,
                     scaledSinRoll*sinRota, -scaledSinRoll*cosRota, scaledCosRoll, 0,
-                    pos.X, pos.Y, 0, 1);
+                    _pos.X, _pos.Y, 0, 1);
 #else
                 return Matrix.CreateScale(Scale)
                      * Matrix.CreateRotationX(_rollAngle.Current)

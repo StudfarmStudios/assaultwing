@@ -290,8 +290,8 @@ namespace AW2.Graphics
                 }
 
                 // 2D graphics
-
                 DrawMode2D? drawMode = null;
+                var gameToScreenMatrix = GetGameToScreenMatrix(layer.Z);
                 layer.Gobs.ForEachIn2DOrder(gob =>
                 {
                     if (!gob.IsVisible) return;
@@ -302,7 +302,7 @@ namespace AW2.Graphics
                         drawMode = gob.DrawMode2D;
                         drawMode.Value.BeginDraw(AssaultWingCore.Instance, _spriteBatch);
                     }
-                    gob.Draw2D(GetGameToScreenMatrix(layer.Z), _spriteBatch, layerScale * ZoomRatio);
+                    gob.Draw2D(gameToScreenMatrix, _spriteBatch, layerScale * ZoomRatio);
                 });
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);

@@ -87,6 +87,12 @@ namespace AW2.Game
         private const float WARM_UP_TIME = 0.2f;
 
         /// <summary>
+        /// Maximum gob displacement that is not interpreted by draw position
+        /// smoothing algorithm as a repositioning. Measured in meters.
+        /// </summary>
+        private const int GOB_POS_SMOOTHING_CUTOFF = 50;
+
+        /// <summary>
         /// Least int that is known not to have been used as a gob identifier
         /// on this game instance.
         /// </summary>
@@ -415,9 +421,16 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Get or set the gob position in the game world.
+        /// Position of the gob in the game world.
         /// </summary>
         public virtual Vector2 Pos { get { return _pos; } set { _pos = value; } }
+
+        /// <summary>
+        /// Drawing position of the gob in the game world. This is mostly zero except
+        /// on game clients who use this to smooth out erratic gob movement caused by
+        /// inconsistency between local updates and game server updates.
+        /// </summary>
+        public virtual Vector2 DrawPosDelta { get; set; }
 
         /// <summary>
         /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
@@ -481,7 +494,7 @@ namespace AW2.Game
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, _rotation, _pos); } }
+        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, _rotation, _pos + DrawPosDelta); } }
 
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.
@@ -752,6 +765,7 @@ namespace AW2.Game
         public virtual void Update()
         {
             Arena.Move(this, 1, true);
+            DrawPosDelta *= 0.95f;
         }
 
         /// <summary>
@@ -978,9 +992,13 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
+                var oldPos = _pos;
                 var newPos = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
                 var newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
                 ExtrapolatePosAndMove(newPos, newMove, framesAgo);
+                DrawPosDelta += oldPos - _pos;
+                if (DrawPosDelta.LengthSquared() > GOB_POS_SMOOTHING_CUTOFF * GOB_POS_SMOOTHING_CUTOFF)
+                    DrawPosDelta = Vector2.Zero;
                 byte rotationAsByte = reader.ReadByte();
                 _rotation = rotationAsByte * MathHelper.TwoPi / 256;
             }

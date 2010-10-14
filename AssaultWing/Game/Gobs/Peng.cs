@@ -72,19 +72,19 @@ namespace AW2.Game.Gobs
         List<Particle> particles;
 
         /// <summary>
-        /// Position of the peng in the previous frame, or NaN if unspecified.
+        /// Drawing position (Pos + DrawPosDelta) of the peng in the previous frame, or NaN if unspecified.
         /// </summary>
-        Vector2 oldPos;
+        private Vector2 _oldDrawPos;
 
         /// <summary>
-        /// Last known value of <c>Pos</c> after a frame update, or NaN if unspecified.
+        /// Last known drawing position (Pos + DrawPosDelta) after a frame update, or NaN if unspecified.
         /// </summary>
-        Vector2 prevPos;
+        private Vector2 _prevDrawPos;
 
         /// <summary>
-        /// Time of last update to field <c>oldPos</c>.
+        /// Time of last update to field <see cref="_oldDrawPos"/>
         /// </summary>
-        TimeSpan oldPosTimestamp;
+        private TimeSpan _oldPosTimestamp;
 
         [ExcludeFromDeepCopy]
         Gob _leader;
@@ -117,22 +117,21 @@ namespace AW2.Game.Gobs
             {
                 if (Leader == null) return base.Pos;
                 if (LeaderBone == -1)
-                    return Leader.Pos;
+                    return Leader.Pos + Leader.DrawPosDelta;
                 else
                     return Leader.GetNamedPosition(LeaderBone);
             }
         }
 
         /// <summary>
-        /// Position of the peng before movement in the current frame.
+        /// Drawing position (Pos + DrawPosDelta) of the peng before movement in the current frame.
         /// </summary>
-        public Vector2 OldPos
+        public Vector2 OldDrawPos
         {
             get
             {
-                // TODO: Update oldPos from pos when Arena.TotalTime has advanced
-                if (float.IsNaN(oldPos.X)) return _pos;
-                return oldPos;
+                if (float.IsNaN(_oldDrawPos.X)) return _pos + DrawPosDelta;
+                return _oldDrawPos;
             }
         }
 
@@ -215,8 +214,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                return Matrix.CreateRotationZ(Rotation)
-                     * Matrix.CreateTranslation(new Vector3(Pos, 0));
+                return AWMathHelper.CreateWorldMatrix(1, Rotation, Pos + DrawPosDelta);
             }
         }
 
@@ -247,19 +245,15 @@ namespace AW2.Game.Gobs
             _collisionAreas = new CollisionArea[0];
         }
 
-        /// <summary>
-        /// Creates a peng.
-        /// </summary>
-        /// <param name="typeName">The type of the peng.</param>
         public Peng(CanonicalString typeName)
             : base(typeName)
         {
             input = 0;
             Leader = null;
             LeaderBone = -1;
-            oldPos = new Vector2(Single.NaN);
-            prevPos = new Vector2(Single.NaN);
-            oldPosTimestamp = TimeSpan.Zero;
+            _oldDrawPos = new Vector2(Single.NaN);
+            _prevDrawPos = new Vector2(Single.NaN);
+            _oldPosTimestamp = TimeSpan.Zero;
             particles = new List<Particle>();
         }
 
@@ -294,7 +288,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            UpdateOldPos();
+            UpdateOldDrawPos();
 
             // Create particles.
             var newParticles = emitter.Emit();
@@ -325,15 +319,21 @@ namespace AW2.Game.Gobs
             var gfxViewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
             var viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
             var pengToGame = WorldMatrix;
-            var pengColor = new Color(new Vector3(1, 1, 1));
-            if (this.PlayerRelated)
-                pengColor = this.Owner.PlayerColor;
+            var pengColor = PlayerRelated ? Owner.PlayerColor : Color.White;
             foreach (var particle in particles)
             {
                 // Find out particle's center's position on screen.
-                var posCenter = particle.Pos;
-                if (coordinateSystem == CoordinateSystem.Peng)
-                    posCenter = Vector2.Transform(posCenter, pengToGame);
+                Vector2 posCenter;
+                switch (coordinateSystem)
+                {
+                    case CoordinateSystem.Peng:
+                        posCenter = Vector2.Transform(particle.Pos, pengToGame);
+                        break;
+                    case CoordinateSystem.Game:
+                        posCenter = particle.Pos;
+                        break;
+                    default: throw new ApplicationException("Unknown CoordinateSystem: " + coordinateSystem);
+                }
                 var screenCenter = Vector2.Transform(posCenter, gameToScreen);
 
                 // Sprite depth will be our given depth layer slightly adjusted by
@@ -359,15 +359,15 @@ namespace AW2.Game.Gobs
         /// Call this method after frame update has finished.
         /// Calling this method more than once after one frame update
         /// has no further effects.
-        private void UpdateOldPos()
+        private void UpdateOldDrawPos()
         {
-            if (oldPosTimestamp >= Arena.TotalTime) return;
-            if (float.IsNaN(prevPos.X))
-                oldPos = Pos;
+            if (_oldPosTimestamp >= Arena.TotalTime) return;
+            if (float.IsNaN(_prevDrawPos.X))
+                _oldDrawPos = Pos + DrawPosDelta;
             else
-                oldPos = prevPos;
-            prevPos = Pos;
-            oldPosTimestamp = Arena.TotalTime;
+                _oldDrawPos = _prevDrawPos;
+            _prevDrawPos = Pos + DrawPosDelta;
+            _oldPosTimestamp = Arena.TotalTime;
         }
 
         #region IConsistencyCheckable and Clonable Members

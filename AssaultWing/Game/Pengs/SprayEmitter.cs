@@ -148,8 +148,8 @@ namespace AW2.Game.Pengs
             // with an even distribution over the circle sector
             // defined by 'radius', the origin and 'sprayAngle'.
 
-            Vector2 startPos = Peng.OldPos;
-            Vector2 endPos = Peng.Pos;
+            var startPos = Peng.OldDrawPos;
+            var endPos = Peng.Pos + Peng.DrawPosDelta;
             for (int i = 0; i < createCount; ++i)
             {
                 // Find out type of emitted thing (which gob or particle) and create it.

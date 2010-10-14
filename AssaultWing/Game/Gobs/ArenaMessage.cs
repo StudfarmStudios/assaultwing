@@ -87,7 +87,7 @@ namespace AW2.Game.Gobs
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            Vector2 backgroundPos = Vector2.Transform(Pos, gameToScreen);
+            Vector2 backgroundPos = Vector2.Transform(Pos + DrawPosDelta, gameToScreen);
 
             float timePassed = _birthTime.SecondsAgoGameTime();
             float finalScale = _scaleCurve.Evaluate(timePassed) * scale;

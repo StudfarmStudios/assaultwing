@@ -190,7 +190,7 @@ namespace AW2.Game.Gobs
                 return Matrix.CreateScale(Scale)
                      * Matrix.CreateRotationX(_rollAngle.Current)
                      * Matrix.CreateRotationZ(Rotation)
-                     * Matrix.CreateTranslation(new Vector3(Pos, 0));
+                     * Matrix.CreateTranslation(new Vector3(Pos + DrawPosDelta, 0));
 #endif
             }
         }
@@ -495,16 +495,15 @@ namespace AW2.Game.Gobs
 
         private SpriteFont playerNameFont;
 
-        public override void Draw2D(Matrix gameToScreen, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, float scale)
+        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-           // base.Draw2D(gameToScreen, spriteBatch, scale);
+            var screenPos = Vector2.Transform(Pos + DrawPosDelta, gameToScreen);
 
             // Draw player name
             if (Owner.IsRemote)
             {
-                Vector2 playerNameSize = playerNameFont.MeasureString(Owner.Name);
-                Vector2 screenPos = Vector2.Transform(Pos, gameToScreen);
-                Vector2 playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
+                var playerNameSize = playerNameFont.MeasureString(Owner.Name);
+                var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
                 spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos, new Color(Owner.PlayerColor, 0.8f));
             }
         }

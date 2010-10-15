@@ -964,10 +964,8 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((Half)_pos.X);
-                writer.Write((Half)_pos.Y);
-                writer.Write((Half)_move.X);
-                writer.Write((Half)_move.Y);
+                writer.Write((Vector2)_pos);
+                writer.WriteHalf((Vector2)_move);
                 byte rotationAsByte = (byte)Math.Round(_rotation / MathHelper.TwoPi * 256);
                 writer.Write((byte)rotationAsByte);
             }
@@ -993,8 +991,8 @@ namespace AW2.Game
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 var oldPos = _pos;
-                var newPos = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
-                var newMove = new Vector2 { X = reader.ReadHalf(), Y = reader.ReadHalf() };
+                var newPos = reader.ReadVector2();
+                var newMove = reader.ReadHalfVector2();
                 ExtrapolatePosAndMove(newPos, newMove, framesAgo);
                 DrawPosDelta += oldPos - _pos;
                 if (DrawPosDelta.LengthSquared() > GOB_POS_SMOOTHING_CUTOFF * GOB_POS_SMOOTHING_CUTOFF)

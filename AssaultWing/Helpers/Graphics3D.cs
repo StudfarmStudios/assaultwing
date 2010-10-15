@@ -107,6 +107,9 @@ namespace AW2.Helpers
 
         #endregion Type definitions
 
+        private const float DEBUG_DRAW_Z = 300;
+        private static readonly Color DEBUG_DRAW_COLOR = Color.Aquamarine;
+
         static BasicEffect debugEffect;
         static BasicEffect DebugEffect
         {
@@ -653,9 +656,23 @@ namespace AW2.Helpers
         /// </summary>
         public static void DebugDraw(BoundingSphere sphere, Matrix view, Matrix projection, Matrix world)
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             VertexPositionColor[] vertexData;
-            Graphics3D.GetWireframeModelData(sphere, 300, Color.Aquamarine, out vertexData);
+            Graphics3D.GetWireframeModelData(sphere, DEBUG_DRAW_Z, DEBUG_DRAW_COLOR, out vertexData);
+            DebugDraw(view, projection, world, vertexData);
+        }
+
+        public static void DebugDraw(Vector2 p1, Vector2 p2, Matrix view, Matrix projection, Matrix world)
+        {
+            var vertexData = new VertexPositionColor[] {
+                new VertexPositionColor(new Vector3(p1, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR),
+                new VertexPositionColor(new Vector3(p2, DEBUG_DRAW_Z), DEBUG_DRAW_COLOR),
+            };
+            DebugDraw(view, projection, world, vertexData);
+        }
+
+        private static void DebugDraw(Matrix view, Matrix projection, Matrix world, VertexPositionColor[] vertexData)
+        {
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             DebugEffect.View = view;
             DebugEffect.Projection = projection;
             DebugEffect.World = world;

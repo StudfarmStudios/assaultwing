@@ -9,6 +9,8 @@ namespace AW2.Graphics
 {
     internal class EditorViewport : AWViewport
     {
+        private const float SMALL_GOB_RADIUS = 20;
+
         private EditorSpectator _spectator;
 
         public bool IsCirclingSmallAndInvisibleGobs { get; set; }
@@ -37,8 +39,11 @@ namespace AW2.Graphics
             {
                 var projection = GetProjectionMatrix(layer.Z);
                 foreach (var gob in layer.Gobs)
-                    if (gob.DrawBounds.Radius < 20)
-                        Graphics3D.DebugDraw(new BoundingSphere(new Vector3(gob.Pos, 0), 20), view, projection, Matrix.Identity);
+                    if (gob.DrawBounds.Radius < SMALL_GOB_RADIUS)
+                    {
+                        Graphics3D.DebugDraw(new BoundingSphere(new Vector3(gob.Pos, 0), SMALL_GOB_RADIUS), view, projection, Matrix.Identity);
+                        Graphics3D.DebugDraw(gob.Pos, gob.Pos + SMALL_GOB_RADIUS * AWMathHelper.GetUnitVector2(gob.Rotation), view, projection, Matrix.Identity);
+                    }
             }
         }
     }

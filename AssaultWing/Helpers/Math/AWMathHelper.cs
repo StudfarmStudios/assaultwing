@@ -111,14 +111,30 @@ namespace AW2.Helpers
         /// Return value is undefined if <b>step</b> is negative.
         public static float InterpolateTowardsAngle(float from, float to, float step)
         {
-            // Normalise angles to the interval [0, 2*pi[.
-            from = ((from % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
-            to = ((to % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
-            float difference = (((to - from) % MathHelper.TwoPi) + MathHelper.TwoPi) % MathHelper.TwoPi;
-
+            float difference = GetMinimalPositiveEqualAngle(to - from);
             return difference <= MathHelper.Pi
                 ? from + Math.Min(step, difference)
                 : from - Math.Min(step, MathHelper.TwoPi - difference);
+        }
+
+        /// <summary>
+        /// Returns the smallest angle that is positive and that denotes
+        /// an equal rotation to the given angle.
+        /// </summary>
+        public static float GetMinimalPositiveEqualAngle(float angle)
+        {
+            return angle >= 0
+                ? angle % MathHelper.TwoPi
+                : MathHelper.TwoPi + (angle % MathHelper.TwoPi);
+        }
+
+        /// <summary>
+        /// Returns the angle that is minimal in its absolute value and that denotes
+        /// an equal rotation to the given angle.
+        /// </summary>
+        public static float GetAbsoluteMinimalEqualAngle(float angle)
+        {
+            return GetMinimalPositiveEqualAngle(angle + MathHelper.Pi) - MathHelper.Pi;
         }
 
         /// <summary>
@@ -694,6 +710,34 @@ namespace AW2.Helpers
                 Assert.AreEqual(0, AbsoluteAngleDifference(0, MathHelper.TwoPi));
                 Assert.AreEqual(0, AbsoluteAngleDifference(MathHelper.Pi, -MathHelper.Pi));
                 Assert.AreEqual(MathHelper.Pi, AbsoluteAngleDifference(MathHelper.PiOver2, (float)(-2.5 * Math.PI)), 0.00001);
+            }
+
+            [Test]
+            public void TestGetAbsoluteMinimalEqualAngle()
+            {
+                const double EPSILON = 0.0001;
+                Assert.AreEqual(0, GetAbsoluteMinimalEqualAngle(0), EPSILON);
+                Assert.AreEqual(0, GetAbsoluteMinimalEqualAngle(MathHelper.TwoPi), EPSILON);
+                Assert.AreEqual(MathHelper.PiOver2, GetAbsoluteMinimalEqualAngle(MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(-MathHelper.PiOver2, GetAbsoluteMinimalEqualAngle(-MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(-MathHelper.PiOver2, GetAbsoluteMinimalEqualAngle(3 * MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(MathHelper.PiOver2, GetAbsoluteMinimalEqualAngle(-3 * MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(-MathHelper.Pi, GetAbsoluteMinimalEqualAngle(MathHelper.Pi), EPSILON);
+                Assert.AreEqual(-MathHelper.Pi, GetAbsoluteMinimalEqualAngle(-MathHelper.Pi), EPSILON);
+            }
+
+            [Test]
+            public void TestGetMinimalPositiveEqualAngle()
+            {
+                const double EPSILON = 0.0001;
+                Assert.AreEqual(0, GetMinimalPositiveEqualAngle(0), EPSILON);
+                Assert.AreEqual(0, GetMinimalPositiveEqualAngle(MathHelper.TwoPi), EPSILON);
+                Assert.AreEqual(MathHelper.PiOver2, GetMinimalPositiveEqualAngle(MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(3 * MathHelper.PiOver2, GetMinimalPositiveEqualAngle(-MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(3 * MathHelper.PiOver2, GetMinimalPositiveEqualAngle(3 * MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(MathHelper.PiOver2, GetMinimalPositiveEqualAngle(-3 * MathHelper.PiOver2), EPSILON);
+                Assert.AreEqual(MathHelper.Pi, GetMinimalPositiveEqualAngle(MathHelper.Pi), EPSILON);
+                Assert.AreEqual(MathHelper.Pi, GetMinimalPositiveEqualAngle(-MathHelper.Pi), EPSILON);
             }
 
             [Test]

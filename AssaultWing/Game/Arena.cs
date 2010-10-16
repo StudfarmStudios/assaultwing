@@ -709,7 +709,7 @@ namespace AW2.Game
 
             var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
             float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN,
-                3 * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
+                2 * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
             float checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
             var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
                 gob.PhysicalArea.Type, gob.PhysicalArea.CollidesAgainst, gob.PhysicalArea.CannotOverlap, CollisionMaterialType.Regular);

@@ -651,8 +651,7 @@ namespace AW2.Game
         {
             _gravitating = true;
             _owner = null;
-            ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION); // DELME !!!
-            // WANT THIS but it causes anomalities !!! ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
+            ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
             _modelPartTransforms = null;
             _exhaustEngines = new Gob[0];
             _alpha = 1;

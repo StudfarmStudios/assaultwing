@@ -93,24 +93,13 @@ namespace AW2.Game.Gobs
 
         #region Peng properties
 
-        /// <summary>
-        /// Is the gob relevant to gameplay. Irrelevant gobs won't receive state updates
-        /// from the server when playing over network and they can therefore be created
-        /// independently on a client.
-        /// </summary>
         public override bool IsRelevant { get { return false; } }
 
-        /// <summary>
-        /// Names of all textures that this gob type will ever use.
-        /// </summary>
         public override IEnumerable<CanonicalString> TextureNames
         {
             get { return base.TextureNames.Union(emitter.TextureNames); }
         }
 
-        /// <summary>
-        /// Position of the peng and the origin of its coordinate system.
-        /// </summary>
         public override Vector2 Pos
         {
             get
@@ -135,9 +124,6 @@ namespace AW2.Game.Gobs
             }
         }
 
-        /// <summary>
-        /// Movement vector of the peng.
-        /// </summary>
         public override Vector2 Move
         {
             get
@@ -147,17 +133,13 @@ namespace AW2.Game.Gobs
             }
         }
 
-        /// <summary>
-        /// Rotation of the peng around the Z-axis, i.e. the direction of the
-        /// peng's coordinate system's X axis in game coordinates.
-        /// </summary>
         public override float Rotation
         {
             get
             {
                 if (Leader == null) return base.Rotation;
                 if (LeaderBone == -1)
-                    return Leader.Rotation;
+                    return Leader.Rotation + Leader.DrawRotationDelta;
                 else
                     return Leader.GetBoneRotation(LeaderBone);
             }
@@ -214,7 +196,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                return AWMathHelper.CreateWorldMatrix(1, Rotation, Pos + DrawPosDelta);
+                return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationDelta, Pos + DrawPosDelta);
             }
         }
 
@@ -322,28 +304,28 @@ namespace AW2.Game.Gobs
             var pengColor = PlayerRelated ? Owner.PlayerColor : Color.White;
             foreach (var particle in particles)
             {
-                // Find out particle's center's position on screen.
-                Vector2 posCenter;
+                Vector2 posCenter; // particle center position in game world coordinates
+                float drawRotation;
                 switch (coordinateSystem)
                 {
                     case CoordinateSystem.Peng:
                         posCenter = Vector2.Transform(particle.Pos, pengToGame);
+                        drawRotation = particle.Rotation + Rotation + DrawRotationDelta;
                         break;
                     case CoordinateSystem.Game:
                         posCenter = particle.Pos;
+                        drawRotation = particle.Rotation;
                         break;
                     default: throw new ApplicationException("Unknown CoordinateSystem: " + coordinateSystem);
                 }
                 var screenCenter = Vector2.Transform(posCenter, gameToScreen);
+                drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
 
                 // Sprite depth will be our given depth layer slightly adjusted by
                 // particle's position in its lifespan.
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
+
                 var texture = emitter.Textures[particle.TextureIndex];
-                float drawRotation = coordinateSystem == CoordinateSystem.Game
-                    ? particle.Rotation
-                    : particle.Rotation + Rotation;
-                drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
                 spriteBatch.Draw(texture, screenCenter, null,
                     new Color(new Vector4(pengColor.ToVector3(), particle.Alpha)), drawRotation,
                     new Vector2(texture.Width, texture.Height) / 2, particle.Scale * scale,

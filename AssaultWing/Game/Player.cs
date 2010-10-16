@@ -419,7 +419,7 @@ namespace AW2.Game
 
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"deathmessage", gob =>
             {
-                gob.ResetPos(Pos, gob.Move, gob.Rotation);
+                gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 gob.Message = message;
                 gob.IconName = iconName;
                 gob.DrawColor = messageColor;
@@ -687,13 +687,13 @@ namespace AW2.Game
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
-                PositionShip(newShip);
+                PositionNewShip(newShip);
                 Game.DataEngine.Arena.Gobs.Add(newShip);
                 Ship = newShip;
             });
         }
 
-        private void PositionShip(Ship ship)
+        private void PositionNewShip(Ship ship)
         {
             var arena = Game.DataEngine.Arena;
 
@@ -710,7 +710,7 @@ namespace AW2.Game
             {
                 var newShipPos = arena.GetFreePosition(ship,
                     new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, arena.Dimensions));
-                ship.ResetPos(newShipPos, ship.Move, ship.Rotation);
+                ship.ResetPos(newShipPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
             }
             else
                 bestSpawn.Spawn(ship);

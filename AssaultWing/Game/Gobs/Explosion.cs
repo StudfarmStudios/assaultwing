@@ -135,11 +135,11 @@ namespace AW2.Game.Gobs
 
         private void CreateParticleEngines()
         {
-            for (int i = 0; i < _particleEngineNames.Length; ++i)
+            foreach (var pengName in _particleEngineNames)
             {
-                Gob.CreateGob<Gob>(Game, _particleEngineNames[i], gob =>
+                Gob.CreateGob<Gob>(Game, pengName, gob =>
                 {
-                    gob.ResetPos(this.Pos, gob.Move, gob.Rotation);
+                    gob.ResetPos(this.Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                     Arena.Gobs.Add(gob);
                 });
             }

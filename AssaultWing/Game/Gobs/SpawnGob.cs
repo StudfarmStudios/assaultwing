@@ -137,7 +137,7 @@ namespace AW2.Game.Gobs
                 Gob.CreateGob<Gob>(Game, GetRandomSpawnType(), newGob =>
                 {
                     var spawnPos = Arena.GetFreePosition(newGob, _spawnArea);
-                    newGob.Pos = spawnPos;
+                    newGob.ResetPos(spawnPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                     Arena.Gobs.Add(newGob);
                 });
             }

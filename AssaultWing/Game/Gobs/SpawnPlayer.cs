@@ -58,7 +58,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Spawn(Ship ship)
         {
-            ship.ResetPos(Arena.GetFreePosition(ship, _spawnArea), ship.Move, ship.Rotation);
+            ship.ResetPos(Arena.GetFreePosition(ship, _spawnArea), Vector2.Zero, Gob.DEFAULT_ROTATION);
         }
     }
 }

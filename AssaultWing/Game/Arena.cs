@@ -700,16 +700,26 @@ namespace AW2.Game
         public bool IsFreePosition(Gob gob, Vector2 position)
         {
             if (gob.PhysicalArea == null) return true;
+
+            // Make sure Gob.WorldMatrix doesn't contain NaN's.
+            var oldPos = gob.Pos;
+            var oldRotation = gob.Rotation;
+            gob.Pos = Vector2.Zero;
+            gob.Rotation = 0;
+
             var boundingDimensions = gob.PhysicalArea.Area.BoundingBox.Dimensions;
             float checkRadiusMeters = MathHelper.Max(FREE_POS_CHECK_RADIUS_MIN,
                 3 * MathHelper.Max(boundingDimensions.X, boundingDimensions.Y));
             float checkRadiusGobCoords = checkRadiusMeters / gob.Scale; // in gob coordinates
             var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
                 gob.PhysicalArea.Type, gob.PhysicalArea.CollidesAgainst, gob.PhysicalArea.CannotOverlap, CollisionMaterialType.Regular);
-            var oldPos = gob.Pos;
             gob.Pos = position;
             bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(wallCheckArea, wallCheckArea.CannotOverlap, null);
+
+            // Restore old values
             gob.Pos = oldPos;
+            gob.Rotation = oldRotation;
+
             return result;
         }
 

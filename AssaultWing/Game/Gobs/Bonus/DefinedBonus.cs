@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using AW2.Helpers;
 
 namespace AW2.Game.Gobs.Bonus
@@ -29,7 +30,7 @@ namespace AW2.Game.Gobs.Bonus
 
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"bonusmessage", gob =>
             {
-                gob.ResetPos(Pos, gob.Move, gob.Rotation);
+                gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
                 gob.Message = gameAction.BonusText;
                 gob.IconName = gameAction.BonusIconName;
                 gob.DrawColor = gameAction.Player.PlayerColor;

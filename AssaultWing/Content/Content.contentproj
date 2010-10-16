@@ -2703,6 +2703,36 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\bloodbowl_rock2.X">
+      <Name>bloodbowl_rock2</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_bg_wall1.X">
+      <Name>bloodbowl_bg_wall1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_bg_wall2.X">
+      <Name>bloodbowl_bg_wall2</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_bg_wall3.X">
+      <Name>bloodbowl_bg_wall3</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_rock1.X">
+      <Name>bloodbowl_rock1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\bloodbowl_rock3.X">
+      <Name>bloodbowl_rock3</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="sounds\sounddefs.xml">
       <Name>sounddefs</Name>
       <Importer>XmlImporter</Importer>

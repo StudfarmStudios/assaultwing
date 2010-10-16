@@ -280,11 +280,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         protected virtual void Thrusting(float thrustForce) { }
 
-        /// <summary>
-        /// Called when the ship is turning.
-        /// </summary>
-        protected virtual void Turning(float turnAngle) { }
-
         #endregion Protected methods
 
         #region Private methods
@@ -470,7 +465,6 @@ namespace AW2.Game.Gobs
             force = MathHelper.Clamp(force, -1f, 1f);
             float deltaRotation = Game.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
             Rotation += deltaRotation;
-            Turning(deltaRotation);
 
             Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
             float moveLength = Move.Length();

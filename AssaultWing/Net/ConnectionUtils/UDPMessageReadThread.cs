@@ -43,9 +43,15 @@ namespace AW2.Net.ConnectionUtils
                     }
                     catch (SocketException e)
                     {
-                        if (e.ErrorCode == (int)SocketError.MessageSize)
-                            throw new MessageException("Message was larger than the read buffer", e);
-                        throw;
+                        switch ((SocketError)e.ErrorCode)
+                        {
+                            case SocketError.ConnectionReset:
+                                // This doesn't our UDP socket.
+                                break;
+                            case SocketError.MessageSize:
+                                throw new MessageException("Message was larger than the read buffer", e);
+                            default: throw;
+                        }
                     }
                 }
                 yield return null;

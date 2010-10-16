@@ -1,3 +1,6 @@
+#if DEBUG
+using NUnit.Framework;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +51,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.TypeParameterAttribute"/>
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
-    [System.Diagnostics.DebuggerDisplay("ID:{ID} typeName:{typeName} pos:{pos} move:{move}")]
+    [System.Diagnostics.DebuggerDisplay("ID:{ID} TypeName:{TypeName} Pos:{Pos} Move:{Move}")]
     public class Gob : Clonable, IConsistencyCheckable, INetworkSerializable
     {
         /// <summary>
@@ -78,7 +81,7 @@ namespace AW2.Game
         /// <summary>
         /// Default rotation of gobs. Points up in the game world.
         /// </summary>
-        protected const float DEFAULT_ROTATION = MathHelper.PiOver2;
+        public const float DEFAULT_ROTATION = MathHelper.PiOver2;
 
         /// <summary>
         /// Time, in seconds, for a gob to stop being cold.
@@ -87,10 +90,16 @@ namespace AW2.Game
         private const float WARM_UP_TIME = 0.2f;
 
         /// <summary>
-        /// Maximum gob displacement that is not interpreted by draw position
+        /// Maximum gob displacement that is not interpreted by the draw position
         /// smoothing algorithm as a repositioning. Measured in meters.
         /// </summary>
-        private const int GOB_POS_SMOOTHING_CUTOFF = 50;
+        private const int POS_SMOOTHING_CUTOFF = 50;
+
+        /// <summary>
+        /// Maximum gob rotation change that is not interpreted by the draw rotation
+        /// smoothing algorithm as a discrete rotation. Measured in radians.
+        /// </summary>
+        private const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
 
         /// <summary>
         /// Least int that is known not to have been used as a gob identifier
@@ -395,7 +404,7 @@ namespace AW2.Game
         {
             get
             {
-                return new BoundingSphere(_drawBounds.Center.RotateZ(Rotation) + new Vector3(Pos, 0), _drawBounds.Radius);
+                return new BoundingSphere(_drawBounds.Center.RotateZ(Rotation + DrawRotationDelta) + new Vector3(Pos + DrawPosDelta, 0), _drawBounds.Radius);
             }
         }
 
@@ -426,11 +435,11 @@ namespace AW2.Game
         public virtual Vector2 Pos { get { return _pos; } set { _pos = value; } }
 
         /// <summary>
-        /// Drawing position of the gob in the game world. This is mostly zero except
-        /// on game clients who use this to smooth out erratic gob movement caused by
-        /// inconsistency between local updates and game server updates.
+        /// Drawing position delta of the gob in the game world, relative to <see cref="Pos"/>.
+        /// This is mostly zero except on game clients who use this to smooth out erratic gob
+        /// movement caused by inconsistency between local updates and game server updates.
         /// </summary>
-        public virtual Vector2 DrawPosDelta { get; set; }
+        public Vector2 DrawPosDelta { get; set; }
 
         /// <summary>
         /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
@@ -464,6 +473,14 @@ namespace AW2.Game
         }
 
         /// <summary>
+        /// Drawing rotation delta of the gob, relative to <see cref="Rotation"/>.
+        /// This is mostly zero except on game clients who use this to smooth out
+        /// erratic gob rotation caused by inconsistency between local updates and
+        /// game server updates.
+        /// </summary>
+        public float DrawRotationDelta { get; set; }
+
+        /// <summary>
         /// Get the owner of the gob.
         /// </summary>
         public Player Owner { get { return _owner; } set { _owner = value; } }
@@ -494,7 +511,7 @@ namespace AW2.Game
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, _rotation, _pos + DrawPosDelta); } }
+        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, _rotation + DrawRotationDelta, _pos + DrawPosDelta); } }
 
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.
@@ -634,7 +651,8 @@ namespace AW2.Game
         {
             _gravitating = true;
             _owner = null;
-            ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION); // also translates collPrimitives
+            ResetPos(Vector2.Zero, Vector2.Zero, Gob.DEFAULT_ROTATION); // DELME !!!
+            // WANT THIS but it causes anomalities !!! ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
             _modelPartTransforms = null;
             _exhaustEngines = new Gob[0];
             _alpha = 1;
@@ -765,7 +783,18 @@ namespace AW2.Game
         public virtual void Update()
         {
             Arena.Move(this, 1, true);
-            DrawPosDelta *= 0.95f;
+            DrawPosDelta *= 0.95f; // reduces the offset to less than 5 % in 60 updates
+            DrawRotationDelta = DampDrawRotationDelta(DrawRotationDelta);
+        }
+
+        private static float DampDrawRotationDelta(float drawRotationDelta)
+        {
+            // Reduce large rotation offsets in somewhat constant steps but small offsets
+            // in smaller and smaller steps.
+            // If x_n are within [0,1], the formula is x_{n+1} = ((x_n + 3)^2 - 9) / 8
+            float sign = Math.Sign(drawRotationDelta);
+            float temp = sign * drawRotationDelta / ROTATION_SMOOTHING_CUTOFF + 3;
+            return sign * ROTATION_SMOOTHING_CUTOFF * (temp * temp - 9) / 8;
         }
 
         /// <summary>
@@ -995,10 +1024,15 @@ namespace AW2.Game
                 var newMove = reader.ReadHalfVector2();
                 ExtrapolatePosAndMove(newPos, newMove, framesAgo);
                 DrawPosDelta += oldPos - _pos;
-                if (DrawPosDelta.LengthSquared() > GOB_POS_SMOOTHING_CUTOFF * GOB_POS_SMOOTHING_CUTOFF)
+                if (float.IsNaN(DrawPosDelta.X) || DrawPosDelta.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
                     DrawPosDelta = Vector2.Zero;
+
+                var oldRotation = _rotation;
                 byte rotationAsByte = reader.ReadByte();
                 _rotation = rotationAsByte * MathHelper.TwoPi / 256;
+                DrawRotationDelta = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationDelta + oldRotation - _rotation);
+                if (float.IsNaN(DrawRotationDelta) || Math.Abs(DrawRotationDelta) > ROTATION_SMOOTHING_CUTOFF)
+                    DrawRotationDelta = 0;
             }
         }
 
@@ -1035,14 +1069,14 @@ namespace AW2.Game
         }
 
         /// <summary>
-        /// Returns the game world rotation of a named positino on the gob's 3D model.
+        /// Returns the game world rotation of a named position on the gob's 3D model.
         /// </summary>
         /// <seealso cref="GetNamedPosition(int)"/>
         public float GetBoneRotation(int boneIndex)
         {
             var transformed = Vector2.TransformNormal(Vector2.UnitX, ModelPartTransforms[boneIndex]);
             float boneRotation = transformed.Angle();
-            return Rotation + boneRotation;
+            return Rotation + DrawRotationDelta + boneRotation;
         }
 
         /// <summary>
@@ -1222,7 +1256,7 @@ namespace AW2.Game
                 LastDamager = cause.Killer.Owner;
                 LastDamagerTime = Game.DataEngine.ArenaTotalTime;
             }
-            
+
             _damage += damageAmount;
             _damage = MathHelper.Clamp(_damage, 0, _maxDamage);
 
@@ -1430,5 +1464,33 @@ namespace AW2.Game
         }
 
         #endregion
+
+#if DEBUG
+        [TestFixture]
+        public class GobUnitTests
+        {
+            private const float STEP = 0.1f;
+
+            [Test]
+            public void TestDrawRotationDeltaDampingKeepsSign([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
+            {
+                Assert.AreEqual(Math.Sign(x), Math.Sign(DampDrawRotationDelta(x)));
+            }
+
+            [Test]
+            public void TestDrawRotationDeltaDampingShrinks([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
+            {
+                Assert.GreaterOrEqual(Math.Abs(x), Math.Abs(DampDrawRotationDelta(x)));
+            }
+
+            [Test]
+            public void TestDrawRotationDeltaDampingDerivativeIsNotTooSteep([Range(-ROTATION_SMOOTHING_CUTOFF + STEP, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
+            {
+                var delta = DampDrawRotationDelta(x) - DampDrawRotationDelta(x - STEP);
+                Assert.GreaterOrEqual(1, delta / STEP);
+                Assert.LessOrEqual(-1, delta / STEP);
+            }
+        }
+#endif
     }
 }

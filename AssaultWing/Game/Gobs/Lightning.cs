@@ -274,8 +274,9 @@ namespace AW2.Game.Gobs
             }
             else
             {
-                var middle1 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, Shooter.Gob.Rotation - MathHelper.PiOver4, Shooter.Gob.Rotation);
-                var middle2 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, Shooter.Gob.Rotation, Shooter.Gob.Rotation + MathHelper.PiOver4);
+                var drawRotation = Shooter.Gob.Rotation + Shooter.Gob.DrawRotationDelta;
+                var middle1 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation - MathHelper.PiOver4, drawRotation);
+                var middle2 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation, drawRotation + MathHelper.PiOver4);
                 _segments = new List<Segment>
                 {
                     new Segment(start, middle1),

@@ -155,41 +155,33 @@ namespace AW2.Game.Gobs
 
         #region Ship properties
 
-        /// <summary>
-        /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
-        /// as if the gob appeared there instantaneously
-        /// as opposed to moving there in a continuous fashion.
-        /// </summary>
         public override void ResetPos(Vector2 pos, Vector2 move, float rotation)
         {
             base.ResetPos(pos, move, rotation);
             if (LocationPredicter != null) LocationPredicter.ForgetOldShipLocations();
         }
 
-        /// <summary>
-        /// Returns the world matrix of the gob, i.e., the translation from
-        /// game object coordinates to game world coordinates.
-        /// </summary>
         public override Matrix WorldMatrix
         {
             get
             {
 #if OPTIMIZED_CODE
+                var drawPos = _pos + DrawPosDelta;
                 float scale = Scale;
-                float rotation = Rotation;
+                float rotation = Rotation + DrawRotationDelta;
                 float scaledCosRoll = scale * (float)Math.Cos(_rollAngle.Current);
                 float scaledSinRoll = scale * (float)Math.Sin(_rollAngle.Current);
                 float cosRota = (float)Math.Cos(rotation);
                 float sinRota = (float)Math.Sin(rotation);
                 return new Matrix(
-                    scale*cosRota, scale*sinRota, 0, 0,
-                    -scaledCosRoll*sinRota, scaledCosRoll*cosRota, scaledSinRoll, 0,
-                    scaledSinRoll*sinRota, -scaledSinRoll*cosRota, scaledCosRoll, 0,
-                    _pos.X, _pos.Y, 0, 1);
+                    scale * cosRota, scale * sinRota, 0, 0,
+                    -scaledCosRoll * sinRota, scaledCosRoll * cosRota, scaledSinRoll, 0,
+                    scaledSinRoll * sinRota, -scaledSinRoll * cosRota, scaledCosRoll, 0,
+                    drawPos.X, drawPos.Y, 0, 1);
 #else
                 return Matrix.CreateScale(Scale)
                      * Matrix.CreateRotationX(_rollAngle.Current)
-                     * Matrix.CreateRotationZ(Rotation)
+                     * Matrix.CreateRotationZ(Rotation + DrawRotationDelta)
                      * Matrix.CreateTranslation(new Vector3(Pos + DrawPosDelta, 0));
 #endif
             }
@@ -358,7 +350,7 @@ namespace AW2.Game.Gobs
                 Rotation = Rotation
             });
             base.Update();
-            
+
             // Re-enable temporarily disabled gobs.
             foreach (Gob gob in _temporarilyDisabledGobs) gob.Enable();
             _temporarilyDisabledGobs.Clear();
@@ -569,7 +561,7 @@ namespace AW2.Game.Gobs
             var device = GetDevice(deviceType);
             device.LoadTimeMultiplier = multiplier;
         }
-        
+
         public float GetDeviceLoadMultiplier(ShipDevice.OwnerHandleType deviceType)
         {
             var device = GetDevice(deviceType);
@@ -629,11 +621,11 @@ namespace AW2.Game.Gobs
         protected override void SwitchEngineFlashAndBang(bool active)
         {
             base.SwitchEngineFlashAndBang(active);
-            if (active) 
+            if (active)
             {
                 _thrusterSound.EnsureIsPlaying();
-            }            
-            else 
+            }
+            else
             {
                 _thrusterSound.Stop();
             }

@@ -148,8 +148,6 @@ namespace AW2.Game.Pengs
             // with an even distribution over the circle sector
             // defined by 'radius', the origin and 'sprayAngle'.
 
-            var startPos = Peng.OldDrawPos;
-            var endPos = Peng.Pos + Peng.DrawPosDelta;
             for (int i = 0; i < createCount; ++i)
             {
                 // Find out type of emitted thing (which gob or particle) and create it.
@@ -158,7 +156,7 @@ namespace AW2.Game.Pengs
                 // The emitted thing init routine must be an Action<Gob>
                 // so that it can be passed to Gob.CreateGob. Particle init
                 // is included in the same routine because of large similarities.
-                Action<Gob> emittedThingInit = gob => GobCreation(gob, createCount, i, startPos, endPos, emitType, ref particles);
+                Action<Gob> emittedThingInit = gob => GobCreation(gob, createCount, i, emitType, ref particles);
                 if (emitType < textureNames.Length)
                     emittedThingInit(null);
                 else
@@ -200,7 +198,7 @@ namespace AW2.Game.Pengs
 
         #endregion
 
-        private void GobCreation(Gob gob, int createCount, int i, Vector2 startPos, Vector2 endPos, int emitType, ref List<Particle> particles)
+        private void GobCreation(Gob gob, int createCount, int i, int emitType, ref List<Particle> particles)
         {
             // Find out emission parameters.
             // We have to loop because some choices of parameters may not be wanted.
@@ -231,8 +229,11 @@ namespace AW2.Game.Pengs
                     case Peng.CoordinateSystem.Game:
                         {
                             float posWeight = (i + 1) / (float)createCount;
-                            Vector2 iPos = Vector2.Lerp(startPos, endPos, posWeight);
-                            RandomHelper.GetRandomCirclePoint(radius, Peng.Rotation - sprayAngle, Peng.Rotation + sprayAngle,
+                            var startPos = Peng.OldDrawPos;
+                            var endPos = Peng.Pos + Peng.DrawPosDelta;
+                            var iPos = Vector2.Lerp(startPos, endPos, posWeight);
+                            var drawRotation = Peng.Rotation + Peng.DrawRotationDelta;
+                            RandomHelper.GetRandomCirclePoint(radius, drawRotation - sprayAngle, drawRotation + sprayAngle,
                                 out pos, out directionUnit, out directionAngle);
                             pos += iPos;
                             move = Peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;

@@ -71,6 +71,11 @@ namespace AW2.Game
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
 
+        /// <summary>
+        /// Called when a new <see cref="Arena"/> is instantiated.
+        /// </summary>
+        public event Action<Arena> NewArena;
+
         #endregion Properties
 
         public DataEngine(AssaultWingCore game)
@@ -143,6 +148,7 @@ namespace AW2.Game
                 try
                 {
                     arena = Arena.FromFile(Game, arenaFilename);
+                    if (NewArena != null) NewArena(arena);
                     InitializeFromArena(arena, true);
                     return true;
                 }

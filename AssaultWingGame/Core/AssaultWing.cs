@@ -75,6 +75,11 @@ namespace AW2.Core
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
+            DataEngine.NewArena += arena =>
+            {
+                arena.Gobs.Added += gob => GobAddedToArena(arena, gob);
+                arena.Gobs.Removed += gob => GobRemovedFromArena(arena, gob);
+            };
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
@@ -176,6 +181,7 @@ namespace AW2.Core
                 foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = true;
                 var message = new StartGameMessage();
                 message.ArenaPlaylist = DataEngine.ArenaPlaylist;
+                // TODO !!! Make GobPreCreationMessage contain all created gobs -- this way game clients know when gob creation has finished
                 NetworkEngine.SendToGameClients(message);
             }
             base.PrepareFirstArena();
@@ -488,6 +494,25 @@ namespace AW2.Core
             {
                 MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             }
+        }
+
+        private void GobAddedToArena(Arena arena, Gob gob)
+        {
+            if (NetworkMode != NetworkMode.Server || !gob.IsRelevant) return;
+            var message = arena.IsActive ? (GobCreationMessageBase)new GobCreationMessage() : new GobPreCreationMessage();
+            message.GobTypeName = gob.TypeName;
+            message.LayerIndex = arena.Layers.IndexOf(gob.Layer);
+            message.Write(gob, AW2.Helpers.Serialization.SerializationModeFlags.All);
+            NetworkEngine.SendToGameClients(message);
+        }
+
+        private void GobRemovedFromArena(Arena arena, Gob gob)
+        {
+            if (NetworkMode != NetworkMode.Server || !gob.IsRelevant) return;
+            if (!arena.IsActive) throw new ApplicationException("Removing a gob from an inactive arena during network game");
+            var message = new GobDeletionMessage();
+            message.GobId = gob.ID;
+            NetworkEngine.SendToGameClients(message);
         }
     }
 }

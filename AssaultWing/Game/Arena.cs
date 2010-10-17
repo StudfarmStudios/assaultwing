@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
@@ -8,7 +7,6 @@ using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
-using AW2.Net.Messages;
 using AW2.Sound;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
@@ -411,7 +409,7 @@ namespace AW2.Game
         /// </summary>
         public List<BackgroundMusic> BackgroundMusic { get { return _backgroundMusic; } }
 
-        private bool IsActive { get { return this == Game.DataEngine.Arena; } }
+        public bool IsActive { get { return this == Game.DataEngine.Arena; } }
 
         #endregion // Arena properties
 
@@ -1330,29 +1328,12 @@ namespace AW2.Game
         {
             if (IsActive) Game.GobsCounter.Increment();
             Prepare(gob);
-
             if (gob is AW2.Game.Gobs.Ship)
-            {
                 AddShipTrackerToViewports((AW2.Game.Gobs.Ship)gob);
-            }
             if (gob is AW2.Game.Gobs.Dock)
-            {
                 AddDockTrackerToViewports((AW2.Game.Gobs.Dock)gob);
-            }
             if (gob is AW2.Game.Gobs.Bonus.Bonus)
-            {
                 AddBonusTrackerToViewports((AW2.Game.Gobs.Bonus.Bonus)gob);
-            }
-
-            // Game server notifies game clients of the new gob.
-            if (Game.NetworkMode == NetworkMode.Server && gob.IsRelevant)
-            {
-                var message = IsActive ? (GobCreationMessageBase)new GobCreationMessage() : new GobPreCreationMessage();
-                message.GobTypeName = gob.TypeName;
-                message.LayerIndex = Layers.IndexOf(gob.Layer);
-                message.Write(gob, SerializationModeFlags.All);
-                Game.NetworkEngine.SendToGameClients(message);
-            }
         }
 
         private bool GobRemoving(Gob gob)
@@ -1363,15 +1344,6 @@ namespace AW2.Game
 
         private void GobRemoved(Gob gob)
         {
-            // Game server notifies game clients of the removal of relevant gobs.
-            if (Game.NetworkMode == NetworkMode.Server && gob.IsRelevant)
-            {
-                if (!IsActive) throw new Exception("Removing a gob from an inactive arena during network game");
-                var message = new GobDeletionMessage();
-                message.GobId = gob.ID;
-                Game.NetworkEngine.SendToGameClients(message);
-            }
-
             if (IsActive)
                 Game.GobsCounter.Decrement();
             if (gob.Layer == Gobs.GameplayLayer)

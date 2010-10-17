@@ -2828,6 +2828,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\bloodbowl_volcano.X">
+      <Name>bloodbowl_volcano</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng_lava spray.xml">
       <Name>Peng_lava spray</Name>
       <Importer>XmlImporter</Importer>
@@ -2836,6 +2841,14 @@
     </None>
     <None Include="particledefs\Peng_lavachunkglow.xml">
       <Name>Peng_lavachunkglow</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="particledefs\Peng_volcano.xml">
+      <Name>Peng_volcano</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

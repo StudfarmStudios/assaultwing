@@ -398,9 +398,9 @@ namespace AW2.Game
             private set
             {
                 _gobs = value;
-                _gobs.Added += GobAdded;
-                _gobs.Removing += GobRemoving;
-                _gobs.Removed += GobRemoved;
+                _gobs.Added += GobAddedHandler;
+                _gobs.Removing += GobRemovingHandler;
+                _gobs.Removed += GobRemovedHandler;
             }
         }
 
@@ -410,6 +410,9 @@ namespace AW2.Game
         public List<BackgroundMusic> BackgroundMusic { get { return _backgroundMusic; } }
 
         public bool IsActive { get { return this == Game.DataEngine.Arena; } }
+
+        public event Action<Gob> GobAdded;
+        public event Action<Gob> GobRemoved;
 
         #endregion // Arena properties
 
@@ -1324,7 +1327,7 @@ namespace AW2.Game
 
         #region Callbacks
 
-        private void GobAdded(Gob gob)
+        private void GobAddedHandler(Gob gob)
         {
             if (IsActive) Game.GobsCounter.Increment();
             Prepare(gob);
@@ -1334,21 +1337,23 @@ namespace AW2.Game
                 AddDockTrackerToViewports((AW2.Game.Gobs.Dock)gob);
             if (gob is AW2.Game.Gobs.Bonus.Bonus)
                 AddBonusTrackerToViewports((AW2.Game.Gobs.Bonus.Bonus)gob);
+            if (GobAdded != null) GobAdded(gob);
         }
 
-        private bool GobRemoving(Gob gob)
+        private bool GobRemovingHandler(Gob gob)
         {
             // Game client removes relevant gobs only when the server says so.
             return Game.NetworkMode != NetworkMode.Client || !gob.IsRelevant;
         }
 
-        private void GobRemoved(Gob gob)
+        private void GobRemovedHandler(Gob gob)
         {
             if (IsActive)
                 Game.GobsCounter.Decrement();
             if (gob.Layer == Gobs.GameplayLayer)
                 Unregister(gob);
             gob.Dispose();
+            if (GobRemoved != null) GobRemoved(gob);
         }
 
         #endregion

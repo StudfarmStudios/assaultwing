@@ -77,8 +77,8 @@ namespace AW2.Core
             _frameStep = false;
             DataEngine.NewArena += arena =>
             {
-                arena.Gobs.Added += gob => GobAddedToArena(arena, gob);
-                arena.Gobs.Removed += gob => GobRemovedFromArena(arena, gob);
+                arena.GobAdded += gob => GobAddedToArena(arena, gob);
+                arena.GobRemoved += gob => GobRemovedFromArena(arena, gob);
             };
         }
 

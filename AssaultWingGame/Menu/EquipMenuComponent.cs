@@ -483,11 +483,11 @@ namespace AW2.Menu
         private void StartGame()
         {
             if (MenuEngine.Game.DataEngine.ArenaPlaylist.Count == 0) return;
-            ResetEquipMenu();
-            _readyPressed = true;
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Server:
+                    ResetEquipMenu();
+                    _readyPressed = true;
                     MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArenaOnServer);
                     MenuEngine.Deactivate();
                     break;
@@ -495,6 +495,8 @@ namespace AW2.Menu
                     // Client advances only when the server says so.
                     break;
                 case NetworkMode.Standalone:
+                    ResetEquipMenu();
+                    _readyPressed = true;
                     MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArena);
                     MenuEngine.Deactivate();
                     break;

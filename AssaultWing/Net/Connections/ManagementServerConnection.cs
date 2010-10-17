@@ -14,8 +14,8 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Creates a new connection to a management server that works solely on UDP.
         /// </summary>
-        public ManagementServerConnection(IPEndPoint managementServerEndPoint)
-            : base()
+        public ManagementServerConnection(AssaultWingCore game, IPEndPoint managementServerEndPoint)
+            : base(game)
         {
             Name = "Management Server Connection " + ID;
             RemoteUDPEndPoint = managementServerEndPoint;
@@ -25,7 +25,7 @@ namespace AW2.Net.Connections
         {
             var managementMessage = message as ManagementMessage;
             if (managementMessage == null) throw new ArgumentException("Only ManagementMessage instances can be sent to management server", "message");
-            AssaultWingCore.Instance.NetworkEngine.UDPSocket.Send(managementMessage.Serialize(), RemoteUDPEndPoint);
+            Game.NetworkEngine.UDPSocket.Send(managementMessage.Serialize(), RemoteUDPEndPoint);
         }
 
         public override void Update()

@@ -19,8 +19,6 @@ namespace AW2.Net.ConnectionUtils
     /// </summary>
     public class ConnectionAttemptListener
     {
-        private static ConnectionAttemptListener g_instance;
-
         /// <summary>
         /// Server socket for listening to incoming connection attempts.
         /// <c>null</c> if not in use.
@@ -28,22 +26,14 @@ namespace AW2.Net.ConnectionUtils
         private Socket _serverSocket;
 
         private IAsyncResult _listenResult;
-
-        /// <summary>
-        /// The only instance (Singleton pattern).
-        /// </summary>
-        public static ConnectionAttemptListener Instance
-        {
-            get
-            {
-                if (g_instance == null) g_instance = new ConnectionAttemptListener();
-                return g_instance;
-            }
-        }
+        private AssaultWingCore _game;
 
         public bool IsListening { get { return _serverSocket != null; } }
 
-        private ConnectionAttemptListener() { }
+        public ConnectionAttemptListener(AssaultWingCore game)
+        {
+            _game = game;
+        }
 
         /// <summary>
         /// Starts listening connection attempts from remote hosts.
@@ -66,9 +56,9 @@ namespace AW2.Net.ConnectionUtils
                 else
                 {
                     Log.Write("UPnP not supported, make sure the server port " + port
-                        + " is forwarded to your computer in your local network"); 
+                        + " is forwarded to your computer in your local network");
                 }
-                ListenOneConnection();
+                ListenOneConnection(_game);
             }
             catch (Exception)
             {
@@ -79,7 +69,7 @@ namespace AW2.Net.ConnectionUtils
 
         public void Update()
         {
-            if (_serverSocket != null && _listenResult.IsCompleted) ListenOneConnection();
+            if (_serverSocket != null && _listenResult.IsCompleted) ListenOneConnection(_game);
         }
 
         /// <summary>
@@ -132,12 +122,12 @@ namespace AW2.Net.ConnectionUtils
             _serverSocket.Listen(64);
         }
 
-        private void ListenOneConnection()
+        private void ListenOneConnection(AssaultWingCore game)
         {
             if (_serverSocket == null) throw new ApplicationException("Server socket must be opened first");
             try
             {
-                _listenResult = _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(new Socket[] { _serverSocket }, null));
+                _listenResult = _serverSocket.BeginAccept(AcceptCallback, new ConnectAsyncState(game, new Socket[] { _serverSocket }, null));
             }
             catch (SocketException e)
             {
@@ -155,7 +145,7 @@ namespace AW2.Net.ConnectionUtils
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             var socketToNewHost = state.Sockets.Single().EndAccept(asyncResult);
-            return new GameClientConnection(socketToNewHost);
+            return new GameClientConnection(state.Game, socketToNewHost);
         }
     }
 }

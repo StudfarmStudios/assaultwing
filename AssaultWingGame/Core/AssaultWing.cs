@@ -264,7 +264,7 @@ namespace AW2.Core
             NetworkMode = NetworkMode.Client;
             try
             {
-                NetworkEngine.StartClient(serverEndPoints, connectionHandler);
+                NetworkEngine.StartClient(this, serverEndPoints, connectionHandler);
                 foreach (var spectator in DataEngine.Spectators) spectator.ResetForClient();
             }
             catch (System.Net.Sockets.SocketException e)

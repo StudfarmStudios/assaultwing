@@ -16,8 +16,8 @@ namespace AW2.Net.Connections
         /// </summary>
         /// <param name="tcpSocket">An opened TCP socket to the remote host. The
         /// created connection owns the socket and will dispose of it.</param>
-        public GameServerConnection(Socket tcpSocket, IPEndPoint remoteUDPEndPoint)
-            : base(tcpSocket)
+        public GameServerConnection(AssaultWingCore game, Socket tcpSocket, IPEndPoint remoteUDPEndPoint)
+            : base(game, tcpSocket)
         {
             Name = "Game Server Connection " + ID;
             RemoteUDPEndPoint = remoteUDPEndPoint;
@@ -25,7 +25,7 @@ namespace AW2.Net.Connections
 
         protected override void DisposeImpl(bool error)
         {
-            if (error) AssaultWingCore.Instance.StopClient("Connection to server lost");
+            if (error) Game.StopClient("Connection to server lost");
             base.DisposeImpl(error);
         }
     }

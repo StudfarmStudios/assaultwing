@@ -1,5 +1,4 @@
 //#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
-//#define DEBUG_MESSAGE_DELAY // delays message sending to simulate lag
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -71,14 +70,11 @@ namespace AW2.Net.Connections
         private static Dictionary<Type, int> _messageSizes = new Dictionary<Type, int>();
 #endif
 
-#if DEBUG_MESSAGE_DELAY
-        // TimeSpan is the time to send the message
-        private Queue<AW2.Helpers.Pair<Message, TimeSpan>> _messagesToSend = new Queue<AW2.Helpers.Pair<Message, TimeSpan>>();
-#endif
-
         #endregion Fields
 
         #region Properties
+
+        public AssaultWingCore Game { get; private set; }
 
         /// <summary>
         /// Unique identifier of the connection. Nonnegative.
@@ -169,10 +165,10 @@ namespace AW2.Net.Connections
         /// Starts opening a connection to a remote host.
         /// </summary>
         /// <param name="remoteEndPoints">Alternative end points to connect to.</param>
-        public static void Connect(AWEndPoint[] remoteEndPoints)
+        public static void Connect(AssaultWingCore game, AWEndPoint[] remoteEndPoints)
         {
             var sockets = new Socket[remoteEndPoints.Length];
-            var asyncState = new ConnectAsyncState(sockets, remoteEndPoints);
+            var asyncState = new ConnectAsyncState(game, sockets, remoteEndPoints);
             g_connectAsyncStates.Add(asyncState);
             for (int i = 0; i < remoteEndPoints.Length; i++)
             {
@@ -208,16 +204,6 @@ namespace AW2.Net.Connections
             if (IsDisposed) return;
             try
             {
-#if DEBUG_MESSAGE_DELAY
-                // Store message and check if there are old messages to send.
-                TimeSpan sendTime = AssaultWing.Instance.GameTime.TotalRealTime + TimeSpan.FromMilliseconds(100);
-                messagesToSend.Enqueue(new AW2.Helpers.Pair<Message, TimeSpan>(message, sendTime));
-                while (messagesToSend.Peek().Second <= AssaultWing.Instance.GameTime.TotalRealTime)
-                {
-                    var sendMessage = messagesToSend.Dequeue().First;
-                    Send(sendMessage.Serialize());
-                }
-#else
                 var data = message.Serialize();
                 switch (message.SendType)
                 {
@@ -225,11 +211,10 @@ namespace AW2.Net.Connections
                     case MessageSendType.UDP: SendViaUDP(data); break;
                     default: throw new MessageException("Unknown send type " + message.SendType);
                 }
-#endif
 #if DEBUG_SENT_BYTE_COUNT
-                if (_lastPrintTime + TimeSpan.FromSeconds(1) < AssaultWingCore.Instance.GameTime.TotalRealTime)
+                if (_lastPrintTime + TimeSpan.FromSeconds(1) < Game.GameTime.TotalRealTime)
                 {
-                    _lastPrintTime = AssaultWingCore.Instance.GameTime.TotalRealTime;
+                    _lastPrintTime = Game.GameTime.TotalRealTime;
                     AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
                     foreach (var pair in _messageSizes)
                         AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");
@@ -343,8 +328,8 @@ namespace AW2.Net.Connections
         /// The client program can create <see cref="Connection">Connections</see>
         /// via the static methods <see cref="StartListening(int, string)"/> and 
         /// <see cref="Connect(IPAddress, int, string)"/>.
-        protected Connection(Socket tcpSocket)
-            : this()
+        protected Connection(AssaultWingCore game, Socket tcpSocket)
+            : this(game)
         {
             if (tcpSocket == null) throw new ArgumentNullException("tcpSocket", "Null socket argument");
             if (!tcpSocket.Connected) throw new ArgumentException("Socket not connected", "tcpSocket");
@@ -355,8 +340,9 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Creates a UDP-only connection.
         /// </summary>
-        protected Connection()
+        protected Connection(AssaultWingCore game)
         {
+            Game = game;
             ID = g_leastUnusedID++;
             Name = "Connection " + ID;
             _messages = new TypedQueue<Message>();
@@ -380,7 +366,7 @@ namespace AW2.Net.Connections
         private void SendViaUDP(byte[] data)
         {
             if (!IsHandshaked) throw new InvalidOperationException("Cannot send messages via UDP before connection is handshaked");
-            AssaultWingCore.Instance.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
+            Game.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
         }
 
         /// <summary>
@@ -421,7 +407,7 @@ namespace AW2.Net.Connections
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             state.Sockets[index].EndConnect(asyncResult);
-            var connection = new GameServerConnection(state.Sockets[index], state.RemoteEndPoints[index].UDPEndPoint);
+            var connection = new GameServerConnection(state.Game, state.Sockets[index], state.RemoteEndPoints[index].UDPEndPoint);
             connection.RemoteUDPEndPoint = state.RemoteEndPoints[index].UDPEndPoint;
             return connection;
         }

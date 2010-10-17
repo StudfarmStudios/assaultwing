@@ -12,15 +12,15 @@ namespace AW2.Net.Connections
         /// </summary>
         /// <param name="tcpSocket">An opened TCP socket to the remote host. The
         /// created connection owns the socket and will dispose of it.</param>
-        public GameClientConnection(Socket tcpSocket)
-            : base(tcpSocket)
+        public GameClientConnection(AssaultWingCore game, Socket tcpSocket)
+            : base(game, tcpSocket)
         {
             Name = "Game Client Connection " + ID;
         }
 
         protected override void DisposeImpl(bool error)
         {
-            if (error) AssaultWingCore.Instance.NetworkEngine.DropClient(ID, error);
+            if (error) Game.NetworkEngine.DropClient(ID, error);
             base.DisposeImpl(error);
         }
     }

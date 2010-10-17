@@ -95,6 +95,7 @@ namespace AW2.Net
         private Action<Result<Connection>> _startServerConnectionHandler;
 
         private List<NetBuffer> _udpMessagesToHandle;
+        private ConnectionAttemptListener _connectionAttemptListener;
 
         #endregion Fields
 
@@ -181,7 +182,7 @@ namespace AW2.Net
                 var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
                 if (managementServerEndPoint.Port == 0)
                     managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
-                _managementServerConnection = new ManagementServerConnection(managementServerEndPoint);
+                _managementServerConnection = new ManagementServerConnection(Game, managementServerEndPoint);
             }
             catch (ArgumentException e)
             {
@@ -198,7 +199,8 @@ namespace AW2.Net
         {
             Log.Write("Server starts listening");
             _startServerConnectionHandler = connectionHandler;
-            ConnectionAttemptListener.Instance.StartListening(TCP_CONNECTION_PORT);
+            _connectionAttemptListener = new ConnectionAttemptListener(Game);
+            _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT);
             RegisterServerToManagementServer();
         }
 
@@ -210,7 +212,8 @@ namespace AW2.Net
         {
             Log.Write("Server stops listening");
             MessageHandlers.Clear();
-            ConnectionAttemptListener.Instance.StopListening();
+            _connectionAttemptListener.StopListening();
+            _connectionAttemptListener = null;
             DisposeGameClientConnections();
         }
 
@@ -219,11 +222,11 @@ namespace AW2.Net
         /// Poll <c>Connection.ConnectionResults</c> to find out when and if
         /// the connection was successfully estblished.
         /// </summary>
-        public void StartClient(AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
+        public void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Client starts connecting");
             _startClientConnectionHandler = connectionHandler;
-            Connection.Connect(serverEndPoints);
+            Connection.Connect(game, serverEndPoints);
         }
 
         /// <summary>
@@ -387,7 +390,8 @@ namespace AW2.Net
 
         public override void Update()
         {
-            if (ConnectionAttemptListener.Instance.IsListening) ConnectionAttemptListener.Instance.Update();
+            if (_connectionAttemptListener != null && _connectionAttemptListener.IsListening)
+                _connectionAttemptListener.Update();
             HandleNewConnections();
             HandleUDPMessages();
 

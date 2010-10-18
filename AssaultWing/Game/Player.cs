@@ -152,7 +152,7 @@ namespace AW2.Game
         {
             get
             {
-                if (Ship != null) _lastLookAtPos = Ship.Pos + Ship.DrawPosDelta;
+                if (Ship != null) _lastLookAtPos = Ship.Pos + Ship.DrawPosOffset;
                 return _lastLookAtPos;
             }
         }

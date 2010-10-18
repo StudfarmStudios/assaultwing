@@ -404,7 +404,7 @@ namespace AW2.Game
         {
             get
             {
-                return new BoundingSphere(_drawBounds.Center.RotateZ(Rotation + DrawRotationDelta) + new Vector3(Pos + DrawPosDelta, 0), _drawBounds.Radius);
+                return new BoundingSphere(_drawBounds.Center.RotateZ(Rotation + DrawRotationOffset) + new Vector3(Pos + DrawPosOffset, 0), _drawBounds.Radius);
             }
         }
 
@@ -439,7 +439,7 @@ namespace AW2.Game
         /// This is mostly zero except on game clients who use this to smooth out erratic gob
         /// movement caused by inconsistency between local updates and game server updates.
         /// </summary>
-        public Vector2 DrawPosDelta { get; set; }
+        public Vector2 DrawPosOffset { get; set; }
 
         /// <summary>
         /// Sets <see cref="Pos"/>, <see cref="Move"/> and <see cref="Rotation"/>
@@ -478,7 +478,7 @@ namespace AW2.Game
         /// erratic gob rotation caused by inconsistency between local updates and
         /// game server updates.
         /// </summary>
-        public float DrawRotationDelta { get; set; }
+        public float DrawRotationOffset { get; set; }
 
         /// <summary>
         /// Get the owner of the gob.
@@ -511,7 +511,7 @@ namespace AW2.Game
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, _rotation + DrawRotationDelta, _pos + DrawPosDelta); } }
+        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, _rotation + DrawRotationOffset, _pos + DrawPosOffset); } }
 
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.
@@ -782,17 +782,17 @@ namespace AW2.Game
         public virtual void Update()
         {
             Arena.Move(this, 1, true);
-            DrawPosDelta *= 0.95f; // reduces the offset to less than 5 % in 60 updates
-            DrawRotationDelta = DampDrawRotationDelta(DrawRotationDelta);
+            DrawPosOffset *= 0.95f; // reduces the offset to less than 5 % in 60 updates
+            DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
         }
 
-        private static float DampDrawRotationDelta(float drawRotationDelta)
+        private static float DampDrawRotationOffset(float drawRotationOffset)
         {
             // Reduce large rotation offsets in somewhat constant steps but small offsets
             // in smaller and smaller steps.
             // If x_n are within [0,1], the formula is x_{n+1} = ((x_n + 3)^2 - 9) / 8
-            float sign = Math.Sign(drawRotationDelta);
-            float temp = sign * drawRotationDelta / ROTATION_SMOOTHING_CUTOFF + 3;
+            float sign = Math.Sign(drawRotationOffset);
+            float temp = sign * drawRotationOffset / ROTATION_SMOOTHING_CUTOFF + 3;
             return sign * ROTATION_SMOOTHING_CUTOFF * (temp * temp - 9) / 8;
         }
 
@@ -1022,16 +1022,16 @@ namespace AW2.Game
                 var newPos = reader.ReadVector2();
                 var newMove = reader.ReadHalfVector2();
                 ExtrapolatePosAndMove(newPos, newMove, framesAgo);
-                DrawPosDelta += oldPos - _pos;
-                if (float.IsNaN(DrawPosDelta.X) || DrawPosDelta.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
-                    DrawPosDelta = Vector2.Zero;
+                DrawPosOffset += oldPos - _pos;
+                if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
+                    DrawPosOffset = Vector2.Zero;
 
                 var oldRotation = _rotation;
                 byte rotationAsByte = reader.ReadByte();
                 _rotation = rotationAsByte * MathHelper.TwoPi / 256;
-                DrawRotationDelta = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationDelta + oldRotation - _rotation);
-                if (float.IsNaN(DrawRotationDelta) || Math.Abs(DrawRotationDelta) > ROTATION_SMOOTHING_CUTOFF)
-                    DrawRotationDelta = 0;
+                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
+                if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
+                    DrawRotationOffset = 0;
             }
         }
 
@@ -1075,7 +1075,7 @@ namespace AW2.Game
         {
             var transformed = Vector2.TransformNormal(Vector2.UnitX, ModelPartTransforms[boneIndex]);
             float boneRotation = transformed.Angle();
-            return Rotation + DrawRotationDelta + boneRotation;
+            return Rotation + DrawRotationOffset + boneRotation;
         }
 
         /// <summary>
@@ -1471,21 +1471,21 @@ namespace AW2.Game
             private const float STEP = 0.1f;
 
             [Test]
-            public void TestDrawRotationDeltaDampingKeepsSign([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
+            public void TestDrawRotationOffsetDampingKeepsSign([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
             {
-                Assert.AreEqual(Math.Sign(x), Math.Sign(DampDrawRotationDelta(x)));
+                Assert.AreEqual(Math.Sign(x), Math.Sign(DampDrawRotationOffset(x)));
             }
 
             [Test]
-            public void TestDrawRotationDeltaDampingShrinks([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
+            public void TestDrawRotationOffsetDampingShrinks([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
             {
-                Assert.GreaterOrEqual(Math.Abs(x), Math.Abs(DampDrawRotationDelta(x)));
+                Assert.GreaterOrEqual(Math.Abs(x), Math.Abs(DampDrawRotationOffset(x)));
             }
 
             [Test]
-            public void TestDrawRotationDeltaDampingDerivativeIsNotTooSteep([Range(-ROTATION_SMOOTHING_CUTOFF + STEP, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
+            public void TestDrawRotationOffsetDampingDerivativeIsNotTooSteep([Range(-ROTATION_SMOOTHING_CUTOFF + STEP, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
             {
-                var delta = DampDrawRotationDelta(x) - DampDrawRotationDelta(x - STEP);
+                var delta = DampDrawRotationOffset(x) - DampDrawRotationOffset(x - STEP);
                 Assert.GreaterOrEqual(1, delta / STEP);
                 Assert.LessOrEqual(-1, delta / STEP);
             }

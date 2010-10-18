@@ -166,9 +166,9 @@ namespace AW2.Game.Gobs
             get
             {
 #if OPTIMIZED_CODE
-                var drawPos = _pos + DrawPosDelta;
+                var drawPos = _pos + DrawPosOffset;
                 float scale = Scale;
-                float rotation = Rotation + DrawRotationDelta;
+                float rotation = Rotation + DrawRotationOffset;
                 float scaledCosRoll = scale * (float)Math.Cos(_rollAngle.Current);
                 float scaledSinRoll = scale * (float)Math.Sin(_rollAngle.Current);
                 float cosRota = (float)Math.Cos(rotation);
@@ -181,8 +181,8 @@ namespace AW2.Game.Gobs
 #else
                 return Matrix.CreateScale(Scale)
                      * Matrix.CreateRotationX(_rollAngle.Current)
-                     * Matrix.CreateRotationZ(Rotation + DrawRotationDelta)
-                     * Matrix.CreateTranslation(new Vector3(Pos + DrawPosDelta, 0));
+                     * Matrix.CreateRotationZ(Rotation + DrawRotationOffset)
+                     * Matrix.CreateTranslation(new Vector3(Pos + DrawPosOffset, 0));
 #endif
             }
         }
@@ -483,7 +483,7 @@ namespace AW2.Game.Gobs
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
-            var screenPos = Vector2.Transform(Pos + DrawPosDelta, gameToScreen);
+            var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
 
             // Draw player name
             if (Owner.IsRemote)

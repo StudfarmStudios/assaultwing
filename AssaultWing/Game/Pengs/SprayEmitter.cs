@@ -230,9 +230,9 @@ namespace AW2.Game.Pengs
                         {
                             float posWeight = (i + 1) / (float)createCount;
                             var startPos = Peng.OldDrawPos;
-                            var endPos = Peng.Pos + Peng.DrawPosDelta;
+                            var endPos = Peng.Pos + Peng.DrawPosOffset;
                             var iPos = Vector2.Lerp(startPos, endPos, posWeight);
-                            var drawRotation = Peng.Rotation + Peng.DrawRotationDelta;
+                            var drawRotation = Peng.Rotation + Peng.DrawRotationOffset;
                             RandomHelper.GetRandomCirclePoint(radius, drawRotation - sprayAngle, drawRotation + sprayAngle,
                                 out pos, out directionUnit, out directionAngle);
                             pos += iPos;

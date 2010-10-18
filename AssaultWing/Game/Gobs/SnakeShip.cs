@@ -52,9 +52,9 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (Rotation + DrawRotationDelta != _oldDrawRotation)
+            if (Rotation + DrawRotationOffset != _oldDrawRotation)
             {
-                _oldDrawRotation = Rotation + DrawRotationDelta;
+                _oldDrawRotation = Rotation + DrawRotationOffset;
                 UpdateTailTurnTargets();
             }
             float elapsedTime = (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
@@ -75,7 +75,7 @@ namespace AW2.Game.Gobs
                 _thrustRemainderForTurnShift -= THRUST_NEEDED_FOR_TURN_SHIFT;
 
                 // Shift tail turn angles forward one step.
-                float prevTailTurn = Rotation + DrawRotationDelta;
+                float prevTailTurn = Rotation + DrawRotationOffset;
                 foreach (int i in _tailIndices)
                 {
                     float thisTailTurn = _tailTurns[i].Target;
@@ -94,7 +94,7 @@ namespace AW2.Game.Gobs
             if (transforms.Length < model.Bones.Count) throw new ArgumentException("Too short transformation matrix array");
 
             float[] tailTurnDeltas = new float[model.Bones.Count];
-            float prevTailTurn = Rotation + DrawRotationDelta;
+            float prevTailTurn = Rotation + DrawRotationOffset;
             foreach (int i in _tailIndices)
             {
                 tailTurnDeltas[i] = MathHelper.WrapAngle(_tailTurns[i].Current - prevTailTurn);
@@ -137,7 +137,7 @@ namespace AW2.Game.Gobs
             {
                 _tailPhases[i] = -1;
                 _tailAmplitudes[i] = 0;
-                _tailTurns[i].Reset(Rotation + DrawRotationDelta);
+                _tailTurns[i].Reset(Rotation + DrawRotationOffset);
                 _tailTurns[i].Step = 1.2f * MAX_TAIL_TURN / THRUST_NEEDED_FOR_TURN_SHIFT;
                 _tailTurns[i].AngularInterpolation = true;
             }
@@ -153,7 +153,7 @@ namespace AW2.Game.Gobs
 
         private void UpdateTailTurnTargets()
         {
-            float prevTailTurn = Rotation + DrawRotationDelta;
+            float prevTailTurn = Rotation + DrawRotationOffset;
             foreach (int i in _tailIndices)
             {
                 float turnDifference = MathHelper.WrapAngle(_tailTurns[i].Target - prevTailTurn);

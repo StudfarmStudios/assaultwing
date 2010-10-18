@@ -72,12 +72,12 @@ namespace AW2.Game.Gobs
         List<Particle> particles;
 
         /// <summary>
-        /// Drawing position (Pos + DrawPosDelta) of the peng in the previous frame, or NaN if unspecified.
+        /// Drawing position (Pos + DrawPosOffset) of the peng in the previous frame, or NaN if unspecified.
         /// </summary>
         private Vector2 _oldDrawPos;
 
         /// <summary>
-        /// Last known drawing position (Pos + DrawPosDelta) after a frame update, or NaN if unspecified.
+        /// Last known drawing position (Pos + DrawPosOffset) after a frame update, or NaN if unspecified.
         /// </summary>
         private Vector2 _prevDrawPos;
 
@@ -106,20 +106,20 @@ namespace AW2.Game.Gobs
             {
                 if (Leader == null) return base.Pos;
                 if (LeaderBone == -1)
-                    return Leader.Pos + Leader.DrawPosDelta;
+                    return Leader.Pos + Leader.DrawPosOffset;
                 else
                     return Leader.GetNamedPosition(LeaderBone);
             }
         }
 
         /// <summary>
-        /// Drawing position (Pos + DrawPosDelta) of the peng before movement in the current frame.
+        /// Drawing position (Pos + DrawPosOffset) of the peng before movement in the current frame.
         /// </summary>
         public Vector2 OldDrawPos
         {
             get
             {
-                if (float.IsNaN(_oldDrawPos.X)) return _pos + DrawPosDelta;
+                if (float.IsNaN(_oldDrawPos.X)) return _pos + DrawPosOffset;
                 return _oldDrawPos;
             }
         }
@@ -139,7 +139,7 @@ namespace AW2.Game.Gobs
             {
                 if (Leader == null) return base.Rotation;
                 if (LeaderBone == -1)
-                    return Leader.Rotation + Leader.DrawRotationDelta;
+                    return Leader.Rotation + Leader.DrawRotationOffset;
                 else
                     return Leader.GetBoneRotation(LeaderBone);
             }
@@ -196,7 +196,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationDelta, Pos + DrawPosDelta);
+                return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationOffset, Pos + DrawPosOffset);
             }
         }
 
@@ -310,7 +310,7 @@ namespace AW2.Game.Gobs
                 {
                     case CoordinateSystem.Peng:
                         posCenter = Vector2.Transform(particle.Pos, pengToGame);
-                        drawRotation = particle.Rotation + Rotation + DrawRotationDelta;
+                        drawRotation = particle.Rotation + Rotation + DrawRotationOffset;
                         break;
                     case CoordinateSystem.Game:
                         posCenter = particle.Pos;
@@ -345,10 +345,10 @@ namespace AW2.Game.Gobs
         {
             if (_oldPosTimestamp >= Arena.TotalTime) return;
             if (float.IsNaN(_prevDrawPos.X))
-                _oldDrawPos = Pos + DrawPosDelta;
+                _oldDrawPos = Pos + DrawPosOffset;
             else
                 _oldDrawPos = _prevDrawPos;
-            _prevDrawPos = Pos + DrawPosDelta;
+            _prevDrawPos = Pos + DrawPosOffset;
             _oldPosTimestamp = Arena.TotalTime;
         }
 

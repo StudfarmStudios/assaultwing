@@ -274,7 +274,7 @@ namespace AW2.Game.Gobs
             }
             else
             {
-                var drawRotation = Shooter.Gob.Rotation + Shooter.Gob.DrawRotationDelta;
+                var drawRotation = Shooter.Gob.Rotation + Shooter.Gob.DrawRotationOffset;
                 var middle1 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation - MathHelper.PiOver4, drawRotation);
                 var middle2 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation, drawRotation + MathHelper.PiOver4);
                 _segments = new List<Segment>

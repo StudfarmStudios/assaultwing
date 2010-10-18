@@ -369,25 +369,27 @@ namespace AW2.Game
 
         public void ProcessGobCreationMessage(GobCreationMessageBase message, int framesAgo)
         {
-            var gob = (Gob)Clonable.Instantiate(message.GobTypeName);
-            gob.Game = Game;
-            message.Read(gob, SerializationModeFlags.All, framesAgo);
+            Arena arena;
             if (message is GobPreCreationMessage)
-            {
-                gob.Layer = _preparedArena.Layers[message.LayerIndex];
-                _preparedArena.Gobs.Add(gob);
-            }
+                arena = _preparedArena;
             else if (message is GobCreationMessage)
-            {
-                gob.Layer = Arena.Layers[message.LayerIndex];
-                Arena.Gobs.Add(gob);
-            }
+                arena = Arena;
             else throw new ArgumentException("Invalid message type " + message.GetType().Name);
-
-            // Ships we set automatically as the ship the ship's owner is controlling.
-            var gobShip = gob as Ship;
-            if (gobShip != null)
-                gobShip.Owner.Ship = gobShip;
+            message.ReadGobs(framesAgo,
+                (typeName, layerIndex) =>
+                {
+                    var gob = (Gob)Clonable.Instantiate(typeName);
+                    gob.Game = Game;
+                    gob.Layer = arena.Layers[layerIndex];
+                    return gob;
+                },
+                gob =>
+                {
+                    arena.Gobs.Add(gob);
+                    var gobShip = gob as Ship;
+                    if (gobShip != null)
+                        gobShip.Owner.Ship = gobShip;
+                });
         }
 
         /// <summary>

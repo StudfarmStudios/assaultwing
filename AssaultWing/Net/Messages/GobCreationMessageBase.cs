@@ -1,4 +1,7 @@
-﻿using AW2.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using AW2.Game;
+using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
@@ -10,42 +13,68 @@ namespace AW2.Net.Messages
     public abstract class GobCreationMessageBase : GameplayMessage
     {
         /// <summary>
-        /// Type name of the gob to create.
+        /// Type names of the gobs to create.
         /// </summary>
-        public CanonicalString GobTypeName { get; set; }
+        private List<CanonicalString> _gobTypeNames = new List<CanonicalString>();
 
         /// <summary>
-        /// Index of the arena layer the gob lives in.
+        /// Indices of the arena layers the gobs live in.
         /// </summary>
-        public int LayerIndex { get; set; }
+        private List<int> _layerIndices = new List<int>();
+
+        public void AddGob(Gob gob)
+        {
+            _gobTypeNames.Add(gob.TypeName);
+            _layerIndices.Add(gob.Arena.Layers.IndexOf(gob.Layer));
+            Write(gob, SerializationModeFlags.All);
+        }
+
+        public void ReadGobs(int framesAgo, Func<CanonicalString, int, Gob> createGob, Action<Gob> initGob)
+        {
+            for (int i = 0; i < _gobTypeNames.Count; ++i)
+            {
+                var gob = createGob(_gobTypeNames[i], _layerIndices[i]);
+                Read(gob, SerializationModeFlags.All, framesAgo);
+                initGob(gob);
+            }
+        }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             base.Serialize(writer);
-            // Gob creation (request) message structure:
-            // byte: arena layer index
-            // int: canonical form of gob type name
-            // int: data length N
-            // N bytes: serialised data of the gob (content known only by the Gob subclass in question)
-            byte[] writeBytes = StreamedData;
-            writer.Write(checked((byte)LayerIndex));
-            writer.Write((int)GobTypeName.Canonical);
-            writer.Write((int)writeBytes.Length);
-            writer.Write(writeBytes, 0, writeBytes.Length);
+            checked
+            {
+                // Gob creation (request) message structure:
+                // short: number of gobs to create, N
+                // N bytes: arena layer indices
+                // N ints: canonical forms of gob type names
+                // int: byte count of all gob data, K
+                // K bytes: serialised data of all gobs
+                var writeBytes = StreamedData;
+                if (_gobTypeNames.Count != _layerIndices.Count) throw new MessageException("_gobTypeNames.Count != _layerIndices.Count");
+                writer.Write((short)_gobTypeNames.Count);
+                foreach (byte layerIndex in _layerIndices) writer.Write((byte)layerIndex);
+                foreach (var typeName in _gobTypeNames) writer.Write((int)typeName.Canonical);
+                writer.Write((int)writeBytes.Length);
+                writer.Write(writeBytes, 0, writeBytes.Length);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            LayerIndex = reader.ReadByte();
-            GobTypeName = (CanonicalString)reader.ReadInt32();
+            int gobCount = reader.ReadInt16();
+            _layerIndices = new List<int>(gobCount);
+            _gobTypeNames = new List<CanonicalString>(gobCount);
+            for (int i = 0; i < gobCount; ++i) _layerIndices.Add(reader.ReadByte());
+            for (int i = 0; i < gobCount; ++i) _gobTypeNames.Add((CanonicalString)reader.ReadInt32());
             int byteCount = reader.ReadInt32();
             StreamedData = reader.ReadBytes(byteCount);
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [GobTypeName " + GobTypeName + "]";
+            return base.ToString() + " [" + _gobTypeNames.Count + " gobs, " + StreamedData.Length + " bytes]";
         }
     }
 }

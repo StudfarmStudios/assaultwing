@@ -500,9 +500,7 @@ namespace AW2.Core
         {
             if (NetworkMode != NetworkMode.Server || !gob.IsRelevant) return;
             var message = arena.IsActive ? (GobCreationMessageBase)new GobCreationMessage() : new GobPreCreationMessage();
-            message.GobTypeName = gob.TypeName;
-            message.LayerIndex = arena.Layers.IndexOf(gob.Layer);
-            message.Write(gob, AW2.Helpers.Serialization.SerializationModeFlags.All);
+            message.AddGob(gob);
             NetworkEngine.SendToGameClients(message);
         }
 

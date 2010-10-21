@@ -80,7 +80,8 @@
             this._logView.MaxLength = 0;
             this._logView.Multiline = true;
             this._logView.Name = "_logView";
-            this._logView.Size = new System.Drawing.Size(984, 430);
+            this._logView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this._logView.Size = new System.Drawing.Size(150, 46);
             this._logView.TabIndex = 0;
             // 
             // GameForm

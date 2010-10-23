@@ -25,6 +25,7 @@ namespace AW2.Core
         private ArenaStartWaiter _arenaStartWaiter;
         private Control _escapeControl;
         private TimeSpan _nextFrameNumberSynchronize;
+        private List<Gob> _addedGobs;
 
         // HACK: Debug keys
         private Control _musicSwitch;
@@ -75,9 +76,10 @@ namespace AW2.Core
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
+            _addedGobs = new List<Gob>();
             DataEngine.NewArena += arena =>
             {
-                arena.GobAdded += gob => GobAddedToArena(arena, gob);
+                arena.GobAdded += gob => { if (NetworkMode == NetworkMode.Server && gob.IsRelevant) _addedGobs.Add(gob); };
                 arena.GobRemoved += gob => GobRemovedFromArena(arena, gob);
             };
         }
@@ -89,6 +91,7 @@ namespace AW2.Core
             UpdateDebugKeys();
             UpdateArenaStartWaiter();
             SynchronizeFrameNumber();
+            SendGobCreationMessage();
         }
 
         /// <summary>
@@ -181,9 +184,9 @@ namespace AW2.Core
                 foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = true;
                 var message = new StartGameMessage();
                 message.ArenaPlaylist = DataEngine.ArenaPlaylist;
-                // TODO !!! Make GobPreCreationMessage contain all created gobs -- this way game clients know when gob creation has finished
                 NetworkEngine.SendToGameClients(message);
             }
+            // base.PrepareFirstArena adds gobs to the arena which triggers AssaultWing.GobAddedToArena
             base.PrepareFirstArena();
         }
 
@@ -483,25 +486,52 @@ namespace AW2.Core
                 DataEngine.Arena.FrameNumber -= NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
         }
 
+        private void SendGobCreationMessage()
+        {
+            if (DataEngine.ProgressBar.TaskRunning) return; // wait for arena load completion
+            if (NetworkMode == NetworkMode.Server && _addedGobs.Any())
+            {
+                var message = DataEngine.Arena != null && DataEngine.Arena.IsActive
+                    ? (GobCreationMessageBase)new GobCreationMessage()
+                    : new GobPreCreationMessage();
+                foreach (var gob in _addedGobs) message.AddGob(gob);
+                _addedGobs.Clear();
+                NetworkEngine.SendToGameClients(message);
+            }
+        }
+
+        public void HandleGobCreationMessage(GobCreationMessageBase message, int framesAgo)
+        {
+            Arena arena;
+            if (message is GobPreCreationMessage)
+                arena = DataEngine.PreparedArena;
+            else if (message is GobCreationMessage)
+                arena = DataEngine.Arena;
+            else throw new ArgumentException("Invalid message type " + message.GetType().Name);
+            message.ReadGobs(framesAgo,
+                (typeName, layerIndex) =>
+                {
+                    var gob = (Gob)Clonable.Instantiate(typeName);
+                    gob.Game = this;
+                    gob.Layer = arena.Layers[layerIndex];
+                    return gob;
+                },
+                arena.Gobs.Add);
+            if (message is GobPreCreationMessage)
+                AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Send(new ArenaLoadedMessage());
+        }
+
         private void DeactivateAllMessageHandlers()
         {
             if (NetworkMode == NetworkMode.Client)
             {
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientArenaActionHandlers());
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientArenaActionHandlers(HandleGobCreationMessage));
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null, HandleGobCreationMessage));
             }
             if (NetworkMode == NetworkMode.Server)
             {
                 MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             }
-        }
-
-        private void GobAddedToArena(Arena arena, Gob gob)
-        {
-            if (NetworkMode != NetworkMode.Server || !gob.IsRelevant) return;
-            var message = arena.IsActive ? (GobCreationMessageBase)new GobCreationMessage() : new GobPreCreationMessage();
-            message.AddGob(gob);
-            NetworkEngine.SendToGameClients(message);
         }
 
         private void GobRemovedFromArena(Arena arena, Gob gob)

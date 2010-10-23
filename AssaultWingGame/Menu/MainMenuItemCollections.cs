@@ -134,13 +134,8 @@ namespace AW2.Menu
         {
             _menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
-
-            // Prepare and start playing the game.
-            _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareFirstArena, () =>
-            {
-                AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Send(new ArenaLoadedMessage());
-                MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage));
-            });
+            _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareFirstArena,
+                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage, _menuEngine.Game.HandleGobCreationMessage)));
             _menuEngine.Deactivate();
         }
 

@@ -67,6 +67,7 @@ namespace AW2.Game
         /// </summary>
         /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
         public Arena Arena { get; private set; }
+        public Arena PreparedArena { get { return _preparedArena; } }
 
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
@@ -365,31 +366,6 @@ namespace AW2.Game
 #if DEBUG_PROFILE
             AssaultWing.Instance.GobCount = Arena.Gobs.Count;
 #endif
-        }
-
-        public void ProcessGobCreationMessage(GobCreationMessageBase message, int framesAgo)
-        {
-            Arena arena;
-            if (message is GobPreCreationMessage)
-                arena = _preparedArena;
-            else if (message is GobCreationMessage)
-                arena = Arena;
-            else throw new ArgumentException("Invalid message type " + message.GetType().Name);
-            message.ReadGobs(framesAgo,
-                (typeName, layerIndex) =>
-                {
-                    var gob = (Gob)Clonable.Instantiate(typeName);
-                    gob.Game = Game;
-                    gob.Layer = arena.Layers[layerIndex];
-                    return gob;
-                },
-                gob =>
-                {
-                    arena.Gobs.Add(gob);
-                    var gobShip = gob as Ship;
-                    if (gobShip != null)
-                        gobShip.Owner.Ship = gobShip;
-                });
         }
 
         /// <summary>

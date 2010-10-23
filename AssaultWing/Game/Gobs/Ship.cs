@@ -404,6 +404,7 @@ namespace AW2.Game.Gobs
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
+            if (Owner.Ship == null) Owner.Ship = this;
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);

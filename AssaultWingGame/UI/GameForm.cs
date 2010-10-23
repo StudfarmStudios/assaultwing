@@ -49,6 +49,17 @@ namespace AW2.UI
             InitializeRunner();
         }
 
+        public new void Dispose()
+        {
+            if (_game != null)
+            {
+                _game.Dispose();
+                _game = null;
+            }
+            AW2.Helpers.Log.Written -= AddToLogView;
+            base.Dispose();
+        }
+
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
@@ -93,7 +104,7 @@ namespace AW2.UI
         {
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _previousWindowedModeParameters = GetCurrentFormParameters();
-            AW2.Helpers.Log.Written += text => _logView.BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
+            AW2.Helpers.Log.Written += AddToLogView;
         }
 
         private void InitializeGraphicsDeviceService()
@@ -158,6 +169,11 @@ namespace AW2.UI
             FormBorderStyle = parameters.BorderStyle;
             Location = parameters.Location;
             ClientSize = parameters.Size;
+        }
+
+        private void AddToLogView(string text)
+        {
+            _logView.BeginInvoke((Action<string>)(_logView.AppendText), text + "\r\n");
         }
     }
 }

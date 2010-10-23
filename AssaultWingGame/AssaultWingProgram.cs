@@ -9,7 +9,7 @@ using AW2.UI;
 
 namespace AW2
 {
-    public class AssaultWingProgram
+    public class AssaultWingProgram : IDisposable
     {
         private GameForm _form;
 
@@ -18,26 +18,17 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-#if !DEBUG
-            try
+            using (Instance = new AssaultWingProgram(args))
             {
-#endif
-                Instance = new AssaultWingProgram(args);
                 Instance.Run();
-#if !DEBUG
             }
-            catch (Exception e)
-            {
-                Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
-                ReportException(e);
-            }
-#endif
         }
 
         public AssaultWingProgram(string[] args)
         {
             Log.Write("Assault Wing started");
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+            Application.ThreadException += ThreadExceptionHandler;
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             _form = new GameForm(args);
@@ -53,8 +44,25 @@ namespace AW2
             _form.Close();
         }
 
+        public void Dispose()
+        {
+            if (_form != null)
+            {
+                _form.Dispose();
+                _form = null;
+            }
+            Application.ThreadException -= ThreadExceptionHandler;
+        }
+
+        private void ThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            ReportException(e.Exception);
+            Exit();
+        }
+
         private static void ReportException(Exception e)
         {
+            Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
             string dateTime = DateTime.Now.ToUniversalTime().ToString("u");
             string computer = Environment.MachineName;
             string errorInfo = e.ToString();

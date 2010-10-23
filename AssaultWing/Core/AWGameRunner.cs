@@ -13,6 +13,9 @@ namespace AW2.Core
         private Action<GameTime> _update;
         private bool _exiting;
         private bool _exited;
+        private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
+
+        private bool BackgroundLoopFinished { get { return _exited || _gameUpdateAndDrawLoopAsyncResult == null; } }
 
         public AWGameRunner(AWGame game, Action draw, Action<GameTime> update)
         {
@@ -26,7 +29,7 @@ namespace AW2.Core
         /// </summary>
         public void Run()
         {
-            ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
+            _gameUpdateAndDrawLoopAsyncResult = ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
         }
 
         /// <summary>
@@ -35,8 +38,7 @@ namespace AW2.Core
         public void Exit()
         {
             _exiting = true;
-            // Wait for BackgroundLoop to finish
-            while (!_exited) Thread.Sleep(100);
+            while (!BackgroundLoopFinished) Thread.Sleep(100);
         }
 
         private void GameUpdateAndDrawLoop()
@@ -75,7 +77,6 @@ namespace AW2.Core
             var deleg = (Action)((AsyncResult)result).AsyncDelegate;
             deleg.EndInvoke(result);
             _game.EndRun();
-            _game.Dispose();
             _exited = true;
         }
     }

@@ -550,29 +550,6 @@ namespace AW2.Game.Gobs
             }
         }
 
-        public void SetDeviceLoadMultiplier(ShipDevice.OwnerHandleType deviceType, float multiplier)
-        {
-            var device = GetDevice(deviceType);
-            device.LoadTimeMultiplier = multiplier;
-        }
-
-        public float GetDeviceLoadMultiplier(ShipDevice.OwnerHandleType deviceType)
-        {
-            var device = GetDevice(deviceType);
-            return device.LoadTimeMultiplier;
-        }
-
-        private ShipDevice GetDevice(ShipDevice.OwnerHandleType deviceType)
-        {
-            switch (deviceType)
-            {
-                case ShipDevice.OwnerHandleType.PrimaryWeapon: return Weapon1;
-                case ShipDevice.OwnerHandleType.SecondaryWeapon: return Weapon2;
-                case ShipDevice.OwnerHandleType.ExtraDevice: return ExtraDevice;
-                default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
-            }
-        }
-
         public void SetDeviceType(ShipDevice.OwnerHandleType deviceType, CanonicalString typeName)
         {
             switch (deviceType)

@@ -6,7 +6,7 @@ namespace AW2.Game.BonusActions
     [GameActionType(4)]
     public class Weapon1UpgradeLoadTimeBonusAction : GameAction
     {
-        private static float LOAD_TIME_MULTIPLIER = 0.8f;
+        private static float LOAD_TIME_MULTIPLIER = 0.6f;
 
         public override bool DoAction()
         {
@@ -17,16 +17,13 @@ namespace AW2.Game.BonusActions
 
         public override void RemoveAction()
         {
-            Player.Ship.SetDeviceLoadMultiplier(ShipDevice.OwnerHandleType.PrimaryWeapon, 1);
+            // Multiple load time bonuses are handled by the same action; reset them all here.
+            Player.Ship.Weapon1.LoadTimeMultiplier = 1;
         }
 
         private void UpgradeWeapon()
         {
-            var deviceType = ShipDevice.OwnerHandleType.PrimaryWeapon;
-            float currentMultiplier = Player.Ship.GetDeviceLoadMultiplier(deviceType);
-            float newMultiplier = currentMultiplier * LOAD_TIME_MULTIPLIER;
-            Player.Ship.SetDeviceLoadMultiplier(deviceType, newMultiplier);
-
+            Player.Ship.Weapon1.LoadTimeMultiplier *= LOAD_TIME_MULTIPLIER;
         }
 
         private void SetActionMessage()

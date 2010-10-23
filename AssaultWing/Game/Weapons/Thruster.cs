@@ -73,12 +73,12 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            var duration = owner.Game.GameTime.ElapsedGameTime;
-            float direction = reverse ? owner.Rotation + MathHelper.Pi : owner.Rotation;
+            var duration = Owner.Game.GameTime.ElapsedGameTime;
+            float direction = reverse ? Owner.Rotation + MathHelper.Pi : Owner.Rotation;
             float thrustForce = _extraForceEnd > Arena.TotalTime
                 ? thrustForceFactor * 2
                 : thrustForceFactor;
-            owner.Thrust(thrustForce, duration, direction);
+            Owner.Thrust(thrustForce, duration, direction);
         }
 
         protected override void CreateVisualsImpl()

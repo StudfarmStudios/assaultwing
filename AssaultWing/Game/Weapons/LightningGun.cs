@@ -33,8 +33,8 @@ namespace AW2.Game.Weapons
         {
             var targets =
                 from gob in Arena.Gobs.GameplayLayer.Gobs
-                where gob.IsDamageable && !gob.Disabled && gob != owner
-                let distanceSquared = Vector2.DistanceSquared(gob.Pos, owner.Pos)
+                where gob.IsDamageable && !gob.Disabled && gob != Owner
+                let distanceSquared = Vector2.DistanceSquared(gob.Pos, Owner.Pos)
                 where distanceSquared <= range * range
                 orderby distanceSquared ascending
                 select gob;
@@ -52,11 +52,11 @@ namespace AW2.Game.Weapons
 
         private void CreateShot(Gob target, int boneIndex)
         {
-            Gob.CreateGob<Lightning>(owner.Game, shotTypeName, shot =>
+            Gob.CreateGob<Lightning>(Owner.Game, shotTypeName, shot =>
             {
-                shot.Owner = owner.Owner;
-                shot.ResetPos(owner.GetNamedPosition(boneIndex), Vector2.Zero, owner.Rotation);
-                shot.Shooter = new GobProxy(owner);
+                shot.Owner = Owner.Owner;
+                shot.ResetPos(Owner.GetNamedPosition(boneIndex), Vector2.Zero, Owner.Rotation);
+                shot.Shooter = new GobProxy(Owner);
                 shot.ShooterBoneIndex = boneIndex;
                 shot.Target = new GobProxy(target);
                 Arena.Gobs.Add(shot);

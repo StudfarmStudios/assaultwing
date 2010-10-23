@@ -319,12 +319,6 @@ namespace AW2.Game.Gobs
             base.Activate();
             _isActivated = true;
             _thrusterSound = Game.SoundEngine.CreateSound(SHIP_THRUST_SOUND);
-
-            // Deferred initialization of ship devices
-            if (Weapon1 == null && Weapon1Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
-            if (Weapon2 == null && Weapon2Name != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
-            if (ExtraDevice == null && ExtraDeviceName != CanonicalString.Null) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
-
             SwitchEngineFlashAndBang(false);
             _exhaustAmountUpdated = false;
             CreateCoughEngines();
@@ -336,6 +330,10 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
+            // Deferred initialization of ship weapons
+            if (Weapon1.BoneIndices == null) InitializeWeapon(Weapon1);
+            if (Weapon2.BoneIndices == null) InitializeWeapon(Weapon2);
+
             UpdateRoll();
             LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
             {
@@ -408,6 +406,7 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
+                SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 var typeName = (CanonicalString)reader.ReadInt32();
                 if (!typeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, typeName);
                 typeName = (CanonicalString)reader.ReadInt32();
@@ -419,9 +418,9 @@ namespace AW2.Game.Gobs
                 if (thrustForce > 0)
                     Thrust(thrustForce, Game.GameTime.ElapsedGameTime, Rotation);
             }
-            if (Weapon1 != null) Weapon1.Deserialize(reader, mode, framesAgo);
-            if (Weapon2 != null) Weapon2.Deserialize(reader, mode, framesAgo);
-            if (ExtraDevice != null) ExtraDevice.Deserialize(reader, mode, framesAgo);
+            Weapon1.Deserialize(reader, mode, framesAgo);
+            Weapon2.Deserialize(reader, mode, framesAgo);
+            ExtraDevice.Deserialize(reader, mode, framesAgo);
         }
 
         #endregion Methods related to serialisation
@@ -563,13 +562,6 @@ namespace AW2.Game.Gobs
                 case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDeviceName = typeName; break;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
-
-            // If we are not activated, the next call to Activate() will create the device.
-            // Creating weapons is deferred until the ship is activated because it
-            // requires looking at the ship's 3D model which is initialized only when
-            // the arena is played for sure.
-            if (!_isActivated) return;
-
             ShipDevice oldDevice = null;
             switch (deviceType)
             {
@@ -579,7 +571,7 @@ namespace AW2.Game.Gobs
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
             if (oldDevice != null) Game.DataEngine.Devices.Remove(oldDevice);
-            var newDevice = ShipDevice.CreateDevice(typeName, deviceType, this);
+            var newDevice = (ShipDevice)Clonable.Instantiate(typeName);
             switch (deviceType)
             {
                 case ShipDevice.OwnerHandleType.PrimaryWeapon: Weapon1 = (Weapon)newDevice; break;
@@ -587,19 +579,29 @@ namespace AW2.Game.Gobs
                 case ShipDevice.OwnerHandleType.ExtraDevice: ExtraDevice = newDevice; break;
                 default: throw new ApplicationException("Unknown Weapon.OwnerHandleType " + deviceType);
             }
+            InitializeDevice(newDevice, deviceType);
         }
 
         protected override void SwitchEngineFlashAndBang(bool active)
         {
             base.SwitchEngineFlashAndBang(active);
             if (active)
-            {
                 _thrusterSound.EnsureIsPlaying();
-            }
             else
-            {
                 _thrusterSound.Stop();
-            }
+        }
+
+        private void InitializeDevice(ShipDevice device, ShipDevice.OwnerHandleType ownerHandle)
+        {
+            device.AttachTo(this, ownerHandle);
+            device.PlayerOwner.Game.DataEngine.Devices.Add(device);
+        }
+
+        private void InitializeWeapon(Weapon weapon)
+        {
+            var boneIs = GetNamedPositions("Gun");
+            if (boneIs.Length == 0) Log.Write("Warning: Ship found no gun barrels in its 3D model");
+            weapon.BoneIndices = boneIs.OrderBy(index => index.Key).Select(index => index.Value).ToArray();
         }
 
         private void UpdateRoll()

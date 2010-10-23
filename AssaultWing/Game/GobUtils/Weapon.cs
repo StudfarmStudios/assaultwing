@@ -61,12 +61,6 @@ namespace AW2.Game.GobUtils
         private CanonicalString[] upgradeNames;
 
         /// <summary>
-        /// Indices of the bones that defines the weapon's barrels' locations 
-        /// on the owning ship.
-        /// </summary>
-        protected int[] _boneIndices;
-
-        /// <summary>
         /// What type of gobs the weapon shoots out.
         /// </summary>
         [TypeParameter]
@@ -84,12 +78,18 @@ namespace AW2.Game.GobUtils
         #region Weapon properties
 
         /// <summary>
+        /// Indices of the bones that define the locations of the weapon barrels on the owning ship.
+        /// </summary>
+        public int[] BoneIndices { get; set; }
+
+        /// <summary>
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.
         /// </summary>
         public CanonicalString[] UpgradeNames { get { return upgradeNames; } }
+
         public WeaponInfo WeaponInfo { get { return _weaponInfo; } }
 
-        #endregion // Weapon properties
+        #endregion Weapon properties
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -102,30 +102,12 @@ namespace AW2.Game.GobUtils
             recoilMomentum = 10000;
         }
 
-        /// <summary>
-        /// Creates a new weapon of the specified type.
-        /// </summary>
-        /// <param name="typeName">The type of the weapon.</param>
         protected Weapon(CanonicalString typeName)
             : base(typeName)
         {
-            _boneIndices = new int[] { 0 };
         }
 
         #region Weapon public methods
-
-        /// <summary>
-        /// Attaches the weapon to a ship.
-        /// </summary>
-        /// <param name="owner">The ship to attach to.</param>
-        /// <param name="ownerHandle">A handle for identifying the weapon at the owner.</param>
-        /// <param name="boneIndices">Indices of the bones that define the locations of the
-        /// barrels of the weapon on the ship.</param>
-        public void AttachTo(Ship owner, OwnerHandleType ownerHandle, int[] boneIndices)
-        {
-            base.AttachTo(owner, ownerHandle);
-            _boneIndices = boneIndices;
-        }
 
         #endregion Weapon public methods
 
@@ -138,8 +120,8 @@ namespace AW2.Game.GobUtils
         /// </summary>
         protected void ApplyRecoil()
         {
-            var momentum = -recoilMomentum * AWMathHelper.GetUnitVector2(owner.Rotation);
-            owner.Game.DataEngine.CustomOperations += () => { owner.Game.PhysicsEngine.ApplyMomentum(owner, momentum); };
+            var momentum = -recoilMomentum * AWMathHelper.GetUnitVector2(Owner.Rotation);
+            Owner.Game.DataEngine.CustomOperations += () => { Owner.Game.PhysicsEngine.ApplyMomentum(Owner, momentum); };
         }
 
         protected void ForEachShipBarrel(ShipBarrelTypes barrelTypes, ShipBarrelAction action)
@@ -150,10 +132,10 @@ namespace AW2.Game.GobUtils
                   ShipBarrelTypes.Right |
                   ShipBarrelTypes.Rear)) != 0)
                 throw new ApplicationException("Unknown ShipBarrelTypes " + barrelTypes);
-            if ((barrelTypes & ShipBarrelTypes.Middle) != 0) action(_boneIndices[0], 0);
-            if ((barrelTypes & ShipBarrelTypes.Left) != 0) action(_boneIndices[1], 0);
-            if ((barrelTypes & ShipBarrelTypes.Right) != 0) action(_boneIndices[2], 0);
-            if ((barrelTypes & ShipBarrelTypes.Rear) != 0) action(_boneIndices[3], MathHelper.Pi);
+            if ((barrelTypes & ShipBarrelTypes.Middle) != 0) action(BoneIndices[0], 0);
+            if ((barrelTypes & ShipBarrelTypes.Left) != 0) action(BoneIndices[1], 0);
+            if ((barrelTypes & ShipBarrelTypes.Right) != 0) action(BoneIndices[2], 0);
+            if ((barrelTypes & ShipBarrelTypes.Rear) != 0) action(BoneIndices[3], MathHelper.Pi);
         }
 
         #endregion Weapon protected methods

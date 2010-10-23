@@ -24,12 +24,12 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            owner.InflictDamage(owner.MaxDamageLevel - owner.DamageLevel - 1, new DeathCause(owner, DeathCauseType.Damage, owner));
+            Owner.InflictDamage(Owner.MaxDamageLevel - Owner.DamageLevel - 1, new DeathCause(Owner, DeathCauseType.Damage, Owner));
             foreach (var gobType in deathGobTypes)
-                Gob.CreateGob<Gob>(owner.Game, gobType, gob =>
+                Gob.CreateGob<Gob>(Owner.Game, gobType, gob =>
                 {
-                    gob.ResetPos(owner.Pos, Vector2.Zero, owner.Rotation);
-                    gob.Owner = owner.Owner;
+                    gob.ResetPos(Owner.Pos, Vector2.Zero, Owner.Rotation);
+                    gob.Owner = Owner.Owner;
                     Arena.Gobs.Add(gob);
                 });
         }

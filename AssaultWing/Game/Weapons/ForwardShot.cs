@@ -150,14 +150,14 @@ namespace AW2.Game.Weapons
 
         private void CreateShot(int boneIndex, float barrelRotation)
         {
-            float direction = barrelRotation + owner.Rotation + shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            float direction = barrelRotation + Owner.Rotation + shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             float kickSpeed = shotSpeed + shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
-            Gob.CreateGob<Gob>(owner.Game, shotTypeName, shot =>
+            Gob.CreateGob<Gob>(Owner.Game, shotTypeName, shot =>
             {
-                shot.Owner = owner.Owner;
-                shot.ResetPos(owner.GetNamedPosition(boneIndex), owner.Move + kick,
-                    owner.Rotation);  // 'owner.Rotation' could also be 'direction'
+                shot.Owner = Owner.Owner;
+                shot.ResetPos(Owner.GetNamedPosition(boneIndex), Owner.Move + kick,
+                    Owner.Rotation);  // 'owner.Rotation' could also be 'direction'
                 Arena.Gobs.Add(shot);
                 liveShots.Add(shot);
             });
@@ -167,10 +167,10 @@ namespace AW2.Game.Weapons
         {
             foreach (var engineName in muzzleFireEngineNames)
             {
-                Gob.CreateGob<Peng>(owner.Game, engineName, fireEngine =>
+                Gob.CreateGob<Peng>(Owner.Game, engineName, fireEngine =>
                 {
-                    fireEngine.Owner = owner.Owner;
-                    fireEngine.Leader = owner;
+                    fireEngine.Owner = Owner.Owner;
+                    fireEngine.Leader = Owner;
                     fireEngine.LeaderBone = barrelBoneIndex;
                     Arena.Gobs.Add(fireEngine);
                 });

@@ -67,11 +67,6 @@ namespace AW2.Game.GobUtils
         private float shotSpacing;
 
         /// <summary>
-        /// The ship this weapon is attached to.
-        /// </summary>
-        protected Ship owner;
-
-        /// <summary>
         /// The time in seconds that it takes for the weapon to fire again after being fired once.
         /// Use the property <see cref="LoadTime"/> to see the current load time
         /// with applied bonuses.
@@ -130,9 +125,14 @@ namespace AW2.Game.GobUtils
         public Arena Arena { get; set; }
 
         /// <summary>
+        /// The ship this weapon is attached to.
+        /// </summary>
+        public Ship Owner { get; protected set; }
+
+        /// <summary>
         /// The player who owns the ship who owns this device, or <c>null</c> if none exists.
         /// </summary>
-        public Player PlayerOwner { get { return owner == null ? null : owner.Owner; } }
+        public Player PlayerOwner { get { return Owner == null ? null : Owner.Owner; } }
 
         /// <summary>
         /// The purpose for which the owner is using this device.
@@ -201,37 +201,9 @@ namespace AW2.Game.GobUtils
         public ShipDevice(CanonicalString typeName)
             : base(typeName)
         {
-            owner = null;
+            Owner = null;
             OwnerHandle = 0;
             loadTimeMultiplier = 1;
-        }
-
-        /// <summary>
-        /// Creates a new instance of a named ship device type. If the device is a weapon,
-        /// it is instantiated at each gun barrel on the ship's 3D model.
-        /// </summary>
-        /// <param name="deviceName">Name of the device type.</param>
-        /// <param name="ownerHandle">A handle for identifying the device at the owner.</param>
-        /// <param name="ship">The ship to own the device.</param>
-        /// <returns>The created device.</returns>
-        public static ShipDevice CreateDevice(CanonicalString deviceName, OwnerHandleType ownerHandle, Ship ship)
-        {
-            var device = (ShipDevice)Clonable.Instantiate(deviceName);
-            if (ownerHandle == OwnerHandleType.PrimaryWeapon ||
-                ownerHandle == OwnerHandleType.SecondaryWeapon)
-            {
-                var boneIs = ship.GetNamedPositions("Gun");
-                if (boneIs.Length == 0) Log.Write("Warning: Ship found no gun barrels in its 3D model");
-                var boneIndices =
-                    (from pair in boneIs
-                    orderby pair.Key
-                    select pair.Value).ToArray();
-                ((Weapon)device).AttachTo(ship, ownerHandle, boneIndices);
-            }
-            else
-                device.AttachTo(ship, ownerHandle);
-            device.PlayerOwner.Game.DataEngine.Devices.Add(device);
-            return device;
         }
 
         #region Public methods
@@ -240,8 +212,8 @@ namespace AW2.Game.GobUtils
         /// <param name="ownerHandle">A handle for identifying the device at the owner.</param>
         public void AttachTo(Ship owner, OwnerHandleType ownerHandle)
         {
-            this.owner = owner;
-            this.OwnerHandle = ownerHandle;
+            Owner = owner;
+            OwnerHandle = ownerHandle;
             _chargeProvider = owner.GetChargeProvider(ownerHandle);
             _charge = ChargeMax;
         }
@@ -260,7 +232,7 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public void Fire(AW2.UI.ControlState triggerState)
         {
-            if (owner.Disabled) return;
+            if (Owner.Disabled) return;
             if (!FiringOperator.IsFirePressed(triggerState)) return;
             bool success = PermissionToFire(FiringOperator.CanFire) && FiringOperator.TryFire();
             if (success)

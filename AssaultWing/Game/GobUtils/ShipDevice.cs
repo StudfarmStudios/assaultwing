@@ -39,32 +39,32 @@ namespace AW2.Game.GobUtils
         /// and bonus display.
         /// </summary>
         [TypeParameter]
-        private CanonicalString iconName;
+        private CanonicalString _iconName;
 
         /// <summary>
         /// The sound to play when firing.
         /// </summary>
         [TypeParameter]
-        private string fireSound;
+        private string _fireSound;
 
         /// <summary>
         /// How to play the firing sound.
         /// </summary>
         [TypeParameter]
-        private FiringSoundType fireSoundType;
+        private FiringSoundType _fireSoundType;
 
         /// <summary>
         /// Number of shots to shoot in a series.
         /// </summary>
         [TypeParameter]
-        private int shotCount;
+        private int _shotCount;
 
         /// <summary>
         /// Temporal spacing between successive shots in a series, in seconds.
         /// Zero or less means once each frame.
         /// </summary>
         [TypeParameter]
-        private float shotSpacing;
+        private float _shotSpacing;
 
         /// <summary>
         /// The time in seconds that it takes for the weapon to fire again after being fired once.
@@ -72,24 +72,24 @@ namespace AW2.Game.GobUtils
         /// with applied bonuses.
         /// </summary>
         [TypeParameter]
-        protected float loadTime;
+        protected float _loadTime;
 
         /// <summary>
         /// Bonus Multiplier for loadtime
         /// </summary>
-        protected float loadTimeMultiplier;
+        protected float _loadTimeMultiplier;
 
         /// <summary>
         /// Amount of charge required to fire the weapon once.
         /// </summary>
         [TypeParameter]
-        private float fireCharge;
+        private float _fireCharge;
 
         /// <summary>
         /// Amount of charge required for one second of rapid firing the weapon.
         /// </summary>
         [TypeParameter]
-        private float fireChargePerSecond;
+        private float _fireChargePerSecond;
 
         [TypeParameter]
         private ShipDeviceInfo _deviceInfo;
@@ -109,14 +109,14 @@ namespace AW2.Game.GobUtils
         /// Name of the icon of the weapon, to be displayed in weapon selection 
         /// and bonus display.
         /// </summary>
-        public CanonicalString IconName { get { return iconName; } set { iconName = value; } }
+        public CanonicalString IconName { get { return _iconName; } set { _iconName = value; } }
 
         /// <summary>
         /// Names of all textures that this weapon will ever use.
         /// </summary>
         public IEnumerable<CanonicalString> TextureNames
         {
-            get { return new List<CanonicalString> { iconName, DeviceInfo.IconEquipName }; }
+            get { return new List<CanonicalString> { _iconName, DeviceInfo.IconEquipName }; }
         }
 
         /// <summary>
@@ -139,13 +139,13 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public OwnerHandleType OwnerHandle { get; protected set; }
 
-        public float LoadTimeMultiplier { get { return loadTimeMultiplier; } set { loadTimeMultiplier = value; } }
+        public float LoadTimeMultiplier { get { return _loadTimeMultiplier; } set { _loadTimeMultiplier = value; } }
         
         /// <summary>
         /// The time in seconds that it takes for the weapon to fire again 
         /// after being fired once.
         /// </summary>
-        public float LoadTime { get { return loadTime; } }
+        public float LoadTime { get { return _loadTime; } }
 
         /// <summary>
         /// Current amount of charge.
@@ -165,20 +165,20 @@ namespace AW2.Game.GobUtils
         /// Amount of charge required to fire the weapon once.
         /// </summary>
         // TODO: Move FireCharge and fireCharge to FiringOperatorSingle
-        public float FireCharge { get { return fireCharge; } }
+        public float FireCharge { get { return _fireCharge; } }
 
         /// <summary>
         /// Amount of charge required for one second of rapid firing the weapon.
         /// </summary>
         // TODO: Move FireChargePerSecond and fireChargePerSecond to FiringOperatorContinuous
-        public float FireChargePerSecond { get { return fireChargePerSecond; } }
+        public float FireChargePerSecond { get { return _fireChargePerSecond; } }
 
         public FiringOperator FiringOperator { get; set; }
 
         // TODO: Move ShotCount and shotCount to FiringOperatorSingle
-        public int ShotCount { get { return shotCount; } }
+        public int ShotCount { get { return _shotCount; } }
         // TODO: Move ShotSpacing and shotSpacing to FiringOperatorSingle
-        public float ShotSpacing { get { return shotSpacing; } }
+        public float ShotSpacing { get { return _shotSpacing; } }
 
         #endregion Properties
 
@@ -187,15 +187,15 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public ShipDevice()
         {
-            iconName = (CanonicalString)"dummytexture";
-            fireSound = "dummysound";
-            fireSoundType = FiringSoundType.EveryShot;
-            shotCount = 3;
-            shotSpacing = 0.2f;
-            loadTime = 0.5f;
-            fireCharge = 100;
-            fireChargePerSecond = 500;
-            loadTimeMultiplier = 1;
+            _iconName = (CanonicalString)"dummytexture";
+            _fireSound = "dummysound";
+            _fireSoundType = FiringSoundType.EveryShot;
+            _shotCount = 3;
+            _shotSpacing = 0.2f;
+            _loadTime = 0.5f;
+            _fireCharge = 100;
+            _fireChargePerSecond = 500;
+            _loadTimeMultiplier = 1;
         }
 
         public ShipDevice(CanonicalString typeName)
@@ -203,7 +203,7 @@ namespace AW2.Game.GobUtils
         {
             Owner = null;
             OwnerHandle = 0;
-            loadTimeMultiplier = 1;
+            _loadTimeMultiplier = 1;
         }
 
         #region Public methods
@@ -237,7 +237,7 @@ namespace AW2.Game.GobUtils
             bool success = PermissionToFire(FiringOperator.CanFire) && FiringOperator.TryFire();
             if (success)
             {
-                if (fireSoundType == FiringSoundType.Once) PlayFiringSound();
+                if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
             }
             else
                 PlayerOwner.Game.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
@@ -247,12 +247,12 @@ namespace AW2.Game.GobUtils
         {
             _visualsCreatedThisFrame = false;
             _soundPlayedThisFrame = false;
-            bool shootOnceAFrame = shotSpacing <= 0;
+            bool shootOnceAFrame = _shotSpacing <= 0;
             bool shotThisFrame = false;
             while (FiringOperator.IsItTimeToShoot && !(shootOnceAFrame && shotThisFrame))
             {
                 shotThisFrame = true;
-                if (fireSoundType == FiringSoundType.EveryShot) PlayFiringSound();
+                if (_fireSoundType == FiringSoundType.EveryShot) PlayFiringSound();
                 CreateVisuals();
                 ShootImpl();
                 FiringOperator.ShotFired();
@@ -311,7 +311,7 @@ namespace AW2.Game.GobUtils
 
         private void PlayFiringSoundImpl()
         {
-            if (fireSound != "") PlayerOwner.Game.SoundEngine.PlaySound(fireSound);
+            if (_fireSound != "") PlayerOwner.Game.SoundEngine.PlaySound(_fireSound);
         }
 
         #endregion Nonpublic methods

@@ -267,11 +267,15 @@ namespace AW2.Game.GobUtils
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            checked
             {
-                writer.Write((Half)_charge);
-                writer.Write((bool)_visualsCreatedThisFrame);
-                writer.Write((bool)_soundPlayedThisFrame);
+                if ((mode & SerializationModeFlags.VaryingData) != 0)
+                {
+                    byte data = (byte)(0x3f * Charge / ChargeMax);
+                    if (_visualsCreatedThisFrame) data |= 0x40;
+                    if (_soundPlayedThisFrame) data |= 0x80;
+                    writer.Write((byte)data);
+                }
             }
         }
 
@@ -279,9 +283,10 @@ namespace AW2.Game.GobUtils
         {
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                _charge = reader.ReadHalf();
-                bool mustCreateVisuals = reader.ReadBoolean();
-                bool mustPlaySound = reader.ReadBoolean();
+                var data = reader.ReadByte();
+                _charge = (data & 0x3f) * ChargeMax / 0x3f;
+                bool mustCreateVisuals = (data & 0x40) != 0;
+                bool mustPlaySound = (data & 0x80) != 0;
                 if (mustCreateVisuals) CreateVisualsImpl();
                 if (mustPlaySound) PlayFiringSoundImpl();
             }

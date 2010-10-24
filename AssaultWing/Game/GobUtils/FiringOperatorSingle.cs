@@ -9,7 +9,7 @@ namespace AW2.Game.GobUtils
     public class FiringOperatorSingle : FiringOperator
     {
         private int _shotsLeft;
-        private bool _cannotFireFlagged;
+        private bool _previousCanFire;
         private TimeSpan _loadedTime;
 
         public override bool Loaded { get { return _loadedTime <= Device.Arena.TotalTime; } }
@@ -21,6 +21,7 @@ namespace AW2.Game.GobUtils
         public FiringOperatorSingle(ShipDevice device)
             : base(device)
         {
+            _previousCanFire = true;
         }
 
         public override bool IsFirePressed(AW2.UI.ControlState triggerState)
@@ -41,20 +42,12 @@ namespace AW2.Game.GobUtils
 
         public override void Update()
         {
-            if (Device.PlayerOwner.Game.NetworkMode != NetworkMode.Client)
+            if (Device.PlayerOwner.Game.NetworkMode != NetworkMode.Client &&
+                Device.OwnerHandle != ShipDevice.OwnerHandleType.PrimaryWeapon)
             {
-                if (Device.OwnerHandle != ShipDevice.OwnerHandleType.PrimaryWeapon)
-                {
-                    if (!CanFire && !_cannotFireFlagged)
-                    {
-                        _cannotFireFlagged = true;
-                    }
-                    else if (CanFire && _cannotFireFlagged)
-                    {
-                        _cannotFireFlagged = false;
-                        Device.PlayerOwner.SendMessage(Device.TypeName + " ready to use", Player.PLAYER_STATUS_COLOR);
-                    }
-                }
+                if (CanFire && !_previousCanFire)
+                    Device.PlayerOwner.SendMessage(Device.TypeName + " ready to use", Player.PLAYER_STATUS_COLOR);
+                _previousCanFire = CanFire;
             }
         }
 

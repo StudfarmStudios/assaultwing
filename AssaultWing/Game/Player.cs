@@ -100,7 +100,6 @@ namespace AW2.Game
         /// </summary>
         private TimeSpan _shakeUpdateTime;
 
-        private Ship _ship;
         private Vector2 _lastLookAtPos;
         private List<GobTrackerItem> _gobTrackerItems = new List<GobTrackerItem>();
 
@@ -146,7 +145,7 @@ namespace AW2.Game
         /// <summary>
         /// The ship the player is controlling in the game arena.
         /// </summary>
-        public Ship Ship { get { return _ship; } set { _ship = value; } }
+        public Ship Ship { get; set; }
 
         public Vector2 LookAtPos
         {
@@ -216,7 +215,7 @@ namespace AW2.Game
         {
             get
             {
-                if (_ship != null) return _ship.Weapon1Name;
+                if (Ship != null) return Ship.Weapon1Name;
                 var shipType = (Ship)Game.DataEngine.GetTypeTemplate(ShipName);
                 return shipType.Weapon1Name;
             }

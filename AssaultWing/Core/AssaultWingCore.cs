@@ -381,7 +381,7 @@ namespace AW2
             {
                 // Also this seems to happen on Windows 7 due to lack of user privileges.
             }
-            TargetElapsedTime = TimeSpan.FromSeconds(1 / 60.0); // 60 frames per second
+            TargetFPS = 60;
             base.Initialize();
             if (!DoNotFreezeCanonicalStrings) FreezeCanonicalStrings();
         }

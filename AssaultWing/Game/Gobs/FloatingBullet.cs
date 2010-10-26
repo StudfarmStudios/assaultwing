@@ -9,6 +9,8 @@ namespace AW2.Game.Gobs
 {
     public class FloatingBullet : Bullet
     {
+        private const float HOVER_THRUST_INTERVAL = 2f; // in seconds game time
+
         /// <summary>
         /// Amplitude of bullet thrust when hovering around, measured in Newtons.
         /// </summary>
@@ -27,10 +29,12 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _spreadingForce;
 
-        private Circle _targetCircle;
+        private Vector2? _hoverAroundPos;
         private Vector2 _thrustForce;
-        private float? _thrustSeconds; // if not null, thrust time to send from server to clients
-        private TimeSpan _thrustEndGameTime;
+
+        private int HoverThrustCycleFrame { get { return Arena.FrameNumber % (int)(Game.TargetFPS * HOVER_THRUST_INTERVAL); } }
+        private bool IsHoverThrusting { get { return HoverThrustCycleFrame < Game.TargetFPS * HOVER_THRUST_INTERVAL / 2; } }
+        private bool IsChangingHoverThrustTargetPos { get { return HoverThrustCycleFrame == 0; } }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -51,16 +55,9 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (_thrustEndGameTime < Game.DataEngine.ArenaTotalTime)
-            {
-                Move *= 0.957f;
-                if (Game.NetworkMode != NetworkMode.Client && Move.LengthSquared() < 1 * 1)
-                    RandomizeNewTargetPos();
-            }
-            else
-            {
-                Game.PhysicsEngine.ApplyForce(this, _thrustForce);
-            }
+            Move *= 0.97f;
+            if (IsChangingHoverThrustTargetPos) SetNewTargetPos();
+            if (IsHoverThrusting) Game.PhysicsEngine.ApplyForce(this, _thrustForce);
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
@@ -86,15 +83,10 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                if (!_thrustSeconds.HasValue)
-                    writer.Write((bool)false);
+                if (_hoverAroundPos.HasValue)
+                    writer.WriteHalf(_hoverAroundPos.Value);
                 else
-                {
-                    writer.Write((bool)true);
-                    writer.Write((Half)_thrustSeconds.Value);
-                    writer.WriteHalf(_thrustForce);
-                    _thrustSeconds = null;
-                }
+                    writer.WriteHalf(new Vector2(float.NaN));
             }
         }
 
@@ -103,14 +95,11 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                bool movementChanged = reader.ReadBoolean();
-                if (movementChanged)
-                {
-                    float thrustSeconds = reader.ReadHalf();
-                    _thrustEndGameTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(thrustSeconds)
-                        - Game.TargetElapsedTime.Multiply(framesAgo);
-                    _thrustForce = reader.ReadHalfVector2();
-                }
+                var maybeHoverAroundPos = reader.ReadHalfVector2();
+                if (float.IsNaN(maybeHoverAroundPos.X))
+                    _hoverAroundPos = null;
+                else
+                    _hoverAroundPos = maybeHoverAroundPos;
             }
         }
 
@@ -118,17 +107,15 @@ namespace AW2.Game.Gobs
         {
             var forceVector = force * Vector2.Normalize(target - Pos);
             Game.PhysicsEngine.ApplyForce(this, forceVector);
-            _targetCircle = null;
+            _hoverAroundPos = null;
         }
 
-        private void RandomizeNewTargetPos()
+        private void SetNewTargetPos()
         {
-            if (_targetCircle == null) _targetCircle = new Circle(Pos, 15);
-            var targetPos = Geometry.GetRandomLocation(_targetCircle);
+            if (!_hoverAroundPos.HasValue) _hoverAroundPos = Pos;
+            float targetAngle = MathHelper.TwoPi / (2.5f * Game.TargetFPS * HOVER_THRUST_INTERVAL) * (ID * 7 + Arena.FrameNumber);
+            var targetPos = _hoverAroundPos.Value + 50 * AWMathHelper.GetUnitVector2(targetAngle);
             _thrustForce = _hoverThrust * Vector2.Normalize(targetPos - Pos);
-            _thrustSeconds = RandomHelper.GetRandomFloat(1.2f, 1.9f);
-            _thrustEndGameTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(_thrustSeconds.Value);
-            if (Game.NetworkMode == NetworkMode.Server) ForcedNetworkUpdate = true;
         }
     }
 }

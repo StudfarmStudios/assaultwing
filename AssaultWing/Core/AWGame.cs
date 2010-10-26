@@ -17,7 +17,8 @@ namespace AW2.Core
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
         public List<AWGameComponent> Components { get; private set; }
-        public TimeSpan TargetElapsedTime { get; set; }
+        public TimeSpan TargetElapsedTime { get { return TimeSpan.FromSeconds(1f / TargetFPS); } }
+        public int TargetFPS { get; set; }
 
         public event EventHandler Exiting;
 
@@ -27,7 +28,7 @@ namespace AW2.Core
             Services = new GameServiceContainer();
             Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
             Components = new List<AWGameComponent>();
-            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60);
+            TargetFPS = 60;
         }
 
         public void Dispose()

@@ -5,7 +5,7 @@ using AW2.Helpers;
 
 namespace AW2
 {
-    public class ArenaEditorProgram
+    public class ArenaEditorProgram : IDisposable
     {
         private ArenaEditor _editor;
 
@@ -15,7 +15,10 @@ namespace AW2
         [STAThread]
         public static void Main(string[] args)
         {
-            new ArenaEditorProgram(args).Run();
+            using (var program = new ArenaEditorProgram(args))
+            {
+                program.Run();
+            }
         }
 
         public ArenaEditorProgram(string[] args)
@@ -28,6 +31,15 @@ namespace AW2
         {
             var app = new Application();
             app.Run(_editor);
+        }
+
+        public void Dispose()
+        {
+            if (_editor != null)
+            {
+                _editor.Dispose();
+                _editor = null;
+            }
         }
     }
 }

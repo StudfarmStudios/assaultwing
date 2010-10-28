@@ -65,6 +65,15 @@ namespace AW2
             Closed += (sender, eventArgs) => _runner.Exit();
         }
 
+        public void Dispose()
+        {
+            if (_game != null)
+            {
+                _game.Dispose();
+                _game = null;
+            }
+        }
+
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             _runner.Exit();

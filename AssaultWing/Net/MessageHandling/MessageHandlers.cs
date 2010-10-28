@@ -60,7 +60,6 @@ namespace AW2.Net.MessageHandling
         {
             yield return new MessageHandler<WallHoleMessage>(false, IMessageHandler.SourceType.Server, HandleWallHoleMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, (m, f) => handleGobCreationMessage((GobCreationMessage)m, f));
-            yield return new MessageHandler<GobDamageMessage>(false, IMessageHandler.SourceType.Server, HandleGobDamageMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
@@ -192,13 +191,6 @@ namespace AW2.Net.MessageHandling
             var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null) throw new NetworkException("Update for unknown player ID " + mess.PlayerID);
             mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
-        }
-
-        private static void HandleGobDamageMessage(GobDamageMessage mess)
-        {
-            Gob gob = AssaultWingCore.Instance.DataEngine.Arena.Gobs.FirstOrDefault(gobb => gobb.ID == mess.GobID);
-            if (gob == null) return; // Skip updates for gobs we haven't yet created.
-            gob.DamageLevel = mess.DamageLevel;
         }
 
         private static void HandleJoinGameRequest(JoinGameRequest mess)

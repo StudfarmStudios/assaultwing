@@ -996,6 +996,7 @@ namespace AW2.Game
                 writer.WriteHalf((Vector2)_move);
                 byte rotationAsByte = (byte)Math.Round(_rotation / MathHelper.TwoPi * 256);
                 writer.Write((byte)rotationAsByte);
+                if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
             }
         }
 
@@ -1032,6 +1033,7 @@ namespace AW2.Game
                 DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
                 if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
                     DrawRotationOffset = 0;
+                if (IsDamageable) DamageLevel = reader.ReadByte() / (float)byte.MaxValue * MaxDamageLevel;
             }
         }
 
@@ -1258,14 +1260,6 @@ namespace AW2.Game
 
             _damage += damageAmount;
             _damage = MathHelper.Clamp(_damage, 0, _maxDamage);
-
-            if (Game.NetworkMode == NetworkMode.Server)
-            {
-                var message = new AW2.Net.Messages.GobDamageMessage();
-                message.GobID = this.ID;
-                message.DamageLevel = _damage;
-                Game.NetworkEngine.SendToGameClients(message);
-            }
 
             if (damageAmount > 0)
                 _bleachDamage += damageAmount;

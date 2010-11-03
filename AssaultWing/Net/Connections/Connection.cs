@@ -35,6 +35,8 @@ namespace AW2.Net.Connections
     {
         #region Fields
 
+        private static readonly TimeSpan SIMULATED_NETWORK_LAG = TimeSpan.FromSeconds(0.0);
+
         /// <summary>
         /// A meta-value for <see cref="ID"/> denoting an invalid value.
         /// </summary>
@@ -234,6 +236,11 @@ namespace AW2.Net.Connections
 
         }
 
+        public T TryDequeueMessage<T>() where T : Message
+        {
+            return Messages.TryDequeue<T>(m => m.CreationTime <= Game.GameTime.TotalRealTime - SIMULATED_NETWORK_LAG);
+        }
+
         /// <summary>
         /// Closes the connection and frees resources it has allocated.
         /// </summary>
@@ -281,7 +288,7 @@ namespace AW2.Net.Connections
         /// </summary>
         public void HandleMessage(NetBuffer messageHeaderAndBody)
         {
-            var message = Message.Deserialize(messageHeaderAndBody.Buffer, ID);
+            var message = Message.Deserialize(messageHeaderAndBody.Buffer, ID, Game.GameTime.TotalRealTime);
             if (!TryHandleMessageInternally(message, messageHeaderAndBody.EndPoint))
                 _messages.Enqueue(message);
         }

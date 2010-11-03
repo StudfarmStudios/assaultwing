@@ -305,7 +305,7 @@ namespace AW2.Game
             {
                 {
                     GobUpdateMessage message = null;
-                    while ((message = Game.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobUpdateMessage>()) != null)
+                    while ((message = Game.NetworkEngine.GameServerConnection.TryDequeueMessage<GobUpdateMessage>()) != null)
                     {
                         var framesAgo = Game.NetworkEngine.GetMessageAge(message);
                         message.ReadGobs(gobId =>
@@ -326,7 +326,7 @@ namespace AW2.Game
             if (Game.NetworkMode == NetworkMode.Client)
             {
                 GobDeletionMessage message = null;
-                while ((message = Game.NetworkEngine.GameServerConnection.Messages.TryDequeue<GobDeletionMessage>()) != null)
+                while ((message = Game.NetworkEngine.GameServerConnection.TryDequeueMessage<GobDeletionMessage>()) != null)
                 {
                     Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.ID == message.GobId);
                     if (gob == null)

@@ -554,7 +554,7 @@ namespace AW2.Net
                 {
                     if (messageHeaderAndBody.EndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint))
                     {
-                        var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer, messageHeaderAndBody.Length);
+                        var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer, messageHeaderAndBody.Length, Game.GameTime.TotalRealTime);
                         ManagementServerConnection.Messages.Enqueue(message);
                     }
                     else

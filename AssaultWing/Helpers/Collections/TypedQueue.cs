@@ -63,24 +63,22 @@ namespace AW2.Helpers.Collections
             }
         }
 
-        /// <summary>
-        /// Removes and returns the first element in the queue that is of a type.
-        /// Returns the default value of <typeparamref name="U"/> if there are no such elements.
-        /// </summary>
-        /// <typeparam name="U">The type of element to dequeue.</typeparam>
-        /// <returns>The first element in the queue of the type, or the
-        /// default value of <typeparamref name="U"/> if there are no such elements.</returns>
-        /// <seealso cref="Dequeue"/>
-        public U TryDequeue<U>() where U : T
+        public U TryDequeue<U>(Predicate<U> criteria) where U : T
         {
-            Type elementType = typeof(U);
+            var elementType = typeof(U);
             lock (queues)
             {
                 Queue<Pair<T, TimeSpan>> subqueue;
                 if (!queues.TryGetValue(elementType, out subqueue) || subqueue.Count == 0)
                     return default(U);
+                if (!criteria((U)subqueue.Peek().First)) return default(U);
                 return (U)subqueue.Dequeue().First;
             }
+        }
+
+        public U TryDequeue<U>() where U : T
+        {
+            return TryDequeue<U>(x => true);
         }
 
         /// <summary>

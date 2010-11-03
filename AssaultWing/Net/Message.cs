@@ -70,6 +70,8 @@ namespace AW2.Net
         /// </summary>
         public int ConnectionID { get; private set; }
 
+        public TimeSpan CreationTime { get; protected set; }
+
         #region Public interface
 
         /// <summary>
@@ -172,7 +174,8 @@ namespace AW2.Net
 
         /// <param name="headerAndBody">Buffer containing the header and the body of the message.</param>
         /// <param name="connectionId">Identifier of the connection where the message was received.</param>
-        public static Message Deserialize(byte[] headerAndBody, int connectionId)
+        /// <param name="creationTime">Creation timestamp of the message</param>
+        public static Message Deserialize(byte[] headerAndBody, int connectionId, TimeSpan creationTime)
         {
             if (headerAndBody == null) throw new ArgumentNullException("headerAndBody", "Null message content");
             if (!IsValidHeader(headerAndBody)) throw new ArgumentException("Invalid message header", "headerAndBody");
@@ -182,6 +185,7 @@ namespace AW2.Net
             var message = (Message)GetMessageSubclass(headerAndBody).GetConstructor(System.Type.EmptyTypes).Invoke(null);
             message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody, HEADER_LENGTH, BODY_MAXIMUM_LENGTH, false)));
             message.ConnectionID = connectionId;
+            message.CreationTime = creationTime;
             return message;
         }
 

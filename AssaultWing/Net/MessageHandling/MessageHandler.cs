@@ -37,7 +37,7 @@ namespace AW2.Net.MessageHandling
             T message = null;
             foreach (var connection in GetConnections(Source))
             {
-                while ((message = connection.Messages.TryDequeue<T>()) != null)
+                while ((message = connection.TryDequeueMessage<T>()) != null)
                 {
                     Action(message);
                     if (OnlyOneMessage)

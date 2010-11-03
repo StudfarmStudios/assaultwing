@@ -23,12 +23,10 @@ namespace AW2.Helpers.Collections
 
         /// <summary>
         /// Removes and returns the first element in the queue that is of a type.
-        /// Returns the default value of <typeparamref name="U"/> if there are no such elements.
+        /// If the element doesn't match the given criteria or there are no elements of
+        /// the type, default(U) is returned.
         /// </summary>
-        /// <typeparam name="U">The type of element to dequeue.</typeparam>
-        /// <returns>The first element in the queue of the type, or the
-        /// default value of <typeparamref name="U"/> if there are no such elements.</returns>
-        /// <seealso cref="Dequeue"/>
+        U TryDequeue<U>(Predicate<U> criteria) where U : T;
         U TryDequeue<U>() where U : T;
 
         /// <summary>

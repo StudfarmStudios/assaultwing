@@ -77,7 +77,7 @@ namespace AW2.Net.ConnectionUtils
 
         private void ReceivePingAndSendPong()
         {
-            var pingReceive = BaseConnection.Messages.TryDequeue<PingRequestMessage>();
+            var pingReceive = BaseConnection.TryDequeueMessage<PingRequestMessage>();
             if (pingReceive == null) return;
             var pongSend = pingReceive.GetPingReplyMessage(AssaultWingCore.Instance.DataEngine.ArenaTotalTime, AssaultWingCore.Instance.DataEngine.ArenaFrameCount);
             BaseConnection.Send(pongSend);
@@ -85,7 +85,7 @@ namespace AW2.Net.ConnectionUtils
 
         private void ReceivePong(TimeSpan now)
         {
-            var pongReceive = BaseConnection.Messages.TryDequeue<PingReplyMessage>();
+            var pongReceive = BaseConnection.TryDequeueMessage<PingReplyMessage>();
             if (pongReceive == null || IsMeasuringFreezed) return;
             var pingTime = now - pongReceive.Timestamp;
             _pingTimes[_nextIndex] = pingTime;

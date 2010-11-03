@@ -40,7 +40,7 @@ namespace AW2.Net.MessageHandling
             T message = null;
             foreach (var connection in connections)
             {
-                while ((message = connection.Messages.TryDequeue<T>()) != null)
+                while ((message = connection.TryDequeueMessage<T>()) != null)
                 {
                     var framesAgo = AssaultWingCore.Instance.NetworkEngine.GetMessageAge(message, connection);
                     Action(message, framesAgo);

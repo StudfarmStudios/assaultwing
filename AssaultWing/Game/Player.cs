@@ -364,9 +364,6 @@ namespace AW2.Game
                 _gobTrackerItems.Add(item);
         }
 
-        /// <summary>
-        /// Updates the player.
-        /// </summary>
         public override void Update()
         {
             foreach (var action in BonusActions)
@@ -379,14 +376,8 @@ namespace AW2.Game
 
             if (Game.NetworkMode != NetworkMode.Client)
             {
-                // Give birth to a new ship if it's time.
-                if (Ship == null && _lives != 0 &&
-                    _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)
-                {
+                if (Ship == null && _lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)
                     CreateShip();
-                }
-
-                // Check player controls.
                 ApplyControlsToShip();
             }
             else // otherwise we are a game client
@@ -646,6 +637,10 @@ namespace AW2.Game
         private void ApplyControlsToShip()
         {
             if (Ship == null || Ship.IsDisposed) return;
+            if (Ship.LocationPredicter != null)
+            {
+                Ship.LocationPredicter.StoreControlStates(Controls.GetStates(), Game.GameTime.TotalGameTime);
+            }
             if (Controls.Thrust.Force > 0)
                 Ship.Thrust(Controls.Thrust.Force, Game.GameTime.ElapsedGameTime, Ship.Rotation);
             if (Controls.Left.Force > 0)

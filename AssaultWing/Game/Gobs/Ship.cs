@@ -155,6 +155,15 @@ namespace AW2.Game.Gobs
 
         #region Ship properties
 
+        public override float DrawRotation
+        {
+            get
+            {
+                if (LocationPredicter == null) return Rotation;
+                return LocationPredicter.GetShipLocation(Game.DataEngine.ArenaTotalTime).Rotation;
+            }
+        }
+
         public override void ResetPos(Vector2 pos, Vector2 move, float rotation)
         {
             base.ResetPos(pos, move, rotation);
@@ -168,7 +177,7 @@ namespace AW2.Game.Gobs
 #if OPTIMIZED_CODE
                 var drawPos = _pos + DrawPosOffset;
                 float scale = Scale;
-                float rotation = Rotation + DrawRotationOffset;
+                float rotation = DrawRotation + DrawRotationOffset;
                 float scaledCosRoll = scale * (float)Math.Cos(_rollAngle.Current);
                 float scaledSinRoll = scale * (float)Math.Sin(_rollAngle.Current);
                 float cosRota = (float)Math.Cos(rotation);
@@ -181,7 +190,7 @@ namespace AW2.Game.Gobs
 #else
                 return Matrix.CreateScale(Scale)
                      * Matrix.CreateRotationX(_rollAngle.Current)
-                     * Matrix.CreateRotationZ(Rotation + DrawRotationOffset)
+                     * Matrix.CreateRotationZ(DrawRotation + DrawRotationOffset)
                      * Matrix.CreateTranslation(new Vector3(Pos + DrawPosOffset, 0));
 #endif
             }
@@ -340,7 +349,8 @@ namespace AW2.Game.Gobs
                 GameTime = Arena.TotalTime - Game.GameTime.ElapsedGameTime,
                 Pos = Pos,
                 Move = Move,
-                Rotation = Rotation
+                Rotation = Rotation,
+                ControlStates = null, // FIXME
             });
             base.Update();
 
@@ -352,6 +362,7 @@ namespace AW2.Game.Gobs
             UpdateCoughEngines();
             UpdateCharges();
             UpdateFlashing();
+            StoreCurrentShipLocation();
         }
 
         public override void Die(DeathCause cause)
@@ -651,6 +662,18 @@ namespace AW2.Game.Gobs
                     _isBirthFlashing = false;
                 }
             }
+        }
+
+        private void StoreCurrentShipLocation()
+        {
+            if (LocationPredicter != null) LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
+            {
+                GameTime = Game.DataEngine.ArenaTotalTime,
+                Move = Move,
+                Pos = Pos,
+                Rotation = Rotation,
+                ControlStates = null, // FIXME
+            });
         }
     }
 }

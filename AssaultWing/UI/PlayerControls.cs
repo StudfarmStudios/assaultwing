@@ -11,17 +11,17 @@ namespace AW2.UI
         /// Thrusts the player's ship forward, or moves up in a menu.
         /// </summary>
         public Control Thrust;
-        
+
         /// <summary>
         /// Turns the player's ship counter-clockwise, or moves left in a menu.
         /// </summary>
         public Control Left;
-        
+
         /// <summary>
         /// Turns the player's ship clockwise, or moves right in a menu.
         /// </summary>
         public Control Right;
-        
+
         /// <summary>
         /// Uses the player's ship modification, or moves down in a menu.
         /// </summary>
@@ -63,6 +63,19 @@ namespace AW2.UI
                     default: throw new ArgumentException("Unknown control type " + Enum.GetName(typeof(PlayerControlType), type));
                 }
             }
+        }
+
+        public ControlState[] GetStates()
+        {
+            return new[]
+            {
+                Thrust.State,
+                Left.State,
+                Right.State,
+                Fire1.State,
+                Fire2.State,
+                Extra.State,
+            };
         }
     }
 }

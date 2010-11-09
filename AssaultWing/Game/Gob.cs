@@ -404,7 +404,7 @@ namespace AW2.Game
         {
             get
             {
-                return new BoundingSphere(_drawBounds.Center.RotateZ(Rotation + DrawRotationOffset) + new Vector3(Pos + DrawPosOffset, 0), _drawBounds.Radius);
+                return new BoundingSphere(_drawBounds.Center.RotateZ(DrawRotation + DrawRotationOffset) + new Vector3(Pos + DrawPosOffset, 0), _drawBounds.Radius);
             }
         }
 
@@ -472,6 +472,8 @@ namespace AW2.Game
             set { _rotation = value % MathHelper.TwoPi; }
         }
 
+        public virtual float DrawRotation { get { return Rotation; } }
+
         /// <summary>
         /// Drawing rotation delta of the gob, relative to <see cref="Rotation"/>.
         /// This is mostly zero except on game clients who use this to smooth out
@@ -511,7 +513,7 @@ namespace AW2.Game
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
         /// </summary>
-        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, _rotation + DrawRotationOffset, _pos + DrawPosOffset); } }
+        public virtual Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(_scale, DrawRotation + DrawRotationOffset, _pos + DrawPosOffset); } }
 
         /// <summary>
         /// The transform matrices of the gob's 3D model parts.

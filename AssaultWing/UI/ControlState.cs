@@ -27,5 +27,10 @@ namespace AW2.UI
             Force = force;
             Pulse = pulse;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}/{1}", Pulse, Force);
+        }
     }
 }

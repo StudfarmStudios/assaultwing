@@ -123,6 +123,11 @@ namespace AW2.Helpers.Serialization
                 Write((byte)0);
         }
 
+        public void Write(CanonicalString value)
+        {
+            Write((int)value.Canonical);
+        }
+
         /// <summary>
         /// Writes a Vector2 value.
         /// </summary>

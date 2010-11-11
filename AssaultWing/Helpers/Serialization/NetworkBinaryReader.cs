@@ -89,6 +89,11 @@ namespace AW2.Helpers.Serialization
             return Encoding.UTF8.GetString(bytes).TrimEnd(nullCharArray);
         }
 
+        public CanonicalString ReadCanonicalString()
+        {
+            return (CanonicalString)ReadInt32();
+        }
+
         /// <summary>
         /// Reads a Vector2 value.
         /// </summary>

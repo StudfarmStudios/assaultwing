@@ -397,10 +397,10 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                if (Weapon2 != null) writer.Write((int)Weapon2.TypeName.Canonical);
-                else writer.Write((int)CanonicalString.Null.Canonical);
-                if (ExtraDevice != null) writer.Write((int)ExtraDevice.TypeName.Canonical);
-                else writer.Write((int)CanonicalString.Null.Canonical);
+                if (Weapon2 != null) writer.Write(Weapon2.TypeName);
+                else writer.Write(CanonicalString.Null);
+                if (ExtraDevice != null) writer.Write(ExtraDevice.TypeName);
+                else writer.Write(CanonicalString.Null);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -419,10 +419,10 @@ namespace AW2.Game.Gobs
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
-                var typeName = (CanonicalString)reader.ReadInt32();
-                if (!typeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, typeName);
-                typeName = (CanonicalString)reader.ReadInt32();
-                if (!typeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, typeName);
+                var weapon2TypeName = reader.ReadCanonicalString();
+                if (!weapon2TypeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, weapon2TypeName);
+                var extraTypeName = reader.ReadCanonicalString();
+                if (!extraTypeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, extraTypeName);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {

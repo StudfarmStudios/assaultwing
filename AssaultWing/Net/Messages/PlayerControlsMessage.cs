@@ -13,77 +13,64 @@ namespace AW2.Net.Messages
     {
         protected static MessageType messageType = new MessageType(0x22, false);
 
-        ControlState[] controlStates = new ControlState[Enum.GetValues(typeof(PlayerControlType)).Length];
-
         /// <summary>
         /// Identifier of the player the message is about.
         /// </summary>
         public int PlayerID { get; set; }
 
         /// <summary>
-        /// Returns the state of a control of the player.
-        /// </summary>
-        /// <param name="controlType">Type of the control whose state to return.</param>
-        /// <returns>The state of a control of the player.</returns>
-        public ControlState GetControlState(PlayerControlType controlType)
-        {
-            return controlStates[(int)controlType];
-        }
-
-        /// <summary>
         /// The states of all the controls of the player.
         /// </summary>
-        public IList<ControlState> ControlStates { get { return controlStates; } }
+        public IList<ControlState> ControlStates { get; private set; }
 
-        /// <summary>
-        /// Sets the state of a control of the player.
-        /// </summary>
-        /// <param name="controlType">Type of the control whose state to return.</param>
-        /// <param name="state">State of the control.</param>
-        public void SetControlState(PlayerControlType controlType, ControlState state)
+        public ControlState GetControlState(PlayerControlType controlType)
         {
-            controlStates[(int)controlType] = state;
+            return ControlStates[(int)controlType];
         }
 
-        /// <summary>
-        /// Writes the body of the message in serialised form.
-        /// </summary>
-        /// <param name="writer">Writer of serialised data.</param>
+        public void SetControlState(PlayerControlType controlType, ControlState state)
+        {
+            ControlStates[(int)controlType] = state;
+        }
+
+        public PlayerControlsMessage()
+        {
+            ControlStates = new ControlState[PlayerControls.CONTROL_COUNT];
+        }
+
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             base.Serialize(writer);
-            // Player controls (request) message structure:
-            // int player ID
-            // repeat over PlayerControlType
-            //   4 bytes = float: force of the control
-            //   1 byte  = bool:  pulse of the control
-            writer.Write((int)PlayerID);
-            foreach (ControlState state in controlStates)
+            checked
             {
-                writer.Write((float)state.Force);
-                writer.Write((bool)state.Pulse);
+                // Player controls (request) message structure:
+                // byte: player ID
+                // loop PlayerControls.CONTROL_COUNT times
+                //   byte: highest bit = control pulse; other bits = control force
+                writer.Write((byte)PlayerID);
+                foreach (var state in ControlStates)
+                {
+                    var force7Bit = (byte)(state.Force * 127);
+                    var pulseHighBit = state.Pulse ? (byte)0x80 : (byte)0x00;
+                    var value = (byte)(force7Bit | pulseHighBit);
+                    writer.Write((byte)value);
+                }
             }
         }
 
-        /// <summary>
-        /// Reads the body of the message from serialised form.
-        /// </summary>
-        /// <param name="reader">Reader of serialised data.</param>
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            PlayerID = reader.ReadInt32();
-            for (int i = 0; i < controlStates.Length; ++i)
+            PlayerID = reader.ReadByte();
+            for (int i = 0; i < PlayerControls.CONTROL_COUNT; ++i)
             {
-                float force = reader.ReadSingle();
-                bool pulse = reader.ReadBoolean();
-                controlStates[i] = new ControlState(force, pulse);
+                var value = reader.ReadByte();
+                var force = (value & 0x7f) / 127f;
+                var pulse = (value & 0x80) != 0;
+                ControlStates[i] = new ControlState(force, pulse);
             }
         }
 
-        /// <summary>
-        /// Returns a String that represents the current Object. 
-        /// </summary>
         public override string ToString()
         {
             return base.ToString() + " [PlayerID " + PlayerID + "]";

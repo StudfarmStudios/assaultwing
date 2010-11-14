@@ -7,6 +7,8 @@ namespace AW2.UI
     /// </summary>
     public struct PlayerControls
     {
+        public static readonly int CONTROL_COUNT = Enum.GetValues(typeof(PlayerControlType)).Length;
+
         /// <summary>
         /// Thrusts the player's ship forward, or moves up in a menu.
         /// </summary>

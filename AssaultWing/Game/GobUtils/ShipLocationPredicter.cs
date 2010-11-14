@@ -25,10 +25,10 @@ namespace AW2.Game.GobUtils
         private ShipLocations _shipLocations;
         private Func<ShipData> _getShipData;
 
-        public ShipLocationPredicter(Func<ShipData> getShipData)
+        public ShipLocationPredicter(Func<ShipData> getShipData, Action<ShipLocationEntry> setShipLocation)
         {
             _getShipData = getShipData;
-            _shipLocations = new ShipLocations(getShipData);
+            _shipLocations = new ShipLocations(getShipData, setShipLocation);
         }
 
         private static ShipData DefaultShipDataProvider(Ship ship)
@@ -50,8 +50,15 @@ namespace AW2.Game.GobUtils
             };
         }
 
+        private static void DefaultShipLocationSetter(ShipLocationEntry entry, Ship ship)
+        {
+            ship.Pos = entry.Pos;
+            ship.Move = entry.Move;
+            ship.Rotation = entry.Rotation;
+        }
+
         public ShipLocationPredicter(Ship ship)
-            : this(() => DefaultShipDataProvider(ship))
+            : this(() => DefaultShipDataProvider(ship), entry => DefaultShipLocationSetter(entry, ship))
         {
         }
 
@@ -86,6 +93,35 @@ namespace AW2.Game.GobUtils
         public void StoreOldShipLocation(ShipLocationEntry entry)
         {
             _shipLocations.Add(entry);
+        }
+
+        /// <summary>
+        /// Called on a game client to update an old ship location based on data received from the game server.
+        /// Old ControlStates are not to be updated and should be null in the given ShipLocationEntry.
+        /// Setting an old ShipLocationEntry affects all newer ShipLocationEntries.
+        /// </summary>
+        public void UpdateOldShipLocation(ShipLocationEntry entry)
+        {
+            if (entry.ControlStates != null) throw new ArgumentException("Expected null ControlStates");
+            var shipData = _getShipData();
+            var halfFrameTime = shipData.TargetElapsedTime.Divide(2);
+            int entryIndex = _shipLocations.FindLastIndex(e => e.GameTime - halfFrameTime < entry.GameTime);
+            for (int i = entryIndex; 0 <= i && i < _shipLocations.Count; ++i)
+            {
+                var oldEntry = _shipLocations[i];
+                var newEntry = oldEntry;
+                if (i == entryIndex)
+                    newEntry.Rotation = entry.Rotation;
+                else
+                {
+                    var prevEntry = _shipLocations[i - 1];
+                    var elapsedSeconds = (float)(oldEntry.GameTime - prevEntry.GameTime).TotalSeconds;
+                    var rotationChange = shipData.TurnSpeed * elapsedSeconds *
+                        (oldEntry.ControlStates[(int)PlayerControlType.Left].Force - oldEntry.ControlStates[(int)PlayerControlType.Right].Force);
+                    newEntry.Rotation = prevEntry.Rotation + rotationChange;
+                }
+                _shipLocations[i] = newEntry;
+            }
         }
 
         public ShipLocationEntry GetShipLocation(TimeSpan gameTime)
@@ -134,6 +170,7 @@ namespace AW2.Game.GobUtils
             private ShipLocationPredicter _predicter;
             private ShipData _shipData;
             private ShipLocationEntry _entry1, _entry2, _entry3;
+            private ControlState[] _turningLeft;
 
             private void SetLatestShipLocationEntry(ShipLocationEntry entry)
             {
@@ -146,13 +183,20 @@ namespace AW2.Game.GobUtils
                 return _predicter.GetShipLocation(gameTime);
             }
 
+            private void SetShipLocation(ShipLocationEntry entry)
+            {
+                _shipData.ShipLocationEntry.Pos = entry.Pos;
+                _shipData.ShipLocationEntry.Move = entry.Move;
+                _shipData.ShipLocationEntry.Rotation = entry.Rotation;
+            }
+
             [SetUp]
             public void Setup()
             {
-                _predicter = new ShipLocationPredicter(() => _shipData);
+                _predicter = new ShipLocationPredicter(() => _shipData, SetShipLocation);
                 var on = new ControlState(1, true);
                 var off = new ControlState(0, false);
-                var turningLeft = new[] { off, on, off, off, off, off, off };
+                _turningLeft = new[] { off, on, off, off, off, off, off };
                 _shipData = new ShipData
                 {
                     ShipLocationEntry = new ShipLocationEntry
@@ -161,7 +205,7 @@ namespace AW2.Game.GobUtils
                         Pos = Vector2.Zero,
                         Move = Vector2.Zero,
                         GameTime = TimeSpan.Zero,
-                        ControlStates = turningLeft,
+                        ControlStates = _turningLeft,
                     },
                     TargetElapsedTime = TimeSpan.FromSeconds(1f / 20),
                     ThrustForce = 120000,
@@ -174,7 +218,7 @@ namespace AW2.Game.GobUtils
                     Pos = new Vector2(100, 100),
                     Move = new Vector2(1000, 0),
                     Rotation = 1,
-                    ControlStates = turningLeft,
+                    ControlStates = _turningLeft,
                 };
                 _entry2 = new ShipLocationEntry
                 {
@@ -182,7 +226,7 @@ namespace AW2.Game.GobUtils
                     Pos = new Vector2(200, 100),
                     Move = new Vector2(1000, 0),
                     Rotation = 1.1f,
-                    ControlStates = turningLeft,
+                    ControlStates = _turningLeft,
                 };
                 _entry3 = new ShipLocationEntry
                 {
@@ -190,7 +234,7 @@ namespace AW2.Game.GobUtils
                     Pos = new Vector2(300, 100),
                     Move = new Vector2(1000, 0),
                     Rotation = 1.2f,
-                    ControlStates = turningLeft,
+                    ControlStates = _turningLeft,
                 };
             }
 
@@ -234,6 +278,32 @@ namespace AW2.Game.GobUtils
                 SetLatestShipLocationEntry(_entry2);
                 var entry = GetShipLocationEntry(TimeSpan.FromSeconds(1.2));
                 Assert.AreEqual(_entry3, entry);
+            }
+
+            [Test]
+            public void TestUpdateFromServer()
+            {
+                var serverEntry1 = new ShipLocationEntry
+                {
+                    GameTime = TimeSpan.FromSeconds(1),
+                    Pos = new Vector2(100, 100),
+                    Move = new Vector2(1000, 0),
+                    Rotation = 2,
+                    ControlStates = null,
+                };
+                var resultEntry2 = new ShipLocationEntry
+                {
+                    GameTime = TimeSpan.FromSeconds(1.1),
+                    Pos = new Vector2(200, 100),
+                    Move = new Vector2(1000, 0),
+                    Rotation = 2.1f,
+                    ControlStates = _turningLeft,
+                };
+                SetLatestShipLocationEntry(_entry1);
+                SetLatestShipLocationEntry(_entry2);
+                _predicter.UpdateOldShipLocation(serverEntry1);
+                var entry = GetShipLocationEntry(TimeSpan.FromSeconds(1.1));
+                Assert.AreEqual(resultEntry2, entry);
             }
         }
 #endif
@@ -284,12 +354,14 @@ namespace AW2.Game.GobUtils
         private List<ShipLocationEntry> _oldShipLocations;
 
         private Func<ShipLocationPredicter.ShipData> _getShipData;
+        private Action<ShipLocationEntry> _setShipLocation;
 
         private ShipLocationEntry LatestEntry { get { return _getShipData().ShipLocationEntry; } }
 
-        public ShipLocations(Func<ShipLocationPredicter.ShipData> getShipData)
+        public ShipLocations(Func<ShipLocationPredicter.ShipData> getShipData, Action<ShipLocationEntry> setShipLocation)
         {
             _getShipData = getShipData;
+            _setShipLocation = setShipLocation;
             _oldShipLocations = new List<ShipLocationEntry>();
         }
 
@@ -343,7 +415,10 @@ namespace AW2.Game.GobUtils
             }
             set
             {
-                throw new NotImplementedException();
+                if (index == _oldShipLocations.Count)
+                    _setShipLocation(value);
+                else
+                    _oldShipLocations[index] = value;
             }
         }
 

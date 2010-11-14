@@ -99,7 +99,7 @@ namespace AW2.Game
         /// Maximum gob rotation change that is not interpreted by the draw rotation
         /// smoothing algorithm as a discrete rotation. Measured in radians.
         /// </summary>
-        private const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
+        public const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
 
         /// <summary>
         /// Least int that is known not to have been used as a gob identifier
@@ -1035,6 +1035,7 @@ namespace AW2.Game
                 DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
                 if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
                     DrawRotationOffset = 0;
+
                 if (IsDamageable) DamageLevel = reader.ReadByte() / (float)byte.MaxValue * MaxDamageLevel;
             }
         }

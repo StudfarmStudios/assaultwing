@@ -344,14 +344,6 @@ namespace AW2.Game.Gobs
             if (Weapon2.BoneIndices == null) InitializeWeapon(Weapon2);
 
             UpdateRoll();
-            LocationPredicter.StoreOldShipLocation(new ShipLocationEntry
-            {
-                GameTime = Arena.TotalTime - Game.GameTime.ElapsedGameTime,
-                Pos = Pos,
-                Move = Move,
-                Rotation = Rotation,
-                ControlStates = null, // FIXME
-            });
             base.Update();
 
             // Re-enable temporarily disabled gobs.
@@ -414,8 +406,28 @@ namespace AW2.Game.Gobs
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
+            var oldRotation = Rotation;
+            var oldDrawRotationOffset = DrawRotationOffset;
             base.Deserialize(reader, mode, framesAgo);
             if (Owner.Ship != this) Owner.Ship = this;
+
+            // HACK: superclass Gob deserializes old Pos and Move and calculates them forward;
+            // class Ship must calculate Rotation from old value to current.
+            if (LocationPredicter != null)
+            {
+                LocationPredicter.UpdateOldShipLocation(new ShipLocationEntry
+                {
+                    GameTime = Game.DataEngine.ArenaTotalTime - Game.TargetElapsedTime.Multiply(framesAgo),
+                    Pos = Pos,
+                    Move = Move,
+                    Rotation = Rotation,
+                    ControlStates = null,
+                });
+                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(oldDrawRotationOffset + oldRotation - Rotation);
+                if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > Gob.ROTATION_SMOOTHING_CUTOFF)
+                    DrawRotationOffset = 0;
+            }
+
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
@@ -672,7 +684,7 @@ namespace AW2.Game.Gobs
                 Move = Move,
                 Pos = Pos,
                 Rotation = Rotation,
-                ControlStates = null, // FIXME
+                ControlStates = Owner.Controls.GetStates(),
             });
         }
     }

@@ -78,7 +78,7 @@ namespace AW2.Core
         /// <summary>
         /// Called when the game has determined that game logic needs to be processed.
         /// </summary>
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(AWGameTime gameTime)
         {
             Components.Sort((a, b) => a.UpdateOrder.CompareTo(b.UpdateOrder));
             foreach (var component in Components)

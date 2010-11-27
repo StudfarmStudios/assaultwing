@@ -1,6 +1,7 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{E8EFC5DB-1665-4079-9F4E-BD60AB104630}</ProjectGuid>
+    <ProjectGuid>{6CBD4219-88EE-46F2-B321-141F35B8B4BC}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -8,34 +9,19 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AW2</RootNamespace>
     <AssemblyName>AssaultWingGame</AssemblyName>
-    <XnaFrameworkVersion>v3.1</XnaFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
+    <XnaProfile>HiDef</XnaProfile>
+    <XnaCrossPlatformGroupID>f9146fd4-8f0e-42ea-b25c-75704518d187</XnaCrossPlatformGroupID>
+    <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
-    <ManifestCertificateThumbprint>7E0078CD3D959F197223004F7BE2C3CD313A050B</ManifestCertificateThumbprint>
-    <ManifestKeyFile>AssaultWing_TemporaryKey.pfx</ManifestKeyFile>
-    <GenerateManifests>true</GenerateManifests>
-    <SignManifests>false</SignManifests>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
     <Thumbnail>GameThumbnail.png</Thumbnail>
-    <XnaCrossPlatformGroupID>{15153d80-6b81-4a3d-b3f9-536b30b7a7d0}</XnaCrossPlatformGroupID>
-    <XnaUpgrade>
-    </XnaUpgrade>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <TargetZone>LocalIntranet</TargetZone>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <TargetFrameworkSubset>Full</TargetFrameworkSubset>
-    <SignAssembly>false</SignAssembly>
-    <DelaySign>false</DelaySign>
-    <ExcludedPermissions>
-    </ExcludedPermissions>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
@@ -51,6 +37,7 @@
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>58</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -61,71 +48,73 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <PlatformTarget>x86</PlatformTarget>
-    <DocumentationFile>
-    </DocumentationFile>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug2|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\x86\Debug2\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <DocumentationFile>
-    </DocumentationFile>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <XnaCompressContent>false</XnaCompressContent>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\x86\Release</OutputPath>
-    <DefineConstants>WINDOWS</DefineConstants>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
-    <XnaCompressContent>True</XnaCompressContent>
-    <DebugSymbols>true</DebugSymbols>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <XnaCompressContent>true</XnaCompressContent>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Xna.Framework, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
-    <Reference Include="Microsoft.Xna.Framework.Game, Version=3.1.0.0, Culture=neutral, PublicKeyToken=6d5c3888ef60e27d" />
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Xact, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Xna.Framework.Video, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net">
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssaultWingProgram.cs" />
     <Compile Include="Core\ArenaStartWaiter.cs" />
     <Compile Include="Core\AssaultWing.cs" />
-    <Compile Include="Core\GameComponents\StartupScreen.cs" />
     <Compile Include="Core\GameComponents\IntroEngine.cs" />
     <Compile Include="Core\GameComponents\OverlayDialog.cs" />
+    <Compile Include="Core\GameComponents\StartupScreen.cs" />
     <Compile Include="Core\OverlayDialogs\ArenaOverOverlayDialogData.cs" />
     <Compile Include="Core\OverlayDialogs\CustomOverlayDialogData.cs" />
     <Compile Include="Core\OverlayDialogs\GameOverOverlayDialogData.cs" />
@@ -134,23 +123,15 @@
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
     <Compile Include="Menu\MainMenuComponent.cs" />
+    <Compile Include="Menu\MainMenuItem.cs" />
     <Compile Include="Menu\MainMenuItemCollection.cs" />
     <Compile Include="Menu\MainMenuItemCollections.cs" />
-    <Compile Include="Menu\MainMenuItem.cs" />
     <Compile Include="Menu\MainMenuTextField.cs" />
     <Compile Include="Menu\MenuComponent.cs" />
     <Compile Include="Menu\MenuComponentType.cs" />
     <Compile Include="Menu\MenuContent.cs" />
-    <Compile Include="Menu\MenuEngineImpl.cs">
-      <SubType>Code</SubType>
-      <Name>MenuEngineImpl</Name>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <Name>AssemblyInfo</Name>
-    </Compile>
-    <Compile Include="AssaultWingProgram.cs">
-      <Name>Program</Name>
-    </Compile>
+    <Compile Include="Menu\MenuEngineImpl.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,61 +140,44 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Game.ico">
-      <Name>Game</Name>
-    </Content>
-    <Content Include="GameThumbnail.png">
-    </Content>
+    <Content Include="Game.ico" />
+    <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
       <Visible>False</Visible>
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Xna.Framework.3.1">
+    <BootstrapperPackage Include="Microsoft.Xna.Framework.4.0">
       <Visible>False</Visible>
-      <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
+      <ProductName>Microsoft XNA Framework Redistributable 4.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="AssaultWingGame.exe.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Properties\app.manifest" />
+    <EmbeddedResource Include="UI\GameForm.resx">
+      <DependentUpon>GameForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AssaultWing\AssaultWing.csproj">
-      <Project>{CBFE65DF-0911-46C8-BEBB-C57254648ABC}</Project>
+      <Project>{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}</Project>
       <Name>AssaultWing</Name>
     </ProjectReference>
   </ItemGroup>
@@ -239,22 +203,14 @@
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="UI\GameForm.resx">
-      <DependentUpon>GameForm.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <ProjectExtensions>
-    <VisualStudio>
-    </VisualStudio>
-  </ProjectExtensions>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" Condition="" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
+  <!--
+      To modify your build process, add your task inside one of the targets below and uncomment it. 
+      Other similar extension points exist, see Microsoft.Common.targets.
+      <Target Name="BeforeBuild">
+      </Target>
+      <Target Name="AfterBuild">
+      </Target>
+    -->
 </Project>

@@ -19,8 +19,6 @@ namespace AW2.Graphics
         private int _sourceIndex, _targetIndex;
         private GraphicsDevice _gfx;
         private VertexPositionTexture[] _vertexData;
-        private VertexDeclaration _vertexDeclaration;
-        private DepthStencilBuffer _oldDepthStencilBuffer;
         private Viewport _oldViewport;
         private List<Effect> _effects;
         private Action<ICollection<Effect>> _effectContainerUpdater;
@@ -47,7 +45,6 @@ namespace AW2.Graphics
                 new VertexPositionTexture(new Vector3(1, -1, 0), Vector2.One),
                 new VertexPositionTexture(new Vector3(1, 1, 0), Vector2.UnitX)
             };
-            _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
         }
 
         public void ProcessToScreen(Action render)
@@ -67,44 +64,31 @@ namespace AW2.Graphics
         private void DisplayOnScreen()
         {
             PrepareLastPass(_basicShaders);
-            _basicShaders.Begin();
-            _basicShaders.CurrentTechnique.Passes["PixelAndVertexShaderPass"].Begin();
+            _basicShaders.CurrentTechnique.Passes["PixelAndVertexShaderPass"].Apply();
             _gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
-            _basicShaders.CurrentTechnique.Passes["PixelAndVertexShaderPass"].End();
-            _basicShaders.End();
         }
 
         private void Process()
         {
-            _gfx.VertexDeclaration = _vertexDeclaration;
-            _basicShaders.Begin();
-            _basicShaders.CurrentTechnique.Passes["VertexShaderPass"].Begin();
-
+            _basicShaders.CurrentTechnique.Passes["VertexShaderPass"].Apply();
             for (int effectIndex = 0; effectIndex < _effects.Count; ++effectIndex)
             {
                 var effect = _effects[effectIndex];
-                effect.Begin();
                 foreach (var pass in effect.CurrentTechnique.Passes)
                 {
                     PrepareNextPass(effect);
-                    pass.Begin();
+                    pass.Apply();
                     _gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
-                    pass.End();
                 }
-                effect.End();
             }
-
-            _basicShaders.CurrentTechnique.Passes["VertexShaderPass"].End();
-            _basicShaders.End();
         }
 
         private void PrepareFirstPass()
         {
             _sourceIndex = -1;
             _targetIndex = 0;
-            _oldDepthStencilBuffer = _gfx.DepthStencilBuffer;
             _oldViewport = _gfx.Viewport;
-            _targets[_targetIndex].SetAsRenderTarget(0);
+            _targets[_targetIndex].SetAsRenderTarget();
         }
 
         /// <summary>
@@ -114,7 +98,7 @@ namespace AW2.Graphics
         {
             _sourceIndex = _targetIndex;
             _targetIndex = (_targetIndex + 1) % _targets.Length;
-            _targets[_targetIndex].SetAsRenderTarget(0);
+            _targets[_targetIndex].SetAsRenderTarget();
             PrepareEffect(effect);
         }
 
@@ -122,13 +106,10 @@ namespace AW2.Graphics
         {
             _sourceIndex = _targetIndex;
             _targetIndex = (_targetIndex + 1) % _targets.Length;
-            _gfx.DepthStencilBuffer = _oldDepthStencilBuffer;
-            _oldDepthStencilBuffer = null;
-            _gfx.SetRenderTarget(0, null);
-            _gfx.RenderState.DepthBufferEnable = false;
-            _gfx.RenderState.StencilEnable = false;
-            _gfx.RenderState.AlphaTestEnable = false;
-            _gfx.RenderState.AlphaBlendEnable = false;
+            _gfx.SetRenderTarget(null);
+            _gfx.DepthStencilState.DepthBufferEnable = false;
+            _gfx.DepthStencilState.StencilEnable = false;
+            _gfx.BlendState = BlendState.Opaque;
             _gfx.Viewport = _oldViewport;
             _gfx.Clear(Color.Black);
             PrepareEffect(effect);
@@ -155,8 +136,6 @@ namespace AW2.Graphics
         {
             for (int i = 0; i < _targets.Length; ++i)
                 _targets[i].Dispose();
-            _vertexDeclaration.Dispose();
-            _vertexDeclaration = null;
         }
 
         #endregion

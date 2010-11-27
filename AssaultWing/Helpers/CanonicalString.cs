@@ -18,6 +18,7 @@ namespace AW2.Helpers
     /// integer value over a bandwidth-limited stream instead of an 
     /// arbitrarily long string.
     [SerializedType(typeof(string))]
+    [System.Diagnostics.DebuggerDisplay("{Value}")]
     public struct CanonicalString
     {
         private static List<string> g_canonicalForms;

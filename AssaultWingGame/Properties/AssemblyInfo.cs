@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -9,19 +9,20 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Assault Wing")]
 [assembly: AssemblyDescription("Fast-paced multiplayer online shoot'em up")]
 [assembly: AssemblyCompany("Studfarm Studios")]
-
-[assembly: AssemblyCopyright("Copyright ©  2009")]
+[assembly: AssemblyCopyright("Copyright © 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
+// COM, set the ComVisible attribute to true on that type. Only Windows
+// assemblies support COM.
 [assembly: ComVisible(false)]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("130358a1-13b4-4fa5-b7ff-7da30e96bbda")]
-
+// On Windows, the following GUID is for the ID of the typelib if this
+// project is exposed to COM. On other platforms, it unique identifies the
+// title storage container when deploying this assembly to the device.
+[assembly: Guid("3496aa49-1ea2-40c8-9afb-d63947c68056")]
 
 // Version information for an assembly consists of the following four values:
 //

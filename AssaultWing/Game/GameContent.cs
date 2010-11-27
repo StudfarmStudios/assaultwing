@@ -18,7 +18,7 @@ namespace AW2.Game
 
         public void LoadContent()
         {
-            WallSilhouetteEffect = new BasicEffect(_game.GraphicsDeviceService.GraphicsDevice, null);
+            WallSilhouetteEffect = new BasicEffect(_game.GraphicsDeviceService.GraphicsDevice);
             WallSilhouetteEffect.World = Matrix.Identity;
             WallSilhouetteEffect.VertexColorEnabled = false;
             WallSilhouetteEffect.LightingEnabled = false;

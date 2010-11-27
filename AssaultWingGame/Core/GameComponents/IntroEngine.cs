@@ -70,7 +70,7 @@ namespace AW2.Core.GameComponents
             var videoFrame = _introVideo.GetTexture();
             if (videoFrame != null)
             {
-                _spriteBatch.Begin();
+                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque);
                 int width = videoFrame.Width;
                 int height = videoFrame.Height;
                 var titleSafeArea = Game.GraphicsDeviceService.GraphicsDevice.Viewport.TitleSafeArea;

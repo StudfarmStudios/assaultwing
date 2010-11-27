@@ -31,10 +31,10 @@ namespace AW2.Core
         private PresentationParameters _parameters;
 
         // IGraphicsDeviceService events.
-        public event EventHandler DeviceCreated;
-        public event EventHandler DeviceDisposing;
-        public event EventHandler DeviceReset;
-        public event EventHandler DeviceResetting;
+        public event EventHandler<EventArgs> DeviceCreated;
+        public event EventHandler<EventArgs> DeviceDisposing;
+        public event EventHandler<EventArgs> DeviceReset;
+        public event EventHandler<EventArgs> DeviceResetting;
 
         public GraphicsDevice GraphicsDevice { get; private set; }
 
@@ -72,11 +72,13 @@ namespace AW2.Core
                 BackBufferWidth = screenBounds.Width,
                 BackBufferHeight = screenBounds.Height,
                 BackBufferFormat = SurfaceFormat.Color,
-                EnableAutoDepthStencil = true,
-                AutoDepthStencilFormat = DepthFormat.Depth24,
+                DepthStencilFormat = DepthFormat.Depth24,
+                DeviceWindowHandle = windowHandle,
+                IsFullScreen = false,
+                PresentationInterval = PresentInterval.Immediate,
             };
             if (GraphicsDevice != null) GraphicsDevice.Dispose();
-            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, DeviceType.Hardware, windowHandle, _parameters);
+            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.HiDef, _parameters);
         }
     }
 }

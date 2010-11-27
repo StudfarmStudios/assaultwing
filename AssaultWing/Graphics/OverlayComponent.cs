@@ -101,7 +101,7 @@ namespace AW2.Graphics
             newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
             newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
             gfx.Viewport = newViewport;
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             DrawContent(spriteBatch);
             spriteBatch.End();
             gfx.Viewport = oldViewport;

@@ -326,8 +326,8 @@ namespace AW2.Game.Gobs
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
 
                 var texture = emitter.Textures[particle.TextureIndex];
-                spriteBatch.Draw(texture, screenCenter, null,
-                    new Color(new Vector4(pengColor.ToVector3(), particle.Alpha)), drawRotation,
+                var color = Color.Multiply(pengColor, particle.Alpha);
+                spriteBatch.Draw(texture, screenCenter, null, color, drawRotation,
                     new Vector2(texture.Width, texture.Height) / 2, particle.Scale * scale,
                     SpriteEffects.None, layerDepth);
             }

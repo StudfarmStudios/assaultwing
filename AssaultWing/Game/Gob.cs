@@ -860,13 +860,13 @@ namespace AW2.Game
                 {
                     // For now we assume only one ModelMeshPart. (Laziness.)
                     if (mesh.Effects.Count > 1)
-                        throw new Exception("Error: Several effects on a gob with alpha effect. Programmer must use arrays for saving BasicEffect state.");
+                        throw new ApplicationException("Error: Several effects on a gob with alpha effect. Programmer must use arrays for saving BasicEffect state.");
                     var be = (BasicEffect)mesh.Effects[0];
                     oldAlpha = be.Alpha;
                     be.Alpha = _alpha;
 
                     // Modify render state.
-                    Game.GraphicsDeviceService.GraphicsDevice.RenderState.AlphaBlendEnable = true;
+                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.AlphaBlend;
                 }
 
                 foreach (BasicEffect be in mesh.Effects)
@@ -886,7 +886,7 @@ namespace AW2.Game
                     be.Alpha = oldAlpha;
 
                     // Restore render state.
-                    Game.GraphicsDeviceService.GraphicsDevice.RenderState.AlphaBlendEnable = false;
+                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.Opaque;
                 }
 
                 // Blend towards white if required.
@@ -899,9 +899,8 @@ namespace AW2.Game
                     var be = (BasicEffect)mesh.Effects[0];
 
                     // Modify render state.
-                    var renderState = Game.GraphicsDeviceService.GraphicsDevice.RenderState;
-                    renderState.AlphaBlendEnable = true;
-                    renderState.DepthBufferEnable = false;
+                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                    Game.GraphicsDeviceService.GraphicsDevice.DepthStencilState = DepthStencilState.None;
 
                     // Save effect state.
                     bool oldLightingEnabled = be.LightingEnabled;
@@ -927,8 +926,8 @@ namespace AW2.Game
                     be.Alpha = oldAlpha;
 
                     // Restore render state.
-                    renderState.AlphaBlendEnable = false;
-                    renderState.DepthBufferEnable = true;
+                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.Opaque;
+                    Game.GraphicsDeviceService.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                 }
             }
         }

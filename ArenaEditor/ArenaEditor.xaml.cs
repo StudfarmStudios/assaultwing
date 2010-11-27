@@ -90,7 +90,7 @@ namespace AW2
                 CheckFileExists = true,
                 DefaultExt = ".xml",
                 Filter = "Assault Wing Arenas (*.xml)|*.xml|All Files (*.*)|*.*",
-                InitialDirectory = ".",
+                InitialDirectory = Environment.CurrentDirectory,
                 Title = "Open an Existing Arena for Editing",
             };
             bool? success = fileDialog.ShowDialog();
@@ -134,7 +134,7 @@ namespace AW2
             {
                 DefaultExt = ".xml",
                 Filter = "Assault Wing Arenas (*.xml)|*.xml|All Files (*.*)|*.*",
-                InitialDirectory = ".",
+                InitialDirectory = Environment.CurrentDirectory,
                 Title = "Save the Arena to File",
                 FileName = arena.Name + ".xml",
             };

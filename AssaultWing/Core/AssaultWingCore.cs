@@ -73,7 +73,7 @@ namespace AW2
         /// <summary>
         /// The game time on this frame.
         /// </summary>
-        public GameTime GameTime { get; private set; }
+        public AWGameTime GameTime { get; private set; }
 
         /// <summary>
         /// Are overlay dialogs allowed.
@@ -129,7 +129,7 @@ namespace AW2
             InitializeGraphics();
 
             NetworkMode = NetworkMode.Standalone;
-            GameTime = new GameTime();
+            GameTime = new AWGameTime();
 
             InitializeComponents();
         }
@@ -197,12 +197,13 @@ namespace AW2
                     {
                         PerformanceCounterCategory.Delete(categoryName);
                     }
+                    catch (UnauthorizedAccessException)
+                    {
+                        Log.Write("Note: Performance monitoring not available due to lack of user rights. Try 'Run as administrator'");
+                    }
                     catch (System.ComponentModel.Win32Exception e)
                     {
-                        if (e.NativeErrorCode == 5)
-                            Log.Write("Note: Performance monitoring not available due to lack of user rights. Try 'Run as administrator'");
-                        else
-                            Log.Write("Note: Performance monitoring not available, native error " + e);
+                        Log.Write("Note: Performance monitoring not available, native error " + e);
                     }
             }
 
@@ -403,7 +404,7 @@ namespace AW2
             base.EndRun();
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(AWGameTime gameTime)
         {
             GameTime = gameTime;
             if (_arenaStartTime.HasValue && _arenaStartTime.Value <= GameTime.TotalRealTime)

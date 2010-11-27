@@ -28,6 +28,7 @@ namespace AW2.UI
         private AssaultWing _game;
         private AWGameRunner _runner;
         private GraphicsDeviceService _graphicsDeviceService;
+        private string[] _commandLineArgs;
         
         private bool _isFullScreen;
         private FormParameters _previousWindowedModeParameters;
@@ -41,10 +42,11 @@ namespace AW2.UI
 
         public GameForm(string[] args)
         {
+            _commandLineArgs = args;
             InitializeComponent();
             InitializeGameForm();
-            InitializeGraphicsDeviceService();
-            InitializeGame(args);
+            InitializeGraphicsDeviceService(Handle);
+            InitializeGame(_commandLineArgs);
             InitializeGameView();
             InitializeRunner();
         }
@@ -107,9 +109,9 @@ namespace AW2.UI
             AW2.Helpers.Log.Written += AddToLogView;
         }
 
-        private void InitializeGraphicsDeviceService()
+        private void InitializeGraphicsDeviceService(IntPtr windowHandle)
         {
-            _graphicsDeviceService = new GraphicsDeviceService(Handle);
+            _graphicsDeviceService = new GraphicsDeviceService(windowHandle);
         }
 
         private void InitializeGame(string[] args)

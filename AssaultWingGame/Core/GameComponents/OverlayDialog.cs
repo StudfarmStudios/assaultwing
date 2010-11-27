@@ -66,7 +66,7 @@ namespace AW2.Core.GameComponents
             gfx.Viewport = newViewport;
 
             // Draw contents.
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _spriteBatch.Draw(_dialogTexture, Vector2.Zero, Color.White);
             _spriteBatch.End();
             _dialogData.Draw(_spriteBatch);

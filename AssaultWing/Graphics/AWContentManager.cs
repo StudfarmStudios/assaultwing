@@ -23,7 +23,7 @@ namespace AW2.Graphics
         /// Creates a new content manager for Assault Wing.
         /// </summary>
         public AWContentManager(IServiceProvider serviceProvider)
-            : base(serviceProvider)
+            : base(serviceProvider, ".\\")
         { }
 
         public bool Exists<T>(string assetName)

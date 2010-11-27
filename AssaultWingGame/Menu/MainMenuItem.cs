@@ -57,7 +57,7 @@ namespace AW2.Menu
         {
             var highlightPos = GetHighlightPos(origin);
             var cursorPos = highlightPos + cursorDelta;
-            spriteBatch.Draw(_menuEngine.MenuContent.MainCursor, cursorPos, new Color(1, 1, 1, _menuEngine.GetCursorFade()));
+            spriteBatch.Draw(_menuEngine.MenuContent.MainCursor, cursorPos, Color.Multiply(Color.White, _menuEngine.GetCursorFade()));
             spriteBatch.Draw(_menuEngine.MenuContent.MainHighlight, highlightPos, Color.White);
         }
 

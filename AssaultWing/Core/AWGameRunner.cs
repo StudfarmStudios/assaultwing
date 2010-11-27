@@ -10,14 +10,14 @@ namespace AW2.Core
     {
         private AWGame _game;
         private Action _draw;
-        private Action<GameTime> _update;
+        private Action<AWGameTime> _update;
         private bool _exiting;
         private bool _exited;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
 
         private bool BackgroundLoopFinished { get { return _exited || _gameUpdateAndDrawLoopAsyncResult == null; } }
 
-        public AWGameRunner(AWGame game, Action draw, Action<GameTime> update)
+        public AWGameRunner(AWGame game, Action draw, Action<AWGameTime> update)
         {
             _game = game;
             _draw = draw;
@@ -62,7 +62,7 @@ namespace AW2.Core
                 {
                     var updateInterval = _game.TargetElapsedTime;
                     var nextNextUpdate = nextUpdate + updateInterval;
-                    var gameTime = new GameTime(timer.Elapsed, now - lastUpdate, totalGameTime, updateInterval);
+                    var gameTime = new AWGameTime(totalGameTime, updateInterval, timer.Elapsed);
                     _update(gameTime);
                     if (now < nextNextUpdate) _draw();
                     nextUpdate = nextNextUpdate;

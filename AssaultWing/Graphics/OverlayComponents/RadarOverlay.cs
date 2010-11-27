@@ -14,7 +14,7 @@ namespace AW2.Graphics.OverlayComponents
     /// </summary>
     public class RadarOverlay : OverlayComponent
     {
-        private static readonly Color ARENA_RADAR_SILHOUETTE_COLOR = new Color(190, 190, 190, 85);
+        private static readonly Color ARENA_RADAR_SILHOUETTE_COLOR = Color.FromNonPremultiplied(190, 190, 190, 85);
         private static readonly Vector2 RADAR_DISPLAY_TOP_LEFT = new Vector2(7, 7);
         private Player _player;
         private Texture2D _radarDisplayTexture;

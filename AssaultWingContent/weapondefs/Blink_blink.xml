@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.Blink, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  
+  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+	<pictureName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_devicepicture_blink</pictureName>
+	<titlePictureName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_devicename_blink</titlePictureName>
+	<infoText type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Blink makes your ship go into another
+phase and pushes you through an 
+extra-dimensional conduit. As a 
+safety this device wont allow you to
+blink inside a wall</infoText>
+	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</reloadSpeed>
+	<energyUsage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</energyUsage>
+	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
+    <iconEquipName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_mod_blink</iconEquipName>
+  </deviceInfo>
+  
+  <typeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">blink</typeName>
+  <fireSound type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Blink</fireSound>
+  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Once</fireSoundType>
+  <blinkMoveSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1200</blinkMoveSpeed>
+  <blinkArea type="AW2.Helpers.Geometric.Circle, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <center type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
+      <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</X>
+      <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
+    </center>
+    <radius type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</radius>
+    <boundingBox type="AW2.Helpers.Geometric.Rectangle, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <min type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
+        <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">400</X>
+        <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-100</Y>
+      </min>
+      <max type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
+        <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">600</X>
+        <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</Y>
+      </max>
+    </boundingBox>
+  </blinkArea>
+  <iconName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_mod_blink</iconName>
+  <loadTime type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</loadTime>
+  <fireCharge type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</fireCharge>
+  <fireChargePerSecond type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</fireChargePerSecond>
+  <shotCount type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</shotCount>
+  <shotSpacing type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</shotSpacing>
+</ShipDeviceType>

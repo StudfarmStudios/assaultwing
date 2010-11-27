@@ -150,7 +150,7 @@ namespace AW2.Game.Gobs
             // Take a copy of the effect so that we won't mess 
             // with the wall model template in the future.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var effectCopy = (BasicEffect)effect.Clone(gfx);
+            var effectCopy = (BasicEffect)effect.Clone();
 
             Set3DModel(vertexData, indexData, effectCopy.Texture, effectCopy);
         }

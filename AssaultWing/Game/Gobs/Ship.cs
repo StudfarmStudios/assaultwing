@@ -79,8 +79,6 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _weapon2ChargeSpeed;
 
-        private bool _isActivated;
-
         #endregion Ship fields related to weapons
 
         #region Ship fields related to rolling
@@ -326,7 +324,6 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _isActivated = true;
             _thrusterSound = Game.SoundEngine.CreateSound(SHIP_THRUST_SOUND);
             SwitchEngineFlashAndBang(false);
             _exhaustAmountUpdated = false;
@@ -513,7 +510,7 @@ namespace AW2.Game.Gobs
             {
                 var playerNameSize = playerNameFont.MeasureString(Owner.Name);
                 var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
-                spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos, new Color(Owner.PlayerColor, 0.8f));
+                spriteBatch.DrawString(playerNameFont, Owner.Name, playerNamePos, Color.Multiply(Owner.PlayerColor, 0.8f));
             }
         }
 

@@ -47,11 +47,11 @@ namespace AW2.Helpers.Collections
 
         /// <summary>
         /// Prunes old elements off the queue.
-        /// Elements older than <paramref name="timeout"/> are removed from the queue
+        /// Elements satisfying <paramref name="condition"/> are removed from the queue
         /// and passed to <paramref name="action"/> if it is not <c>null</c>.
         /// </summary>
+        /// <param name="condition">Condition for purging.</param>
         /// <param name="action">Action to perform on purged elements, or <c>null</c>.</param>
-        /// <param name="timeout">Elements older than this are purged.</param>
-        void Prune(TimeSpan timeout, Action<T> action);
+        void Prune(Predicate<T> condition, Action<T> action);
     }
 }

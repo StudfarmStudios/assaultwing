@@ -59,7 +59,7 @@ namespace AW2.Graphics.OverlayComponents
 
         private void DrawHealthBar(SpriteBatch spriteBatch, float relativeHealth, float alpha)
         {
-            var color = new Color(1f, 1f, 1f, alpha);
+            var color = Color.Multiply(Color.White, alpha);
             int width = (int)Math.Ceiling(relativeHealth * _barFillTexture.Width);
             var healthBarRect = new Rectangle(0, 0, width, _barFillTexture.Height);
             spriteBatch.Draw(_barBackgroundTexture, Vector2.Zero, color);
@@ -68,7 +68,7 @@ namespace AW2.Graphics.OverlayComponents
 
         private Color DrawHealthPercentage(SpriteBatch spriteBatch, float relativeHealth, float alpha)
         {
-            var halfColor = new Color(1f, 1f, 1f, alpha * 0.5f);
+            var halfColor = Color.Multiply(Color.White, alpha * 0.5f);
             var healthText = ((int)Math.Ceiling(relativeHealth * 100)).ToString() + "%";
             var textSize = _healthFont.MeasureString(healthText);
             var textPos = new Vector2((int)((Dimensions.X - textSize.X) / 2), _barBackgroundTexture.Height);

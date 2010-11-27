@@ -95,7 +95,8 @@ namespace AW2.Game.Gobs
             Vector2 iconPos = backgroundPos + new Vector2(-origin.X + 6, -_icon.Height / 2 - 1) * finalScale;
             Vector2 textPos = backgroundPos + new Vector2(_icon.Width + 1, 0) / 2 * finalScale;
             Vector2 textOrigin = _messageFont.MeasureString(Message) / 2;
-            Color drawColor = new Color(DrawColor, _alphaCurve.Evaluate(timePassed));
+            var drawColor = DrawColor;
+            drawColor.A = (byte)(byte.MaxValue * _alphaCurve.Evaluate(timePassed));
             if (timePassed > _scaleCurve.Keys.Last().Position)
             {
                 textPos = textPos.Round();

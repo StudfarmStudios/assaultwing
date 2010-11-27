@@ -43,6 +43,8 @@ namespace AW2.Graphics
     {
         private DrawModeType2D _type;
 
+        public DrawModeType2D Type { get { return _type; } }
+
         /// <summary>
         /// Is there any 2D graphics.
         /// </summary>
@@ -59,25 +61,22 @@ namespace AW2.Graphics
         /// <param name="spriteBatch">The sprite batch whose <c>Begin</c> to call.</param>
         public void BeginDraw(AssaultWingCore game, SpriteBatch spriteBatch)
         {
-            var renderState = game.GraphicsDeviceService.GraphicsDevice.RenderState;
             switch (_type)
             {
                 case DrawModeType2D.None:
                     // We're not going to draw anything, so we don't need to Begin the sprite batch.
                     break;
                 case DrawModeType2D.Transparent:
-                    spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.BackToFront, SaveStateMode.None);
+                    spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
                     break;
                 case DrawModeType2D.Additive:
-                    spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.BackToFront, SaveStateMode.None);
+                    spriteBatch.Begin(SpriteSortMode.BackToFront, GraphicsEngineImpl.AdditiveBlendPremultipliedAlpha);
                     break;
                 case DrawModeType2D.Subtractive:
                     // Sprite sorting must be disabled in order to get immediate mode
                     // which in turn is needed so that our changes to RenderState have any effect.
-                    spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-                    renderState.BlendFunction = BlendFunction.ReverseSubtract;
-                    renderState.DestinationBlend = Blend.One;
-                    renderState.SourceBlend = Blend.SourceAlpha;
+                    // NOTE: This was the case in XNA 3.1, is it valid anymore in XNA 4.0?
+                    spriteBatch.Begin(SpriteSortMode.Immediate, GraphicsEngineImpl.SubtractiveBlend);
                     break;
                 default:
                     throw new Exception("DrawMode2D: Unknown type of draw mode, " + _type);
@@ -102,7 +101,7 @@ namespace AW2.Graphics
                     break;
                 case DrawModeType2D.Subtractive:
                     spriteBatch.End();
-                    game.GraphicsDeviceService.GraphicsDevice.RenderState.BlendFunction = BlendFunction.Add;
+                    game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.AlphaBlend;
                     break;
                 default:
                     throw new Exception("DrawMode2D: Unknown type of draw mode, " + _type);

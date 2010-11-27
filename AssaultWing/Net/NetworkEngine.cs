@@ -409,15 +409,17 @@ namespace AW2.Net
             Type lastMessageType = null; // to avoid flooding log messages
             Connection lastConnection = null;
             foreach (var connection in AllConnections)
-                connection.Messages.Prune(TimeSpan.FromSeconds(30), message =>
-                {
-                    if (lastMessageType != message.GetType() || lastConnection != connection)
+                connection.Messages.Prune(
+                    message => message.CreationTime < Game.GameTime.TotalRealTime - TimeSpan.FromSeconds(30),
+                    message =>
                     {
-                        lastMessageType = message.GetType();
-                        lastConnection = connection;
-                        Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
-                    }
-                });
+                        if (lastMessageType != message.GetType() || lastConnection != connection)
+                        {
+                            lastMessageType = message.GetType();
+                            lastConnection = connection;
+                            Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
+                        }
+                    });
 #endif
         }
 

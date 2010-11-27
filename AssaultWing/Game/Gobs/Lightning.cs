@@ -64,7 +64,7 @@ namespace AW2.Game.Gobs
     [LimitedSerialization]
     public class Lightning : Gob
     {
-        class Segment
+        private class Segment
         {
             public Vector2 StartPoint { get; private set; }
             public Vector2 EndPoint { get; private set; }
@@ -77,51 +77,50 @@ namespace AW2.Game.Gobs
             }
         }
 
-        List<Segment> _segments;
-        Texture2D _texture;
-        VertexDeclaration _vertexDeclaration;
-        static BasicEffect g_effect;
-        VertexPositionTexture[] _vertexData;
+        private List<Segment> _segments;
+        private Texture2D _texture;
+        private static BasicEffect g_effect;
+        private VertexPositionTexture[] _vertexData;
 
-        bool _damageDealt;
+        private bool _damageDealt;
 
         /// <summary>
         /// Amount of damage to inflict on impact with a damageable gob.
         /// </summary>
         [TypeParameter]
-        float impactDamage;
+        private float impactDamage;
 
         /// <summary>
         /// Wildness of the lightning. 0 gives a straight line,
         /// 1 gives a very chaotic mess. 0.4 is a decent value.
         /// </summary>
         [TypeParameter]
-        float wildness;
+        private float wildness;
 
         /// <summary>
         /// Maximum length of each lightning segment in meters.
         /// </summary>
         [TypeParameter]
-        float fineness;
+        private float fineness;
 
         /// <summary>
         /// Thickness multiplier of the lightning. 1 makes the lightning
         /// as wide as its texture.
         /// </summary>
         [TypeParameter]
-        float thickness;
+        private float thickness;
 
         /// <summary>
         /// Name of the texture of the lightning. The name indexes the texture database in GraphicsEngine.
         /// </summary>
         [TypeParameter]
-        CanonicalString textureName;
+        private CanonicalString textureName;
 
         /// <summary>
         /// Amount of lighting alpha as a function of time from creation,
         /// in seconds of game time.
         [TypeParameter]
-        Curve alphaCurve;
+        private Curve alphaCurve;
 
         public GobProxy Shooter { get; set; }
         public int ShooterBoneIndex { get; set; }
@@ -132,9 +131,10 @@ namespace AW2.Game.Gobs
             get { return base.TextureNames.Concat(new CanonicalString[] { textureName }); }
         }
 
+        /// <summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Lightning()
-            : base()
         {
             impactDamage = 200;
             wildness = 0.4f;
@@ -149,7 +149,6 @@ namespace AW2.Game.Gobs
             alphaCurve.PostLoop = CurveLoopType.Constant;
         }
 
-        /// <param name="typeName">The type of the lightning.</param>
         public Lightning(CanonicalString typeName)
             : base(typeName)
         {
@@ -164,8 +163,7 @@ namespace AW2.Game.Gobs
             base.LoadContent();
             _texture = Game.Content.Load<Texture2D>(textureName);
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
-            g_effect = g_effect ?? new BasicEffect(gfx, null);
+            g_effect = g_effect ?? new BasicEffect(gfx);
             g_effect.World = Matrix.Identity;
             g_effect.Texture = _texture;
             g_effect.TextureEnabled = true;
@@ -202,21 +200,15 @@ namespace AW2.Game.Gobs
         public override void Draw(Matrix view, Matrix projection)
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            gfx.VertexDeclaration = _vertexDeclaration;
-            gfx.RenderState.AlphaBlendEnable = true;
-            gfx.RenderState.SourceBlend = Blend.SourceAlpha;
-            gfx.RenderState.DestinationBlend = Blend.One;
+            gfx.BlendState = AW2.Graphics.GraphicsEngineImpl.AdditiveBlendPremultipliedAlpha;
             g_effect.Projection = projection;
             g_effect.View = view;
             g_effect.Alpha = Alpha;
-            g_effect.Begin();
-            foreach (EffectPass pass in g_effect.CurrentTechnique.Passes)
+            foreach (var pass in g_effect.CurrentTechnique.Passes)
             {
-                pass.Begin();
+                pass.Apply();
                 gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, _vertexData.Length - 2);
-                pass.End();
             }
-            g_effect.End();
         }
 
         #endregion Methods related to gobs' functionality in the game world

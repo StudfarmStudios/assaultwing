@@ -48,8 +48,8 @@ namespace AW2.Graphics.OverlayComponents
                 float alpha = g_messageFadeoutCurve.Evaluate(_player.Messages[messageI].GameTime.SecondsAgoGameTime());
                 if (alpha == 0) continue;
                 messagePos = new Vector2((Dimensions.X - _chatBoxFont.MeasureString(_player.Messages[messageI].Text).X) / 2, messagePos.Y);
-                _player.Messages[messageI].TextColor.A = (byte)(byte.MaxValue * alpha);
-                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Text, messagePos, _player.Messages[messageI].TextColor);
+                var color = Color.Multiply(_player.Messages[messageI].TextColor, alpha);
+                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Text, messagePos, color);
             }
         }
 

@@ -476,7 +476,7 @@ namespace AW2.Helpers.Serialization
             settings.IgnoreProcessingInstructions = true;
             settings.IgnoreWhitespace = true;
             settings.CloseInput = true;
-            settings.ProhibitDtd = false;
+            settings.DtdProcessing = DtdProcessing.Prohibit;
             return XmlReader.Create(stream, settings);
         }
 

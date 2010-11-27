@@ -4,7 +4,7 @@ using NUnit.Framework;
 #endif
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using IndexPair = System.Collections.Generic.KeyValuePair<Microsoft.Xna.Framework.Vector3, Microsoft.Xna.Framework.Vector3>;
@@ -117,7 +117,7 @@ namespace AW2.Helpers
             {
                 if (debugEffect == null)
                 {
-                    debugEffect = new BasicEffect(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, null);
+                    debugEffect = new BasicEffect(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice);
                     debugEffect.TextureEnabled = false;
                     debugEffect.VertexColorEnabled = true;
                     debugEffect.LightingEnabled = false;
@@ -159,14 +159,24 @@ namespace AW2.Helpers
         {
             foreach (var part in mesh.MeshParts)
             {
+                if (part.VertexBuffer.VertexDeclaration.VertexStride != VertexPositionNormalTexture.VertexDeclaration.VertexStride)
+                    throw new InvalidOperationException("Model has an unsupported VertexDeclaration " + part.VertexBuffer.VertexDeclaration.Name);
+
                 int vertexCount = part.NumVertices;
-                int indexCount = part.PrimitiveCount;
                 var vertexData = new VertexPositionNormalTexture[vertexCount];
-                var indexData = new short[indexCount * 3];
-                mesh.VertexBuffer.GetData(vertexData);
-                mesh.IndexBuffer.GetData(indexData);
-                Matrix worldMatrix = Matrix.Identity;
-                for (ModelBone bone = mesh.ParentBone; bone != null; bone = bone.Parent)
+                var vertexStride = VertexPositionNormalTexture.VertexDeclaration.VertexStride;
+                part.VertexBuffer.GetData(part.VertexOffset * vertexStride, vertexData, 0, vertexCount, vertexStride);
+
+                int indexCount = part.PrimitiveCount * 3;
+                var indexData = new short[indexCount];
+                var indexStride = part.IndexBuffer.IndexElementSize == IndexElementSize.SixteenBits ? 2
+                    : part.IndexBuffer.IndexElementSize == IndexElementSize.ThirtyTwoBits ? 4
+                    : -1;
+                if (indexStride == -1) throw new InvalidOperationException("Model has unexpected IndexElementSize " + part.IndexBuffer.IndexElementSize);
+                part.IndexBuffer.GetData(part.StartIndex * indexStride, indexData, 0, indexCount);
+
+                var worldMatrix = Matrix.Identity;
+                for (var bone = mesh.ParentBone; bone != null; bone = bone.Parent)
                     worldMatrix *= bone.Transform;
                 for (int i = 0; i < vertexData.Length; ++i)
                 {
@@ -497,70 +507,6 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Reverses the winding of each triangle in a 3D model by editing vertex order of triangles.
-        /// </summary>
-        /// <param name="model">The 3D model.</param>
-        public static void ReverseTriangleWinding(Model model)
-        {
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                IndexBuffer indexBuffer = mesh.IndexBuffer;
-                if (indexBuffer.IndexElementSize != IndexElementSize.SixteenBits)
-                    throw new Exception("Index buffer is not 16 bit -- not supported");
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                {
-                    int vertexCount = meshPart.NumVertices;
-                    short[] indexData = new short[vertexCount];
-                    indexBuffer.GetData(meshPart.StartIndex * sizeof(short), indexData, 0, vertexCount);
-                    for (int i = 0; i + 2 < indexData.Length; i += 3)
-                    {
-                        short swap = indexData[i + 1];
-                        indexData[i + 1] = indexData[i + 2];
-                        indexData[i + 2] = swap;
-                    }
-                    indexBuffer.SetData(meshPart.StartIndex * sizeof(short), indexData, 0, vertexCount);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Transforms the vertices and normals of a 3D model.
-        /// </summary>
-        /// Use this method to translate a 3D model from one coordinate system to another.
-        /// <param name="model">The 3D model to modify.</param>
-        /// <param name="vertexTransform">The transformation to apply to the model's vertices.</param>
-        /// <param name="normalTransform">The transformation to apply to the model's normals.</param>
-        public static void TransformModel(Model model, Matrix vertexTransform, Matrix normalTransform)
-        {
-            Matrix[] modelPartTransforms = new Matrix[model.Bones.Count];
-            model.CopyAbsoluteBoneTransformsTo(modelPartTransforms);
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                Matrix meshTransform = modelPartTransforms[mesh.ParentBone.Index];
-                Matrix totalVertexTransform = Matrix.Invert(meshTransform) * vertexTransform * meshTransform;
-                Vector3 scale;
-                Quaternion rotation;
-                Vector3 translation;
-                meshTransform.Decompose(out scale, out rotation, out translation);
-                Matrix meshTransformNoTranslate = Matrix.CreateScale(scale) * Matrix.CreateFromQuaternion(rotation);
-                Matrix totalNormalTransform = Matrix.Invert(meshTransformNoTranslate) * normalTransform * meshTransformNoTranslate;
-                VertexBuffer vertexBuffer = mesh.VertexBuffer;
-                foreach (ModelMeshPart meshPart in mesh.MeshParts)
-                {
-                    int vertexCount = meshPart.NumVertices;
-                    VertexPositionTextureNormal[] vertexData = new VertexPositionTextureNormal[vertexCount];
-                    vertexBuffer.GetData(meshPart.StreamOffset, vertexData, 0, vertexCount, meshPart.VertexStride);
-                    for (int i = 0; i < vertexData.Length; ++i)
-                    {
-                        vertexData[i].Position = Vector3.Transform(vertexData[i].Position, totalVertexTransform);
-                        vertexData[i].Normal = Vector3.Transform(vertexData[i].Normal, totalNormalTransform);
-                    }
-                    vertexBuffer.SetData(meshPart.StreamOffset, vertexData, 0, vertexCount, meshPart.VertexStride);
-                }
-            }
-        }
-
-        /// <summary>
         /// Fines the triangles of a 3D model. Triangles are split to smaller ones
         /// until they don't have edges longer than the given maximum dimension.
         /// Z coordinates don't affect the fining.
@@ -676,15 +622,11 @@ namespace AW2.Helpers
             DebugEffect.View = view;
             DebugEffect.Projection = projection;
             DebugEffect.World = world;
-            gfx.VertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements);
-            DebugEffect.Begin(SaveStateMode.SaveState);
             foreach (var pass in DebugEffect.CurrentTechnique.Passes)
             {
-                pass.Begin();
+                pass.Apply();
                 gfx.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.LineStrip, vertexData, 0, vertexData.Length - 1);
-                pass.End();
             }
-            DebugEffect.End();
         }
 
         /// <summary>

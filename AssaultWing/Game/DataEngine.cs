@@ -417,19 +417,14 @@ namespace AW2.Game
 
             // Draw arena walls in one color in a radar-sized texture.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var gfxCaps = gfx.GraphicsDeviceCapabilities;
             int targetWidth = (int)_arenaDimensionsOnRadar.X;
             int targetHeight = (int)_arenaDimensionsOnRadar.Y;
-            var gfxAdapter = gfx.CreationParameters.Adapter;
-            if (!gfxAdapter.CheckDeviceFormat(DeviceType.Hardware, gfx.DisplayMode.Format,
-                TextureUsage.None, QueryUsages.None, ResourceType.RenderTarget, SurfaceFormat.Color))
-                throw new Exception("Cannot create render target of type SurfaceFormat.Color");
-            var maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight,
-                1, SurfaceFormat.Color);
-
-            // Set up graphics device.
-            var oldDepthStencilBuffer = gfx.DepthStencilBuffer;
-            gfx.DepthStencilBuffer = null;
+            var gfxAdapter = gfx.Adapter;
+            SurfaceFormat selectedFormat;
+            DepthFormat selectedDepthFormat;
+            int selectedMultiSampleCount;
+            gfxAdapter.QueryRenderTargetFormat(GraphicsProfile.HiDef, SurfaceFormat.Color, DepthFormat.None, 1, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
+            var maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight, false, selectedFormat, selectedDepthFormat);
 
             // Set up draw matrices.
             var view = Matrix.CreateLookAt(new Vector3(0, 0, 500), Vector3.Zero, Vector3.Up);
@@ -437,33 +432,27 @@ namespace AW2.Game
                 0, Arena.Dimensions.Y, 10, 1000);
 
             // Set and clear our own render target.
-            gfx.SetRenderTarget(0, maskTarget);
-            gfx.Clear(ClearOptions.Target, Color.TransparentBlack, 0, 0);
+            gfx.SetRenderTarget(maskTarget);
+            gfx.Clear(ClearOptions.Target, Color.Transparent, 0, 0);
 
             // Draw the arena's walls.
             // TODO: Reuse one SpriteBatch instance. Creating a new one is slow.
             var spriteBatch = new SpriteBatch(gfx);
             spriteBatch.Begin();
-            foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
-            {
-                Wall wall = gob as Wall;
-                if (wall != null)
-                    wall.DrawSilhouette(view, projection, spriteBatch);
-            }
+            foreach (var wall in Arena.Gobs.GameplayLayer.Gobs.OfType<Wall>())
+                wall.DrawSilhouette(view, projection, spriteBatch);
             spriteBatch.End();
             spriteBatch.Dispose();
 
             // Restore render target so what we can extract drawn pixels.
             // Create a copy of the texture in local memory so that a graphics device
             // reset (e.g. when changing resolution) doesn't lose the texture.
-            gfx.SetRenderTarget(0, null);
+            gfx.SetRenderTarget(null);
             var textureData = new Color[targetHeight * targetWidth];
-            maskTarget.GetTexture().GetData(textureData);
-            _arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, 1, TextureUsage.None, SurfaceFormat.Color);
+            maskTarget.GetData(textureData);
+            _arenaRadarSilhouette = new Texture2D(gfx, targetWidth, targetHeight, false, SurfaceFormat.Color);
             _arenaRadarSilhouette.SetData(textureData);
 
-            // Restore graphics device's old settings.
-            gfx.DepthStencilBuffer = oldDepthStencilBuffer;
             maskTarget.Dispose();
         }
 

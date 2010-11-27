@@ -110,7 +110,7 @@ namespace AW2.Core.OverlayDialogs
                 spriteBatch.DrawString(fontSmall, "Loading next arena: " + arenaName, loadTextPos, Color.White);
                 spriteBatch.End();
                 AssaultWingCore.Instance.DataEngine.ProgressBar.Draw(spriteBatch);
-                spriteBatch.Begin();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             }
             else
             {

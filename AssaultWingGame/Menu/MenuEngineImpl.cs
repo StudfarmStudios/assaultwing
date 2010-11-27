@@ -44,7 +44,6 @@ namespace AW2.Menu
         // The menu system draws a shadow on the screen as this transparent 3D object.
         private VertexPositionColor[] _shadowVertexData;
         private int[] _shadowIndexData; // stored as a triangle list
-        private VertexDeclaration _vertexDeclaration;
         private BasicEffect _effect;
         private Curve _alphaCurve;
         private Point _shadowSize;
@@ -144,8 +143,7 @@ namespace AW2.Menu
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);
-            _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionColor.VertexElements); 
-            _effect = new BasicEffect(gfx, null);
+            _effect = new BasicEffect(gfx);
             _effect.FogEnabled = false;
             _effect.LightingEnabled = false;
             _effect.View = Matrix.CreateLookAt(100 * Vector3.UnitZ, Vector3.Zero, Vector3.Up);
@@ -171,11 +169,6 @@ namespace AW2.Menu
                 _spriteBatch.Dispose();
                 _spriteBatch = null;
             }
-            if (_vertexDeclaration != null)
-            {
-                _vertexDeclaration.Dispose();
-                _vertexDeclaration = null;
-            }
             if (_effect != null)
             {
                 _effect.Dispose();
@@ -185,7 +178,7 @@ namespace AW2.Menu
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
-            foreach (MenuComponent component in _components)
+            foreach (var component in _components)
                 if (component != null) component.UnloadContent();
             Game.DataEngine.ProgressBar.UnloadContent();
 
@@ -293,7 +286,7 @@ namespace AW2.Menu
 
         public override void Draw()
         {
-            _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             DrawBackground();
             DrawMenuComponents();
             _spriteBatch.End();
@@ -369,27 +362,23 @@ namespace AW2.Menu
         {
             if (_shadowSize != new Point(ViewportWidth, ViewportHeight))
                 InitializeShadow();
-            Game.GraphicsDeviceService.GraphicsDevice.VertexDeclaration = _vertexDeclaration;
             _effect.Projection = Matrix.CreateOrthographicOffCenter(
                 -ViewportWidth / 2, ViewportWidth / 2,
                 -ViewportHeight, 0,
                 1, 500);
-            _effect.Begin();
             foreach (var pass in _effect.CurrentTechnique.Passes)
             {
-                pass.Begin();
+                pass.Apply();
                 Game.GraphicsDeviceService.GraphicsDevice.DrawUserIndexedPrimitives<VertexPositionColor>(
                     PrimitiveType.TriangleList,
                     _shadowVertexData, 0, _shadowVertexData.Length,
                     _shadowIndexData, 0, _shadowIndexData.Length / 3);
-                pass.End();
             }
-            _effect.End();
         }
 
         private void DrawStaticText()
         {
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _spriteBatch.DrawString(_smallFont, "4th Milestone 2010-05-15",
                 new Vector2(10, ViewportHeight - _smallFont.LineSpacing), Color.White);
             if (_showHelpText)

@@ -53,8 +53,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         protected BasicEffect Effect { get; set; }
 
-        private VertexDeclaration _vertexDeclaration;
-
         #endregion // Wall Fields
 
         #region Properties
@@ -103,10 +101,6 @@ namespace AW2.Game.Gobs
                 null, null);
         }
 
-        /// <summary>
-        /// Creates a piece of wall.
-        /// </summary>
-        /// <param name="typeName">The type of the wall.</param>
         public Wall(CanonicalString typeName)
             : base(typeName)
         {
@@ -115,25 +109,6 @@ namespace AW2.Game.Gobs
         }
 
         #region Methods related to gobs' functionality in the game world
-
-        public override void LoadContent()
-        {
-            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            _vertexDeclaration = _vertexDeclaration ?? new VertexDeclaration(gfx, VertexPositionNormalTexture.VertexElements);
-            base.LoadContent();
-        }
-
-        public override void UnloadContent()
-        {
-            // 'texture' will be disposed by the graphics engine.
-            // 'effect' is managed by other objects
-            if (_vertexDeclaration != null)
-            {
-                _vertexDeclaration.Dispose();
-                _vertexDeclaration = null;
-            }
-            base.UnloadContent();
-        }
 
         public override void Activate()
         {
@@ -161,23 +136,18 @@ namespace AW2.Game.Gobs
                 return;
             }
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            if (_vertexDeclaration == null) throw new ApplicationException("Null vertex declaration, this should not happen");
-            gfx.VertexDeclaration = _vertexDeclaration;
             Effect.World = Matrix.Identity;
             Effect.Projection = projection;
             Effect.View = view;
             Effect.Texture = Texture;
             Effect.TextureEnabled = true;
             Arena.PrepareEffect(Effect);
-            Effect.Begin();
             foreach (var pass in Effect.CurrentTechnique.Passes)
             {
-                pass.Begin();
+                pass.Apply();
                 gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
                     PrimitiveType.TriangleList, _vertexData, 0, _vertexData.Length, _indexData, 0, _indexData.Length / 3);
-                pass.End();
             }
-            Effect.End();
         }
 
         /// <summary>
@@ -192,19 +162,15 @@ namespace AW2.Game.Gobs
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var silhouetteEffect = Game.GraphicsEngine.GameContent.WallSilhouetteEffect;
-            gfx.VertexDeclaration = _vertexDeclaration;
             silhouetteEffect.Projection = projection;
             silhouetteEffect.View = view;
             silhouetteEffect.Texture = Texture;
-            silhouetteEffect.Begin();
             foreach (var pass in silhouetteEffect.CurrentTechnique.Passes)
             {
-                pass.Begin();
+                pass.Apply();
                 gfx.DrawUserIndexedPrimitives<VertexPositionNormalTexture>(
                     PrimitiveType.TriangleList, _vertexData, 0, _vertexData.Length, _indexData, 0, _indexData.Length / 3);
-                pass.End();
             }
-            silhouetteEffect.End();
         }
 
         #endregion Methods related to gobs' functionality in the game world

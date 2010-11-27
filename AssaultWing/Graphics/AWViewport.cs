@@ -28,11 +28,6 @@ namespace AW2.Graphics
         private BasicEffect _effect;
 
         /// <summary>
-        /// Vertex declaration for drawing parallaxes as 3D primitives.
-        /// </summary>
-        private VertexDeclaration _vertexDeclaration;
-
-        /// <summary>
         /// Vertex data scratch buffer for drawing parallaxes as 3D primitives.
         /// </summary>
         private VertexPositionTexture[] _vertexData;
@@ -265,7 +260,6 @@ namespace AW2.Graphics
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             var view = ViewMatrix;
-            gfx.Clear(Color.Black);
             if (AssaultWingCore.Instance.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
             foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
             {
@@ -361,7 +355,7 @@ namespace AW2.Graphics
         {
             if (_effect != null) return;
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            _effect = new BasicEffect(gfx, null);
+            _effect = new BasicEffect(gfx);
             _effect.World = Matrix.Identity;
             _effect.Projection = Matrix.Identity;
             _effect.View = Matrix.Identity;
@@ -369,7 +363,6 @@ namespace AW2.Graphics
             _effect.LightingEnabled = false;
             _effect.FogEnabled = false;
             _effect.VertexColorEnabled = false;
-            _vertexDeclaration = new VertexDeclaration(gfx, VertexPositionTexture.VertexElements);
             _vertexData = new VertexPositionTexture[] {
                 new VertexPositionTexture(new Vector3(-1, -1, 1), Vector2.UnitY),
                 new VertexPositionTexture(new Vector3(-1, 1, 1), Vector2.Zero),
@@ -385,41 +378,29 @@ namespace AW2.Graphics
         [Conditional("PARALLAX_IN_3D")]
         private void Draw_DrawParallaxIn3D(AW2.Game.ArenaLayer layer)
         {
+            if (layer.ParallaxName == "") return;
+
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+
             // Modify renderstate for parallax.
-            gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
-            gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
-            gfx.RenderState.AlphaTestEnable = false;
-            gfx.RenderState.AlphaBlendEnable = true;
-            gfx.RenderState.BlendFunction = BlendFunction.Add;
-            gfx.RenderState.DestinationBlend = Blend.InverseSourceAlpha;
-            gfx.RenderState.SourceBlend = Blend.SourceAlpha;
+            gfx.SamplerStates[0] = SamplerState.LinearWrap;
+            gfx.BlendState = BlendState.AlphaBlend;
+            gfx.DepthStencilState = DepthStencilState.None;
 
-            // Layer parallax
-            if (layer.ParallaxName != "")
-            {
-                // Render looping parallax as two huge triangles.
-                gfx.RenderState.DepthBufferEnable = false;
-                gfx.VertexDeclaration = _vertexDeclaration;
-                _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
-                var texCenter = GetScale(layer.Z) * GetLookAtPos() / _effect.Texture.Dimensions();
-                var texCornerOffset = new Vector2(
-                    Viewport.Width / (2f * _effect.Texture.Width),
-                    -Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;
-                _vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
-                _vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
-                _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
-                _vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
+            // Render looping parallax as two huge triangles.
+            _effect.Texture = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
+            var texCenter = GetScale(layer.Z) * GetLookAtPos() / _effect.Texture.Dimensions();
+            var texCornerOffset = new Vector2(
+                Viewport.Width / (2f * _effect.Texture.Width),
+                -Viewport.Height / (2f * _effect.Texture.Height)) / ZoomRatio;
+            _vertexData[0].TextureCoordinate = texCenter - texCornerOffset;
+            _vertexData[1].TextureCoordinate = texCenter + new Vector2(-texCornerOffset.X, texCornerOffset.Y);
+            _vertexData[2].TextureCoordinate = texCenter + new Vector2(texCornerOffset.X, -texCornerOffset.Y);
+            _vertexData[3].TextureCoordinate = texCenter + texCornerOffset;
+            _effect.CurrentTechnique.Passes[0].Apply();
+            gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
 
-                _effect.Begin();
-                _effect.CurrentTechnique.Passes[0].Begin();
-                gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
-                _effect.CurrentTechnique.Passes[0].End();
-                _effect.End();
-            }
-
-            // Modify renderstate for 3D graphics.
-            gfx.RenderState.DepthBufferEnable = true;
+            gfx.DepthStencilState = DepthStencilState.Default;
         }
 
         /// <summary>
@@ -431,8 +412,7 @@ namespace AW2.Graphics
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             if (layer.ParallaxName != "")
             {
-                _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
-                gfx.RenderState.AlphaTestEnable = false;
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
                 var tex = AssaultWingCore.Instance.Content.Load<Texture2D>(layer.ParallaxName);
                 var lookAtPosScaled = GetScale(layer.Z) * GetLookAtPos();
                 float texCenterX = lookAtPosScaled.X.Modulo(tex.Width);
@@ -446,11 +426,9 @@ namespace AW2.Graphics
             }
 
             // Modify renderstate for 3D graphics.
-            gfx.SamplerStates[0].AddressU = TextureAddressMode.Wrap;
-            gfx.SamplerStates[0].AddressV = TextureAddressMode.Wrap;
-            gfx.RenderState.DepthBufferEnable = true;
-            gfx.RenderState.AlphaTestEnable = false;
-            gfx.RenderState.AlphaBlendEnable = false;
+            gfx.SamplerStates[0] = SamplerState.LinearWrap;
+            gfx.DepthStencilState = DepthStencilState.Default;
+            gfx.BlendState = BlendState.Opaque;
         }
 
         #endregion Methods that are used only conditionally

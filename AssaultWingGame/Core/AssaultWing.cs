@@ -84,7 +84,7 @@ namespace AW2.Core
             };
         }
 
-        public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
+        public override void Update(AWGameTime gameTime)
         {
             base.Update(gameTime);
             UpdateSpecialKeys();

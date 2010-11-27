@@ -9,6 +9,7 @@ using AW2.UI;
 
 namespace AW2
 {
+#if WINDOWS || XBOX
     public class AssaultWingProgram : IDisposable
     {
         private GameForm _form;
@@ -103,4 +104,5 @@ namespace AW2
             return mail;
         }
     }
+#endif
 }

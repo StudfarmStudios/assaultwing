@@ -61,7 +61,7 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void Update()
         {
-            var now = AssaultWingCore.Instance.GameTime.TotalRealTime;
+            var now = AssaultWingCore.Instance.GameTime.TotalGameTime;
             SendPing(now);
             ReceivePingAndSendPong();
             ReceivePong(now);

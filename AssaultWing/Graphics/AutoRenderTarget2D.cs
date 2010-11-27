@@ -11,7 +11,7 @@ namespace AW2.Graphics
     /// when its parameters change, such as the required width and height.
     /// Doesn't support the use of stencil.
     /// </summary>
-    class AutoRenderTarget2D : IDisposable
+    public class AutoRenderTarget2D : IDisposable
     {
         public struct CreationData
         {
@@ -20,11 +20,10 @@ namespace AW2.Graphics
             public bool DepthStencilEnable;
         }
 
-        GraphicsDevice _graphicsDevice;
-        RenderTarget2D _target;
-        DepthStencilBuffer _depthStencilBuffer;
-        Func<CreationData> _getCreationData;
-        CreationData _oldCreationData;
+        private GraphicsDevice _graphicsDevice;
+        private RenderTarget2D _target;
+        private Func<CreationData> _getCreationData;
+        private CreationData _oldCreationData;
 
         public AutoRenderTarget2D(GraphicsDevice graphicsDevice, Func<CreationData> getCreationData)
         {
@@ -34,24 +33,22 @@ namespace AW2.Graphics
 
         public Texture2D GetTexture()
         {
-            return _target.GetTexture();
+            return _target;
         }
 
-        public void SetAsRenderTarget(int renderTargetIndex)
+        public void SetAsRenderTarget()
         {
             var data = _getCreationData();
             if (_target == null || !data.Equals(_oldCreationData))
             {
                 _oldCreationData = data;
                 if (_target != null) _target.Dispose();
-                if (_depthStencilBuffer != null) _depthStencilBuffer.Dispose();
-                _target = new RenderTarget2D(_graphicsDevice, data.Width, data.Height, 1, SurfaceFormat.Color);
-                if (data.DepthStencilEnable) _depthStencilBuffer = new DepthStencilBuffer(_graphicsDevice, data.Width, data.Height, DepthFormat.Depth24);
+                var depthFormat = data.DepthStencilEnable ? DepthFormat.Depth24 : DepthFormat.None;
+                _target = new RenderTarget2D(_graphicsDevice, data.Width, data.Height, false, SurfaceFormat.Color, depthFormat);
             }
-            _graphicsDevice.SetRenderTarget(renderTargetIndex, _target);
-            _graphicsDevice.DepthStencilBuffer = _depthStencilBuffer;
-            _graphicsDevice.RenderState.DepthBufferEnable = data.DepthStencilEnable;
-            _graphicsDevice.RenderState.StencilEnable = data.DepthStencilEnable;
+            _graphicsDevice.SetRenderTarget(_target);
+            _graphicsDevice.DepthStencilState.DepthBufferEnable = data.DepthStencilEnable;
+            _graphicsDevice.DepthStencilState.StencilEnable = data.DepthStencilEnable;
             var clearOptions = data.DepthStencilEnable
                 ? ClearOptions.Target | ClearOptions.DepthBuffer
                 : ClearOptions.Target;

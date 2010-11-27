@@ -16,7 +16,31 @@ namespace AW2.Graphics
     {
         private SpriteBatch _spriteBatch;
 
+        public static BlendState AdditiveBlendPremultipliedAlpha { get; private set; }
+        public static BlendState SubtractiveBlend { get; private set; }
+
         public GameContent GameContent { get; private set; }
+
+        static GraphicsEngineImpl()
+        {
+            AdditiveBlendPremultipliedAlpha = new BlendState
+            {
+                ColorDestinationBlend = Blend.One,
+                AlphaDestinationBlend = Blend.One,
+                ColorSourceBlend = Blend.One,
+                AlphaSourceBlend = Blend.One,
+                Name = "Additive blend for colors with premultiplied alpha",
+            };
+            SubtractiveBlend = new BlendState
+            {
+                ColorBlendFunction = BlendFunction.ReverseSubtract,
+                ColorDestinationBlend = Blend.One,
+                AlphaDestinationBlend = Blend.One,
+                ColorSourceBlend = Blend.SourceAlpha,
+                AlphaSourceBlend = Blend.SourceAlpha,
+                Name = "Subtractive blend",
+            };
+        }
 
         public GraphicsEngineImpl(AssaultWingCore game)
             : base(game)
@@ -125,7 +149,7 @@ namespace AW2.Graphics
         {
             int viewportHeight = Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height;
             int viewportWidth = Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width;
-            _spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.None);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             foreach (var separator in Game.DataEngine.Viewports.Separators)
             {
                 var separatorTexture = Game.Content.Load<Texture2D>("viewport_border_vertical");

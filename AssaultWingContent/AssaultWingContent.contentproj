@@ -2067,266 +2067,319 @@
       <Name>bad01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bad02.wav">
       <Name>bad02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bad03.wav">
       <Name>bad03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bazooka01.wav">
       <Name>bazooka01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bazooka02.wav">
       <Name>bazooka02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bazooka03.wav">
       <Name>bazooka03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bazooka04.wav">
       <Name>bazooka04</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bazooka05.wav">
       <Name>bazooka05</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\blink01.wav">
       <Name>blink01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\blink02.wav">
       <Name>blink02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bonusCollection01.wav">
       <Name>bonusCollection01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\bonusCollection02.wav">
       <Name>bonusCollection02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\collision01.wav">
       <Name>collision01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\collision02.wav">
       <Name>collision02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\dropMines01.wav">
       <Name>dropMines01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\dummysound01.wav">
       <Name>dummysound01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\engine01.wav">
       <Name>engine01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\escPause01.wav">
       <Name>escPause01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\escPause02.wav">
       <Name>escPause02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\explosion01.wav">
       <Name>explosion01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\explosion02.wav">
       <Name>explosion02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\explosion03.wav">
       <Name>explosion03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\good01.wav">
       <Name>good01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\hisss01.wav">
       <Name>hisss01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\homeBaseLoop01.wav">
       <Name>homeBaseLoop01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\lightningWeapon01.wav">
       <Name>lightningWeapon01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuBrowseItem01.wav">
       <Name>menuBrowseItem01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuBrowseItem02.wav">
       <Name>menuBrowseItem02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuBrowseItem03.wav">
       <Name>menuBrowseItem03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeEnd01.wav">
       <Name>menuChangeEnd01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeEnd02.wav">
       <Name>menuChangeEnd02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeEnd03.wav">
       <Name>menuChangeEnd03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeEnd04.wav">
       <Name>menuChangeEnd04</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeEnd05.wav">
       <Name>menuChangeEnd05</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeItem01.wav">
       <Name>menuChangeItem01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeStart01.wav">
       <Name>menuChangeStart01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeStart02.wav">
       <Name>menuChangeStart02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeStart03.wav">
       <Name>menuChangeStart03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeStart04.wav">
       <Name>menuChangeStart04</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\menuChangeStart05.wav">
       <Name>menuChangeStart05</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\missile01.wav">
       <Name>missile01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\missileHit01.wav">
       <Name>missileHit01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\missileHit02.wav">
       <Name>missileHit02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\missileHit03.wav">
       <Name>missileHit03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\newCraft01.wav">
       <Name>newCraft01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\newCraft02.wav">
       <Name>newCraft02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\newCraft03.wav">
       <Name>newCraft03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\newCraft04.wav">
       <Name>newCraft04</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\newCraft05.wav">
       <Name>newCraft05</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\playerMessage01.wav">
       <Name>playerMessage01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\shipcollision01.wav">
       <Name>shipcollision01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\shipcollision02.wav">
       <Name>shipcollision02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\shipcollision03.wav">
       <Name>shipcollision03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <None Include="sounds\sounddefs.xml">
       <Name>sounddefs</Name>
@@ -2338,61 +2391,73 @@
       <Name>talon01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon02.wav">
       <Name>talon02</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon03.wav">
       <Name>talon03</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon04.wav">
       <Name>talon04</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon05.wav">
       <Name>talon05</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon06.wav">
       <Name>talon06</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon07.wav">
       <Name>talon07</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon08.wav">
       <Name>talon08</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon09.wav">
       <Name>talon09</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\talon10.wav">
       <Name>talon10</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\venomSpray01.wav">
       <Name>venomSpray01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="sounds\weaponFail01.wav">
       <Name>weaponFail01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
+      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
     <Compile Include="video\aw_intro.wmv">
       <Name>aw_intro</Name>

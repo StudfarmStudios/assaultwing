@@ -17,7 +17,7 @@ namespace AW2.Graphics
         {
             public int Width;
             public int Height;
-            public bool DepthStencilEnable;
+            public DepthStencilState DepthStencilState;
         }
 
         private GraphicsDevice _graphicsDevice;
@@ -43,16 +43,11 @@ namespace AW2.Graphics
             {
                 _oldCreationData = data;
                 if (_target != null) _target.Dispose();
-                var depthFormat = data.DepthStencilEnable ? DepthFormat.Depth24 : DepthFormat.None;
-                _target = new RenderTarget2D(_graphicsDevice, data.Width, data.Height, false, SurfaceFormat.Color, depthFormat);
+                _target = new RenderTarget2D(_graphicsDevice, data.Width, data.Height, false, SurfaceFormat.Color, DepthFormat.Depth24);
             }
             _graphicsDevice.SetRenderTarget(_target);
-            _graphicsDevice.DepthStencilState.DepthBufferEnable = data.DepthStencilEnable;
-            _graphicsDevice.DepthStencilState.StencilEnable = data.DepthStencilEnable;
-            var clearOptions = data.DepthStencilEnable
-                ? ClearOptions.Target | ClearOptions.DepthBuffer
-                : ClearOptions.Target;
-            _graphicsDevice.Clear(clearOptions, Color.Black, 1, 0);
+            _graphicsDevice.DepthStencilState = data.DepthStencilState;
+            _graphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1, 0);
         }
 
         #region IDisposable Members

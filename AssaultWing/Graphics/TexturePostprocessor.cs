@@ -31,7 +31,7 @@ namespace AW2.Graphics
             {
                 Width = _gfx.Viewport.Width,
                 Height = _gfx.Viewport.Height,
-                DepthStencilEnable = true
+                DepthStencilState = DepthStencilState.Default,
             };
             _targets = new AutoRenderTarget2D[] {
                 new AutoRenderTarget2D(gfx, getRenderTargetCreationData),
@@ -107,8 +107,7 @@ namespace AW2.Graphics
             _sourceIndex = _targetIndex;
             _targetIndex = (_targetIndex + 1) % _targets.Length;
             _gfx.SetRenderTarget(null);
-            _gfx.DepthStencilState.DepthBufferEnable = false;
-            _gfx.DepthStencilState.StencilEnable = false;
+            _gfx.DepthStencilState = DepthStencilState.None;
             _gfx.BlendState = BlendState.Opaque;
             _gfx.Viewport = _oldViewport;
             _gfx.Clear(Color.Black);

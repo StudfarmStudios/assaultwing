@@ -296,6 +296,7 @@
     <Compile Include="Net\ManagementMessages\JoinGameServerReply.cs" />
     <Compile Include="Net\ManagementMessages\JoinGameServerRequest.cs" />
     <Compile Include="Net\ManagementMessages\RegisterGameServerMessage.cs" />
+    <Compile Include="Net\ManagementMessages\UnregisterGameServerMessage.cs" />
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\MessageException.cs" />
     <Compile Include="Net\MessageHandling\GameplayMessageHandler.cs" />

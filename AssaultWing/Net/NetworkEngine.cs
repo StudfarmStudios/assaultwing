@@ -212,6 +212,7 @@ namespace AW2.Net
         {
             Log.Write("Server stops listening");
             MessageHandlers.Clear();
+            UnregisterServerFromManagementServer();
             _connectionAttemptListener.StopListening();
             _connectionAttemptListener = null;
             DisposeGameClientConnections();
@@ -527,6 +528,12 @@ namespace AW2.Net
                 TCPPort = TCP_CONNECTION_PORT,
                 LocalEndPoint = new AWEndPoint(UDPSocket.PrivateLocalEndPoint, TCP_CONNECTION_PORT)
             };
+            ManagementServerConnection.Send(message);
+        }
+
+        private void UnregisterServerFromManagementServer()
+        {
+            var message = new UnregisterGameServerMessage();
             ManagementServerConnection.Send(message);
         }
 

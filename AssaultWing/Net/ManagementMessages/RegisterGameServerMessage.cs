@@ -12,7 +12,6 @@ namespace AW2.Net.ManagementMessages
     {
         public string GameServerName { get; set; }
         public int MaxClients { get; set; }
-        public int TimeoutMinutes { get; set; }
         public int TCPPort { get; set; }
         public AWEndPoint LocalEndPoint { get; set; }
 
@@ -24,7 +23,6 @@ namespace AW2.Net.ManagementMessages
                 {
                     "name=" + GameServerName,
                     "maxclients=" + MaxClients,
-                    "timeout=" + TimeoutMinutes,
                     "tcpport=" + TCPPort,
                     "localendpoint=" + LocalEndPoint,
                 };

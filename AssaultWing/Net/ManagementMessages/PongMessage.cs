@@ -3,11 +3,10 @@
 namespace AW2.Net.ManagementMessages
 {
     /// <summary>
-    /// A message from a game server to a management server, requesting to get
-    /// unregistered from the list of known game servers.
+    /// A ping reply from a management server to a game server.
     /// </summary>
-    [ManagementMessage("removeserver")]
-    public class UnregisterGameServerMessage : ManagementMessage
+    [ManagementMessage("pong")]
+    public class PongMessage : ManagementMessage
     {
         protected override void Deserialize(List<Dictionary<string, string>> tokenizedLines)
         {

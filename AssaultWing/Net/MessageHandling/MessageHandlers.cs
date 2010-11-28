@@ -33,8 +33,9 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<GameServerListReply>(false, IMessageHandler.SourceType.Management, handleGameServerListReply);
             yield return new MessageHandler<JoinGameServerReply>(false, IMessageHandler.SourceType.Management, handleJoinGameServerReply);
 
-            // ClientJoinMessage is only for game servers
+            // These messages only game servers receive
             yield return new MessageHandler<ClientJoinMessage>(false, IMessageHandler.SourceType.Management, HandleClientJoinMessage);
+            yield return new MessageHandler<PingMessage>(false, IMessageHandler.SourceType.Management, HandlePingMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction, Action<StartGameMessage> handleStartGameMessage, Action<ConnectionClosingMessage> handleConnectionClosingMessage)
@@ -110,13 +111,19 @@ namespace AW2.Net.MessageHandling
             if (connection == null)
             {
                 // Received game client UDP end point before the connection to the game client was created.
-                // TODO: The connection is probably going to be created soon. Store the port somewhere else.
+                // TODO !!! The connection is probably going to be created soon. Store the port somewhere else.
                 // OR, more likely the connection was closed immediately (e.g. because the game server is full).
             }
             else
             {
                 connection.RemoteUDPEndPoint = matchingEndPoint;
             }
+        }
+
+        private static void HandlePingMessage(PingMessage mess)
+        {
+            var pong = new PongMessage();
+            AssaultWingCore.Instance.NetworkEngine.ManagementServerConnection.Send(pong);
         }
 
         private static void HandlePlayerSettingsRequestOnClient(PlayerSettingsRequest mess)

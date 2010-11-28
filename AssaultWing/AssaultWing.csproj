@@ -295,6 +295,8 @@
     <Compile Include="Net\ManagementMessages\GameServerListRequest.cs" />
     <Compile Include="Net\ManagementMessages\JoinGameServerReply.cs" />
     <Compile Include="Net\ManagementMessages\JoinGameServerRequest.cs" />
+    <Compile Include="Net\ManagementMessages\PingMessage.cs" />
+    <Compile Include="Net\ManagementMessages\PongMessage.cs" />
     <Compile Include="Net\ManagementMessages\RegisterGameServerMessage.cs" />
     <Compile Include="Net\ManagementMessages\UnregisterGameServerMessage.cs" />
     <Compile Include="Net\Message.cs" />

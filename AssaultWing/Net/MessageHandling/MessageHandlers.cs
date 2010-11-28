@@ -184,8 +184,12 @@ namespace AW2.Net.MessageHandling
         private static void HandlePlayerMessageMessageOnServer(PlayerMessageMessage mess)
         {
             if (mess.AllPlayers)
-                foreach (var player in AssaultWingCore.Instance.DataEngine.Players)
-                    player.SendMessage(mess.Text, mess.Color);
+            {
+                var otherPlayers = AssaultWingCore.Instance.DataEngine.Players
+                    .Where(plr => plr.ConnectionID != mess.ConnectionID);
+                foreach (var player in otherPlayers)
+                    player.SendMessage(mess.Text, Player.PLAYER_MESSAGE_COLOR);
+            }
             else
             {
                 var player = AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);

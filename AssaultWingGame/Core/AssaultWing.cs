@@ -56,6 +56,7 @@ namespace AW2.Core
         private IntroEngine IntroEngine { get; set; }
         private LogicEngine LogicEngine { get { return (LogicEngine)Components.First(c => c is LogicEngine); } }
         private OverlayDialog OverlayDialog { get; set; }
+        private PlayerChat PlayerChat { get; set; }
         private UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService)
@@ -65,10 +66,12 @@ namespace AW2.Core
             OverlayDialog = new OverlayDialog(this) { UpdateOrder = 5 };
             MenuEngine = new MenuEngineImpl(this) { UpdateOrder = 6 };
             IntroEngine = new IntroEngine(this) { UpdateOrder = 7 };
+            PlayerChat = new PlayerChat(this) { UpdateOrder = 8 };
             Components.Add(StartupScreen);
             Components.Add(OverlayDialog);
             Components.Add(MenuEngine);
             Components.Add(IntroEngine);
+            Components.Add(PlayerChat);
             GameState = GameState.Initializing;
             _escapeControl = new KeyboardKey(Keys.Escape);
             _musicSwitch = new KeyboardKey(Keys.F5);
@@ -329,6 +332,7 @@ namespace AW2.Core
                     Settings.ToFile();
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     GraphicsEngine.Visible = true;
+                    if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
                     break;
                 case GameState.Menu:
                     MenuEngine.Enabled = true;
@@ -359,6 +363,7 @@ namespace AW2.Core
                 case GameState.Gameplay:
                     LogicEngine.Enabled = false;
                     GraphicsEngine.Visible = false;
+                    PlayerChat.Enabled = PlayerChat.Visible = false;
                     break;
                 case GameState.Menu:
                     MenuEngine.Enabled = false;

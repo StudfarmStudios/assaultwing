@@ -34,12 +34,13 @@ namespace AW2.Game
 
         #region Player constants
 
-        public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f, 1f);
-        public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f, 1f);
-        public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f, 1f);
-        public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f, 1f);
+        public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f);
+        public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f);
+        public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f);
+        public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f);
         public static readonly Color KILLING_SPREE_COLOR = new Color(255, 228, 0);
         public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
+        public static readonly Color PLAYER_MESSAGE_COLOR = Color.LightGray;
 
         private const int MESSAGE_KEEP_COUNT = 100;
 

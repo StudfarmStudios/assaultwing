@@ -622,46 +622,44 @@ namespace AW2.Helpers.Serialization
             // We have no guarantee of the order of the fields.
             while (reader.IsStartElement())
             {
-                bool fieldFound = false;
-                for (int fieldI = 0; fieldI < fields.Length; ++fieldI)
-                {
-                    var field = fields[fieldI];
-
-                    // React to SerializedNameAttribute
-                    string elementName = field.Name;
-                    var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
-                    if (serializedNameAttribute != null)
-                        elementName = serializedNameAttribute.SerializedName;
-                    else if (elementName.StartsWith("_"))
-                        elementName = elementName.Substring(1);
-
-                    if (reader.Name.Equals(elementName))
-                    {
-                        if (fieldFounds[fieldI])
-                            throw new MemberSerializationException(GetXmlReaderErrorText("Field deserialised twice", reader), field.Name);
-                        Type fieldLimitationAttribute = limitationAttribute;
-
-                        // React to LimitationSwitchAttribute
-                        var limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
-                        if (limitationSwitchAttribute != null)
-                        {
-                            if (limitationSwitchAttribute.From == limitationAttribute)
-                                fieldLimitationAttribute = limitationSwitchAttribute.To;
-                        }
-
-                        fieldFound = true;
-                        fieldFounds[fieldI] = true;
-                        object value = DeserializeXml(reader, elementName, field.FieldType, fieldLimitationAttribute);
-                        field.SetValue(obj, value);
-                        break;
-                    }
-                }
-                if (!fieldFound)
-                    throw new MemberSerializationException(GetXmlReaderErrorText("Cannot deserialise unknown field", reader), reader.Name);
+                var fieldIndex = FindFieldIndex(fields, reader.Name);
+                if (fieldIndex == -1) throw new MemberSerializationException(GetXmlReaderErrorText("Cannot deserialise unknown field", reader), reader.Name);
+                var field = fields[fieldIndex];
+                if (fieldFounds[fieldIndex]) throw new MemberSerializationException(GetXmlReaderErrorText("Field deserialised twice", reader), field.Name);
+                var fieldLimitationAttribute = GetFieldLimitationAttribute(field, limitationAttribute);
+                fieldFounds[fieldIndex] = true;
+                object value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute);
+                field.SetValue(obj, value);
             }
+            int missingIndex = Array.FindIndex(fieldFounds, f => !f);
+            if (missingIndex >= 0) throw new MemberSerializationException(GetXmlReaderErrorText("Value not found", reader), fields[missingIndex].Name);
+        }
+
+        private static Type GetFieldLimitationAttribute(FieldInfo field, Type limitationAttribute)
+        {
+            var limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
+            if (limitationSwitchAttribute != null && limitationSwitchAttribute.From == limitationAttribute)
+                return limitationSwitchAttribute.To;
+            return limitationAttribute;
+        }
+
+        private static int FindFieldIndex(FieldInfo[] fields, string xmlElementName)
+        {
             for (int fieldI = 0; fieldI < fields.Length; ++fieldI)
-                if (!fieldFounds[fieldI])
-                    throw new MemberSerializationException(GetXmlReaderErrorText("Value not found", reader), fields[fieldI].Name);
+            {
+                var field = fields[fieldI];
+
+                // React to SerializedNameAttribute
+                string elementName = field.Name;
+                var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
+                if (serializedNameAttribute != null)
+                    elementName = serializedNameAttribute.SerializedName;
+                else if (elementName.StartsWith("_"))
+                    elementName = elementName.Substring(1);
+
+                if (xmlElementName.Equals(elementName)) return fieldI;
+            }
+            return -1;
         }
 
         private static string GetXmlReaderErrorText(string baseText, XmlReader reader)

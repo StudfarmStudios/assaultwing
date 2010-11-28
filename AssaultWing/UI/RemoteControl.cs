@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 
 namespace AW2.UI
 {

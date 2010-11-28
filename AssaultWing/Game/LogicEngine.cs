@@ -88,8 +88,8 @@ namespace AW2.Game
         [System.Diagnostics.Conditional("DEBUG")]
         private void DeleteTemplates(params TypeLoader[] typeLoaders)
         {
-            if (!Game.CommandLineArgs.Contains("-deletetemplates")) return;
-            Log.Write("Parameter -deletetemplates given, deleting templates now...");
+            if (!Game.CommandLineOptions.DeleteTemplates) return;
+            Log.Write("Deleting templates now...");
             foreach (var typeLoader in typeLoaders) typeLoader.DeleteTemplates();
             Log.Write("...templates deleted");
         }
@@ -97,8 +97,8 @@ namespace AW2.Game
         [System.Diagnostics.Conditional("DEBUG")]
         private void SaveTemplates(params TypeLoader[] typeLoaders)
         {
-            if (!Game.CommandLineArgs.Contains("-savetemplates")) return;
-            Log.Write("Parameter -savetemplates given, saving templates now...");
+            if (!Game.CommandLineOptions.SaveTemplates) return;
+            Log.Write("Saving templates now...");
             foreach (var typeLoader in typeLoaders) typeLoader.SaveTemplateExamples();
             Log.Write("...templates saved");
         }

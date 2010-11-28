@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core;
 using AW2.Game;
 using AW2.Game.Gobs;
 using AW2.Graphics;
@@ -13,9 +16,6 @@ using AW2.Helpers.Serialization;
 using AW2.UI;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
-using Microsoft.Win32;
-using System.Windows.Input;
-using AW2.Core;
 
 namespace AW2
 {
@@ -287,7 +287,7 @@ namespace AW2
         {
             _game = new AssaultWingCore(_graphicsDeviceService);
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
-            _game.CommandLineArgs = args;
+            _game.CommandLineOptions = new CommandLineOptions(args);
             _game.DoNotFreezeCanonicalStrings = true;
             _game.SoundEngine.Enabled = false;
             _game.AllowDialogs = false;

@@ -1,12 +1,15 @@
-﻿using System;
+﻿#if DEBUG
+using NUnit.Framework;
+#endif
+using System;
 using System.Collections.Generic;
+using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using AW2.Core;
 using AW2.Game;
-using AW2.Helpers;
-using System.Xml;
-using NUnit.Framework;
 using AW2.Graphics;
+using AW2.Helpers;
 
 namespace AW2.Sound
 {

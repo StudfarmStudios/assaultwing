@@ -13,7 +13,7 @@ using AW2.Settings;
 using AW2.Sound;
 using AW2.UI;
 
-namespace AW2
+namespace AW2.Core
 {
     public class AssaultWingCore : AWGame
     {
@@ -58,7 +58,7 @@ namespace AW2
         public bool DoNotFreezeCanonicalStrings { get; set; }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
-        public string[] CommandLineArgs { get; set; }
+        public CommandLineOptions CommandLineOptions { get; set; }
         public PhysicsEngine PhysicsEngine { get; private set; }
         public DataEngine DataEngine { get; private set; }
         public NetworkEngine NetworkEngine { get; private set; }
@@ -370,7 +370,8 @@ namespace AW2
             Log.Write("Assault Wing initializing");
             try
             {
-                InitializePerformanceCounters();
+                if (CommandLineOptions.PerformanceCounters)
+                    InitializePerformanceCounters();
             }
             catch (System.Security.SecurityException)
             {

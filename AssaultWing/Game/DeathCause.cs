@@ -1,4 +1,5 @@
 using System;
+using AW2.Core;
 
 namespace AW2.Game
 {

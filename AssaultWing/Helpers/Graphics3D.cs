@@ -1,4 +1,3 @@
-// marked in as DEBUG because we don't want NUnit framework to release builds
 #if DEBUG
 using NUnit.Framework;
 #endif
@@ -7,8 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using IndexPair = System.Collections.Generic.KeyValuePair<Microsoft.Xna.Framework.Vector3, Microsoft.Xna.Framework.Vector3>;
+using AW2.Core;
 using AW2.Helpers.Geometric;
+using IndexPair = System.Collections.Generic.KeyValuePair<Microsoft.Xna.Framework.Vector3, Microsoft.Xna.Framework.Vector3>;
 
 namespace AW2.Helpers
 {

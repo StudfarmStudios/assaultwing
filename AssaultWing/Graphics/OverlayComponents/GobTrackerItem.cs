@@ -1,7 +1,8 @@
 ﻿using System;
-using Microsoft.Xna.Framework.Graphics;
-using AW2.Game;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using AW2.Core;
+using AW2.Game;
 
 namespace AW2.Graphics.OverlayComponents
 {

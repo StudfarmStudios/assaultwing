@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using AW2.Core;
 using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AW2.Core;
 using AW2.Net.Connections;
 
 namespace AW2.Net.MessageHandling

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 

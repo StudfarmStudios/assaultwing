@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+using AW2.Core;
 using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Net.ConnectionUtils;

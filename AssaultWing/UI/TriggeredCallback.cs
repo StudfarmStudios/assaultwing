@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework.Input;
+using AW2.Core;
 using AW2.Game;
 
 namespace AW2.UI

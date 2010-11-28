@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using AW2.Core;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Helpers

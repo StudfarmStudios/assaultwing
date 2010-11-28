@@ -146,13 +146,7 @@ namespace AW2.Game.Gobs
                 vertexData[i].Normal = Vector3.TransformNormal(vertexData[i].Normal, worldMatrix);
             }
             var effect = GetEffect(model);
-
-            // Take a copy of the effect so that we won't mess 
-            // with the wall model template in the future.
-            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            var effectCopy = (BasicEffect)effect.Clone();
-
-            Set3DModel(vertexData, indexData, effectCopy.Texture, effectCopy);
+            Set3DModel(vertexData, indexData, effect.Texture, effect);
         }
 
         private static BasicEffect GetEffect(Model model)
@@ -161,7 +155,7 @@ namespace AW2.Game.Gobs
                 throw new ArgumentOutOfRangeException("Model has more than one mesh");
             if (model.Meshes[0].Effects.Count > 1)
                 throw new ArgumentOutOfRangeException("Model mesh has more than one effect");
-            BasicEffect effect = model.Meshes[0].Effects[0] as BasicEffect;
+            var effect = model.Meshes[0].Effects[0] as BasicEffect;
             if (effect == null)
                 throw new ArgumentException("Model mesh's effect isn't a BasicEffect");
             return effect;

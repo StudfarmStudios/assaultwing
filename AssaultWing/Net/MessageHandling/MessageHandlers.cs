@@ -51,7 +51,7 @@ namespace AW2.Net.MessageHandling
         {
             yield return new MessageHandler<ArenaStartRequest>(false, IMessageHandler.SourceType.Server, m => HandleArenaStartRequest(m, handleGobCreationMessage));
             yield return new MessageHandler<ArenaFinishMessage>(false, IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
-            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessage);
+            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobPreCreationMessage>(false, IMessageHandler.SourceType.Server, (m, f) => handleGobCreationMessage((GobPreCreationMessage)m, f));
@@ -72,6 +72,7 @@ namespace AW2.Net.MessageHandling
         public static IEnumerable<IMessageHandler> GetServerGameplayHandlers()
         {
             yield return new MessageHandler<PlayerControlsMessage>(false, IMessageHandler.SourceType.Client, AW2.UI.UIEngineImpl.HandlePlayerControlsMessage);
+            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
         public static IEnumerable<IMessageHandler> GetServerArenaStartHandlers(Action<int> idRegisterer)
@@ -179,11 +180,25 @@ namespace AW2.Net.MessageHandling
             AssaultWingCore.Instance.FinishArena();
         }
 
-        private static void HandlePlayerMessageMessage(PlayerMessageMessage mess)
+        private static void HandlePlayerMessageMessageOnServer(PlayerMessageMessage mess)
         {
-            var player = AssaultWingCore.Instance.DataEngine.Spectators.First(spec => spec.ID == mess.PlayerID) as Player;
-            if (player == null) throw new NetworkException("Text message for spectator " + mess.PlayerID + " who is not a Player");
-            player.SendMessage(mess.Text, mess.Color);
+            if (mess.AllPlayers)
+                foreach (var player in AssaultWingCore.Instance.DataEngine.Players)
+                    player.SendMessage(mess.Text, mess.Color);
+            else
+            {
+                var player = AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
+                if (player.IsRemote)
+                    AssaultWingCore.Instance.NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(mess);
+                else
+                    HandlePlayerMessageMessageOnClient(mess);
+            }
+        }
+
+        private static void HandlePlayerMessageMessageOnClient(PlayerMessageMessage mess)
+        {
+            if (mess.AllPlayers) throw new NotImplementedException("Client cannot broadcast player text messages");
+            AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID).SendMessage(mess.Text, mess.Color);
         }
 
         private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)

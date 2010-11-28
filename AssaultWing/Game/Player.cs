@@ -554,14 +554,17 @@ namespace AW2.Game
                 var messageMessage = new PlayerMessageMessage { PlayerID = ID, Color = messageColor, Text = message };
                 Game.NetworkEngine.GetGameClientConnection(ConnectionID).Send(messageMessage);
             }
-            var msg = new Message(Game.DataEngine.ArenaTotalTime, message);
-            msg.TextColor = messageColor;
-            Messages.Add(msg);
-            Game.SoundEngine.PlaySound("PlayerMessage");
+            else
+            {
+                var msg = new Message(Game.DataEngine.ArenaTotalTime, message);
+                msg.TextColor = messageColor;
+                Messages.Add(msg);
+                Game.SoundEngine.PlaySound("PlayerMessage");
 
-            // Throw away very old messages.
-            if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)
-                Messages.RemoveRange(0, Messages.Count - MESSAGE_KEEP_COUNT);
+                // Throw away very old messages.
+                if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)
+                    Messages.RemoveRange(0, Messages.Count - MESSAGE_KEEP_COUNT);
+            }
         }
 
         public override void Dispose()

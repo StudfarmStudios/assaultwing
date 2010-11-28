@@ -13,33 +13,42 @@ namespace AW2.Net.Messages
     {
         protected static MessageType messageType = new MessageType(0x2b, false);
 
+        /// <summary>
+        /// Receiving player identifier. From client to server, this can be -1
+        /// to mean broadcast to all players.
+        /// </summary>
         public int PlayerID { get; set; }
+        public bool AllPlayers { get { return PlayerID == -1; } }
         public Color Color { get; set; }
         public string Text { get; set; }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             base.Serialize(writer);
-            // Player message (request) message structure:
-            // int: player ID
-            // Color: message color
-            // variable_length_string message: text
-            writer.Write((int)PlayerID);
-            writer.Write((Color)Color);
-            writer.Write((string)Text);
+            checked
+            {
+                // Player message (request) message structure:
+                // short: player ID
+                // Color: message color
+                // variable_length_string message: text
+                writer.Write((short)PlayerID);
+                writer.Write((Color)Color);
+                writer.Write((string)Text);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            PlayerID = reader.ReadInt32();
+            PlayerID = reader.ReadInt16();
             Color = reader.ReadColor();
             Text = reader.ReadString();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [PlayerID " + PlayerID + ", Message '" + Text + "']";
+            var recipientText = AllPlayers ? "All players" : "PlayerID " + PlayerID;
+            return base.ToString() + " [" + recipientText + ", Message '" + Text + "']";
         }
     }
 }

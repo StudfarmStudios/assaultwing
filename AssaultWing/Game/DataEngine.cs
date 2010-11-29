@@ -12,6 +12,7 @@ using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Helpers.Serialization;
 using AW2.Net.Messages;
+using AW2.Net.ManagementMessages;
 
 namespace AW2.Game
 {
@@ -39,6 +40,7 @@ namespace AW2.Game
         private Vector2 _arenaDimensionsOnRadar;
         private Matrix _arenaToRadarTransform;
         private ProgressBar _progressBar;
+        private IndexedItemCollection<Spectator> _spectators;
 
         #endregion Fields
 
@@ -47,7 +49,16 @@ namespace AW2.Game
         /// <summary>
         /// Players and other spectators of the game session.
         /// </summary>
-        public IndexedItemCollection<Spectator> Spectators { get; private set; }
+        public IndexedItemCollection<Spectator> Spectators
+        {
+            get { return _spectators; }
+            private set
+            {
+                _spectators = value;
+                _spectators.Added += SpectatorAddedHandler;
+                _spectators.Removed += SpectatorRemovedHandler;
+            }
+        }
 
         /// <summary>
         /// Players of the game session.
@@ -542,6 +553,28 @@ namespace AW2.Game
             // 16 colours total
         }
 
+        private void UpdateGameServerInfoToManagementServer()
+        {
+            var mess = new UpdateGameServerMessage { CurrentClients = Players.Count() };
+            Game.NetworkEngine.ManagementServerConnection.Send(mess);
+        }
+
         #endregion Private methods
+
+        #region Callbacks
+
+        private void SpectatorAddedHandler(Spectator spectator)
+        {
+            if (Game.NetworkMode == NetworkMode.Server)
+                UpdateGameServerInfoToManagementServer();
+        }
+
+        private void SpectatorRemovedHandler(Spectator spectator)
+        {
+            if (Game.NetworkMode == NetworkMode.Server)
+                UpdateGameServerInfoToManagementServer();
+        }
+
+        #endregion Callbacks
     }
 }

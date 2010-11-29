@@ -291,6 +291,7 @@
     <Compile Include="Net\ManagementMessage.cs" />
     <Compile Include="Net\ManagementMessageAttribute.cs" />
     <Compile Include="Net\ManagementMessages\ClientJoinMessage.cs" />
+    <Compile Include="Net\ManagementMessages\UpdateGameServerMessage.cs" />
     <Compile Include="Net\ManagementMessages\GameServerListReply.cs" />
     <Compile Include="Net\ManagementMessages\GameServerListRequest.cs" />
     <Compile Include="Net\ManagementMessages\JoinGameServerReply.cs" />

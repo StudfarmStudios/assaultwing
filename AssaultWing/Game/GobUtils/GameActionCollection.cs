@@ -57,13 +57,16 @@ namespace AW2.Game.GobUtils
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            checked
             {
-                writer.Write((short)_items.Count);
-                foreach (var item in _items)
+                if ((mode & SerializationModeFlags.VaryingData) != 0)
                 {
-                    writer.Write((int)item.TypeID);
-                    item.Serialize(writer, SerializationModeFlags.All);
+                    writer.Write((byte)_items.Count);
+                    foreach (var item in _items)
+                    {
+                        writer.Write((byte)item.TypeID);
+                        item.Serialize(writer, SerializationModeFlags.All);
+                    }
                 }
             }
         }
@@ -72,11 +75,11 @@ namespace AW2.Game.GobUtils
         {
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                int count = reader.ReadInt16();
+                int count = reader.ReadByte();
                 var currentItems = new List<GameAction>();
                 for (int i = 0; i < count; ++i)
                 {
-                    var typeID = reader.ReadInt32();
+                    int typeID = reader.ReadByte();
                     var item = GameAction.CreateGameAction(typeID);
                     item.Deserialize(reader, SerializationModeFlags.All, framesAgo);
                     item.Player = _owner;

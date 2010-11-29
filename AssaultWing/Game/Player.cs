@@ -404,10 +404,7 @@ namespace AW2.Game
 
         private void CreateDeathMessage(string message, Color messageColor, Vector2 Pos, bool isSuicide)
         {
-            string iconName = "b_icon_add_kill";
-
-            if (isSuicide) iconName = "b_icon_take_life";
-
+            var iconName = isSuicide ? "b_icon_take_life" : "b_icon_add_kill";
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"deathmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
@@ -418,38 +415,23 @@ namespace AW2.Game
             });
         }
 
-        private void SendDeathMessageToBystanders(DeathCause cause, string bystanderMessage)
+        private void SendDeathMessageToBystanders(DeathCause cause)
         {
-            foreach (var plr in Game.DataEngine.Players)
-            {
-                if (plr.ID != ID)
-                {
-                    if (cause.IsKill && plr.ID == cause.Killer.Owner.ID)
-                    {
-                    }
-                    else
-                    {
-                        plr.SendMessage(bystanderMessage, KILL_COLOR);
-                    }
-                }
-            }
+            if (cause.IsKill) return;
+            var bystanderMessage = Name + " could not take it anymore";
+            foreach (var plr in Game.DataEngine.Players.Except(new[] { this, cause.Killer.Owner }))
+                plr.SendMessage(bystanderMessage, KILL_COLOR);
         }
 
         private static readonly int KILLINGSPREE_KILLS_REQUIRED = 3;
 
         private void SendKillingSpreeMessage(Player player)
         {
-            string message = player.Name + " IS ON FIRE! (" + player.KillsWithoutDying + " kills)";
-
-            if (player.KillsWithoutDying > 5)
-            {
-                message = player.Name + " IS UNSTOPPABLE! (" + player.KillsWithoutDying + " kills) OMG!";
-            }
-
+            var message = player.KillsWithoutDying <= 5
+                ? player.Name + " IS ON FIRE! (" + player.KillsWithoutDying + " kills)"
+                : player.Name + " IS UNSTOPPABLE! (" + player.KillsWithoutDying + " kills) OMG!";
             foreach (var plr in Game.DataEngine.Players)
-            {
                 plr.SendMessage(message, KILLING_SPREE_COLOR);
-            }
         }
 
         /// <summary>
@@ -458,53 +440,10 @@ namespace AW2.Game
         /// <param name="cause">The cause of death of the player's ship</param>
         public void Die(DeathCause cause)
         {
-            // Dying has some consequences.
-            if (cause.IsSuicide) ++_suicides;
-            if (cause.IsKill)
-            {
-                ++cause.Killer.Owner._kills;
-                if (Game.NetworkMode == NetworkMode.Server)
-                    cause.Killer.Owner.MustUpdateToClients = true;
-            }
-            
-            // Take a life (it's not easy to die)
-            --_lives;
-            // Reset killing-spree
-            KillsWithoutDying = 0;
-            BonusActions.Clear();
-
-            var bystanderMessage = "";
-
-            if (cause.IsKill)
-            {
-                cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
-                // Increase killing spree
-                ++cause.Killer.Owner.KillsWithoutDying;
-                // If Killer is on a KillingSpree, send message
-                if (cause.Killer.Owner.KillsWithoutDying >= KILLINGSPREE_KILLS_REQUIRED)
-                    SendKillingSpreeMessage(cause.Killer.Owner);
-                CreateDeathMessage(cause.Killer.Owner.Name, cause.Killer.Owner.PlayerColor, Ship.Pos, false);
-                bystanderMessage = cause.Killer.Owner.Name + " fragged " + Name;
-            }
-            if (cause.IsSuicide)
-            {
-                CreateDeathMessage(Name, PlayerColor, Ship.Pos, true);
-                bystanderMessage = Name + " could not take it anymore";
-            }
-
-            // Send message about death to other players too
-            SendDeathMessageToBystanders(cause, bystanderMessage);
-
-            Ship = null;
-
-            // Notify the player about his death and possible killer about his frag.
-            SendMessage("Death by " + cause.ToPersonalizedString(this), DEATH_COLOR);
-
-            // Schedule the making of a new ship, lives permitting.
+            Die_HandleCounters(cause);
+            Die_SendMessages(cause);
             _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
-
-            if (Game.NetworkMode == NetworkMode.Server)
-                MustUpdateToClients = true;
+            if (Game.NetworkMode == NetworkMode.Server) MustUpdateToClients = true;
         }
 
         public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
@@ -634,6 +573,36 @@ namespace AW2.Game
         #endregion Methods related to serialisation
 
         #region Private methods
+
+        private void Die_HandleCounters(DeathCause cause)
+        {
+            if (cause.IsSuicide) ++_suicides;
+            if (cause.IsKill)
+            {
+                ++cause.Killer.Owner._kills;
+                if (Game.NetworkMode == NetworkMode.Server)
+                    cause.Killer.Owner.MustUpdateToClients = true;
+            }
+            --_lives;
+            KillsWithoutDying = 0;
+            BonusActions.Clear();
+        }
+
+        private void Die_SendMessages(DeathCause cause)
+        {
+            if (cause.IsKill)
+            {
+                cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
+                ++cause.Killer.Owner.KillsWithoutDying;
+                if (cause.Killer.Owner.KillsWithoutDying >= KILLINGSPREE_KILLS_REQUIRED)
+                    SendKillingSpreeMessage(cause.Killer.Owner);
+                CreateDeathMessage(cause.Killer.Owner.Name, cause.Killer.Owner.PlayerColor, Ship.Pos, false);
+            }
+            if (cause.IsSuicide) CreateDeathMessage(Name, PlayerColor, Ship.Pos, true);
+            SendDeathMessageToBystanders(cause);
+            Ship = null;
+            SendMessage("Death by " + cause.ToPersonalizedString(this), DEATH_COLOR);
+        }
 
         /// <summary>
         /// Applies the player's controls to his ship, if there is any.

@@ -105,7 +105,11 @@ namespace AW2.Game.Gobs
 
         public override void Dispose()
         {
-            _dockSound.Dispose();
+            if (_dockSound != null)
+            {
+                _dockSound.Dispose();
+                _dockSound = null;
+            }
             base.Dispose();
         }
 

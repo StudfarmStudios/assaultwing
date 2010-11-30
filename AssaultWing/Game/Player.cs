@@ -419,7 +419,12 @@ namespace AW2.Game
         {
             if (cause.IsKill) return;
             var bystanderMessage = Name + " could not take it anymore";
-            foreach (var plr in Game.DataEngine.Players.Except(new[] { this, cause.Killer.Owner }))
+            var playersToExclude = new[]
+            {
+                this,
+                cause.Killer == null ? null : cause.Killer.Owner
+            };
+            foreach (var plr in Game.DataEngine.Players.Except(playersToExclude))
                 plr.SendMessage(bystanderMessage, KILL_COLOR);
         }
 

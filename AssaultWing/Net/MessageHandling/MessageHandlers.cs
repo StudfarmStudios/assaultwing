@@ -102,22 +102,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleClientJoinMessage(ClientJoinMessage mess)
         {
-            IPEndPoint matchingEndPoint = null;
-            var connection = AssaultWingCore.Instance.NetworkEngine.GameClientConnections.FirstOrDefault(conn =>
-            {
-                matchingEndPoint = mess.ClientUDPEndPoints.FirstOrDefault(endPoint => endPoint.Address.Equals(conn.RemoteIPAddress));
-                return matchingEndPoint != null;
-            });
-            if (connection == null)
-            {
-                // Received game client UDP end point before the connection to the game client was created.
-                // TODO !!! The connection is probably going to be created soon. Store the port somewhere else.
-                // OR, more likely the connection was closed immediately (e.g. because the game server is full).
-            }
-            else
-            {
-                connection.RemoteUDPEndPoint = matchingEndPoint;
-            }
+            AssaultWingCore.Instance.NetworkEngine.ClientUDPEndPointPool.Add(mess.ClientUDPEndPoints);
         }
 
         private static void HandlePingMessage(PingMessage mess)

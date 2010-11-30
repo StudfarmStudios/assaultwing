@@ -130,9 +130,6 @@ namespace AW2.Net
         /// </summary>
         public bool IsConnectedToManagementServer { get { return _managementServerConnection != null; } }
 
-        /// <summary>
-        /// Connections to game clients.
-        /// </summary>
         public IEnumerable<Connection> GameClientConnections
         {
             get
@@ -142,9 +139,6 @@ namespace AW2.Net
             }
         }
 
-        /// <summary>
-        /// Connection to the game server.
-        /// </summary>
         public Connection GameServerConnection
         {
             get
@@ -154,9 +148,6 @@ namespace AW2.Net
             }
         }
 
-        /// <summary>
-        /// Connection to the management server.
-        /// </summary>
         public Connection ManagementServerConnection
         {
             get
@@ -170,6 +161,12 @@ namespace AW2.Net
         /// UDP socket for use with all remote connections.
         /// </summary>
         public AWUDPSocket UDPSocket { get; private set; }
+
+        /// <summary>
+        /// A temporary storage of game client UDP end points. Items come from <see cref="ClientJoinMessage"/> 
+        /// and are read and removed by game client connections themselves.
+        /// </summary>
+        public IList<IPEndPoint[]> ClientUDPEndPointPool { get; private set; }
 
         /// <summary>
         /// Finds a management server and initialises <see cref="ManagementServerConnection"/>.
@@ -198,6 +195,7 @@ namespace AW2.Net
         public void StartServer(Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Server starts listening");
+            ClientUDPEndPointPool = new List<IPEndPoint[]>();
             _startServerConnectionHandler = connectionHandler;
             _connectionAttemptListener = new ConnectionAttemptListener(Game);
             _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT);
@@ -215,6 +213,7 @@ namespace AW2.Net
             UnregisterServerFromManagementServer();
             _connectionAttemptListener.StopListening();
             _connectionAttemptListener = null;
+            ClientUDPEndPointPool = null;
             DisposeGameClientConnections();
         }
 

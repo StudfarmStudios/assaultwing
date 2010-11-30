@@ -93,7 +93,16 @@ namespace AW2.Net.Connections
         /// Has the connection handshake been completed. Sending UDP messages is not possible before the
         /// handshaking is complete.
         /// </summary>
-        public bool IsHandshaked { get { return RemoteUDPEndPoint != null; } }
+        public bool IsHandshaked
+        {
+            get
+            {
+                // TODO: If RemoteUDPEndPoint stays null for a long time (5 seconds), cut the connection.
+                // TODO: Also, TryInitializeRemoteUDPEndPoint() need not be called but at relaxed intervals (each second).
+                if (RemoteUDPEndPoint == null) TryInitializeRemoteUDPEndPoint();
+                return RemoteUDPEndPoint != null;
+            }
+        }
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
@@ -373,7 +382,9 @@ namespace AW2.Net.Connections
         /// </summary>
         private void SendViaUDP(byte[] data)
         {
-            if (!IsHandshaked) throw new InvalidOperationException("Cannot send messages via UDP before connection is handshaked");
+            // Cannot send messages via UDP before the connection is handshaked. But hey,
+            // UDP is an unreliable protocol, so let's just dump the message silently in that case.
+            if (!IsHandshaked) return;
             Game.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
         }
 
@@ -388,6 +399,21 @@ namespace AW2.Net.Connections
             if (!IsHandshaked && mess is PingRequestMessage)
                 RemoteUDPEndPoint = remoteEndPoint;
             return false;
+        }
+
+        /// <summary>
+        /// Try to find the remote UDP end point from received <see cref="ClientJoinMessage"/>s.
+        /// Relevant only on a game server for game client connections.
+        /// </summary>
+        private void TryInitializeRemoteUDPEndPoint()
+        {
+            if (RemoteUDPEndPoint != null) throw new InvalidOperationException("RemoteUDPEndPoint already initialized");
+            var matchingEndPoints = Game.NetworkEngine.ClientUDPEndPointPool
+                .FirstOrDefault(endPoints => endPoints.Any(ep => ep.Address.Equals(RemoteIPAddress)));
+            if (matchingEndPoints == null) return;
+            RemoteUDPEndPoint = matchingEndPoints.First(ep => ep.Address.Equals(RemoteIPAddress));
+            Game.NetworkEngine.ClientUDPEndPointPool.Remove(matchingEndPoints);
+            // TODO: Remove old items from Game.NetworkEngine.ClientUDPEndPointPool
         }
 
         public static void ReportResult(Result<Connection> result)

@@ -141,6 +141,7 @@ namespace AW2.Graphics
             Game.GobsDrawnPerFrameAvgPerSecondBaseCounter.Increment();
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.Clear(Color.Black);
+            foreach (var viewport in Game.DataEngine.Viewports) viewport.PrepareForDraw();
             foreach (var viewport in Game.DataEngine.Viewports) viewport.Draw();
             DrawViewportSeparators();
         }

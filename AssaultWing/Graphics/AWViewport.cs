@@ -228,25 +228,22 @@ namespace AW2.Graphics
             return new Ray(nearWorld, direction);
         }
 
-        /// <summary>
-        /// Draws the viewport's contents.
-        /// </summary>
-        public void Draw()
+        public void PrepareForDraw()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            var oldViewport = gfx.Viewport;
-            gfx.Viewport = Viewport;
-            Draw_InitializeParallaxIn3D();
-            _postprocessor.ProcessToScreen(RenderGameWorld);
-            DrawOverlayComponents();
-            gfx.Viewport = oldViewport;
+            DoInMyViewport(() =>
+            {
+                Draw_InitializeParallaxIn3D();
+                _postprocessor.PrepareForDisplay();
+            });
         }
 
-        private void DrawOverlayComponents()
+        public void Draw()
         {
-            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            gfx.Viewport = Viewport;
-            foreach (var component in _overlayComponents) component.Draw(_spriteBatch);
+            DoInMyViewport(() =>
+            {
+                _postprocessor.DisplayOnScreen();
+                DrawOverlayComponents();
+            });
         }
 
         public Matrix GetGameToScreenMatrix(float z)
@@ -316,7 +313,7 @@ namespace AW2.Graphics
                 foreach (var name in _getPostprocessEffectNames())
                     container.Add(AssaultWingCore.Instance.Content.Load<Effect>(name));
             };
-            _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, effectContainerUpdater);
+            _postprocessor = new TexturePostprocessor(AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice, RenderGameWorld, effectContainerUpdater);
             foreach (var component in _overlayComponents) component.LoadContent();
         }
 
@@ -340,6 +337,22 @@ namespace AW2.Graphics
         private float GetScale(float z)
         {
             return 1000 / (1000 - z);
+        }
+
+        private void DoInMyViewport(Action action)
+        {
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+            var oldViewport = gfx.Viewport;
+            gfx.Viewport = Viewport;
+            action();
+            gfx.Viewport = oldViewport;
+        }
+
+        private void DrawOverlayComponents()
+        {
+            var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+            gfx.Viewport = Viewport;
+            foreach (var component in _overlayComponents) component.Draw(_spriteBatch);
         }
 
         #region Methods that are used only conditionally

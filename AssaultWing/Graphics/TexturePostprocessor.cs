@@ -22,12 +22,14 @@ namespace AW2.Graphics
         private VertexPositionTexture[] _vertexData;
         private Viewport _oldViewport;
         private List<Effect> _effects;
+        private Action _render;
         private Action<ICollection<Effect>> _effectContainerUpdater;
 
-        public TexturePostprocessor(GraphicsDevice gfx, Action<ICollection<Effect>> effectContainerUpdater)
+        public TexturePostprocessor(GraphicsDevice gfx, Action render, Action<ICollection<Effect>> effectContainerUpdater)
         {
             _basicShaders = AssaultWingCore.Instance.Content.Load<Effect>("basicshaders");
             _gfx = gfx;
+            _render = render;
             Func<AutoRenderTarget2D.CreationData> getRenderTargetCreationData = () => new AutoRenderTarget2D.CreationData
             {
                 Width = _gfx.Viewport.Width,
@@ -48,25 +50,25 @@ namespace AW2.Graphics
             };
         }
 
-        public void ProcessToScreen(Action render)
+        public void PrepareForDisplay()
         {
             _effectContainerUpdater(_effects);
-            if (_effects.Count == 0)
-            {
-                render();
-                return;
-            }
+            if (_effects.Count == 0) return;
             PrepareFirstPass();
-            render();
+            _render();
             Process();
-            DisplayOnScreen();
         }
 
-        private void DisplayOnScreen()
+        public void DisplayOnScreen()
         {
-            PrepareLastPass(_basicShaders);
-            _basicShaders.CurrentTechnique.Passes["PixelAndVertexShaderPass"].Apply();
-            _gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
+            if (_effects.Count == 0)
+                _render();
+            else
+            {
+                PrepareLastPass(_basicShaders);
+                _basicShaders.CurrentTechnique.Passes["PixelAndVertexShaderPass"].Apply();
+                _gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
+            }
         }
 
         private void Process()
@@ -82,6 +84,7 @@ namespace AW2.Graphics
                     _gfx.DrawUserPrimitives(PrimitiveType.TriangleStrip, _vertexData, 0, 2);
                 }
             }
+            _gfx.SetRenderTarget(null);
         }
 
         private void PrepareFirstPass()
@@ -106,12 +109,11 @@ namespace AW2.Graphics
         private void PrepareLastPass(Effect effect)
         {
             _sourceIndex = _targetIndex;
-            _targetIndex = (_targetIndex + 1) % _targets.Length;
+            _targetIndex = -1;
             _gfx.SetRenderTarget(null);
             _gfx.DepthStencilState = DepthStencilState.None;
             _gfx.BlendState = BlendState.Opaque;
             _gfx.Viewport = _oldViewport;
-            _gfx.Clear(Color.Black);
             PrepareEffect(effect);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using AW2.Core;
 using AW2.Game.GobUtils;
+using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Game.BonusActions
@@ -10,10 +11,10 @@ namespace AW2.Game.BonusActions
     public class DamageBuffBonusAction : GameAction
     {
         [TypeParameter]
-        private string _buffName;
+        private string _buffName; // not CanonicalString because this doesn't contain any "well known string" such as a content texture name
 
         [TypeParameter]
-        private string _bonusIconName;
+        private CanonicalString _bonusIconName;
 
         [TypeParameter]
         private float _damagePerSecond;
@@ -24,11 +25,11 @@ namespace AW2.Game.BonusActions
         public DamageBuffBonusAction()
         {
             _buffName = "dummy damage buff";
-            _bonusIconName = "dummytexture";
+            _bonusIconName = (CanonicalString)"dummytexture";
             _damagePerSecond = 500;
         }
 
-        public DamageBuffBonusAction(string buffName, string bonusIconName, float damagePerSecond)
+        public DamageBuffBonusAction(string buffName, CanonicalString bonusIconName, float damagePerSecond)
         {
             _buffName = buffName;
             _bonusIconName = bonusIconName;
@@ -39,6 +40,26 @@ namespace AW2.Game.BonusActions
         {
             SetActionMessage();
             return base.DoAction();
+        }
+
+        public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
+            base.Serialize(writer, mode);
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                writer.Write(_buffName);
+                writer.Write(_bonusIconName);
+            }
+        }
+
+        public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
+        {
+            base.Deserialize(reader, mode, framesAgo);
+            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            {
+                _buffName = reader.ReadString();
+                _bonusIconName = reader.ReadCanonicalString();
+            }
         }
 
         public override void Update()

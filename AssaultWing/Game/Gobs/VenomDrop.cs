@@ -11,7 +11,7 @@ namespace AW2.Game.Gobs
     public class VenomDrop : Bullet
     {
         [TypeParameter]
-        private string _damageOverTimeBonusIconName;
+        private CanonicalString _damageOverTimeBonusIconName;
 
         [TypeParameter]
         private float _clingDamagePerSecond;
@@ -22,7 +22,7 @@ namespace AW2.Game.Gobs
         /// This constructor is only for serialisation.
         public VenomDrop()
         {
-            _damageOverTimeBonusIconName = "dummytexture";
+            _damageOverTimeBonusIconName = (CanonicalString)"dummytexture";
             _clingDamagePerSecond = 10;
             _clingTime = 5;
         }

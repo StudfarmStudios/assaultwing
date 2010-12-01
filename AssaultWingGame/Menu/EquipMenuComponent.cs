@@ -34,14 +34,13 @@ namespace AW2.Menu
         private enum EquipMenuTab { Equipment = 1, Players = 2, Chat = 3, GameSettings = 4 }
         private enum EquipMenuGameSettings { Type = 0, Arena = 1 }
         private EquipMenuTab _currentTab;
-        private int _playerListIndex;
+        private int _playerListIndex; // access through property PlayerListIndex
         private int _gameSettingsListIndex;
         private bool _playerNameChanged;
         private bool _readyPressed;
         private TimeSpan _listCursorFadeStartTime;
         private TimeSpan _tabFadeStartTime;
         private TimeSpan _readyFadeStartTime;
-        private TimeSpan _nameInfoMoveStartTime;
 
         private const int MAX_MENU_PANES = 4;
 
@@ -163,6 +162,17 @@ namespace AW2.Menu
             }
         }
 
+        private int PlayerListIndex
+        {
+            get
+            {
+                if (_playerListIndex >= MenuEngine.Game.DataEngine.Players.Count()) _playerListIndex = 0;
+                if (_playerListIndex < 0) _playerListIndex = MenuEngine.Game.DataEngine.Players.Count() - 1;
+                return _playerListIndex;
+            }
+            set { _playerListIndex = value; }
+        }
+
         /// <summary>
         /// Creates an equip menu component for a menu system.
         /// </summary>
@@ -178,13 +188,12 @@ namespace AW2.Menu
             _controlListDown = new KeyboardKey(Keys.Down);
             _controlStartGame = new KeyboardKey(Keys.F10);
             _currentTab = EquipMenuTab.Equipment;
-            _playerListIndex = 0;
+            PlayerListIndex = 0;
             _gameSettingsListIndex = 0;
             _listCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             _playerNameChanged = false;
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             _readyFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
-            _nameInfoMoveStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             _pos = new Vector2(0, 0);
             _currentItems = new EquipMenuItem[MAX_MENU_PANES];
             _cursorFadeStartTimes = new TimeSpan[MAX_MENU_PANES];
@@ -244,7 +253,7 @@ namespace AW2.Menu
 
         private void ResetPlayerList()
         {
-            _playerListIndex = 0;
+            PlayerListIndex = 0;
         }
 
         private void ResetEquipMenu()
@@ -261,7 +270,6 @@ namespace AW2.Menu
         public override void Update()
         {
             if (MenuPanePlayers.Count() != _playerNames.Count()) CreateSelectors();
-            if (MenuPanePlayers.Count() < _playerNames.Count()) ResetPlayerList();
             if (Active)
             {
                 CheckGeneralControls();
@@ -354,27 +362,15 @@ namespace AW2.Menu
         {
             if (_controlListDown.Pulse)
             {
-                ++_playerListIndex;
-
-                if (_playerListIndex >= MenuEngine.Game.DataEngine.Players.Count())
-                    _playerListIndex = 0;
-
+                ++PlayerListIndex;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 _listCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
-
-                return;
             }
             if (_controlListUp.Pulse)
             {
-                --_playerListIndex;
-
-                if (_playerListIndex < 0)
-                    _playerListIndex = MenuEngine.Game.DataEngine.Players.Count() - 1;
-
+                --PlayerListIndex;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 _listCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
-
-                return;
             }
         }
 
@@ -518,44 +514,41 @@ namespace AW2.Menu
             spriteBatch.Draw(_backgroundTexture, _pos - view, Color.White);
             DrawTabsAndButtons(view, spriteBatch);
             DrawStatusDisplay(view, spriteBatch);
-
-            if (_currentTab == EquipMenuTab.Equipment)
+            switch (_currentTab)
             {
-                if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
-                {
+                case EquipMenuTab.Equipment:
+                    if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
+                        DrawLargeStatusBackground(view, spriteBatch);
+                    DrawPlayerPanes(view, spriteBatch);
+                    DrawShipInfoDisplay(view, spriteBatch);
+                    DrawShipDeviceInfoDisplay(view, spriteBatch);
+                    DrawWeaponInfoDisplay(view, spriteBatch);
+                    DrawNameChangeInfo(view, spriteBatch);
+                    break;
+                case EquipMenuTab.Players:
                     DrawLargeStatusBackground(view, spriteBatch);
-                }
-
-                DrawPlayerPanes(view, spriteBatch);
-                // Draw info display if in network game
-                DrawShipInfoDisplay(view, spriteBatch);
-                // Draw ship device info display
-                DrawShipDeviceInfoDisplay(view, spriteBatch);
-                // Draw weapon info display
-                DrawWeaponInfoDisplay(view, spriteBatch);
-
-                DrawNameChangeInfo(view, spriteBatch);
-            }
-
-            if (_currentTab == EquipMenuTab.Players)
-            {
-                DrawLargeStatusBackground(view, spriteBatch);
-                DrawPlayerListDisplay(view, spriteBatch);
-                DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(_playerListIndex));
-            }
-
-            if (_currentTab == EquipMenuTab.Chat)
-            {
-                DrawLargeStatusBackground(view, spriteBatch);
-                DrawChatTextInputBox(view, spriteBatch);
-            }
-
-            if (_currentTab == EquipMenuTab.GameSettings)
-            {
-                DrawLargeStatusBackground(view, spriteBatch);
-                DrawGameSettingsList(view, spriteBatch);
-                DrawGameModeInfo(view, spriteBatch);
-                DrawArenaInfo(view, spriteBatch);
+                    DrawPlayerListDisplay(view, spriteBatch);
+                    DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(PlayerListIndex));
+                    break;
+                case EquipMenuTab.Chat:
+                    DrawLargeStatusBackground(view, spriteBatch);
+                    DrawChatTextInputBox(view, spriteBatch);
+                    break;
+                case EquipMenuTab.GameSettings:
+                    DrawLargeStatusBackground(view, spriteBatch);
+                    DrawGameSettingsList(view, spriteBatch);
+                    switch ((EquipMenuGameSettings)_gameSettingsListIndex)
+                    {
+                        case EquipMenuGameSettings.Type:
+                            DrawGameModeInfo(view, spriteBatch);
+                            break;
+                        case EquipMenuGameSettings.Arena:
+                            DrawArenaInfo(view, spriteBatch);
+                            break;
+                        default: throw new ApplicationException("Unexpected EquipMenuGameSettings " + _gameSettingsListIndex);
+                    }
+                    break;
+                default: throw new ApplicationException("Unexpected EquipMenuTab " + _currentTab);
             }
         }
 
@@ -567,79 +560,73 @@ namespace AW2.Menu
 
         private void DrawArenaInfo(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (_gameSettingsListIndex == (int)EquipMenuGameSettings.Arena)
-            {
-                Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
-                Vector2 currentPos = infoDisplayPos;
-                Vector2 lineHeight = new Vector2(0, 20);
-                Vector2 infoWidth = new Vector2(320, 0);
-                string arenaName = MenuEngine.Game.DataEngine.ArenaPlaylist[0];
-                ArenaInfo arenaInfo = MenuEngine.Game.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
-                var content = MenuEngine.Game.Content;
-                string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
-                var previewTexture = content.Load<Texture2D>(previewName);
+            Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
+            Vector2 currentPos = infoDisplayPos;
+            Vector2 lineHeight = new Vector2(0, 20);
+            Vector2 infoWidth = new Vector2(320, 0);
+            string arenaName = MenuEngine.Game.DataEngine.ArenaPlaylist[0];
+            ArenaInfo arenaInfo = MenuEngine.Game.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
+            var content = MenuEngine.Game.Content;
+            string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
+            var previewTexture = content.Load<Texture2D>(previewName);
 
-                spriteBatch.DrawString(_menuBigFont, "Arena info", currentPos, Color.White);
-                currentPos += new Vector2(0, 50);
-                spriteBatch.DrawString(_menuSmallFont, "Current arena:", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, arenaName, currentPos + new Vector2(_menuSmallFont.MeasureString("Current arena:  ").X, 0), Color.GreenYellow);
-                spriteBatch.DrawString(_menuSmallFont, "Arena list", currentPos + infoWidth + new Vector2(10, 0), Color.White);
-                currentPos += lineHeight;
-                spriteBatch.DrawString(_menuSmallFont, "Gametype settings don't\n" +
-                                                       "contain a list of arenas\n" +
-                                                       "so the game host can\n" +
-                                                       "change the arena.", currentPos + infoWidth + new Vector2(10, 0), new Color(218, 159, 33));
-                spriteBatch.Draw(previewTexture, currentPos, null, Color.White, 0,
-                    new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
-            }
+            spriteBatch.DrawString(_menuBigFont, "Arena info", currentPos, Color.White);
+            currentPos += new Vector2(0, 50);
+            spriteBatch.DrawString(_menuSmallFont, "Current arena:", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, arenaName, currentPos + new Vector2(_menuSmallFont.MeasureString("Current arena:  ").X, 0), Color.GreenYellow);
+            spriteBatch.DrawString(_menuSmallFont, "Arena list", currentPos + infoWidth + new Vector2(10, 0), Color.White);
+            currentPos += lineHeight;
+            spriteBatch.DrawString(_menuSmallFont, "Gametype settings don't\n" +
+                                                   "contain a list of arenas\n" +
+                                                   "so the game host can\n" +
+                                                   "change the arena.", currentPos + infoWidth + new Vector2(10, 0), new Color(218, 159, 33));
+            spriteBatch.Draw(previewTexture, currentPos, null, Color.White, 0,
+                new Vector2(0, 0), 0.6f, SpriteEffects.None, 0);
         }
 
         private void DrawGameModeInfo(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (_gameSettingsListIndex == (int)EquipMenuGameSettings.Type)
-            {
-                Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
-                Vector2 lineHeight = new Vector2(0, 20);
-                Vector2 infoWidth = new Vector2(320, 0);
-                Vector2 currentPos = infoDisplayPos;
-                string arenaName = MenuEngine.Game.DataEngine.ArenaPlaylist[0];
+            Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
+            Vector2 lineHeight = new Vector2(0, 20);
+            Vector2 infoWidth = new Vector2(320, 0);
+            Vector2 currentPos = infoDisplayPos;
+            string arenaName = MenuEngine.Game.DataEngine.ArenaPlaylist[0];
 
-                spriteBatch.DrawString(_menuBigFont, "Gametype Settings", currentPos, Color.White);
-                currentPos += new Vector2(0, 50);
-                
-                spriteBatch.DrawString(_menuSmallFont, "Enemy", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, "Everyone", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("Everyone").X, 0)), Color.GreenYellow);
-                currentPos += lineHeight;
+            spriteBatch.DrawString(_menuBigFont, "Gametype Settings", currentPos, Color.White);
+            currentPos += new Vector2(0, 50);
 
-                spriteBatch.DrawString(_menuSmallFont, "Players", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, "max 16", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("max 16").X, 0)), Color.GreenYellow);
-                currentPos += lineHeight;
+            spriteBatch.DrawString(_menuSmallFont, "Enemy", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, "Everyone", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("Everyone").X, 0)), Color.GreenYellow);
+            currentPos += lineHeight;
 
-                spriteBatch.DrawString(_menuSmallFont, "Time limit", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
-                currentPos += lineHeight;
+            spriteBatch.DrawString(_menuSmallFont, "Players", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, "max 16", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("max 16").X, 0)), Color.GreenYellow);
+            currentPos += lineHeight;
 
-                spriteBatch.DrawString(_menuSmallFont, "Life limit", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
-                currentPos += lineHeight;
+            spriteBatch.DrawString(_menuSmallFont, "Time limit", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
+            currentPos += lineHeight;
 
-                spriteBatch.DrawString(_menuSmallFont, "Score limit", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
-                currentPos += lineHeight;
+            spriteBatch.DrawString(_menuSmallFont, "Life limit", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
+            currentPos += lineHeight;
 
-                spriteBatch.DrawString(_menuSmallFont, "Arena count", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, "1", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("1").X, 0)), Color.GreenYellow);
-                currentPos += lineHeight;
+            spriteBatch.DrawString(_menuSmallFont, "Score limit", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, "none", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("none").X, 0)), Color.GreenYellow);
+            currentPos += lineHeight;
 
-                spriteBatch.DrawString(_menuSmallFont, "Arenas", currentPos, Color.White);
-                spriteBatch.DrawString(_menuSmallFont, "Selectable <" + arenaName + ">", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("Selectable <" + arenaName + ">").X, 0)), Color.GreenYellow);
-                currentPos += new Vector2(0, 72);
+            spriteBatch.DrawString(_menuSmallFont, "Arena count", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, "1", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("1").X, 0)), Color.GreenYellow);
+            currentPos += lineHeight;
 
-                spriteBatch.DrawString(_menuSmallFont, "If you want to change these gametype\n" + 
-                                                       "settings, please create a pilot in\n" +
-                                                       "assault wing website which will allow\n" +
-                                                       "you to create your own gametype settings'.", currentPos, new Color(218, 159, 33));
-            }
+            spriteBatch.DrawString(_menuSmallFont, "Arenas", currentPos, Color.White);
+            spriteBatch.DrawString(_menuSmallFont, "Selectable <" + arenaName + ">", currentPos + (infoWidth - new Vector2(_menuSmallFont.MeasureString("Selectable <" + arenaName + ">").X, 0)), Color.GreenYellow);
+            currentPos += new Vector2(0, 72);
+
+            spriteBatch.DrawString(_menuSmallFont, "If you want to change these gametype\n" +
+                                                   "settings, please create a pilot in\n" +
+                                                   "assault wing website which will allow\n" +
+                                                   "you to create your own gametype settings'.", currentPos, new Color(218, 159, 33));
         }
 
         private void DrawGameSettingsList(Vector2 view, SpriteBatch spriteBatch)
@@ -667,22 +654,19 @@ namespace AW2.Menu
 
         private void DrawNameChangeInfo(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (!_playerNameChanged && MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
-            {
-                Vector2 nameChangeInfoPos = _pos - view + new Vector2(250, 180);
-                var nameChangeInfoTexture = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
-                float moveTime = (float)(MenuEngine.Game.GameTime.TotalRealTime - _nameInfoMoveStartTime).TotalSeconds;
-                spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos + new Vector2((float)_nameInfoMove.Evaluate(moveTime), 0), MenuPanePlayers.ElementAt(0).First.PlayerColor);
-                // spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).First.PlayerColor);
-            }
+            if (_playerNameChanged || MenuEngine.Game.NetworkMode == NetworkMode.Standalone) return;
+            var moveTime = (float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds;
+            var nameChangeInfoPos = _pos - view + new Vector2(250 + _nameInfoMove.Evaluate(moveTime), 180);
+            var nameChangeInfoTexture = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
+            spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).First.PlayerColor);
         }
 
         private void DrawPlayerListDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
-            Vector2 playerListPos = _pos - view + new Vector2(360, 201);
-            Vector2 currentPlayerPos = playerListPos;
-            Vector2 lineHeight = new Vector2(0, 30);
-            Vector2 cursorPos = playerListPos + (lineHeight * _playerListIndex) + new Vector2(-27, -37);
+            var playerListPos = _pos - view + new Vector2(360, 201);
+            var currentPlayerPos = playerListPos;
+            var lineHeight = new Vector2(0, 30);
+            var cursorPos = playerListPos + (lineHeight * PlayerListIndex) + new Vector2(-27, -37);
 
             float cursorTime = (float)(MenuEngine.Game.GameTime.TotalRealTime - _listCursorFadeStartTime).TotalSeconds;
             var playerNameEmptyTexture = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_player_name_bg_empty");
@@ -690,7 +674,7 @@ namespace AW2.Menu
             spriteBatch.Draw(_listCursorTexture, cursorPos, Color.White);
             spriteBatch.Draw(_listHiliteTexture, cursorPos, new Color(255, 255, 255, (byte)_cursorFade.Evaluate(cursorTime)));
 
-            foreach (Player plr in MenuEngine.Game.DataEngine.Players)
+            foreach (var plr in MenuEngine.Game.DataEngine.Players)
             {
                 spriteBatch.DrawString(_menuSmallFont, plr.Name, currentPlayerPos, plr.PlayerColor);
                 currentPlayerPos += lineHeight;
@@ -699,13 +683,13 @@ namespace AW2.Menu
 
         private void DrawPlayerInfoDisplay(Vector2 view, SpriteBatch spriteBatch, Player player)
         {
-            Weapon weapon = (Weapon)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
-            ShipDeviceInfo weaponInfo = weapon.DeviceInfo;
-            ShipDevice device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
-            ShipDeviceInfo deviceInfo = device.DeviceInfo;
-            Ship ship = (Ship)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ShipName);
-            ShipInfo shipInfo = ship.ShipInfo;
-            Vector2 infoDisplayPos = _pos - view + new Vector2(570, 191);
+            var weapon = (Weapon)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
+            var weaponInfo = weapon.DeviceInfo;
+            var device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
+            var deviceInfo = device.DeviceInfo;
+            var ship = (Ship)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ShipName);
+            var shipInfo = ship.ShipInfo;
+            var infoDisplayPos = _pos - view + new Vector2(570, 191);
 
             var shipPicture = MenuEngine.Game.Content.Load<Texture2D>(shipInfo.PictureName);
             var shipTitlePicture = MenuEngine.Game.Content.Load<Texture2D>(shipInfo.TitlePictureName);

@@ -663,9 +663,8 @@ namespace AW2.Game.Gobs
         {
             if (_isBirthFlashing)
             {
-                float age = _birthTime.SecondsAgoGameTime();
-                Alpha = _birthAlpha.Evaluate(age);
-                if (age >= _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position)
+                Alpha = _birthAlpha.Evaluate(AgeInGameSeconds);
+                if (AgeInGameSeconds >= _birthAlpha.Keys[_birthAlpha.Keys.Count - 1].Position)
                 {
                     Enable();
                     _isBirthFlashing = false;

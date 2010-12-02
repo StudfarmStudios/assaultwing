@@ -49,7 +49,7 @@ namespace AW2.Game.Gobs
         public FloatingBullet(CanonicalString typeName)
             : base(typeName)
         {
-            _gravitating = false;
+            Gravitating = false;
         }
 
         public override void Update()

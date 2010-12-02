@@ -191,9 +191,8 @@ namespace AW2.Game.Gobs
                     Target.Gob.InflictDamage(impactDamage, new DeathCause(Target.Gob, DeathCauseType.Damage, this));
                 _damageDealt = true;
             }
-            float seconds = _birthTime.SecondsAgoGameTime();
-            Alpha = alphaCurve.Evaluate(seconds);
-            if (seconds >= alphaCurve.Keys.Last().Position)
+            Alpha = alphaCurve.Evaluate(AgeInGameSeconds);
+            if (AgeInGameSeconds >= alphaCurve.Keys.Last().Position)
                 Die(new DeathCause());
         }
 

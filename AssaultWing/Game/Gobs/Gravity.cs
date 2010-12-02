@@ -38,7 +38,7 @@ namespace AW2.Game.Gobs
         public Gravity(AW2.Helpers.CanonicalString typeName)
             : base(typeName)
         {
-            _movable = false;
+            Movable = false;
         }
 
         /// <summary>

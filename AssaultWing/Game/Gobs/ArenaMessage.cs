@@ -89,14 +89,13 @@ namespace AW2.Game.Gobs
         {
             Vector2 backgroundPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
 
-            float timePassed = _birthTime.SecondsAgoGameTime();
-            float finalScale = _scaleCurve.Evaluate(timePassed) * scale;
+            float finalScale = _scaleCurve.Evaluate(AgeInGameSeconds) * scale;
             Vector2 origin = new Vector2(_iconBackground.Width, _iconBackground.Height) / 2;
             Vector2 iconPos = backgroundPos + new Vector2(-origin.X + 6, -_icon.Height / 2 - 1) * finalScale;
             Vector2 textPos = backgroundPos + new Vector2(_icon.Width + 1, 0) / 2 * finalScale;
             Vector2 textOrigin = _messageFont.MeasureString(Message) / 2;
-            var drawColor = Color.Multiply(DrawColor, _alphaCurve.Evaluate(timePassed));
-            if (timePassed > _scaleCurve.Keys.Last().Position)
+            var drawColor = Color.Multiply(DrawColor, _alphaCurve.Evaluate(AgeInGameSeconds));
+            if (AgeInGameSeconds > _scaleCurve.Keys.Last().Position)
             {
                 textPos = textPos.Round();
                 textOrigin = textOrigin.Round();
@@ -111,8 +110,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            float timePassed = _birthTime.SecondsAgoGameTime();
-            if (_alphaCurve.Keys.Last().Position < timePassed)
+            if (_alphaCurve.Keys.Last().Position < AgeInGameSeconds)
                 Die(new DeathCause());
         }
 

@@ -155,13 +155,13 @@ namespace AW2.Game
         /// Position of the gob in the game world.
         /// </summary>
         [RuntimeState]
-        protected Vector2 _pos;
+        private Vector2 _pos;
 
         /// <summary>
         /// Movement vector of the gob.
         /// </summary>
         [RuntimeState]
-        protected Vector2 _move;
+        private Vector2 _move;
 
         /// <summary>
         /// Gob rotation around the Z-axis in radians.
@@ -210,7 +210,7 @@ namespace AW2.Game
         /// Time of birth of the gob, in game time.
         /// </summary>
         [RuntimeState]
-        protected TimeSpan _birthTime;
+        private TimeSpan _birthTime;
 
         /// <summary>
         /// True iff the Die() has been called for this gob.
@@ -225,13 +225,7 @@ namespace AW2.Game
         /// </summary>
         /// Subclasses should set this according to their needs.
         [TypeParameter]
-        protected bool _movable;
-
-        /// <summary>
-        /// True iff the gob's movement is affected by gravity and other forces.
-        /// </summary>
-        /// Subclasses should set this according to their needs.
-        protected bool _gravitating;
+        private bool _movable;
 
         /// <summary>
         /// Preferred maximum time between the gob's state updates
@@ -267,15 +261,9 @@ namespace AW2.Game
         private CanonicalString[] _exhaustEngineNames;
 
         /// <summary>
-        /// Indices of bones that indicate exhaust engine locations
-        /// in the gob's 3D model.
-        /// </summary>
-        protected int[] _exhaustBoneIndices;
-
-        /// <summary>
         /// Particle engines that manage exhaust fumes.
         /// </summary>
-        protected Gob[] _exhaustEngines;
+        private Gob[] _exhaustEngines;
 
         #endregion Fields for gobs with thrusters
 
@@ -509,6 +497,8 @@ namespace AW2.Game
         /// </summary>
         public float Alpha { get { return _alpha; } set { _alpha = value; } }
 
+        public float AgeInGameSeconds { get { return _birthTime.SecondsAgoGameTime(); } }
+
         /// <summary>
         /// Returns the world matrix of the gob, i.e., the translation from
         /// game object coordinates to game world coordinates.
@@ -573,12 +563,13 @@ namespace AW2.Game
         /// <summary>
         /// True iff the gob moves around by the laws of physics.
         /// </summary>
-        public bool Movable { get { return _movable; } }
+        public bool Movable { get { return _movable; } protected set { _movable = value; } }
 
         /// <summary>
         /// True iff the gob's movement is affected by gravity and other forces.
+        /// Subclasses should set this according to their needs.
         /// </summary>
-        public bool Gravitating { get { return _gravitating; } }
+        public bool Gravitating { get; protected set; }
 
         #endregion Gob Properties
 
@@ -651,15 +642,11 @@ namespace AW2.Game
         protected Gob(CanonicalString typeName)
             : base(typeName)
         {
-            _gravitating = true;
-            _owner = null;
+            Gravitating = true;
             ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
-            _modelPartTransforms = null;
             _exhaustEngines = new Gob[0];
             _alpha = 1;
-            _bleachDamage = 0;
             _previousBleach = -1;
-            _bleachResetTime = new TimeSpan(0);
         }
 
         /// <summary>
@@ -830,11 +817,6 @@ namespace AW2.Game
         /// </summary>
         public virtual void Dispose()
         {
-            // Remove exhaust engines that are not Pengs.
-            // Pengs will die automatically because we are their Leader.
-            foreach (Gob exhaustEngine in _exhaustEngines)
-                if (!(exhaustEngine is Gobs.Peng))
-                    exhaustEngine.Die(new DeathCause());
             UnloadContent();
             IsDisposed = true;
         }
@@ -1138,8 +1120,8 @@ namespace AW2.Game
 
             // Create proper exhaust engines.
             int templates = _exhaustEngineNames.Length;
-            List<int> exhaustBoneIList = new List<int>();
-            List<Gob> exhaustEngineList = new List<Gob>();
+            var exhaustBoneIList = new List<int>();
+            var exhaustEngineList = new List<Gob>();
             for (int thrustI = 0; thrustI < boneIs.Length; ++thrustI)
                 for (int tempI = 0; tempI < templates; ++tempI)
                 {
@@ -1152,7 +1134,6 @@ namespace AW2.Game
                         exhaustEngineList.Add(gob);
                     });
                 }
-            _exhaustBoneIndices = exhaustBoneIList.ToArray();
             _exhaustEngines = exhaustEngineList.ToArray();
         }
 
@@ -1162,11 +1143,8 @@ namespace AW2.Game
 
         protected virtual void SwitchEngineFlashAndBang(bool active)
         {
-            foreach (var exhaustEngine in _exhaustEngines)
-            {
-                var peng = exhaustEngine as Gobs.Peng;
-                if (peng != null) peng.Paused = !active;
-            }
+            foreach (var exhaustEngine in _exhaustEngines.OfType<Gobs.Peng>())
+                exhaustEngine.Paused = !active;
         }
 
         /// <summary>

@@ -71,7 +71,7 @@ namespace AW2.Game.Gobs
         public MovingWall(CanonicalString typeName)
             : base(typeName)
         {
-            _gravitating = false;
+            Gravitating = false;
             wallModelName = (CanonicalString)"dummymodel";
             startTime = new TimeSpan(-1);
         }
@@ -96,21 +96,18 @@ namespace AW2.Game.Gobs
             ModelName = wallModelName;
             _collisionAreas = wallCollisionAreas;
             foreach (var area in wallCollisionAreas) area.Owner = this;
-            startPos = _pos;
+            startPos = Pos;
             movingCurve = new MovementCurve(startPos);
             base.Activate();
         }
 
-        /// <summary>
-        /// Updates the gob according to physical laws.
-        /// </summary>
         public override void Update()
         {
             if (startTime.Ticks >= 0)
             {
                 var nextPos = movingCurve.Evaluate(Arena.TotalTime);
-                _move = (nextPos - _pos) / (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
-                _move = _move.Clamp(0, 500); // limit movement speed to reasonable bounds
+                Move = (nextPos - Pos) / (float)Game.GameTime.ElapsedGameTime.TotalSeconds;
+                Move = Move.Clamp(0, 500); // limit movement speed to reasonable bounds
             }
             base.Update();
         }

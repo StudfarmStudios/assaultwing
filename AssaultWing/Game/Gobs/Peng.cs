@@ -119,7 +119,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                if (float.IsNaN(_oldDrawPos.X)) return _pos + DrawPosOffset;
+                if (float.IsNaN(_oldDrawPos.X)) return Pos + DrawPosOffset;
                 return _oldDrawPos;
             }
         }
@@ -220,7 +220,7 @@ namespace AW2.Game.Gobs
 
             // Set better defaults than class Gob does.
             DrawMode2D = new DrawMode2D(DrawModeType2D.Transparent);
-            _movable = false;
+            Movable = false;
 
             // Remove default collision areas set by class Gob so that we don't need to explicitly state
             // in each peng's XML definition that there are no collision areas.
@@ -252,7 +252,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _movable = false; // Peng stays put or moves with its leader
+            Movable = false; // Peng stays put or moves with its leader
         }
 
         public override void LoadContent()

@@ -105,7 +105,7 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             _removedTriangleIndices = new List<int>();
-            _movable = false;
+            Movable = false;
         }
 
         #region Methods related to gobs' functionality in the game world

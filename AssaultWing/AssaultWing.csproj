@@ -312,8 +312,6 @@
     <Compile Include="Net\Messages\ArenaLoadedMessage.cs" />
     <Compile Include="Net\Messages\ArenaStartRequest.cs" />
     <Compile Include="Net\Messages\ConnectionClosingMessage.cs" />
-    <Compile Include="Net\Messages\ConnectionReplyMessage.cs" />
-    <Compile Include="Net\Messages\ConnectionRequestMessage.cs" />
     <Compile Include="Net\Messages\GameSettingsRequest.cs" />
     <Compile Include="Net\Messages\GobCreationMessage.cs" />
     <Compile Include="Net\Messages\GobCreationMessageBase.cs" />

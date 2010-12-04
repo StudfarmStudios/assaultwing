@@ -77,12 +77,12 @@ namespace AW2.Net
         /// <summary>
         /// Network connections to game clients. Nonempty only on a game server.
         /// </summary>
-        private List<Connection> _gameClientConnections;
+        private List<GameClientConnection> _gameClientConnections;
 
         /// <summary>
         /// Clients to be removed from <c>clientConnections</c>.
         /// </summary>
-        private List<Connection> _removedClientConnections;
+        private List<GameClientConnection> _removedClientConnections;
 
         /// <summary>
         /// Handler of connection results for client that is connecting to a game server.
@@ -104,8 +104,8 @@ namespace AW2.Net
         public NetworkEngine(AssaultWingCore game)
             : base(game)
         {
-            _gameClientConnections = new List<Connection>();
-            _removedClientConnections = new List<Connection>();
+            _gameClientConnections = new List<GameClientConnection>();
+            _removedClientConnections = new List<GameClientConnection>();
             _udpMessagesToHandle = new List<NetBuffer>();
             MessageHandlers = new List<IMessageHandler>();
             InitializeUDPSocket();
@@ -259,7 +259,7 @@ namespace AW2.Net
             // Remove the client's players.
             if (error)
             {
-                List<string> droppedPlayerNames = new List<string>();
+                var droppedPlayerNames = new List<string>();
                 foreach (var player in Game.DataEngine.Spectators)
                     if (player.ConnectionID == connection.ID)
                         droppedPlayerNames.Add(player.Name);
@@ -271,7 +271,7 @@ namespace AW2.Net
             Game.DataEngine.Spectators.Remove(player => player.ConnectionID == connection.ID);
         }
 
-        public Connection GetGameClientConnection(int connectionID)
+        public GameClientConnection GetGameClientConnection(int connectionID)
         {
             return _gameClientConnections.First(conn => conn.ID == connectionID);
         }
@@ -465,7 +465,7 @@ namespace AW2.Net
                             // Silently ignore extra server connection attempts.
                             // Note: This will only allow one game client behind any one NAT.
                             if (_gameClientConnections.Any(conn => conn.RemoteIPAddress.Equals(result.Value.RemoteIPAddress))) break;
-                            if (result.Successful) _gameClientConnections.Add(result.Value);
+                            if (result.Successful) _gameClientConnections.Add((GameClientConnection)result.Value);
                             _startServerConnectionHandler(result);
                             break;
                         default:
@@ -621,9 +621,7 @@ namespace AW2.Net
                 _managementServerConnection = null;
             if (_gameServerConnection != null && _gameServerConnection.IsDisposed)
                 _gameServerConnection = null;
-            Connection conn;
-            while ((conn = _gameClientConnections.FirstOrDefault(c => c.IsDisposed)) != null)
-                _gameClientConnections.Remove(conn);
+            _gameClientConnections.RemoveAll(c => c.IsDisposed);
         }
 
         #endregion Private methods

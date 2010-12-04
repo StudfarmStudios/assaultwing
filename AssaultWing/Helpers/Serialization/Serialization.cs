@@ -255,7 +255,9 @@ namespace AW2.Helpers.Serialization
         /// the fields must have, or <c>null</c> to list all fields.
         /// </summary>
         /// <seealso cref="GetFields(object, Type)"/>
-        static readonly Dictionary<TypeTriple, IEnumerable<FieldInfo>> typeFields = new Dictionary<TypeTriple, IEnumerable<FieldInfo>>();
+        private static readonly Dictionary<TypeTriple, IEnumerable<FieldInfo>> typeFields = new Dictionary<TypeTriple, IEnumerable<FieldInfo>>();
+
+        private static Dictionary<Tuple<Type, Type>, bool> g_isAssignableFromCache = new Dictionary<Tuple<Type, Type>, bool>();
 
         #region public methods
 
@@ -829,12 +831,21 @@ namespace AW2.Helpers.Serialization
         /// </summary>
         private static bool IsAssignableFrom(Type lType, Type rType)
         {
-            if (lType.IsAssignableFrom(rType)) return true;
-            Type lElementType = GetIEnumerableElementType(lType);
-            Type rElementType = GetIEnumerableElementType(rType);
-            if (lElementType != null && rElementType != null)
-                return IsAssignableFrom(lElementType, rElementType);
-            return CanBeCast(rType, lType);
+            bool result;
+            var cacheKey = Tuple.Create(lType, rType);
+            if (g_isAssignableFromCache.TryGetValue(cacheKey, out result)) return result;
+            if (lType.IsAssignableFrom(rType))
+                result = true;
+            else
+            {
+                var lElementType = GetIEnumerableElementType(lType);
+                var rElementType = GetIEnumerableElementType(rType);
+                if (lElementType != null && rElementType != null)
+                    result = IsAssignableFrom(lElementType, rElementType);
+                else
+                    result = CanBeCast(rType, lType);
+            }
+            return g_isAssignableFromCache[cacheKey] = result;
         }
 
         private static IEnumerable<FieldInfo> GetFieldsImpl(Type objType, Type limitationAttribute, Type exclusionAttribute)

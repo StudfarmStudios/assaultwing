@@ -29,7 +29,7 @@ namespace AW2.Net.Connections
             Game.NetworkEngine.UDPSocket.Send(managementMessage.Serialize(), RemoteUDPEndPoint);
         }
 
-        public override void Update()
+        public override void UpdatePingInfo()
         {
             // Not updating ping
         }

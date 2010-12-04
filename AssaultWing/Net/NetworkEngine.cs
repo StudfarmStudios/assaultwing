@@ -394,33 +394,13 @@ namespace AW2.Net
                 _connectionAttemptListener.Update();
             HandleNewConnections();
             HandleUDPMessages();
-
-            // Update ping time measurements.
-            foreach (var conn in AllConnections) conn.Update();
-
+            foreach (var conn in AllConnections) conn.UpdatePingInfo();
             foreach (var handler in MessageHandlers.ToList()) // enumerate over a copy to allow adding MessageHandlers during enumeration
                 if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
             HandleErrors();
             RemoveClosedConnections();
-
-#if DEBUG
-            // Look for unhandled messages.
-            Type lastMessageType = null; // to avoid flooding log messages
-            Connection lastConnection = null;
-            foreach (var connection in AllConnections)
-                connection.Messages.Prune(
-                    message => message.CreationTime < Game.GameTime.TotalRealTime - TimeSpan.FromSeconds(30),
-                    message =>
-                    {
-                        if (lastMessageType != message.GetType() || lastConnection != connection)
-                        {
-                            lastMessageType = message.GetType();
-                            lastConnection = connection;
-                            Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
-                        }
-                    });
-#endif
+            PurgeUnhandledMessages();
         }
 
         public override void Dispose()
@@ -622,6 +602,25 @@ namespace AW2.Net
             if (_gameServerConnection != null && _gameServerConnection.IsDisposed)
                 _gameServerConnection = null;
             _gameClientConnections.RemoveAll(c => c.IsDisposed);
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        private void PurgeUnhandledMessages()
+        {
+            Type lastMessageType = null; // to avoid flooding log messages
+            Connection lastConnection = null;
+            foreach (var connection in AllConnections)
+                connection.Messages.Prune(
+                    message => message.CreationTime < Game.GameTime.TotalRealTime - TimeSpan.FromSeconds(30),
+                    message =>
+                    {
+                        if (lastMessageType != message.GetType() || lastConnection != connection)
+                        {
+                            lastMessageType = message.GetType();
+                            lastConnection = connection;
+                            Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
+                        }
+                    });
         }
 
         #endregion Private methods

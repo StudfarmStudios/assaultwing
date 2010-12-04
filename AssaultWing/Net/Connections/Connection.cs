@@ -201,7 +201,7 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Updates the connection's ping information. Call this every frame.
         /// </summary>
-        public virtual void Update()
+        public virtual void UpdatePingInfo()
         {
             if (IsHandshaked) PingInfo.Update();
         }

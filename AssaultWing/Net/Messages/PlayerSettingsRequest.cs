@@ -7,10 +7,9 @@ namespace AW2.Net.Messages
     /// A message from a game instance to another, requesting the update of the settings of a player.
     /// This may implicitly request creating the player on the remote game instance.
     /// </summary>
+    [MessageType(0x2d, false)]
     public class PlayerSettingsRequest : StreamMessage
     {
-        protected static MessageType messageType = new MessageType(0x2d, false);
-
         /// <summary>
         /// Has the player (who lives at a client) been registered to the server.
         /// Meaningful only when sent from a client to the server.

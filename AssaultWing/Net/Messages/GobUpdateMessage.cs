@@ -8,16 +8,12 @@ namespace AW2.Net.Messages
     /// A message from a game server to a game client updating
     /// the state of a gob.
     /// </summary>
+    [MessageType(0x24, false)]
     public class GobUpdateMessage : GameplayMessage
     {
         private List<int> _gobIds = new List<int>();
         private List<ushort> _byteCounts = new List<ushort>();
         private MessageSendType _sendType = MessageSendType.UDP;
-
-        /// <summary>
-        /// Identifier of the message type.
-        /// </summary>
-        protected static MessageType messageType = new MessageType(0x24, false);
 
         public override MessageSendType SendType { get { return _sendType; } }
 

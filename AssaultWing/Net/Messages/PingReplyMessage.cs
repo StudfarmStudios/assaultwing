@@ -10,10 +10,9 @@ namespace AW2.Net.Messages
     /// A reply to a message for checking connection quality and response time
     /// during gameplay.
     /// </summary>
+    [MessageType(0x2a, true)]
     public class PingReplyMessage : Message
     {
-        protected static MessageType messageType = new MessageType(0x2a, true);
-
         public override MessageSendType SendType { get { return MessageSendType.UDP; } }
 
         /// <summary>

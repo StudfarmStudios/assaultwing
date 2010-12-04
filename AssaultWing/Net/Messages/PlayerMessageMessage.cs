@@ -9,10 +9,9 @@ namespace AW2.Net.Messages
     /// <summary>
     /// A network message about a textual message to a player's chat box overlay.
     /// </summary>
+    [MessageType(0x2b, false)]
     public class PlayerMessageMessage : GameplayMessage
     {
-        protected static MessageType messageType = new MessageType(0x2b, false);
-
         /// <summary>
         /// Receiving player identifier. From client to server, this can be -1
         /// to mean broadcast to all players.

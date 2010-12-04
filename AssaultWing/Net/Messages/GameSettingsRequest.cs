@@ -7,10 +7,9 @@ namespace AW2.Net.Messages
     /// <summary>
     /// A message from a game server to a game client, requesting the update of the settings of the game session.
     /// </summary>
+    [MessageType(0x30, false)]
     public class GameSettingsRequest : Message
     {
-        protected static MessageType messageType = new MessageType(0x30, false);
-
         /// <summary>
         /// The list of arenas to play.
         /// </summary>

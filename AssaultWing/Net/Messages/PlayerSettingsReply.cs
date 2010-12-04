@@ -7,10 +7,9 @@ namespace AW2.Net.Messages
     /// A reply from a game server to a game client, acknowledging the adding of a new player
     /// to the game and specifying the player's new ID in the network game.
     /// </summary>
+    [MessageType(0x2d, true)]
     public class PlayerSettingsReply : Message
     {
-        protected static MessageType messageType = new MessageType(0x2d, true);
-
         /// <summary>
         /// The player's old identifier on the client.
         /// </summary>

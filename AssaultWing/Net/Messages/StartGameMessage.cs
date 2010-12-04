@@ -12,10 +12,9 @@ namespace AW2.Net.Messages
     /// A message from a game server to a game client notifying
     /// that the game session starts.
     /// </summary>
+    [MessageType(0x21, false)]
     public class StartGameMessage : Message
     {
-        protected static MessageType messageType = new MessageType(0x21, false);
-
         /// <summary>
         /// Names of arenas to play in the game session.
         /// </summary>

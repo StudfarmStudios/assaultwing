@@ -9,10 +9,9 @@ namespace AW2.Net.Messages
     /// A message from a game client to the game server, sending identification information
     /// about the version of Assault Wing the client is running.
     /// </summary>
+    [MessageType(0x20, false)]
     public class JoinGameRequest : Message
     {
-        protected static MessageType messageType = new MessageType(0x20, false);
-
         /// <summary>
         /// The list of canonical strings on the game client.
         /// </summary>

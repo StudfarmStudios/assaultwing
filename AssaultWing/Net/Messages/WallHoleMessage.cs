@@ -9,10 +9,9 @@ namespace AW2.Net.Messages
     /// A message from a game server to a game client about
     /// making a hole in an arena wall.
     /// </summary>
+    [MessageType(0x2c, false)]
     public class WallHoleMessage : GameplayMessage
     {
-        protected static MessageType messageType = new MessageType(0x2c, false);
-
         /// <summary>
         /// Gob identifier of the wall.
         /// </summary>

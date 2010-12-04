@@ -6,10 +6,9 @@ namespace AW2.Net.Messages
     /// <summary>
     /// A message from a game server to a game client signalling the removal of a remote player.
     /// </summary>
+    [MessageType(0x2e, false)]
     public class PlayerDeletionMessage : Message
     {
-        protected static MessageType messageType = new MessageType(0x2e, false);
-
         /// <summary>
         /// Identifier of the player to delete.
         /// </summary>

@@ -6,7 +6,7 @@ namespace AW2.Net
     /// An attribute providing information about a ManagementMessage subclass.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
-    public class ManagementMessageAttribute : Attribute
+    public class ManagementMessageAttribute : MessageTypeAttribute
     {
         public string Operation { get; private set; }
 

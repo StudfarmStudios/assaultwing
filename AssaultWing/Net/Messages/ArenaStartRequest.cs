@@ -7,10 +7,9 @@ namespace AW2.Net.Messages
     /// A message from a game server to a game client notifying
     /// that playing will start for the previously loaded arena.
     /// </summary>
+    [MessageType(0x29, false)]
     public class ArenaStartRequest : GameplayMessage
     {
-        protected static MessageType messageType = new MessageType(0x29, false);
-
         /// <summary>
         /// Amount of real time the client should wait from receiving this message before starting the arena.
         /// </summary>

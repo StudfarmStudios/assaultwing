@@ -7,10 +7,9 @@ namespace AW2.Net.Messages
     /// that the arena that is to be played next has been loaded and the
     /// game client is ready to start gameplay on the game server's mark.
     /// </summary>
+    [MessageType(0x33, false)]
     public class ArenaLoadedMessage : GameplayMessage
     {
-        protected static MessageType messageType = new MessageType(0x33, false);
-
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             base.Serialize(writer);

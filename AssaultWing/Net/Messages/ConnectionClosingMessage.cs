@@ -7,10 +7,9 @@ namespace AW2.Net.Messages
     /// A message from a game server to a game client, informing that the connection
     /// is to close.
     /// </summary>
+    [MessageType(0x2f, false)]
     public class ConnectionClosingMessage : Message
     {
-        protected static MessageType messageType = new MessageType(0x2f, false);
-
         /// <summary>
         /// Human-readable information about why the connection is closed.
         /// </summary>

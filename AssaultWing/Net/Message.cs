@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using AW2.Helpers.Serialization;
 
@@ -13,8 +14,7 @@ namespace AW2.Net
     /// the <c>BeginSerialize</c> methods. Then a number of <c>WriteXxx</c>
     /// methods write the data to the message. Finally, a call to 
     /// <c>EndSerialize</c> finishes the serialisation and returns its result.
-    /// Every subclass must define their message type identifier as
-    /// <c>static MessageType messageType</c>.
+    /// Every subclass must define their message type identifier with <see cref="MessageTypeAttribute"/>.
     /// </remarks>
     public abstract class Message
     {
@@ -137,12 +137,7 @@ namespace AW2.Net
             // word message_body_length
             // word reserved
             writer.Write((byte)PROTOCOL_IDENTIFIER);
-            System.Reflection.BindingFlags bindingFlags = 
-                System.Reflection.BindingFlags.GetField |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.Static;
-            var messageType = (MessageType)GetType().GetField("messageType", bindingFlags).GetValue(null);
+            var messageType = GetMessageType(GetType());
             writer.Write((byte)messageType.TopicIdentifier);
             if (messageType.IsReply) _headerFlags |= MessageHeaderFlags.Reply;
             writer.Write((byte)_headerFlags); // flags
@@ -255,14 +250,9 @@ namespace AW2.Net
         {
             if (!typeof(Message).IsAssignableFrom(type) || type.IsAbstract)
                 throw new ArgumentException("Only nonabstract subclasses of Message have a message type");
-            var flags =
-                System.Reflection.BindingFlags.GetField |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.Static;
-            var field = type.GetField("messageType", flags);
-            if (field == null) return null;
-            return (MessageType)field.GetValue(null);
+            var messageTypeAttribute = (MessageTypeAttribute)type.GetCustomAttributes(typeof(MessageTypeAttribute), false).First();
+            if (!messageTypeAttribute.ToBeRegistered) return null;
+            return messageTypeAttribute.Type;
         }
 
         #endregion Private deserialisation stuff

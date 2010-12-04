@@ -6,10 +6,9 @@ namespace AW2.Net.Messages
     /// A message from a game server to a game client updating
     /// the state of a player.
     /// </summary>
+    [MessageType(0x28, false)]
     public class PlayerUpdateMessage : GameplayMessage
     {
-        protected static MessageType messageType = new MessageType(0x28, false);
-
         /// <summary>
         /// Identifier of the player to update.
         /// </summary>

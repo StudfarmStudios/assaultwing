@@ -331,6 +331,7 @@
     <Compile Include="Net\Messages\StartGameMessage.cs" />
     <Compile Include="Net\Messages\WallHoleMessage.cs" />
     <Compile Include="Net\MessageType.cs" />
+    <Compile Include="Net\MessageTypeAttribute.cs" />
     <Compile Include="Net\NetworkEngine.cs" />
     <Compile Include="Net\NetworkException.cs" />
     <Compile Include="Net\Result.cs" />

@@ -9,10 +9,9 @@ namespace AW2.Net.Messages
     /// A message from a game client to a game server containing
     /// the state of the controls of a player at the client.
     /// </summary>
+    [MessageType(0x22, false)]
     public class PlayerControlsMessage : GameplayMessage
     {
-        protected static MessageType messageType = new MessageType(0x22, false);
-
         /// <summary>
         /// Identifier of the player the message is about.
         /// </summary>

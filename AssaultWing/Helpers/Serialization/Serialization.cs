@@ -8,7 +8,7 @@ using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using TypeTriple = AW2.Helpers.Triple<System.Type, System.Type, System.Type>;
+using TypeTriple = System.Tuple<System.Type, System.Type, System.Type>;
 
 namespace AW2.Helpers.Serialization
 {
@@ -255,7 +255,7 @@ namespace AW2.Helpers.Serialization
         /// the fields must have, or <c>null</c> to list all fields.
         /// </summary>
         /// <seealso cref="GetFields(object, Type)"/>
-        private static readonly Dictionary<TypeTriple, IEnumerable<FieldInfo>> typeFields = new Dictionary<TypeTriple, IEnumerable<FieldInfo>>();
+        private static readonly Dictionary<TypeTriple, IEnumerable<FieldInfo>> g_typeFields = new Dictionary<TypeTriple, IEnumerable<FieldInfo>>();
 
         private static Dictionary<Tuple<Type, Type>, bool> g_isAssignableFromCache = new Dictionary<Tuple<Type, Type>, bool>();
 
@@ -430,9 +430,9 @@ namespace AW2.Helpers.Serialization
         {
             var key = new TypeTriple(objType, limitationAttribute, exclusionAttribute);
             IEnumerable<FieldInfo> result;
-            if (typeFields.TryGetValue(key, out result)) return result;
+            if (g_typeFields.TryGetValue(key, out result)) return result;
             result = GetFieldsImpl(objType, limitationAttribute, exclusionAttribute);
-            typeFields.Add(key, result);
+            g_typeFields.Add(key, result);
             return result;
         }
 

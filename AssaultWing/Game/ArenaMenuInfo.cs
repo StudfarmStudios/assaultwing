@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -11,12 +7,12 @@ namespace AW2.Game
     [LimitedSerialization]
     public class ArenaMenuInfo
     {
-        public static readonly Color C_LEVEL_1 = new Color(220, 0, 0);
-        public static readonly Color C_LEVEL_2 = new Color(255, 132, 0);
-        public static readonly Color C_LEVEL_3 = new Color(255, 196, 0);
-        public static readonly Color C_LEVEL_4 = new Color(152, 200, 33);
-        public static readonly Color C_LEVEL_5 = new Color(0, 255, 0);
-        
+        private static readonly Color C_LEVEL_1 = new Color(220, 0, 0);
+        private static readonly Color C_LEVEL_2 = new Color(255, 132, 0);
+        private static readonly Color C_LEVEL_3 = new Color(255, 196, 0);
+        private static readonly Color C_LEVEL_4 = new Color(152, 200, 33);
+        private static readonly Color C_LEVEL_5 = new Color(0, 255, 0);
+
         public enum ArenaSize { Tiny, Small, Medium, Large, Huge }
         public enum ArenaBonusAmount { None, Little, Average, Good, Crazy }
         public enum ArenaFlightEasiness { Deadly, Hard, Average, Easy, Stoner }

@@ -130,7 +130,7 @@ namespace AW2.Net
         /// </summary>
         public bool IsConnectedToManagementServer { get { return _managementServerConnection != null; } }
 
-        public IEnumerable<Connection> GameClientConnections
+        public IEnumerable<GameClientConnection> GameClientConnections
         {
             get
             {
@@ -401,6 +401,18 @@ namespace AW2.Net
             HandleErrors();
             RemoveClosedConnections();
             PurgeUnhandledMessages();
+        }
+
+        private void UpdateClientState()
+        {
+            if (Game.NetworkMode != NetworkMode.Server) return;
+            var isPlayingArena = Game.DataEngine.Arena != null;
+            var currentArenaName = Game.DataEngine.Arena != null ? null : Game.DataEngine.Arena.Name;
+            foreach (var conn in GameClientConnections.Where(c => c.IsPlayingArena != isPlayingArena))
+            {
+                if (conn.IsPlayingArena && !isPlayingArena) throw new ApplicationException("Not implemented: Server stopped arena and client should too");
+
+            }
         }
 
         public override void Dispose()

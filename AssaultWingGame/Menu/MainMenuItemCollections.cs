@@ -70,7 +70,7 @@ namespace AW2.Menu
                 Action = component =>
                 {
                     if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
-                    if (!_menuEngine.Game.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, AllowNewConnection))) return;
+                    if (!_menuEngine.Game.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, () => true))) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
 
                     // HACK: Force one local player and Amazonas as the only arena.
@@ -78,11 +78,6 @@ namespace AW2.Menu
                     _menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
                 }
             });
-        }
-
-        private bool AllowNewConnection()
-        {
-            return _menuEngine.Game.GameState == GameState.Menu;
         }
 
         private void HandleGameServerListReply(GameServerListReply mess)

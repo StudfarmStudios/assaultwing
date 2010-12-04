@@ -8,6 +8,9 @@ namespace AW2.Net.Connections
     /// </summary>
     public class GameClientConnection : Connection
     {
+        public bool IsPlayingArena { get { return string.IsNullOrEmpty(PlayingArenaName); } }
+        public string PlayingArenaName { get; set; }
+
         /// <summary>
         /// Creates a new connection to a game client.
         /// </summary>

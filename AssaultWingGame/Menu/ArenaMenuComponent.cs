@@ -49,11 +49,7 @@ namespace AW2.Menu
         private int arenaListStart;
 
         private List<ArenaInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
-        private List<string> selectedArenaNames;
 
-        /// <summary>
-        /// Does the menu component react to input.
-        /// </summary>
         public override bool Active
         {
             set
@@ -61,7 +57,6 @@ namespace AW2.Menu
                 base.Active = value;
                 if (value)
                 {
-                    if (!selectedArenaNames.Any()) selectedArenaNames.Add(ArenaInfos.First().Name);
                     InitializeControls();
                     InitializeControlCallbacks();
                 }
@@ -83,8 +78,6 @@ namespace AW2.Menu
             : base(menuEngine)
         {
             pos = new Vector2(1220, 698);
-
-            selectedArenaNames = new List<string>();
             cursorFade = new Curve();
             cursorFade.Keys.Add(new CurveKey(0, 255, 0, 0, CurveContinuity.Step));
             cursorFade.Keys.Add(new CurveKey(0.5f, 0, 0, 0, CurveContinuity.Step));
@@ -141,7 +134,7 @@ namespace AW2.Menu
             {
                 int arenaI = arenaListStart + i;
                 spriteBatch.DrawString(menuSmallFont, ArenaInfos[arenaI].Name, arenaNamePos + i * lineDeltaPos, Color.White);
-                if (selectedArenaNames.Contains(ArenaInfos[arenaI].Name))
+                if (arenaI == currentArena)
                     spriteBatch.Draw(tagTexture, arenaTagPos + i * lineDeltaPos, Color.White);
             }
 
@@ -224,21 +217,9 @@ namespace AW2.Menu
             }));
         }
 
-        private bool SelectCurrentArena()
+        private void SelectCurrentArena()
         {
-            if (currentArena >= 0 && currentArena < ArenaInfos.Count)
-            {
-                var name = ArenaInfos[currentArena].Name;
-                if (!selectedArenaNames.Contains(name))
-                {
-                    selectedArenaNames.Clear();
-                    selectedArenaNames.Add(name);
-                    MenuEngine.Game.DataEngine.SelectedArenaName = name;
-                    return true;
-                }
-            }
-
-            return false;
+            MenuEngine.Game.DataEngine.SelectedArenaName = ArenaInfos[currentArena].Name;
         }
         
         /// <summary>

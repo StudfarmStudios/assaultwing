@@ -250,7 +250,6 @@
     <Compile Include="Helpers\Math\MovementCurve.cs" />
     <Compile Include="Helpers\Math\Statistics.cs" />
     <Compile Include="Helpers\MiscHelper.cs" />
-    <Compile Include="Helpers\Pair.cs" />
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />

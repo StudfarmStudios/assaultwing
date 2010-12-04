@@ -152,13 +152,13 @@ namespace AW2.Menu
         /// is to be seen well on the screen.
         public override Vector2 Center { get { return _pos + new Vector2(750, 460); } }
 
-        private IEnumerable<Pair<Player, int>> MenuPanePlayers
+        private IEnumerable<Tuple<Player, int>> MenuPanePlayers
         {
             get
             {
                 return MenuEngine.Game.DataEngine.Players
                     .Where(p => !p.IsRemote)
-                    .Select((p, i) => new Pair<Player, int>(p, i));
+                    .Select((p, i) => Tuple.Create(p, i));
             }
         }
 
@@ -305,8 +305,8 @@ namespace AW2.Menu
             _playerNames = new EditableText[MenuPanePlayers.Count()];
             foreach (var indexedPlayer in MenuPanePlayers)
             {
-                var player = indexedPlayer.First;
-                int playerI = indexedPlayer.Second;
+                var player = indexedPlayer.Item1;
+                int playerI = indexedPlayer.Item2;
                 _currentItems[playerI] = EquipMenuItem.Ship;
                 _playerNames[playerI] = new EditableText(player.Name, 20, EditableText.Keysets.PlayerNameSet);
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship] = new ShipSelector(MenuEngine.Game, player, GetShipSelectorPos(playerI));
@@ -378,8 +378,8 @@ namespace AW2.Menu
         {
             foreach (var indexedPlayer in MenuPanePlayers)
             {
-                var player = indexedPlayer.First;
-                int playerI = indexedPlayer.Second;
+                var player = indexedPlayer.Item1;
+                int playerI = indexedPlayer.Item2;
                 ConditionalPlayerAction(player.Controls.Thrust.Pulse, playerI, "MenuBrowseItem", () =>
                 {
                     var minItem = MenuEngine.Game.NetworkMode == NetworkMode.Standalone
@@ -658,7 +658,7 @@ namespace AW2.Menu
             var moveTime = (float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds;
             var nameChangeInfoPos = _pos - view + new Vector2(250 + _nameInfoMove.Evaluate(moveTime), 180);
             var nameChangeInfoTexture = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_player_name_changeinfo");
-            spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).First.PlayerColor);
+            spriteBatch.Draw(nameChangeInfoTexture, nameChangeInfoPos, MenuPanePlayers.ElementAt(0).Item1.PlayerColor);
         }
 
         private void DrawPlayerListDisplay(Vector2 view, SpriteBatch spriteBatch)
@@ -718,9 +718,9 @@ namespace AW2.Menu
         {
             if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone &&
                 MenuPanePlayers.ElementAt(0) != null &&
-                _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Weapon2)
+                _currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Weapon2)
             {
-                Player player = MenuPanePlayers.ElementAt(0).First;
+                Player player = MenuPanePlayers.ElementAt(0).Item1;
                 Weapon weapon = (Weapon)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
                 WeaponInfo info = weapon.WeaponInfo;
                 Vector2 infoDisplayPos = _pos - view + new Vector2(560, 186);
@@ -741,13 +741,13 @@ namespace AW2.Menu
         {
             if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone &&
                 MenuPanePlayers.ElementAt(0) != null &&
-                (_currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Weapon2 ||
-                _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Extra))
+                (_currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Weapon2 ||
+                _currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Extra))
             {
-                Player player = MenuPanePlayers.ElementAt(0).First;
+                Player player = MenuPanePlayers.ElementAt(0).Item1;
 
                 ShipDevice device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
-                if (_currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Weapon2) device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
+                if (_currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Weapon2) device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
 
                 ShipDeviceInfo info = device.DeviceInfo;
                 Vector2 infoDisplayPos = _pos - view + new Vector2(560, 186);
@@ -776,9 +776,9 @@ namespace AW2.Menu
         {
             if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone &&
                 MenuPanePlayers.ElementAt(0) != null &&
-                _currentItems[MenuPanePlayers.ElementAt(0).Second] == EquipMenuItem.Ship)
+                _currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Ship)
             {
-                Player player = MenuPanePlayers.ElementAt(0).First;
+                Player player = MenuPanePlayers.ElementAt(0).Item1;
                 Ship ship = (Ship)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ShipName);
                 ShipInfo info = ship.ShipInfo;
                 Vector2 infoDisplayPos = _pos - view + new Vector2(560, 186);
@@ -874,7 +874,7 @@ namespace AW2.Menu
             {
                 spriteBatch.DrawString(_menuSmallFont, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
                 var textAndColor = GetPingTextAndColor();
-                spriteBatch.DrawString(_menuSmallFont, textAndColor.First, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, textAndColor.Second);
+                spriteBatch.DrawString(_menuSmallFont, textAndColor.Item1, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, textAndColor.Item2);
             }
         }
 
@@ -882,8 +882,8 @@ namespace AW2.Menu
         {
             foreach (var indexedPlayer in MenuPanePlayers)
             {
-                var player = indexedPlayer.First;
-                int playerI = indexedPlayer.Second;
+                var player = indexedPlayer.Item1;
+                int playerI = indexedPlayer.Item2;
 
                 // Find out things.
                 string playerItemName = "Write your name";
@@ -939,17 +939,17 @@ namespace AW2.Menu
             spriteBatch.Draw(_statusPaneTexture, statusPanePos, Color.White);
         }
 
-        private Pair<string, Color> GetPingTextAndColor()
+        private Tuple<string, Color> GetPingTextAndColor()
         {
             if (MenuEngine.Game.NetworkMode != NetworkMode.Client ||
                 !MenuEngine.Game.NetworkEngine.IsConnectedToGameServer)
-                return new Pair<string, Color>("???", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));
+                return Tuple.Create("???", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));
             var ping = MenuEngine.Game.NetworkEngine.GameServerConnection.PingInfo.PingTime.TotalMilliseconds;
-            if (ping < 35) return new Pair<string, Color>("Excellent", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Great));
-            if (ping < 70) return new Pair<string, Color>("Good", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.High));
-            if (ping < 120) return new Pair<string, Color>("Sufficient", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));
-            if (ping < 200) return new Pair<string, Color>("Poor", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Low));
-            return new Pair<string, Color>("Dreadful", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Poor));
+            if (ping < 35) return Tuple.Create("Excellent", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Great));
+            if (ping < 70) return Tuple.Create("Good", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.High));
+            if (ping < 120) return Tuple.Create("Sufficient", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Average));
+            if (ping < 200) return Tuple.Create("Poor", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Low));
+            return Tuple.Create("Dreadful", EquipInfo.GetColorForAmountType(EquipInfo.EquipInfoAmountType.Poor));
         }
 
         #endregion Drawing methods

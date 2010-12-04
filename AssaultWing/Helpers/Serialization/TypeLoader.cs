@@ -39,8 +39,7 @@ namespace AW2.Helpers.Serialization
         #region Public interface
 
         /// <summary>
-        /// Loads a type template from file. Throws <see cref="AW2.Helpers.MemberSerializationException"/>
-        /// or <see cref="System.Xml.XmlException"/> if there were errors while reading the template.
+        /// Loads a type template from file, or null on error.
         /// </summary>
         public static object LoadTemplate(string filename, Type baseClass, Type limitationAttribute)
         {
@@ -54,13 +53,13 @@ namespace AW2.Helpers.Serialization
             }
             catch (MemberSerializationException e)
             {
-                Log.Write("Error in " + filename + ": " + e.Message + ", " + e.MemberName);
-                throw;
+                Log.Write("Error in {0} line {1}: {2}, {3}", filename, e.LineNumber, e.Message, e.MemberName);
+                return null;
             }
-            catch (System.Xml.XmlException e)
+            catch (Exception e)
             {
                 Log.Write("Error in " + filename + ": " + e.Message);
-                throw;
+                return null;
             }
             finally
             {
@@ -96,18 +95,7 @@ namespace AW2.Helpers.Serialization
 
         public IEnumerable<object> LoadTemplates()
         {
-            var templates = GetTemplateFilenames().Select(filename =>
-            {
-                try
-                {
-                    return LoadTemplate(filename);
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Error while reading template " + filename + ": " + e);
-                    return null;
-                }
-            });
+            var templates = GetTemplateFilenames().Select(filename => LoadTemplate(filename));
             templates = templates.ToList(); // immediate evaluation
             if (templates.Contains(null)) throw new ApplicationException("Error: Some templates failed to load. Previous log entries contain the details.");
             return templates;

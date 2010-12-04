@@ -252,6 +252,7 @@
     <Compile Include="Helpers\Paths.cs" />
     <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\RandomHelper.cs" />
+    <Compile Include="Helpers\Serialization\FieldFinder.cs" />
     <Compile Include="Helpers\Serialization\IAWSerializable.cs" />
     <Compile Include="Helpers\Serialization\INetworkSerializable.cs" />
     <Compile Include="Helpers\Serialization\NetworkBinaryReader.cs" />

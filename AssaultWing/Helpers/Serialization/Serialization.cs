@@ -199,6 +199,11 @@ namespace AW2.Helpers.Serialization
         public string MemberName { get; set; }
 
         /// <summary>
+        /// Line number in XML file where error occurred.
+        /// </summary>
+        public int LineNumber { get; set; }
+
+        /// <summary>
         /// Creates a new member serialisation exception.
         /// </summary>
         /// <param name="message">Description of the error.</param>
@@ -371,7 +376,8 @@ namespace AW2.Helpers.Serialization
             }
             catch (MemberSerializationException e)
             {
-                throw new MemberSerializationException(e.Message, elementName + "." + e.MemberName);
+                e.MemberName = elementName + "." + e.MemberName;
+                throw;
             }
         }
 
@@ -614,27 +620,25 @@ namespace AW2.Helpers.Serialization
         /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
         private static void DeserializeFieldsXml(XmlReader reader, object obj, Type limitationAttribute)
         {
-            var type = obj.GetType();
-            var fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
-                ? GetFields(type, limitationAttribute, null).ToArray()
-                : GetFields(type, null, null).ToArray();
-            bool[] fieldFounds = new bool[fields.Length];
-
-            // Read in serialised fields of the given object.
-            // We have no guarantee of the order of the fields.
-            while (reader.IsStartElement())
+            try
             {
-                var fieldIndex = FindFieldIndex(fields, reader.Name);
-                if (fieldIndex == -1) throw new MemberSerializationException(GetXmlReaderErrorText("Cannot deserialise unknown field", reader), reader.Name);
-                var field = fields[fieldIndex];
-                if (fieldFounds[fieldIndex]) throw new MemberSerializationException(GetXmlReaderErrorText("Field deserialised twice", reader), field.Name);
-                var fieldLimitationAttribute = GetFieldLimitationAttribute(field, limitationAttribute);
-                fieldFounds[fieldIndex] = true;
-                object value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute);
-                field.SetValue(obj, value);
+                var type = obj.GetType();
+                var fieldFinder = new FieldFinder(obj.GetType(), limitationAttribute);
+                // NOTE: There is no guarantee about the order of the fields.
+                while (reader.IsStartElement())
+                {
+                    var field = fieldFinder.Find(reader.Name);
+                    var fieldLimitationAttribute = GetFieldLimitationAttribute(field, limitationAttribute);
+                    object value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute);
+                    field.SetValue(obj, value);
+                }
+                fieldFinder.CheckForMissing();
             }
-            int missingIndex = Array.FindIndex(fieldFounds, f => !f);
-            if (missingIndex >= 0) throw new MemberSerializationException(GetXmlReaderErrorText("Value not found", reader), fields[missingIndex].Name);
+            catch (MemberSerializationException e)
+            {
+                e.LineNumber = reader.LineNumber();
+                throw;
+            }
         }
 
         private static Type GetFieldLimitationAttribute(FieldInfo field, Type limitationAttribute)
@@ -645,33 +649,10 @@ namespace AW2.Helpers.Serialization
             return limitationAttribute;
         }
 
-        private static int FindFieldIndex(FieldInfo[] fields, string xmlElementName)
+        private static int LineNumber(this XmlReader reader)
         {
-            for (int fieldI = 0; fieldI < fields.Length; ++fieldI)
-            {
-                var field = fields[fieldI];
-
-                // React to SerializedNameAttribute
-                string elementName = field.Name;
-                var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
-                if (serializedNameAttribute != null)
-                    elementName = serializedNameAttribute.SerializedName;
-                else if (elementName.StartsWith("_"))
-                    elementName = elementName.Substring(1);
-
-                if (xmlElementName.Equals(elementName)) return fieldI;
-            }
-            return -1;
-        }
-
-        private static string GetXmlReaderErrorText(string baseText, XmlReader reader)
-        {
-            int lineNumber = -1;
-            try { reader.ReadEndElement(); }
-            catch (XmlException e) { lineNumber = e.LineNumber; }
-            return lineNumber >= 0
-                ? baseText + " (line " + lineNumber + ")"
-                : baseText;
+            var lineInfo = reader as IXmlLineInfo;
+            return lineInfo != null ? lineInfo.LineNumber : 0;
         }
 
         /// <summary>

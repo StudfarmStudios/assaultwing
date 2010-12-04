@@ -10,14 +10,18 @@ namespace AW2.Helpers.Serialization
     /// </summary>
     internal class FieldFinder
     {
+        private static Dictionary<Tuple<Type, Type>, FieldInfo[]> g_fieldCache = new Dictionary<Tuple<Type, Type>, FieldInfo[]>();
+        private static Dictionary<Tuple<Type, Type, string>, int> g_fieldIndexCache = new Dictionary<Tuple<Type, Type, string>, int>();
+        private Type _type;
+        private Type _limitationAttribute;
         private FieldInfo[] _fields;
         private bool[] _fieldFounds;
 
         public FieldFinder(Type type, Type limitationAttribute)
         {
-            _fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
-                ? Serialization.GetFields(type, limitationAttribute, null).ToArray()
-                : Serialization.GetFields(type, null, null).ToArray();
+            _type = type;
+            _limitationAttribute = limitationAttribute;
+            InitializeFields();
             _fieldFounds = new bool[_fields.Length];
         }
 
@@ -32,28 +36,43 @@ namespace AW2.Helpers.Serialization
             if (missingIndex >= 0) throw new MemberSerializationException("Value not found", _fields[missingIndex].Name);
         }
 
+        private void InitializeFields()
+        {
+            var cacheKey = Tuple.Create(_type, _limitationAttribute);
+            if (g_fieldCache.TryGetValue(cacheKey, out _fields)) return;
+            g_fieldCache[cacheKey] = _fields = Attribute.IsDefined(_type, typeof(LimitedSerializationAttribute))
+                ? Serialization.GetFields(_type, _limitationAttribute, null).ToArray()
+                : Serialization.GetFields(_type, null, null).ToArray();
+        }
+
         private FieldInfo FindField(string xmlElementName)
         {
-            for (int fieldI = 0; fieldI < _fields.Length; ++fieldI)
-            {
-                var field = _fields[fieldI];
+            int fieldIndex = FindFieldIndex(xmlElementName);
+            if (_fieldFounds[fieldIndex]) throw new MemberSerializationException("Field deserialised twice", xmlElementName);
+            _fieldFounds[fieldIndex] = true;
+            return _fields[fieldIndex];
+        }
 
-                // React to SerializedNameAttribute
-                string elementName = field.Name;
-                var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
-                if (serializedNameAttribute != null)
-                    elementName = serializedNameAttribute.SerializedName;
-                else if (elementName.StartsWith("_"))
-                    elementName = elementName.Substring(1);
+        private int FindFieldIndex(string xmlElementName)
+        {
+            int fieldIndex;
+            var cacheKey = Tuple.Create(_type, _limitationAttribute, xmlElementName);
+            if (!g_fieldIndexCache.TryGetValue(cacheKey, out fieldIndex))
+                g_fieldIndexCache[cacheKey] = fieldIndex = Array.FindIndex(_fields, f => GetElementName(f) == xmlElementName);
+            if (fieldIndex == -1) throw new MemberSerializationException("Cannot deserialise unknown field", xmlElementName);
+            return fieldIndex;
+        }
 
-                if (xmlElementName.Equals(elementName))
-                {
-                    if (_fieldFounds[fieldI]) throw new MemberSerializationException("Field deserialised twice", xmlElementName);
-                    _fieldFounds[fieldI] = true; 
-                    return _fields[fieldI];
-                }
-            }
-            throw new MemberSerializationException("Cannot deserialise unknown field", xmlElementName);
+        private static string GetElementName(FieldInfo field)
+        {
+            // React to SerializedNameAttribute
+            string elementName = field.Name;
+            var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
+            if (serializedNameAttribute != null)
+                elementName = serializedNameAttribute.SerializedName;
+            else if (elementName.StartsWith("_"))
+                elementName = elementName.Substring(1);
+            return elementName;
         }
     }
 }

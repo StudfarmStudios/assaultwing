@@ -15,35 +15,23 @@ namespace AW2.Net.Messages
     [MessageType(0x21, false)]
     public class StartGameMessage : Message
     {
-        /// <summary>
-        /// Names of arenas to play in the game session.
-        /// </summary>
-        public IList<string> ArenaPlaylist { get; set; }
-
-        public StartGameMessage()
-        {
-            ArenaPlaylist = new List<string>();
-        }
+        public string ArenaToPlay { get; set; }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Start game (request) message structure:
-            // int: total number of arenas in the game, M
-            // 32 * M bytes: names of M arenas
-            writer.Write((int)ArenaPlaylist.Count);
-            foreach (string name in ArenaPlaylist) writer.Write((string)name, 32, true);
+            // variable-length string: name of arena to play
+            writer.Write((string)ArenaToPlay);
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            int arenaCount = reader.ReadInt32();
-            ArenaPlaylist.Clear();
-            for (int i = 0; i < arenaCount; ++i) ArenaPlaylist.Add(reader.ReadString(32));
+            ArenaToPlay = reader.ReadString();
         }
 
         public override string ToString()
         {
-            return base.ToString() + string.Format(" [ArenaPlaylist: {1}]", string.Join(", ", ArenaPlaylist.ToArray()));
+            return base.ToString() + " [" + ArenaToPlay + "]";
         }
     }
 }

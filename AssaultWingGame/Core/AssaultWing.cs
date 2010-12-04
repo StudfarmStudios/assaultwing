@@ -185,8 +185,7 @@ namespace AW2.Core
                 // Arena loading is heavy and would show up in ping measurements.
                 // Ping measurement is unfreezed by ArenaStartWaiter.
                 foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = true;
-                var message = new StartGameMessage();
-                message.ArenaPlaylist = DataEngine.ArenaPlaylist;
+                var message = new StartGameMessage { ArenaToPlay = DataEngine.SelectedArenaName };
                 NetworkEngine.SendToGameClients(message);
             }
             // base.PrepareFirstArena adds gobs to the arena which triggers AssaultWing.GobAddedToArena
@@ -215,10 +214,7 @@ namespace AW2.Core
         {
             base.FinishArena();
             DeactivateAllMessageHandlers();
-            if (DataEngine.ArenaPlaylist.HasNext)
-                ShowDialog(new ArenaOverOverlayDialogData(DataEngine.ArenaPlaylist.Next));
-            else
-                ShowDialog(new GameOverOverlayDialogData(this));
+            ShowDialog(new GameOverOverlayDialogData(this));
             if (NetworkMode == NetworkMode.Server)
             {
                 var message = new ArenaFinishMessage();
@@ -417,7 +413,7 @@ namespace AW2.Core
             // Instant arena reload (simple aid for hand-editing an arena)
             if (_arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
             {
-                var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.ArenaPlaylist.Current).FileName;
+                var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.SelectedArenaName).FileName;
                 try
                 {
                     var arena = Arena.FromFile(this, arenaFilename);

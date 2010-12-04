@@ -76,8 +76,8 @@ namespace AW2.Graphics
             // Load arena previews.
             // The purpose of this is to load from disk here and cache the content for fast access later.
             Game.Content.Load<Texture2D>("no_preview");
-            foreach (var name in data.ArenaPlaylist)
-                try { Game.Content.Load<Texture2D>(name.ToLower() + "_preview"); }
+            foreach (var arenaInfo in data.ArenaInfos)
+                try { Game.Content.Load<Texture2D>(arenaInfo.Name.ToLower() + "_preview"); }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException) { }
 
             // Load arena related content if an arena is being played right now.

@@ -271,7 +271,6 @@ namespace AW2.Core
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
-            DataEngine.ArenaPlaylist.Reset();
             PrepareNextArena();
         }
 

@@ -10,34 +10,26 @@ namespace AW2.Net.Messages
     [MessageType(0x30, false)]
     public class GameSettingsRequest : Message
     {
-        /// <summary>
-        /// The list of arenas to play.
-        /// </summary>
-        public IList<string> ArenaPlaylist { get; set; }
+        public string ArenaToPlay { get; set; }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             checked
             {
                 // Game settings request structure:
-                // int: number of arenas in playlist, N
-                // N variable-length strings: arena names
-                writer.Write((int)ArenaPlaylist.Count);
-                foreach (var arenaName in ArenaPlaylist) writer.Write((string)arenaName);
+                // variable-length string: name of arena to play
+                writer.Write((string)ArenaToPlay);
             }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            int count = reader.ReadInt32();
-            var playlist = new List<string>(count);
-            for (int i = 0; i < count; ++i) playlist.Add(reader.ReadString());
-            ArenaPlaylist = playlist;
+            ArenaToPlay = reader.ReadString();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [" + ArenaPlaylist.Count + " arenas]";
+            return base.ToString() + " [" + ArenaToPlay + "]";
         }
     }
 }

@@ -107,7 +107,7 @@ namespace AW2.Game
 
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
             _templates = new List<object>();
-            ArenaPlaylist = new Playlist(new string[] { "Amazonas" });
+            SelectedArenaName = "Amazonas";
         }
 
         #region arenas
@@ -135,10 +135,7 @@ namespace AW2.Game
         /// Y is down.
         public Matrix ArenaToRadarTransform { get { return _arenaToRadarTransform; } }
 
-        /// <summary>
-        /// Arenas to play in one session.
-        /// </summary>
-        public Playlist ArenaPlaylist { get; set; }
+        public string SelectedArenaName { get; set; }
 
         /// <summary>
         /// Information about all available arenas.
@@ -153,27 +150,19 @@ namespace AW2.Game
         /// <b>false</b> otherwise.</returns>
         public bool NextArena()
         {
-            if (ArenaPlaylist.MoveNext())
+            var arenaFilename = ArenaInfos.Single(info => info.Name == SelectedArenaName).FileName;
+            Arena arena = null;
+            try
             {
-                var arenaFilename = ArenaInfos.Single(info => info.Name == ArenaPlaylist.Current).FileName;
-                Arena arena = null;
-                try
-                {
-                    arena = Arena.FromFile(Game, arenaFilename);
-                    if (NewArena != null) NewArena(arena);
-                    InitializeFromArena(arena, true);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Failed to load arena: " + e);
-                    return NextArena();
-                }
+                arena = Arena.FromFile(Game, arenaFilename);
+                if (NewArena != null) NewArena(arena);
+                InitializeFromArena(arena, true);
+                return true;
             }
-            else
+            catch (Exception e)
             {
-                Arena = null;
-                return false;
+                Log.Write("Failed to load arena: " + e);
+                return NextArena();
             }
         }
 

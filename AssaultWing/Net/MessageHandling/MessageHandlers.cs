@@ -150,7 +150,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleGameSettingsRequest(GameSettingsRequest mess)
         {
-            AssaultWingCore.Instance.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
+            AssaultWingCore.Instance.DataEngine.SelectedArenaName = mess.ArenaToPlay;
         }
 
         private static void HandleWallHoleMessage(WallHoleMessage mess)

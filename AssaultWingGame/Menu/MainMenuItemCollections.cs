@@ -75,7 +75,7 @@ namespace AW2.Menu
 
                     // HACK: Force one local player and Amazonas as the only arena.
                     _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
-                    _menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(new string[] { "Amazonas" });
+                    _menuEngine.Game.DataEngine.SelectedArenaName = "Amazonas";
                 }
             });
         }
@@ -127,7 +127,7 @@ namespace AW2.Menu
 
         private void HandleStartGameMessage(StartGameMessage mess)
         {
-            _menuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(mess.ArenaPlaylist);
+            _menuEngine.Game.DataEngine.SelectedArenaName = mess.ArenaToPlay;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
             _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareFirstArena,
                 () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage, _menuEngine.Game.HandleGobCreationMessage)));

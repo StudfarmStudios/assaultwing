@@ -434,10 +434,7 @@ namespace AW2.Menu
 
         private void SendGameSettingsToRemote(IEnumerable<Connection> connections)
         {
-            var mess = new GameSettingsRequest
-            {
-                ArenaPlaylist = MenuEngine.Game.DataEngine.ArenaPlaylist
-            };
+            var mess = new GameSettingsRequest { ArenaToPlay = MenuEngine.Game.DataEngine.SelectedArenaName };
             foreach (var conn in connections) conn.Send(mess);
         }
 
@@ -478,7 +475,6 @@ namespace AW2.Menu
 
         private void StartGame()
         {
-            if (MenuEngine.Game.DataEngine.ArenaPlaylist.Count == 0) return;
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Server:
@@ -560,12 +556,12 @@ namespace AW2.Menu
 
         private void DrawArenaInfo(Vector2 view, SpriteBatch spriteBatch)
         {
-            Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
-            Vector2 currentPos = infoDisplayPos;
-            Vector2 lineHeight = new Vector2(0, 20);
-            Vector2 infoWidth = new Vector2(320, 0);
-            string arenaName = MenuEngine.Game.DataEngine.ArenaPlaylist[0];
-            ArenaInfo arenaInfo = MenuEngine.Game.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
+            var infoDisplayPos = _pos - view + new Vector2(595, 220);
+            var currentPos = infoDisplayPos;
+            var lineHeight = new Vector2(0, 20);
+            var infoWidth = new Vector2(320, 0);
+            var arenaName = MenuEngine.Game.DataEngine.SelectedArenaName;
+            var arenaInfo = MenuEngine.Game.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
             var content = MenuEngine.Game.Content;
             string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
             var previewTexture = content.Load<Texture2D>(previewName);
@@ -586,11 +582,11 @@ namespace AW2.Menu
 
         private void DrawGameModeInfo(Vector2 view, SpriteBatch spriteBatch)
         {
-            Vector2 infoDisplayPos = _pos - view + new Vector2(595, 220);
-            Vector2 lineHeight = new Vector2(0, 20);
-            Vector2 infoWidth = new Vector2(320, 0);
-            Vector2 currentPos = infoDisplayPos;
-            string arenaName = MenuEngine.Game.DataEngine.ArenaPlaylist[0];
+            var infoDisplayPos = _pos - view + new Vector2(595, 220);
+            var lineHeight = new Vector2(0, 20);
+            var infoWidth = new Vector2(320, 0);
+            var currentPos = infoDisplayPos;
+            var arenaName = MenuEngine.Game.DataEngine.SelectedArenaName;
 
             spriteBatch.DrawString(_menuBigFont, "Gametype Settings", currentPos, Color.White);
             currentPos += new Vector2(0, 50);
@@ -643,7 +639,7 @@ namespace AW2.Menu
             spriteBatch.DrawString(_menuSmallFont, "Mayhem", currentPos + new Vector2(0, 20), Color.White);
             currentPos += lineHeight;
 
-            string arenaName = MenuEngine.Game.DataEngine.ArenaPlaylist[0];
+            var arenaName = MenuEngine.Game.DataEngine.SelectedArenaName;
             spriteBatch.DrawString(_menuSmallFont, EquipMenuGameSettings.Arena.ToString(), currentPos, Color.GreenYellow);
             spriteBatch.DrawString(_menuSmallFont, arenaName, currentPos + new Vector2(0, 20), Color.White);
 
@@ -851,7 +847,7 @@ namespace AW2.Menu
 
             // Setup statusdisplay texts
             string statusDisplayPlayerAmount = "" + data.Players.Count();
-            string statusDisplayArenaName = data.ArenaPlaylist[0];
+            string statusDisplayArenaName = data.SelectedArenaName;
             string statusDisplayStatus = MenuEngine.Game.NetworkMode == NetworkMode.Server
                 ? "server"
                 : "connected";

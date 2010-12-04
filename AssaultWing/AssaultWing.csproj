@@ -226,7 +226,6 @@
     <Compile Include="Helpers\Collections\IObservableCollection.cs" />
     <Compile Include="Helpers\Collections\ITypedQueue.cs" />
     <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
-    <Compile Include="Helpers\Collections\Playlist.cs" />
     <Compile Include="Helpers\Collections\TypedQueue.cs" />
     <Compile Include="Helpers\Converter.cs" />
     <Compile Include="Helpers\Geometric\Circle.cs" />

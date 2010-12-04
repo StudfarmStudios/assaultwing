@@ -233,7 +233,7 @@ namespace AW2.Menu
                 {
                     selectedArenaNames.Clear();
                     selectedArenaNames.Add(name);
-                    MenuEngine.Game.DataEngine.ArenaPlaylist = new AW2.Helpers.Collections.Playlist(selectedArenaNames);
+                    MenuEngine.Game.DataEngine.SelectedArenaName = name;
                     return true;
                 }
             }

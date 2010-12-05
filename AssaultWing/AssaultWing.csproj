@@ -120,7 +120,7 @@
     <Compile Include="Game\ArenaLayer.cs" />
     <Compile Include="Game\ArenaLayerGobCollection.cs" />
     <Compile Include="Game\ArenaLoadException.cs" />
-    <Compile Include="Game\ArenaMenuInfo.cs" />
+    <Compile Include="Game\ArenaInfo.cs" />
     <Compile Include="Game\ArenaTypeLoader.cs" />
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
     <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />

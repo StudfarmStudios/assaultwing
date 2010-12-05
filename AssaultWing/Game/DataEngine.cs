@@ -140,7 +140,7 @@ namespace AW2.Game
         /// <summary>
         /// Information about all available arenas.
         /// </summary>
-        public List<ArenaMenuInfo> ArenaInfos { get; set; }
+        public List<ArenaInfo> ArenaInfos { get; set; }
 
         /// <summary>
         /// Advances the arena playlist and prepares the new current arena for playing.

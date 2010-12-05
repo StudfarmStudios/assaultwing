@@ -18,7 +18,7 @@ namespace AW2.Game
         {
             var arena = (Arena)base.LoadTemplate(filename);
             if (arena == null) throw new ArenaLoadException("Failed to load arena (" + filename + ")");
-            arena.MenuInfo.FileName = filename;
+            arena.Info.FileName = filename;
             return arena;
         }
     }

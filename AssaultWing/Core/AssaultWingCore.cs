@@ -291,7 +291,7 @@ namespace AW2.Core
             DataEngine.StartArena();
             DataEngine.RearrangeViewports();
             SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
-            Log.Write("...started arena " + DataEngine.Arena.MenuInfo.Name);
+            Log.Write("...started arena " + DataEngine.Arena.Info.Name);
         }
 
         /// <summary>

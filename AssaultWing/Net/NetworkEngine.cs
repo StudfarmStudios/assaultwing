@@ -407,7 +407,7 @@ namespace AW2.Net
         {
             if (Game.NetworkMode != NetworkMode.Server) return;
             var isPlayingArena = Game.DataEngine.Arena != null;
-            var currentArenaName = Game.DataEngine.Arena != null ? null : Game.DataEngine.Arena.MenuInfo.Name;
+            var currentArenaName = Game.DataEngine.Arena != null ? null : Game.DataEngine.Arena.Info.Name;
             foreach (var conn in GameClientConnections.Where(c => c.IsPlayingArena != isPlayingArena))
             {
                 if (conn.IsPlayingArena && !isPlayingArena) throw new ApplicationException("Not implemented: Server stopped arena and client should too");

@@ -47,7 +47,7 @@ namespace AW2.Menu
         /// </summary>
         private int _arenaListStart;
 
-        private List<ArenaMenuInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
+        private List<ArenaInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
 
         public override bool Active
         {
@@ -140,33 +140,33 @@ namespace AW2.Menu
             Vector2 infoBoxContentPos = infoBoxHeaderPos + new Vector2(0, 38);
             Vector2 infoBoxLineHeight = new Vector2(0, 14);
             Vector2 infoBoxColumnWidth = new Vector2(220, 0);
-            ArenaMenuInfo menuInfo = _selectedArena.MenuInfo;
+            ArenaInfo info = _selectedArena.Info;
             var content = MenuEngine.Game.Content;
-            string previewName = content.Exists<Texture2D>(menuInfo.PreviewName) ? menuInfo.PreviewName : "no_preview";
+            string previewName = content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
             var previewTexture = content.Load<Texture2D>(previewName);
             spriteBatch.Draw(_highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(_cursorTexture, cursorPos, Color.Multiply(Color.White, _cursorFade.Evaluate((float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds)));
 
             spriteBatch.Draw(previewTexture, arenaPreviewPos, Color.White);
             spriteBatch.Draw(_infoBackgroundTexture, infoBoxPos, Color.White);
-            spriteBatch.DrawString(_menuBigFont, menuInfo.Name, infoBoxHeaderPos, Color.White);
+            spriteBatch.DrawString(_menuBigFont, info.Name, infoBoxHeaderPos, Color.White);
             
             spriteBatch.DrawString(_menuSmallFont, "Size", infoBoxContentPos, Color.White);
-            spriteBatch.DrawString(_menuSmallFont, menuInfo.Size.ToString(), infoBoxContentPos + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(menuInfo.Size.ToString()).X, 0)), ArenaMenuInfo.GetColorForSize(menuInfo.Size));
+            spriteBatch.DrawString(_menuSmallFont, info.Size.ToString(), infoBoxContentPos + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.Size.ToString()).X, 0)), ArenaInfo.GetColorForSize(info.Size));
             
             spriteBatch.DrawString(_menuSmallFont, "Ideal Players", infoBoxContentPos + (infoBoxLineHeight * 1), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, menuInfo.IdealPlayers, infoBoxContentPos + (infoBoxLineHeight * 1) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(menuInfo.IdealPlayers).X, 0)), Color.YellowGreen);
+            spriteBatch.DrawString(_menuSmallFont, info.IdealPlayers, infoBoxContentPos + (infoBoxLineHeight * 1) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.IdealPlayers).X, 0)), Color.YellowGreen);
 
             spriteBatch.DrawString(_menuSmallFont, "Bonus Amount", infoBoxContentPos + (infoBoxLineHeight * 2), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, menuInfo.BonusAmount.ToString(), infoBoxContentPos + (infoBoxLineHeight * 2) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(menuInfo.BonusAmount.ToString()).X, 0)), ArenaMenuInfo.GetColorForBonusAmount(menuInfo.BonusAmount));
+            spriteBatch.DrawString(_menuSmallFont, info.BonusAmount.ToString(), infoBoxContentPos + (infoBoxLineHeight * 2) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.BonusAmount.ToString()).X, 0)), ArenaInfo.GetColorForBonusAmount(info.BonusAmount));
             
             spriteBatch.DrawString(_menuSmallFont, "Docks", infoBoxContentPos + (infoBoxLineHeight * 3), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, menuInfo.Docks, infoBoxContentPos + (infoBoxLineHeight * 3) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(menuInfo.Docks).X, 0)), Color.YellowGreen);
+            spriteBatch.DrawString(_menuSmallFont, info.Docks, infoBoxContentPos + (infoBoxLineHeight * 3) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.Docks).X, 0)), Color.YellowGreen);
             
             spriteBatch.DrawString(_menuSmallFont, "Flight Easiness", infoBoxContentPos + (infoBoxLineHeight * 4), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, menuInfo.FlightEasiness.ToString(), infoBoxContentPos + (infoBoxLineHeight * 4) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(menuInfo.FlightEasiness.ToString()).X, 0)), ArenaMenuInfo.GetColorForFlightEasiness(menuInfo.FlightEasiness));
+            spriteBatch.DrawString(_menuSmallFont, info.FlightEasiness.ToString(), infoBoxContentPos + (infoBoxLineHeight * 4) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.FlightEasiness.ToString()).X, 0)), ArenaInfo.GetColorForFlightEasiness(info.FlightEasiness));
 
-            spriteBatch.DrawString(_menuSmallFont, menuInfo.InfoText, infoBoxContentPos + infoBoxColumnWidth + new Vector2(16, 0), new Color(218, 159, 33));
+            spriteBatch.DrawString(_menuSmallFont, info.InfoText, infoBoxContentPos + infoBoxColumnWidth + new Vector2(16, 0), new Color(218, 159, 33));
         }
 
         private void InitializeControlCallbacks()

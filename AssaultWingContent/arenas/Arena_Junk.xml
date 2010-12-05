@@ -9093,7 +9093,7 @@
     </Item>
   </layers>
 
-  <menuInfo type="AW2.Game.ArenaMenuInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <info type="AW2.Game.ArenaInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <name type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Junk</name>
     <dimensions type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
       <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4000</X>
@@ -9102,16 +9102,16 @@
     <docks type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">5</docks>
     <idealPlayers type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4-8</idealPlayers>
     <previewName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">preview_arena_junk</previewName>
-    <size type="AW2.Game.ArenaMenuInfo+ArenaSize, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Medium</size>
-  	<bonusAmount type="AW2.Game.ArenaMenuInfo+ArenaBonusAmount, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Good</bonusAmount>
-  	<flightEasiness type="AW2.Game.ArenaMenuInfo+ArenaFlightEasiness, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Hard</flightEasiness>
+    <size type="AW2.Game.ArenaInfo+ArenaSize, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Medium</size>
+  	<bonusAmount type="AW2.Game.ArenaInfo+ArenaBonusAmount, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Good</bonusAmount>
+  	<flightEasiness type="AW2.Game.ArenaInfo+ArenaFlightEasiness, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Hard</flightEasiness>
     <infoText type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Narrow passages and hard 
 turns. This place seems to
 be abandoned long ago by 
 some great world builders.
 They were just very lazy in
 cleaning their mess away.</infoText>
-  </menuInfo>  
+  </info>  
 
   <backgroundMusic type="System.Collections.Generic.List`1[[AW2.Sound.BackgroundMusic, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <Item type="AW2.Sound.BackgroundMusic, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

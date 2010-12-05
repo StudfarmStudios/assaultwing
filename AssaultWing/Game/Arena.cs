@@ -63,7 +63,7 @@ namespace AW2.Game
     /// Important: For the whole system of physical collisions to act consistently, the CollisionArea.cannotOverlap must be a symmetric relation over all gobtypes. That is, if gobtype A cannot overlap gobtype B, then it must also be that gobtype B cannot overlap gobtype A, with the only allowed exception that if B is not movable then it need not bother with this requirement.
     /// </para>
     [LimitedSerialization]
-    [System.Diagnostics.DebuggerDisplay("{MenuInfo.Name} Dimensions:{MenuInfo.Dimensions} Layers:{Layers.Count} Gobs:{Gobs.Count}")]
+    [System.Diagnostics.DebuggerDisplay("{Info.Name} Dimensions:{Info.Dimensions} Layers:{Layers.Count} Gobs:{Gobs.Count}")]
     public class Arena : IConsistencyCheckable
     {
         #region Type definitions
@@ -143,7 +143,7 @@ namespace AW2.Game
         private List<ArenaLayer> _layers;
 
         [TypeParameter]
-        private ArenaMenuInfo _menuInfo;
+        private ArenaInfo _info;
 
         /// <summary>
         /// Tunes to play in the background while playing this arena.
@@ -305,12 +305,12 @@ namespace AW2.Game
             }
         }
 
-        public ArenaMenuInfo MenuInfo { get { return _menuInfo; } set { _menuInfo = value; } }
+        public ArenaInfo Info { get { return _info; } set { _info = value; } }
 
         /// <summary>
         /// The width and height of the arena.
         /// </summary>
-        public Vector2 Dimensions { get { return MenuInfo.Dimensions; } }
+        public Vector2 Dimensions { get { return Info.Dimensions; } }
 
         /// <summary>
         /// Filename of the arena's binary data container.
@@ -395,7 +395,7 @@ namespace AW2.Game
         /// </summary>
         public Arena()
         {
-            MenuInfo = new ArenaMenuInfo { Name = "dummyarena", Dimensions = new Vector2(4000, 4000) };
+            Info = new ArenaInfo { Name = "dummyarena", Dimensions = new Vector2(4000, 4000) };
             _layers = new List<ArenaLayer>();
             _layers.Add(new ArenaLayer());
             Gobs = new GobCollection(_layers);
@@ -1227,7 +1227,7 @@ namespace AW2.Game
         {
             int gameplayLayerIndex = Layers.FindIndex(layer => layer.IsGameplayLayer);
             if (gameplayLayerIndex == -1)
-                throw new ArgumentException("Arena " + MenuInfo.Name + " doesn't have a gameplay layer");
+                throw new ArgumentException("Arena " + Info.Name + " doesn't have a gameplay layer");
             Gobs.GameplayLayer = Layers[gameplayLayerIndex];
 
             // Make sure the gameplay backlayer is located right before the gameplay layer.

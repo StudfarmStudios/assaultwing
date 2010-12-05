@@ -5,7 +5,7 @@ using AW2.Helpers.Serialization;
 namespace AW2.Game
 {
     [LimitedSerialization]
-    public class ArenaMenuInfo
+    public class ArenaInfo
     {
         private static readonly Color C_LEVEL_1 = new Color(220, 0, 0);
         private static readonly Color C_LEVEL_2 = new Color(255, 132, 0);

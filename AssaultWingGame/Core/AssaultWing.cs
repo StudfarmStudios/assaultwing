@@ -19,7 +19,7 @@ namespace AW2.Core
 {
     public class AssaultWing : AssaultWingCore
     {
-        private static readonly TimeSpan FRAME_NUMBER_SYNCHRONIZATION_INTERVAL = TimeSpan.FromSeconds(3);
+        private static readonly TimeSpan FRAME_NUMBER_SYNCHRONIZATION_INTERVAL = TimeSpan.FromSeconds(1);
 
         private GameState _gameState;
         private ArenaStartWaiter _arenaStartWaiter;

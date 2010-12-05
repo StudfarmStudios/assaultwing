@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AW2.Helpers.Collections;
 
-namespace AW2.Game
+namespace AW2.Game.Arenas
 {
     /// <summary>
     /// A collection of gobs in an arena. The collection reflects a list of arena layers.

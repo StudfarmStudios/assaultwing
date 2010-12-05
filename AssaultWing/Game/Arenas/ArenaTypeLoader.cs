@@ -1,7 +1,7 @@
 using System;
 using AW2.Helpers.Serialization;
 
-namespace AW2.Game
+namespace AW2.Game.Arenas
 {
     /// <summary>
     /// Handles loading and saving template instances that represent user-defined types

@@ -2,7 +2,7 @@
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
-namespace AW2.Game
+namespace AW2.Game.Arenas
 {
     [LimitedSerialization]
     public class ArenaInfo

@@ -10,7 +10,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
-using AW2.Game;
+using AW2.Game.Arenas;
 using AW2.Helpers;
 
 namespace AW2.Graphics
@@ -390,7 +390,7 @@ namespace AW2.Graphics
         /// Perhaps less time lost in RenderState changes.
         /// </summary>
         [Conditional("PARALLAX_IN_3D")]
-        private void Draw_DrawParallaxIn3D(AW2.Game.ArenaLayer layer)
+        private void Draw_DrawParallaxIn3D(ArenaLayer layer)
         {
             if (layer.ParallaxName == "") return;
 

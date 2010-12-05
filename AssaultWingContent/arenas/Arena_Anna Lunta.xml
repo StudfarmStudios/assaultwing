@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArenaType type="AW2.Game.Arena, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <layers type="System.Collections.Generic.List`1[[AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <layers type="System.Collections.Generic.List`1[[AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <isGameplayLayer type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</isGameplayLayer>
       <z type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-4882.353</z>
       <parallaxName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">parallax_icy_backdrop</parallaxName>
       <gobs type="System.Collections.Generic.List`1[[AW2.Game.Gob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     </Item>
-    <Item type="AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <isGameplayLayer type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</isGameplayLayer>
       <z type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-2030.303</z>
       <parallaxName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">parallax_icy_clouds</parallaxName>
       <gobs type="System.Collections.Generic.List`1[[AW2.Game.Gob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     </Item>
-    <Item type="AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <isGameplayLayer type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</isGameplayLayer>
       <z type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-1325.58142</z>
       <parallaxName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">parallax_icy_flakes_2</parallaxName>
       <gobs type="System.Collections.Generic.List`1[[AW2.Game.Gob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     </Item>
-    <Item type="AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <isGameplayLayer type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</isGameplayLayer>
       <z type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-960.7843</z>
       <parallaxName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">parallax_icy_flakes</parallaxName>
       <gobs type="System.Collections.Generic.List`1[[AW2.Game.Gob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     </Item>
-    <Item type="AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <isGameplayLayer type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</isGameplayLayer>
       <z type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</z>
       <parallaxName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"></parallaxName>
       <gobs type="System.Collections.Generic.List`1[[AW2.Game.Gob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     </Item>
-    <Item type="AW2.Game.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <isGameplayLayer type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</isGameplayLayer>
       <z type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</z>
       <parallaxName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"></parallaxName>
@@ -776,7 +776,7 @@
     </Item>
   </layers>
   
-  <info type="AW2.Game.ArenaInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <info type="AW2.Game.Arenas.ArenaInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <name type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Anna Lunta</name>
     <dimensions type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
       <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2000</X>
@@ -785,9 +785,9 @@
     <docks type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2</docks>
     <idealPlayers type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3-5</idealPlayers>
     <previewName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">preview_arena_annalunta</previewName>
-    <size type="AW2.Game.ArenaInfo+ArenaSize, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Small</size>
-	<bonusAmount type="AW2.Game.ArenaInfo+ArenaBonusAmount, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Little</bonusAmount>
-	<flightEasiness type="AW2.Game.ArenaInfo+ArenaFlightEasiness, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</flightEasiness>
+    <size type="AW2.Game.Arenas.ArenaInfo+ArenaSize, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Small</size>
+	<bonusAmount type="AW2.Game.Arenas.ArenaInfo+ArenaBonusAmount, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Little</bonusAmount>
+	<flightEasiness type="AW2.Game.Arenas.ArenaInfo+ArenaFlightEasiness, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</flightEasiness>
     <infoText type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">This arena should be either
 deleted or redone</infoText>
   </info>

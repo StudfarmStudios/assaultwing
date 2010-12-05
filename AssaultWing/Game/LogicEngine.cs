@@ -1,6 +1,7 @@
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
+using AW2.Game.Arenas;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;

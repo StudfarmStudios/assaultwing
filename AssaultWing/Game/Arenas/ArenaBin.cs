@@ -5,7 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using AW2.Helpers.Serialization;
 
-namespace AW2.Game
+namespace AW2.Game.Arenas
 {
     /// <summary>
     /// Container of indexed chunks of serialized data.

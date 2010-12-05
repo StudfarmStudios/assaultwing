@@ -116,7 +116,6 @@
     <Compile Include="Core\GameComponents\OverlayDialog.cs" />
     <Compile Include="Core\GameComponents\PlayerChat.cs" />
     <Compile Include="Core\GameComponents\StartupScreen.cs" />
-    <Compile Include="Core\OverlayDialogs\ArenaOverOverlayDialogData.cs" />
     <Compile Include="Core\OverlayDialogs\CustomOverlayDialogData.cs" />
     <Compile Include="Core\OverlayDialogs\GameOverOverlayDialogData.cs" />
     <Compile Include="Core\OverlayDialogs\OverlayDialogData.cs" />

@@ -273,7 +273,8 @@ namespace AW2.Core
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
-            DataEngine.NextArena(arenaName);
+            var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == arenaName).FileName;
+            DataEngine.InitializeFromArena(arenaFilename, true);
         }
 
         /// <summary>

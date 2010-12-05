@@ -100,18 +100,8 @@ namespace AW2
             {
                 ArenaEditorWindow.Cursor = Cursors.Wait;
                 var arenaFilename = fileDialog.FileName;
-                Arena arena = null;
-                try
-                {
-                    arena = Arena.FromFile(_game, arenaFilename);
-                }
-                catch (Exception ex)
-                {
-                    Log.Write("Failed to load arena " + arenaFilename + ": " + ex);
-                    return;
-                }
                 var data = _game.DataEngine;
-                data.ProgressBar.Task = () => data.InitializeFromArena(arena, false);
+                data.ProgressBar.Task = () => data.InitializeFromArena(arenaFilename, false);
                 data.ProgressBar.StartTask();
                 while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
                 data.ProgressBar.FinishTask();

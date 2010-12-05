@@ -151,19 +151,6 @@ namespace AW2.Game
         public List<ArenaInfo> ArenaInfos { get; set; }
 
         /// <summary>
-        /// Advances the arena playlist and prepares the new current arena for playing.
-        /// When the playing really should start, call <see cref="StartArena"/>
-        /// </summary>
-        public void NextArena(string arenaName)
-        {
-            if (Arena != null) Arena.Dispose();
-            var arenaFilename = ArenaInfos.Single(info => info.Name == arenaName).FileName;
-            var arena = Arena.FromFile(Game, arenaFilename);
-            if (NewArena != null) NewArena(arena);
-            InitializeFromArena(arena, true);
-        }
-
-        /// <summary>
         /// Sets a previously prepared arena as the active one.
         /// </summary>
         /// Call this method right before commencing play in the prepared arena.
@@ -182,19 +169,20 @@ namespace AW2.Game
 
         /// <summary>
         /// Prepares the game data for playing an arena.
-        /// When the playing really should start, call <c>StartArena</c>.
+        /// When the playing really should start, call <see cref="StartArena"/>.
         /// </summary>
         /// <param name="initializeForPlaying">Should the arena be initialised
         /// for playing. If not, some initialisations are skipped.</param>
-        public void InitializeFromArena(Arena arena, bool initializeForPlaying)
+        public void InitializeFromArena(string arenaFilename, bool initializeForPlaying)
         {
+            if (Arena != null) Arena.Dispose();
+            Arena = Arena.FromFile(Game, arenaFilename);
+            if (NewArena != null) NewArena(Arena);
             CustomOperations = null;
-            Arena = arena;
-            Arena.IsForPlaying = initializeForPlaying;
             if (initializeForPlaying) Arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, Arena.BinFilename));
+            Arena.IsForPlaying = initializeForPlaying;
             Game.LoadArenaContent(Arena);
-            int wallCount = Arena.Gobs.Count(gob => gob is Wall);
-            _progressBar.SetSubtaskCount(wallCount);
+            _progressBar.SetSubtaskCount(Arena.Gobs.OfType<Wall>().Count());
             Arena.Reset(); // this usually takes several seconds
         }
 

@@ -178,7 +178,7 @@ namespace AW2.Core
             base.BeginRun();
         }
 
-        public override void PrepareFirstArena()
+        public override void PrepareArena()
         {
             if (NetworkMode == NetworkMode.Server)
             {
@@ -189,7 +189,7 @@ namespace AW2.Core
                 NetworkEngine.SendToGameClients(message);
             }
             // base.PrepareFirstArena adds gobs to the arena which triggers AssaultWing.GobAddedToArena
-            base.PrepareFirstArena();
+            base.PrepareArena();
         }
 
         /// <summary>
@@ -503,12 +503,10 @@ namespace AW2.Core
 
         public void HandleGobCreationMessage(GobCreationMessageBase message, int framesAgo)
         {
-            Arena arena;
-            if (message is GobPreCreationMessage)
-                arena = DataEngine.PreparedArena;
-            else if (message is GobCreationMessage)
-                arena = DataEngine.Arena;
-            else throw new ArgumentException("Invalid message type " + message.GetType().Name);
+            var arena = message is GobPreCreationMessage ? DataEngine.PreparedArena
+                : message is GobCreationMessage ? DataEngine.Arena
+                : null;
+            if (arena == null) throw new ArgumentException("Invalid message type " + message.GetType().Name);
             message.ReadGobs(framesAgo,
                 (typeName, layerIndex) =>
                 {

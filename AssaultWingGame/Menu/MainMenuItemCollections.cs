@@ -129,7 +129,7 @@ namespace AW2.Menu
         {
             _menuEngine.Game.DataEngine.SelectedArenaName = mess.ArenaToPlay;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
-            _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareFirstArena,
+            _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareArena,
                 () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage, _menuEngine.Game.HandleGobCreationMessage)));
             _menuEngine.Deactivate();
         }

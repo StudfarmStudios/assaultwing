@@ -145,26 +145,14 @@ namespace AW2.Game
 
         /// <summary>
         /// Advances the arena playlist and prepares the new current arena for playing.
+        /// When the playing really should start, call <see cref="StartArena"/>
         /// </summary>
-        /// When the playing really should start, call <c>StartArena</c>.
-        /// <returns><b>true</b> if the initialisation succeeded,
-        /// <b>false</b> otherwise.</returns>
-        public bool NextArena()
+        public void NextArena()
         {
             var arenaFilename = ArenaInfos.Single(info => info.Name == SelectedArenaName).FileName;
-            Arena arena = null;
-            try
-            {
-                arena = Arena.FromFile(Game, arenaFilename);
-                if (NewArena != null) NewArena(arena);
-                InitializeFromArena(arena, true);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Log.Write("Failed to load arena: " + e);
-                return NextArena();
-            }
+            var arena = Arena.FromFile(Game, arenaFilename);
+            if (NewArena != null) NewArena(arena);
+            InitializeFromArena(arena, true);
         }
 
         /// <summary>
@@ -190,8 +178,8 @@ namespace AW2.Game
 
         /// <summary>
         /// Prepares the game data for playing an arena.
-        /// </summary>
         /// When the playing really should start, call <c>StartArena</c>.
+        /// </summary>
         /// <param name="initializeForPlaying">Should the arena be initialised
         /// for playing. If not, some initialisations are skipped.</param>
         public void InitializeFromArena(Arena arena, bool initializeForPlaying)

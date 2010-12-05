@@ -480,7 +480,7 @@ namespace AW2.Menu
                 case NetworkMode.Server:
                     ResetEquipMenu();
                     _readyPressed = true;
-                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArenaOnServer);
+                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, MenuEngine.Game.StartArenaOnServer);
                     MenuEngine.Deactivate();
                     break;
                 case NetworkMode.Client:
@@ -489,7 +489,7 @@ namespace AW2.Menu
                 case NetworkMode.Standalone:
                     ResetEquipMenu();
                     _readyPressed = true;
-                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareFirstArena, MenuEngine.Game.StartArena);
+                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, MenuEngine.Game.StartArena);
                     MenuEngine.Deactivate();
                     break;
                 default: throw new Exception("Unexpected network mode " + MenuEngine.Game.NetworkMode);

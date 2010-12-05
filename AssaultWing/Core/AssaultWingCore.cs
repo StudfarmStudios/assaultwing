@@ -266,12 +266,14 @@ namespace AW2.Core
         /// Prepares a new play session to start from the first chosen arena.
         /// Call <c>StartArena</c> after this method returns to start
         /// playing the arena.
+        /// This method usually takes a long time to run. It's therefore a good
+        /// idea to make it run in a background thread.
         /// </summary>
-        public virtual void PrepareFirstArena()
+        public virtual void PrepareArena()
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
-            PrepareNextArena();
+            DataEngine.NextArena();
         }
 
         /// <summary>
@@ -299,19 +301,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void FinishArena()
         {
-        }
-
-        /// <summary>
-        /// Prepares an ongoing play session to move to the next chosen arena.
-        /// Call <c>StartArena</c> after this method returns to start
-        /// playing the arena.
-        /// </summary>
-        /// This method usually takes a long time to run. It's therefore a good
-        /// idea to make it run in a background thread.
-        public void PrepareNextArena()
-        {
-            if (!DataEngine.NextArena())
-                throw new InvalidOperationException("There is no next arena to play");
         }
 
         /// <summary>

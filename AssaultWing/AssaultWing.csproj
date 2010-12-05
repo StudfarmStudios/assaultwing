@@ -119,6 +119,7 @@
     <Compile Include="Game\Arenas\ArenaBin.cs" />
     <Compile Include="Game\Arenas\ArenaLayer.cs" />
     <Compile Include="Game\Arenas\ArenaLayerGobCollection.cs" />
+    <Compile Include="Game\Arenas\LightingSettings.cs" />
     <Compile Include="Game\Arenas\ArenaLoadException.cs" />
     <Compile Include="Game\Arenas\ArenaInfo.cs" />
     <Compile Include="Game\Arenas\ArenaTypeLoader.cs" />

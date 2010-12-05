@@ -157,57 +157,8 @@ namespace AW2.Game
 
         #endregion General fields
 
-        #region Lighting related fields
-
         [TypeParameter]
-        private Vector3 light0DiffuseColor;
-
-        [TypeParameter]
-        private Vector3 light0Direction;
-
-        [TypeParameter]
-        private bool light0Enabled;
-
-        [TypeParameter]
-        private Vector3 light0SpecularColor;
-
-        [TypeParameter]
-        private Vector3 light1DiffuseColor;
-
-        [TypeParameter]
-        private Vector3 light1Direction;
-
-        [TypeParameter]
-        private bool light1Enabled;
-
-        [TypeParameter]
-        private Vector3 light1SpecularColor;
-
-        [TypeParameter]
-        private Vector3 light2DiffuseColor;
-
-        [TypeParameter]
-        private Vector3 light2Direction;
-
-        [TypeParameter]
-        private bool light2Enabled;
-
-        [TypeParameter]
-        private Vector3 light2SpecularColor;
-
-        [TypeParameter]
-        private Vector3 fogColor;
-
-        [TypeParameter]
-        private bool fogEnabled;
-
-        [TypeParameter]
-        private float fogEnd;
-
-        [TypeParameter]
-        private float fogStart;
-
-        #endregion Lighting related fields
+        private LightingSettings _lighting;
 
         #region Collision related fields
 
@@ -402,22 +353,7 @@ namespace AW2.Game
             Gobs = new GobCollection(_layers);
             Bin = new ArenaBin();
             _backgroundMusic = new List<BackgroundMusic>();
-            light0DiffuseColor = Vector3.Zero;
-            light0Direction = -Vector3.UnitZ;
-            light0Enabled = true;
-            light0SpecularColor = Vector3.Zero;
-            light1DiffuseColor = Vector3.Zero;
-            light1Direction = -Vector3.UnitZ;
-            light1Enabled = false;
-            light1SpecularColor = Vector3.Zero;
-            light2DiffuseColor = Vector3.Zero;
-            light2Direction = -Vector3.UnitZ;
-            light2Enabled = false;
-            light2SpecularColor = Vector3.Zero;
-            fogColor = Vector3.Zero;
-            fogEnabled = false;
-            fogEnd = 1.0f;
-            fogStart = 0.0f;
+            _lighting = new LightingSettings();
         }
 
         #region Public methods
@@ -679,11 +615,6 @@ namespace AW2.Game
             return result;
         }
 
-        /// <summary>
-        /// Removes a round area from all walls of the arena, i.e. makes a hole.
-        /// </summary>
-        /// <param name="holePos">Center of the hole, in world coordinates.</param>
-        /// <param name="holeRadius">Radius of the hole, in meters.</param>
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
             if (holeRadius <= 0) return;
@@ -697,28 +628,10 @@ namespace AW2.Game
             });
         }
 
-        /// <summary>
-        /// Sets lighting for the effect.
-        /// </summary>
-        /// <param name="effect">The effect to modify.</param>
         public void PrepareEffect(BasicEffect effect)
         {
-            effect.DirectionalLight0.DiffuseColor = light0DiffuseColor;
-            effect.DirectionalLight0.Direction = light0Direction;
-            effect.DirectionalLight0.Enabled = light0Enabled;
-            effect.DirectionalLight0.SpecularColor = light0SpecularColor;
-            effect.DirectionalLight1.DiffuseColor = light1DiffuseColor;
-            effect.DirectionalLight1.Direction = light1Direction;
-            effect.DirectionalLight1.Enabled = light1Enabled;
-            effect.DirectionalLight1.SpecularColor = light1SpecularColor;
-            effect.DirectionalLight2.DiffuseColor = light2DiffuseColor;
-            effect.DirectionalLight2.Direction = light2Direction;
-            effect.DirectionalLight2.Enabled = light2Enabled;
-            effect.DirectionalLight2.SpecularColor = light2SpecularColor;
-            effect.FogColor = fogColor;
-            effect.FogEnabled = IsFogOverrideDisabled ? false : fogEnabled;
-            effect.FogEnd = fogEnd;
-            effect.FogStart = fogStart;
+            _lighting.PrepareEffect(effect);
+            if (IsFogOverrideDisabled) effect.FogEnabled = false;
             effect.LightingEnabled = true;
         }
 
@@ -1143,30 +1056,14 @@ namespace AW2.Game
 
         #endregion Arena boundary methods
 
-        #region IConsistencyCheckable Members
-
         public void MakeConsistent(Type limitationAttribute)
         {
             Gobs = new GobCollection(Layers);
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                light0DiffuseColor = Vector3.Clamp(light0DiffuseColor, Vector3.Zero, Vector3.One);
-                light0Direction.Normalize();
-                light0SpecularColor = Vector3.Clamp(light0SpecularColor, Vector3.Zero, Vector3.One);
-                light1DiffuseColor = Vector3.Clamp(light1DiffuseColor, Vector3.Zero, Vector3.One);
-                light1Direction.Normalize();
-                light1SpecularColor = Vector3.Clamp(light1SpecularColor, Vector3.Zero, Vector3.One);
-                light2DiffuseColor = Vector3.Clamp(light2DiffuseColor, Vector3.Zero, Vector3.One);
-                light2Direction.Normalize();
-                light2SpecularColor = Vector3.Clamp(light2SpecularColor, Vector3.Zero, Vector3.One);
-                fogColor = Vector3.Clamp(fogColor, Vector3.Zero, Vector3.One);
-                fogEnd = MathHelper.Max(fogEnd, 0);
-                fogStart = MathHelper.Max(fogStart, 0);
                 SetGameAndArenaToGobs();
             }
         }
-
-        #endregion
 
         private void SetGameAndArenaToGobs()
         {

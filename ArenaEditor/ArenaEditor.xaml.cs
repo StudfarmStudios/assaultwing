@@ -129,14 +129,14 @@ namespace AW2
         {
             var arena = _game.DataEngine.Arena;
             if (arena == null) return;
-            arena.Name = ArenaName.Text;
+            arena.MenuInfo.Name = ArenaName.Text;
             var fileDialog = new SaveFileDialog
             {
                 DefaultExt = ".xml",
                 Filter = "Assault Wing Arenas (*.xml)|*.xml|All Files (*.*)|*.*",
                 InitialDirectory = Environment.CurrentDirectory,
                 Title = "Save the Arena to File",
-                FileName = arena.Name + ".xml",
+                FileName = arena.MenuInfo.Name + ".xml",
             };
             bool? success = fileDialog.ShowDialog();
             if (success.HasValue && !success.Value) return;
@@ -405,7 +405,7 @@ namespace AW2
         private void UpdateControlsFromArena()
         {
             var arena = _game.DataEngine.Arena;
-            ArenaName.Text = arena.Name;
+            ArenaName.Text = arena.MenuInfo.Name;
 
             // Put arena layers on display.
             layerNames.Items.Clear();

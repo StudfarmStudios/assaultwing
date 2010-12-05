@@ -20,6 +20,12 @@ namespace AW2.Game
         #region Fields
 
         [TypeParameter]
+        private string _name;
+
+        [TypeParameter]
+        private Vector2 _dimensions;
+
+        [TypeParameter]
         private string _docks;
 
         [TypeParameter]
@@ -42,7 +48,9 @@ namespace AW2.Game
 
         #endregion
 
-        public string Name { get; set; }
+        public string Name { get { return _name; } set { _name = value; } }
+        public string FileName { get; set; }
+        public Vector2 Dimensions { get { return _dimensions; } set { _dimensions = value; } }
         public string Docks { get { return _docks; } set { _docks = value; } }
         public CanonicalString PreviewName { get { return _previewName; } set { _previewName = value; } }
         public string InfoText { get { return _infoText; } set { _infoText = value; } }

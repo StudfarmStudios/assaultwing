@@ -117,7 +117,6 @@
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\ArenaBin.cs" />
-    <Compile Include="Game\ArenaInfo.cs" />
     <Compile Include="Game\ArenaLayer.cs" />
     <Compile Include="Game\ArenaLayerGobCollection.cs" />
     <Compile Include="Game\ArenaLoadException.cs" />

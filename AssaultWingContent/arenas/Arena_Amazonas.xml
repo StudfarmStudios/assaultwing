@@ -5767,9 +5767,13 @@
       </gobs>
     </Item>
   </layers>
-  <name type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Amazonas</name>
-  
+
   <menuInfo type="AW2.Game.ArenaMenuInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <name type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Amazonas</name>
+    <dimensions type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
+      <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4000</X>
+      <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4000</Y>
+    </dimensions>
     <docks type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">5</docks>
     <idealPlayers type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4-8</idealPlayers>
     <previewName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">preview_arena_amazonas</previewName>
@@ -5782,10 +5786,6 @@ the RajnFjurest is all about
 intense battles in open spaces</infoText>
   </menuInfo>
   
-  <dimensions type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-    <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4000</X>
-    <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4000</Y>
-  </dimensions>
   <backgroundMusic type="System.Collections.Generic.List`1[[AW2.Sound.BackgroundMusic, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <Item type="AW2.Sound.BackgroundMusic, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <fileName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">toikka_1</fileName>

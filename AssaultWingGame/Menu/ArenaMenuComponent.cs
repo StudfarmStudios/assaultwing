@@ -47,7 +47,7 @@ namespace AW2.Menu
         /// </summary>
         private int _arenaListStart;
 
-        private List<ArenaInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
+        private List<ArenaMenuInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
 
         public override bool Active
         {

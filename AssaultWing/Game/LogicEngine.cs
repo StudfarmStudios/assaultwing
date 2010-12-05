@@ -44,7 +44,7 @@ namespace AW2.Game
                 Game.DataEngine.AddTypeTemplate(device.TypeName, device);
             foreach (Gob particleEngine in particleLoader.LoadTemplates())
                 Game.DataEngine.AddTypeTemplate(particleEngine.TypeName, particleEngine);
-            Game.DataEngine.ArenaInfos = arenaLoader.LoadTemplates().Cast<Arena>().Select(arena => arena.Info).ToList();
+            Game.DataEngine.ArenaInfos = arenaLoader.LoadTemplates().Cast<Arena>().Select(arena => arena.MenuInfo).ToList();
 
             SaveTemplates(gobLoader, deviceLoader, particleLoader, arenaLoader);
             base.Initialize();

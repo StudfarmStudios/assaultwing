@@ -101,11 +101,30 @@ namespace AW2.Graphics
             newViewport.Y += (int)CustomAlignment.Y;
             newViewport.Width = Math.Min(oldViewport.Width, dimensions.X);
             newViewport.Height = Math.Min(oldViewport.Height, dimensions.Y);
+            newViewport = LimitViewport(newViewport);
             gfx.Viewport = newViewport;
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             DrawContent(spriteBatch);
             spriteBatch.End();
             gfx.Viewport = oldViewport;
+        }
+
+        private static Viewport LimitViewport(Viewport viewport)
+        {
+            var clientBounds = AssaultWingCore.Instance.Window.ClientBounds;
+            if (viewport.X < clientBounds.X)
+            {
+                viewport.Width -= clientBounds.X - viewport.X;
+                viewport.X = clientBounds.X;
+            }
+            if (viewport.Y < clientBounds.Y)
+            {
+                viewport.Height -= clientBounds.Y - viewport.Y;
+                viewport.Y = clientBounds.Y;
+            }
+            viewport.Width = Math.Min(viewport.Width, clientBounds.Right - viewport.X);
+            viewport.Height = Math.Min(viewport.Height, clientBounds.Bottom - viewport.Y);
+            return viewport;
         }
 
         /// <summary>

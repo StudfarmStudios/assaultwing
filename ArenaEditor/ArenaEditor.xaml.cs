@@ -22,7 +22,7 @@ namespace AW2
     /// <summary>
     /// Assault Wing Arena Editor main window.
     /// </summary>
-    public partial class ArenaEditor : Window
+    public partial class ArenaEditor : System.Windows.Window
     {
         private class GobReference
         {
@@ -276,6 +276,10 @@ namespace AW2
         private void InitializeGame(string[] args)
         {
             _game = new AssaultWingCore(_graphicsDeviceService);
+            _game.Window = new Core.Window(
+                () => Title,
+                text => Dispatcher.Invoke((Action)(() => Title = text)),
+                () => new Rectangle(ArenaView.Bounds.X, ArenaView.Bounds.Y, ArenaView.Bounds.Width, ArenaView.Bounds.Height));
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
             _game.CommandLineOptions = new CommandLineOptions(args);
             _game.DoNotFreezeCanonicalStrings = true;

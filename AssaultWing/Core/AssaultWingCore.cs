@@ -80,7 +80,7 @@ namespace AW2.Core
         /// </summary>
         public bool AllowDialogs { get; set; }
 
-        public event Action<string> StatusTextChanged;
+        public Window Window { get; set; }
 
         #endregion AssaultWing properties
 
@@ -427,7 +427,7 @@ namespace AW2.Core
             }
             else
             {
-                var newStatusText = "[~" + _framesSinceLastCheck + " fps]";
+                var newStatusText = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
                 _framesSinceLastCheck = 1;
                 if (secondsSinceLastFramerateCheck < 2)
                     _lastFramerateCheck += TimeSpan.FromSeconds(1);
@@ -448,7 +448,7 @@ namespace AW2.Core
                 if (DataEngine.ArenaFrameCount > 0)
                     newStatusText += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
 #endif
-                if (StatusTextChanged != null) StatusTextChanged(newStatusText);
+                Window.Title = newStatusText;
             }
             base.Draw();
         }

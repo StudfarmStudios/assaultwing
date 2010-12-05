@@ -119,7 +119,10 @@ namespace AW2.UI
             _game = new AssaultWing(_graphicsDeviceService);
             AssaultWing.Instance = _game; // HACK: support older code that uses the static instance
             _game.CommandLineOptions = new CommandLineOptions(args);
-            _game.StatusTextChanged += text => BeginInvoke((Action)(() => Text = "Assault Wing " + text));
+            _game.Window = new Window(
+                () => Text,
+                text => BeginInvoke((Action)(() => Text = text)),
+                () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height));
             _gameView.Draw += _game.Draw;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
             _graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();

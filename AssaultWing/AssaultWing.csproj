@@ -114,6 +114,7 @@
     <Compile Include="Core\GraphicsDeviceService.cs" />
     <Compile Include="Core\NetworkMode.cs" />
     <Compile Include="Core\Waiter.cs" />
+    <Compile Include="Core\Window.cs" />
     <Compile Include="Game\ActionGob.cs" />
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\Arenas\ArenaBin.cs" />

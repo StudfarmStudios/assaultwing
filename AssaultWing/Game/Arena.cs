@@ -235,14 +235,14 @@ namespace AW2.Game
         /// Exactly, when a collision occurs, the moving gob's point of collision
         /// will be no more than <see cref="COLLISION_ACCURACY"/>'s time of movement
         /// away from the actual point of collision.
-        private readonly TimeSpan COLLISION_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.01));
+        private readonly TimeSpan COLLISION_ACCURACY = TimeSpan.FromSeconds(0.01);
 
         /// <summary>
         /// Accuracy to which movement of a gob in a frame is done. 
         /// Measured in game time.
         /// </summary>
         /// This constant is to work around rounding errors.
-        private readonly TimeSpan MOVEMENT_ACCURACY = new TimeSpan((long)(TimeSpan.TicksPerSecond * 0.00001666));
+        private readonly TimeSpan MOVEMENT_ACCURACY = TimeSpan.FromSeconds(0.00001666);
 
         /// <summary>
         /// The maximum number of times to try to move a gob in one frame.
@@ -1290,6 +1290,8 @@ namespace AW2.Game
                 AddDockTrackerToViewports((AW2.Game.Gobs.Dock)gob);
             if (gob is AW2.Game.Gobs.Bonus.Bonus)
                 AddBonusTrackerToViewports((AW2.Game.Gobs.Bonus.Bonus)gob);
+            if (gob is AW2.Game.Gobs.Wall)
+                Game.DataEngine.UpdateArenaRadarSilhouette = true;
             if (GobAdded != null) GobAdded(gob);
         }
 

@@ -503,19 +503,15 @@ namespace AW2.Core
 
         public void HandleGobCreationMessage(GobCreationMessageBase message, int framesAgo)
         {
-            var arena = message is GobPreCreationMessage ? DataEngine.PreparedArena
-                : message is GobCreationMessage ? DataEngine.Arena
-                : null;
-            if (arena == null) throw new ArgumentException("Invalid message type " + message.GetType().Name);
             message.ReadGobs(framesAgo,
                 (typeName, layerIndex) =>
                 {
                     var gob = (Gob)Clonable.Instantiate(typeName);
                     gob.Game = this;
-                    gob.Layer = arena.Layers[layerIndex];
+                    gob.Layer = DataEngine.Arena.Layers[layerIndex];
                     return gob;
                 },
-                arena.Gobs.Add);
+                DataEngine.Arena.Gobs.Add);
             if (message is GobPreCreationMessage)
                 AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Send(new ArenaLoadedMessage());
         }

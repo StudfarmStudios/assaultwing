@@ -36,10 +36,10 @@ namespace AW2.Game
         /// </summary>
         private List<object> _templates;
 
-        private Arena _preparedArena;
         private Texture2D _arenaRadarSilhouette;
         private Vector2 _arenaDimensionsOnRadar;
         private Matrix _arenaToRadarTransform;
+        private TimeSpan _lastArenaRadarSilhouetteUpdate;
         private ProgressBar _progressBar;
         private IndexedItemCollection<Spectator> _spectators;
 
@@ -79,7 +79,6 @@ namespace AW2.Game
         /// </summary>
         /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
         public Arena Arena { get; private set; }
-        public Arena PreparedArena { get { return _preparedArena; } }
 
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
@@ -121,10 +120,21 @@ namespace AW2.Game
         {
             get
             {
-                if (_arenaRadarSilhouette == null) RefreshArenaRadarSilhouette();
+                if (_arenaRadarSilhouette == null ||
+                    (UpdateArenaRadarSilhouette && _lastArenaRadarSilhouetteUpdate.SecondsAgoGameTime() >= 1))
+                {
+                    RefreshArenaRadarSilhouette();
+                    UpdateArenaRadarSilhouette = false;
+                    _lastArenaRadarSilhouetteUpdate = Game.GameTime.TotalGameTime;
+                }
                 return _arenaRadarSilhouette;
             }
         }
+
+        /// <summary>
+        /// If true, the arena radar silhouette will be updated soon.
+        /// </summary>
+        public bool UpdateArenaRadarSilhouette { get; set; }
 
         /// <summary>
         /// The transformation to map coordinates in the current arena 
@@ -149,6 +159,7 @@ namespace AW2.Game
         /// </summary>
         public void NextArena()
         {
+            if (Arena != null) Arena.Dispose();
             var arenaFilename = ArenaInfos.Single(info => info.Name == SelectedArenaName).FileName;
             var arena = Arena.FromFile(Game, arenaFilename);
             if (NewArena != null) NewArena(arena);
@@ -164,10 +175,6 @@ namespace AW2.Game
             // Clear old stuff from previous arena, if any.
             Devices.Clear();
             foreach (var player in Spectators) player.ResetForArena();
-            if (Arena != null) Arena.Dispose();
-
-            Arena = _preparedArena;
-            _preparedArena = null;
             Game.GobsCounter.SetRawValue(Arena.Gobs.Count);
             if (Arena.IsForPlaying)
             {
@@ -185,13 +192,13 @@ namespace AW2.Game
         public void InitializeFromArena(Arena arena, bool initializeForPlaying)
         {
             CustomOperations = null;
-            _preparedArena = arena;
-            _preparedArena.IsForPlaying = initializeForPlaying;
-            if (initializeForPlaying) _preparedArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, _preparedArena.BinFilename));
-            Game.LoadArenaContent(_preparedArena);
-            int wallCount = _preparedArena.Gobs.Count(gob => gob is Wall);
+            Arena = arena;
+            Arena.IsForPlaying = initializeForPlaying;
+            if (initializeForPlaying) Arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, Arena.BinFilename));
+            Game.LoadArenaContent(Arena);
+            int wallCount = Arena.Gobs.Count(gob => gob is Wall);
             _progressBar.SetSubtaskCount(wallCount);
-            _preparedArena.Reset(); // this usually takes several seconds
+            Arena.Reset(); // this usually takes several seconds
         }
 
         #endregion arenas

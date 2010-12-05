@@ -19,7 +19,7 @@ namespace AW2.Core
             get
             {
                 CheckDisposed();
-                return _connections.All(conn => _readyIDs.Contains(conn.ID));
+                return true;
             }
         }
 

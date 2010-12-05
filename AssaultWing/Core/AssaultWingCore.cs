@@ -263,17 +263,17 @@ namespace AW2.Core
         #region Methods for game components
 
         /// <summary>
-        /// Prepares a new play session to start from the first chosen arena.
-        /// Call <c>StartArena</c> after this method returns to start
+        /// Prepares a new play session to start from an arena.
+        /// Call <see cref="StartArena"/> after this method returns to start
         /// playing the arena.
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
         /// </summary>
-        public virtual void PrepareArena()
+        protected void PrepareArena(string arenaName)
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
-            DataEngine.NextArena();
+            DataEngine.NextArena(arenaName);
         }
 
         /// <summary>

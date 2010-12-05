@@ -434,7 +434,7 @@ namespace AW2.Menu
 
         private void SendGameSettingsToRemote(IEnumerable<Connection> connections)
         {
-            var mess = new GameSettingsRequest { ArenaToPlay = MenuEngine.Game.DataEngine.SelectedArenaName };
+            var mess = new GameSettingsRequest { ArenaToPlay = MenuEngine.Game.SelectedArenaName };
             foreach (var conn in connections) conn.Send(mess);
         }
 
@@ -560,7 +560,7 @@ namespace AW2.Menu
             var currentPos = infoDisplayPos;
             var lineHeight = new Vector2(0, 20);
             var infoWidth = new Vector2(320, 0);
-            var arenaName = MenuEngine.Game.DataEngine.SelectedArenaName;
+            var arenaName = MenuEngine.Game.SelectedArenaName;
             var arenaInfo = MenuEngine.Game.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
             var content = MenuEngine.Game.Content;
             string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
@@ -586,7 +586,7 @@ namespace AW2.Menu
             var lineHeight = new Vector2(0, 20);
             var infoWidth = new Vector2(320, 0);
             var currentPos = infoDisplayPos;
-            var arenaName = MenuEngine.Game.DataEngine.SelectedArenaName;
+            var arenaName = MenuEngine.Game.SelectedArenaName;
 
             spriteBatch.DrawString(_menuBigFont, "Gametype Settings", currentPos, Color.White);
             currentPos += new Vector2(0, 50);
@@ -639,7 +639,7 @@ namespace AW2.Menu
             spriteBatch.DrawString(_menuSmallFont, "Mayhem", currentPos + new Vector2(0, 20), Color.White);
             currentPos += lineHeight;
 
-            var arenaName = MenuEngine.Game.DataEngine.SelectedArenaName;
+            var arenaName = MenuEngine.Game.SelectedArenaName;
             spriteBatch.DrawString(_menuSmallFont, EquipMenuGameSettings.Arena.ToString(), currentPos, Color.GreenYellow);
             spriteBatch.DrawString(_menuSmallFont, arenaName, currentPos + new Vector2(0, 20), Color.White);
 
@@ -847,7 +847,7 @@ namespace AW2.Menu
 
             // Setup statusdisplay texts
             string statusDisplayPlayerAmount = "" + data.Players.Count();
-            string statusDisplayArenaName = data.SelectedArenaName;
+            string statusDisplayArenaName = MenuEngine.Game.SelectedArenaName;
             string statusDisplayStatus = MenuEngine.Game.NetworkMode == NetworkMode.Server
                 ? "server"
                 : "connected";

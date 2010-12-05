@@ -302,7 +302,6 @@
     <Compile Include="Net\MessageHandling\GameplayMessageHandler.cs" />
     <Compile Include="Net\MessageHandling\IMessageHandler.cs" />
     <Compile Include="Net\MessageHandling\MessageHandler.cs" />
-    <Compile Include="Net\MessageHandling\MessageHandlers.cs" />
     <Compile Include="Net\MessageHeaderFlags.cs" />
     <Compile Include="Net\MessageSendType.cs" />
     <Compile Include="Net\Messages\ArenaFinishMessage.cs" />

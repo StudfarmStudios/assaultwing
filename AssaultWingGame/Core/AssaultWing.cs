@@ -28,13 +28,9 @@ namespace AW2.Core
         private List<Gob> _addedGobs;
 
         // HACK: Debug keys
-        private Control _musicSwitch;
-        private Control _arenaReload;
         private Control _frameStepControl;
         private Control _frameRunControl;
         private bool _frameStep;
-
-        public MenuEngineImpl MenuEngine { get; private set; }
 
         public GameState GameState
         {
@@ -51,7 +47,8 @@ namespace AW2.Core
         }
 
         public event Action<GameState> GameStateChanged;
-
+        public string SelectedArenaName { get; set; }
+        public MenuEngineImpl MenuEngine { get; private set; }
         private StartupScreen StartupScreen { get; set; }
         private IntroEngine IntroEngine { get; set; }
         private LogicEngine LogicEngine { get { return (LogicEngine)Components.First(c => c is LogicEngine); } }
@@ -74,8 +71,6 @@ namespace AW2.Core
             Components.Add(PlayerChat);
             GameState = GameState.Initializing;
             _escapeControl = new KeyboardKey(Keys.Escape);
-            _musicSwitch = new KeyboardKey(Keys.F5);
-            _arenaReload = new KeyboardKey(Keys.F6);
             _frameStepControl = new KeyboardKey(Keys.F8);
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
@@ -129,6 +124,8 @@ namespace AW2.Core
         {
             Log.Write("Assault Wing begins to run");
 
+            SelectedArenaName = DataEngine.ArenaInfos.First().Name;
+
             // Hardcoded for now!!!
 
             PlayerControls plr1Controls;
@@ -178,18 +175,18 @@ namespace AW2.Core
             base.BeginRun();
         }
 
-        public override void PrepareArena()
+        public void PrepareArena()
         {
             if (NetworkMode == NetworkMode.Server)
             {
                 // Arena loading is heavy and would show up in ping measurements.
                 // Ping measurement is unfreezed by ArenaStartWaiter.
                 foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = true;
-                var message = new StartGameMessage { ArenaToPlay = DataEngine.SelectedArenaName };
+                var message = new StartGameMessage { ArenaToPlay = SelectedArenaName };
                 NetworkEngine.SendToGameClients(message);
             }
             // base.PrepareFirstArena adds gobs to the arena which triggers AssaultWing.GobAddedToArena
-            base.PrepareArena();
+            base.PrepareArena(SelectedArenaName);
         }
 
         /// <summary>
@@ -404,28 +401,6 @@ namespace AW2.Core
         [System.Diagnostics.Conditional("DEBUG")]
         private void UpdateDebugKeys()
         {
-            // Switch music off
-            if (_musicSwitch.Pulse && GameState == GameState.Gameplay)
-            {
-                SoundEngine.StopMusic();
-            }
-
-            // Instant arena reload (simple aid for hand-editing an arena)
-            if (_arenaReload.Pulse && GameState == GameState.Gameplay && NetworkMode == NetworkMode.Standalone)
-            {
-                var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == DataEngine.SelectedArenaName).FileName;
-                try
-                {
-                    var arena = Arena.FromFile(this, arenaFilename);
-                    DataEngine.InitializeFromArena(arena, true);
-                    StartArena();
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Arena reload failed: " + e);
-                }
-            }
-
             // Frame stepping (for debugging)
             if (_frameRunControl.Pulse)
             {

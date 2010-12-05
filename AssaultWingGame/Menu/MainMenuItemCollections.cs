@@ -73,9 +73,8 @@ namespace AW2.Menu
                     if (!_menuEngine.Game.StartServer(result => MessageHandlers.IncomingConnectionHandlerOnServer(result, () => true))) return;
                     component.MenuEngine.ActivateComponent(MenuComponentType.Equip);
 
-                    // HACK: Force one local player and Amazonas as the only arena.
+                    // HACK: Force one local player
                     _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
-                    _menuEngine.Game.DataEngine.SelectedArenaName = "Amazonas";
                 }
             });
         }
@@ -127,7 +126,7 @@ namespace AW2.Menu
 
         private void HandleStartGameMessage(StartGameMessage mess)
         {
-            _menuEngine.Game.DataEngine.SelectedArenaName = mess.ArenaToPlay;
+            _menuEngine.Game.SelectedArenaName = mess.ArenaToPlay;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
             _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareArena,
                 () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage, _menuEngine.Game.HandleGobCreationMessage)));

@@ -207,7 +207,7 @@ namespace AW2.Menu
 
         private void SelectCurrentArena()
         {
-            MenuEngine.Game.DataEngine.SelectedArenaName = ArenaInfos[_currentArena].Name;
+            MenuEngine.Game.SelectedArenaName = ArenaInfos[_currentArena].Name;
         }
         
         /// <summary>

@@ -107,7 +107,6 @@ namespace AW2.Game
 
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
             _templates = new List<object>();
-            SelectedArenaName = "Amazonas";
         }
 
         #region arenas
@@ -146,8 +145,6 @@ namespace AW2.Game
         /// Y is down.
         public Matrix ArenaToRadarTransform { get { return _arenaToRadarTransform; } }
 
-        public string SelectedArenaName { get; set; }
-
         /// <summary>
         /// Information about all available arenas.
         /// </summary>
@@ -157,10 +154,10 @@ namespace AW2.Game
         /// Advances the arena playlist and prepares the new current arena for playing.
         /// When the playing really should start, call <see cref="StartArena"/>
         /// </summary>
-        public void NextArena()
+        public void NextArena(string arenaName)
         {
             if (Arena != null) Arena.Dispose();
-            var arenaFilename = ArenaInfos.Single(info => info.Name == SelectedArenaName).FileName;
+            var arenaFilename = ArenaInfos.Single(info => info.Name == arenaName).FileName;
             var arena = Arena.FromFile(Game, arenaFilename);
             if (NewArena != null) NewArena(arena);
             InitializeFromArena(arena, true);

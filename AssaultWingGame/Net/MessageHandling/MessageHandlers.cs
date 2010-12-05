@@ -145,7 +145,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleGameSettingsRequest(GameSettingsRequest mess)
         {
-            AssaultWingCore.Instance.DataEngine.SelectedArenaName = mess.ArenaToPlay;
+            ((AssaultWing)AssaultWing.Instance).SelectedArenaName = mess.ArenaToPlay;
         }
 
         private static void HandleWallHoleMessage(WallHoleMessage mess)

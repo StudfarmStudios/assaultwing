@@ -49,20 +49,20 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, mess => joinGameReplyAction());
         }
 
-        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(Action<ConnectionClosingMessage> handleConnectionClosingMessage, GameplayMessageHandler<GobCreationMessageBase>.GameplayMessageAction handleGobCreationMessage)
+        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(Action<ConnectionClosingMessage> handleConnectionClosingMessage, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
             yield return new MessageHandler<ArenaStartRequest>(false, IMessageHandler.SourceType.Server, m => HandleArenaStartRequest(m, handleGobCreationMessage));
             yield return new MessageHandler<ArenaFinishMessage>(false, IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
-            yield return new GameplayMessageHandler<GobPreCreationMessage>(false, IMessageHandler.SourceType.Server, (m, f) => handleGobCreationMessage((GobPreCreationMessage)m, f));
+            yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, handleGobCreationMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientArenaActionHandlers(GameplayMessageHandler<GobCreationMessageBase>.GameplayMessageAction handleGobCreationMessage)
+        public static IEnumerable<IMessageHandler> GetClientArenaActionHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
             yield return new MessageHandler<WallHoleMessage>(false, IMessageHandler.SourceType.Server, HandleWallHoleMessage);
-            yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, (m, f) => handleGobCreationMessage((GobCreationMessage)m, f));
+            yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, handleGobCreationMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
@@ -75,11 +75,6 @@ namespace AW2.Net.MessageHandling
         {
             yield return new MessageHandler<PlayerControlsMessage>(false, IMessageHandler.SourceType.Client, AW2.UI.UIEngineImpl.HandlePlayerControlsMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerMessageMessageOnServer);
-        }
-
-        public static IEnumerable<IMessageHandler> GetServerArenaStartHandlers(Action<int> idRegisterer)
-        {
-            yield return new MessageHandler<ArenaLoadedMessage>(false, IMessageHandler.SourceType.Client, mess => idRegisterer(mess.ConnectionID));
         }
 
         public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)
@@ -162,7 +157,7 @@ namespace AW2.Net.MessageHandling
                 wall.MakeHole(mess.TriangleIndices);
         }
 
-        private static void HandleArenaStartRequest(ArenaStartRequest mess, GameplayMessageHandler<GobCreationMessageBase>.GameplayMessageAction handleGobCreationMessage)
+        private static void HandleArenaStartRequest(ArenaStartRequest mess, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientArenaActionHandlers(handleGobCreationMessage));
             AssaultWingCore.Instance.StartArena(mess.StartDelay);

@@ -32,7 +32,6 @@ namespace AW2.Core
         public void BeginWait()
         {
             CheckDisposed();
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetServerArenaStartHandlers(_readyIDs.Add));
         }
 
         /// <summary>
@@ -56,7 +55,6 @@ namespace AW2.Core
         public void Dispose()
         {
             _disposed = true;
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerArenaStartHandlers(null));
         }
 
         private void CheckDisposed()

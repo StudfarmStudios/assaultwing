@@ -492,16 +492,14 @@ namespace AW2.Core
             if (DataEngine.ProgressBar.TaskRunning) return; // wait for arena load completion
             if (NetworkMode == NetworkMode.Server && _addedGobs.Any())
             {
-                var message = DataEngine.Arena != null && DataEngine.Arena.IsActive
-                    ? (GobCreationMessageBase)new GobCreationMessage()
-                    : new GobPreCreationMessage();
+                var message = new GobCreationMessage();
                 foreach (var gob in _addedGobs) message.AddGob(gob);
                 _addedGobs.Clear();
                 NetworkEngine.SendToGameClients(message);
             }
         }
 
-        public void HandleGobCreationMessage(GobCreationMessageBase message, int framesAgo)
+        public void HandleGobCreationMessage(GobCreationMessage message, int framesAgo)
         {
             message.ReadGobs(framesAgo,
                 (typeName, layerIndex) =>
@@ -512,8 +510,6 @@ namespace AW2.Core
                     return gob;
                 },
                 DataEngine.Arena.Gobs.Add);
-            if (message is GobPreCreationMessage)
-                AssaultWingCore.Instance.NetworkEngine.GameServerConnection.Send(new ArenaLoadedMessage());
         }
 
         private void DeactivateAllMessageHandlers()

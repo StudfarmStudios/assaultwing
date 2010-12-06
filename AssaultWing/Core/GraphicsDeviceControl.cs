@@ -18,6 +18,7 @@ namespace AW2.Core
     // types. To avoid conflicts, we specify exactly which ones to use.
     using Color = System.Drawing.Color;
     using Rectangle = Microsoft.Xna.Framework.Rectangle;
+    using AW2.Helpers;
 
     /// <summary>
     /// Custom control uses the XNA Framework GraphicsDevice to render onto
@@ -141,6 +142,7 @@ namespace AW2.Core
                 }
                 catch (Exception e)
                 {
+                    Log.Write("ERROR: Graphics device reset failed", e);
                     return "Graphics device reset failed\n\n" + e;
                 }
             }

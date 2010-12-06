@@ -125,8 +125,6 @@ namespace AW2.UI
                 () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height));
             _gameView.Draw += _game.Draw;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
-            _graphicsDeviceService.DeviceResetting += (sender, eventArgs) => _game.UnloadContent();
-            _graphicsDeviceService.DeviceReset += (sender, eventArgs) => _game.LoadContent();
         }
 
         private void InitializeGameView()

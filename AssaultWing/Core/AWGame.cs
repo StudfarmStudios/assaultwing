@@ -16,7 +16,7 @@ namespace AW2.Core
         public GraphicsDeviceService GraphicsDeviceService { get; private set; }
         public AWContentManager Content { get; private set; }
         public GameServiceContainer Services { get; private set; }
-        public List<AWGameComponent> Components { get; private set; }
+        public AWGameComponentCollection Components { get; private set; }
         public TimeSpan TargetElapsedTime { get { return TimeSpan.FromSeconds(1f / TargetFPS); } }
         public int TargetFPS { get; set; }
 
@@ -27,7 +27,7 @@ namespace AW2.Core
             GraphicsDeviceService = graphicsDeviceService;
             Services = new GameServiceContainer();
             Services.AddService(typeof(IGraphicsDeviceService), graphicsDeviceService);
-            Components = new List<AWGameComponent>();
+            Components = new AWGameComponentCollection();
             TargetFPS = 60;
         }
 
@@ -80,7 +80,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void Update(AWGameTime gameTime)
         {
-            Components.Sort((a, b) => a.UpdateOrder.CompareTo(b.UpdateOrder));
             foreach (var component in Components)
                 if (component.Enabled) component.Update();
         }
@@ -90,7 +89,6 @@ namespace AW2.Core
         /// </summary>
         public virtual void Draw()
         {
-            Components.Sort((a, b) => a.UpdateOrder.CompareTo(b.UpdateOrder));
             foreach (var component in Components)
                 if (component.Visible) component.Draw();
         }

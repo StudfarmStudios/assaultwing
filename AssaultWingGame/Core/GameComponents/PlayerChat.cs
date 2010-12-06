@@ -24,8 +24,8 @@ namespace AW2.Core.GameComponents
         private Color TypingColor { get { return Color.White; } }
         private bool IsTyping { get { return _message != null; } }
 
-        public PlayerChat(AssaultWing game)
-            : base(game)
+        public PlayerChat(AssaultWing game, int updateOrder)
+            : base(game, updateOrder)
         {
             _chatControl = new KeyboardKey(Keys.Enter);
         }

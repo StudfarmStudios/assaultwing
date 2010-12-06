@@ -10,8 +10,8 @@ namespace AW2.Game
     /// </summary>
     public class PhysicsEngine : AWGameComponent
     {
-        public PhysicsEngine(AssaultWingCore game)
-            : base(game)
+        public PhysicsEngine(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
         }
 

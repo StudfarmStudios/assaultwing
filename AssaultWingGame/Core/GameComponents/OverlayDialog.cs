@@ -18,8 +18,8 @@ namespace AW2.Core.GameComponents
         private SpriteBatch _spriteBatch;
         private Texture2D _dialogTexture;
 
-        public OverlayDialog(AssaultWingCore game)
-            : base(game)
+        public OverlayDialog(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
         }
 

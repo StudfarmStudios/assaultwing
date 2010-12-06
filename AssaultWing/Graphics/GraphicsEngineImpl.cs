@@ -42,8 +42,8 @@ namespace AW2.Graphics
             };
         }
 
-        public GraphicsEngineImpl(AssaultWingCore game)
-            : base(game)
+        public GraphicsEngineImpl(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
             GameContent = new GameContent(game);
         }

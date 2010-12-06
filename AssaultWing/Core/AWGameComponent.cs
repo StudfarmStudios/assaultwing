@@ -10,11 +10,12 @@ namespace AW2.Core
         public AssaultWingCore Game { get; private set; }
         public bool Enabled { get; set; }
         public bool Visible { get; set; }
-        public int UpdateOrder { get; set; }
+        public int UpdateOrder { get; private set; }
 
-        public AWGameComponent(AssaultWingCore game)
+        public AWGameComponent(AssaultWingCore game, int updateOrder)
         {
             Game = game;
+            UpdateOrder = updateOrder;
         }
 
         public virtual void Initialize() { }

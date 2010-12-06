@@ -90,8 +90,8 @@ namespace AW2.Game
 
         #endregion Properties
 
-        public DataEngine(AssaultWingCore game)
-            : base(game)
+        public DataEngine(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
             Spectators = new IndexedItemCollection<Spectator>();
             Spectators.Added += SpectatorAdded;

@@ -143,19 +143,13 @@ namespace AW2.Core
 
         private void InitializeComponents()
         {
-            _uiEngine = new UIEngineImpl(this);
-            _logicEngine = new LogicEngine(this);
-            SoundEngine = new SoundEngineXACT(this);
-            GraphicsEngine = new GraphicsEngineImpl(this);
-            NetworkEngine = new NetworkEngine(this);
-            DataEngine = new DataEngine(this);
-            PhysicsEngine = new PhysicsEngine(this);
-
-            NetworkEngine.UpdateOrder = 0;
-            _uiEngine.UpdateOrder = 1;
-            _logicEngine.UpdateOrder = 2;
-            SoundEngine.UpdateOrder = 3;
-            GraphicsEngine.UpdateOrder = 4;
+            NetworkEngine = new NetworkEngine(this, 0);
+            DataEngine = new DataEngine(this, 0);
+            PhysicsEngine = new PhysicsEngine(this, 0);
+            _uiEngine = new UIEngineImpl(this, 1);
+            _logicEngine = new LogicEngine(this, 2);
+            SoundEngine = new SoundEngineXACT(this, 3);
+            GraphicsEngine = new GraphicsEngineImpl(this, 4);
 
             Components.Add(_logicEngine);
             Components.Add(GraphicsEngine);

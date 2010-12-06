@@ -18,8 +18,8 @@ namespace AW2.Core.GameComponents
 
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
 
-        public IntroEngine(AssaultWing game)
-            : base(game)
+        public IntroEngine(AssaultWing game, int updateOrder)
+            : base(game, updateOrder)
         {
         }
 

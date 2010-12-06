@@ -53,8 +53,8 @@ namespace AW2.Sound
 
         #endregion
 
-        public SoundEngineXNA(AssaultWingCore game)
-            : base(game)
+        public SoundEngineXNA(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
         }
 

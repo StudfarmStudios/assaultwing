@@ -29,8 +29,8 @@ namespace AW2.UI
         /// </summary>
         public bool MouseControlsEnabled { get { return _eatMouse; } set { _eatMouse = value; } }
 
-        public UIEngineImpl(AssaultWingCore game)
-            : base(game)
+        public UIEngineImpl(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
             _oldState = InputState.GetState();
             _eatMouse = false;

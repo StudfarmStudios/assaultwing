@@ -59,11 +59,11 @@ namespace AW2.Core
         public AssaultWing(GraphicsDeviceService graphicsDeviceService)
             : base(graphicsDeviceService)
         {
-            StartupScreen = new StartupScreen(this) { UpdateOrder = -1 };
-            OverlayDialog = new OverlayDialog(this) { UpdateOrder = 5 };
-            MenuEngine = new MenuEngineImpl(this) { UpdateOrder = 6 };
-            IntroEngine = new IntroEngine(this) { UpdateOrder = 7 };
-            PlayerChat = new PlayerChat(this) { UpdateOrder = 8 };
+            StartupScreen = new StartupScreen(this, -1);
+            OverlayDialog = new OverlayDialog(this, 5);
+            MenuEngine = new MenuEngineImpl(this, 6);
+            IntroEngine = new IntroEngine(this, 7);
+            PlayerChat = new PlayerChat(this, 8);
             Components.Add(StartupScreen);
             Components.Add(OverlayDialog);
             Components.Add(MenuEngine);

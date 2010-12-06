@@ -4,8 +4,8 @@ namespace AW2.Core.GameComponents
 {
     public class StartupScreen : AWGameComponent
     {
-        public StartupScreen(AssaultWing game)
-            : base(game)
+        public StartupScreen(AssaultWing game, int updateOrder)
+            : base(game, updateOrder)
         {
         }
 

@@ -101,8 +101,8 @@ namespace AW2.Net
 
         #region Constructor
 
-        public NetworkEngine(AssaultWingCore game)
-            : base(game)
+        public NetworkEngine(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
             _gameClientConnections = new List<GameClientConnection>();
             _removedClientConnections = new List<GameClientConnection>();

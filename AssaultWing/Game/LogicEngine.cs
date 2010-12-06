@@ -18,8 +18,8 @@ namespace AW2.Game
         private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
 #endif
 
-        public LogicEngine(AssaultWingCore game)
-            : base(game)
+        public LogicEngine(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
 #if DEBUG
             showOnlyPlayer1Control = new KeyboardKey(Keys.F11);

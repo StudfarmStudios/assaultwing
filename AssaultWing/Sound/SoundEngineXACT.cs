@@ -24,8 +24,8 @@ namespace AW2.Sound
 
         #endregion
 
-        public SoundEngineXACT(AssaultWingCore game)
-            : base(game)
+        public SoundEngineXACT(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
         }
 

@@ -104,6 +104,7 @@
     <Compile Include="Core\AssaultWingCore.cs" />
     <Compile Include="Core\AWGame.cs" />
     <Compile Include="Core\AWGameComponent.cs" />
+    <Compile Include="Core\AWGameComponentCollection.cs" />
     <Compile Include="Core\AWGameRunner.cs" />
     <Compile Include="Core\AWGameTime.cs" />
     <Compile Include="Core\CommandLineOptions.cs" />

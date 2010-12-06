@@ -118,8 +118,8 @@ namespace AW2.Menu
             g_cursorFade.PostLoop = CurveLoopType.Cycle;
         }
 
-        public MenuEngineImpl(AssaultWing game)
-            : base(game)
+        public MenuEngineImpl(AssaultWing game, int updateOrder)
+            : base(game, updateOrder)
         {
             MenuContent = new MenuContent();
             _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];

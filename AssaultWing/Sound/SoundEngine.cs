@@ -7,8 +7,8 @@ namespace AW2.Sound
 {
     public abstract class SoundEngine : AWGameComponent
     {
-        public SoundEngine(AssaultWingCore game)
-            : base(game)
+        public SoundEngine(AssaultWingCore game, int updateOrder)
+            : base(game, updateOrder)
         {
         }
 

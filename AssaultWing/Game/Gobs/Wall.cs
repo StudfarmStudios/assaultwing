@@ -30,13 +30,15 @@ namespace AW2.Game.Gobs
         protected VertexPositionNormalTexture[] _vertexData;
 
         /// <summary>
-        /// The index data where every consequtive index triplet signifies
+        /// The index data where every consecutive index triplet signifies
         /// one triangle. The indices index 'vertexData'.
         /// </summary>
         protected short[] _indexData;
 
         private WallIndexMap _indexMap;
         private List<int> _removedTriangleIndices;
+        private List<int> _removedTriangleIndicesToSerialize;
+        private List<int> _removedTriangleIndicesOfAllTime;
 
         /// <summary>
         /// The number of triangles in the wall's 3D model not yet removed.
@@ -91,7 +93,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Wall()
         {
-            Set3DModel(new VertexPositionNormalTexture[] 
+            Set3DModel(new[] 
                 {
                     new VertexPositionNormalTexture(new Vector3(0,0,0), -Vector3.UnitX, Vector2.Zero),
                     new VertexPositionNormalTexture(new Vector3(100,0,0), Vector3.UnitX, Vector2.UnitX),
@@ -105,6 +107,8 @@ namespace AW2.Game.Gobs
             : base(typeName)
         {
             _removedTriangleIndices = new List<int>();
+            _removedTriangleIndicesToSerialize = new List<int>();
+            _removedTriangleIndicesOfAllTime = new List<int>();
             Movable = false;
         }
 
@@ -118,7 +122,7 @@ namespace AW2.Game.Gobs
                 Prepare3DModel();
                 var binReader = new System.IO.BinaryReader(Arena.Bin[StaticID]);
                 var boundingBox = CollisionAreas.Single(area => area.Name == "Bounding").Area.BoundingBox;
-                _indexMap = new WallIndexMap(RemoveTriangle, boundingBox, binReader);
+                _indexMap = new WallIndexMap(_removedTriangleIndices.Add, boundingBox, binReader);
                 binReader.Close();
 #if !VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
                 RemoveVerySmallTrianglesFromCollisionAreas();
@@ -126,6 +130,14 @@ namespace AW2.Game.Gobs
                 _drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
             Game.DataEngine.ProgressBar.SubtaskCompleted();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            foreach (int index in _removedTriangleIndices) RemoveTriangle(index);
+            _removedTriangleIndices.Clear();
+            if (TriangleCount == 0) Die(new DeathCause());
         }
 
         public override void Draw(Matrix view, Matrix projection)
@@ -182,6 +194,18 @@ namespace AW2.Game.Gobs
                 ? SerializationModeFlags.All
                 : SerializationModeFlags.None;
             base.Serialize(writer, reducedMode);
+            checked
+            {
+                if (mode != SerializationModeFlags.None)
+                {
+                    var indices = (mode & SerializationModeFlags.VaryingData) != 0
+                        ? _removedTriangleIndicesToSerialize
+                        : _removedTriangleIndicesOfAllTime;
+                    writer.Write((short)indices.Count());
+                    foreach (short index in indices) writer.Write((short)index);
+                    if ((mode & SerializationModeFlags.VaryingData) != 0) _removedTriangleIndicesToSerialize.Clear();
+                }
+            }
         }
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
@@ -191,11 +215,17 @@ namespace AW2.Game.Gobs
                 ? SerializationModeFlags.All
                 : SerializationModeFlags.None;
             base.Deserialize(reader, reducedMode, framesAgo);
+            if (mode != SerializationModeFlags.None)
+            {
+                int indexCount = reader.ReadInt16();
+                _removedTriangleIndices.Capacity += indexCount;
+                for (int i = 0; i < indexCount; i++) _removedTriangleIndices.Add(reader.ReadInt16());
+            }
         }
 
         public WallIndexMap CreateIndexMap()
         {
-            var indexMap = new WallIndexMap(RemoveTriangle, GetBoundingBox(), _vertexData, _indexData);
+            var indexMap = new WallIndexMap(_removedTriangleIndices.Add, GetBoundingBox(), _vertexData, _indexData);
 #if VERY_SMALL_TRIANGLES_ARE_COLLIDABLE
             indexMap.ForceVerySmallTrianglesIntoIndexMap(_vertexData, _indexData);
 #endif
@@ -211,21 +241,15 @@ namespace AW2.Game.Gobs
         {
             if (holeRadius <= 0) return;
             if (Game.NetworkMode == NetworkMode.Client) return;
-
-            // Eat a round hole.
-            Vector2 posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
-            _removedTriangleIndices.Clear();
+            var posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), _indexMap.Remove);
-
+            _removedTriangleIndices.AddRange(_removedTriangleIndices);
             if (Game.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
-                var message = new WallHoleMessage { GobID = ID, TriangleIndices = _removedTriangleIndices.ToList() };
-                Game.NetworkEngine.SendToGameClients(message);
+                _removedTriangleIndicesToSerialize.AddRange(_removedTriangleIndices);
+                _removedTriangleIndicesOfAllTime.AddRange(_removedTriangleIndices);
+                ForcedNetworkUpdate = true;
             }
-
-            // Remove the wall gob if all its triangles have been removed.
-            if (TriangleCount == 0)
-                Die(new DeathCause());
         }
 
         /// <summary>
@@ -261,14 +285,15 @@ namespace AW2.Game.Gobs
 
         private void RemoveTriangle(int index)
         {
+            if (_collisionAreas[index] == null) return; // triangle already removed earlier this frame
+            Arena.Unregister(_collisionAreas[index]);
+            _collisionAreas[index] = null;
+            --TriangleCount;
+
             // Replace the triangle in the 3D model with a trivial one.
             _indexData[3 * index + 0] = 0;
             _indexData[3 * index + 1] = 0;
             _indexData[3 * index + 2] = 0;
-
-            _removedTriangleIndices.Add(index);
-            Arena.Unregister(_collisionAreas[index]);
-            --TriangleCount;
         }
 
         /// <summary>

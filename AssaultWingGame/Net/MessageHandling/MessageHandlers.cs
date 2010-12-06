@@ -61,7 +61,6 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetClientArenaActionHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
-            yield return new MessageHandler<WallHoleMessage>(false, IMessageHandler.SourceType.Server, HandleWallHoleMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, handleGobCreationMessage);
         }
 
@@ -146,15 +145,6 @@ namespace AW2.Net.MessageHandling
         private static void HandleGameSettingsRequest(GameSettingsRequest mess)
         {
             ((AssaultWing)AssaultWing.Instance).SelectedArenaName = mess.ArenaToPlay;
-        }
-
-        private static void HandleWallHoleMessage(WallHoleMessage mess)
-        {
-            var wall = (AW2.Game.Gobs.Wall)AssaultWingCore.Instance.DataEngine.Arena.Gobs.FirstOrDefault(gob => gob.ID == mess.GobID);
-            if (wall == null)
-                Log.Write("WARNING: Cannot find wall ID " + mess.GobID + " for WallHoleMessage");
-            else
-                wall.MakeHole(mess.TriangleIndices);
         }
 
         private static void HandleArenaStartRequest(ArenaStartRequest mess, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)

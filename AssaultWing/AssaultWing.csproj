@@ -325,7 +325,6 @@
     <Compile Include="Net\Messages\PlayerSettingsRequest.cs" />
     <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
     <Compile Include="Net\Messages\StartGameMessage.cs" />
-    <Compile Include="Net\Messages\WallHoleMessage.cs" />
     <Compile Include="Net\MessageType.cs" />
     <Compile Include="Net\MessageTypeAttribute.cs" />
     <Compile Include="Net\NetworkEngine.cs" />

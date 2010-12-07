@@ -22,7 +22,6 @@ namespace AW2.Core
         private static readonly TimeSpan FRAME_NUMBER_SYNCHRONIZATION_INTERVAL = TimeSpan.FromSeconds(1);
 
         private GameState _gameState;
-        private ArenaStartWaiter _arenaStartWaiter;
         private Control _escapeControl;
         private TimeSpan _nextFrameNumberSynchronize;
         private List<Gob> _addedGobs;
@@ -87,7 +86,6 @@ namespace AW2.Core
             base.Update(gameTime);
             UpdateSpecialKeys();
             UpdateDebugKeys();
-            UpdateArenaStartWaiter();
             SynchronizeFrameNumber();
             SendGobCreationMessage();
         }
@@ -180,7 +178,8 @@ namespace AW2.Core
             if (NetworkMode == NetworkMode.Server)
             {
                 // Arena loading is heavy and would show up in ping measurements.
-                // Ping measurement is unfreezed by ArenaStartWaiter.
+                // Ping measurement is unfreezed by StartArenaOnServer().
+                // TODO: Is this helpful at all? Note that also client's arena loading affects ping.
                 foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = true;
                 var message = new StartGameMessage { ArenaToPlay = SelectedArenaName };
                 NetworkEngine.SendToGameClients(message);
@@ -191,14 +190,16 @@ namespace AW2.Core
 
         /// <summary>
         /// Starts a process on a game server that eventually leads to
-        /// <see cref="StartArena"/> begin called simultaneously on the
-        /// game server and all game clients.
+        /// <see cref="StartArena"/> begin called on the game server and all game clients.
         /// </summary>
         public void StartArenaOnServer()
         {
             if (NetworkMode != NetworkMode.Server) throw new InvalidOperationException("Should have been NetworkMode.Server but was " + NetworkMode);
-            _arenaStartWaiter = new ArenaStartWaiter(NetworkEngine.GameClientConnections);
-            _arenaStartWaiter.BeginWait(); // StartArenaImpl() eventually called in UpdateArenaStartWaiter()
+            foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = false;
+            NetworkEngine.SendToGameClients(new ArenaStartRequest());
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            StartArena();
         }
 
         public override void StartArena()
@@ -233,8 +234,7 @@ namespace AW2.Core
             try
             {
                 NetworkEngine.StartServer(connectionHandler);
-                var handlers = MessageHandlers.GetServerMenuHandlers();
-                NetworkEngine.MessageHandlers.AddRange(handlers);
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerMenuHandlers());
                 return true;
             }
             catch (Exception e)
@@ -437,18 +437,6 @@ namespace AW2.Core
                     if (!DataEngine.ProgressBar.TaskRunning)
                         FinishArena();
                 }
-            }
-        }
-
-        private void UpdateArenaStartWaiter()
-        {
-            if (_arenaStartWaiter != null && _arenaStartWaiter.IsEverybodyReady)
-            {
-                _arenaStartWaiter.EndWait();
-                _arenaStartWaiter = null;
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
-                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-                StartArena();
             }
         }
 

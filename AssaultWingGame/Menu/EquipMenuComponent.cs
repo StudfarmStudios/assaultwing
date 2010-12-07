@@ -251,17 +251,6 @@ namespace AW2.Menu
             _buttonReadyHiliteTexture = content.Load<Texture2D>("menu_equip_btn_ready_hilite");
         }
 
-        private void ResetPlayerList()
-        {
-            PlayerListIndex = 0;
-        }
-
-        private void ResetEquipMenu()
-        {
-            ResetPlayerList();
-            _currentTab = EquipMenuTab.Equipment;
-        }
-
         public override void UnloadContent()
         {
             // The textures and fonts we reference will be disposed by GraphicsEngine.
@@ -295,6 +284,17 @@ namespace AW2.Menu
                         break;
                 }
             }
+        }
+
+        private void ResetPlayerList()
+        {
+            PlayerListIndex = 0;
+        }
+
+        private void ResetEquipMenu()
+        {
+            ResetPlayerList();
+            _currentTab = EquipMenuTab.Equipment;
         }
 
         private void CreateSelectors()

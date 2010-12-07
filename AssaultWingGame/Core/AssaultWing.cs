@@ -479,8 +479,7 @@ namespace AW2.Core
         {
             if (NetworkMode == NetworkMode.Client)
             {
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientArenaActionHandlers(HandleGobCreationMessage));
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null, HandleGobCreationMessage));
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null, null));
             }
             if (NetworkMode == NetworkMode.Server)
             {

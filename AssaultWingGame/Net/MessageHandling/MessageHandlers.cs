@@ -59,11 +59,6 @@ namespace AW2.Net.MessageHandling
             yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, handleGobCreationMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientArenaActionHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
-        {
-            yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, handleGobCreationMessage);
-        }
-
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
         {
             yield return new MessageHandler<JoinGameRequest>(false, IMessageHandler.SourceType.Client, HandleJoinGameRequest);
@@ -149,7 +144,6 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleArenaStartRequest(ArenaStartRequest mess, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientArenaActionHandlers(handleGobCreationMessage));
             AssaultWingCore.Instance.StartArena();
         }
 

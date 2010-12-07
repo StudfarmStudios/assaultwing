@@ -46,7 +46,7 @@ namespace AW2.Core
             {
                 conn.PingInfo.IsMeasuringFreezed = false;
                 var startDelay = maxDelay - conn.PingInfo.PingTime.Divide(2);
-                conn.Send(new ArenaStartRequest { StartDelay = startDelay });
+                conn.Send(new ArenaStartRequest());
             }
             Dispose();
             return maxDelay;

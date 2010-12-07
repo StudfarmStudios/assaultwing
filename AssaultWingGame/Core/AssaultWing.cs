@@ -444,11 +444,11 @@ namespace AW2.Core
         {
             if (_arenaStartWaiter != null && _arenaStartWaiter.IsEverybodyReady)
             {
-                var startDelay = _arenaStartWaiter.EndWait();
+                _arenaStartWaiter.EndWait();
                 _arenaStartWaiter = null;
                 MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-                base.StartArena(startDelay);
+                StartArena();
             }
         }
 

@@ -150,7 +150,7 @@ namespace AW2.Net.MessageHandling
         private static void HandleArenaStartRequest(ArenaStartRequest mess, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientArenaActionHandlers(handleGobCreationMessage));
-            AssaultWingCore.Instance.StartArena(mess.StartDelay);
+            AssaultWingCore.Instance.StartArena();
         }
 
         private static void HandleArenaFinishMessage(ArenaFinishMessage mess)

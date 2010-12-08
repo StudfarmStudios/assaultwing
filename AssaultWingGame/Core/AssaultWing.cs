@@ -44,6 +44,7 @@ namespace AW2.Core
                     GameStateChanged(_gameState);
             }
         }
+        public bool ClientAllowedToStartArena { get; set; }
 
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
@@ -188,22 +189,14 @@ namespace AW2.Core
             base.PrepareArena(SelectedArenaName);
         }
 
-        /// <summary>
-        /// Starts a process on a game server that eventually leads to
-        /// <see cref="StartArena"/> begin called on the game server and all game clients.
-        /// </summary>
-        public void StartArenaOnServer()
-        {
-            if (NetworkMode != NetworkMode.Server) throw new InvalidOperationException("Should have been NetworkMode.Server but was " + NetworkMode);
-            foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = false;
-            NetworkEngine.SendToGameClients(new ArenaStartRequest());
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            StartArena();
-        }
-
         public override void StartArena()
         {
+            if (NetworkMode == NetworkMode.Server)
+            {
+                foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = false;
+                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            }
             base.StartArena();
             GameState = GameState.Gameplay;
         }
@@ -267,6 +260,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Client;
+            ClientAllowedToStartArena = false;
             try
             {
                 NetworkEngine.StartClient(this, serverEndPoints, connectionHandler);

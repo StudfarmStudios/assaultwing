@@ -475,20 +475,19 @@ namespace AW2.Menu
 
         private void StartGame()
         {
+            _readyPressed = true;
+            ResetEquipMenu(); // FIXME: remove this
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    ResetEquipMenu();
-                    _readyPressed = true;
-                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, MenuEngine.Game.StartArenaOnServer);
+                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, MenuEngine.Game.StartArena);
                     MenuEngine.Deactivate();
                     break;
                 case NetworkMode.Client:
-                    // Client advances only when the server says so.
+                    // Client must also wait for the server
                     break;
                 case NetworkMode.Standalone:
                     ResetEquipMenu();
-                    _readyPressed = true;
                     MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, MenuEngine.Game.StartArena);
                     MenuEngine.Deactivate();
                     break;

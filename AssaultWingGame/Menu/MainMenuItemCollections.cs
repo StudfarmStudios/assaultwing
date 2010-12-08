@@ -128,9 +128,17 @@ namespace AW2.Menu
         {
             _menuEngine.Game.SelectedArenaName = mess.ArenaToPlay;
             MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
+            ((AssaultWing)AssaultWing.Instance).ClientAllowedToStartArena = true;
+
+            // TODO: remove from here -- also check for F10 >>>
             _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareArena,
-                () => MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage, _menuEngine.Game.HandleGobCreationMessage)));
+                () =>
+                {
+                    MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage, _menuEngine.Game.HandleGobCreationMessage));
+                    AssaultWingCore.Instance.StartArena();
+                });
             _menuEngine.Deactivate();
+            // TODO: remove from here -- also check for F10 <<<
         }
 
         private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)

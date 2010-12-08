@@ -51,7 +51,6 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(Action<ConnectionClosingMessage> handleConnectionClosingMessage, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
-            yield return new MessageHandler<ArenaStartRequest>(false, IMessageHandler.SourceType.Server, m => HandleArenaStartRequest(m, handleGobCreationMessage));
             yield return new MessageHandler<ArenaFinishMessage>(false, IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
@@ -140,11 +139,6 @@ namespace AW2.Net.MessageHandling
         private static void HandleGameSettingsRequest(GameSettingsRequest mess)
         {
             ((AssaultWing)AssaultWing.Instance).SelectedArenaName = mess.ArenaToPlay;
-        }
-
-        private static void HandleArenaStartRequest(ArenaStartRequest mess, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
-        {
-            AssaultWingCore.Instance.StartArena();
         }
 
         private static void HandleArenaFinishMessage(ArenaFinishMessage mess)

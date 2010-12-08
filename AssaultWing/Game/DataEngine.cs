@@ -158,6 +158,7 @@ namespace AW2.Game
         {
             // Clear old stuff from previous arena, if any.
             Devices.Clear();
+            _lastArenaRadarSilhouetteUpdate = TimeSpan.Zero;
             foreach (var player in Spectators) player.ResetForArena();
             Game.GobsCounter.SetRawValue(Arena.Gobs.Count);
             if (Arena.IsForPlaying)

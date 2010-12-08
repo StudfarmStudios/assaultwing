@@ -122,6 +122,7 @@ namespace AW2.Game
                 if (_arenaRadarSilhouette == null ||
                     (UpdateArenaRadarSilhouette && _lastArenaRadarSilhouetteUpdate.SecondsAgoGameTime() >= 1))
                 {
+                    RefreshArenaToRadarTransform();
                     RefreshArenaRadarSilhouette();
                     UpdateArenaRadarSilhouette = false;
                     _lastArenaRadarSilhouetteUpdate = Game.GameTime.TotalGameTime;
@@ -151,9 +152,8 @@ namespace AW2.Game
         public List<ArenaInfo> ArenaInfos { get; set; }
 
         /// <summary>
-        /// Sets a previously prepared arena as the active one.
+        /// Starts playing the arena.
         /// </summary>
-        /// Call this method right before commencing play in the prepared arena.
         public void StartArena()
         {
             // Clear old stuff from previous arena, if any.
@@ -161,11 +161,6 @@ namespace AW2.Game
             _lastArenaRadarSilhouetteUpdate = TimeSpan.Zero;
             foreach (var player in Spectators) player.ResetForArena();
             Game.GobsCounter.SetRawValue(Arena.Gobs.Count);
-            if (Arena.IsForPlaying)
-            {
-                RefreshArenaToRadarTransform();
-                RefreshArenaRadarSilhouette();
-            }
         }
 
         /// <summary>

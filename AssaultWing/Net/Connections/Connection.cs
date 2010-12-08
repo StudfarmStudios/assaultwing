@@ -1,4 +1,4 @@
-#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
+//#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
 using System;
 using System.Collections.Generic;
 using System.IO;

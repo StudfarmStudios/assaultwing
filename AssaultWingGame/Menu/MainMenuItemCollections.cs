@@ -115,7 +115,7 @@ namespace AW2.Menu
             }
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(
                 () => _menuEngine.ActivateComponent(MenuComponentType.Equip),
-                HandleStartGameMessage, HandleConnectionClosingMessage));
+                HandleStartGameMessage, _menuEngine.Game.HandleConnectionClosingMessage));
 
             // HACK: Force one local player.
             _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
@@ -126,27 +126,13 @@ namespace AW2.Menu
 
         private void HandleStartGameMessage(StartGameMessage mess)
         {
-            _menuEngine.Game.SelectedArenaName = mess.ArenaToPlay;
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientMenuHandlers(null, null, null));
-            ((AssaultWing)AssaultWing.Instance).ClientAllowedToStartArena = true;
-
-            // TODO: remove from here -- also check for F10 >>>
-            _menuEngine.ProgressBarAction(_menuEngine.Game.PrepareArena,
-                () =>
-                {
-                    MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(HandleConnectionClosingMessage, _menuEngine.Game.HandleGobCreationMessage));
-                    AssaultWingCore.Instance.StartArena();
-                });
-            _menuEngine.Deactivate();
-            // TODO: remove from here -- also check for F10 <<<
-        }
-
-        private void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
-        {
-            Log.Write("Server is going to close the connection, reason: " + mess.Info);
-            var dialogData = new CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
-                new TriggeredCallback(TriggeredCallback.GetProceedControl(), _menuEngine.Game.ShowMenu));
-            _menuEngine.Game.ShowDialog(dialogData);
+            var game = _menuEngine.Game;
+            game.SelectedArenaName = mess.ArenaToPlay;
+            _menuEngine.ProgressBarAction(game.PrepareArena, () =>
+            {
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleConnectionClosingMessage, game.HandleGobCreationMessage));
+                game.IsClientAllowedToStartArena = true;
+            });
         }
     }
 }

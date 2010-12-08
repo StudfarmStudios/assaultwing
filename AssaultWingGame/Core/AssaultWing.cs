@@ -44,7 +44,7 @@ namespace AW2.Core
                     GameStateChanged(_gameState);
             }
         }
-        public bool ClientAllowedToStartArena { get; set; }
+        public bool IsClientAllowedToStartArena { get; set; }
 
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
@@ -110,7 +110,6 @@ namespace AW2.Core
         {
             Log.Write("Entering menus");
             DeactivateAllMessageHandlers();
-            if (NetworkMode == NetworkMode.Server) MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             DataEngine.ClearGameState();
             MenuEngine.Activate();
             GameState = GameState.Menu;
@@ -177,26 +176,14 @@ namespace AW2.Core
         public void PrepareArena()
         {
             if (NetworkMode == NetworkMode.Server)
-            {
-                // Arena loading is heavy and would show up in ping measurements.
-                // Ping measurement is unfreezed by StartArenaOnServer().
-                // TODO: Is this helpful at all? Note that also client's arena loading affects ping.
-                foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = true;
-                var message = new StartGameMessage { ArenaToPlay = SelectedArenaName };
-                NetworkEngine.SendToGameClients(message);
-            }
-            // base.PrepareFirstArena adds gobs to the arena which triggers AssaultWing.GobAddedToArena
+                NetworkEngine.SendToGameClients(new StartGameMessage { ArenaToPlay = SelectedArenaName });
             base.PrepareArena(SelectedArenaName);
         }
 
         public override void StartArena()
         {
             if (NetworkMode == NetworkMode.Server)
-            {
-                foreach (var conn in NetworkEngine.GameClientConnections) conn.PingInfo.IsMeasuringFreezed = false;
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerMenuHandlers());
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            }
             base.StartArena();
             GameState = GameState.Gameplay;
         }
@@ -206,11 +193,7 @@ namespace AW2.Core
             base.FinishArena();
             DeactivateAllMessageHandlers();
             ShowDialog(new GameOverOverlayDialogData(this));
-            if (NetworkMode == NetworkMode.Server)
-            {
-                var message = new ArenaFinishMessage();
-                NetworkEngine.SendToGameClients(message);
-            }
+            if (NetworkMode == NetworkMode.Server) NetworkEngine.SendToGameClients(new ArenaFinishMessage());
         }
 
         /// <summary>
@@ -260,7 +243,7 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Standalone)
                 throw new InvalidOperationException("Cannot start client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Client;
-            ClientAllowedToStartArena = false;
+            IsClientAllowedToStartArena = false;
             try
             {
                 NetworkEngine.StartClient(this, serverEndPoints, connectionHandler);
@@ -299,6 +282,14 @@ namespace AW2.Core
                 case NetworkMode.Standalone: break;
                 default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);
             }
+        }
+
+        public void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
+        {
+            Log.Write("Server is going to close the connection, reason: " + mess.Info);
+            var dialogData = new CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
+                new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
+            ShowDialog(dialogData);
         }
 
         private void EnableGameState(GameState value)
@@ -471,14 +462,7 @@ namespace AW2.Core
 
         private void DeactivateAllMessageHandlers()
         {
-            if (NetworkMode == NetworkMode.Client)
-            {
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null, null));
-            }
-            if (NetworkMode == NetworkMode.Server)
-            {
-                MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            }
+            AssaultWingCore.Instance.NetworkEngine.MessageHandlers.Clear();
         }
 
         private void GobRemovedFromArena(Arena arena, Gob gob)

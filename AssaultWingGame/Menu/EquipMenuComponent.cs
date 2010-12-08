@@ -13,6 +13,7 @@ using AW2.Net.Connections;
 using AW2.Net.Messages;
 using AW2.UI;
 using AW2.Game.Gobs;
+using AW2.Net.MessageHandling;
 
 namespace AW2.Menu
 {
@@ -204,15 +205,15 @@ namespace AW2.Menu
             _cursorFade.PreLoop = CurveLoopType.Cycle;
             _cursorFade.PostLoop = CurveLoopType.Cycle;
             _tabFade = new Curve();
-            _tabFade.Keys.Add(new CurveKey(0f, 255));
-            _tabFade.Keys.Add(new CurveKey(1f, 150));
-            _tabFade.Keys.Add(new CurveKey(2.2f, 255));
+            _tabFade.Keys.Add(new CurveKey(0f, 1f));
+            _tabFade.Keys.Add(new CurveKey(1f, 0.588f));
+            _tabFade.Keys.Add(new CurveKey(2.2f, 1f));
             _tabFade.PreLoop = CurveLoopType.Cycle;
             _tabFade.PostLoop = CurveLoopType.Cycle;
             _readyFade = new Curve();
-            _readyFade.Keys.Add(new CurveKey(0f, 240));
-            _readyFade.Keys.Add(new CurveKey(1f, 30));
-            _readyFade.Keys.Add(new CurveKey(2f, 240));
+            _readyFade.Keys.Add(new CurveKey(0f, 0.941f));
+            _readyFade.Keys.Add(new CurveKey(1f, 0.118f));
+            _readyFade.Keys.Add(new CurveKey(2f, 0.941f));
             _readyFade.PreLoop = CurveLoopType.Cycle;
             _readyFade.PostLoop = CurveLoopType.Cycle;
             _nameInfoMove = new Curve();
@@ -259,31 +260,50 @@ namespace AW2.Menu
         public override void Update()
         {
             if (MenuPanePlayers.Count() != _playerNames.Count()) CreateSelectors();
-            if (Active)
+            if (!Active) return;
+            switch (_currentTab)
             {
-                CheckGeneralControls();
-
-                if (_currentTab == EquipMenuTab.Equipment)
-                    CheckEquipTabPlayerControls();
-                if (_currentTab == EquipMenuTab.Players)
-                    CheckPlayersTabControls();
-                if (_currentTab == EquipMenuTab.GameSettings)
-                    CheckGameSettingsTabControls();
-                switch (MenuEngine.Game.NetworkMode)
-                {
-                    case NetworkMode.Client:
-                        SendPlayerSettingsToRemote(
-                            p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested,
-                            new Connection[] { MenuEngine.Game.NetworkEngine.GameServerConnection });
-                        break;
-                    case NetworkMode.Server:
-                        SendPlayerSettingsToRemote(
-                            p => true,
-                            MenuEngine.Game.NetworkEngine.GameClientConnections);
-                        SendGameSettingsToRemote(MenuEngine.Game.NetworkEngine.GameClientConnections);
-                        break;
-                }
+                case EquipMenuTab.Equipment: CheckEquipTabPlayerControls(); break;
+                case EquipMenuTab.Players: CheckPlayersTabControls(); break;
+                case EquipMenuTab.Chat: break; // TODO
+                case EquipMenuTab.GameSettings: CheckGameSettingsTabControls(); break;
+                default: throw new ApplicationException("Unexpected EquipMenuTab " + _currentTab);
             }
+            CheckGeneralControls();
+            SendGameSettings();
+            CheckArenaStart();
+        }
+
+        private void SendGameSettings()
+        {
+            switch (MenuEngine.Game.NetworkMode)
+            {
+                case NetworkMode.Client:
+                    SendPlayerSettingsToRemote(
+                        p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested,
+                        new Connection[] { MenuEngine.Game.NetworkEngine.GameServerConnection });
+                    break;
+                case NetworkMode.Server:
+                    SendPlayerSettingsToRemote(
+                        p => true,
+                        MenuEngine.Game.NetworkEngine.GameClientConnections);
+                    SendGameSettingsToRemote(MenuEngine.Game.NetworkEngine.GameClientConnections);
+                    break;
+            }
+        }
+
+        private void CheckArenaStart()
+        {
+            bool okToStart = MenuEngine.Game.NetworkMode == NetworkMode.Client
+                ? MenuEngine.Game.IsClientAllowedToStartArena && _readyPressed
+                : _readyPressed;
+            if (!okToStart) return;
+            ResetEquipMenu(); // FIXME: remove this
+            MenuEngine.Deactivate();
+            if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
+                AssaultWingCore.Instance.StartArena(); // arena prepared in MainMenuItemCollections.HandleStartGameMessage
+            else
+                MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, AssaultWingCore.Instance.StartArena);
         }
 
         private void ResetPlayerList()
@@ -319,7 +339,7 @@ namespace AW2.Menu
         {
             if (_controlTab.Pulse) ChangeTab();
             else if (_controlBack.Pulse) BackOutFromMenu();
-            else if (_controlStartGame.Pulse) StartGame();
+            else if (_controlStartGame.Pulse) _readyPressed = !_readyPressed;
         }
 
         private void CheckGameSettingsTabControls()
@@ -471,28 +491,6 @@ namespace AW2.Menu
         {
             ResetEquipMenu();
             MenuEngine.ActivateComponent(MenuComponentType.Main);
-        }
-
-        private void StartGame()
-        {
-            _readyPressed = true;
-            ResetEquipMenu(); // FIXME: remove this
-            switch (MenuEngine.Game.NetworkMode)
-            {
-                case NetworkMode.Server:
-                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, MenuEngine.Game.StartArena);
-                    MenuEngine.Deactivate();
-                    break;
-                case NetworkMode.Client:
-                    // Client must also wait for the server
-                    break;
-                case NetworkMode.Standalone:
-                    ResetEquipMenu();
-                    MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, MenuEngine.Game.StartArena);
-                    MenuEngine.Deactivate();
-                    break;
-                default: throw new Exception("Unexpected network mode " + MenuEngine.Game.NetworkMode);
-            }
         }
 
         #region Drawing methods
@@ -820,19 +818,16 @@ namespace AW2.Menu
 
             // Draw tab hilite (texture is the same size as tabs so it can be placed to same position as the selected tab)
             float fadeTime = (float)(MenuEngine.Game.GameTime.TotalRealTime - _tabFadeStartTime).TotalSeconds;
-            spriteBatch.Draw(_tabHilite, tab1Pos + (tabWidth * ((int)_currentTab - 1)), new Color(255, 255, 255, (byte)_tabFade.Evaluate(fadeTime)));
+            spriteBatch.Draw(_tabHilite, tab1Pos + (tabWidth * ((int)_currentTab - 1)), Color.Multiply(Color.White, _tabFade.Evaluate(fadeTime)));
 
             // Draw ready button
             spriteBatch.Draw(_buttonReadyTexture, tab1Pos + new Vector2(419, 0), Color.White);
 
             // Draw ready button hilite (same size as button)
-            Color drawColor = Color.White;
-            if (!_readyPressed)
-            {
-                float readyFadeTime = (float)(MenuEngine.Game.GameTime.TotalRealTime - _readyFadeStartTime).TotalSeconds;
-                drawColor = new Color(255, 255, 255, (byte)_readyFade.Evaluate(readyFadeTime));
-            }
-            spriteBatch.Draw(_buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), drawColor);
+            var drawAlpha = _readyPressed
+                ? 1f
+                : _readyFade.Evaluate((float)(MenuEngine.Game.GameTime.TotalRealTime - _readyFadeStartTime).TotalSeconds);
+            spriteBatch.Draw(_buttonReadyHiliteTexture, tab1Pos + new Vector2(419, 0), Color.Multiply(Color.White, drawAlpha));
         }
 
         private void DrawStatusDisplay(Vector2 view, SpriteBatch spriteBatch)

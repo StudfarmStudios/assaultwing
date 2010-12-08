@@ -39,8 +39,7 @@ namespace AW2.Graphics
         {
             var assetFullName = GetAssetFullName<T>(assetName);
             object item;
-            loadedContent.TryGetValue(assetFullName, out item);
-            if (item != null) return (T)item;
+            if (loadedContent.TryGetValue(assetFullName, out item)) return (T)item;
             item = ReadAsset<T>(assetFullName, disposableItem => disposableContent.Add(disposableItem));
             loadedContent.Add(assetFullName, item);
             return (T)item;

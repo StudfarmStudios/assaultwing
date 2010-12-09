@@ -32,7 +32,6 @@ namespace AW2.Core
         #region AssaultWing fields
 
         private UIEngineImpl _uiEngine;
-        private LogicEngine _logicEngine;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
 
@@ -60,6 +59,7 @@ namespace AW2.Core
         public CommandLineOptions CommandLineOptions { get; set; }
         public PhysicsEngine PhysicsEngine { get; private set; }
         public DataEngine DataEngine { get; private set; }
+        public LogicEngine LogicEngine { get; private set; }
         public NetworkEngine NetworkEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
@@ -146,11 +146,11 @@ namespace AW2.Core
             DataEngine = new DataEngine(this, 0);
             PhysicsEngine = new PhysicsEngine(this, 0);
             _uiEngine = new UIEngineImpl(this, 1);
-            _logicEngine = new LogicEngine(this, 2);
+            LogicEngine = new LogicEngine(this, 2);
             SoundEngine = new SoundEngineXACT(this, 3);
             GraphicsEngine = new GraphicsEngineImpl(this, 4);
 
-            Components.Add(_logicEngine);
+            Components.Add(LogicEngine);
             Components.Add(GraphicsEngine);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
@@ -276,6 +276,7 @@ namespace AW2.Core
         public virtual void StartArena()
         {
             Log.Write("Starting arena");
+            LogicEngine.Reset();
             DataEngine.StartArena();
             DataEngine.RearrangeViewports();
             SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
@@ -382,7 +383,7 @@ namespace AW2.Core
         public override void Update(AWGameTime gameTime)
         {
             GameTime = gameTime;
-            if (_logicEngine.Enabled)
+            if (LogicEngine.Enabled)
             {
                 if (gameTime.ElapsedGameTime != TargetElapsedTime) throw new ApplicationException("Timestep expected " + TargetElapsedTime.TotalSeconds + " s but was " + gameTime.ElapsedGameTime + " s");
                 DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
@@ -390,7 +391,7 @@ namespace AW2.Core
             }
 
             base.Update(GameTime);
-            if (_logicEngine.Enabled)
+            if (LogicEngine.Enabled)
             {
                 GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
                 DataEngine.CommitPending();

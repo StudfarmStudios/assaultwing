@@ -51,7 +51,6 @@ namespace AW2.Core
         public MenuEngineImpl MenuEngine { get; private set; }
         private StartupScreen StartupScreen { get; set; }
         private IntroEngine IntroEngine { get; set; }
-        private LogicEngine LogicEngine { get { return (LogicEngine)Components.First(c => c is LogicEngine); } }
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
         private UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }

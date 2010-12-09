@@ -277,48 +277,8 @@ namespace AW2.Game
         /// </summary>
         public void CommitPending()
         {
-            // Game client updates gobs and players as told by the game server.
-            if (Game.NetworkMode == NetworkMode.Client)
-            {
-                {
-                    GobUpdateMessage message = null;
-                    while ((message = Game.NetworkEngine.GameServerConnection.TryDequeueMessage<GobUpdateMessage>()) != null)
-                    {
-                        var framesAgo = Game.NetworkEngine.GetMessageAge(message);
-                        message.ReadGobs(gobId =>
-                        {
-                            var theGob = Arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
-                            return theGob == null || theGob.IsDisposed ? null : theGob;
-                        }, SerializationModeFlags.VaryingData, framesAgo);
-                    }
-                }
-            }
-
-            // Apply custom operations.
-            if (CustomOperations != null)
-                CustomOperations();
+            if (CustomOperations != null) CustomOperations();
             CustomOperations = null;
-
-            // Game client removes gobs as told by the game server.
-            if (Game.NetworkMode == NetworkMode.Client)
-            {
-                GobDeletionMessage message = null;
-                while ((message = Game.NetworkEngine.GameServerConnection.TryDequeueMessage<GobDeletionMessage>()) != null)
-                {
-                    Gob gob = Arena.Gobs.FirstOrDefault(gobb => gobb.ID == message.GobId);
-                    if (gob == null)
-                    {
-                        // The gob hasn't been created yet. This happens when the server
-                        // has created a gob and deleted it on the same frame, and
-                        // the creation and deletion messages arrived just after we 
-                        // finished receiving creation messages but right before we 
-                        // started receiving deletion messages for this frame.
-                        Game.NetworkEngine.GameServerConnection.Messages.Requeue(message);
-                        break;
-                    }
-                    gob.DieOnClient();
-                }
-            }
 
             // Game server sends state updates about gobs to game clients.
             if (Game.NetworkMode == NetworkMode.Server)

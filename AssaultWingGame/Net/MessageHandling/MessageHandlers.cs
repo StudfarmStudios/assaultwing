@@ -57,6 +57,8 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, handleGobCreationMessage);
+            yield return new GameplayMessageHandler<GobUpdateMessage>(false, IMessageHandler.SourceType.Server, HandleGobUpdateMessage);
+            yield return new GameplayMessageHandler<GobDeletionMessage>(false, IMessageHandler.SourceType.Server, HandleGobDeletionMessage);
         }
 
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
@@ -231,6 +233,21 @@ namespace AW2.Net.MessageHandling
                     if (oldColor.HasValue) ((Player)player).PlayerColor = oldColor.Value;
                 }
             }
+        }
+
+        private static void HandleGobUpdateMessage(GobUpdateMessage mess, int framesAgo)
+        {
+            var arena = AssaultWingCore.Instance.DataEngine.Arena;
+            mess.ReadGobs(gobId =>
+            {
+                var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
+                return theGob == null || theGob.IsDisposed ? null : theGob;
+            }, SerializationModeFlags.VaryingData, framesAgo);
+        }
+
+        private static void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
+        {
+            AssaultWingCore.Instance.LogicEngine.GobsToKillOnClient.Add(mess.GobId);
         }
 
         #endregion

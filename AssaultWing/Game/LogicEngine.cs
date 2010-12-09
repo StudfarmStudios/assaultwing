@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
@@ -16,11 +17,15 @@ namespace AW2.Game
     {
 #if DEBUG
         private Control showOnlyPlayer1Control, showOnlyPlayer2Control, showEverybodyControl;
+        private int _unfoundGobsToDeleteOnClientReportLimit = 10;
 #endif
 
+        public List<int> GobsToKillOnClient { get; private set; }
+ 
         public LogicEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
+            GobsToKillOnClient = new List<int>();
 #if DEBUG
             showOnlyPlayer1Control = new KeyboardKey(Keys.F11);
             showOnlyPlayer2Control = new KeyboardKey(Keys.F12);
@@ -51,17 +56,22 @@ namespace AW2.Game
             base.Initialize();
         }
 
+        public void Reset()
+        {
+            GobsToKillOnClient.Clear();
+        }
+
         public override void Update()
         {
             var data = Game.DataEngine;
             UpdateControls();
 
-            // Update gobs, weapons and players.
             foreach (var gob in data.Arena.Gobs) gob.Update();
             foreach (var device in data.Devices) device.Update();
             foreach (var player in data.Spectators) player.Update();
 
             Game.DataEngine.Arena.PerformNonphysicalCollisions();
+            KillGobsOnClient();
 
             // Check for arena end. Network games end when the game server presses Esc.
             if (Game.NetworkMode == NetworkMode.Standalone)
@@ -69,6 +79,27 @@ namespace AW2.Game
                 if (data.GameplayMode.ArenaFinished(data.Arena, data.Players))
                     Game.FinishArena();
             }
+        }
+
+        private void KillGobsOnClient()
+        {
+            var unfoundGobs = new List<int>();
+            foreach (var gobID in GobsToKillOnClient)
+            {
+                var gob = Game.DataEngine.Arena.Gobs.FirstOrDefault(gobb => gobb.ID == gobID);
+                if (gob != null)
+                    gob.DieOnClient();
+                else
+                    unfoundGobs.Add(gobID);
+            }
+            GobsToKillOnClient = unfoundGobs;
+#if DEBUG
+            if (GobsToKillOnClient.Count() >= _unfoundGobsToDeleteOnClientReportLimit )
+            {
+                Log.Write("WARNING: {0} unfound gobs to kill on client", GobsToKillOnClient.Count());
+                _unfoundGobsToDeleteOnClientReportLimit *= 2;
+            }
+#endif
         }
 
         /// <summary>

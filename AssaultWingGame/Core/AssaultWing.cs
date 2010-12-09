@@ -20,6 +20,7 @@ namespace AW2.Core
     public class AssaultWing : AssaultWingCore
     {
         private static readonly TimeSpan FRAME_NUMBER_SYNCHRONIZATION_INTERVAL = TimeSpan.FromSeconds(1);
+        private const int MINIMUM_ACCEPTABLE_FRAME_NUMBER_OFFSET = 1;
 
         private GameState _gameState;
         private Control _escapeControl;
@@ -179,11 +180,18 @@ namespace AW2.Core
             base.PrepareArena(SelectedArenaName);
         }
 
+        public void StartArenaButStayInMenu()
+        {
+            if (NetworkMode != Core.NetworkMode.Client) throw new InvalidOperationException("Only client can start arena on background");
+            base.StartArena();
+            GameState = GameState.GameAndMenu;
+        }
+
         public override void StartArena()
         {
             if (NetworkMode == NetworkMode.Server)
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            base.StartArena();
+            if (GameState != Core.GameState.GameAndMenu) base.StartArena();
             GameState = GameState.Gameplay;
         }
 
@@ -311,6 +319,11 @@ namespace AW2.Core
                     GraphicsEngine.Visible = true;
                     if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
                     break;
+                case GameState.GameAndMenu:
+                    LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
+                    MenuEngine.Enabled = true;
+                    MenuEngine.Visible = true;
+                    break;
                 case GameState.Menu:
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
@@ -341,6 +354,11 @@ namespace AW2.Core
                     LogicEngine.Enabled = false;
                     GraphicsEngine.Visible = false;
                     PlayerChat.Enabled = PlayerChat.Visible = false;
+                    break;
+                case GameState.GameAndMenu:
+                    LogicEngine.Enabled = false;
+                    MenuEngine.Enabled = false;
+                    MenuEngine.Visible = false;
                     break;
                 case GameState.Menu:
                     MenuEngine.Enabled = false;
@@ -426,10 +444,10 @@ namespace AW2.Core
 
         private void SynchronizeFrameNumber()
         {
-            if (NetworkMode != NetworkMode.Client || GameState != GameState.Gameplay) return;
+            if (NetworkMode != NetworkMode.Client) return;
+            if (GameState != GameState.Gameplay && GameState != GameState.GameAndMenu) return;
             if (GameTime.TotalRealTime < _nextFrameNumberSynchronize) return;
             _nextFrameNumberSynchronize = GameTime.TotalRealTime + FRAME_NUMBER_SYNCHRONIZATION_INTERVAL;
-            var MINIMUM_ACCEPTABLE_FRAME_NUMBER_OFFSET = 1;
             if (Math.Abs(NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset) > MINIMUM_ACCEPTABLE_FRAME_NUMBER_OFFSET)
                 DataEngine.Arena.FrameNumber -= NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
         }

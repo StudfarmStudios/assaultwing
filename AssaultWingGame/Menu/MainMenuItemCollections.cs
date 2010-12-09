@@ -132,6 +132,7 @@ namespace AW2.Menu
             {
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleConnectionClosingMessage, game.HandleGobCreationMessage));
                 game.IsClientAllowedToStartArena = true;
+                _menuEngine.Game.StartArenaButStayInMenu();
             });
         }
     }

@@ -29,5 +29,10 @@
         /// The menu is active.
         /// </summary>
         Menu,
+
+        /// <summary>
+        /// The game and the menu is active but only the menu is visible.
+        /// </summary>
+        GameAndMenu,
     }
 }

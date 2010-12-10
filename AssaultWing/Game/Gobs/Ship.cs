@@ -173,7 +173,7 @@ namespace AW2.Game.Gobs
             get
             {
 #if OPTIMIZED_CODE
-                var drawPos = _pos + DrawPosOffset;
+                var drawPos = Pos + DrawPosOffset;
                 float scale = Scale;
                 float rotation = DrawRotation + DrawRotationOffset;
                 float scaledCosRoll = scale * (float)Math.Cos(_rollAngle.Current);

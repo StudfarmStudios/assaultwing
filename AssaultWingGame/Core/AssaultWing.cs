@@ -60,15 +60,15 @@ namespace AW2.Core
             : base(graphicsDeviceService)
         {
             StartupScreen = new StartupScreen(this, -1);
-            OverlayDialog = new OverlayDialog(this, 5);
             MenuEngine = new MenuEngineImpl(this, 6);
             IntroEngine = new IntroEngine(this, 7);
             PlayerChat = new PlayerChat(this, 8);
+            OverlayDialog = new OverlayDialog(this, 20);
             Components.Add(StartupScreen);
-            Components.Add(OverlayDialog);
             Components.Add(MenuEngine);
             Components.Add(IntroEngine);
             Components.Add(PlayerChat);
+            Components.Add(OverlayDialog);
             GameState = GameState.Initializing;
             _escapeControl = new KeyboardKey(Keys.Escape);
             _frameStepControl = new KeyboardKey(Keys.F8);
@@ -91,16 +91,21 @@ namespace AW2.Core
             SendGobCreationMessage();
         }
 
-        /// <summary>
-        /// Displays the dialog on top of the game and stops updating the game logic.
-        /// </summary>
-        /// <param name="dialogData">The contents and actions for the dialog.</param>
         public void ShowDialog(OverlayDialogData dialogData)
         {
             if (!AllowDialogs) return;
-            OverlayDialog.Data = dialogData;
-            GameState = GameState.OverlayDialog;
-            SoundEngine.PlaySound("EscPause");
+            OverlayDialog.Data.Enqueue(dialogData);
+            if (!OverlayDialog.Enabled) SoundEngine.PlaySound("EscPause");
+            OverlayDialog.Enabled = OverlayDialog.Visible = true;
+        }
+
+        public void HideDialog()
+        {
+            OverlayDialog.Data.Dequeue();
+            if (OverlayDialog.Data.Any())
+                SoundEngine.PlaySound("EscPause");
+            else
+                OverlayDialog.Enabled = OverlayDialog.Visible = false;
         }
 
         /// <summary>
@@ -273,7 +278,7 @@ namespace AW2.Core
             DataEngine.RemoveRemoteSpectators();
             if (errorOrNull != null)
             {
-                var dialogData = new CustomOverlayDialogData(
+                var dialogData = new CustomOverlayDialogData(this,
                     errorOrNull + "\nPress Enter to return to Main Menu",
                     new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
                 ShowDialog(dialogData);
@@ -294,7 +299,7 @@ namespace AW2.Core
         public void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
             Log.Write("Server is going to close the connection, reason: " + mess.Info);
-            var dialogData = new CustomOverlayDialogData("Server closed connection.\n" + mess.Info,
+            var dialogData = new CustomOverlayDialogData(this, "Server closed connection.\n" + mess.Info,
                 new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
             ShowDialog(dialogData);
         }
@@ -328,11 +333,6 @@ namespace AW2.Core
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
                     break;
-                case GameState.OverlayDialog:
-                    OverlayDialog.Enabled = true;
-                    OverlayDialog.Visible = true;
-                    GraphicsEngine.Visible = true;
-                    break;
                 default:
                     throw new ApplicationException("Cannot change to unexpected game state " + value);
             }
@@ -364,11 +364,6 @@ namespace AW2.Core
                     MenuEngine.Enabled = false;
                     MenuEngine.Visible = false;
                     break;
-                case GameState.OverlayDialog:
-                    OverlayDialog.Enabled = false;
-                    OverlayDialog.Visible = false;
-                    GraphicsEngine.Visible = false;
-                    break;
                 default:
                     throw new ApplicationException("Cannot change away from unexpected game state " + GameState);
             }
@@ -387,11 +382,11 @@ namespace AW2.Core
             if (GameState == GameState.Gameplay && _escapeControl.Pulse)
             {
                 var dialogData = NetworkMode == NetworkMode.Server
-                    ? new CustomOverlayDialogData(
+                    ? new CustomOverlayDialogData(this,
                         "Finish Arena? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.GetYesControl(), FinishArena),
                         new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay))
-                    : new CustomOverlayDialogData(
+                    : new CustomOverlayDialogData(this,
                         "Quit to Main Menu? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.GetYesControl(), ShowMenu),
                         new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay));
@@ -423,7 +418,7 @@ namespace AW2.Core
             }
 
             // Cheat codes during dialog.
-            if (GameState == GameState.OverlayDialog)
+            if (GameState == GameState.Gameplay && OverlayDialog.Enabled)
             {
                 var keys = Keyboard.GetState();
                 if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))

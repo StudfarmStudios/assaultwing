@@ -20,7 +20,7 @@ namespace AW2.Game.Arenas
         #region Fields
 
         [TypeParameter]
-        private string _name;
+        private CanonicalString _name;
 
         [TypeParameter]
         private Vector2 _dimensions;
@@ -48,7 +48,7 @@ namespace AW2.Game.Arenas
 
         #endregion
 
-        public string Name { get { return _name; } set { _name = value; } }
+        public CanonicalString Name { get { return _name; } set { _name = value; } }
         public string FileName { get; set; }
         public Vector2 Dimensions { get { return _dimensions; } set { _dimensions = value; } }
         public string Docks { get { return _docks; } set { _docks = value; } }

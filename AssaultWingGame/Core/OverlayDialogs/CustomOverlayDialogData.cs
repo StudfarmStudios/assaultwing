@@ -18,8 +18,8 @@ namespace AW2.Core.OverlayDialogs
         /// </summary>
         /// <param name="text">The text to display in the dialog.</param>
         /// <param name="actions">The actions to allow in the dialog.</param>
-        public CustomOverlayDialogData(string text, params TriggeredCallback[] actions)
-            : base(actions)
+        public CustomOverlayDialogData(AssaultWing game, string text, params TriggeredCallback[] actions)
+            : base(game, actions)
         {
             _text = text;
         }

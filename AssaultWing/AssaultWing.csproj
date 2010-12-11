@@ -108,7 +108,6 @@
     <Compile Include="Core\AWGameRunner.cs" />
     <Compile Include="Core\AWGameTime.cs" />
     <Compile Include="Core\CommandLineOptions.cs" />
-    <Compile Include="Core\GameState.cs" />
     <Compile Include="Core\GraphicsDeviceControl.cs">
       <SubType>Component</SubType>
     </Compile>

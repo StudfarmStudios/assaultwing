@@ -10,6 +10,7 @@ namespace AW2.Core.OverlayDialogs
     /// <seealso cref="OverlayDialog"/>
     public abstract class OverlayDialogData : OverlayComponent
     {
+        private AssaultWing _game;
         private TriggeredCallback[] _actions;
 
         /// <summary>
@@ -22,9 +23,10 @@ namespace AW2.Core.OverlayDialogs
         /// </summary>
         protected TriggeredCallback[] Actions { set { _actions = value; } }
 
-        public OverlayDialogData(params TriggeredCallback[] actions)
+        public OverlayDialogData(AssaultWing game, params TriggeredCallback[] actions)
             : base(null, HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
         {
+            _game = game;
             _actions = actions;
         }
 
@@ -33,7 +35,9 @@ namespace AW2.Core.OverlayDialogs
         /// </summary>
         public virtual void Update()
         {
-            foreach (var action in _actions) action.Update();
+            bool goAway = false;
+            foreach (var action in _actions) goAway |= action.Update();
+            if (goAway) _game.HideDialog();
         }
     }
 }

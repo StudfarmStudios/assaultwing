@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core.OverlayDialogs;
@@ -14,27 +16,25 @@ namespace AW2.Core.GameComponents
     /// <seealso cref="OverlayDialogData"/>
     public class OverlayDialog : AWGameComponent
     {
-        private OverlayDialogData _dialogData;
+        private AssaultWing _game;
         private SpriteBatch _spriteBatch;
         private Texture2D _dialogTexture;
 
-        public OverlayDialog(AssaultWingCore game, int updateOrder)
+        public OverlayDialog(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
         {
+            _game = game;
+            Data = new Queue<OverlayDialogData>();
         }
-
-        #region Public interface
 
         /// <summary>
         /// The dialog's actions and visual contents.
         /// </summary>
-        public OverlayDialogData Data { set { _dialogData = value; } }
-
-        #endregion Public interface
+        public Queue<OverlayDialogData> Data { get; private set; }
 
         public override void Update()
         {
-            _dialogData.Update();
+            Data.First().Update();
             base.Update();
         }
 
@@ -58,6 +58,7 @@ namespace AW2.Core.GameComponents
             // Set viewport exactly to the dialog's area.
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             var screen = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
+            var oldViewport = gfx.Viewport;
             var newViewport = gfx.Viewport;
             newViewport.X = (screen.Width - _dialogTexture.Width) / 2;
             newViewport.Y = (screen.Height - _dialogTexture.Height) / 2;
@@ -69,7 +70,9 @@ namespace AW2.Core.GameComponents
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _spriteBatch.Draw(_dialogTexture, Vector2.Zero, Color.White);
             _spriteBatch.End();
-            _dialogData.Draw(_spriteBatch);
+            Data.First().Draw(_spriteBatch);
+
+            gfx.Viewport = oldViewport;
         }
     }
 }

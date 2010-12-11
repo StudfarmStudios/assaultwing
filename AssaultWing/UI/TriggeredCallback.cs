@@ -68,8 +68,8 @@ namespace AW2.UI
 
         #endregion Static members
 
-        Control control;
-        Action callback;
+        private Control _control;
+        private Action _callback;
 
         /// <summary>
         /// Creates a triggered callback.
@@ -80,8 +80,8 @@ namespace AW2.UI
         {
             if (control == null || callback == null)
                 throw new ArgumentNullException("DialogAction got null arguments");
-            this.control = control;
-            this.callback = callback;
+            this._control = control;
+            this._callback = callback;
         }
 
         /// <summary>
@@ -91,9 +91,9 @@ namespace AW2.UI
         /// <c>false</c> otherwise.</returns>
         public bool Update()
         {
-            if (control.Pulse)
+            if (_control.Pulse)
             {
-                callback();
+                _callback();
                 return true;
             }
             return false;
@@ -104,7 +104,7 @@ namespace AW2.UI
         /// </summary>
         public void Dispose()
         {
-            control.Dispose();
+            _control.Dispose();
         }
 
         /// <summary>

@@ -21,11 +21,6 @@
         Gameplay,
 
         /// <summary>
-        /// The game overlay dialog is visible, game is active but paused.
-        /// </summary>
-        OverlayDialog,
-
-        /// <summary>
         /// The menu is active.
         /// </summary>
         Menu,

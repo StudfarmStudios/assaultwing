@@ -347,7 +347,7 @@ namespace AW2.Game
         /// </summary>
         public Arena()
         {
-            Info = new ArenaInfo { Name = "dummyarena", Dimensions = new Vector2(4000, 4000) };
+            Info = new ArenaInfo { Name = (CanonicalString)"dummyarena", Dimensions = new Vector2(4000, 4000) };
             _layers = new List<ArenaLayer>();
             _layers.Add(new ArenaLayer());
             Gobs = new GobCollection(_layers);

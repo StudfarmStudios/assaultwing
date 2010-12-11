@@ -119,7 +119,7 @@ namespace AW2
         {
             var arena = _game.DataEngine.Arena;
             if (arena == null) return;
-            arena.Info.Name = ArenaName.Text;
+            arena.Info.Name = (CanonicalString)ArenaName.Text;
             var fileDialog = new SaveFileDialog
             {
                 DefaultExt = ".xml",

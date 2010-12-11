@@ -403,15 +403,15 @@ namespace AW2.Net
             PurgeUnhandledMessages();
         }
 
-        private void UpdateClientState()
+        private void UpdateClientState() // TODO: Call this method in Update()
         {
             if (Game.NetworkMode != NetworkMode.Server) return;
             var isPlayingArena = Game.DataEngine.Arena != null;
-            var currentArenaName = Game.DataEngine.Arena != null ? null : Game.DataEngine.Arena.Info.Name;
+            var currentArenaName = Game.DataEngine.Arena != null ? null : Game.DataEngine.Arena.Info.Name.Value;
             foreach (var conn in GameClientConnections.Where(c => c.IsPlayingArena != isPlayingArena))
             {
                 if (conn.IsPlayingArena && !isPlayingArena) throw new ApplicationException("Not implemented: Server stopped arena and client should too");
-
+                throw new ApplicationException("Not implemented: Client should join server in the new arena. Serialize all gobs.");
             }
         }
 

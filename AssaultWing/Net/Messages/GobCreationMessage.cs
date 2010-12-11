@@ -55,7 +55,7 @@ namespace AW2.Net.Messages
                 if (_gobTypeNames.Count != _layerIndices.Count) throw new MessageException("_gobTypeNames.Count != _layerIndices.Count");
                 writer.Write((short)_gobTypeNames.Count);
                 foreach (byte layerIndex in _layerIndices) writer.Write((byte)layerIndex);
-                foreach (var typeName in _gobTypeNames) writer.Write((int)typeName.Canonical);
+                foreach (var typeName in _gobTypeNames) writer.Write((CanonicalString)typeName);
                 writer.Write((int)writeBytes.Length);
                 writer.Write(writeBytes, 0, writeBytes.Length);
             }

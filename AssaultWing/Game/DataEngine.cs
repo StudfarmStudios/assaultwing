@@ -29,12 +29,10 @@ namespace AW2.Game
     /// The gameplay backlayer is for 2D graphics that needs to be behind gobs.
     public class DataEngine : AWGameComponent
     {
-        #region Fields
-
         /// <summary>
-        /// Type templates, indexed by <see cref="CanonicalString.Canonical"/> of their type name.
+        /// Type templates, indexed by their type name.
         /// </summary>
-        private List<object> _templates;
+        private NamedItemCollection<object> _templates;
 
         private Texture2D _arenaRadarSilhouette;
         private Vector2 _arenaDimensionsOnRadar;
@@ -42,10 +40,6 @@ namespace AW2.Game
         private TimeSpan _lastArenaRadarSilhouetteUpdate;
         private ProgressBar _progressBar;
         private IndexedItemCollection<Spectator> _spectators;
-
-        #endregion Fields
-
-        #region Properties
 
         /// <summary>
         /// Players and other spectators of the game session.
@@ -88,8 +82,6 @@ namespace AW2.Game
         /// </summary>
         public event Action<Arena> NewArena;
 
-        #endregion Properties
-
         public DataEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
@@ -106,7 +98,7 @@ namespace AW2.Game
             Devices.Removed += device => device.Dispose();
 
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, 0, null);
-            _templates = new List<object>();
+            _templates = new NamedItemCollection<object>();
         }
 
         #region arenas
@@ -191,17 +183,19 @@ namespace AW2.Game
         /// </summary>
         public void AddTypeTemplate(CanonicalString typeName, object template)
         {
-            while (_templates.Count < typeName.Canonical + 1) _templates.Add(null);
-            if (_templates[typeName.Canonical] != null)
+            try
+            {
+                _templates.Add(typeName, template);
+            }
+            catch (ArgumentException)
+            {
                 Log.Write("WARNING: Overwriting template for user-defined type " + typeName);
-            _templates[typeName.Canonical] = template;
+            }
         }
 
         public object GetTypeTemplate(CanonicalString typeName)
         {
-            var item = _templates.ElementAtOrDefault(typeName.Canonical);
-            if (item == null) throw new ApplicationException("Missing template for user-defined type " + typeName);
-            return item;
+            return _templates[typeName];
         }
 
         /// <summary>
@@ -213,8 +207,7 @@ namespace AW2.Game
         /// <param name="action">The Action delegate to perform on each template.</param>
         public void ForEachTypeTemplate<T>(Action<T> action)
         {
-            foreach (var template in _templates)
-                if (template != null && template is T) action((T)template);
+            foreach (var template in _templates.Values.OfType<T>()) action((T)template);
         }
 
         #endregion type templates
@@ -323,7 +316,7 @@ namespace AW2.Game
         /// <summary>
         /// Unloads content needed by the currently active arena.
         /// </summary>
-        public void UnloadContent()
+        public override void UnloadContent()
         {
             if (_arenaRadarSilhouette != null)
             {

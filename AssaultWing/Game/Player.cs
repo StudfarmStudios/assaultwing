@@ -535,9 +535,9 @@ namespace AW2.Game
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)ShipName.Canonical);
-                writer.Write((int)Weapon2Name.Canonical);
-                writer.Write((int)ExtraDeviceName.Canonical);
+                writer.Write((CanonicalString)ShipName);
+                writer.Write((CanonicalString)Weapon2Name);
+                writer.Write((CanonicalString)ExtraDeviceName);
                 writer.Write((Color)PlayerColor);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
@@ -547,7 +547,7 @@ namespace AW2.Game
                 writer.Write((short)_suicides);
                 writer.Write((byte)PostprocessEffectNames.Count);
                 foreach (var effectName in PostprocessEffectNames)
-                    writer.Write((int)effectName.Canonical);
+                    writer.Write((CanonicalString)effectName);
                 BonusActions.Serialize(writer, mode);
             }
         }

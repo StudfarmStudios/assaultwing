@@ -100,7 +100,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)wallModelName.Canonical);
+                writer.Write((CanonicalString)wallModelName);
             }
         }
 

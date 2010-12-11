@@ -43,7 +43,7 @@ namespace AW2.Game.Gobs
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 writer.Write((float)weight);
-                writer.Write((int)spawnTypeName.Canonical);
+                writer.Write((CanonicalString)spawnTypeName);
             }
         }
 

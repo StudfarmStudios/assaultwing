@@ -68,7 +68,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)propModelName.Canonical);
+                writer.Write((CanonicalString)propModelName);
             }
         }
 

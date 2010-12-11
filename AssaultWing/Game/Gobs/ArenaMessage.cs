@@ -127,7 +127,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)((CanonicalString)IconName).Canonical);
+                writer.Write((CanonicalString)IconName);
                 writer.Write((Color)DrawColor);
                 writer.Write((string)Message);
             }

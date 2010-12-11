@@ -119,7 +119,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)wallModelName.Canonical);
+                writer.Write((CanonicalString)wallModelName);
                 writer.Write((byte)wallCollisionAreas.Length);
                 foreach (var area in wallCollisionAreas)
                     area.Serialize(writer, SerializationModeFlags.All);

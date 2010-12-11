@@ -185,11 +185,12 @@ namespace AW2.Net.MessageHandling
         private static void HandleJoinGameRequest(JoinGameRequest mess)
         {
             string clientDiff, serverDiff;
-            bool differ = MiscHelper.FirstDifference(mess.CanonicalStrings, CanonicalString.CanonicalForms, out clientDiff, out serverDiff);
+            int diffIndex;
+            bool differ = MiscHelper.FirstDifference(mess.CanonicalStrings, CanonicalString.CanonicalForms, out clientDiff, out serverDiff, out diffIndex);
             if (differ)
             {
-                string mismatchInfo = string.Format("First mismatch is client: {0}, server: {1}",
-                    clientDiff ?? "<missing>", serverDiff ?? "<missing>");
+                string mismatchInfo = string.Format("First mismatch is index: {0}, client: {1}, server: {2}",
+                    diffIndex, clientDiff ?? "<missing>", serverDiff ?? "<missing>");
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo);
                 var reply = new ConnectionClosingMessage
                 {

@@ -46,14 +46,16 @@ namespace AW2.Helpers
         /// <param name="aDiff">First differing element in <paramref name="a"/>. Is null if either
         /// the sequences were otherwise equal but <paramref name="b"/> had more elements,
         /// or there were no differences in the sequences.</param>
-        /// <param name="aDiff">First differing element in <paramref name="b"/>. Is null if either
+        /// <param name="bDiff">First differing element in <paramref name="b"/>. Is null if either
         /// the sequences were otherwise equal but <paramref name="a"/> had more elements,
         /// or there were no differences in the sequences.</param>
+        /// <param name="diffIndex">Index of the differing elements.</param>
         /// <returns>true if there was a difference; false if the sequences were equal</returns>
-        public static bool FirstDifference<T>(IEnumerable<T> a, IEnumerable<T> b, out T aDiff, out T bDiff) where T : class
+        public static bool FirstDifference<T>(IEnumerable<T> a, IEnumerable<T> b, out T aDiff, out T bDiff, out int diffIndex) where T : class
         {
             aDiff = null;
             bDiff = null;
+            diffIndex = -1;
             using (IEnumerator<T> aEnum = a.GetEnumerator(), bEnum = b.GetEnumerator())
             {
                 bool aHas, bHas;
@@ -61,6 +63,7 @@ namespace AW2.Helpers
                 {
                     aHas = aEnum.MoveNext();
                     bHas = bEnum.MoveNext();
+                    diffIndex++;
                     if (!aHas || !bHas) break;
                     var aItem = aEnum.Current;
                     var bItem = bEnum.Current;
@@ -72,6 +75,7 @@ namespace AW2.Helpers
                 }
                 if (aHas) aDiff = aEnum.Current;
                 if (bHas) bDiff = bEnum.Current;
+                if (!aHas && !bHas) diffIndex = -1;
                 return aHas || bHas;
             }
         }
@@ -146,30 +150,39 @@ namespace AW2.Helpers
             public void TestFirstDifference()
             {
                 object a, b;
-                Assert.False(FirstDifference(new object[] { 2, 3, 4 }, new object[] { 2, 3, 4 }, out a, out b));
+                int index;
+                Assert.False(FirstDifference(new object[] { 2, 3, 4 }, new object[] { 2, 3, 4 }, out a, out b, out index));
                 Assert.Null(a);
                 Assert.Null(b);
-                Assert.False(FirstDifference(new object[] { null, null }, new object[] { null, null }, out a, out b));
+                Assert.AreEqual(-1, index);
+                Assert.False(FirstDifference(new object[] { null, null }, new object[] { null, null }, out a, out b, out index));
                 Assert.Null(a);
                 Assert.Null(b);
-                Assert.False(FirstDifference(new object[0], new object[0], out a, out b));
+                Assert.AreEqual(-1, index);
+                Assert.False(FirstDifference(new object[0], new object[0], out a, out b, out index));
                 Assert.Null(a);
                 Assert.Null(b);
-                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 2, 3, 4 }, out a, out b));
+                Assert.AreEqual(-1, index);
+                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 2, 3, 4 }, out a, out b, out index));
                 Assert.AreEqual(1, a);
                 Assert.AreEqual(2, b);
-                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 1, 3, 5 }, out a, out b));
+                Assert.AreEqual(0, index);
+                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 1, 3, 5 }, out a, out b, out index));
                 Assert.AreEqual(4, a);
                 Assert.AreEqual(5, b);
-                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 1, null, 4 }, out a, out b));
+                Assert.AreEqual(2, index);
+                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 1, null, 4 }, out a, out b, out index));
                 Assert.AreEqual(3, a);
                 Assert.AreEqual(null, b);
-                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 1, 3 }, out a, out b));
+                Assert.AreEqual(1, index);
+                Assert.True(FirstDifference(new object[] { 1, 3, 4 }, new object[] { 1, 3 }, out a, out b, out index));
                 Assert.AreEqual(4, a);
                 Assert.Null(b);
-                Assert.True(FirstDifference(new object[0], new object[] { 1 }, out a, out b));
+                Assert.AreEqual(2, index);
+                Assert.True(FirstDifference(new object[0], new object[] { 1 }, out a, out b, out index));
                 Assert.Null(a);
                 Assert.AreEqual(1, b);
+                Assert.AreEqual(0, index);
             }
         }
 #endif

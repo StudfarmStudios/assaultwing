@@ -54,7 +54,6 @@ namespace AW2.Core
         /// </summary>
         public static AssaultWingCore Instance { get; set; }
 
-        public bool DoNotFreezeCanonicalStrings { get; set; }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
         public CommandLineOptions CommandLineOptions { get; set; }
@@ -381,7 +380,7 @@ namespace AW2.Core
             }
             TargetFPS = 60;
             base.Initialize();
-            if (!DoNotFreezeCanonicalStrings) FreezeCanonicalStrings();
+            if (!CanonicalString.IsForLocalUseOnly) FreezeCanonicalStrings();
         }
 
         public override void BeginRun()

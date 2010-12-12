@@ -282,7 +282,6 @@ namespace AW2
                 () => new Rectangle(ArenaView.Bounds.X, ArenaView.Bounds.Y, ArenaView.Bounds.Width, ArenaView.Bounds.Height));
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
             _game.CommandLineOptions = new CommandLineOptions(args);
-            _game.DoNotFreezeCanonicalStrings = true;
             _game.SoundEngine.Enabled = false;
             _game.AllowDialogs = false;
             _graphicsDeviceService.DeviceResetting += (sender2, eventArgs2) => _game.UnloadContent();

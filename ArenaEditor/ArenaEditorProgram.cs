@@ -24,6 +24,7 @@ namespace AW2
         public ArenaEditorProgram(string[] args)
         {
             Log.Write("Assault Wing Arena Editor started");
+            CanonicalString.IsForLocalUseOnly = true;
             _editor = new ArenaEditor(args);
         }
 

@@ -19,7 +19,7 @@ namespace AW2.Graphics
     /// A view on the display that looks into the game world.
     /// </summary>
     /// <c>LoadContent</c> must be called before a viewport is used.
-    public abstract class AWViewport
+    public abstract class AWViewport : IDisposable
     {
         #region Fields that are used only when PARALLAX_IN_3D is #defined
 
@@ -134,14 +134,6 @@ namespace AW2.Graphics
         public void AddOverlayComponent(OverlayComponent component)
         {
             _overlayComponents.Add(component);
-        }
-
-        /// <summary>
-        /// Removes all overlay graphics components from the viewport.
-        /// </summary>
-        public void ClearOverlayComponents()
-        {
-            _overlayComponents.Clear();
         }
 
         /// <summary>
@@ -325,6 +317,15 @@ namespace AW2.Graphics
             foreach (var component in _overlayComponents) component.UnloadContent();
             _postprocessor.Dispose();
             _spriteBatch.Dispose();
+        }
+
+        /// <summary>
+        /// Called when allocated resources should be released.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            UnloadContent();
+            foreach (var component in _overlayComponents) component.Dispose();
         }
 
         protected abstract Vector2 GetLookAtPos();

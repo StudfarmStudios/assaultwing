@@ -13,7 +13,7 @@ namespace AW2.Graphics
     /// This point can be top, center, bottom on the vertical axis, and left, center,
     /// right on the horizontal axis. The component can also be stretched to cover
     /// the whole viewport.
-    public abstract class OverlayComponent
+    public abstract class OverlayComponent : IDisposable
     {
         /// <summary>
         /// Horizontal alignment of the component in the backbuffer viewport.
@@ -145,5 +145,12 @@ namespace AW2.Graphics
         /// Called when graphics resources need to be unloaded.
         /// </summary>
         public virtual void UnloadContent() { }
+
+        /// <summary>
+        /// Called when allocated resources should be released.
+        /// </summary>
+        public virtual void Dispose()
+        {
+        }
     }
 }

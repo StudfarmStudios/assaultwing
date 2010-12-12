@@ -46,7 +46,11 @@ namespace AW2.Graphics
 
         public void Dispose()
         {
-            foreach (var viewport in _items) viewport.UnloadContent();
+            foreach (var viewport in _items)
+            {
+                viewport.UnloadContent();
+                viewport.Dispose();
+            }
         }
 
         public IEnumerator<AWViewport> GetEnumerator()
@@ -129,6 +133,7 @@ namespace AW2.Graphics
 
         private void CreateViewports(int viewports, ViewportConstructor viewportConstructor, int bestRows, int bestColumns)
         {
+            foreach (var item in _items) item.Dispose();
             _items.Clear();
             for (int viewportI = 0; viewportI < viewports; ++viewportI)
             {
@@ -152,6 +157,11 @@ namespace AW2.Graphics
                 _separators.Add(new ViewportSeparator(true, WindowWidth * i / bestColumns));
             for (int i = 1; i < bestRows; ++i)
                 _separators.Add(new ViewportSeparator(false, WindowHeight * i / bestRows));
+        }
+
+        ~AWViewportCollection()
+        {
+            Dispose();
         }
 
         #endregion Private methods

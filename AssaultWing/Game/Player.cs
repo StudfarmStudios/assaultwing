@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using AW2.Net.Messages;
 using AW2.UI;
 
 namespace AW2.Game
@@ -24,15 +22,14 @@ namespace AW2.Game
         {
             public TimeSpan GameTime { get; private set; }
             public string Text { get; private set; }
-            public Color TextColor;
-            public Message(TimeSpan gameTime, string text)
+            public Color TextColor { get; private set; }
+            public Message(TimeSpan gameTime, string text, Color textColor)
             {
                 GameTime = gameTime;
                 Text = text;
+                TextColor = textColor;
             }
         }
-
-        #region Player constants
 
         public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f);
         public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f);
@@ -41,7 +38,6 @@ namespace AW2.Game
         public static readonly Color KILLING_SPREE_COLOR = new Color(255, 228, 0);
         public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
         public static readonly Color PLAYER_MESSAGE_COLOR = Color.LightGray;
-
         private const int MESSAGE_KEEP_COUNT = 100;
 
         /// <summary>
@@ -49,8 +45,6 @@ namespace AW2.Game
         /// measured in seconds.
         /// </summary>
         private const float MOURNING_DELAY = 3;
-
-        #endregion Player constants
 
         #region Player fields about general things
 
@@ -258,6 +252,8 @@ namespace AW2.Game
 
         #endregion Player properties about statistics
 
+        public event Action<Message> NewMessage;
+
         #region Constructors
 
         /// <summary>
@@ -345,24 +341,14 @@ namespace AW2.Game
 
         public void RemoveGobTrackerItem(GobTrackerItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("Trying to remove NULL GobTrackerItem from the GobTrackerList");
-            }
-
-            if (_gobTrackerItems.Contains(item))
-                _gobTrackerItems.Remove(item);
+            if (item == null) throw new ArgumentNullException("Trying to remove NULL GobTrackerItem from the GobTrackerList");
+            if (_gobTrackerItems.Contains(item)) _gobTrackerItems.Remove(item);
         }
 
         public void AddGobTrackerItem(GobTrackerItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("Trying to add NULL GobTrackerItem to the GobTrackerList");
-            }
-
-            if (!_gobTrackerItems.Contains(item))
-                _gobTrackerItems.Add(item);
+            if (item == null) throw new ArgumentNullException("Trying to add NULL GobTrackerItem to the GobTrackerList");
+            if (!_gobTrackerItems.Contains(item)) _gobTrackerItems.Add(item);
         }
 
         public override void Update()
@@ -383,22 +369,7 @@ namespace AW2.Game
             }
             else // otherwise we are a game client
             {
-                // As a client, we only care about local player controls.
-                if (!IsRemote)
-                {
-                    SendControlsToServer();
-                    ApplyControlsToShip();
-                }
-            }
-
-            // Game server sends state updates about players to game clients.
-            if (Game.NetworkMode == NetworkMode.Server && MustUpdateToClients)
-            {
-                MustUpdateToClients = false;
-                var message = new PlayerUpdateMessage();
-                message.PlayerID = ID;
-                message.Write(this, SerializationModeFlags.VaryingData);
-                Game.NetworkEngine.SendToGameClients(message);
+                if (!IsRemote) ApplyControlsToShip();
             }
         }
 
@@ -488,35 +459,21 @@ namespace AW2.Game
         /// <summary>
         /// Sends a message to the player. The message will be displayed on the player's screen.
         /// </summary>
-        public void SendMessage(string message, Color messageColor)
+        public void SendMessage(string text, Color textColor)
         {
-            if (message == null) throw new ArgumentNullException("Null message");
-            message = message.Replace("\n", " ");
-            message = message.Capitalize();
-
-            if (Game.NetworkMode == NetworkMode.Server && IsRemote)
-            {
-                var messageMessage = new PlayerMessageMessage { PlayerID = ID, Color = messageColor, Text = message };
-                Game.NetworkEngine.GetGameClientConnection(ConnectionID).Send(messageMessage);
-            }
-            else
-            {
-                var msg = new Message(Game.DataEngine.ArenaTotalTime, message);
-                msg.TextColor = messageColor;
-                Messages.Add(msg);
-                Game.SoundEngine.PlaySound("PlayerMessage");
-
-                // Throw away very old messages.
-                if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT)
-                    Messages.RemoveRange(0, Messages.Count - MESSAGE_KEEP_COUNT);
-            }
+            if (text == null) throw new ArgumentNullException("Null message");
+            text = text.Replace("\n", " ");
+            text = text.Capitalize();
+            var message = new Message(Game.DataEngine.ArenaTotalTime, text, textColor);
+            Messages.Add(message);
+            if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT) Messages.RemoveRange(0, Messages.Count - MESSAGE_KEEP_COUNT);
+            if (NewMessage != null) NewMessage(message);
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            if (Ship != null)
-                Ship.Die(new DeathCause());
+            if (Ship != null) Ship.Die(new DeathCause());
         }
 
         #endregion General public methods
@@ -631,18 +588,6 @@ namespace AW2.Game
                 Ship.Weapon2.Fire(Controls.Fire2.State);
             if (Controls.Extra.Pulse || Controls.Extra.Force > 0)
                 Ship.ExtraDevice.Fire(Controls.Extra.State);
-        }
-
-        /// <summary>
-        /// Sends the player's controls to the game server.
-        /// </summary>
-        private void SendControlsToServer()
-        {
-            var message = new PlayerControlsMessage();
-            message.PlayerID = ID;
-            foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
-                message.SetControlState(controlType, Controls[controlType].State);
-            Game.NetworkEngine.GameServerConnection.Send(message);
         }
 
         /// <summary>

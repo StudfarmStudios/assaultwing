@@ -6,13 +6,14 @@ using AW2.Core.GameComponents;
 using AW2.Core.OverlayDialogs;
 using AW2.Game;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 using AW2.Menu;
 using AW2.Net;
 using AW2.Net.Connections;
+using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
-using AW2.Net.ManagementMessages;
 
 namespace AW2.Core
 {
@@ -193,11 +194,8 @@ namespace AW2.Core
         {
             if (NetworkMode == NetworkMode.Server)
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            if (GameState != Core.GameState.GameAndMenu)
-            {
-                base.StartArena();
-                PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
-            }
+            if (GameState != Core.GameState.GameAndMenu) base.StartArena();
+            PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             GameState = GameState.Gameplay;
         }
 
@@ -498,7 +496,19 @@ namespace AW2.Core
 
         private void SpectatorAddedHandler(Spectator spectator)
         {
-            if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
+            var player = spectator as Player;
+            if (NetworkMode == NetworkMode.Server)
+            {
+                UpdateGameServerInfoToManagementServer();
+                if (player != null) player.NewMessage += message =>
+                {
+                    if (player.IsRemote)
+                    {
+                        var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Color = message.TextColor, Text = message.Text };
+                        NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
+                    }
+                };
+            }
         }
 
         private void SpectatorRemovedHandler(Spectator spectator)
@@ -519,23 +529,58 @@ namespace AW2.Core
 
         private void AfterEveryFrame()
         {
-            if (NetworkMode == NetworkMode.Server)
+            switch (NetworkMode)
             {
-                var now = DataEngine.ArenaTotalTime;
-                var message = new GobUpdateMessage();
-                foreach (var gob in DataEngine.Arena.Gobs.GameplayLayer.Gobs)
+                case NetworkMode.Server:
+                    SendGobUpdates();
+                    SendPlayerUpdatesOnServer();
+                    break;
+                case NetworkMode.Client:
+                    SendPlayerUpdatesOnClient();
+                    break;
+            }
+        }
+
+        private void SendGobUpdates()
+        {
+            var now = DataEngine.ArenaTotalTime;
+            var gobMessage = new GobUpdateMessage();
+            foreach (var gob in DataEngine.Arena.Gobs.GameplayLayer.Gobs)
+            {
+                if (!gob.ForcedNetworkUpdate)
                 {
-                    if (!gob.ForcedNetworkUpdate)
-                    {
-                        if (!gob.IsRelevant) continue;
-                        if (!gob.Movable) continue;
-                        if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
-                        if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
-                    }
-                    gob.LastNetworkUpdate = now;
-                    message.AddGob(gob.ID, gob, AW2.Helpers.Serialization.SerializationModeFlags.VaryingData);
+                    if (!gob.IsRelevant) continue;
+                    if (!gob.Movable) continue;
+                    if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
+                    if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
                 }
-                NetworkEngine.SendToGameClients(message);
+                gob.LastNetworkUpdate = now;
+                gobMessage.AddGob(gob.ID, gob, AW2.Helpers.Serialization.SerializationModeFlags.VaryingData);
+            }
+            NetworkEngine.SendToGameClients(gobMessage);
+        }
+
+        private void SendPlayerUpdatesOnServer()
+        {
+            foreach (var player in DataEngine.Players.Where(p => p.MustUpdateToClients))
+            {
+                player.MustUpdateToClients = false;
+                var plrMessage = new PlayerUpdateMessage();
+                plrMessage.PlayerID = player.ID;
+                plrMessage.Write(player, SerializationModeFlags.VaryingData);
+                NetworkEngine.SendToGameClients(plrMessage);
+            }
+        }
+
+        private void SendPlayerUpdatesOnClient()
+        {
+            foreach (var player in DataEngine.Players.Where(plr => !plr.IsRemote))
+            {
+                var message = new PlayerControlsMessage();
+                message.PlayerID = player.ID;
+                foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
+                    message.SetControlState(controlType, player.Controls[controlType].State);
+                NetworkEngine.GameServerConnection.Send(message);
             }
         }
     }

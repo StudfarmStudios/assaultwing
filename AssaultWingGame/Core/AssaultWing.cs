@@ -12,6 +12,7 @@ using AW2.Net.Connections;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
+using AW2.Net.ManagementMessages;
 
 namespace AW2.Core
 {
@@ -73,11 +74,9 @@ namespace AW2.Core
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
             _addedGobs = new List<Gob>();
-            DataEngine.NewArena += arena =>
-            {
-                arena.GobAdded += gob => { if (NetworkMode == NetworkMode.Server && gob.IsRelevant) _addedGobs.Add(gob); };
-                arena.GobRemoved += gob => GobRemovedFromArena(arena, gob);
-            };
+            DataEngine.NewArena += NewArenaHandler;
+            DataEngine.SpectatorAdded += SpectatorAddedHandler;
+            DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
         }
 
         public override void Update(AWGameTime gameTime)
@@ -479,13 +478,43 @@ namespace AW2.Core
             AssaultWingCore.Instance.NetworkEngine.MessageHandlers.Clear();
         }
 
-        private void GobRemovedFromArena(Arena arena, Gob gob)
+        private void NewArenaHandler(Arena arena)
+        {
+            arena.GobAdded += gob =>
+            {
+                if (NetworkMode == NetworkMode.Server && gob.IsRelevant) _addedGobs.Add(gob);
+            };
+            arena.GobRemoved += gob => GobRemovedFromArenaHandler(arena, gob);
+        }
+
+        private void GobRemovedFromArenaHandler(Arena arena, Gob gob)
         {
             if (NetworkMode != NetworkMode.Server || !gob.IsRelevant) return;
             if (!arena.IsActive) throw new ApplicationException("Removing a gob from an inactive arena during network game");
             var message = new GobDeletionMessage();
             message.GobId = gob.ID;
             NetworkEngine.SendToGameClients(message);
+        }
+
+        private void SpectatorAddedHandler(Spectator spectator)
+        {
+            if (NetworkMode == NetworkMode.Server) UpdateGameServerInfoToManagementServer();
+        }
+
+        private void SpectatorRemovedHandler(Spectator spectator)
+        {
+            if (NetworkMode == NetworkMode.Server)
+            {
+                UpdateGameServerInfoToManagementServer();
+                var clientMessage = new PlayerDeletionMessage { PlayerID = spectator.ID };
+                NetworkEngine.SendToGameClients(clientMessage);
+            }
+        }
+
+        private void UpdateGameServerInfoToManagementServer()
+        {
+            var managementMessage = new UpdateGameServerMessage { CurrentClients = DataEngine.Players.Count() };
+            NetworkEngine.ManagementServerConnection.Send(managementMessage);
         }
 
         private void AfterEveryFrame()

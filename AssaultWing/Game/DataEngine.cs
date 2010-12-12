@@ -11,9 +11,6 @@ using AW2.Graphics;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Collections;
-using AW2.Helpers.Serialization;
-using AW2.Net.Messages;
-using AW2.Net.ManagementMessages;
 
 namespace AW2.Game
 {
@@ -81,6 +78,9 @@ namespace AW2.Game
         /// Called when a new <see cref="Arena"/> is instantiated.
         /// </summary>
         public event Action<Arena> NewArena;
+
+        public event Action<Spectator> SpectatorAdded;
+        public event Action<Spectator> SpectatorRemoved;
 
         public DataEngine(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
@@ -373,28 +373,6 @@ namespace AW2.Game
                 Matrix.CreateTranslation(0, _arenaDimensionsOnRadar.Y, 0);
         }
 
-        private void SpectatorAdded(Spectator spectator)
-        {
-            spectator.Game = (AssaultWingCore)this.Game;
-            spectator.ID = GetFreeSpectatorID();
-            var player = spectator as Player;
-            if (player != null && Game.NetworkMode != NetworkMode.Client)
-            {
-                player.PlayerColor = Color.Black; // reset to a color that won't affect free color picking
-                player.PlayerColor = GetFreePlayerColor();
-            }
-        }
-
-        private void SpectatorRemoved(Spectator spectator)
-        {
-            if (Game.NetworkMode == NetworkMode.Server)
-            {
-                var message = new PlayerDeletionMessage { PlayerID = spectator.ID };
-                Game.NetworkEngine.SendToGameClients(message);
-            }
-            spectator.Dispose();
-        }
-
         private int GetFreeSpectatorID()
         {
             var usedIDs = Spectators.Select(spec => spec.ID);
@@ -429,26 +407,27 @@ namespace AW2.Game
             // 16 colours total
         }
 
-        private void UpdateGameServerInfoToManagementServer()
-        {
-            var mess = new UpdateGameServerMessage { CurrentClients = Players.Count() };
-            Game.NetworkEngine.ManagementServerConnection.Send(mess);
-        }
-
         #endregion Private methods
 
         #region Callbacks
 
         private void SpectatorAddedHandler(Spectator spectator)
         {
-            if (Game.NetworkMode == NetworkMode.Server)
-                UpdateGameServerInfoToManagementServer();
+            spectator.Game = Game;
+            spectator.ID = GetFreeSpectatorID();
+            var player = spectator as Player;
+            if (player != null && Game.NetworkMode != NetworkMode.Client)
+            {
+                player.PlayerColor = Color.Black; // reset to a color that won't affect free color picking
+                player.PlayerColor = GetFreePlayerColor();
+            }
+            if (SpectatorAdded != null) SpectatorAdded(spectator);
         }
 
         private void SpectatorRemovedHandler(Spectator spectator)
         {
-            if (Game.NetworkMode == NetworkMode.Server)
-                UpdateGameServerInfoToManagementServer();
+            spectator.Dispose();
+            if (SpectatorRemoved != null) SpectatorRemoved(spectator);
         }
 
         #endregion Callbacks

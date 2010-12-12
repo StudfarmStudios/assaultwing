@@ -166,7 +166,6 @@ namespace AW2.Game
             if (Arena != null) Arena.Dispose();
             Arena = Arena.FromFile(Game, arenaFilename);
             if (NewArena != null) NewArena(Arena);
-            CustomOperations = null;
             if (initializeForPlaying) Arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, Arena.BinFilename));
             Arena.IsForPlaying = initializeForPlaying;
             Game.LoadArenaContent(Arena);
@@ -254,48 +253,6 @@ namespace AW2.Game
                 if (_progressBar == null) _progressBar = new ProgressBar();
                 return _progressBar;
             }
-        }
-
-        /// <summary>
-        /// Custom operations to perform once at the end of a frame.
-        /// </summary>
-        /// This event is called by the data engine after all updates of a frame.
-        /// You can add your own delegate to this event to postpone it after 
-        /// everything else is calculated in the frame.
-        /// The parameter to the Action delegate is undefined.
-        public event Action CustomOperations;
-
-        /// <summary>
-        /// Commits pending operations. This method should be called at the end of each frame.
-        /// </summary>
-        public void CommitPending()
-        {
-            if (CustomOperations != null) CustomOperations();
-            CustomOperations = null;
-
-            // Game server sends state updates about gobs to game clients.
-            if (Game.NetworkMode == NetworkMode.Server)
-            {
-                var now = ArenaTotalTime;
-                var message = new GobUpdateMessage();
-                foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
-                {
-                    if (!gob.ForcedNetworkUpdate)
-                    {
-                        if (!gob.IsRelevant) continue;
-                        if (!gob.Movable) continue;
-                        if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
-                        if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
-                    }
-                    gob.LastNetworkUpdate = now;
-                    message.AddGob(gob.ID, gob, SerializationModeFlags.VaryingData);
-                }
-                Game.NetworkEngine.SendToGameClients(message);
-            }
-
-#if DEBUG_PROFILE
-            AssaultWing.Instance.GobCount = Arena.Gobs.Count;
-#endif
         }
 
         /// <summary>

@@ -115,7 +115,7 @@ namespace AW2.Menu
             }
             MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(
                 () => _menuEngine.ActivateComponent(MenuComponentType.Equip),
-                HandleStartGameMessage, _menuEngine.Game.HandleConnectionClosingMessage));
+                HandleStartGameMessage));
 
             // HACK: Force one local player.
             _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
@@ -130,7 +130,7 @@ namespace AW2.Menu
             game.SelectedArenaName = mess.ArenaToPlay;
             _menuEngine.ProgressBarAction(game.PrepareArena, () =>
             {
-                MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleConnectionClosingMessage, game.HandleGobCreationMessage));
+                MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleGobCreationMessage));
                 game.IsClientAllowedToStartArena = true;
                 _menuEngine.Game.StartArenaButStayInMenu();
             });

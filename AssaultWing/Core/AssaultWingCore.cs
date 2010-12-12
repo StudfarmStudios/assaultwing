@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Core.GameComponents;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
@@ -59,7 +60,9 @@ namespace AW2.Core
         public CommandLineOptions CommandLineOptions { get; set; }
         public PhysicsEngine PhysicsEngine { get; private set; }
         public DataEngine DataEngine { get; private set; }
+        public PreFrameLogicEngine PreFrameLogicEngine { get; private set; }
         public LogicEngine LogicEngine { get; private set; }
+        public PostFrameLogicEngine PostFrameLogicEngine { get; private set; }
         public NetworkEngine NetworkEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
@@ -146,11 +149,15 @@ namespace AW2.Core
             DataEngine = new DataEngine(this, 0);
             PhysicsEngine = new PhysicsEngine(this, 0);
             _uiEngine = new UIEngineImpl(this, 1);
-            LogicEngine = new LogicEngine(this, 2);
-            SoundEngine = new SoundEngineXACT(this, 3);
-            GraphicsEngine = new GraphicsEngineImpl(this, 4);
+            PreFrameLogicEngine = new PreFrameLogicEngine(this, 2);
+            LogicEngine = new LogicEngine(this, 3);
+            PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
+            SoundEngine = new SoundEngineXACT(this, 5);
+            GraphicsEngine = new GraphicsEngineImpl(this, 6);
 
+            Components.Add(PreFrameLogicEngine);
             Components.Add(LogicEngine);
+            Components.Add(PostFrameLogicEngine);
             Components.Add(GraphicsEngine);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
@@ -250,6 +257,17 @@ namespace AW2.Core
             CanonicalString.DisableRegistering();
         }
 
+        private void BeforeEveryFrame()
+        {
+            DataEngine.Arena.TotalTime += GameTime.ElapsedGameTime;
+            DataEngine.Arena.FrameNumber++;
+        }
+
+        private void AfterEveryFrame()
+        {
+            GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
+        }
+
         #endregion AssaultWing private methods
 
         #region Methods for game components
@@ -276,6 +294,10 @@ namespace AW2.Core
         {
             Log.Write("Starting arena");
             LogicEngine.Reset();
+            PreFrameLogicEngine.Reset();
+            PostFrameLogicEngine.Reset();
+            PreFrameLogicEngine.DoEveryFrame += BeforeEveryFrame;
+            PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             DataEngine.StartArena();
             DataEngine.RearrangeViewports();
             SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
@@ -382,19 +404,7 @@ namespace AW2.Core
         public override void Update(AWGameTime gameTime)
         {
             GameTime = gameTime;
-            if (LogicEngine.Enabled)
-            {
-                if (gameTime.ElapsedGameTime != TargetElapsedTime) throw new ApplicationException("Timestep expected " + TargetElapsedTime.TotalSeconds + " s but was " + gameTime.ElapsedGameTime + " s");
-                DataEngine.Arena.TotalTime += gameTime.ElapsedGameTime;
-                DataEngine.Arena.FrameNumber++;
-            }
-
             base.Update(GameTime);
-            if (LogicEngine.Enabled)
-            {
-                GobsCreatedPerFrameAvgPerSecondBaseCounter.Increment();
-                DataEngine.CommitPending();
-            }
         }
 
         public override void Draw()

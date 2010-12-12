@@ -5,11 +5,13 @@ using System.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Core.OverlayDialogs;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
+using AW2.UI;
 
 namespace AW2.Net.MessageHandling
 {
@@ -38,9 +40,9 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PingMessage>(false, IMessageHandler.SourceType.Management, HandlePingMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction, Action<StartGameMessage> handleStartGameMessage, Action<ConnectionClosingMessage> handleConnectionClosingMessage)
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction, Action<StartGameMessage> handleStartGameMessage)
         {
-            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, handleConnectionClosingMessage);
+            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, handleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
@@ -49,9 +51,9 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, mess => joinGameReplyAction());
         }
 
-        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(Action<ConnectionClosingMessage> handleConnectionClosingMessage, GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
+        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
-            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, handleConnectionClosingMessage);
+            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<ArenaFinishMessage>(false, IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
@@ -196,7 +198,7 @@ namespace AW2.Net.MessageHandling
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo + extraInfo);
                 var reply = new ConnectionClosingMessage
                 {
-                    Info = "Cannot join server due to mismatching canonical strings!\nYou may be running different versions of Assault Wing."
+                    Info = "Assault Wing version mismatch\nin canonical strings."
                 };
                 AssaultWingCore.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
                 AssaultWingCore.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
@@ -272,6 +274,15 @@ namespace AW2.Net.MessageHandling
             mess.Read(newPlayer, SerializationModeFlags.ConstantData, 0);
             AssaultWingCore.Instance.DataEngine.Spectators.Add(newPlayer);
             return newPlayer;
+        }
+
+        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
+        {
+            var game = (AssaultWing)AssaultWing.Instance;
+            Log.Write("Server is going to close the connection, reason: " + mess.Info);
+            var dialogData = new CustomOverlayDialogData(game, "Server closed connection.\n" + mess.Info,
+                new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu));
+            game.ShowDialog(dialogData);
         }
     }
 }

@@ -1192,12 +1192,9 @@ namespace AW2.Game
         {
         }
 
-        /// <summary>
-        /// Removes collision areas that meet a condition.
-        /// </summary>
         protected void RemoveCollisionAreas(Predicate<CollisionArea> wantToRemove)
         {
-            Game.DataEngine.CustomOperations += () =>
+            Game.PostFrameLogicEngine.DoOnce += () =>
             {
                 Arena.Unregister(this);
                 _collisionAreas = Array.FindAll(_collisionAreas, area => !wantToRemove(area));

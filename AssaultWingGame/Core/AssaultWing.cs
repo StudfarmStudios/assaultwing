@@ -5,8 +5,6 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
 using AW2.Core.OverlayDialogs;
 using AW2.Game;
-using AW2.Graphics;
-using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Menu;
 using AW2.Net;
@@ -60,9 +58,9 @@ namespace AW2.Core
             : base(graphicsDeviceService)
         {
             StartupScreen = new StartupScreen(this, -1);
-            MenuEngine = new MenuEngineImpl(this, 6);
-            IntroEngine = new IntroEngine(this, 7);
-            PlayerChat = new PlayerChat(this, 8);
+            MenuEngine = new MenuEngineImpl(this, 10);
+            IntroEngine = new IntroEngine(this, 11);
+            PlayerChat = new PlayerChat(this, 12);
             OverlayDialog = new OverlayDialog(this, 20);
             Components.Add(StartupScreen);
             Components.Add(MenuEngine);
@@ -196,7 +194,11 @@ namespace AW2.Core
         {
             if (NetworkMode == NetworkMode.Server)
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
-            if (GameState != Core.GameState.GameAndMenu) base.StartArena();
+            if (GameState != Core.GameState.GameAndMenu)
+            {
+                base.StartArena();
+                PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
+            }
             GameState = GameState.Gameplay;
         }
 
@@ -296,14 +298,6 @@ namespace AW2.Core
             }
         }
 
-        public void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
-        {
-            Log.Write("Server is going to close the connection, reason: " + mess.Info);
-            var dialogData = new CustomOverlayDialogData(this, "Server closed connection.\n" + mess.Info,
-                new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
-            ShowDialog(dialogData);
-        }
-
         private void EnableGameState(GameState value)
         {
             switch (value)
@@ -321,11 +315,15 @@ namespace AW2.Core
                     Log.Write("Saving settings to file");
                     Settings.ToFile();
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
+                    PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
+                    PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     GraphicsEngine.Visible = true;
                     if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
                     break;
                 case GameState.GameAndMenu:
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
+                    PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
+                    PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     MenuEngine.Enabled = true;
                     MenuEngine.Visible = true;
                     break;
@@ -352,11 +350,15 @@ namespace AW2.Core
                     break;
                 case GameState.Gameplay:
                     LogicEngine.Enabled = false;
+                    PreFrameLogicEngine.Enabled = false;
+                    PostFrameLogicEngine.Enabled = false;
                     GraphicsEngine.Visible = false;
                     PlayerChat.Enabled = PlayerChat.Visible = false;
                     break;
                 case GameState.GameAndMenu:
                     LogicEngine.Enabled = false;
+                    PreFrameLogicEngine.Enabled = false;
+                    PostFrameLogicEngine.Enabled = false;
                     MenuEngine.Enabled = false;
                     MenuEngine.Visible = false;
                     break;
@@ -401,19 +403,19 @@ namespace AW2.Core
             // Frame stepping (for debugging)
             if (_frameRunControl.Pulse)
             {
-                LogicEngine.Enabled = true;
+                LogicEngine.Enabled = PreFrameLogicEngine.Enabled = PostFrameLogicEngine.Enabled = true;
                 _frameStep = false;
             }
             if (_frameStep)
             {
                 if (_frameStepControl.Pulse)
-                    LogicEngine.Enabled = true;
+                    LogicEngine.Enabled = PreFrameLogicEngine.Enabled = PostFrameLogicEngine.Enabled = true;
                 else
-                    LogicEngine.Enabled = false;
+                    LogicEngine.Enabled = PreFrameLogicEngine.Enabled = PostFrameLogicEngine.Enabled = false;
             }
             else if (_frameStepControl.Pulse)
             {
-                LogicEngine.Enabled = false;
+                LogicEngine.Enabled = PreFrameLogicEngine.Enabled = PostFrameLogicEngine.Enabled = false;
                 _frameStep = true;
             }
 
@@ -484,6 +486,28 @@ namespace AW2.Core
             var message = new GobDeletionMessage();
             message.GobId = gob.ID;
             NetworkEngine.SendToGameClients(message);
+        }
+
+        private void AfterEveryFrame()
+        {
+            if (NetworkMode == NetworkMode.Server)
+            {
+                var now = DataEngine.ArenaTotalTime;
+                var message = new GobUpdateMessage();
+                foreach (var gob in DataEngine.Arena.Gobs.GameplayLayer.Gobs)
+                {
+                    if (!gob.ForcedNetworkUpdate)
+                    {
+                        if (!gob.IsRelevant) continue;
+                        if (!gob.Movable) continue;
+                        if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
+                        if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
+                    }
+                    gob.LastNetworkUpdate = now;
+                    message.AddGob(gob.ID, gob, AW2.Helpers.Serialization.SerializationModeFlags.VaryingData);
+                }
+                NetworkEngine.SendToGameClients(message);
+            }
         }
     }
 }

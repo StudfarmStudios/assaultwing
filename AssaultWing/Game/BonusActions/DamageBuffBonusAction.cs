@@ -66,11 +66,9 @@ namespace AW2.Game.BonusActions
         {
             // HACK: If the ship dies, the player's bonus actions are cleared, which results in a crash
             // because this method is called while iterating over the player's bonus actions.
-            // Workaround: delay InflictDamage by using DataEngine.CustomOperations.
-            // A more beautiful way around this would be to share deletion logic from Gob to other
-            // similar classes such as BonusAction and Weapon. !!!
-            float damage = AssaultWingCore.Instance.PhysicsEngine.ApplyChange(_damagePerSecond, AssaultWingCore.Instance.GameTime.ElapsedGameTime);
-            AssaultWingCore.Instance.DataEngine.CustomOperations += () =>
+            // Workaround: Call InflictDamage later this frame.
+            float damage = Player.Game.PhysicsEngine.ApplyChange(_damagePerSecond, Player.Game.GameTime.ElapsedGameTime);
+            Player.Game.PostFrameLogicEngine.DoOnce += () =>
             {
                 if (Player.Ship != null) Player.Ship.InflictDamage(damage, new DeathCause(Player.Ship, DeathCauseType.Damage));
             };

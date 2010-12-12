@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Game.Weapons;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using Ship = AW2.Game.Gobs.Ship;
 
 namespace AW2.Game.GobUtils
 {
@@ -49,8 +47,6 @@ namespace AW2.Game.GobUtils
     {
         protected delegate void ShipBarrelAction(int barrelBoneIndex, float barrelRotation);
 
-        #region Weapon fields
-
         [TypeParameter]
         private WeaponInfo _weaponInfo;
 
@@ -73,10 +69,6 @@ namespace AW2.Game.GobUtils
         [TypeParameter]
         private float recoilMomentum;
 
-        #endregion // Weapon fields
-
-        #region Weapon properties
-
         /// <summary>
         /// Indices of the bones that define the locations of the weapon barrels on the owning ship.
         /// </summary>
@@ -88,8 +80,6 @@ namespace AW2.Game.GobUtils
         public CanonicalString[] UpgradeNames { get { return upgradeNames; } }
 
         public WeaponInfo WeaponInfo { get { return _weaponInfo; } }
-
-        #endregion Weapon properties
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -107,12 +97,6 @@ namespace AW2.Game.GobUtils
         {
         }
 
-        #region Weapon public methods
-
-        #endregion Weapon public methods
-
-        #region Weapon protected methods
-
         /// <summary>
         /// Applies recoil to the owner of the weapon.
         /// Subclasses should call this method when they emit a new shot
@@ -121,7 +105,7 @@ namespace AW2.Game.GobUtils
         protected void ApplyRecoil()
         {
             var momentum = -recoilMomentum * AWMathHelper.GetUnitVector2(Owner.Rotation);
-            Owner.Game.DataEngine.CustomOperations += () => { Owner.Game.PhysicsEngine.ApplyMomentum(Owner, momentum); };
+            Owner.Game.PostFrameLogicEngine.DoOnce += () => Owner.Game.PhysicsEngine.ApplyMomentum(Owner, momentum);
         }
 
         protected void ForEachShipBarrel(ShipBarrelTypes barrelTypes, ShipBarrelAction action)
@@ -137,7 +121,5 @@ namespace AW2.Game.GobUtils
             if ((barrelTypes & ShipBarrelTypes.Right) != 0) action(BoneIndices[2], 0);
             if ((barrelTypes & ShipBarrelTypes.Rear) != 0) action(BoneIndices[3], MathHelper.Pi);
         }
-
-        #endregion Weapon protected methods
     }
 }

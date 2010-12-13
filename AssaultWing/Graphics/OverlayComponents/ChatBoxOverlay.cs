@@ -17,7 +17,6 @@ namespace AW2.Graphics.OverlayComponents
         private const int VISIBLE_LINES = 5;
         private static Curve g_messageFadeoutCurve;
         private Player _player;
-        private TimeSpan _lastMessageEntryTime;
         private SpriteFont _chatBoxFont;
 
         public override Point Dimensions

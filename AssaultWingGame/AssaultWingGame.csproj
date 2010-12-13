@@ -89,6 +89,7 @@
     <Reference Include="mscorlib">
       <Private>False</Private>
     </Reference>
+    <Reference Include="nunit.framework, Version=2.5.8.10295, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="System">
       <Private>False</Private>
     </Reference>
@@ -132,6 +133,71 @@
     <Compile Include="Menu\MenuContent.cs" />
     <Compile Include="Menu\MenuEngineImpl.cs" />
     <Compile Include="Net\MessageHandling\MessageHandlers.cs" />
+    <Compile Include="Net\AWEndPoint.cs" />
+    <Compile Include="Net\ConnectionException.cs" />
+    <Compile Include="Net\Connections\Connection.cs" />
+    <Compile Include="Net\Connections\GameClientConnection.cs" />
+    <Compile Include="Net\Connections\GameServerConnection.cs" />
+    <Compile Include="Net\Connections\ManagementServerConnection.cs" />
+    <Compile Include="Net\ConnectionUtils\AWSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\AWTCPSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\AWUDPSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\ConnectAsyncState.cs" />
+    <Compile Include="Net\ConnectionUtils\ConnectionAttemptListener.cs" />
+    <Compile Include="Net\ConnectionUtils\MessageReadThread.cs" />
+    <Compile Include="Net\ConnectionUtils\MessageSendThread.cs" />
+    <Compile Include="Net\ConnectionUtils\NetBuffer.cs" />
+    <Compile Include="Net\ConnectionUtils\PingInfo.cs" />
+    <Compile Include="Net\ConnectionUtils\StaticPortMapper.cs" />
+    <Compile Include="Net\ConnectionUtils\TCPMessageReadThread.cs" />
+    <Compile Include="Net\ConnectionUtils\TCPMessageSendThread.cs" />
+    <Compile Include="Net\ConnectionUtils\ThreadSafeWrapper.cs" />
+    <Compile Include="Net\ConnectionUtils\UDPMessageReadThread.cs" />
+    <Compile Include="Net\ConnectionUtils\UDPMessageSendThread.cs" />
+    <Compile Include="Net\GameplayMessage.cs" />
+    <Compile Include="Net\GameServerInfo.cs" />
+    <Compile Include="Net\ManagementMessage.cs" />
+    <Compile Include="Net\ManagementMessageAttribute.cs" />
+    <Compile Include="Net\ManagementMessages\ClientJoinMessage.cs" />
+    <Compile Include="Net\ManagementMessages\GameServerListReply.cs" />
+    <Compile Include="Net\ManagementMessages\GameServerListRequest.cs" />
+    <Compile Include="Net\ManagementMessages\JoinGameServerReply.cs" />
+    <Compile Include="Net\ManagementMessages\JoinGameServerRequest.cs" />
+    <Compile Include="Net\ManagementMessages\PingMessage.cs" />
+    <Compile Include="Net\ManagementMessages\PongMessage.cs" />
+    <Compile Include="Net\ManagementMessages\RegisterGameServerMessage.cs" />
+    <Compile Include="Net\ManagementMessages\UnregisterGameServerMessage.cs" />
+    <Compile Include="Net\ManagementMessages\UpdateGameServerMessage.cs" />
+    <Compile Include="Net\Message.cs" />
+    <Compile Include="Net\MessageException.cs" />
+    <Compile Include="Net\MessageHandling\GameplayMessageHandler.cs" />
+    <Compile Include="Net\MessageHandling\IMessageHandler.cs" />
+    <Compile Include="Net\MessageHandling\MessageHandler.cs" />
+    <Compile Include="Net\MessageHeaderFlags.cs" />
+    <Compile Include="Net\MessageSendType.cs" />
+    <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
+    <Compile Include="Net\Messages\ConnectionClosingMessage.cs" />
+    <Compile Include="Net\Messages\GameSettingsRequest.cs" />
+    <Compile Include="Net\Messages\GobCreationMessage.cs" />
+    <Compile Include="Net\Messages\GobDeletionMessage.cs" />
+    <Compile Include="Net\Messages\GobUpdateMessage.cs" />
+    <Compile Include="Net\Messages\JoinGameReply.cs" />
+    <Compile Include="Net\Messages\JoinGameRequest.cs" />
+    <Compile Include="Net\Messages\PingReplyMessage.cs" />
+    <Compile Include="Net\Messages\PingRequestMessage.cs" />
+    <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
+    <Compile Include="Net\Messages\PlayerDeletionMessage.cs" />
+    <Compile Include="Net\Messages\PlayerMessageMessage.cs" />
+    <Compile Include="Net\Messages\PlayerSettingsReply.cs" />
+    <Compile Include="Net\Messages\PlayerSettingsRequest.cs" />
+    <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
+    <Compile Include="Net\Messages\StartGameMessage.cs" />
+    <Compile Include="Net\MessageType.cs" />
+    <Compile Include="Net\MessageTypeAttribute.cs" />
+    <Compile Include="Net\NetworkEngine.cs" />
+    <Compile Include="Net\NetworkException.cs" />
+    <Compile Include="Net\Result.cs" />
+    <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\GameForm.cs">
       <SubType>Form</SubType>
@@ -210,7 +276,17 @@
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="NATUPNPLib">
+      <Guid>{1C565858-F302-471E-B409-F180AA4ABEC6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

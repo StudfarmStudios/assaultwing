@@ -32,6 +32,11 @@ namespace AW2.Core
         private Control _frameRunControl;
         private bool _frameStep;
 
+        /// <summary>
+        /// The AssaultWing instance. Avoid using this remnant of the old times.
+        /// </summary>
+        public static new AssaultWing Instance { get { return (AssaultWing)AssaultWingCore.Instance; } }
+
         public GameState GameState
         {
             get { return _gameState; }
@@ -55,15 +60,18 @@ namespace AW2.Core
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
         private UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
+        public NetworkEngine NetworkEngine { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService)
             : base(graphicsDeviceService)
         {
             StartupScreen = new StartupScreen(this, -1);
+            NetworkEngine = new NetworkEngine(this, 0);
             MenuEngine = new MenuEngineImpl(this, 10);
             IntroEngine = new IntroEngine(this, 11);
             PlayerChat = new PlayerChat(this, 12);
             OverlayDialog = new OverlayDialog(this, 20);
+            Components.Add(NetworkEngine);
             Components.Add(StartupScreen);
             Components.Add(MenuEngine);
             Components.Add(IntroEngine);
@@ -78,6 +86,7 @@ namespace AW2.Core
             DataEngine.NewArena += NewArenaHandler;
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
+            NetworkEngine.Enabled = true;
         }
 
         public override void Update(AWGameTime gameTime)
@@ -267,9 +276,8 @@ namespace AW2.Core
             }
         }
 
-        public override void StopClient(string errorOrNull)
+        public void StopClient(string errorOrNull)
         {
-            base.StopClient(errorOrNull);
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
             NetworkMode = NetworkMode.Standalone;
@@ -284,7 +292,7 @@ namespace AW2.Core
             }
         }
 
-        public override void CutNetworkConnections()
+        public void CutNetworkConnections()
         {
             switch (NetworkMode)
             {
@@ -293,6 +301,20 @@ namespace AW2.Core
                 case NetworkMode.Standalone: break;
                 default: throw new ApplicationException("Unexpected NetworkMode: " + NetworkMode);
             }
+        }
+
+        protected override string GetStatusText()
+        {
+            string myStatusText = "";
+            if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
+                myStatusText = string.Format(" [{0} ms lag]",
+                    (int)NetworkEngine.ServerPingTime.TotalMilliseconds);
+
+            if (NetworkMode == NetworkMode.Server)
+                myStatusText = string.Join(" ", NetworkEngine.GameClientConnections
+                    .Select(conn => string.Format(" [#{0}: {1} ms lag]", conn.ID, (int)conn.PingInfo.PingTime.TotalMilliseconds)
+                    ).ToArray());
+            return base.GetStatusText() + myStatusText;
         }
 
         private void EnableGameState(GameState value)
@@ -473,7 +495,7 @@ namespace AW2.Core
 
         private void DeactivateAllMessageHandlers()
         {
-            AssaultWingCore.Instance.NetworkEngine.MessageHandlers.Clear();
+            NetworkEngine.MessageHandlers.Clear();
         }
 
         private void NewArenaHandler(Arena arena)

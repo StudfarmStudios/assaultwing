@@ -61,6 +61,8 @@ namespace AW2.Net
         private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
 
+        private AssaultWing _game;
+
         /// <summary>
         /// Network connection to the management server, 
         /// or <c>null</c> if no such live connection exists.
@@ -101,9 +103,10 @@ namespace AW2.Net
 
         #region Constructor
 
-        public NetworkEngine(AssaultWingCore game, int updateOrder)
+        public NetworkEngine(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
         {
+            _game = game;
             _gameClientConnections = new List<GameClientConnection>();
             _removedClientConnections = new List<GameClientConnection>();
             _udpMessagesToHandle = new List<NetBuffer>();
@@ -179,7 +182,7 @@ namespace AW2.Net
                 var managementServerEndPoint = MiscHelper.ParseIPEndPoint(Game.Settings.Net.ManagementServerAddress);
                 if (managementServerEndPoint.Port == 0)
                     managementServerEndPoint.Port = MANAGEMENT_SERVER_PORT_DEFAULT;
-                _managementServerConnection = new ManagementServerConnection(Game, managementServerEndPoint);
+                _managementServerConnection = new ManagementServerConnection(_game, managementServerEndPoint);
             }
             catch (ArgumentException e)
             {
@@ -197,7 +200,7 @@ namespace AW2.Net
             Log.Write("Server starts listening");
             ClientUDPEndPointPool = new List<IPEndPoint[]>();
             _startServerConnectionHandler = connectionHandler;
-            _connectionAttemptListener = new ConnectionAttemptListener(Game);
+            _connectionAttemptListener = new ConnectionAttemptListener(_game);
             _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT);
             RegisterServerToManagementServer();
         }
@@ -222,7 +225,7 @@ namespace AW2.Net
         /// Poll <c>Connection.ConnectionResults</c> to find out when and if
         /// the connection was successfully estblished.
         /// </summary>
-        public void StartClient(AssaultWingCore game, AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
+        public void StartClient(AssaultWing game, AWEndPoint[] serverEndPoints, Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Client starts connecting");
             _startClientConnectionHandler = connectionHandler;
@@ -492,7 +495,7 @@ namespace AW2.Net
             if (errorsFound)
             {
                 Log.Write("Closing network connections due to errors");
-                Game.CutNetworkConnections();
+                _game.CutNetworkConnections();
             }
         }
 

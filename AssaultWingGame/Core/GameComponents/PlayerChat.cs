@@ -15,6 +15,7 @@ namespace AW2.Core.GameComponents
     /// </summary>
     public class PlayerChat : AWGameComponent
     {
+        private AssaultWing _game;
         private Control _chatControl;
         private EditableText _message;
         private SpriteBatch _spriteBatch;
@@ -27,6 +28,7 @@ namespace AW2.Core.GameComponents
         public PlayerChat(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
         {
+            _game = game;
             _chatControl = new KeyboardKey(Keys.Enter);
         }
 
@@ -79,7 +81,7 @@ namespace AW2.Core.GameComponents
                 case NetworkMode.Client:
                     foreach (var plr in Game.DataEngine.Players.Where(plr => !plr.IsRemote))
                         plr.SendMessage(text, Player.PLAYER_MESSAGE_COLOR);
-                    Game.NetworkEngine.GameServerConnection.Send(new PlayerMessageMessage
+                    _game.NetworkEngine.GameServerConnection.Send(new PlayerMessageMessage
                     {
                         PlayerID = -1,
                         Color = Player.PLAYER_MESSAGE_COLOR,

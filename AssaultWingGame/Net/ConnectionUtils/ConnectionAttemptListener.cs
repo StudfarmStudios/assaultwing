@@ -27,11 +27,11 @@ namespace AW2.Net.ConnectionUtils
         private Socket _serverSocket;
 
         private IAsyncResult _listenResult;
-        private AssaultWingCore _game;
+        private AssaultWing _game;
 
         public bool IsListening { get { return _serverSocket != null; } }
 
-        public ConnectionAttemptListener(AssaultWingCore game)
+        public ConnectionAttemptListener(AssaultWing game)
         {
             _game = game;
         }
@@ -123,7 +123,7 @@ namespace AW2.Net.ConnectionUtils
             _serverSocket.Listen(64);
         }
 
-        private void ListenOneConnection(AssaultWingCore game)
+        private void ListenOneConnection(AssaultWing game)
         {
             if (_serverSocket == null) throw new ApplicationException("Server socket must be opened first");
             try

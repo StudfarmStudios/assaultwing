@@ -9,7 +9,6 @@ using AW2.Core.GameComponents;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
-using AW2.Net;
 using AW2.Settings;
 using AW2.Sound;
 using AW2.UI;
@@ -62,7 +61,6 @@ namespace AW2.Core
         public PreFrameLogicEngine PreFrameLogicEngine { get; private set; }
         public LogicEngine LogicEngine { get; private set; }
         public PostFrameLogicEngine PostFrameLogicEngine { get; private set; }
-        public NetworkEngine NetworkEngine { get; private set; }
         public GraphicsEngineImpl GraphicsEngine { get; private set; }
         public SoundEngine SoundEngine { get; private set; }
 
@@ -144,7 +142,6 @@ namespace AW2.Core
 
         private void InitializeComponents()
         {
-            NetworkEngine = new NetworkEngine(this, 0);
             DataEngine = new DataEngine(this, 0);
             PhysicsEngine = new PhysicsEngine(this, 0);
             _uiEngine = new UIEngineImpl(this, 1);
@@ -160,15 +157,7 @@ namespace AW2.Core
             Components.Add(GraphicsEngine);
             Components.Add(_uiEngine);
             Components.Add(SoundEngine);
-            Components.Add(NetworkEngine);
 
-            // Disable all optional components
-            foreach (var component in Components)
-            {
-                component.Visible = false;
-                component.Enabled = false;
-            }
-            NetworkEngine.Enabled = true;
             _uiEngine.Enabled = true;
             SoundEngine.Enabled = true;
         }
@@ -325,24 +314,6 @@ namespace AW2.Core
         }
 
         /// <summary>
-        /// Turns this game client into a standalone game instance by disconnecting
-        /// from the game server.
-        /// </summary>
-        [Obsolete("Move to AW2.Core.AssaultWing")]
-        public virtual void StopClient(string errorOrNull)
-        {
-        }
-
-        /// <summary>
-        /// Turns this game instance into a standalone instance, irrespective of the current
-        /// network mode.
-        /// </summary>
-        [Obsolete("Move to AW2.Core.AssaultWing")]
-        public virtual void CutNetworkConnections()
-        {
-        }
-
-        /// <summary>
         /// Loads graphical content required by an arena to DataEngine.
         /// </summary>
         public void LoadArenaContent(Arena arena)
@@ -416,30 +387,22 @@ namespace AW2.Core
             }
             else
             {
-                var newStatusText = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
-                _framesSinceLastCheck = 1;
-                if (secondsSinceLastFramerateCheck < 2)
-                    _lastFramerateCheck += TimeSpan.FromSeconds(1);
-                else
-                    _lastFramerateCheck = GameTime.TotalRealTime;
-
-                if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
-                    newStatusText += string.Format(" [{0} ms lag]",
-                        (int)NetworkEngine.ServerPingTime.TotalMilliseconds);
-
-                if (NetworkMode == NetworkMode.Server)
-                    foreach (var conn in NetworkEngine.GameClientConnections)
-                        newStatusText += string.Format(" [#{0}: {1} ms lag]",
-                            conn.ID,
-                            (int)conn.PingInfo.PingTime.TotalMilliseconds);
-
-#if DEBUG
-                if (DataEngine.ArenaFrameCount > 0)
-                    newStatusText += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
-#endif
-                Window.Title = newStatusText;
+                _lastFramerateCheck = secondsSinceLastFramerateCheck < 2
+                    ? _lastFramerateCheck + TimeSpan.FromSeconds(1)
+                    : GameTime.TotalRealTime;
+                Window.Title = GetStatusText();
             }
             base.Draw();
+        }
+        protected virtual string GetStatusText()
+        {
+            var newStatusText = "Assault Wing [~" + _framesSinceLastCheck + " fps]";
+            _framesSinceLastCheck = 1;
+#if DEBUG
+            if (DataEngine.ArenaFrameCount > 0)
+                newStatusText += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
+#endif
+            return newStatusText;
         }
 
         protected override void OnExiting(object sender, EventArgs args)

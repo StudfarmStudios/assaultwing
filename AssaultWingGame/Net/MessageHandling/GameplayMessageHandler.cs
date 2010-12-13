@@ -43,7 +43,7 @@ namespace AW2.Net.MessageHandling
             {
                 while ((message = connection.TryDequeueMessage<T>()) != null)
                 {
-                    var framesAgo = AssaultWingCore.Instance.NetworkEngine.GetMessageAge(message, connection);
+                    var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(message, connection);
                     Action(message, framesAgo);
                     if (OnlyOneMessage)
                     {

@@ -19,12 +19,12 @@ namespace AW2.Net.MessageHandling
     {
         public static void ActivateHandlers(IEnumerable<IMessageHandler> handlers)
         {
-            AssaultWingCore.Instance.NetworkEngine.MessageHandlers.AddRange(handlers);
+            AssaultWing.Instance.NetworkEngine.MessageHandlers.AddRange(handlers);
         }
 
         public static void DeactivateHandlers(IEnumerable<IMessageHandler> handlers)
         {
-            var net = AssaultWingCore.Instance.NetworkEngine;
+            var net = AssaultWing.Instance.NetworkEngine;
             var handlerTypesToRemove = handlers.Select(handler => handler.GetType());
             foreach (var handler in net.MessageHandlers)
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
@@ -86,7 +86,7 @@ namespace AW2.Net.MessageHandling
                 {
                     var mess = new ConnectionClosingMessage { Info = "Game server doesn't allow joining right now" };
                     result.Value.Send(mess);
-                    AssaultWingCore.Instance.NetworkEngine.DropClient(result.Value.ID, false);
+                    AssaultWing.Instance.NetworkEngine.DropClient(result.Value.ID, false);
                 }
             }
         }
@@ -95,13 +95,13 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleClientJoinMessage(ClientJoinMessage mess)
         {
-            AssaultWingCore.Instance.NetworkEngine.ClientUDPEndPointPool.Add(mess.ClientUDPEndPoints);
+            AssaultWing.Instance.NetworkEngine.ClientUDPEndPointPool.Add(mess.ClientUDPEndPoints);
         }
 
         private static void HandlePingMessage(PingMessage mess)
         {
             var pong = new PongMessage();
-            AssaultWingCore.Instance.NetworkEngine.ManagementServerConnection.Send(pong);
+            AssaultWing.Instance.NetworkEngine.ManagementServerConnection.Send(pong);
         }
 
         private static void HandlePlayerSettingsRequestOnClient(PlayerSettingsRequest mess)
@@ -143,7 +143,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleGameSettingsRequest(GameSettingsRequest mess)
         {
-            ((AssaultWing)AssaultWing.Instance).SelectedArenaName = mess.ArenaToPlay;
+            AssaultWing.Instance.SelectedArenaName = mess.ArenaToPlay;
         }
 
         private static void HandleArenaFinishMessage(ArenaFinishMessage mess)
@@ -166,7 +166,7 @@ namespace AW2.Net.MessageHandling
                 setRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
             var playerPlayer = player as Player;
             if (playerPlayer != null && playerPlayer.Ship != null)
-                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWingCore.Instance.NetworkEngine.GetMessageGameTime(mess));
+                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWing.Instance.NetworkEngine.GetMessageGameTime(mess));
         }
 
         private static void HandlePlayerMessageMessageOnServer(PlayerMessageMessage mess)
@@ -182,7 +182,7 @@ namespace AW2.Net.MessageHandling
             {
                 var player = AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
                 if (player.IsRemote)
-                    AssaultWingCore.Instance.NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(mess);
+                    AssaultWing.Instance.NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(mess);
                 else
                     HandlePlayerMessageMessageOnClient(mess);
             }
@@ -196,7 +196,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)
         {
-            var framesAgo = AssaultWingCore.Instance.NetworkEngine.GetMessageAge(mess);
+            var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
             var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
             if (player == null) throw new NetworkException("Update for unknown player ID " + mess.PlayerID);
             mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
@@ -218,13 +218,13 @@ namespace AW2.Net.MessageHandling
                 {
                     Info = "Assault Wing version mismatch\nin canonical strings."
                 };
-                AssaultWingCore.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
-                AssaultWingCore.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
+                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
+                AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
             }
             else
             {
                 var reply = new JoinGameReply();
-                AssaultWingCore.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
+                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
             }
         }
 
@@ -238,7 +238,7 @@ namespace AW2.Net.MessageHandling
                     OldPlayerID = mess.PlayerID,
                     NewPlayerID = newPlayer.ID
                 };
-                AssaultWingCore.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
+                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
             }
             else
             {
@@ -296,7 +296,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
-            var game = (AssaultWing)AssaultWing.Instance;
+            var game = AssaultWing.Instance;
             Log.Write("Server is going to close the connection, reason: " + mess.Info);
             var dialogData = new CustomOverlayDialogData(game, "Server closed connection.\n" + mess.Info,
                 new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu));

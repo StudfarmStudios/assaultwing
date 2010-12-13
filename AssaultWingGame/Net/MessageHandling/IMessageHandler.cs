@@ -17,9 +17,9 @@ namespace AW2.Net.MessageHandling
         {
             switch (source)
             {
-                case SourceType.Client: return AssaultWingCore.Instance.NetworkEngine.GameClientConnections;
-                case SourceType.Server: return new Connection[] { AssaultWingCore.Instance.NetworkEngine.GameServerConnection };
-                case SourceType.Management: return new Connection[] { AssaultWingCore.Instance.NetworkEngine.ManagementServerConnection };
+                case SourceType.Client: return AssaultWing.Instance.NetworkEngine.GameClientConnections;
+                case SourceType.Server: return new Connection[] { AssaultWing.Instance.NetworkEngine.GameServerConnection };
+                case SourceType.Management: return new Connection[] { AssaultWing.Instance.NetworkEngine.ManagementServerConnection };
                 default: throw new ApplicationException("Invalid SourceType " + source);
             }
         }

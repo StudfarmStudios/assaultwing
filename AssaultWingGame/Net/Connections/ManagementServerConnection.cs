@@ -15,7 +15,7 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Creates a new connection to a management server that works solely on UDP.
         /// </summary>
-        public ManagementServerConnection(AssaultWingCore game, IPEndPoint managementServerEndPoint)
+        public ManagementServerConnection(AssaultWing game, IPEndPoint managementServerEndPoint)
             : base(game)
         {
             Name = "Management Server Connection " + ID;

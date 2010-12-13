@@ -1,9 +1,4 @@
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using AW2.Core;
-using AW2.Game;
-using AW2.Net.Messages;
 
 namespace AW2.UI
 {
@@ -46,27 +41,6 @@ namespace AW2.UI
 
             Control.SetState(ref _oldState, ref newState);
             _oldState = newState;
-        }
-
-        public static void HandlePlayerControlsMessage(PlayerControlsMessage mess)
-        {
-            var player = AssaultWingCore.Instance.DataEngine.Spectators.First(plr => plr.ID == mess.PlayerID);
-            if (player.ConnectionID != mess.ConnectionID)
-            {
-                // A client sent controls for a player that lives on another game instance.
-                // We silently ignore the controls.
-                return;
-            }
-            foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
-                SetRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
-            var playerPlayer = player as Player;
-            if (playerPlayer != null && playerPlayer.Ship != null)
-                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWingCore.Instance.NetworkEngine.GetMessageGameTime(mess));
-        }
-
-        private static void SetRemoteControlState(RemoteControl control, ControlState state)
-        {
-            control.SetControlState(state.Force, state.Pulse);
         }
     }
 }

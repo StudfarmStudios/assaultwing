@@ -71,7 +71,7 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetServerGameplayHandlers()
         {
-            yield return new MessageHandler<PlayerControlsMessage>(false, IMessageHandler.SourceType.Client, AW2.UI.UIEngineImpl.HandlePlayerControlsMessage);
+            yield return new MessageHandler<PlayerControlsMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerControlsMessage);
             yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
@@ -149,6 +149,24 @@ namespace AW2.Net.MessageHandling
         private static void HandleArenaFinishMessage(ArenaFinishMessage mess)
         {
             AssaultWingCore.Instance.FinishArena();
+        }
+
+        private static void HandlePlayerControlsMessage(PlayerControlsMessage mess)
+        {
+            var player = AssaultWingCore.Instance.DataEngine.Spectators.First(plr => plr.ID == mess.PlayerID);
+            if (player.ConnectionID != mess.ConnectionID)
+            {
+                // A client sent controls for a player that lives on another game instance.
+                // We silently ignore the controls.
+                return;
+            }
+            Action<RemoteControl, ControlState> setRemoteControlState =
+                (control, state) => control.SetControlState(state.Force, state.Pulse);
+            foreach (PlayerControlType control in System.Enum.GetValues(typeof(PlayerControlType)))
+                setRemoteControlState((RemoteControl)player.Controls[control], mess.GetControlState(control));
+            var playerPlayer = player as Player;
+            if (playerPlayer != null && playerPlayer.Ship != null)
+                playerPlayer.Ship.LocationPredicter.StoreControlStates(mess.ControlStates, AssaultWingCore.Instance.NetworkEngine.GetMessageGameTime(mess));
         }
 
         private static void HandlePlayerMessageMessageOnServer(PlayerMessageMessage mess)

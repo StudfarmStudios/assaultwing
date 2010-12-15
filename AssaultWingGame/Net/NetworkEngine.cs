@@ -317,34 +317,11 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Offset of game time on the server compared to this game instance.
-        /// </summary>
-        /// Adding the offset to the server game time gives our game time.
-        public TimeSpan ServerGameTimeOffset
-        {
-            get
-            {
-                if (_gameServerConnection == null)
-                    throw new InvalidOperationException("Cannot count server game time offset without connection");
-                return _gameServerConnection.PingInfo.RemoteGameTimeOffset;
-            }
-        }
-
-        /// <summary>
         /// Round-trip ping time to a game client.
         /// </summary>
         public TimeSpan GetClientPingTime(int connectionID)
         {
             return GetGameClientConnection(connectionID).PingInfo.PingTime;
-        }
-
-        /// <summary>
-        /// Offset of game time on a client compared to this server instance.
-        /// </summary>
-        /// Adding the offset to the client game time gives our game time.
-        public TimeSpan GetClientGameTimeOffset(int connectionID)
-        {
-            return GetGameClientConnection(connectionID).PingInfo.RemoteGameTimeOffset;
         }
 
         /// <summary>
@@ -361,12 +338,10 @@ namespace AW2.Net
         /// </summary>
         public int GetMessageAge(GameplayMessage message, Connection connection)
         {
-            // TODO: Assuming the remote and local game instances are frame synchronized,
-            // we can do without the parameter 'connection' as 'RemoteFrameNumberOffset' will be zero.
             if (connection.ID != message.ConnectionID) throw new ArgumentException("Wrong connection");
-            var messageAge = Game.DataEngine.ArenaFrameCount
-                - (message.FrameNumber + connection.PingInfo.RemoteFrameNumberOffset);
-            return messageAge;
+            var localFrameCountOnReceive = Game.DataEngine.ArenaFrameCount;
+            var localFrameCountOnSend = message.FrameNumber + connection.PingInfo.RemoteFrameNumberOffset;
+            return localFrameCountOnReceive - localFrameCountOnSend;
         }
 
         /// <summary>

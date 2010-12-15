@@ -19,12 +19,8 @@ namespace AW2.Core
 {
     public class AssaultWing : AssaultWingCore
     {
-        private static readonly TimeSpan FRAME_NUMBER_SYNCHRONIZATION_INTERVAL = TimeSpan.FromSeconds(1);
-        private const int MINIMUM_ACCEPTABLE_FRAME_NUMBER_OFFSET = 1;
-
         private GameState _gameState;
         private Control _escapeControl;
-        private TimeSpan _nextFrameNumberSynchronize;
         private List<Gob> _addedGobs;
 
         // HACK: Debug keys
@@ -462,10 +458,7 @@ namespace AW2.Core
         {
             if (NetworkMode != NetworkMode.Client) return;
             if (GameState != GameState.Gameplay && GameState != GameState.GameAndMenu) return;
-            if (GameTime.TotalRealTime < _nextFrameNumberSynchronize) return;
-            _nextFrameNumberSynchronize = GameTime.TotalRealTime + FRAME_NUMBER_SYNCHRONIZATION_INTERVAL;
-            if (Math.Abs(NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset) > MINIMUM_ACCEPTABLE_FRAME_NUMBER_OFFSET)
-                DataEngine.Arena.FrameNumber -= NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
+            DataEngine.Arena.FrameNumber -= NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
         }
 
         private void SendGobCreationMessage()

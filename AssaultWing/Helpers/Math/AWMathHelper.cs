@@ -510,6 +510,15 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Returns the integral number of Assault Wing update frames this TimeSpan spans.
+        /// </summary>
+        public static int Frames(this TimeSpan time)
+        {
+            var ticksInFrame = AssaultWingCore.Instance.TargetElapsedTime.Ticks;
+            return (int)((time.Ticks + ticksInFrame / 2) / ticksInFrame);
+        }
+
+        /// <summary>
         /// Returns the average of all values except the maximum and the minimum.
         /// </summary>
         public static TimeSpan AverageWithoutExtremes(IEnumerable<TimeSpan> times)

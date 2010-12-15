@@ -20,9 +20,8 @@ namespace AW2.Net.ConnectionUtils
         private TimeSpan _nextPingSend;
 
         private TimeSpan[] _pingTimes;
-        private TimeSpan[] _remoteGameTimeOffsets;
         private int[] _remoteFrameNumberOffsets;
-        private int _nextIndex; // indexes _pingTimes and _remoteGameTimeOffsets and _remoteFrameNumberOffsets
+        private int _nextIndex; // indexes _pingTimes and _remoteFrameNumberOffsets
 
         /// <summary>
         /// The connection whose ping this instance is measuring.
@@ -35,17 +34,12 @@ namespace AW2.Net.ConnectionUtils
         public TimeSpan PingTime { get { return AWMathHelper.AverageWithoutExtremes(_pingTimes); } }
 
         /// <summary>
-        /// What needs to be added to the remote game time to get local game time.
-        /// </summary>
-        public TimeSpan RemoteGameTimeOffset { get { return AWMathHelper.AverageWithoutExtremes(_remoteGameTimeOffsets); } }
-
-        /// <summary>
         /// What needs to be added to the current remote frame number to get the current local frame number.
         /// </summary>
-        public int RemoteFrameNumberOffset { get { return AWMathHelper.AverageWithoutExtremes(_remoteFrameNumberOffsets); } }
+        public int RemoteFrameNumberOffset { get { return PingTime.Divide(2).Frames(); } }
 
         /// <summary>
-        /// If true, ping time won't be updated. The old results will remaing unchanged.
+        /// If true, ping time won't be updated. The old results will remain unchanged.
         /// </summary>
         public bool IsMeasuringFreezed { get; set; }
 
@@ -53,7 +47,6 @@ namespace AW2.Net.ConnectionUtils
         {
             BaseConnection = baseConnection;
             _pingTimes = new TimeSpan[PING_AVERAGED_COUNT];
-            _remoteGameTimeOffsets = new TimeSpan[PING_AVERAGED_COUNT];
             _remoteFrameNumberOffsets = new int[PING_AVERAGED_COUNT];
         }
 
@@ -90,14 +83,10 @@ namespace AW2.Net.ConnectionUtils
             if (pongReceive == null || IsMeasuringFreezed) return;
             var pingTime = now - pongReceive.Timestamp;
             _pingTimes[_nextIndex] = pingTime;
-            _remoteGameTimeOffsets[_nextIndex] =
-                AssaultWingCore.Instance.DataEngine.ArenaTotalTime
-                - pongReceive.TotalGameTimeOnReply
-                - pingTime.Divide(2);
-            _remoteFrameNumberOffsets[_nextIndex] =
-                AssaultWingCore.Instance.DataEngine.ArenaFrameCount
-                - pongReceive.FrameNumberOnReply
-                - (int)Math.Round(pingTime.Divide(2).Divide(AssaultWingCore.Instance.TargetElapsedTime));
+            var pongDelay = pingTime.Divide(2);
+            var localFrameCountNow = AssaultWingCore.Instance.DataEngine.ArenaFrameCount;
+            var remoteFrameCountNow = pongReceive.FrameNumberOnReply + pongDelay.Frames();
+            _remoteFrameNumberOffsets[_nextIndex] = localFrameCountNow - remoteFrameCountNow;
             _nextIndex = (_nextIndex + 1) % _pingTimes.Length;
         }
     }

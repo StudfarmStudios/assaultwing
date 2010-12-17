@@ -181,8 +181,7 @@
     <Compile Include="Net\Messages\GobCreationMessage.cs" />
     <Compile Include="Net\Messages\GobDeletionMessage.cs" />
     <Compile Include="Net\Messages\GobUpdateMessage.cs" />
-    <Compile Include="Net\Messages\JoinGameReply.cs" />
-    <Compile Include="Net\Messages\JoinGameRequest.cs" />
+    <Compile Include="Net\Messages\GameServerHandshakeRequest.cs" />
     <Compile Include="Net\Messages\PingReplyMessage.cs" />
     <Compile Include="Net\Messages\PingRequestMessage.cs" />
     <Compile Include="Net\Messages\PlayerControlsMessage.cs" />

@@ -113,15 +113,14 @@ namespace AW2.Menu
                 _menuEngine.Game.StopClient("Failed to connect to server");
                 return;
             }
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(
-                () => _menuEngine.ActivateComponent(MenuComponentType.Equip),
-                HandleStartGameMessage));
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(HandleStartGameMessage));
 
             // HACK: Force one local player.
             _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
 
-            var joinRequest = new JoinGameRequest { CanonicalStrings = CanonicalString.CanonicalForms };
+            var joinRequest = new GameServerHandshakeRequest { CanonicalStrings = CanonicalString.CanonicalForms };
             _menuEngine.Game.NetworkEngine.GameServerConnection.Send(joinRequest);
+            _menuEngine.ActivateComponent(MenuComponentType.Equip);
         }
 
         private void HandleStartGameMessage(StartGameMessage mess)

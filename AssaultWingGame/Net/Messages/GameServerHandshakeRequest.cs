@@ -10,7 +10,7 @@ namespace AW2.Net.Messages
     /// about the version of Assault Wing the client is running.
     /// </summary>
     [MessageType(0x20, false)]
-    public class JoinGameRequest : Message
+    public class GameServerHandshakeRequest : Message
     {
         /// <summary>
         /// The list of canonical strings on the game client.
@@ -19,7 +19,7 @@ namespace AW2.Net.Messages
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
-            // Join game request structure:
+            // Join server request structure:
             // int: number of canonical strings, K
             // repeat K - 1 (all but the zero-indexed canonical string)
             //   length-prefixed string: string value

@@ -40,7 +40,7 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PingMessage>(false, IMessageHandler.SourceType.Management, HandlePingMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action joinGameReplyAction, Action<StartGameMessage> handleStartGameMessage)
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action<StartGameMessage> handleStartGameMessage)
         {
             yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, handleStartGameMessage);
@@ -48,7 +48,6 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new MessageHandler<GameSettingsRequest>(false, IMessageHandler.SourceType.Server, HandleGameSettingsRequest);
-            yield return new MessageHandler<JoinGameReply>(true, IMessageHandler.SourceType.Server, mess => joinGameReplyAction());
         }
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
@@ -65,7 +64,7 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
         {
-            yield return new MessageHandler<JoinGameRequest>(false, IMessageHandler.SourceType.Client, HandleJoinGameRequest);
+            yield return new MessageHandler<GameServerHandshakeRequest>(false, IMessageHandler.SourceType.Client, HandleGameServerHandshakeRequest);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Client, HandlePlayerSettingsRequestOnServer);
         }
 
@@ -202,7 +201,7 @@ namespace AW2.Net.MessageHandling
             mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
         }
 
-        private static void HandleJoinGameRequest(JoinGameRequest mess)
+        private static void HandleGameServerHandshakeRequest(GameServerHandshakeRequest mess)
         {
             string clientDiff, serverDiff;
             int diffIndex;
@@ -220,11 +219,6 @@ namespace AW2.Net.MessageHandling
                 };
                 AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
                 AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
-            }
-            else
-            {
-                var reply = new JoinGameReply();
-                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
             }
         }
 

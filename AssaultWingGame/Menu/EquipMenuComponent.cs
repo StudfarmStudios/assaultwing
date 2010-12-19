@@ -490,6 +490,7 @@ namespace AW2.Menu
         private void BackOutFromMenu()
         {
             ResetEquipMenu();
+            MenuEngine.Game.ShowMenu();
             MenuEngine.ActivateComponent(MenuComponentType.Main);
         }
 

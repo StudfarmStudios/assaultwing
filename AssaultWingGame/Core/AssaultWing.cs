@@ -116,7 +116,6 @@ namespace AW2.Core
         /// </summary>
         public void ShowMenu()
         {
-            Log.Write("Entering menus");
             DeactivateAllMessageHandlers();
             DataEngine.ClearGameState();
             MenuEngine.Activate();

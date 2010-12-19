@@ -31,6 +31,7 @@ namespace AW2.Core.GameComponents
         private void EndIntro()
         {
             _introVideo.Stop();
+            Log.Write("Entering menus");
             Game.ShowMenu();
         }
 
@@ -60,8 +61,7 @@ namespace AW2.Core.GameComponents
 
         public override void Update()
         {
-            if (_skipControl.Pulse) EndIntro();
-            if (_introVideo.IsFinished) EndIntro();
+            if (_skipControl.Pulse || _introVideo.IsFinished) EndIntro();
         }
 
         public override void Draw()

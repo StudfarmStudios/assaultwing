@@ -172,19 +172,12 @@ namespace AW2.Core
             DataEngine.Spectators.Add(player2);
 
             DataEngine.GameplayMode = new GameplayMode();
-            DataEngine.GameplayMode.ShipTypes = new string[] { "Windlord", "Bugger", "Plissken" };
-            DataEngine.GameplayMode.ExtraDeviceTypes = new string[] { "reverse thruster", "blink" };
-            DataEngine.GameplayMode.Weapon2Types = new string[] { "bazooka", "rockets", "mines" };
+            DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
+            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "reverse thruster", "blink" };
+            DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "mines" };
 
             GameState = GameState.Intro;
             base.BeginRun();
-        }
-
-        public void PrepareArena()
-        {
-            if (NetworkMode == NetworkMode.Server)
-                NetworkEngine.SendToGameClients(new StartGameMessage { ArenaToPlay = SelectedArenaName });
-            base.PrepareArena(SelectedArenaName);
         }
 
         public void StartArenaButStayInMenu()
@@ -595,6 +588,22 @@ namespace AW2.Core
                 foreach (PlayerControlType controlType in Enum.GetValues(typeof(PlayerControlType)))
                     message.SetControlState(controlType, player.Controls[controlType].State);
                 NetworkEngine.GameServerConnection.Send(message);
+            }
+        }
+
+        public void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, IEnumerable<Connection> connections)
+        {
+            foreach (var player in MenuEngine.Game.DataEngine.Players.Where(sendCriteria))
+            {
+                var mess = new PlayerSettingsRequest
+                {
+                    IsRegisteredToServer = player.ServerRegistration == Spectator.ServerRegistrationType.Yes,
+                    PlayerID = player.ID
+                };
+                mess.Write(player, SerializationModeFlags.ConstantData);
+                if (player.ServerRegistration == Spectator.ServerRegistrationType.No)
+                    player.ServerRegistration = Spectator.ServerRegistrationType.Requested;
+                foreach (var conn in connections) conn.Send(mess);
             }
         }
     }

@@ -197,9 +197,10 @@ namespace AW2.Game.Gobs
             {
                 if (mode != SerializationModeFlags.None)
                 {
-                    var indices = (mode & SerializationModeFlags.VaryingData) != 0
-                        ? _removedTriangleIndicesToSerialize
-                        : _removedTriangleIndicesOfAllTime;
+                    if ((mode & SerializationModeFlags.ConstantData) != 0) mode = mode; // DEBUG !!!
+                    var indices = (mode & SerializationModeFlags.ConstantData) != 0
+                        ? _removedTriangleIndicesOfAllTime
+                        : _removedTriangleIndicesToSerialize;
                     writer.Write((short)indices.Count());
                     foreach (short index in indices) writer.Write((short)index);
                     if ((mode & SerializationModeFlags.VaryingData) != 0) _removedTriangleIndicesToSerialize.Clear();
@@ -242,7 +243,6 @@ namespace AW2.Game.Gobs
             if (Game.NetworkMode == NetworkMode.Client) return;
             var posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), _indexMap.Remove);
-            _removedTriangleIndices.AddRange(_removedTriangleIndices);
             if (Game.NetworkMode == NetworkMode.Server && _removedTriangleIndices.Any())
             {
                 _removedTriangleIndicesToSerialize.AddRange(_removedTriangleIndices);

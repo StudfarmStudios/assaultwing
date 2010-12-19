@@ -372,6 +372,7 @@ namespace AW2.Net
                 _connectionAttemptListener.Update();
             HandleNewConnections();
             HandleUDPMessages();
+            HandleClientState();
             foreach (var conn in AllConnections) conn.UpdatePingInfo();
             foreach (var handler in MessageHandlers.ToList()) // enumerate over a copy to allow adding MessageHandlers during enumeration
                 if (!handler.Disposed) handler.HandleMessages();
@@ -379,18 +380,6 @@ namespace AW2.Net
             HandleErrors();
             RemoveClosedConnections();
             PurgeUnhandledMessages();
-        }
-
-        private void UpdateClientState() // TODO: Call this method in Update()
-        {
-            if (Game.NetworkMode != NetworkMode.Server) return;
-            var isPlayingArena = Game.DataEngine.Arena != null;
-            var currentArenaName = Game.DataEngine.Arena != null ? null : Game.DataEngine.Arena.Info.Name.Value;
-            foreach (var conn in GameClientConnections.Where(c => c.IsPlayingArena != isPlayingArena))
-            {
-                if (conn.IsPlayingArena && !isPlayingArena) throw new ApplicationException("Not implemented: Server stopped arena and client should too");
-                throw new ApplicationException("Not implemented: Client should join server in the new arena. Serialize all gobs.");
-            }
         }
 
         public override void Dispose()
@@ -559,6 +548,26 @@ namespace AW2.Net
             // Compare IP address from TCP end point because UDP end point may still
             // be unknown. IP address should be the same in both end points.
             return AllConnections.FirstOrDefault(conn => conn.RemoteIPAddress.Equals(remoteUDPEndPoint.Address));
+        }
+
+        private void HandleClientState()
+        {
+            if (Game.NetworkMode != NetworkMode.Server) return;
+            var serverIsPlayingArena = Game.DataEngine.Arena != null;
+            foreach (var conn in GameClientConnections)
+            {
+                var clientIsPlayingArena = conn.ConnectionStatus.IsPlayingArena;
+                if (clientIsPlayingArena == serverIsPlayingArena) continue;
+                if (clientIsPlayingArena && !serverIsPlayingArena) throw new ApplicationException("Not implemented: Server stopped arena and client should too");
+                var arenaName = _game.SelectedArenaName;
+                _game.SendPlayerSettingsToRemote(p => true, new[] { conn });
+                conn.Send(new StartGameMessage { ArenaToPlay = arenaName });
+                var gobCreationMessage = new GobCreationMessage();
+                foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))
+                     gobCreationMessage.AddGob(gob);
+                conn.Send(gobCreationMessage);
+                conn.ConnectionStatus.CurrentArenaName = arenaName;
+            }
         }
 
         private void TerminateThread(SuspendableThread thread)

@@ -164,13 +164,15 @@ namespace AW2.Game
         public void InitializeFromArena(string arenaFilename, bool initializeForPlaying)
         {
             if (Arena != null) Arena.Dispose();
-            Arena = Arena.FromFile(Game, arenaFilename);
-            if (NewArena != null) NewArena(Arena);
-            if (initializeForPlaying) Arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, Arena.BinFilename));
-            Arena.IsForPlaying = initializeForPlaying;
-            Game.LoadArenaContent(Arena);
-            _progressBar.SetSubtaskCount(Arena.Gobs.OfType<Wall>().Count());
-            Arena.Reset(); // this usually takes several seconds
+            Arena = null;
+            var newArena = Arena.FromFile(Game, arenaFilename);
+            if (NewArena != null) NewArena(newArena);
+            if (initializeForPlaying) newArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, newArena.BinFilename));
+            newArena.IsForPlaying = initializeForPlaying;
+            Game.LoadArenaContent(newArena);
+            _progressBar.SetSubtaskCount(newArena.Gobs.OfType<Wall>().Count());
+            newArena.Reset(); // this usually takes several seconds
+            Arena = newArena;
         }
 
         #endregion arenas

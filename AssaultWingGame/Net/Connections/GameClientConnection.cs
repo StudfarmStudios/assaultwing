@@ -1,5 +1,7 @@
 ﻿using System.Net.Sockets;
 using AW2.Core;
+using AW2.Net.ConnectionUtils;
+using AW2.Net.Messages;
 
 namespace AW2.Net.Connections
 {
@@ -8,8 +10,7 @@ namespace AW2.Net.Connections
     /// </summary>
     public class GameClientConnection : Connection
     {
-        public bool IsPlayingArena { get { return string.IsNullOrEmpty(PlayingArenaName); } }
-        public string PlayingArenaName { get; set; }
+        public GameClientStatus ConnectionStatus { get; set; }
 
         /// <summary>
         /// Creates a new connection to a game client.
@@ -20,6 +21,7 @@ namespace AW2.Net.Connections
             : base(game, tcpSocket)
         {
             Name = "Game Client Connection " + ID;
+            ConnectionStatus = new GameClientStatus();
         }
 
         protected override void DisposeImpl(bool error)

@@ -79,6 +79,8 @@ namespace AW2.Core
         /// </summary>
         public bool AllowDialogs { get; set; }
 
+        public bool IsLoadingArena { get { return DataEngine.ProgressBar.TaskRunning; } }
+
         public Window Window { get; set; }
 
         #endregion AssaultWing properties
@@ -267,7 +269,7 @@ namespace AW2.Core
         /// This method usually takes a long time to run. It's therefore a good
         /// idea to make it run in a background thread.
         /// </summary>
-        protected void PrepareArena(string arenaName)
+        public void PrepareArena(string arenaName)
         {
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();

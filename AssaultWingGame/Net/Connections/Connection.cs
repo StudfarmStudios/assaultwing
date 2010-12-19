@@ -93,7 +93,7 @@ namespace AW2.Net.Connections
         /// Has the connection handshake been completed. Sending UDP messages is not possible before the
         /// handshaking is complete.
         /// </summary>
-        public bool IsHandshaked
+        public bool IsHandshaken
         {
             get
             {
@@ -203,7 +203,7 @@ namespace AW2.Net.Connections
         /// </summary>
         public virtual void UpdatePingInfo()
         {
-            if (IsHandshaked) PingInfo.Update();
+            if (IsHandshaken) PingInfo.Update();
         }
 
         /// <summary>
@@ -384,7 +384,7 @@ namespace AW2.Net.Connections
         {
             // Cannot send messages via UDP before the connection is handshaked. But hey,
             // UDP is an unreliable protocol, so let's just dump the message silently in that case.
-            if (!IsHandshaked) return;
+            if (!IsHandshaken) return;
             Game.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
         }
 
@@ -396,7 +396,7 @@ namespace AW2.Net.Connections
         {
             // HACK: All we want is, on the game server, to read the sender's (which is a game client)
             // UDP end point from the message. We happen to know that PingRequestMessage is sent via UDP.
-            if (!IsHandshaked && mess is PingRequestMessage)
+            if (!IsHandshaken && mess is PingRequestMessage)
                 RemoteUDPEndPoint = remoteEndPoint;
             return false;
         }
@@ -407,6 +407,7 @@ namespace AW2.Net.Connections
         /// </summary>
         private void TryInitializeRemoteUDPEndPoint()
         {
+            if (Game.NetworkMode != NetworkMode.Server) return;
             if (RemoteUDPEndPoint != null) throw new InvalidOperationException("RemoteUDPEndPoint already initialized");
             var matchingEndPoints = Game.NetworkEngine.ClientUDPEndPointPool
                 .FirstOrDefault(endPoints => endPoints.Any(ep => ep.Address.Equals(RemoteIPAddress)));

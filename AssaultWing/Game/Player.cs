@@ -514,9 +514,9 @@ namespace AW2.Game
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                ShipName = new CanonicalString(reader.ReadInt32());
-                Weapon2Name = new CanonicalString(reader.ReadInt32());
-                ExtraDeviceName = new CanonicalString(reader.ReadInt32());
+                ShipName = reader.ReadCanonicalString();
+                Weapon2Name = reader.ReadCanonicalString();
+                ExtraDeviceName = reader.ReadCanonicalString();
                 PlayerColor = reader.ReadColor();
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
@@ -527,7 +527,7 @@ namespace AW2.Game
                 int effectNameCount = reader.ReadByte();
                 PostprocessEffectNames.Clear();
                 for (int i = 0; i < effectNameCount; ++i)
-                    PostprocessEffectNames.Add(new CanonicalString(reader.ReadInt32()));
+                    PostprocessEffectNames.Add(reader.ReadCanonicalString());
                 BonusActions.Deserialize(reader, mode, framesAgo);
             }
         }

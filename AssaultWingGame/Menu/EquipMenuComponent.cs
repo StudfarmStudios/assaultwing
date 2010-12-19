@@ -279,12 +279,12 @@ namespace AW2.Menu
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Client:
-                    SendPlayerSettingsToRemote(
+                    MenuEngine.Game.SendPlayerSettingsToRemote(
                         p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested,
-                        new Connection[] { MenuEngine.Game.NetworkEngine.GameServerConnection });
+                        new[] { MenuEngine.Game.NetworkEngine.GameServerConnection });
                     break;
                 case NetworkMode.Server:
-                    SendPlayerSettingsToRemote(
+                    MenuEngine.Game.SendPlayerSettingsToRemote(
                         p => true,
                         MenuEngine.Game.NetworkEngine.GameClientConnections);
                     SendGameSettingsToRemote(MenuEngine.Game.NetworkEngine.GameClientConnections);
@@ -303,7 +303,9 @@ namespace AW2.Menu
             if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
                 AssaultWingCore.Instance.StartArena(); // arena prepared in MainMenuItemCollections.HandleStartGameMessage
             else
-                MenuEngine.ProgressBarAction(MenuEngine.Game.PrepareArena, AssaultWingCore.Instance.StartArena);
+                MenuEngine.ProgressBarAction(
+                    () => MenuEngine.Game.PrepareArena(MenuEngine.Game.SelectedArenaName),
+                    AssaultWingCore.Instance.StartArena);
         }
 
         private void ResetPlayerList()
@@ -433,22 +435,6 @@ namespace AW2.Menu
                     if (selectionChange != 0)
                         _equipmentSelectors[playerI, (int)_currentItems[playerI]].CurrentValue += selectionChange;
                 }
-            }
-        }
-
-        private void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, IEnumerable<Connection> connections)
-        {
-            foreach (var player in MenuEngine.Game.DataEngine.Players.Where(sendCriteria))
-            {
-                var mess = new PlayerSettingsRequest
-                {
-                    IsRegisteredToServer = player.ServerRegistration == Spectator.ServerRegistrationType.Yes,
-                    PlayerID = player.ID
-                };
-                mess.Write(player, SerializationModeFlags.ConstantData);
-                if (player.ServerRegistration == Spectator.ServerRegistrationType.No)
-                    player.ServerRegistration = Spectator.ServerRegistrationType.Requested;
-                foreach (var conn in connections) conn.Send(mess);
             }
         }
 

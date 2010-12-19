@@ -126,13 +126,16 @@ namespace AW2.Menu
         private void HandleStartGameMessage(StartGameMessage mess)
         {
             var game = _menuEngine.Game;
+            if (game.IsLoadingArena) return;
             game.SelectedArenaName = mess.ArenaToPlay;
-            _menuEngine.ProgressBarAction(game.PrepareArena, () =>
-            {
-                MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleGobCreationMessage));
-                game.IsClientAllowedToStartArena = true;
-                _menuEngine.Game.StartArenaButStayInMenu();
-            });
+            _menuEngine.ProgressBarAction(
+                () => game.PrepareArena(game.SelectedArenaName),
+                () =>
+                {
+                    MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleGobCreationMessage));
+                    game.IsClientAllowedToStartArena = true;
+                    _menuEngine.Game.StartArenaButStayInMenu();
+                });
         }
     }
 }

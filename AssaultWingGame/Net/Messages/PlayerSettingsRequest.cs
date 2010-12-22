@@ -17,10 +17,9 @@ namespace AW2.Net.Messages
         public bool IsRegisteredToServer { get; set; }
 
         /// <summary>
-        /// Identifier of the player to update.
+        /// If <see cref="IsRegisteredToServer"/> is true, local identifier of the player to update.
+        /// If <see cref="IsRegisteredToServer"/> is false, global identifier of the player to update
         /// </summary>
-        /// The ID is a client's local ID unless the player has been registered to the server
-        /// after which the ID is the server's local ID.
         public int PlayerID { get; set; }
 
         protected override void Serialize(NetworkBinaryWriter writer)

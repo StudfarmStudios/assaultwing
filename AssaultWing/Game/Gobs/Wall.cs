@@ -197,7 +197,6 @@ namespace AW2.Game.Gobs
             {
                 if (mode != SerializationModeFlags.None)
                 {
-                    if ((mode & SerializationModeFlags.ConstantData) != 0) mode = mode; // DEBUG !!!
                     var indices = (mode & SerializationModeFlags.ConstantData) != 0
                         ? _removedTriangleIndicesOfAllTime
                         : _removedTriangleIndicesToSerialize;

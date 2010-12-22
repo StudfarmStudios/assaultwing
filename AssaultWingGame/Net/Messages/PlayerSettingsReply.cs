@@ -11,33 +11,33 @@ namespace AW2.Net.Messages
     public class PlayerSettingsReply : Message
     {
         /// <summary>
-        /// The player's old identifier on the client.
+        /// Local identifier of the player on the game client.
         /// </summary>
-        public int OldPlayerID { get; set; }
+        public int PlayerLocalID { get; set; }
 
         /// <summary>
-        /// The player's new identifier on the server.
+        /// New (non-local) identifier of the player.
         /// </summary>
-        public int NewPlayerID { get; set; }
+        public int PlayerID { get; set; }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             // Player update reply structure:
-            // byte: old player identifier
-            // byte: new player identifier
-            writer.Write((byte)OldPlayerID);
-            writer.Write((byte)NewPlayerID);
+            // byte: local player identifier
+            // byte: non-local player identifier
+            writer.Write((byte)PlayerLocalID);
+            writer.Write((byte)PlayerID);
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
-            OldPlayerID = reader.ReadByte();
-            NewPlayerID = reader.ReadByte();
+            PlayerLocalID = reader.ReadByte();
+            PlayerID = reader.ReadByte();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [PlayerID " + OldPlayerID + " -> " + NewPlayerID + "]";
+            return base.ToString() + " [local " + PlayerLocalID + " -> global " + PlayerID + "]";
         }
     }
 }

@@ -129,10 +129,10 @@ namespace AW2.Net.MessageHandling
 
         private static void HandlePlayerSettingsReply(PlayerSettingsReply mess)
         {
-            var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => ClientPlayerCriteria(plr, mess.OldPlayerID));
-            if (player == null) throw new ApplicationException("Cannot find unregistered local player with ID " + mess.OldPlayerID);
+            var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.LocalID == mess.PlayerLocalID);
+            if (player == null) throw new ApplicationException("Cannot find unregistered local player with local ID " + mess.PlayerLocalID);
             player.ServerRegistration = Spectator.ServerRegistrationType.Yes;
-            player.ID = mess.NewPlayerID;
+            player.ID = mess.PlayerID;
         }
 
         private static void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
@@ -229,10 +229,11 @@ namespace AW2.Net.MessageHandling
                 var newPlayer = CreateAndAddNewPlayer(mess);
                 var reply = new PlayerSettingsReply
                 {
-                    OldPlayerID = mess.PlayerID,
-                    NewPlayerID = newPlayer.ID
+                    PlayerLocalID = mess.PlayerID,
+                    PlayerID = newPlayer.ID
                 };
                 AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
+                AssaultWing.Instance.SendPlayerSettingsToGameClients(p => true);
             }
             else
             {
@@ -272,12 +273,6 @@ namespace AW2.Net.MessageHandling
         private static Player GetTempPlayer()
         {
             return new Player(null, "dummy", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new AW2.UI.PlayerControls());
-        }
-
-        private static bool ClientPlayerCriteria(Spectator spectator, int oldPlayerID)
-        {
-            return spectator.ServerRegistration == Spectator.ServerRegistrationType.Requested &&
-                spectator.ID == oldPlayerID;
         }
 
         private static Player CreateAndAddNewPlayer(PlayerSettingsRequest mess)

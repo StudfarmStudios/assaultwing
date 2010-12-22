@@ -279,14 +279,10 @@ namespace AW2.Menu
             switch (MenuEngine.Game.NetworkMode)
             {
                 case NetworkMode.Client:
-                    MenuEngine.Game.SendPlayerSettingsToRemote(
-                        p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested,
-                        new[] { MenuEngine.Game.NetworkEngine.GameServerConnection });
+                    MenuEngine.Game.SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
                     break;
                 case NetworkMode.Server:
-                    MenuEngine.Game.SendPlayerSettingsToRemote(
-                        p => true,
-                        MenuEngine.Game.NetworkEngine.GameClientConnections);
+                    MenuEngine.Game.SendPlayerSettingsToGameClients(p => true);
                     SendGameSettingsToRemote(MenuEngine.Game.NetworkEngine.GameClientConnections);
                     break;
             }

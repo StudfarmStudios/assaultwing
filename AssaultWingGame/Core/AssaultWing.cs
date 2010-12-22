@@ -591,15 +591,31 @@ namespace AW2.Core
             }
         }
 
-        public void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, IEnumerable<Connection> connections)
+        public void SendPlayerSettingsToGameServer(Func<Player, bool> sendCriteria)
+        {
+            Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest = plr => new PlayerSettingsRequest
+            {
+                IsRegisteredToServer = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes,
+                PlayerID = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes ? plr.ID : plr.LocalID,
+            };
+            SendPlayerSettingsToRemote(sendCriteria, newPlayerSettingsRequest, new[] { NetworkEngine.GameServerConnection });
+        }
+
+        public void SendPlayerSettingsToGameClients(Func<Player, bool> sendCriteria)
+        {
+            Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest = plr => new PlayerSettingsRequest
+            {
+                IsRegisteredToServer = true,
+                PlayerID = plr.ID,
+            };
+            SendPlayerSettingsToRemote(sendCriteria, newPlayerSettingsRequest, NetworkEngine.GameClientConnections);
+        }
+
+        private void SendPlayerSettingsToRemote(Func<Player, bool> sendCriteria, Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest, IEnumerable<Connection> connections)
         {
             foreach (var player in MenuEngine.Game.DataEngine.Players.Where(sendCriteria))
             {
-                var mess = new PlayerSettingsRequest
-                {
-                    IsRegisteredToServer = player.ServerRegistration == Spectator.ServerRegistrationType.Yes,
-                    PlayerID = player.ID
-                };
+                var mess = newPlayerSettingsRequest(player);
                 mess.Write(player, SerializationModeFlags.ConstantData);
                 if (player.ServerRegistration == Spectator.ServerRegistrationType.No)
                     player.ServerRegistration = Spectator.ServerRegistrationType.Requested;

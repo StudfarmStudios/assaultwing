@@ -15,6 +15,8 @@ namespace AW2.Game
     {
         public enum ServerRegistrationType { No, Requested, Yes };
 
+        private static int g_nextLocalID;
+
         /// <summary>
         /// Meaningful only for a client's local spectators.
         /// </summary>
@@ -24,9 +26,17 @@ namespace AW2.Game
 
         /// <summary>
         /// The player's unique identifier.
-        /// </summary>
         /// The identifier may change if a remote game server says so.
+        /// </summary>
         public int ID { get; set; }
+
+        /// <summary>
+        /// The player's unique identifier at a game client. Needed so that
+        /// a game server can change the <see cref="ID"/> of a player.
+        /// This identifier is set by the game client and not changed by the
+        /// game server.
+        /// </summary>
+        public int LocalID { get; set; }
 
         /// <summary>
         /// Identifier of the connection behind which this spectator lives,
@@ -98,6 +108,8 @@ namespace AW2.Game
         {
             if (Game.NetworkMode != AW2.Core.NetworkMode.Client) throw new InvalidOperationException("Not a client game instance");
             ServerRegistration = ServerRegistrationType.No;
+            LocalID = g_nextLocalID++;
+            ID = -1;
         }
 
         #region INetworkSerializable

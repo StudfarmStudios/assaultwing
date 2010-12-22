@@ -560,7 +560,7 @@ namespace AW2.Net
                 if (clientIsPlayingArena == serverIsPlayingArena) continue;
                 if (clientIsPlayingArena && !serverIsPlayingArena) throw new ApplicationException("Not implemented: Server stopped arena and client should too");
                 var arenaName = _game.SelectedArenaName;
-                _game.SendPlayerSettingsToRemote(p => true, new[] { conn });
+                _game.SendPlayerSettingsToGameClients(p => true);
                 conn.Send(new StartGameMessage { ArenaToPlay = arenaName });
                 var gobCreationMessage = new GobCreationMessage();
                 foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))

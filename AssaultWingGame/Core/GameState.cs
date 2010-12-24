@@ -16,9 +16,14 @@
         Intro,
 
         /// <summary>
-        /// The game is active.
+        /// The game is active and playing.
         /// </summary>
         Gameplay,
+
+        /// <summary>
+        /// The game is active but stopped.
+        /// </summary>
+        GameplayStopped,
 
         /// <summary>
         /// The menu is active.

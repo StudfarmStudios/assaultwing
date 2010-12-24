@@ -557,17 +557,28 @@ namespace AW2.Net
             foreach (var conn in GameClientConnections)
             {
                 var clientIsPlayingArena = conn.ConnectionStatus.IsPlayingArena;
-                if (clientIsPlayingArena == serverIsPlayingArena) continue;
-                if (clientIsPlayingArena && !serverIsPlayingArena) throw new ApplicationException("Not implemented: Server stopped arena and client should too");
-                var arenaName = _game.SelectedArenaName;
-                _game.SendPlayerSettingsToGameClients(p => true);
-                conn.Send(new StartGameMessage { ArenaToPlay = arenaName });
-                var gobCreationMessage = new GobCreationMessage();
-                foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))
-                     gobCreationMessage.AddGob(gob);
-                conn.Send(gobCreationMessage);
-                conn.ConnectionStatus.CurrentArenaName = arenaName;
+                if (!clientIsPlayingArena && serverIsPlayingArena)
+                    MakeClientStartArena(conn);
+                else if (clientIsPlayingArena && !serverIsPlayingArena)
+                    MakeClientStopArena(conn);
             }
+        }
+
+        private void MakeClientStartArena(GameClientConnection conn)
+        {
+            var arenaName = _game.SelectedArenaName;
+            _game.SendPlayerSettingsToGameClients(p => true);
+            conn.Send(new StartGameMessage { ArenaToPlay = arenaName });
+            var gobCreationMessage = new GobCreationMessage();
+            foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))
+                gobCreationMessage.AddGob(gob);
+            conn.Send(gobCreationMessage);
+            conn.ConnectionStatus.CurrentArenaName = arenaName;
+        }
+
+        private void MakeClientStopArena(GameClientConnection conn)
+        {
+            conn.Send(new ArenaFinishMessage());
         }
 
         private void TerminateThread(SuspendableThread thread)

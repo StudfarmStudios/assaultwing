@@ -116,7 +116,6 @@ namespace AW2.Core
         /// </summary>
         public void ShowMenu()
         {
-            DeactivateAllMessageHandlers();
             DataEngine.ClearGameState();
             MenuEngine.Activate();
             GameState = GameState.Menu;
@@ -189,6 +188,8 @@ namespace AW2.Core
 
         public override void StartArena()
         {
+            Log.Write("Saving settings to file");
+            Settings.ToFile();
             if (NetworkMode == NetworkMode.Server)
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
             if (GameState != Core.GameState.GameAndMenu) base.StartArena();
@@ -199,9 +200,7 @@ namespace AW2.Core
         public override void FinishArena()
         {
             base.FinishArena();
-            DeactivateAllMessageHandlers();
             ShowDialog(new GameOverOverlayDialogData(this));
-            if (NetworkMode == NetworkMode.Server) NetworkEngine.SendToGameClients(new ArenaFinishMessage());
         }
 
         /// <summary>
@@ -237,7 +236,7 @@ namespace AW2.Core
         {
             if (NetworkMode != NetworkMode.Server)
                 throw new InvalidOperationException("Cannot stop server while in mode " + NetworkMode);
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+            DeactivateAllMessageHandlers();
             NetworkEngine.StopServer();
             NetworkMode = NetworkMode.Standalone;
             DataEngine.RemoveRemoteSpectators();
@@ -268,9 +267,11 @@ namespace AW2.Core
         {
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
+            DeactivateAllMessageHandlers();
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
             DataEngine.RemoveRemoteSpectators();
+            GameState = GameState.GameplayStopped; // game cannot continue because it's initialized only for a client
             if (errorOrNull != null)
             {
                 var dialogData = new CustomOverlayDialogData(this,
@@ -319,13 +320,15 @@ namespace AW2.Core
                     IntroEngine.BeginIntro();
                     break;
                 case GameState.Gameplay:
-                    Log.Write("Saving settings to file");
-                    Settings.ToFile();
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PreFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     GraphicsEngine.Visible = true;
                     if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
+                    break;
+                case GameState.GameplayStopped:
+                    GraphicsEngine.Visible = true;
+                    if (NetworkMode != NetworkMode.Standalone) PlayerChat.Visible = true;
                     break;
                 case GameState.GameAndMenu:
                     LogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
@@ -361,6 +364,10 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = false;
                     GraphicsEngine.Visible = false;
                     PlayerChat.Enabled = PlayerChat.Visible = false;
+                    break;
+                case GameState.GameplayStopped:
+                    GraphicsEngine.Visible = false;
+                    PlayerChat.Visible = false;
                     break;
                 case GameState.GameAndMenu:
                     LogicEngine.Enabled = false;
@@ -427,7 +434,7 @@ namespace AW2.Core
             }
 
             // Cheat codes during dialog.
-            if (GameState == GameState.Gameplay && OverlayDialog.Enabled)
+            if (OverlayDialog.Enabled && (GameState == GameState.Gameplay || GameState == GameState.GameplayStopped))
             {
                 var keys = Keyboard.GetState();
                 if (keys.IsKeyDown(Keys.K) && keys.IsKeyDown(Keys.P))

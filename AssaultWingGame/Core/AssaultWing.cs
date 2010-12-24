@@ -116,6 +116,7 @@ namespace AW2.Core
         /// </summary>
         public void ShowMenu()
         {
+            CutNetworkConnections();
             DataEngine.ClearGameState();
             MenuEngine.Activate();
             GameState = GameState.Menu;

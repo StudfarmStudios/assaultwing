@@ -43,7 +43,6 @@ namespace AW2.Menu
                     InitializeControlCallbacks();
 
                     SetItems(_itemCollections.StartItems);
-                    MenuEngine.Game.CutNetworkConnections();
                 }
             }
         }

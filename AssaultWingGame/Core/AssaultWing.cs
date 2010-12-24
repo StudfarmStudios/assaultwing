@@ -271,7 +271,7 @@ namespace AW2.Core
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
             DataEngine.RemoveRemoteSpectators();
-            GameState = GameState.GameplayStopped; // game cannot continue because it's initialized only for a client
+            GameState = GameState.GameplayStopped; // gameplay cannot continue because it's initialized only for a client
             if (errorOrNull != null)
             {
                 var dialogData = new CustomOverlayDialogData(this,

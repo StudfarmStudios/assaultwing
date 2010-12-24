@@ -579,6 +579,7 @@ namespace AW2.Net
         private void MakeClientStopArena(GameClientConnection conn)
         {
             conn.Send(new ArenaFinishMessage());
+            conn.ConnectionStatus.CurrentArenaName = null;
         }
 
         private void TerminateThread(SuspendableThread thread)

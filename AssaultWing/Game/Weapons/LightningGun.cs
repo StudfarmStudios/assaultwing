@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.Gobs;
 using AW2.Game.GobUtils;
@@ -16,12 +17,12 @@ namespace AW2.Game.Weapons
         /// Maximum distance the lightning can carry, in meters.
         /// </summary>
         [TypeParameter]
-        private float range;
+        private float _range;
 
         /// This constructor is only for serialisation.
         public LightningGun()
         {
-            range = 500;
+            _range = 500;
         }
 
         public LightningGun(CanonicalString typeName)
@@ -31,12 +32,14 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
+            // Prefer targets that are straight ahead and targets that are close
             var targets =
                 from gob in Arena.Gobs.GameplayLayer.Gobs
-                where gob.IsDamageable && !gob.Disabled && gob != Owner
-                let distanceSquared = Vector2.DistanceSquared(gob.Pos, Owner.Pos)
-                where distanceSquared <= range * range
-                orderby distanceSquared ascending
+                where gob.IsDamageable && !gob.Disabled && gob.Owner != Owner.Owner
+                let relativePos = (gob.Pos - Owner.Pos).Rotate(-Owner.Rotation)
+                let distanceSquared = relativePos.LengthSquared()
+                where distanceSquared <= _range * _range && relativePos.X >= 0
+                orderby relativePos.X + 5 * Math.Abs(relativePos.Y) ascending
                 select gob;
             FireAtTarget(targets.FirstOrDefault());
         }

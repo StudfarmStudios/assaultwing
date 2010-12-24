@@ -139,8 +139,6 @@ namespace AW2.Menu
                 if (value)
                 {
                     _readyPressed = false;
-                    MenuEngine.IsProgressBarVisible = false;
-                    MenuEngine.IsHelpTextVisible = true;
                     CreateSelectors();
                 }
             }

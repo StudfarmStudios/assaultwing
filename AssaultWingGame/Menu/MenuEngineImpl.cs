@@ -32,7 +32,7 @@ namespace AW2.Menu
         private MenuComponentType _activeComponent;
         private MenuComponent[] _components;
         private bool _activeComponentActivatedOnce, _activeComponentSoundPlayedOnce;
-        private bool _showHelpText, _showProgressBar;
+        private bool _showProgressBar;
         private string _helpText;
         private Action _finishAction; // what to do when progress bar finishes
         private Vector2 _view; // center of menu view in menu system coordinates
@@ -59,7 +59,7 @@ namespace AW2.Menu
         /// Is the help text visible.
         /// </summary>
         /// <seealso cref="HelpText"/>
-        public bool IsHelpTextVisible { get { return _showHelpText; } set { _showHelpText = value; } }
+        public bool IsHelpTextVisible { get; set; }
 
         /// <summary>
         /// The help text. Assigning <c>null</c> will restore the default help text.
@@ -126,6 +126,7 @@ namespace AW2.Menu
             // The components are created in Initialize() when other resources are ready.
 
             HelpText = null; // initialises helpText to default value
+            IsHelpTextVisible = true;
         }
 
         public float GetCursorFade()
@@ -269,8 +270,6 @@ namespace AW2.Menu
             {
                 _activeComponentActivatedOnce = true;
                 _components[(int)_activeComponent].Active = true;
-                IsProgressBarVisible = false;
-                IsHelpTextVisible = true;
             }
             if (!_activeComponentSoundPlayedOnce && Vector2.Distance(_view, _viewTarget) < 1)
             {
@@ -381,7 +380,7 @@ namespace AW2.Menu
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _spriteBatch.DrawString(_smallFont, "4th Milestone 2010-05-15",
                 new Vector2(10, ViewportHeight - _smallFont.LineSpacing), Color.White);
-            if (_showHelpText)
+            if (IsHelpTextVisible)
             {
                 var helpTextPos = new Vector2(
                     (int)(((float)ViewportWidth - _smallFont.MeasureString(_helpText).X) / 2),

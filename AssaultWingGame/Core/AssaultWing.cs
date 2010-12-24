@@ -518,10 +518,15 @@ namespace AW2.Core
                 if (player != null) player.NewMessage += message =>
                 {
                     if (player.IsRemote)
-                    {
-                        var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Color = message.TextColor, Text = message.Text };
-                        NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
-                    }
+                        try
+                        {
+                            var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Color = message.TextColor, Text = message.Text };
+                            NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            // The connection of the player doesn't exist any more. Just don't send the message then.
+                        }
                 };
             }
         }

@@ -193,7 +193,7 @@ namespace AW2.Game.Gobs
             }
             Alpha = alphaCurve.Evaluate(AgeInGameSeconds);
             if (AgeInGameSeconds >= alphaCurve.Keys.Last().Position)
-                Die(new DeathCause());
+                Die();
         }
 
         public override void Draw(Matrix view, Matrix projection)

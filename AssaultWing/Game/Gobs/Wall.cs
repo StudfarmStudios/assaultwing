@@ -136,7 +136,7 @@ namespace AW2.Game.Gobs
             base.Update();
             foreach (int index in _removedTriangleIndices) RemoveTriangle(index);
             _removedTriangleIndices.Clear();
-            if (TriangleCount == 0) Die(new DeathCause());
+            if (TriangleCount == 0) Die();
         }
 
         public override void Draw(Matrix view, Matrix projection)

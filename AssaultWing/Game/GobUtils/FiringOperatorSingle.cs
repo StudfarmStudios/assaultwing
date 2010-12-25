@@ -46,7 +46,7 @@ namespace AW2.Game.GobUtils
                 Device.OwnerHandle != ShipDevice.OwnerHandleType.PrimaryWeapon)
             {
                 if (CanFire && !_previousCanFire)
-                    Device.PlayerOwner.SendMessage(Device.TypeName + " ready to use", Player.PLAYER_STATUS_COLOR);
+                    Device.PlayerOwner.SendMessage(new PlayerMessage(Device.TypeName + " ready to use", Player.PLAYER_STATUS_COLOR));
                 _previousCanFire = CanFire;
             }
         }

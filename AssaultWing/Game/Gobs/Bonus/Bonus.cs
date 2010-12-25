@@ -74,7 +74,7 @@ namespace AW2.Game.Gobs.Bonus
         {
             base.Update();
             if (deathTime <= Arena.TotalTime)
-                Die(new DeathCause());
+                Die();
         }
 
         #endregion Methods related to gobs' functionality in the game world
@@ -88,7 +88,7 @@ namespace AW2.Game.Gobs.Bonus
                 if (Game.NetworkMode != NetworkMode.Client)
                     DoBonusAction(theirArea.Owner.Owner);
                 Game.SoundEngine.PlaySound("BonusCollection");
-                Die(new DeathCause());
+                Die();
             }
         }
 

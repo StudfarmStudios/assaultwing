@@ -287,13 +287,13 @@ namespace AW2.Game.Gobs
             // Die by our leader.
             if (Leader != null && (Leader.Dead || Leader.IsDisposed))
             {
-                Die(new DeathCause());
+                Die();
                 Leader = null;
             }
 
             // Die if we're finished.
             if (!IsKeptAlive && particles.Count == 0 && emitter.Finished)
-                Die(new DeathCause());
+                Die();
         }
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)

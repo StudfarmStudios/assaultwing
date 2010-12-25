@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using AW2.Core;
+using AW2.Helpers;
 
 namespace AW2.Game
 {
@@ -27,9 +30,24 @@ namespace AW2.Game
     /// <summary>
     /// Cause of death of a gob.
     /// </summary>
-    public struct DeathCause
+    public class DeathCause
     {
         public static readonly TimeSpan LAST_DAMAGER_KILL_TIMEWINDOW = TimeSpan.FromSeconds(6);
+        private static readonly string[] g_killPhrases = new[]
+        {
+            "{0} nailed {1}", "{0} put {1} to rest", "{0} did {1} in",  "{0} iced {1}",
+            "{0} put {1} on his knees", "{0} terminated {1}", "{0} crushed {1}", "{0} destroyed {1}",
+            "{0} ran over {1}", "{0} showed {1} how it's done", "{0} taught {1} a lesson",
+            "{0} made {1} appreciate life", "{0} survived, {1} didn't", "{0} stepped on {1}'s foot",
+        };
+        private static readonly string[] g_omgs = new[]
+        {
+            "OMG!", "W00T!", "WHOA!", "GROOVY!", "WICKED!", "AWESOME!", "INSANE!", "SLAMMIN'!",
+            "CRACKIN'!", "KINKY!", "JIGGY!", "NEAT!", "FAR OUT!", "SLICK!", "SMOKING!", "SOLID!",
+            "SPIFFY!", "CHICKY!", "COOL!", "L33T!",
+        };
+        private string _killPhrase;
+        private string _specialPhrase;
         private Gob _dead;
         private DeathCauseType _type;
         private Gob _other;
@@ -58,12 +76,12 @@ namespace AW2.Game
             get
             {
                 if (_dead == null || _dead.Owner == null) return false;
-                if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager && 
+                if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager &&
                     _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
                 {
                     _other = _dead.LastDamager.Ship;
                     return false;
-                } 
+                }
                 if (_other == null || _other.Owner == null) return true;
                 return _dead.Owner == _other.Owner;
             }
@@ -88,6 +106,30 @@ namespace AW2.Game
             }
         }
 
+        public bool IsSpecial { get { return _specialPhrase != null; } }
+
+        /// <summary>
+        /// Message for the killer player.
+        /// </summary>
+        public string KillMessage { get { return string.Format(_killPhrase, "You", Dead.Owner.Name); } }
+
+        /// <summary>
+        /// Message for bystanders.
+        /// </summary>
+        public string BystanderMessage { get { return string.Format(_killPhrase, KillerName, Dead.Owner.Name); } }
+
+        /// <summary>
+        /// Message for bystanders.
+        /// </summary>
+        public string DeathMessage { get { return string.Format(_killPhrase, KillerName, "you"); } }
+
+        /// <summary>
+        /// Special message for everyone. Defined only if <see cref="IsSpecial"/> is true.
+        /// </summary>
+        public string SpecialMessage { get { return string.Format(_specialPhrase, KillerName, Dead.Owner.Name); } }
+
+        private string KillerName { get { return Killer != null && Killer.Owner != null ? Killer.Owner.Name : "Nature"; } }
+
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
         /// <param name="other">The gob that caused the death.</param>
@@ -96,15 +138,15 @@ namespace AW2.Game
             _dead = dead;
             _type = type;
             _other = other;
+            _killPhrase = g_killPhrases[RandomHelper.GetRandomInt(g_killPhrases.Length)];
+            AssignSpecialPhrase();
         }
 
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
         public DeathCause(Gob dead, DeathCauseType type)
+            : this(dead, type, null)
         {
-            _dead = dead;
-            _type = type;
-            _other = null;
         }
 
         public override string ToString()
@@ -114,21 +156,27 @@ namespace AW2.Game
             return _type.ToString() + " by " + _other.Owner.Name;
         }
 
-        /// <summary>
-        /// Returns a human-readable textual representation of the cause of death,
-        /// formatted especially for a player.
-        /// </summary>
-        /// <param name="player">The player to write the text for.</param>
-        /// <returns>A personalised textual representation of the cause of death.</returns>
-        public string ToPersonalizedString(Player player)
+        public IEnumerable<Player> GetBystanders(IEnumerable<Player> everybody)
         {
-            if (_other == null)
-                return _type.ToString();
-            if (_other.Owner == null)
-                return _type + " by nature (" + _other.TypeName + ")";
-            if (_other.Owner == player)
-                return _type + " by you";
-            return _type + " by " + _other.Owner.Name;
+            var excluded = new[]
+            {
+                Dead.Owner,
+                Killer == null ? null : Killer.Owner
+            };
+            return everybody.Except(excluded);
+        }
+
+        private void AssignSpecialPhrase()
+        {
+            if (Killer == null || Killer.Owner == null) return;
+            if (Killer.Owner.KillsWithoutDying < 3) return;
+            var hypePhrase =
+                Killer.Owner.KillsWithoutDying < 6 ? "IS ON FIRE" :
+                Killer.Owner.KillsWithoutDying < 12 ? "IS UNSTOPPABLE" :
+                Killer.Owner.KillsWithoutDying < 24 ? "WREAKS HAVOC" :
+                "RULES EVERYONE";
+            var randomOmg = RandomHelper.GetRandomFloat() < 0.6f ? "" : g_omgs[RandomHelper.GetRandomInt(g_omgs.Length)];
+            _specialPhrase = string.Format("{0} {1} ({2} kills) {3}", Killer.Owner.Name, hypePhrase, Killer.Owner.KillsWithoutDying, randomOmg);
         }
     }
 }

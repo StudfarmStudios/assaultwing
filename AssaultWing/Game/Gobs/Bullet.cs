@@ -94,7 +94,7 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             if (Arena.TotalTime >= DeathTime)
-                Die(new DeathCause());
+                Die();
             
             base.Update();
             if (_isRotating)
@@ -118,7 +118,7 @@ namespace AW2.Game.Gobs
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                 theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
             Arena.MakeHole(Pos, _impactHoleRadius);
-            Die(new DeathCause());
+            Die();
         }
     }
 }

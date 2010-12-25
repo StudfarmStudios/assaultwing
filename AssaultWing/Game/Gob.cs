@@ -801,6 +801,11 @@ namespace AW2.Game
             DieImpl(cause, false);
         }
 
+        public void Die()
+        {
+            Die(new DeathCause(this, DeathCauseType.Unspecified));
+        }
+
         /// <summary>
         /// Kills the gob, i.e. performs a death ritual and removes the gob from the game world.
         /// Compared to <see cref="Die(DeathCause)"/>, this method forces death on game clients.
@@ -810,7 +815,7 @@ namespace AW2.Game
         /// <seealso cref="Die(DeathCause)"/>
         public void DieOnClient()
         {
-            DieImpl(new DeathCause(), true);
+            DieImpl(new DeathCause(this, DeathCauseType.Unspecified), true);
         }
 
         /// <summary>

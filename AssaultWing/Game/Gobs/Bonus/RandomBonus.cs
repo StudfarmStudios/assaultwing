@@ -32,29 +32,11 @@ namespace AW2.Game.Gobs.Bonus
         {
             base.Update();
             if (deathTime <= Arena.TotalTime)
-                Die(new DeathCause());
+                Die();
         }
 
         protected override void DoBonusAction(Player player)
         {
-            /*if (possibilities.Length == 0) 
-                throw new InvalidOperationException("Bonus has no possible bonus actions");
-            */
-            // Pick our choice from the combined probability mass 
-            // and then find out which possibility we hit.
-            /* TODO: Refactor
-             * float massTotal = possibilities.Sum(possibility => possibility.weight);
-            float choice = RandomHelper.GetRandomFloat(0, massTotal);
-            massTotal = 0;
-            //BonusActionPossibility poss = new BonusActionPossibility();
-            for (int i = 0; i < possibilities.Length && choice >= massTotal; ++i)
-            {
-                poss = possibilities[i];
-                massTotal += poss.weight;
-            }
-            */
-            // Perform the bonus action.
-
         }
 
         #region IConsistencyCheckable Members

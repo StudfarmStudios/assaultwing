@@ -17,9 +17,8 @@ namespace AW2.Net.Messages
         /// to mean broadcast to all players.
         /// </summary>
         public int PlayerID { get; set; }
+        public PlayerMessage Message { get; set; }
         public bool AllPlayers { get { return PlayerID == -1; } }
-        public Color Color { get; set; }
-        public string Text { get; set; }
 
         protected override void Serialize(NetworkBinaryWriter writer)
         {
@@ -28,11 +27,12 @@ namespace AW2.Net.Messages
             {
                 // Player message (request) message structure:
                 // short: player ID
-                // Color: message color
-                // variable_length_string message: text
+                // word: data length, N
+                // N bytes: serialised message data
+                Write(Message, SerializationModeFlags.All);
                 writer.Write((short)PlayerID);
-                writer.Write((Color)Color);
-                writer.Write((string)Text);
+                writer.Write((ushort)StreamedData.Length);
+                writer.Write(StreamedData, 0, StreamedData.Length);
             }
         }
 
@@ -40,14 +40,16 @@ namespace AW2.Net.Messages
         {
             base.Deserialize(reader);
             PlayerID = reader.ReadInt16();
-            Color = reader.ReadColor();
-            Text = reader.ReadString();
+            int byteCount = reader.ReadUInt16();
+            StreamedData = reader.ReadBytes(byteCount);
+            Message = new PlayerMessage();
+            Read(Message, SerializationModeFlags.All, 0);
         }
 
         public override string ToString()
         {
             var recipientText = AllPlayers ? "All players" : "PlayerID " + PlayerID;
-            return base.ToString() + " [" + recipientText + ", Message '" + Text + "']";
+            return base.ToString() + " [" + recipientText + ", Message '" + Message + "']";
         }
     }
 }

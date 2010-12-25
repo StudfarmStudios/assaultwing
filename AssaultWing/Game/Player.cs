@@ -18,26 +18,24 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
-        public class Message
+        public class PlayerMessageEntry
         {
-            public TimeSpan GameTime { get; private set; }
-            public string Text { get; private set; }
-            public Color TextColor { get; private set; }
-            public Message(TimeSpan gameTime, string text, Color textColor)
+            public PlayerMessage Message { get; private set; }
+            public TimeSpan EntryTime { get; private set; }
+            public PlayerMessageEntry(PlayerMessage message, TimeSpan entryTime)
             {
-                GameTime = gameTime;
-                Text = text;
-                TextColor = textColor;
+                Message = message;
+                EntryTime = entryTime;
             }
         }
 
+        public static readonly Color PRETEXT_COLOR = new Color(1f, 1f, 1f);
         public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f);
         public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f);
         public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f);
         public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f);
-        public static readonly Color KILLING_SPREE_COLOR = new Color(255, 228, 0);
+        public static readonly Color SPECIAL_KILL_COLOR = new Color(255, 228, 0);
         public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
-        public static readonly Color PLAYER_MESSAGE_COLOR = Color.LightGray;
         private const int MESSAGE_KEEP_COUNT = 100;
 
         /// <summary>
@@ -231,7 +229,7 @@ namespace AW2.Game
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
         /// </summary>
-        public List<Message> Messages { get; private set; }
+        public List<PlayerMessageEntry> Messages { get; private set; }
 
         public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
 
@@ -252,7 +250,7 @@ namespace AW2.Game
 
         #endregion Player properties about statistics
 
-        public event Action<Message> NewMessage;
+        public event Action<PlayerMessage> NewMessage;
 
         #region Constructors
 
@@ -304,7 +302,7 @@ namespace AW2.Game
             ShipName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
-            Messages = new List<Message>();
+            Messages = new List<PlayerMessageEntry>();
             _lives = 3;
             _shipSpawnTime = new TimeSpan(1);
             _relativeShakeDamage = 0;
@@ -373,41 +371,26 @@ namespace AW2.Game
             }
         }
 
-        private void CreateDeathMessage(string message, Color messageColor, Vector2 Pos, bool isSuicide)
+        private void CreateSuicideMessage(Player perpetrator, Vector2 pos)
         {
-            var iconName = isSuicide ? "b_icon_take_life" : "b_icon_add_kill";
+            CreateDeathMessage(perpetrator, pos, "b_icon_take_life");
+        }
+
+        private void CreateKillMessage(Player perpetrator, Vector2 pos)
+        {
+            CreateDeathMessage(perpetrator, pos, "b_icon_add_kill");
+        }
+
+        private void CreateDeathMessage(Player perpetrator, Vector2 Pos, string iconName)
+        {
             Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"deathmessage", gob =>
             {
                 gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                gob.Message = message;
+                gob.Message = perpetrator.Name;
                 gob.IconName = iconName;
-                gob.DrawColor = messageColor;
+                gob.DrawColor = perpetrator.PlayerColor;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
-        }
-
-        private void SendDeathMessageToBystanders(DeathCause cause)
-        {
-            if (cause.IsKill) return;
-            var bystanderMessage = Name + " could not take it anymore";
-            var playersToExclude = new[]
-            {
-                this,
-                cause.Killer == null ? null : cause.Killer.Owner
-            };
-            foreach (var plr in Game.DataEngine.Players.Except(playersToExclude))
-                plr.SendMessage(bystanderMessage, KILL_COLOR);
-        }
-
-        private static readonly int KILLINGSPREE_KILLS_REQUIRED = 3;
-
-        private void SendKillingSpreeMessage(Player player)
-        {
-            var message = player.KillsWithoutDying <= 5
-                ? player.Name + " IS ON FIRE! (" + player.KillsWithoutDying + " kills)"
-                : player.Name + " IS UNSTOPPABLE! (" + player.KillsWithoutDying + " kills) OMG!";
-            foreach (var plr in Game.DataEngine.Players)
-                plr.SendMessage(message, KILLING_SPREE_COLOR);
         }
 
         /// <summary>
@@ -453,19 +436,15 @@ namespace AW2.Game
 
         public void SendMessage(string message)
         {
-            SendMessage(message, DEFAULT_COLOR);
+            SendMessage(new PlayerMessage(message, DEFAULT_COLOR));
         }
 
         /// <summary>
         /// Sends a message to the player. The message will be displayed on the player's screen.
         /// </summary>
-        public void SendMessage(string text, Color textColor)
+        public void SendMessage(PlayerMessage message)
         {
-            if (text == null) throw new ArgumentNullException("Null message");
-            text = text.Replace("\n", " ");
-            text = text.Capitalize();
-            var message = new Message(Game.DataEngine.ArenaTotalTime, text, textColor);
-            Messages.Add(message);
+            Messages.Add(new PlayerMessageEntry(message, Game.DataEngine.ArenaTotalTime));
             if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT) Messages.RemoveRange(0, Messages.Count - MESSAGE_KEEP_COUNT);
             if (NewMessage != null) NewMessage(message);
         }
@@ -473,7 +452,7 @@ namespace AW2.Game
         public override void Dispose()
         {
             base.Dispose();
-            if (Ship != null) Ship.Die(new DeathCause());
+            if (Ship != null) Ship.Die(new DeathCause(Ship, DeathCauseType.Unspecified));
         }
 
         #endregion General public methods
@@ -554,16 +533,19 @@ namespace AW2.Game
         {
             if (cause.IsKill)
             {
-                cause.Killer.Owner.SendMessage("You nailed " + Name, KILL_COLOR);
-                ++cause.Killer.Owner.KillsWithoutDying;
-                if (cause.Killer.Owner.KillsWithoutDying >= KILLINGSPREE_KILLS_REQUIRED)
-                    SendKillingSpreeMessage(cause.Killer.Owner);
-                CreateDeathMessage(cause.Killer.Owner.Name, cause.Killer.Owner.PlayerColor, Ship.Pos, false);
+                cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
+                CreateKillMessage(cause.Killer.Owner, Ship.Pos);
             }
-            if (cause.IsSuicide) CreateDeathMessage(Name, PlayerColor, Ship.Pos, true);
-            SendDeathMessageToBystanders(cause);
+            if (cause.IsSuicide) CreateSuicideMessage(this, Ship.Pos);
+            if (cause.IsSpecial)
+            {
+                var specialMessage = new PlayerMessage(cause.SpecialMessage, SPECIAL_KILL_COLOR);
+                foreach (var plr in Game.DataEngine.Players) plr.SendMessage(specialMessage);
+            }
+            var bystanderMessage = new PlayerMessage(cause.BystanderMessage, KILL_COLOR);
+            foreach (var plr in cause.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
+            SendMessage(cause.DeathMessage);
             Ship = null;
-            SendMessage("Death by " + cause.ToPersonalizedString(this), DEATH_COLOR);
         }
 
         /// <summary>

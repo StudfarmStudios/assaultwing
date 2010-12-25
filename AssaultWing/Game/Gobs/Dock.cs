@@ -96,7 +96,7 @@ namespace AW2.Game.Gobs
 
                 if (ship != null && canDock)
                 {
-                    ship.InflictDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, Game.GameTime.ElapsedGameTime), new DeathCause());
+                    ship.InflictDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, Game.GameTime.ElapsedGameTime), new DeathCause(ship, DeathCauseType.Damage));
                     ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, Game.GameTime.ElapsedGameTime);
                     ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, Game.GameTime.ElapsedGameTime);
                 }

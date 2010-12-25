@@ -68,23 +68,28 @@ namespace AW2.Graphics.OverlayComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var messagePos = Vector2.Zero;
-            for (int i = 0, messageI = _player.Messages.Count - 1; i < VISIBLE_LINES && messageI >= 0; ++i, --messageI, messagePos += new Vector2(0, _chatBoxFont.LineSpacing))
+            var messageY = 0f;
+            for (int i = 0, messageI = _player.Messages.Count - 1; i < VISIBLE_LINES && messageI >= 0; ++i, --messageI, messageY += _chatBoxFont.LineSpacing)
             {
                 float alpha = GetMessageAlpha(messageI);
                 if (alpha == 0) continue;
-                messagePos = new Vector2((Dimensions.X - _chatBoxFont.MeasureString(_player.Messages[messageI].Text).X) / 2, messagePos.Y);
-                var color = Color.Multiply(_player.Messages[messageI].TextColor, alpha);
-                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Text, messagePos, color);
+                var preTextSize = _chatBoxFont.MeasureString(_player.Messages[messageI].Message.PreText);
+                var textSize = _chatBoxFont.MeasureString(_player.Messages[messageI].Message.Text);
+                var preTextPos = new Vector2((Dimensions.X - textSize.X - preTextSize.X) / 2, messageY);
+                var textPos = preTextPos + new Vector2(preTextSize.X, 0);
+                var preTextColor = Color.Multiply(Player.PRETEXT_COLOR, alpha);
+                var textColor = Color.Multiply(_player.Messages[messageI].Message.TextColor, alpha);
+                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Message.PreText, preTextPos, preTextColor);
+                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Message.Text, textPos, textColor);
             }
         }
 
         private float GetMessageAlpha(int messageIndex)
         {
-            return g_messageFadeoutCurve.Evaluate(_player.Messages[messageIndex].GameTime.SecondsAgoGameTime());
+            return g_messageFadeoutCurve.Evaluate(_player.Messages[messageIndex].EntryTime.SecondsAgoGameTime());
         }
 
-        private void HandleNewPlayerMessage(Player.Message message)
+        private void HandleNewPlayerMessage(PlayerMessage message)
         {
             _player.Game.SoundEngine.PlaySound("PlayerMessage");
         }

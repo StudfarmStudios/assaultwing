@@ -111,7 +111,7 @@ namespace AW2.Game.Gobs
         {
             base.Update();
             if (_alphaCurve.Keys.Last().Position < AgeInGameSeconds)
-                Die(new DeathCause());
+                Die();
         }
 
         public override void LoadContent()

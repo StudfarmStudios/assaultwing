@@ -442,7 +442,7 @@ namespace AW2.Core
                 {
                     // K + P = kill players
                     var ships = DataEngine.Players.Select(p => p.Ship).Where(s => s != null);
-                    foreach (var ship in ships) ship.Die(new DeathCause());
+                    foreach (var ship in ships) ship.Die(new DeathCause(ship, DeathCauseType.Unspecified));
                 }
 
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
@@ -520,7 +520,7 @@ namespace AW2.Core
                     if (player.IsRemote)
                         try
                         {
-                            var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Color = message.TextColor, Text = message.Text };
+                            var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
                             NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
                         }
                         catch (InvalidOperationException)

@@ -43,10 +43,10 @@ namespace AW2.Game.Gobs
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {
                 theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
-                Die(new DeathCause());
+                Die();
             }
             else if (stuck)
-                Die(new DeathCause());
+                Die();
         }
     }
 }

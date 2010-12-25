@@ -174,8 +174,7 @@ namespace AW2.Net.MessageHandling
             {
                 var otherPlayers = AssaultWingCore.Instance.DataEngine.Players
                     .Where(plr => plr.ConnectionID != mess.ConnectionID);
-                foreach (var player in otherPlayers)
-                    player.SendMessage(mess.Text, Player.PLAYER_MESSAGE_COLOR);
+                foreach (var player in otherPlayers) player.SendMessage(mess.Message);
             }
             else
             {
@@ -190,7 +189,7 @@ namespace AW2.Net.MessageHandling
         private static void HandlePlayerMessageMessageOnClient(PlayerMessageMessage mess)
         {
             if (mess.AllPlayers) throw new NotImplementedException("Client cannot broadcast player text messages");
-            AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID).SendMessage(mess.Text, mess.Color);
+            AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID).SendMessage(mess.Message);
         }
 
         private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)

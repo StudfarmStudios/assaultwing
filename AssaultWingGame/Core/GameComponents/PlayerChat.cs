@@ -76,22 +76,21 @@ namespace AW2.Core.GameComponents
             var messageContent = _message.Content.Trim();
             _message = null;
             if (messageContent == "") return;
-            var text = string.Format("{0}: {1}",
-                Game.DataEngine.Players.First(plr => !plr.IsRemote).Name,
-                messageContent);
+            var sendingPlayer = Game.DataEngine.Players.First(plr => !plr.IsRemote);
+            var preText = sendingPlayer.Name + "> ";
+            var textColor = sendingPlayer.PlayerColor;
+            var message = new PlayerMessage(preText, messageContent, textColor);
             switch (Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    foreach (var plr in Game.DataEngine.Players) plr.SendMessage(text, Player.PLAYER_MESSAGE_COLOR);
+                    foreach (var plr in Game.DataEngine.Players) plr.SendMessage(message);
                     break;
                 case NetworkMode.Client:
-                    foreach (var plr in Game.DataEngine.Players.Where(plr => !plr.IsRemote))
-                        plr.SendMessage(text, Player.PLAYER_MESSAGE_COLOR);
+                    foreach (var plr in Game.DataEngine.Players.Where(plr => !plr.IsRemote)) plr.SendMessage(message);
                     _game.NetworkEngine.GameServerConnection.Send(new PlayerMessageMessage
                     {
                         PlayerID = -1,
-                        Color = Player.PLAYER_MESSAGE_COLOR,
-                        Text = text,
+                        Message = message,
                     });
                     break;
                 default: throw new InvalidOperationException("Text messages not supported in mode " + Game.NetworkMode);

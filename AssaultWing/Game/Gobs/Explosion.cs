@@ -109,7 +109,7 @@ namespace AW2.Game.Gobs
                 RemoveCollisionAreas(area => area.Name != "Force");
             }
             if (Arena.TotalTime >= _flowEndTime)
-                Die(new DeathCause());
+                Die();
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)

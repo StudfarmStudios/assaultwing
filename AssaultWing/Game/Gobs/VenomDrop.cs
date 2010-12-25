@@ -40,7 +40,7 @@ namespace AW2.Game.Gobs
                 theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, DeathCauseType.Damage, this));
                 DoDamageOverTime(theirArea.Owner);
             }
-            Die(new DeathCause());
+            Die();
         }
 
         private void DoDamageOverTime(Gob target)

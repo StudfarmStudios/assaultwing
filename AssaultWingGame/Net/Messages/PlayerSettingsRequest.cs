@@ -31,11 +31,10 @@ namespace AW2.Net.Messages
                 // byte: player identifier
                 // word: data length N
                 // N bytes: serialised data of the player
-                byte[] writeBytes = StreamedData;
                 writer.Write((bool)IsRegisteredToServer);
                 writer.Write((byte)PlayerID);
-                writer.Write((ushort)writeBytes.Length);
-                writer.Write(writeBytes, 0, writeBytes.Length);
+                writer.Write((ushort)StreamedData.Length);
+                writer.Write(StreamedData, 0, StreamedData.Length);
             }
         }
 

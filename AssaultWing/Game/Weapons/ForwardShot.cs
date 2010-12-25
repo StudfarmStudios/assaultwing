@@ -131,7 +131,7 @@ namespace AW2.Game.Weapons
         {
             if (fireAction == FireAction.KillAll && liveShots.Count > 0)
             {
-                foreach (var gob in liveShots) gob.Die(new DeathCause());
+                foreach (var gob in liveShots) gob.Die();
                 return false;
             }
             return true;
@@ -190,8 +190,7 @@ namespace AW2.Game.Weapons
             // they won't die soon by themselves.
             if (fireAction == FireAction.KillAll && liveShots.Count > 0)
             {
-                foreach (Gob gob in liveShots)
-                    gob.Die(new DeathCause());
+                foreach (Gob gob in liveShots) gob.Die();
             }
         }
     }

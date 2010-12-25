@@ -449,7 +449,10 @@ namespace AW2.Core
                 {
                     // E + A = end arena
                     if (!DataEngine.ProgressBar.TaskRunning)
+                    {
                         FinishArena();
+                        HideDialog();
+                    }
                 }
             }
         }

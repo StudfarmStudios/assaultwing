@@ -1673,6 +1673,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\junk_falling_pipe.X">
+      <Name>junk_falling_pipe</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng_airstreaks.xml">
       <Name>Peng_airstreaks</Name>
       <Importer>XmlImporter</Importer>
@@ -2558,6 +2563,14 @@
   <ItemGroup>
     <None Include="particledefs\Peng_junk bonus spray.xml">
       <Name>Peng_junk bonus spray</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gobdefs\BounceBullet_falling pipe.xml">
+      <Name>BounceBullet_falling pipe</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

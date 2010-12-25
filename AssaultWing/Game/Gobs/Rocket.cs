@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.GobUtils;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
@@ -60,12 +62,6 @@ namespace AW2.Game.Gobs
         private float _findTargetRange;
 
         /// <summary>
-        /// Half central angle of the sector in which to look for targets, in radians.
-        /// </summary>
-        [TypeParameter]
-        private float _findTargetAngle;
-
-        /// <summary>
         /// Time at which thursting ends, in game time.
         /// </summary>
         private TimeSpan _thrustEndTime;
@@ -88,7 +84,6 @@ namespace AW2.Game.Gobs
             _fallTurnSpeed = 5;
             _targetTurnSpeed = 5;
             _findTargetRange = 800;
-            _findTargetAngle = MathHelper.Pi / 6;
         }
 
         public Rocket(CanonicalString typeName)
@@ -239,23 +234,14 @@ namespace AW2.Game.Gobs
                 Game.GameTime.ElapsedGameTime);
         }
 
-        private Gob FindBestTarget()
-        {
-            var targets =
-                from gob in Arena.Gobs.GameplayLayer.Gobs
-                where gob.IsDamageable && !gob.Disabled && gob.Owner != Owner
-                    && AWMathHelper.AbsoluteAngleDifference((gob.Pos - Pos).Angle(), Rotation) <= _findTargetAngle
-                let distanceSquared = Vector2.DistanceSquared(gob.Pos, Pos)
-                where distanceSquared <= _findTargetRange * _findTargetRange
-                orderby distanceSquared ascending
-                select gob;
-            return targets.FirstOrDefault();
-        }
-
         private void UpdateTarget()
         {
             var oldTarget = _target;
-            var newBestTarget = FindBestTarget();
+            var newBestTarget = TargetSelection.ChooseTarget(Arena.Gobs.GameplayLayer.Gobs, this, _findTargetRange);
+            if (newBestTarget != null &&
+                (newBestTarget.Owner == null || newBestTarget.Owner == Owner) &&
+                RandomHelper.GetRandomFloat() < 0.9)
+                newBestTarget = null;
             _target = newBestTarget ?? _target;
             UpdateGobTrackers();
             if (Game.NetworkMode == AW2.Core.NetworkMode.Server && _target != oldTarget)

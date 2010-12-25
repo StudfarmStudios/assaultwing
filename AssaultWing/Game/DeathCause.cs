@@ -33,18 +33,27 @@ namespace AW2.Game
     public class DeathCause
     {
         public static readonly TimeSpan LAST_DAMAGER_KILL_TIMEWINDOW = TimeSpan.FromSeconds(6);
+        private static readonly string[] g_suicidePhrases = new[]
+        {
+            "{0} nailed {0:reflexivePronoun}", "{0} ended up as {0:genetivePronoun} own nemesis",
+            "{0} stumbled over {0:genetivePronoun} own feet", "{0} screwed up",
+            "{0} terminated {0:reflexivePronoun}", "{0} crushed {0:reflexivePronoun}",
+            "{0} destroyed {0:reflexivePronoun}", "{0} iced {0:reflexivePronoun}",
+            "{0} got it all wrong",
+        };
         private static readonly string[] g_killPhrases = new[]
         {
             "{0} nailed {1}", "{0} put {1} to rest", "{0} did {1} in",  "{0} iced {1}",
-            "{0} put {1} on his knees", "{0} terminated {1}", "{0} crushed {1}", "{0} destroyed {1}",
+            "{0} put {1} on {1:genetivePronoun} knees", "{0} terminated {1}", "{0} crushed {1}", "{0} destroyed {1}",
             "{0} ran over {1}", "{0} showed {1} how it's done", "{0} taught {1} a lesson",
-            "{0} made {1} appreciate life", "{0} survived, {1} didn't", "{0} stepped on {1}'s foot",
+            "{0} made {1} appreciate life", "{0} survived, {1} didn't", "{0} stepped on {1:genetive} foot",
+            "{0:genetive} forcefulness broke {1}",
         };
         private static readonly string[] g_omgs = new[]
         {
-            "OMG!", "W00T!", "WHOA!", "GROOVY!", "WICKED!", "AWESOME!", "INSANE!", "SLAMMIN'!",
-            "CRACKIN'!", "KINKY!", "JIGGY!", "NEAT!", "FAR OUT!", "SLICK!", "SMOKING!", "SOLID!",
-            "SPIFFY!", "CHICKY!", "COOL!", "L33T!",
+            "OMG", "W00T", "WHOA", "GROOVY", "WICKED", "AWESOME", "INSANE", "SLAMMIN'",
+            "CRACKIN'", "KINKY", "JIGGY", "NEAT", "FAR OUT", "SLICK", "SMOKING", "SOLID",
+            "SPIFFY", "CHICKY", "COOL", "L33T", "BRUTAL",
         };
         private string _killPhrase;
         private string _specialPhrase;
@@ -111,24 +120,26 @@ namespace AW2.Game
         /// <summary>
         /// Message for the killer player.
         /// </summary>
-        public string KillMessage { get { return string.Format(_killPhrase, "You", Dead.Owner.Name); } }
+        public string KillMessage { get { return string.Format(_killPhrase, SubjectWord.You, CorpseName).Capitalize(); } }
 
         /// <summary>
         /// Message for bystanders.
         /// </summary>
-        public string BystanderMessage { get { return string.Format(_killPhrase, KillerName, Dead.Owner.Name); } }
+        public string BystanderMessage { get { return string.Format(_killPhrase, KillerName, CorpseName).Capitalize(); } }
 
         /// <summary>
-        /// Message for bystanders.
+        /// Message for the killed player.
         /// </summary>
-        public string DeathMessage { get { return string.Format(_killPhrase, KillerName, "you"); } }
+        public string DeathMessage { get { return string.Format(_killPhrase, KillerNameToCorpse, SubjectWord.You).Capitalize(); } }
 
         /// <summary>
         /// Special message for everyone. Defined only if <see cref="IsSpecial"/> is true.
         /// </summary>
-        public string SpecialMessage { get { return string.Format(_specialPhrase, KillerName, Dead.Owner.Name); } }
+        public string SpecialMessage { get { return string.Format(_specialPhrase, KillerName, SubjectWord.FromProperNoun(Dead.Owner.Name)).Capitalize(); } }
 
-        private string KillerName { get { return Killer != null && Killer.Owner != null ? Killer.Owner.Name : "Nature"; } }
+        private SubjectWord KillerName { get { return SubjectWord.FromProperNoun(Killer != null && Killer.Owner != null ? Killer.Owner.Name : "Nature"); } }
+        private SubjectWord KillerNameToCorpse { get { return IsSuicide ? SubjectWord.You : KillerName; } }
+        private SubjectWord CorpseName { get { return SubjectWord.FromProperNoun(Dead.Owner.Name); } }
 
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
@@ -138,7 +149,8 @@ namespace AW2.Game
             _dead = dead;
             _type = type;
             _other = other;
-            _killPhrase = g_killPhrases[RandomHelper.GetRandomInt(g_killPhrases.Length)];
+            var phraseSet = IsSuicide ? g_suicidePhrases : g_killPhrases;
+            _killPhrase = phraseSet[RandomHelper.GetRandomInt(phraseSet.Length)];
             AssignSpecialPhrase();
         }
 
@@ -171,12 +183,49 @@ namespace AW2.Game
             if (Killer == null || Killer.Owner == null) return;
             if (Killer.Owner.KillsWithoutDying < 3) return;
             var hypePhrase =
-                Killer.Owner.KillsWithoutDying < 6 ? "IS ON FIRE" :
-                Killer.Owner.KillsWithoutDying < 12 ? "IS UNSTOPPABLE" :
-                Killer.Owner.KillsWithoutDying < 24 ? "WREAKS HAVOC" :
-                "RULES EVERYONE";
-            var randomOmg = RandomHelper.GetRandomFloat() < 0.6f ? "" : g_omgs[RandomHelper.GetRandomInt(g_omgs.Length)];
-            _specialPhrase = string.Format("{0} {1} ({2} kills) {3}", Killer.Owner.Name, hypePhrase, Killer.Owner.KillsWithoutDying, randomOmg);
+                Killer.Owner.KillsWithoutDying < 6 ? "is on fire" :
+                Killer.Owner.KillsWithoutDying < 12 ? "is unstoppable" :
+                Killer.Owner.KillsWithoutDying < 24 ? "wreaks havoc" :
+                "rules everyone";
+            var randomOmg = RandomHelper.GetRandomFloat() < 0.6f ? "" : ", " + g_omgs[RandomHelper.GetRandomInt(g_omgs.Length)];
+            _specialPhrase = string.Format("{0} {1} with {2} kills{3}!", Killer.Owner.Name, hypePhrase, Killer.Owner.KillsWithoutDying, randomOmg);
+        }
+    }
+
+    public class SubjectWord : IFormattable
+    {
+        public static SubjectWord You { get; private set; }
+
+        private string _nominative, _genetive, _genetivePronoun, _reflexivePronoun;
+
+        static SubjectWord()
+        {
+            You = new SubjectWord(nominative: "you", genetive: "your", genetivePronoun: "your", reflexiveProunoun: "yourself");
+        }
+
+        public static SubjectWord FromProperNoun(string name)
+        {
+            return new SubjectWord(name, name + "'s", "his", "himself");
+        }
+
+        private SubjectWord(string nominative, string genetive, string genetivePronoun, string reflexiveProunoun)
+        {
+            _nominative = nominative;
+            _genetive = genetive;
+            _genetivePronoun = genetivePronoun;
+            _reflexivePronoun = reflexiveProunoun;
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            switch (format)
+            {
+                case null: return _nominative;
+                case "genetive": return _genetive;
+                case "genetivePronoun": return _genetivePronoun;
+                case "reflexivePronoun": return _reflexivePronoun;
+                default: throw new ArgumentException("Invalid format string '" + format + "'");
+            }
         }
     }
 }

@@ -21,7 +21,6 @@ namespace AW2.Core.GameComponents
         private SpriteBatch _spriteBatch;
         private SpriteFont _typingFont;
 
-        private Vector2 TypingPos { get { return new Vector2(10, 250); } }
         private Color TypingColor { get { return Color.White; } }
         private bool IsTyping { get { return _message != null; } }
 
@@ -61,8 +60,15 @@ namespace AW2.Core.GameComponents
             if (!IsTyping) return;
             var text = string.Format("{0}>{1}<", Game.DataEngine.Players.First(plr => !plr.IsRemote).Name, _message.Content);
             _spriteBatch.Begin();
-            _spriteBatch.DrawString(_typingFont, text, TypingPos, TypingColor);
+            _spriteBatch.DrawString(_typingFont, text, GetTypingPos(text), TypingColor);
             _spriteBatch.End();
+        }
+
+        private Vector2 GetTypingPos(string text)
+        {
+            var viewport = Game.Window.ClientBounds;
+            var textSize = _typingFont.MeasureString(text);
+            return new Vector2(viewport.Width / 2, viewport.Height / 2 + 300 - _typingFont.LineSpacing * 3) - textSize / 2;
         }
 
         private void SendMessage()

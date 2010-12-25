@@ -21,7 +21,11 @@ namespace AW2.Graphics.OverlayComponents
 
         public override Point Dimensions
         {
-            get { return new Point(600, _chatBoxFont.LineSpacing * VISIBLE_LINES); }
+            get
+            {
+                var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+                return new Point(gfx.Viewport.Width, _chatBoxFont.LineSpacing * VISIBLE_LINES);
+            }
         }
 
         static ChatBoxOverlay()

@@ -299,7 +299,6 @@ namespace AW2.Helpers
             public void TestMixRandomInt()
             {
                 int seed = GetRandomInt();
-                int n = 0;
                 TestPredictability(seed, 1000, (x, k) => MixRandomInt(seed, k));
             }
 

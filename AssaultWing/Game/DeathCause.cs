@@ -1,3 +1,6 @@
+#if DEBUG
+using NUnit.Framework;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +35,11 @@ namespace AW2.Game
     /// </summary>
     public class DeathCause
     {
+        private enum RecipientType { Killer, Bystander, Corpse };
+        private delegate SubjectWord SubjectWordProvider(RecipientType recipient);
+
         public static readonly TimeSpan LAST_DAMAGER_KILL_TIMEWINDOW = TimeSpan.FromSeconds(6);
-        private static readonly string[] g_suicidePhrases = new[]
+        private static string[] g_suicidePhrases = new[]
         {
             "{0} nailed {0:reflexivePronoun}", "{0} ended up as {0:genetivePronoun} own nemesis",
             "{0} stumbled over {0:genetivePronoun} own feet", "{0} screwed up",
@@ -41,7 +47,7 @@ namespace AW2.Game
             "{0} destroyed {0:reflexivePronoun}", "{0} iced {0:reflexivePronoun}",
             "{0} got it all wrong",
         };
-        private static readonly string[] g_killPhrases = new[]
+        private static string[] g_killPhrases = new[]
         {
             "{0} nailed {1}", "{0} put {1} to rest", "{0} did {1} in",  "{0} iced {1}",
             "{0} put {1} on {1:genetivePronoun} knees", "{0} terminated {1}", "{0} crushed {1}", "{0} destroyed {1}",
@@ -49,7 +55,7 @@ namespace AW2.Game
             "{0} made {1} appreciate life", "{0} survived, {1} didn't", "{0} stepped on {1:genetive} foot",
             "{0:genetive} forcefulness broke {1}",
         };
-        private static readonly string[] g_omgs = new[]
+        private static string[] g_omgs = new[]
         {
             "OMG", "W00T", "WHOA", "GROOVY", "WICKED", "AWESOME", "INSANE", "SLAMMIN'",
             "CRACKIN'", "KINKY", "JIGGY", "NEAT", "FAR OUT", "SLICK", "SMOKING", "SOLID",
@@ -57,6 +63,7 @@ namespace AW2.Game
         };
         private string _killPhrase;
         private string _specialPhrase;
+        private SubjectWordProvider[] _subjectNameProviders;
         private Gob _dead;
         private DeathCauseType _type;
         private Gob _other;
@@ -120,26 +127,27 @@ namespace AW2.Game
         /// <summary>
         /// Message for the killer player.
         /// </summary>
-        public string KillMessage { get { return string.Format(_killPhrase, SubjectWord.You, CorpseName).Capitalize(); } }
+        public string KillMessage { get { return string.Format(_killPhrase, _subjectNameProviders.Select(x => x(RecipientType.Killer)).ToArray()).Capitalize(); } }
 
         /// <summary>
         /// Message for bystanders.
         /// </summary>
-        public string BystanderMessage { get { return string.Format(_killPhrase, KillerName, CorpseName).Capitalize(); } }
+        public string BystanderMessage { get { return string.Format(_killPhrase, _subjectNameProviders.Select(x => x(RecipientType.Bystander)).ToArray()).Capitalize(); } }
 
         /// <summary>
         /// Message for the killed player.
         /// </summary>
-        public string DeathMessage { get { return string.Format(_killPhrase, KillerNameToCorpse, SubjectWord.You).Capitalize(); } }
+        public string DeathMessage { get { return string.Format(_killPhrase, _subjectNameProviders.Select(x => x(RecipientType.Corpse)).ToArray()).Capitalize(); } }
 
         /// <summary>
         /// Special message for everyone. Defined only if <see cref="IsSpecial"/> is true.
         /// </summary>
-        public string SpecialMessage { get { return string.Format(_specialPhrase, KillerName, SubjectWord.FromProperNoun(Dead.Owner.Name)).Capitalize(); } }
+        public string SpecialMessage { get { return _specialPhrase; } }
 
         private SubjectWord KillerName { get { return SubjectWord.FromProperNoun(Killer != null && Killer.Owner != null ? Killer.Owner.Name : "Nature"); } }
-        private SubjectWord KillerNameToCorpse { get { return IsSuicide ? SubjectWord.You : KillerName; } }
         private SubjectWord CorpseName { get { return SubjectWord.FromProperNoun(Dead.Owner.Name); } }
+        private SubjectWordProvider KillerNameProvider { get { return recipient => recipient == RecipientType.Killer ? SubjectWord.You : KillerName; } }
+        private SubjectWordProvider CorpseNameProvider { get { return recipient => recipient == RecipientType.Corpse ? SubjectWord.You : CorpseName; } }
 
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
@@ -149,8 +157,16 @@ namespace AW2.Game
             _dead = dead;
             _type = type;
             _other = other;
-            var phraseSet = IsSuicide ? g_suicidePhrases : g_killPhrases;
-            _killPhrase = phraseSet[RandomHelper.GetRandomInt(phraseSet.Length)];
+            if (IsSuicide)
+            {
+                _killPhrase = ChoosePhrase(g_suicidePhrases);
+                _subjectNameProviders = new[] { CorpseNameProvider };
+            }
+            else
+            {
+                _killPhrase = ChoosePhrase(g_killPhrases);
+                _subjectNameProviders = new[] { KillerNameProvider, CorpseNameProvider };
+            }
             AssignSpecialPhrase();
         }
 
@@ -159,6 +175,13 @@ namespace AW2.Game
         public DeathCause(Gob dead, DeathCauseType type)
             : this(dead, type, null)
         {
+        }
+
+        public static void SetPhraseSets(string[] suicidePhrases, string[] killPhrases, string[] omgs)
+        {
+            g_suicidePhrases = suicidePhrases;
+            g_killPhrases = killPhrases;
+            g_omgs = omgs;
         }
 
         public override string ToString()
@@ -176,6 +199,11 @@ namespace AW2.Game
                 Killer == null ? null : Killer.Owner
             };
             return everybody.Except(excluded);
+        }
+
+        private static string ChoosePhrase(string[] phraseSet)
+        {
+            return phraseSet[RandomHelper.GetRandomInt(phraseSet.Length)];
         }
 
         private void AssignSpecialPhrase()
@@ -227,5 +255,71 @@ namespace AW2.Game
                 default: throw new ArgumentException("Invalid format string '" + format + "'");
             }
         }
+
+#if DEBUG
+        [TestFixture]
+        public class UnitTests
+        {
+            private Player _player1, _player2;
+            private Gob _gob1, _gob2, _gob2Nature;
+
+            [SetUp]
+            public void Setup()
+            {
+                _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
+                _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
+                _gob1 = new Gob { Owner = _player1 };
+                _gob2 = new Gob { Owner = _player2 };
+                _gob2Nature = new Gob { Owner = null };
+            }
+
+            private void AssertSuicide(string suicidePhrase, string deathMessage, string bystanderMessage)
+            {
+                DeathCause.SetPhraseSets(new[] { suicidePhrase }, new string[0], new string[0]);
+                var cause = new DeathCause(_gob1, DeathCauseType.Collision, _gob2Nature);
+                Assert.IsFalse(cause.IsKill);
+                Assert.IsTrue(cause.IsSuicide);
+                Assert.AreEqual(deathMessage, cause.DeathMessage);
+                Assert.AreEqual(bystanderMessage, cause.BystanderMessage);
+            }
+
+            private void AssertKill(string killPhrase, string killMessage, string deathMessage, string bystanderMessage)
+            {
+                DeathCause.SetPhraseSets(new string[0], new[] { killPhrase }, new string[0]);
+                var cause = new DeathCause(_gob1, DeathCauseType.Collision, _gob2);
+                Assert.IsTrue(cause.IsKill);
+                Assert.IsFalse(cause.IsSuicide);
+                Assert.AreEqual(killMessage, cause.KillMessage);
+                Assert.AreEqual(deathMessage, cause.DeathMessage);
+                Assert.AreEqual(bystanderMessage, cause.BystanderMessage);
+            }
+
+            [Test]
+            public void TestSimpleKill()
+            {
+                AssertKill("{0} nailed {1}", "You nailed Player 1", "Player 2 nailed you", "Player 2 nailed Player 1");
+            }
+
+            [Test]
+            public void TestComplexKill()
+            {
+                AssertKill("{0} put {1} on {1:genetivePronoun} knees", "You put Player 1 on his knees", "Player 2 put you on your knees", "Player 2 put Player 1 on his knees");
+                AssertKill("{0} stepped on {1:genetive} foot", "You stepped on Player 1's foot", "Player 2 stepped on your foot", "Player 2 stepped on Player 1's foot");
+            }
+
+            [Test]
+            public void TestSimpleSuicide()
+            {
+                AssertSuicide("{0} screwed up", "You screwed up", "Player 1 screwed up");
+            }
+
+            [Test]
+            public void TestComplexSuicide()
+            {
+                AssertSuicide("{0} nailed {0:reflexivePronoun}", "You nailed yourself", "Player 1 nailed himself");
+                AssertSuicide("{0} ended up as {0:genetivePronoun} own nemesis", "You ended up as your own nemesis", "Player 1 ended up as his own nemesis");
+            }
+        }
+#endif
     }
 }

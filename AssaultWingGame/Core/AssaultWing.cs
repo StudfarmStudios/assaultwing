@@ -131,6 +131,11 @@ namespace AW2.Core
 
             SelectedArenaName = DataEngine.ArenaInfos.First().Name;
 
+            DataEngine.GameplayMode = new GameplayMode();
+            DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
+            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "reverse thruster", "blink" };
+            DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "mines" };
+
             // Hardcoded for now!!!
 
             PlayerControls plr1Controls;
@@ -170,11 +175,6 @@ namespace AW2.Core
             var player2 = new Player(this, "Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
             DataEngine.Spectators.Add(player1);
             DataEngine.Spectators.Add(player2);
-
-            DataEngine.GameplayMode = new GameplayMode();
-            DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
-            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "reverse thruster", "blink" };
-            DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "mines" };
 
             GameState = GameState.Intro;
             base.BeginRun();
@@ -515,6 +515,7 @@ namespace AW2.Core
         private void SpectatorAddedHandler(Spectator spectator)
         {
             var player = spectator as Player;
+            if (player != null) player.ResetForArena();
             if (NetworkMode == NetworkMode.Server)
             {
                 UpdateGameServerInfoToManagementServer();

@@ -33,6 +33,7 @@ namespace AW2.Game
         public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f);
         public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f);
         public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f);
+        public static readonly Color SUICIDE_COLOR = new Color(1f, 0.5f, 0.5f);
         public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f);
         public static readonly Color SPECIAL_KILL_COLOR = new Color(255, 228, 0);
         public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
@@ -44,12 +45,25 @@ namespace AW2.Game
         /// </summary>
         private const float MOURNING_DELAY = 3;
 
-        #region Player fields about general things
+        /// <summary>
+        /// Function that maps relative shake damage to radians that the player's
+        /// viewport will tilt to produce sufficient shake.
+        /// </summary>
+        private static readonly Curve g_shakeCurve;
 
         /// <summary>
-        /// How many reincarnations the player has left.
+        /// Function that maps a parameter to relative shake damage.
         /// </summary>
-        protected int _lives;
+        /// Used in attenuating shake.
+        private static readonly Curve g_shakeAttenuationCurve;
+
+        /// <summary>
+        /// Inverse of <c>shakeAttenuationCurve</c>.
+        /// </summary>
+        /// Used in attenuating shake.
+        private static readonly Curve g_shakeAttenuationInverseCurve;
+
+        #region Player fields about general things
 
         /// <summary>
         /// Time at which the player's ship is born, measured in game time.
@@ -64,24 +78,6 @@ namespace AW2.Game
         /// Shaking affects the player's viewport and is caused by
         /// the player's ship receiving damage.
         private float _relativeShakeDamage;
-
-        /// <summary>
-        /// Function that maps relative shake damage to radians that the player's
-        /// viewport will tilt to produce sufficient shake.
-        /// </summary>
-        private Curve _shakeCurve;
-
-        /// <summary>
-        /// Function that maps a parameter to relative shake damage.
-        /// </summary>
-        /// Used in attenuating shake.
-        private Curve _shakeAttenuationCurve;
-
-        /// <summary>
-        /// Inverse of <c>shakeAttenuationCurve</c>.
-        /// </summary>
-        /// Used in attenuating shake.
-        private Curve _shakeAttenuationInverseCurve;
 
         /// <summary>
         /// Current amount of shake. Access this field through property <c>Shake</c>.
@@ -154,7 +150,7 @@ namespace AW2.Game
         /// If negative, the player has infinite lives.
         /// If zero, the player cannot play.
         /// </summary>
-        public int Lives { get { return _lives; } set { _lives = value; } }
+        public int Lives { get; set; }
 
         /// <summary>
         /// Amount of shake the player is suffering right now, in radians.
@@ -172,7 +168,7 @@ namespace AW2.Game
                     AttenuateShake(skippedTime);
 
                     // Calculate new shake.
-                    _shake = _shakeCurve.Evaluate(_relativeShakeDamage);
+                    _shake = g_shakeCurve.Evaluate(_relativeShakeDamage);
                     _shakeUpdateTime = Game.DataEngine.ArenaTotalTime;
 
                     // Attenuate shake damage for the current frame.
@@ -254,6 +250,32 @@ namespace AW2.Game
 
         #region Constructors
 
+        static Player()
+        {
+            g_shakeCurve = new Curve();
+            g_shakeCurve.PreLoop = CurveLoopType.Constant;
+            g_shakeCurve.PostLoop = CurveLoopType.Constant;
+            g_shakeCurve.Keys.Add(new CurveKey(0, 0));
+            g_shakeCurve.Keys.Add(new CurveKey(0.15f, 0.0f * MathHelper.PiOver4));
+            g_shakeCurve.Keys.Add(new CurveKey(0.3f, 0.4f * MathHelper.PiOver4));
+            g_shakeCurve.Keys.Add(new CurveKey(0.6f, 0.6f * MathHelper.PiOver4));
+            g_shakeCurve.Keys.Add(new CurveKey(1, MathHelper.PiOver4));
+            g_shakeCurve.ComputeTangents(CurveTangent.Linear);
+            g_shakeAttenuationCurve = new Curve();
+            g_shakeAttenuationCurve.PreLoop = CurveLoopType.Constant;
+            g_shakeAttenuationCurve.PostLoop = CurveLoopType.Linear;
+            g_shakeAttenuationCurve.Keys.Add(new CurveKey(0, 0));
+            g_shakeAttenuationCurve.Keys.Add(new CurveKey(0.05f, 0.01f));
+            g_shakeAttenuationCurve.Keys.Add(new CurveKey(1.0f, 1));
+            g_shakeAttenuationCurve.ComputeTangents(CurveTangent.Linear);
+            g_shakeAttenuationInverseCurve = new Curve();
+            g_shakeAttenuationInverseCurve.PreLoop = CurveLoopType.Constant;
+            g_shakeAttenuationInverseCurve.PostLoop = CurveLoopType.Linear;
+            foreach (var key in g_shakeAttenuationCurve.Keys)
+                g_shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
+            g_shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
+        }
+
         /// <summary>
         /// Creates a new player who plays at the local game instance.
         /// </summary>
@@ -297,38 +319,12 @@ namespace AW2.Game
             CanonicalString extraDeviceName, PlayerControls controls, int connectionId)
             : base(game, controls, connectionId)
         {
-            KillsWithoutDying = 0;
             Name = name;
             ShipName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
             Messages = new List<PlayerMessageEntry>();
-            _lives = 3;
-            _shipSpawnTime = new TimeSpan(1);
-            _relativeShakeDamage = 0;
             PlayerColor = Color.Gray;
-            _shakeCurve = new Curve();
-            _shakeCurve.PreLoop = CurveLoopType.Constant;
-            _shakeCurve.PostLoop = CurveLoopType.Constant;
-            _shakeCurve.Keys.Add(new CurveKey(0, 0));
-            _shakeCurve.Keys.Add(new CurveKey(0.15f, 0.0f * MathHelper.PiOver4));
-            _shakeCurve.Keys.Add(new CurveKey(0.3f, 0.4f * MathHelper.PiOver4));
-            _shakeCurve.Keys.Add(new CurveKey(0.6f, 0.6f * MathHelper.PiOver4));
-            _shakeCurve.Keys.Add(new CurveKey(1, MathHelper.PiOver4));
-            _shakeCurve.ComputeTangents(CurveTangent.Linear);
-            _shakeAttenuationCurve = new Curve();
-            _shakeAttenuationCurve.PreLoop = CurveLoopType.Constant;
-            _shakeAttenuationCurve.PostLoop = CurveLoopType.Linear;
-            _shakeAttenuationCurve.Keys.Add(new CurveKey(0, 0));
-            _shakeAttenuationCurve.Keys.Add(new CurveKey(0.05f, 0.01f));
-            _shakeAttenuationCurve.Keys.Add(new CurveKey(1.0f, 1));
-            _shakeAttenuationCurve.ComputeTangents(CurveTangent.Linear);
-            _shakeAttenuationInverseCurve = new Curve();
-            _shakeAttenuationInverseCurve.PreLoop = CurveLoopType.Constant;
-            _shakeAttenuationInverseCurve.PostLoop = CurveLoopType.Linear;
-            foreach (CurveKey key in _shakeAttenuationCurve.Keys)
-                _shakeAttenuationInverseCurve.Keys.Add(new CurveKey(key.Value, key.Position));
-            _shakeAttenuationInverseCurve.ComputeTangents(CurveTangent.Linear);
             BonusActions = new GameActionCollection(this);
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
         }
@@ -361,7 +357,7 @@ namespace AW2.Game
 
             if (Game.NetworkMode != NetworkMode.Client)
             {
-                if (Ship == null && _lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)
+                if (Ship == null && Lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)
                     CreateShip();
                 ApplyControlsToShip();
             }
@@ -478,7 +474,7 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((short)_lives);
+                writer.Write((short)Lives);
                 writer.Write((short)_kills);
                 writer.Write((short)_suicides);
                 writer.Write((byte)PostprocessEffectNames.Count);
@@ -500,7 +496,7 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                _lives = reader.ReadInt16();
+                Lives = reader.ReadInt16();
                 _kills = reader.ReadInt16();
                 _suicides = reader.ReadInt16();
                 int effectNameCount = reader.ReadByte();
@@ -524,7 +520,7 @@ namespace AW2.Game
                 if (Game.NetworkMode == NetworkMode.Server)
                     cause.Killer.Owner.MustUpdateToClients = true;
             }
-            --_lives;
+            --Lives;
             KillsWithoutDying = 0;
             BonusActions.Clear();
         }
@@ -535,16 +531,16 @@ namespace AW2.Game
                 CreateKillMessage(cause.Killer.Owner, Ship.Pos);
             if (cause.IsSuicide)
                 CreateSuicideMessage(this, Ship.Pos);
-            if (cause.Killer != null && cause.Killer.Owner != null)
-                cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
             if (cause.IsSpecial)
             {
                 var specialMessage = new PlayerMessage(cause.SpecialMessage, SPECIAL_KILL_COLOR);
                 foreach (var plr in Game.DataEngine.Players) plr.SendMessage(specialMessage);
             }
-            var bystanderMessage = new PlayerMessage(cause.BystanderMessage, KILL_COLOR);
+            if (cause.Killer != null && cause.Killer.Owner != null && !cause.IsSuicide)
+                cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
+            var bystanderMessage = new PlayerMessage(cause.BystanderMessage, cause.IsSuicide ? SUICIDE_COLOR : KILL_COLOR);
             foreach (var plr in cause.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
-            SendMessage(cause.DeathMessage);
+            SendMessage(new PlayerMessage(cause.DeathMessage, cause.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
             Ship = null;
         }
 
@@ -628,9 +624,9 @@ namespace AW2.Game
             // for some parameter x which represents time to wait for the shake to stop.
             // In effect, this ensures that it won't take too long for
             // even very big shakes to stop.
-            float shakeTime = _shakeAttenuationInverseCurve.Evaluate(_relativeShakeDamage);
+            float shakeTime = g_shakeAttenuationInverseCurve.Evaluate(_relativeShakeDamage);
             shakeTime = Math.Max(0, shakeTime - seconds);
-            _relativeShakeDamage = _shakeAttenuationCurve.Evaluate(shakeTime);
+            _relativeShakeDamage = g_shakeAttenuationCurve.Evaluate(shakeTime);
         }
 
         #endregion Private methods

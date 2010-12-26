@@ -533,10 +533,10 @@ namespace AW2.Game
         {
             if (cause.IsKill)
                 CreateKillMessage(cause.Killer.Owner, Ship.Pos);
-            if (cause.Killer != null && cause.Killer.Owner != null)
-                cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
             if (cause.IsSuicide)
                 CreateSuicideMessage(this, Ship.Pos);
+            if (cause.Killer != null && cause.Killer.Owner != null)
+                cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
             if (cause.IsSpecial)
             {
                 var specialMessage = new PlayerMessage(cause.SpecialMessage, SPECIAL_KILL_COLOR);

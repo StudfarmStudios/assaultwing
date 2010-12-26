@@ -1876,7 +1876,7 @@ namespace AW2.Helpers.Geometric
                 Assert.AreEqual(Geometry.LineIntersectionType.Segment, Geometry.Intersect(p1, p2, p6, p7)); // one line contained in another
                 Assert.AreEqual(Geometry.LineIntersectionType.Segment, Geometry.Intersect(p1, p2, p1, p2)); // the same line
                 Assert.AreEqual(Geometry.LineIntersectionType.None, Geometry.Intersect(p14, p15, p16, p17)); // segments on same line, not intersecting
-                Assert.AreEqual(Geometry.LineIntersectionType.Point, Geometry.Intersect(p14, p15, p15, p16)); // segments on same line, intersecting at a point
+                Assert.AreEqual(Geometry.LineIntersectionType.Segment, Geometry.Intersect(p14, p15, p15, p16)); // segments on same line, intersecting at a point. NOTE: This is reported as a segment intersection.
                 Assert.AreEqual(Geometry.LineIntersectionType.Segment, Geometry.Intersect(p14, p16, p15, p17)); // segments on same line, intersecting at a segment
             }
 
@@ -1946,35 +1946,6 @@ namespace AW2.Helpers.Geometric
                 Assert.IsTrue(Geometry.Intersect(c7, poly1)); // circle centered on edge, zero size
                 Assert.IsFalse(Geometry.Intersect(c8, poly1)); // circle totally out, in polygon's "armpit"
                 Assert.IsTrue(Geometry.Intersect(c9, poly1)); // circle centered in, intersects also complement
-            }
-
-            [Test]
-            public void TestIntersectPolygonPolygon()
-            {
-                Vector2 q1 = new Vector2(0f, 0f);
-                Vector2 q2 = new Vector2(30f, 10f);
-                Vector2 q3 = new Vector2(20f, 90f);
-                Vector2 q4 = new Vector2(10f, 90f);
-                Vector2 q5 = new Vector2(0f, 20f);
-                Vector2 q6 = new Vector2(-10f, 70f);
-                Vector2 w1 = new Vector2(-10f, -10f);
-                Vector2 w2 = new Vector2(-20f, 0f);
-                Vector2 w3 = new Vector2(20f, 20f);
-                Vector2 w4 = new Vector2(60f, 50f);
-                Vector2 w5 = new Vector2(30f, -20f);
-                Vector2 w6 = new Vector2(25f, 40f);
-                Vector2 w7 = new Vector2(20f, 70f);
-                Polygon poly1 = new Polygon(new Vector2[] { q1, q2, q3, q4, q5, q6 });
-                Polygon poly2 = new Polygon(new Vector2[] { q1, w1, w2 });
-                Polygon poly3 = new Polygon(new Vector2[] { w3, w4, w5 });
-                Polygon poly4 = new Polygon(new Vector2[] { w3, w6, w7 });
-                Polygon poly5 = new Polygon(new Vector2[] { w4, w2, w5 });
-
-                Assert.IsTrue(Geometry.Intersect(poly1, poly2)); // only one vertex intersects
-                Assert.IsTrue(Geometry.Intersect(poly1, poly3)); // vertex in polygon
-                Assert.IsFalse(Geometry.Intersect(poly2, poly3)); // no intersection
-                Assert.IsTrue(Geometry.Intersect(poly1, poly4)); // polygon in polygon
-                Assert.IsTrue(Geometry.Intersect(poly1, poly5)); // vertices out, edge intersects polygon
             }
 
             [Test]

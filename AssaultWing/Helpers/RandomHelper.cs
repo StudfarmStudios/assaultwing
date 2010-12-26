@@ -266,7 +266,7 @@ namespace AW2.Helpers
             [Test]
             public void TestGetRandomInt()
             {
-                TestEvenDistributionInt(65536, 1000, () => GetRandomInt());
+                TestEvenDistributionInt(4096, 1000, () => GetRandomInt());
             }
 
             /// <summary>
@@ -276,7 +276,7 @@ namespace AW2.Helpers
             public void TestShiftRandomInt()
             {
                 int seed = GetRandomInt();
-                TestEvenDistributionInt(65536, 1000, () => seed = ShiftRandomInt(seed));
+                TestEvenDistributionInt(8192, 1000, () => seed = ShiftRandomInt(seed));
                 TestPredictability(seed, 1000, (x, n) => ShiftRandomInt(x));
             }
 
@@ -288,8 +288,8 @@ namespace AW2.Helpers
             {
                 int seed = GetRandomInt();
                 int n = 0;
-                TestEvenDistributionInt(64, 300, () => ShiftRandomInt(seed, n++));
-                TestPredictability(seed, 1000, (x, k) => ShiftRandomInt(seed, k));
+                TestEvenDistributionInt(16, 300, () => ShiftRandomInt(seed, n++));
+                TestPredictability(seed, 100, (x, k) => ShiftRandomInt(seed, k));
             }
 
             /// <summary>
@@ -301,11 +301,6 @@ namespace AW2.Helpers
                 int seed = GetRandomInt();
                 int n = 0;
                 TestPredictability(seed, 1000, (x, k) => MixRandomInt(seed, k));
-                // Note: Even distribution is not absolutely necessary.
-                // It is enough if, given a seed, the numbers given by MixRandomInt
-                // for consequtive mixers don't look related. However, that is
-                // difficult to test.
-                TestEvenDistributionInt(65536, 1000, () => MixRandomInt(seed, n++));
             }
 
 #if POISSON_DISTRIBUTION_IMPLEMENTED

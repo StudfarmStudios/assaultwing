@@ -190,36 +190,6 @@ namespace AW2.Game.Gobs
             return gob.Pos + gob.Move * lookAheadSeconds;
         }
 
-        private Vector2 PredictPositionGood(Gob gob)
-        {
-            // Solve the prediction problem with 3D geometry where the Z axis represents time relative to now.
-            // The rocket travelling at an estimated maximum speed to all directions spans a cone.
-            // The target with its current known position and movement spans a 3D line.
-            // The intersection of the cone and the line represents possible collision points in space and time.
-            float rocketSpeedEstimate = _maxSpeed * 0.9f;
-            var rocketStart = new Vector3(Pos, 0);
-            var targetStart = new Vector3(_target.Pos, 0);
-            var targetDelta = new Vector3(_target.Move, 1);
-            float squareCosine = 1 / (1 * 1 + rocketSpeedEstimate * rocketSpeedEstimate);
-            Vector3 intersectionData1, intersectionData2;
-            var intersectionType = Geometry.Intersect(rocketStart, Vector3.UnitZ, squareCosine,
-                targetStart, targetDelta, out intersectionData1, out intersectionData2);
-            switch (intersectionType)
-            {
-                case Geometry.LineConeIntersectionType.Point:
-                    return new Vector2(intersectionData1.X, intersectionData1.Y);
-                case Geometry.LineConeIntersectionType.Ray:
-                    return new Vector2(intersectionData1.X, intersectionData1.Y);
-                case Geometry.LineConeIntersectionType.Segment:
-                    if (intersectionData1.Z <= intersectionData2.Z)
-                        return new Vector2(intersectionData1.X, intersectionData1.Y);
-                    else
-                        return new Vector2(intersectionData2.X, intersectionData2.Y);
-                default:
-                    return gob.Pos + 1 * gob.Move;
-            }
-        }
-
         private void RotateTowards(Vector2 direction, float rotationSpeed)
         {
             float rotationGoal = AWMathHelper.Angle(direction);

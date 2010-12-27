@@ -198,12 +198,6 @@ namespace AW2.Core
             GameState = GameState.Gameplay;
         }
 
-        public override void FinishArena()
-        {
-            base.FinishArena();
-            ShowDialog(new GameOverOverlayDialogData(this));
-        }
-
         /// <summary>
         /// Turns this game instance into a game server to whom other game instances
         /// can connect as game clients.
@@ -386,6 +380,11 @@ namespace AW2.Core
             }
         }
 
+        protected override void FinishArenaImpl()
+        {
+            ShowDialog(new GameOverOverlayDialogData(this));
+        }
+
         /// <summary>
         /// Resumes playing the current arena, closing the dialog if it's visible.
         /// </summary>
@@ -448,11 +447,7 @@ namespace AW2.Core
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
                 {
                     // E + A = end arena
-                    if (!DataEngine.ProgressBar.TaskRunning)
-                    {
-                        FinishArena();
-                        HideDialog();
-                    }
+                    if (!DataEngine.ProgressBar.TaskRunning && !DataEngine.ArenaFinished) FinishArena();
                 }
             }
         }

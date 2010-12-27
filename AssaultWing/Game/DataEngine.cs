@@ -71,6 +71,7 @@ namespace AW2.Game
         /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
         public Arena Arena { get; private set; }
 
+        public bool ArenaFinished { get; set; }
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
 

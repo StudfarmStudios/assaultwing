@@ -271,6 +271,7 @@ namespace AW2.Core
         /// </summary>
         public void PrepareArena(string arenaName)
         {
+            DataEngine.ArenaFinished = false;
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
             var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == arenaName).FileName;
@@ -297,8 +298,11 @@ namespace AW2.Core
         /// <summary>
         /// Finishes playing the current arena.
         /// </summary>
-        public virtual void FinishArena()
+        public void FinishArena()
         {
+            if (DataEngine.ArenaFinished) return;
+            DataEngine.ArenaFinished = true;
+            FinishArenaImpl();
         }
 
         /// <summary>
@@ -415,6 +419,8 @@ namespace AW2.Core
 
             base.OnExiting(sender, args);
         }
+
+        protected virtual void FinishArenaImpl() { }
 
         #endregion Overridden Game methods
     }

@@ -34,6 +34,7 @@ namespace AW2.Core
         private UIEngineImpl _uiEngine;
         private TimeSpan _lastFramerateCheck;
         private int _framesSinceLastCheck;
+        private bool _arenaFinished;
 
         #endregion AssaultWing fields
 
@@ -271,6 +272,7 @@ namespace AW2.Core
         /// </summary>
         public void PrepareArena(string arenaName)
         {
+            _arenaFinished = false;
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
             var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == arenaName).FileName;
@@ -299,7 +301,8 @@ namespace AW2.Core
         /// </summary>
         public void FinishArena()
         {
-            DataEngine.FinishArena();
+            if (_arenaFinished) return;
+            _arenaFinished = true;
             FinishArenaImpl();
         }
 

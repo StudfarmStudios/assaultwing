@@ -71,7 +71,6 @@ namespace AW2.Game
         /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
         public Arena Arena { get; private set; }
 
-        public bool ArenaFinished { get; private set; }
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
 
@@ -153,14 +152,6 @@ namespace AW2.Game
             Game.GobsCounter.SetRawValue(Arena.Gobs.Count);
         }
 
-        public void FinishArena()
-        {
-            if (ArenaFinished) return;
-            ArenaFinished = true;
-            if (Arena != null) Arena.Dispose();
-            Arena = null;
-        }
-
         /// <summary>
         /// Prepares the game data for playing an arena.
         /// When the playing really should start, call <see cref="StartArena"/>.
@@ -169,7 +160,6 @@ namespace AW2.Game
         /// for playing. If not, some initialisations are skipped.</param>
         public void InitializeFromArena(string arenaFilename, bool initializeForPlaying)
         {
-            ArenaFinished = false;
             var newArena = Arena.FromFile(Game, arenaFilename);
             if (NewArena != null) NewArena(newArena);
             if (initializeForPlaying) newArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, newArena.BinFilename));

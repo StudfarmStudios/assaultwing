@@ -408,7 +408,6 @@ namespace AW2.Core
                         "Quit to Main Menu? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.GetYesControl(), ShowMenu),
                         new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay));
-
                 ShowDialog(dialogData);
             }
         }
@@ -449,7 +448,7 @@ namespace AW2.Core
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
                 {
                     // E + A = end arena
-                    if (!DataEngine.ProgressBar.TaskRunning && !DataEngine.ArenaFinished) FinishArena();
+                    if (!DataEngine.ProgressBar.TaskRunning) FinishArena();
                 }
             }
         }

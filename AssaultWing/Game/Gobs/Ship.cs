@@ -81,6 +81,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _weapon2ChargeSpeed;
 
+        private int[] _barrelBoneIndices;
+
         #endregion Ship fields related to weapons
 
         #region Ship fields related to rolling
@@ -224,6 +226,20 @@ namespace AW2.Game.Gobs
 
         public ShipInfo ShipInfo { get { return _shipInfo; } set { _shipInfo = value; } }
 
+        public int[] BarrelBoneIndices
+        {
+            get
+            {
+                if (_barrelBoneIndices == null)
+                {
+                    var boneIs = GetNamedPositions("Gun");
+                    if (boneIs.Length != 4) throw new ApplicationException(string.Format("Unexpected number of gun barrels ({0}) in ship 3D model ({1})", boneIs.Length, ModelName));
+                    _barrelBoneIndices = boneIs.OrderBy(index => index.Key).Select(index => index.Value).ToArray();
+                }
+                return _barrelBoneIndices;
+            }
+        }
+
         /// <summary>
         /// Names of all textures that this gob type will ever use.
         /// </summary>
@@ -343,10 +359,6 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            // Deferred initialization of ship weapons
-            if (Weapon1.BoneIndices == null) InitializeWeapon(Weapon1);
-            if (Weapon2.BoneIndices == null) InitializeWeapon(Weapon2);
-
             UpdateRoll();
             base.Update();
 
@@ -513,7 +525,7 @@ namespace AW2.Game.Gobs
             var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
 
             // Draw player name
-            if (Owner.IsRemote)
+            if (Owner != null && Owner.IsRemote)
             {
                 var playerNameSize = playerNameFont.MeasureString(Owner.Name);
                 var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);
@@ -630,13 +642,6 @@ namespace AW2.Game.Gobs
         {
             device.AttachTo(this, ownerHandle);
             device.Owner.Game.DataEngine.Devices.Add(device);
-        }
-
-        private void InitializeWeapon(Weapon weapon)
-        {
-            var boneIs = GetNamedPositions("Gun");
-            if (boneIs.Length == 0) Log.Write("Warning: Ship found no gun barrels in its 3D model");
-            weapon.BoneIndices = boneIs.OrderBy(index => index.Key).Select(index => index.Value).ToArray();
         }
 
         private void UpdateRoll()

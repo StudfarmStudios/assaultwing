@@ -46,7 +46,7 @@ namespace AW2.Game.Gobs
             base.Activate();
             InitializeTailState();
             _wiggleFrequency = 3f;
-            _wiggleMainPhase = Owner.ID * 1.2345f; // to avoid different ships wiggling synchronously
+            _wiggleMainPhase = ID * 1.2345f; // to avoid different ships wiggling synchronously
         }
 
         public override void Update()

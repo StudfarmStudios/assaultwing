@@ -218,6 +218,7 @@ namespace AW2.Net
             _connectionAttemptListener = null;
             ClientUDPEndPointPool = null;
             DisposeGameClientConnections();
+            FlushUnhandledUDPMessages();
         }
 
         /// <summary>
@@ -242,6 +243,7 @@ namespace AW2.Net
             MessageHandlers.Clear();
             Connection.CancelConnect();
             DisposeGameServerConnection();
+            FlushUnhandledUDPMessages();
         }
 
         /// <summary>
@@ -505,6 +507,11 @@ namespace AW2.Net
             if (UDPSocket == null) return;
             UDPSocket.Dispose();
             UDPSocket = null;
+        }
+
+        private void FlushUnhandledUDPMessages()
+        {
+            lock (_udpMessagesToHandle) _udpMessagesToHandle.Clear();
         }
 
         private void HandleUDPMessage(NetBuffer messageHeaderAndBody)

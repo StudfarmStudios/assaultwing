@@ -15,6 +15,7 @@ namespace AW2.Game.BonusActions
 
         private void GiveHealth()
         {
+            if (Player.Ship == null) return;
             float healthBonus = Player.Ship.MaxDamageLevel * 0.20f;
             if (healthBonus <= Player.Ship.DamageLevel)
                 Player.Ship.DamageLevel -= healthBonus;

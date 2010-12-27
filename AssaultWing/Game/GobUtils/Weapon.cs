@@ -72,7 +72,7 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Indices of the bones that define the locations of the weapon barrels on the owning ship.
         /// </summary>
-        public int[] BoneIndices { get; set; }
+        private int[] BoneIndices { get { return Owner.BarrelBoneIndices; } }
 
         /// <summary>
         /// Names of the weapon type upgrades of the weapon, in order of upgrades.

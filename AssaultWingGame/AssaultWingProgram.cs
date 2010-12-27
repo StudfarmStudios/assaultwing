@@ -98,7 +98,7 @@ namespace AW2
         private static MailMessage CreateBugMail(string header, string body)
         {
             // Note: Gmail changes From address to what the Gmail user settings say.
-            var mail = new MailMessage("aw-bug@gmail.com", "info@assaultwing.com");
+            var mail = new MailMessage("aw-bug@gmail.com", "assaultwing@gmail.com");
             mail.Subject = "[BUG REPORT] " + header;
             mail.Body = body;
             return mail;

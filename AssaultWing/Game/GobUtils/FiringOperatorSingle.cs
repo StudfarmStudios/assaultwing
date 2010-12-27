@@ -42,7 +42,7 @@ namespace AW2.Game.GobUtils
 
         public override void Update()
         {
-            if (Device.PlayerOwner.Game.NetworkMode != NetworkMode.Client &&
+            if (Device.Owner.Game.NetworkMode != NetworkMode.Client &&
                 Device.OwnerHandle != ShipDevice.OwnerHandleType.PrimaryWeapon)
             {
                 if (CanFire && !_previousCanFire)

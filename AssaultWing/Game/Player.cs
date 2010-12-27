@@ -229,6 +229,17 @@ namespace AW2.Game
 
         public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
 
+        public Func<bool> IsAllowedToCreateShip { get; set; }
+
+        private bool IsTimeToCreateShip
+        {
+            get
+            {
+                if (!(Ship == null && Lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)) return false;
+                return !(IsAllowedToCreateShip != null && !IsAllowedToCreateShip());
+            }
+        }
+
         #endregion Player properties
 
         #region Player properties about statistics
@@ -357,8 +368,7 @@ namespace AW2.Game
 
             if (Game.NetworkMode != NetworkMode.Client)
             {
-                if (Ship == null && Lives != 0 && _shipSpawnTime <= Game.DataEngine.ArenaTotalTime)
-                    CreateShip();
+                if (IsTimeToCreateShip) CreateShip();
                 ApplyControlsToShip();
             }
             else // otherwise we are a game client

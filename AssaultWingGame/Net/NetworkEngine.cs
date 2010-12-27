@@ -556,7 +556,7 @@ namespace AW2.Net
             var serverIsPlayingArena = Game.DataEngine.Arena != null;
             foreach (var conn in GameClientConnections)
             {
-                var clientIsPlayingArena = conn.ConnectionStatus.IsPlayingArena;
+                var clientIsPlayingArena = conn.ConnectionStatus.IsRunningArena;
                 if (!clientIsPlayingArena && serverIsPlayingArena)
                     MakeClientStartArena(conn);
                 else if (clientIsPlayingArena && !serverIsPlayingArena)
@@ -567,7 +567,6 @@ namespace AW2.Net
         private void MakeClientStartArena(GameClientConnection conn)
         {
             var arenaName = _game.SelectedArenaName;
-            _game.SendPlayerSettingsToGameClients(p => true);
             conn.Send(new StartGameMessage { ArenaToPlay = arenaName });
             var gobCreationMessage = new GobCreationMessage();
             foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))

@@ -22,6 +22,7 @@ namespace AW2.Core
         private GameState _gameState;
         private Control _escapeControl;
         private List<Gob> _addedGobs;
+        private TimeSpan _lastGameSettingsSent;
 
         // HACK: Debug keys
         private Control _frameStepControl;
@@ -92,6 +93,7 @@ namespace AW2.Core
             UpdateDebugKeys();
             SynchronizeFrameNumber();
             SendGobCreationMessage();
+            SendGameSettings();
         }
 
         public void ShowDialog(OverlayDialogData dialogData)
@@ -266,7 +268,7 @@ namespace AW2.Core
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
             DataEngine.RemoveRemoteSpectators();
-            GameState = GameState.GameplayStopped; // gameplay cannot continue because it's initialized only for a client
+            if (GameState == Core.GameState.Gameplay) GameState = GameState.GameplayStopped; // gameplay cannot continue because it's initialized only for a client
             if (errorOrNull != null)
             {
                 var dialogData = new CustomOverlayDialogData(this,
@@ -514,19 +516,23 @@ namespace AW2.Core
             if (NetworkMode == NetworkMode.Server)
             {
                 UpdateGameServerInfoToManagementServer();
-                if (player != null) player.NewMessage += message =>
+                if (player != null)
                 {
-                    if (player.IsRemote)
-                        try
-                        {
-                            var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
-                            NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            // The connection of the player doesn't exist any more. Just don't send the message then.
-                        }
-                };
+                    player.NewMessage += message =>
+                    {
+                        if (player.IsRemote)
+                            try
+                            {
+                                var messageMessage = new PlayerMessageMessage { PlayerID = player.ID, Message = message };
+                                NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(messageMessage);
+                            }
+                            catch (InvalidOperationException)
+                            {
+                                // The connection of the player doesn't exist any more. Just don't send the message then.
+                            }
+                    };
+                    player.IsAllowedToCreateShip = () => NetworkEngine.GetGameClientConnection(player.ConnectionID).ConnectionStatus.IsPlayingArena;
+                }
             }
         }
 
@@ -603,17 +609,41 @@ namespace AW2.Core
             }
         }
 
-        public void SendPlayerSettingsToGameServer(Func<Player, bool> sendCriteria)
+        private void SendGameSettings()
+        {
+            if (_lastGameSettingsSent.SecondsAgoRealTime() < 1) return;
+            _lastGameSettingsSent = GameTime.TotalRealTime;
+            switch (MenuEngine.Game.NetworkMode)
+            {
+                case NetworkMode.Client:
+                    if (NetworkEngine.IsConnectedToGameServer)
+                        MenuEngine.Game.SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
+                    break;
+                case NetworkMode.Server:
+                    MenuEngine.Game.SendPlayerSettingsToGameClients(p => true);
+                    SendGameSettingsToRemote(MenuEngine.Game.NetworkEngine.GameClientConnections);
+                    break;
+            }
+        }
+
+        private void SendGameSettingsToRemote(IEnumerable<Connection> connections)
+        {
+            var mess = new GameSettingsRequest { ArenaToPlay = MenuEngine.Game.SelectedArenaName };
+            foreach (var conn in connections) conn.Send(mess);
+        }
+
+        private void SendPlayerSettingsToGameServer(Func<Player, bool> sendCriteria)
         {
             Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest = plr => new PlayerSettingsRequest
             {
                 IsRegisteredToServer = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes,
+                IsGameClientPlayingArena = GameState == Core.GameState.Gameplay,
                 PlayerID = plr.ServerRegistration == Spectator.ServerRegistrationType.Yes ? plr.ID : plr.LocalID,
             };
             SendPlayerSettingsToRemote(sendCriteria, newPlayerSettingsRequest, new[] { NetworkEngine.GameServerConnection });
         }
 
-        public void SendPlayerSettingsToGameClients(Func<Player, bool> sendCriteria)
+        private void SendPlayerSettingsToGameClients(Func<Player, bool> sendCriteria)
         {
             Func<Player, PlayerSettingsRequest> newPlayerSettingsRequest = plr => new PlayerSettingsRequest
             {

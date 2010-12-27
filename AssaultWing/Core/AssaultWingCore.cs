@@ -271,7 +271,6 @@ namespace AW2.Core
         /// </summary>
         public void PrepareArena(string arenaName)
         {
-            DataEngine.ArenaFinished = false;
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
             var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == arenaName).FileName;
@@ -300,8 +299,7 @@ namespace AW2.Core
         /// </summary>
         public void FinishArena()
         {
-            if (DataEngine.ArenaFinished) return;
-            DataEngine.ArenaFinished = true;
+            DataEngine.FinishArena();
             FinishArenaImpl();
         }
 

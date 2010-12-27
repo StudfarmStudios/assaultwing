@@ -15,23 +15,30 @@ namespace AW2.Graphics.OverlayComponents
 
         public Gob Gob { get; private set; }
         public Gob TrackerGob { get; private set; }
-        public bool StickToBorders { get; private set; }
-        public bool RotateTowardsTarget { get; private set; }
-        public bool ShowWhileTargetOnScreen { get; private set; }
-        public bool ScaleByDistance { get; private set; }
+        public bool StickToBorders { get; set; }
+        public bool RotateTowardsTarget { get; set; }
+        public bool ShowWhileTargetOnScreen { get; set; }
+        public bool ScaleByDistance { get; set; }
         public string Texture { get; private set; }
-        public Color DrawColor { get; private set; }
+        private Color DrawColor
+        {
+            get
+            {
+                if (TrackerGob != null && TrackerGob.Owner != null) return TrackerGob.Owner.PlayerColor;
+                if (Gob.Owner != null) return Gob.Owner.PlayerColor;
+                return Color.White;
+            }
+        }
 
-        public GobTrackerItem(Gob gob, Gob trackerGob, string texture, bool stickToViewportBorders, bool rotateTowardsTarget, bool showWhileTargetOnScreen, bool scaleByDistance, Color drawColor)
+        public GobTrackerItem(Gob gob, Gob trackerGob, string texture)
         {
             if (gob == null) throw new ArgumentNullException("GobTrackerItem.Gob must not be null");
             Gob = gob;
-            StickToBorders = stickToViewportBorders;
-            RotateTowardsTarget = rotateTowardsTarget;
-            ShowWhileTargetOnScreen = showWhileTargetOnScreen;
+            StickToBorders = true;
+            RotateTowardsTarget = true;
+            ShowWhileTargetOnScreen = false;
+            ScaleByDistance = true;
             Texture = texture;
-            DrawColor = drawColor;
-            ScaleByDistance = scaleByDistance;
             TrackerGob = trackerGob;
         }
 

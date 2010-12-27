@@ -10,6 +10,7 @@ using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
+using AW2.UI;
 
 namespace AW2.Game.Gobs
 {
@@ -20,6 +21,7 @@ namespace AW2.Game.Gobs
     {
         private const string SHIP_BIRTH_SOUND = "NewCraft";
         private const string SHIP_THRUST_SOUND = "Engine";
+        private static readonly ControlState[] g_defaultControlStates;
 
         #region Ship fields related to flying
 
@@ -234,6 +236,11 @@ namespace AW2.Game.Gobs
 
         #region Ship constructors
 
+        static Ship()
+        {
+            g_defaultControlStates = new[] { new ControlState(), new ControlState(), new ControlState(), new ControlState(), new ControlState(), new ControlState() };
+        }
+
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
@@ -406,7 +413,7 @@ namespace AW2.Game.Gobs
             var oldRotation = Rotation;
             var oldDrawRotationOffset = DrawRotationOffset;
             base.Deserialize(reader, mode, framesAgo);
-            if (Owner.Ship != this) Owner.Ship = this;
+            if (Owner != null && Owner.Ship != this) Owner.Ship = this;
 
             // HACK: superclass Gob deserializes old Pos and Move and calculates them forward;
             // class Ship must calculate Rotation from old value to current.
@@ -603,6 +610,13 @@ namespace AW2.Game.Gobs
             InitializeDevice(newDevice, deviceType);
         }
 
+        public ControlState[] GetControlStates()
+        {
+            return Owner != null
+                ? Owner.Controls.GetStates()
+                : g_defaultControlStates;
+        }
+
         protected override void SwitchEngineFlashAndBang(bool active)
         {
             base.SwitchEngineFlashAndBang(active);
@@ -615,7 +629,7 @@ namespace AW2.Game.Gobs
         private void InitializeDevice(ShipDevice device, ShipDevice.OwnerHandleType ownerHandle)
         {
             device.AttachTo(this, ownerHandle);
-            device.PlayerOwner.Game.DataEngine.Devices.Add(device);
+            device.Owner.Game.DataEngine.Devices.Add(device);
         }
 
         private void InitializeWeapon(Weapon weapon)
@@ -680,7 +694,7 @@ namespace AW2.Game.Gobs
                 Move = Move,
                 Pos = Pos,
                 Rotation = Rotation,
-                ControlStates = Owner.Controls.GetStates(),
+                ControlStates = GetControlStates(),
             });
         }
     }

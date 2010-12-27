@@ -1,51 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AW2.Core;
-using AW2.Helpers.Serialization;
-
-namespace AW2.Net.ConnectionUtils
+﻿namespace AW2.Net.ConnectionUtils
 {
-    public class GameClientStatus : INetworkSerializable
+    [System.Diagnostics.DebuggerDisplay("Arena {CurrentArenaName}, Playing {IsPlayingArena}")]
+    public class GameClientStatus
     {
         private string _currentArenaName;
 
         /// <summary>
-        /// Name of the arena the instance at the end of the connection is currently playing,
-        /// or the empty string if no arena is being played.
+        /// Name of the arena the instance at the end of the connection is currently running,
+        /// or the empty string if no arena is being run.
+        /// This property is maintained by the game server.
         /// </summary>
         public string CurrentArenaName { get { return _currentArenaName ?? ""; } set { _currentArenaName = value; } }
+        public bool IsRunningArena { get { return CurrentArenaName != ""; } }
 
-        public bool IsPlayingArena { get { return CurrentArenaName != ""; } }
-
-        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-            writer.Write((string)CurrentArenaName);
-        }
-
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
-        {
-            CurrentArenaName = reader.ReadString();
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is GameClientStatus)) return false;
-            var other = (GameClientStatus)obj;
-            return _currentArenaName == other._currentArenaName;
-        }
-
-        public override int GetHashCode()
-        {
-            return _currentArenaName.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            if (string.IsNullOrEmpty(CurrentArenaName))
-                return "Not playing any arena";
-            else
-                return "Playing " + CurrentArenaName;
-        }
+        /// <summary>
+        /// Is the game client playing the current arena or hanging out in menus.
+        /// This property is maintained by the game client.
+        /// </summary>
+        public bool IsPlayingArena { get; set; }
     }
 }

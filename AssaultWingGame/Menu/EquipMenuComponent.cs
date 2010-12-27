@@ -134,11 +134,7 @@ namespace AW2.Menu
             set
             {
                 base.Active = value;
-                if (value)
-                {
-                    _readyPressed = false;
-                    CreateSelectors();
-                }
+                if (value) ResetEquipMenu();
             }
         }
 
@@ -163,8 +159,7 @@ namespace AW2.Menu
         {
             get
             {
-                if (_playerListIndex >= MenuEngine.Game.DataEngine.Players.Count()) _playerListIndex = 0;
-                if (_playerListIndex < 0) _playerListIndex = MenuEngine.Game.DataEngine.Players.Count() - 1;
+                _playerListIndex = _playerListIndex.Clamp(0, MenuEngine.Game.DataEngine.Players.Count() - 1);
                 return _playerListIndex;
             }
             set { _playerListIndex = value; }
@@ -185,13 +180,11 @@ namespace AW2.Menu
             _controlListDown = new KeyboardKey(Keys.Down);
             _controlStartGame = new KeyboardKey(Keys.F10);
             _currentTab = EquipMenuTab.Equipment;
-            PlayerListIndex = 0;
-            _gameSettingsListIndex = 0;
             _listCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             _playerNameChanged = false;
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             _readyFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
-            _pos = new Vector2(0, 0);
+            _pos = Vector2.Zero;
             _currentItems = new EquipMenuItem[MAX_MENU_PANES];
             _cursorFadeStartTimes = new TimeSpan[MAX_MENU_PANES];
             _cursorFade = new Curve();
@@ -266,22 +259,7 @@ namespace AW2.Menu
                 default: throw new ApplicationException("Unexpected EquipMenuTab " + _currentTab);
             }
             CheckGeneralControls();
-            SendGameSettings();
             CheckArenaStart();
-        }
-
-        private void SendGameSettings()
-        {
-            switch (MenuEngine.Game.NetworkMode)
-            {
-                case NetworkMode.Client:
-                    MenuEngine.Game.SendPlayerSettingsToGameServer(p => !p.IsRemote && p.ServerRegistration != Spectator.ServerRegistrationType.Requested);
-                    break;
-                case NetworkMode.Server:
-                    MenuEngine.Game.SendPlayerSettingsToGameClients(p => true);
-                    SendGameSettingsToRemote(MenuEngine.Game.NetworkEngine.GameClientConnections);
-                    break;
-            }
         }
 
         private void CheckArenaStart()
@@ -290,7 +268,6 @@ namespace AW2.Menu
                 ? MenuEngine.Game.IsClientAllowedToStartArena && _readyPressed
                 : _readyPressed;
             if (!okToStart) return;
-            ResetEquipMenu(); // FIXME: remove this
             MenuEngine.Deactivate();
             if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
                 AssaultWingCore.Instance.StartArena(); // arena prepared in MainMenuItemCollections.HandleStartGameMessage
@@ -300,15 +277,12 @@ namespace AW2.Menu
                     AssaultWingCore.Instance.StartArena);
         }
 
-        private void ResetPlayerList()
-        {
-            PlayerListIndex = 0;
-        }
-
         private void ResetEquipMenu()
         {
-            ResetPlayerList();
             _currentTab = EquipMenuTab.Equipment;
+            _readyPressed = false;
+            PlayerListIndex = 0;
+            CreateSelectors();
         }
 
         private void CreateSelectors()
@@ -332,7 +306,7 @@ namespace AW2.Menu
         private void CheckGeneralControls()
         {
             if (_controlTab.Pulse) ChangeTab();
-            else if (_controlBack.Pulse) BackOutFromMenu();
+            else if (_controlBack.Pulse) BackToMainMenu();
             else if (_controlStartGame.Pulse) _readyPressed = !_readyPressed;
         }
 
@@ -430,12 +404,6 @@ namespace AW2.Menu
             }
         }
 
-        private void SendGameSettingsToRemote(IEnumerable<Connection> connections)
-        {
-            var mess = new GameSettingsRequest { ArenaToPlay = MenuEngine.Game.SelectedArenaName };
-            foreach (var conn in connections) conn.Send(mess);
-        }
-
         /// <summary>
         /// Helper for <seealso cref="CheckPlayerControls"/>
         /// </summary>
@@ -449,26 +417,22 @@ namespace AW2.Menu
 
         private void ChangeTab()
         {
-            if (_currentTab == EquipMenuTab.GameSettings)
-                _currentTab = EquipMenuTab.Equipment;
-            else
+            switch (_currentTab)
             {
-                ++_currentTab;
-
-                // There is no chat in standalone mode
-                if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone && _currentTab == EquipMenuTab.Chat)
-                    ++_currentTab;
+                case EquipMenuTab.Equipment: _currentTab = EquipMenuTab.Players; break;
+                case EquipMenuTab.Players: _currentTab = MenuEngine.Game.NetworkMode == NetworkMode.Standalone
+                    ? EquipMenuTab.GameSettings : EquipMenuTab.Chat; break;
+                case EquipMenuTab.Chat: _currentTab = EquipMenuTab.GameSettings;  break;
+                case EquipMenuTab.GameSettings: _currentTab = EquipMenuTab.Equipment; break;
+                default: throw new ApplicationException("Unexpected EquipMenuTab " + _currentTab);
             }
-            // If someone drops of or whatever, set the playerListIndex to Zero for safety
-            if (_currentTab == EquipMenuTab.Players) ResetPlayerList();
             MenuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
             _tabFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
         }
 
-        private void BackOutFromMenu()
+        private void BackToMainMenu()
         {
-            ResetEquipMenu();
-            MenuEngine.Game.ShowMenu();
+            MenuEngine.Game.CutNetworkConnections();
             MenuEngine.ActivateComponent(MenuComponentType.Main);
         }
 

@@ -223,6 +223,8 @@ namespace AW2.Net.MessageHandling
 
         private static void HandlePlayerSettingsRequestOnServer(PlayerSettingsRequest mess)
         {
+            var clientConn = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
+            clientConn.ConnectionStatus.IsPlayingArena = mess.IsGameClientPlayingArena;
             if (!mess.IsRegisteredToServer)
             {
                 var newPlayer = CreateAndAddNewPlayer(mess);
@@ -231,8 +233,7 @@ namespace AW2.Net.MessageHandling
                     PlayerLocalID = mess.PlayerID,
                     PlayerID = newPlayer.ID
                 };
-                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
-                AssaultWing.Instance.SendPlayerSettingsToGameClients(p => true);
+                clientConn.Send(reply);
             }
             else
             {

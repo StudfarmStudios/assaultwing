@@ -41,7 +41,7 @@ namespace AW2.Game.GobUtils
                     Move = ship.Move,
                     Rotation = ship.Rotation,
                     GameTime = ship.Game.DataEngine.ArenaTotalTime,
-                    ControlStates = ship.Owner.Controls.GetStates(),
+                    ControlStates = ship.GetControlStates(),
                 },
                 TurnSpeed = ship.TurnSpeed,
                 ThrustForce = ship.ThrustForce,

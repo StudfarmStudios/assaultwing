@@ -1,5 +1,6 @@
 ﻿using System;
 using AW2.Helpers.Serialization;
+using AW2.Net.ConnectionUtils;
 
 namespace AW2.Net.Messages
 {
@@ -22,16 +23,24 @@ namespace AW2.Net.Messages
         /// </summary>
         public int PlayerID { get; set; }
 
+        /// <summary>
+        /// As <see cref="GameClientStatus.IsPlayingArena"/>.
+        /// Used only in messages from a game client to a game server.
+        /// </summary>
+        public bool IsGameClientPlayingArena { get; set; }
+
         protected override void Serialize(NetworkBinaryWriter writer)
         {
             checked
             {
                 // Player settings request structure:
                 // bool: has the player been registered to the server
+                // bool: is the game client playing the current arena
                 // byte: player identifier
                 // word: data length N
                 // N bytes: serialised data of the player
                 writer.Write((bool)IsRegisteredToServer);
+                writer.Write((bool)IsGameClientPlayingArena);
                 writer.Write((byte)PlayerID);
                 writer.Write((ushort)StreamedData.Length);
                 writer.Write(StreamedData, 0, StreamedData.Length);
@@ -41,6 +50,7 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             IsRegisteredToServer = reader.ReadBoolean();
+            IsGameClientPlayingArena = reader.ReadBoolean();
             PlayerID = reader.ReadByte();
             int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);

@@ -456,6 +456,7 @@ namespace AW2.Core
         private void SynchronizeFrameNumber()
         {
             if (NetworkMode != NetworkMode.Client) return;
+            if (!NetworkEngine.IsConnectedToGameServer) return;
             if (GameState != GameState.Gameplay && GameState != GameState.GameAndMenu) return;
             DataEngine.Arena.FrameNumber -= NetworkEngine.GameServerConnection.PingInfo.RemoteFrameNumberOffset;
         }

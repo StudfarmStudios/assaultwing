@@ -51,9 +51,9 @@ namespace AW2.Game.Weapons
             {
                 shot.Owner = Owner.Owner;
                 shot.ResetPos(Owner.GetNamedPosition(boneIndex), Vector2.Zero, Owner.Rotation);
-                shot.Shooter = new GobProxy(Owner);
+                shot.Shooter = Owner;
                 shot.ShooterBoneIndex = boneIndex;
-                shot.Target = new GobProxy(target);
+                shot.Target = target;
                 Arena.Gobs.Add(shot);
             });
         }

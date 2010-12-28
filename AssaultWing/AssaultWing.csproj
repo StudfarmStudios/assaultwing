@@ -242,6 +242,7 @@
     <Compile Include="Helpers\Geometric\Rectangle.cs" />
     <Compile Include="Helpers\Geometric\Triangle.cs" />
     <Compile Include="Helpers\Graphics3D.cs" />
+    <Compile Include="Helpers\LazyProxy.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Helpers\Math\AWMathHelper.cs" />
     <Compile Include="Helpers\Math\ConstantValue.cs" />

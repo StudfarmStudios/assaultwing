@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -7,57 +8,6 @@ using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs
 {
-    public class GobProxy : INetworkSerializable
-    {
-        int _id;
-        Arena _arena;
-        Gob _gob;
-
-        public Gob Gob
-        {
-            get
-            {
-                if (_id > 0)
-                {
-                    int id = _id;
-                    _gob = _arena.Gobs.FirstOrDefault(gob => gob.ID == id);
-                    if (_gob == null) Log.Write("ERROR: GobProxy cannot find gob by the ID " + id);
-                    _id = 0;
-                }
-                return _gob;
-            }
-        }
-
-        public GobProxy() { }
-        public GobProxy(Gob gob) { _gob = gob; }
-
-        public void SetId(int id) { _id = id; }
-        public void SetArena(Arena arena) { _arena = arena; }
-
-        public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
-            {
-                int gobID = Gob == null ? 0 : Gob.ID;
-                writer.Write((int)gobID);
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-            }
-        }
-
-        public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
-        {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
-            {
-                SetId(reader.ReadInt32());
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-            }
-        }
-    }
-
     /// <summary>
     /// A lightning that is shot from a gob into another gob who will get hurt.
     /// </summary>
@@ -122,9 +72,9 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private Curve alphaCurve;
 
-        public GobProxy Shooter { get; set; }
+        public LazyProxy<int, Gob> Shooter { get; set; }
         public int ShooterBoneIndex { get; set; }
-        public GobProxy Target { get; set; }
+        public LazyProxy<int, Gob> Target { get; set; }
 
         public override IEnumerable<CanonicalString> TextureNames
         {
@@ -152,8 +102,8 @@ namespace AW2.Game.Gobs
         public Lightning(CanonicalString typeName)
             : base(typeName)
         {
-            Shooter = new GobProxy();
-            Target = new GobProxy();
+            Shooter = new LazyProxy<int, Gob>(FindGob);
+            Target = new LazyProxy<int, Gob>(FindGob);
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -175,8 +125,6 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            Shooter.SetArena(Arena);
-            Target.SetArena(Arena);
             CreateMesh();
             _damageDealt = false;
         }
@@ -187,8 +135,8 @@ namespace AW2.Game.Gobs
             CreateMesh();
             if (!_damageDealt)
             {
-                if (Target.Gob != null)
-                    Target.Gob.InflictDamage(impactDamage, new DeathCause(Target.Gob, DeathCauseType.Damage, this));
+                var target = Target.GetValue();
+                if (target != null) target.InflictDamage(impactDamage, new DeathCause(target, DeathCauseType.Damage, this));
                 _damageDealt = true;
             }
             Alpha = alphaCurve.Evaluate(AgeInGameSeconds);
@@ -219,12 +167,11 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                writer.Write((int)Shooter.Gob.ID);
+                writer.Write((int)Shooter.GetValue().ID);
                 writer.Write((int)ShooterBoneIndex);
-                Target.Serialize(writer, mode);
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
+                var target = Target.GetValue();
+                int targetID = target == null ? 0 : target.ID;
+                writer.Write((int)targetID);
             }
         }
 
@@ -233,12 +180,10 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                Shooter.SetId(reader.ReadInt32());
+                Shooter.SetData(reader.ReadInt32());
                 ShooterBoneIndex = reader.ReadInt32();
-                Target.Deserialize(reader, mode, framesAgo);
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
+                int targetID = reader.ReadInt32();
+                if (targetID != 0) Target.SetData(targetID);
             }
         }
 
@@ -246,9 +191,15 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
+        private Tuple<bool, Gob> FindGob(int id)
+        {
+            var gob = Arena.Gobs.FirstOrDefault(g => g.ID == id);
+            return Tuple.Create(gob != null, gob);
+        }
+
         private void CreateMesh()
         {
-            if (Shooter.Gob == null)
+            if (Shooter.GetValue() == null)
             {
                 // This will happen if 'Shooter' cannot be found by its gob ID
                 _vertexData = new VertexPositionTexture[] {
@@ -258,16 +209,17 @@ namespace AW2.Game.Gobs
                 };
                 return;
             }
-            var start = Shooter.Gob.GetNamedPosition(ShooterBoneIndex);
-            if (Target.Gob != null)
+            var start = Shooter.GetValue().GetNamedPosition(ShooterBoneIndex);
+            if (Target.GetValue() != null)
             {
-                _segments = new List<Segment> { new Segment(start, Target.Gob.Pos) };
+                _segments = new List<Segment> { new Segment(start, Target.GetValue().Pos) };
             }
             else
             {
-                var drawRotation = Shooter.Gob.Rotation + Shooter.Gob.DrawRotationOffset;
-                var middle1 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation - MathHelper.PiOver4, drawRotation);
-                var middle2 = Shooter.Gob.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation, drawRotation + MathHelper.PiOver4);
+                Gob shooter = Shooter;
+                var drawRotation = shooter.Rotation + shooter.DrawRotationOffset;
+                var middle1 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation - MathHelper.PiOver4, drawRotation);
+                var middle2 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation, drawRotation + MathHelper.PiOver4);
                 _segments = new List<Segment>
                 {
                     new Segment(start, middle1),

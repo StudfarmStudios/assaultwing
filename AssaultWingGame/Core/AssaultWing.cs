@@ -598,7 +598,7 @@ namespace AW2.Core
 
         private void SendPlayerUpdatesOnClient()
         {
-            foreach (var player in DataEngine.Players.Where(plr => !plr.IsRemote))
+            foreach (var player in DataEngine.Players.Where(plr => !plr.IsRemote && plr.ID != Spectator.UNINITIALIZED_ID))
             {
                 var message = new PlayerControlsMessage();
                 message.PlayerID = player.ID;

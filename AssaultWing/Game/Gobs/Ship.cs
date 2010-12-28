@@ -254,7 +254,9 @@ namespace AW2.Game.Gobs
 
         static Ship()
         {
-            g_defaultControlStates = new[] { new ControlState(), new ControlState(), new ControlState(), new ControlState(), new ControlState(), new ControlState() };
+            g_defaultControlStates = new ControlState[PlayerControls.CONTROL_COUNT];
+            for (int i = 0; i < g_defaultControlStates.Length; i++)
+                g_defaultControlStates[i] = new ControlState();
         }
 
         /// <summary>

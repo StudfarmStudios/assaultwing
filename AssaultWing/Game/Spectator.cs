@@ -15,6 +15,8 @@ namespace AW2.Game
     {
         public enum ServerRegistrationType { No, Requested, Yes };
 
+        public const int UNINITIALIZED_ID = -1;
+
         private static int g_nextLocalID;
 
         /// <summary>
@@ -27,6 +29,7 @@ namespace AW2.Game
         /// <summary>
         /// The player's unique identifier.
         /// The identifier may change if a remote game server says so.
+        /// May be <see cref="UNINITIALIZED_ID"/> on a game client.
         /// </summary>
         public int ID { get; set; }
 
@@ -109,7 +112,7 @@ namespace AW2.Game
             if (Game.NetworkMode != AW2.Core.NetworkMode.Client) throw new InvalidOperationException("Not a client game instance");
             ServerRegistration = ServerRegistrationType.No;
             LocalID = g_nextLocalID++;
-            ID = -1;
+            ID = UNINITIALIZED_ID;
         }
 
         #region INetworkSerializable

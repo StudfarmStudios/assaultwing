@@ -333,7 +333,6 @@ namespace AW2.Game.Gobs
 
         private void CreateGlow()
         {
-            if (Owner == null) return;
             Gob.CreateGob<Peng>(Game, (CanonicalString)"playerglow", gob =>
             {
                 gob.Owner = Owner;

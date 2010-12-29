@@ -301,7 +301,7 @@ namespace AW2.Game.Gobs
             var gfxViewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
             var viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
             var pengToGame = WorldMatrix;
-            var pengColor = PlayerRelated ? Owner.PlayerColor : Color.White;
+            var pengColor = PlayerRelated && Owner != null ? Owner.PlayerColor : Color.White;
             foreach (var particle in particles)
             {
                 Vector2 posCenter; // particle center position in game world coordinates

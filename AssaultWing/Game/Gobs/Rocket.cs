@@ -229,7 +229,7 @@ namespace AW2.Game.Gobs
         private void RemoveGobTrackers()
         {
             if (_targetTracker == null) return;
-            Owner.RemoveGobTrackerItem(_targetTracker);
+            if (Owner != null) Owner.RemoveGobTrackerItem(_targetTracker);
             if (_targetTracker.Gob != null && _targetTracker.Gob.Owner != null)
                 _targetTracker.Gob.Owner.RemoveGobTrackerItem(_targetTracker);
             _targetTracker = null;
@@ -244,7 +244,7 @@ namespace AW2.Game.Gobs
                 StickToBorders = false,
                 ShowWhileTargetOnScreen = true,
             };
-            Owner.AddGobTrackerItem(_targetTracker);
+            if (Owner != null) Owner.AddGobTrackerItem(_targetTracker);
             if (_target.Owner != null) _target.Owner.AddGobTrackerItem(_targetTracker);
         }
 

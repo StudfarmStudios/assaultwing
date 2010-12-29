@@ -126,11 +126,6 @@ namespace AW2.Game
         private static int g_leastUnusedIrrelevantId = -1;
 
         /// <summary>
-        /// The player who owns the gob. Can be null for impartial gobs.
-        /// </summary>
-        private Player _owner;
-
-        /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.
         /// 0 is front, 1 is back.
         /// </summary>
@@ -472,9 +467,10 @@ namespace AW2.Game
         public float DrawRotationOffset { get; set; }
 
         /// <summary>
-        /// Get the owner of the gob.
+        /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
-        public Player Owner { get { return _owner; } set { _owner = value; } }
+        public Player Owner { get { return _owner != null ? _owner.GetValue() : null; } set { _owner = value; } }
+        private LazyProxy<int, Player> _owner;
 
         /// <summary>
         /// Arena layer of the gob, or <c>null</c> if uninitialised. Set by <see cref="Arena"/>.
@@ -617,7 +613,6 @@ namespace AW2.Game
             _depthLayer2D = 0.5f;
             _drawMode2D = new DrawMode2D(DrawModeType2D.None);
             _layerPreference = LayerPreferenceType.Front;
-            _owner = null;
             _pos = Vector2.Zero;
             _move = Vector2.Zero;
             _rotation = 0;
@@ -629,11 +624,9 @@ namespace AW2.Game
             _collisionAreas = new CollisionArea[0];
             _damage = 0;
             _maxDamage = 100;
-            _bleachDamage = 0;
             _birthTime = new TimeSpan(23, 59, 59);
             _dead = false;
             _movable = true;
-            _modelPartTransforms = null;
             _exhaustEngineNames = new CanonicalString[0];
         }
 
@@ -974,8 +967,8 @@ namespace AW2.Game
                 byte flags = StaticID == 0 ? (byte)0x00 : (byte)0x01;
                 writer.Write((byte)flags);
                 if (StaticID != 0) writer.Write((int)StaticID);
-                if (_owner != null)
-                    writer.Write(checked((sbyte)_owner.ID));
+                if (Owner != null)
+                    writer.Write(checked((sbyte)Owner.ID));
                 else
                     writer.Write((sbyte)-1);
             }
@@ -1004,7 +997,8 @@ namespace AW2.Game
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
                 int ownerId = reader.ReadSByte();
-                _owner = Game.DataEngine.Players.FirstOrDefault(player => player.ID == ownerId);
+                _owner = new LazyProxy<int, Player>(FindPlayer);
+                _owner.SetData(ownerId);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -1253,6 +1247,12 @@ namespace AW2.Game
         #endregion Damage methods
 
         #region Private methods
+
+        private Tuple<bool, Player> FindPlayer(int id)
+        {
+            var player = Game.DataEngine.Players.FirstOrDefault(p => p.ID == id);
+            return Tuple.Create(player != null, player);
+        }
 
         /// <summary>
         /// Creates birth gobs for the gob.

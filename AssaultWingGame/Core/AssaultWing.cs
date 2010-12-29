@@ -17,6 +17,7 @@ using AW2.UI;
 
 namespace AW2.Core
 {
+    [System.Diagnostics.DebuggerDisplay("AssaultWing {NetworkMode} {GameState}")]
     public class AssaultWing : AssaultWingCore
     {
         private GameState _gameState;
@@ -268,13 +269,22 @@ namespace AW2.Core
             NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
             DataEngine.RemoveRemoteSpectators();
-            if (GameState == Core.GameState.Gameplay) GameState = GameState.GameplayStopped; // gameplay cannot continue because it's initialized only for a client
+            StopGameplay(); // gameplay cannot continue because it's initialized only for a client
             if (errorOrNull != null)
             {
                 var dialogData = new CustomOverlayDialogData(this,
                     errorOrNull + "\nPress Enter to return to Main Menu",
                     new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
                 ShowDialog(dialogData);
+            }
+        }
+
+        private void StopGameplay()
+        {
+            switch (GameState)
+            {
+                case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
+                case GameState.GameAndMenu: GameState = GameState.Menu; break;
             }
         }
 

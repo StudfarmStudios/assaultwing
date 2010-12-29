@@ -15,6 +15,7 @@ using AW2.UI;
 
 namespace AW2.Core
 {
+    [DebuggerDisplay("AssaultWingCore {NetworkMode}")]
     public class AssaultWingCore : AWGame
     {
         /// <summary>

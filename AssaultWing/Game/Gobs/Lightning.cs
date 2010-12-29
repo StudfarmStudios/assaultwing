@@ -191,12 +191,6 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        private Tuple<bool, Gob> FindGob(int id)
-        {
-            var gob = Arena.Gobs.FirstOrDefault(g => g.ID == id);
-            return Tuple.Create(gob != null, gob);
-        }
-
         private void CreateMesh()
         {
             if (Shooter.GetValue() == null)

@@ -469,8 +469,8 @@ namespace AW2.Game
         /// <summary>
         /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
-        public Player Owner { get { return _owner != null ? _owner.GetValue() : null; } set { _owner = value; } }
-        private LazyProxy<int, Player> _owner;
+        public Player Owner { get { return _ownerProxy != null ? _ownerProxy.GetValue() : null; } set { _ownerProxy = value; } }
+        private LazyProxy<int, Player> _ownerProxy;
 
         /// <summary>
         /// Arena layer of the gob, or <c>null</c> if uninitialised. Set by <see cref="Arena"/>.
@@ -997,8 +997,8 @@ namespace AW2.Game
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
                 int ownerId = reader.ReadSByte();
-                _owner = new LazyProxy<int, Player>(FindPlayer);
-                _owner.SetData(ownerId);
+                _ownerProxy = new LazyProxy<int, Player>(FindPlayer);
+                _ownerProxy.SetData(ownerId);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -1140,6 +1140,14 @@ namespace AW2.Game
         #endregion Gob methods related to thrusters
 
         #region Gob miscellaneous protected methods
+
+        protected Tuple<bool, Gob> FindGob(int id)
+        {
+            var gob = id == Gob.INVALID_ID || Arena == null
+                ? null
+                : Arena.Gobs.FirstOrDefault(g => g.ID == id);
+            return Tuple.Create(gob != null, gob);
+        }
 
         protected virtual void SwitchEngineFlashAndBang(bool active)
         {

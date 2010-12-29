@@ -66,11 +66,13 @@ namespace AW2.Game.Gobs
         /// </summary>
         private TimeSpan _thrustEndTime;
 
-        private Gob _target;
         private TimeSpan _lastFindTarget;
         private GobTrackerItem _targetTracker;
 
         #endregion Rocket fields
+
+        private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
+        private LazyProxy<int, Gob> _targetProxy;
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -101,7 +103,7 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            if (_target != null && _target.Dead) _target = null;
+            if (Target != null && Target.Dead) Target = null;
             if (_lastFindTarget + FIND_TARGET_INTERVAL <= Arena.TotalTime)
             {
                 _lastFindTarget = Arena.TotalTime;
@@ -109,9 +111,9 @@ namespace AW2.Game.Gobs
             }
             if (Arena.TotalTime < _thrustEndTime)
             {
-                if (_target != null)
+                if (Target != null)
                 {
-                    var predictedTargetPos = PredictPositionDecent(_target);
+                    var predictedTargetPos = PredictPositionDecent(Target);
                     RotateTowards(predictedTargetPos - Pos, _targetTurnSpeed);
                 }
                 Thrust();
@@ -152,7 +154,7 @@ namespace AW2.Game.Gobs
             base.Serialize(writer, mode);
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                int targetID = _target != null ? _target.ID : Gob.INVALID_ID;
+                int targetID = Target != null ? Target.ID : Gob.INVALID_ID;
                 writer.Write((int)targetID);
             }
         }
@@ -163,12 +165,8 @@ namespace AW2.Game.Gobs
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 int targetID = reader.ReadInt32();
-                if (targetID == Gob.INVALID_ID) _target = null;
-                else
-                {
-                    _target = Arena.Gobs.FirstOrDefault(gob => gob.ID == targetID);
-                    if (_target == null) Log.Write("WARNING: Couldn't find Rocket target by gob ID " + targetID);
-                }
+                _targetProxy = new LazyProxy<int, Gob>(FindGob);
+                _targetProxy.SetData(targetID);
                 UpdateGobTrackers();
             }
         }
@@ -179,10 +177,10 @@ namespace AW2.Game.Gobs
 
         private Vector2 PredictPositionDecent(Gob gob)
         {
-            var trip = _target.Pos - Pos;
+            var trip = Target.Pos - Pos;
             float distance = trip.Length();
             var unitTowardsTarget = trip / distance;
-            var targetEscapeMove = unitTowardsTarget * Vector2.Dot(_target.Move, unitTowardsTarget);
+            var targetEscapeMove = unitTowardsTarget * Vector2.Dot(Target.Move, unitTowardsTarget);
             var rocketChaseMove = unitTowardsTarget * _maxSpeed;
             var relativeMove = rocketChaseMove - targetEscapeMove;
             float secondsToCollisionEstimate = distance / relativeMove.Length();
@@ -206,22 +204,22 @@ namespace AW2.Game.Gobs
 
         private void UpdateTarget()
         {
-            var oldTarget = _target;
+            var oldTarget = Target;
             var newBestTarget = TargetSelection.ChooseTarget(Arena.Gobs.GameplayLayer.Gobs, this, _findTargetRange);
             if (newBestTarget != null &&
                 (newBestTarget.Owner == null || newBestTarget.Owner == Owner) &&
                 RandomHelper.GetRandomFloat() < 0.9)
                 newBestTarget = null;
-            _target = newBestTarget ?? _target;
+            if (newBestTarget != null) Target = newBestTarget;
             UpdateGobTrackers();
-            if (Game.NetworkMode == AW2.Core.NetworkMode.Server && _target != oldTarget)
+            if (Game.NetworkMode == AW2.Core.NetworkMode.Server && Target != oldTarget)
                 ForcedNetworkUpdate = true;
         }
 
         private void UpdateGobTrackers()
         {
-            if (_targetTracker == null && _target == null) return;
-            if (_targetTracker != null && _target == _targetTracker.Gob) return;
+            if (_targetTracker == null && Target == null) return;
+            if (_targetTracker != null && Target == _targetTracker.Gob) return;
             RemoveGobTrackers();
             CreateGobTrackers();
         }
@@ -238,14 +236,14 @@ namespace AW2.Game.Gobs
         private void CreateGobTrackers()
         {
             if (_targetTracker != null) throw new ApplicationException("Rocket is creating a gob tracker although it has one already");
-            if (_target == null) return;
-            _targetTracker = new GobTrackerItem(_target, this, GobTrackerItem.ROCKET_TARGET_TEXTURE)
+            if (Target == null) return;
+            _targetTracker = new GobTrackerItem(Target, this, GobTrackerItem.ROCKET_TARGET_TEXTURE)
             {
                 StickToBorders = false,
                 ShowWhileTargetOnScreen = true,
             };
             if (Owner != null) Owner.AddGobTrackerItem(_targetTracker);
-            if (_target.Owner != null) _target.Owner.AddGobTrackerItem(_targetTracker);
+            if (Target.Owner != null) Target.Owner.AddGobTrackerItem(_targetTracker);
         }
 
         #endregion Private methods

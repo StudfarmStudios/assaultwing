@@ -523,14 +523,15 @@ namespace AW2.Game
 
         private void Die_HandleCounters(DeathCause cause)
         {
-            if (cause.IsSuicide) ++_suicides;
+            if (cause.IsSuicide) _suicides++;
             if (cause.IsKill)
             {
-                ++cause.Killer.Owner._kills;
+                cause.Killer.Owner._kills++;
+                cause.Killer.Owner.KillsWithoutDying++;
                 if (Game.NetworkMode == NetworkMode.Server)
                     cause.Killer.Owner.MustUpdateToClients = true;
             }
-            --Lives;
+            Lives--;
             KillsWithoutDying = 0;
             BonusActions.Clear();
         }

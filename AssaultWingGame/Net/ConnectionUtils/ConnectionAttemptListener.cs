@@ -146,7 +146,16 @@ namespace AW2.Net.ConnectionUtils
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
             var socketToNewHost = state.Sockets.Single().EndAccept(asyncResult);
-            return new GameClientConnection(state.Game, socketToNewHost);
+            try
+            {
+                return new GameClientConnection(state.Game, socketToNewHost);
+            }
+            catch (Exception)
+            {
+                Log.Write("Closing client connection socket due to error");
+                socketToNewHost.Close();
+                throw;
+            }
         }
     }
 }

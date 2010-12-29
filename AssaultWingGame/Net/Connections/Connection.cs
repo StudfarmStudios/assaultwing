@@ -441,10 +441,23 @@ namespace AW2.Net.Connections
         private static Connection CreateServerConnection(IAsyncResult asyncResult, int index)
         {
             var state = (ConnectAsyncState)asyncResult.AsyncState;
-            state.Sockets[index].EndConnect(asyncResult);
-            var connection = new GameServerConnection(state.Game, state.Sockets[index], state.RemoteEndPoints[index].UDPEndPoint);
-            connection.RemoteUDPEndPoint = state.RemoteEndPoints[index].UDPEndPoint;
-            return connection;
+            var socket = state.Sockets[index];
+            var remoteEndPoint = state.RemoteEndPoints[index];
+            try
+            {
+                socket.EndConnect(asyncResult);
+                var connection = new GameServerConnection(state.Game, socket, remoteEndPoint.UDPEndPoint);
+                connection.RemoteUDPEndPoint = remoteEndPoint.UDPEndPoint;
+                return connection;
+            }
+            catch (Exception)
+            {
+#if DEBUG
+                Log.Write("Closing server connection socket {0} of {1} due to error (this may be expected)", index + 1, state.Sockets.Length);
+#endif
+                socket.Close();
+                throw;
+            }
         }
 
         #endregion Private callback implementations

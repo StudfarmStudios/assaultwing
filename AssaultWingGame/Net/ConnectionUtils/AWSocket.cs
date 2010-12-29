@@ -163,14 +163,23 @@ namespace AW2.Net.ConnectionUtils
 
         private static void ConfigureSocket(Socket socket)
         {
-            // TODO: Remove this log output from public release!!!
-            // UNDONE: Log.Write("Configuring socket:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
             socket.Blocking = true;
             socket.SendTimeout = (int)SEND_TIMEOUT_MILLISECONDS.TotalMilliseconds;
             socket.ReceiveTimeout = (int)RECEIVE_TIMEOUT_MILLISECONDS.TotalMilliseconds;
-            if (socket.ProtocolType == ProtocolType.Tcp) socket.NoDelay = true;
-            // TODO: Remove this log output from public release!!!
-            // UNDONE: Log.Write("...configured to:\n  " + string.Join("\n  ", GetSocketInfoStrings(socket).ToArray()));
+            DisableNagleAlgorithm(socket);
+        }
+
+        private static void DisableNagleAlgorithm(Socket socket)
+        {
+            if (socket.ProtocolType != ProtocolType.Tcp) return;
+            try
+            {
+                socket.NoDelay = true;
+            }
+            catch (SocketException)
+            {
+                Log.Write("NOTE: Couldn't disable Nagle algorithm for TCP socket");
+            }
         }
 
         private static IEnumerable<string> GetSocketInfoStrings(Socket socket)

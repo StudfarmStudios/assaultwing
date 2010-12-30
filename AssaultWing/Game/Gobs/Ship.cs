@@ -404,24 +404,29 @@ namespace AW2.Game.Gobs
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+
+            // HACK to avoid null references:
+            //   - ForwardShot using Ship.Model before LoadContent() is called
+            //   - Thrust() using _thrusterSound before Activate() is called
+            var shipMode = (mode & SerializationModeFlags.ConstantData) != 0
+                ? mode & ~SerializationModeFlags.VaryingData
+                : mode;
+
+            if ((shipMode & SerializationModeFlags.ConstantData) != 0)
             {
                 if (Weapon2 != null) writer.Write(Weapon2.TypeName);
                 else writer.Write(CanonicalString.Null);
                 if (ExtraDevice != null) writer.Write(ExtraDevice.TypeName);
                 else writer.Write(CanonicalString.Null);
             }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            if ((shipMode & SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((Half)_visualThrustForce);
                 _visualThrustForce = 0;
             }
-            var deviceMode = (mode & SerializationModeFlags.ConstantData) != 0
-                ? mode & ~SerializationModeFlags.VaryingData // HACK to avoid ForwardShot using Ship.Model before it is initialized
-                : mode;
-            Weapon1.Serialize(writer, deviceMode);
-            Weapon2.Serialize(writer, deviceMode);
-            ExtraDevice.Serialize(writer, deviceMode);
+            Weapon1.Serialize(writer, shipMode);
+            Weapon2.Serialize(writer, shipMode);
+            ExtraDevice.Serialize(writer, shipMode);
         }
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
@@ -430,6 +435,13 @@ namespace AW2.Game.Gobs
             var oldDrawRotationOffset = DrawRotationOffset;
             base.Deserialize(reader, mode, framesAgo);
             if (Owner != null && Owner.Ship != this) Owner.Ship = this;
+
+            // HACK to avoid null references:
+            //   - ForwardShot using Ship.Model before LoadContent() is called
+            //   - Thrust() using _thrusterSound before Activate() is called
+            var shipMode = (mode & SerializationModeFlags.ConstantData) != 0
+                ? mode & ~SerializationModeFlags.VaryingData
+                : mode;
 
             // HACK: superclass Gob deserializes old Pos and Move and calculates them forward;
             // class Ship must calculate Rotation from old value to current.
@@ -448,7 +460,7 @@ namespace AW2.Game.Gobs
                     DrawRotationOffset = 0;
             }
 
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            if ((shipMode & SerializationModeFlags.ConstantData) != 0)
             {
                 SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 var weapon2TypeName = reader.ReadCanonicalString();
@@ -456,18 +468,15 @@ namespace AW2.Game.Gobs
                 var extraTypeName = reader.ReadCanonicalString();
                 if (!extraTypeName.IsNull) SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, extraTypeName);
             }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+            if ((shipMode & SerializationModeFlags.VaryingData) != 0)
             {
                 float thrustForce = reader.ReadHalf();
                 if (thrustForce > 0)
                     Thrust(thrustForce, Game.GameTime.ElapsedGameTime, Rotation);
             }
-            var deviceMode = (mode & SerializationModeFlags.ConstantData) != 0
-                ? mode & ~SerializationModeFlags.VaryingData // HACK to avoid ForwardShot using Ship.Model before it is initialized
-                : mode;
-            Weapon1.Deserialize(reader, deviceMode, framesAgo);
-            Weapon2.Deserialize(reader, deviceMode, framesAgo);
-            ExtraDevice.Deserialize(reader, deviceMode, framesAgo);
+            Weapon1.Deserialize(reader, shipMode, framesAgo);
+            Weapon2.Deserialize(reader, shipMode, framesAgo);
+            ExtraDevice.Deserialize(reader, shipMode, framesAgo);
         }
 
         #endregion Methods related to serialisation

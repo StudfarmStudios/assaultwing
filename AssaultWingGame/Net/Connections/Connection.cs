@@ -62,6 +62,7 @@ namespace AW2.Net.Connections
         private AWTCPSocket _tcpSocket;
 
         private IPEndPoint _remoteUDPEndPoint;
+        private object _lock = new object();
 
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
@@ -396,9 +397,12 @@ namespace AW2.Net.Connections
         {
             // HACK: All we want is, on the game server, to read the sender's (which is a game client)
             // UDP end point from the message. We happen to know that PingRequestMessage is sent via UDP.
-            if (!IsHandshaken && mess is PingRequestMessage)
-                RemoteUDPEndPoint = remoteEndPoint;
-            return false;
+            lock (_lock)
+            {
+                if (!IsHandshaken && mess is PingRequestMessage)
+                    RemoteUDPEndPoint = remoteEndPoint;
+                return false;
+            }
         }
 
         /// <summary>

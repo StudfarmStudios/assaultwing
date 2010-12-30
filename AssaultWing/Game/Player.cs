@@ -90,7 +90,6 @@ namespace AW2.Game
         private TimeSpan _shakeUpdateTime;
 
         private Vector2 _lastLookAtPos;
-        private List<GobTrackerItem> _gobTrackerItems = new List<GobTrackerItem>();
 
         #endregion Player fields about general things
 
@@ -111,7 +110,7 @@ namespace AW2.Game
 
         #region Player properties
 
-        public List<GobTrackerItem> GobTrackerItems { get { return _gobTrackerItems; } set { _gobTrackerItems = value; } }
+        public List<GobTrackerItem> GobTrackerItems { get; private set; }
 
         public int KillsWithoutDying { get; set; }
 
@@ -338,23 +337,12 @@ namespace AW2.Game
             PlayerColor = Color.Gray;
             BonusActions = new GameActionCollection(this);
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
+            GobTrackerItems = new List<GobTrackerItem>();
         }
 
         #endregion Constructors
 
         #region General public methods
-
-        public void RemoveGobTrackerItem(GobTrackerItem item)
-        {
-            if (item == null) throw new ArgumentNullException("Trying to remove NULL GobTrackerItem from the GobTrackerList");
-            if (_gobTrackerItems.Contains(item)) _gobTrackerItems.Remove(item);
-        }
-
-        public void AddGobTrackerItem(GobTrackerItem item)
-        {
-            if (item == null) throw new ArgumentNullException("Trying to add NULL GobTrackerItem to the GobTrackerList");
-            if (!_gobTrackerItems.Contains(item)) _gobTrackerItems.Add(item);
-        }
 
         public override void Update()
         {

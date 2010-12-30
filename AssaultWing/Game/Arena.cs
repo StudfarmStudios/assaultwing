@@ -1137,22 +1137,7 @@ namespace AW2.Game
         {
             var trackerItem = new GobTrackerItem(gob, null, textureName);
             foreach (var plr in Game.DataEngine.Players)
-                if (!plr.IsRemote) plr.AddGobTrackerItem(trackerItem);
-        }
-
-        private void AddShipTrackerToViewports(Gob ship)
-        {
-            AddGobTrackerToViewports(ship, GobTrackerItem.PLAYER_TEXTURE);
-        }
-
-        private void AddDockTrackerToViewports(Gob dock)
-        {
-            AddGobTrackerToViewports(dock, GobTrackerItem.DOCK_TEXTURE);
-        }
-
-        private void AddBonusTrackerToViewports(Gob bonus)
-        {
-            AddGobTrackerToViewports(bonus, GobTrackerItem.BONUS_TEXTURE);
+                if (!plr.IsRemote) plr.GobTrackerItems.Add(trackerItem);
         }
 
         #region Callbacks
@@ -1161,9 +1146,9 @@ namespace AW2.Game
         {
             if (IsActive) Game.GobsCounter.Increment();
             Prepare(gob);
-            if (gob is AW2.Game.Gobs.Ship) AddShipTrackerToViewports(gob);
-            if (gob is AW2.Game.Gobs.Dock) AddDockTrackerToViewports(gob);
-            if (gob is AW2.Game.Gobs.Bonus.Bonus) AddBonusTrackerToViewports(gob);
+            if (gob is AW2.Game.Gobs.Ship) AddGobTrackerToViewports(gob, GobTrackerItem.PLAYER_TEXTURE);
+            if (gob is AW2.Game.Gobs.Dock) AddGobTrackerToViewports(gob, GobTrackerItem.DOCK_TEXTURE);
+            if (gob is AW2.Game.Gobs.Bonus.Bonus) AddGobTrackerToViewports(gob, GobTrackerItem.BONUS_TEXTURE);
             if (gob is AW2.Game.Gobs.Wall) Game.DataEngine.UpdateArenaRadarSilhouette = true;
             if (GobAdded != null) GobAdded(gob);
         }

@@ -227,9 +227,9 @@ namespace AW2.Game.Gobs
         private void RemoveGobTrackers()
         {
             if (_targetTracker == null) return;
-            if (Owner != null) Owner.RemoveGobTrackerItem(_targetTracker);
+            if (Owner != null) Owner.GobTrackerItems.Remove(_targetTracker);
             if (_targetTracker.Gob != null && _targetTracker.Gob.Owner != null)
-                _targetTracker.Gob.Owner.RemoveGobTrackerItem(_targetTracker);
+                _targetTracker.Gob.Owner.GobTrackerItems.Remove(_targetTracker);
             _targetTracker = null;
         }
 
@@ -242,8 +242,8 @@ namespace AW2.Game.Gobs
                 StickToBorders = false,
                 ShowWhileTargetOnScreen = true,
             };
-            if (Owner != null) Owner.AddGobTrackerItem(_targetTracker);
-            if (Target.Owner != null) Target.Owner.AddGobTrackerItem(_targetTracker);
+            if (Owner != null) Owner.GobTrackerItems.Add(_targetTracker);
+            if (Target.Owner != null) Target.Owner.GobTrackerItems.Add(_targetTracker);
         }
 
         #endregion Private methods

@@ -36,13 +36,18 @@ namespace AW2.Menu
         public static Curve CursorFade { get; private set; }
         public EquipMenuControls Controls { get; private set; }
         public TimeSpan ListCursorFadeStartTime { get; set; }
+        public bool IsTemporarilyInactive { get; set; }
 
         public override bool Active
         {
             set
             {
                 base.Active = value;
-                if (value) ResetEquipMenu();
+                if (value)
+                {
+                    if (!IsTemporarilyInactive) ResetEquipMenu();
+                    IsTemporarilyInactive = false;
+                }
             }
         }
 

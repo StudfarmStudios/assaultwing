@@ -33,7 +33,10 @@ namespace AW2.Menu.Equip
             if (Controls.Activate.Pulse && MenuEngine.Game.NetworkMode != NetworkMode.Client)
             {
                 if (_tabItem == MatchTabItem.Arena)
+                {
+                    MenuComponent.IsTemporarilyInactive = true;
                     MenuEngine.ActivateComponent(MenuComponentType.Arena);
+                }
             }
         }
 

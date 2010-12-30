@@ -459,9 +459,12 @@ namespace AW2.Game.Gobs
                 if (thrustForce > 0)
                     Thrust(thrustForce, Game.GameTime.ElapsedGameTime, Rotation);
             }
-            Weapon1.Deserialize(reader, mode, framesAgo);
-            Weapon2.Deserialize(reader, mode, framesAgo);
-            ExtraDevice.Deserialize(reader, mode, framesAgo);
+            var deviceMode = (mode & SerializationModeFlags.ConstantData) != 0
+                ? mode & ~SerializationModeFlags.VaryingData // HACK to avoid ForwardShot using Ship.Model before it is initialized
+                : mode;
+            Weapon1.Deserialize(reader, deviceMode, framesAgo);
+            Weapon2.Deserialize(reader, deviceMode, framesAgo);
+            ExtraDevice.Deserialize(reader, deviceMode, framesAgo);
         }
 
         #endregion Methods related to serialisation

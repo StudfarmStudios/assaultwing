@@ -416,9 +416,12 @@ namespace AW2.Game.Gobs
                 writer.Write((Half)_visualThrustForce);
                 _visualThrustForce = 0;
             }
-            Weapon1.Serialize(writer, mode);
-            Weapon2.Serialize(writer, mode);
-            ExtraDevice.Serialize(writer, mode);
+            var deviceMode = (mode & SerializationModeFlags.ConstantData) != 0
+                ? mode & ~SerializationModeFlags.VaryingData // HACK to avoid ForwardShot using Ship.Model before it is initialized
+                : mode;
+            Weapon1.Serialize(writer, deviceMode);
+            Weapon2.Serialize(writer, deviceMode);
+            ExtraDevice.Serialize(writer, deviceMode);
         }
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)

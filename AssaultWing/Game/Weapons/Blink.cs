@@ -57,14 +57,14 @@ namespace AW2.Game.Weapons
                 {
                     Owner.Enable();
                     _targetPos = null;
-                    Owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
+                    if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
                 }
             }
         }
 
         public override void Dispose()
         {
-            Owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
+            if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
             base.Dispose();
         }
 
@@ -94,7 +94,7 @@ namespace AW2.Game.Weapons
 
         protected override void CreateVisualsImpl()
         {
-            Owner.Owner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
+            if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
         }
     }
 }

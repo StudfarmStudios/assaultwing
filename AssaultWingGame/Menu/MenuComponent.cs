@@ -9,10 +9,8 @@ namespace AW2.Menu
     /// </summary>
     public abstract class MenuComponent
     {
-        /// <summary>
-        /// The menu system of which this component is part of.
-        /// </summary>
         public MenuEngineImpl MenuEngine { get; private set; }
+        public MenuContent Content { get { return MenuEngine.MenuContent; } }
 
         /// <summary>
         /// Does the menu component react to input.
@@ -20,10 +18,15 @@ namespace AW2.Menu
         public virtual bool Active { set; get; }
 
         /// <summary>
-        /// The center of the menu component in menu system coordinates.
+        /// The reference point of the menu component in menu system coordinates.
         /// </summary>
+        public Vector2 Pos { get; protected set; }
+
+        /// <summary>
+        /// The center of the menu component in menu system coordinates.
         /// This is a good place to center the menu view to when the menu component
         /// is to be seen well on the screen.
+        /// </summary>
         public abstract Vector2 Center { get; }
 
         /// <summary>

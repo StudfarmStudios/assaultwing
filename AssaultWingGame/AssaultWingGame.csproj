@@ -123,6 +123,13 @@
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />
+    <Compile Include="Menu\Equip\ChatTab.cs" />
+    <Compile Include="Menu\Equip\EquipMenuControls.cs" />
+    <Compile Include="Menu\Equip\EquipMenuTab.cs" />
+    <Compile Include="Menu\Equip\EquipMenuTabs.cs" />
+    <Compile Include="Menu\Equip\EquipTab.cs" />
+    <Compile Include="Menu\Equip\MatchTab.cs" />
+    <Compile Include="Menu\Equip\PlayersTab.cs" />
     <Compile Include="Menu\MainMenuComponent.cs" />
     <Compile Include="Menu\Main\MainMenuItem.cs" />
     <Compile Include="Menu\Main\MainMenuItemCollection.cs" />

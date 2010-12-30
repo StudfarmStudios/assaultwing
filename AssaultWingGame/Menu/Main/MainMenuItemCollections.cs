@@ -1,12 +1,10 @@
 ﻿using AW2.Core;
-using AW2.Core.OverlayDialogs;
 using AW2.Helpers;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
-using AW2.UI;
 
-namespace AW2.Menu
+namespace AW2.Menu.Main
 {
     /// <summary>
     /// All possible item collections for <see cref="MainMenuComponent"/>.

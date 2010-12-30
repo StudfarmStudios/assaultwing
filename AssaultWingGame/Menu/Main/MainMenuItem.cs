@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AW2.Menu
+namespace AW2.Menu.Main
 {
     /// <summary>
     /// An item in the main menu, consisting of a visible name and an action

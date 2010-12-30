@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
+using AW2.Menu.Main;
 using AW2.UI;
 
 namespace AW2.Menu

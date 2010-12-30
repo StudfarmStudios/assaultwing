@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.UI;
 
-namespace AW2.Menu
+namespace AW2.Menu.Main
 {
     public class MainMenuTextField : MainMenuItem
     {

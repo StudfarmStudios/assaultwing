@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using AW2.Helpers;
 
-namespace AW2.Menu
+namespace AW2.Menu.Main
 {
     /// <summary>
     /// A list of menu items, pluggable into <see cref="MainMenuComponent"/>.

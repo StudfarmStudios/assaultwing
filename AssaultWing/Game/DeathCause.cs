@@ -91,7 +91,7 @@ namespace AW2.Game
         {
             get
             {
-                if (_dead == null || _dead.Owner == null) return false;
+                if (_dead.Owner == null) return false;
                 if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager &&
                     _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
                 {
@@ -110,7 +110,7 @@ namespace AW2.Game
         {
             get
             {
-                if (_dead == null || _dead.Owner == null) return false;
+                if (_dead.Owner == null) return false;
                 if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager &&
                     _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
                 {
@@ -154,6 +154,7 @@ namespace AW2.Game
         /// <param name="other">The gob that caused the death.</param>
         public DeathCause(Gob dead, DeathCauseType type, Gob other)
         {
+            if (_dead == null) throw new ArgumentNullException("dead");
             _dead = dead;
             _type = type;
             _other = other;

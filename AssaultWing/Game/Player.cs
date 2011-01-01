@@ -30,7 +30,7 @@ namespace AW2.Game
         }
 
         public static readonly Color PRETEXT_COLOR = new Color(1f, 1f, 1f);
-        public static readonly Color DEFAULT_COLOR = new Color(1f, 1f, 1f);
+        public static readonly Color DEFAULT_COLOR = new Color(0.9f, 0.9f, 0.9f);
         public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f);
         public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f);
         public static readonly Color SUICIDE_COLOR = new Color(1f, 0.5f, 0.5f);
@@ -537,7 +537,7 @@ namespace AW2.Game
             }
             if (cause.Killer != null && cause.Killer.Owner != null && !cause.IsSuicide)
                 cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
-            var bystanderMessage = new PlayerMessage(cause.BystanderMessage, cause.IsSuicide ? SUICIDE_COLOR : KILL_COLOR);
+            var bystanderMessage = new PlayerMessage(cause.BystanderMessage, DEFAULT_COLOR);
             foreach (var plr in cause.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
             SendMessage(new PlayerMessage(cause.DeathMessage, cause.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
             Ship = null;

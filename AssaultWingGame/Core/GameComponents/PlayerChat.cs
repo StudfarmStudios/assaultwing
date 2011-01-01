@@ -77,7 +77,7 @@ namespace AW2.Core.GameComponents
             _message = null;
             if (messageContent == "") return;
             var sendingPlayer = Game.DataEngine.Players.First(plr => !plr.IsRemote);
-            var preText = sendingPlayer.Name + "> ";
+            var preText = sendingPlayer.Name + ">";
             var textColor = sendingPlayer.PlayerColor;
             var message = new PlayerMessage(preText, messageContent, textColor);
             switch (Game.NetworkMode)

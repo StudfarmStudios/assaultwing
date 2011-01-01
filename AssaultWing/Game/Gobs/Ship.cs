@@ -374,14 +374,6 @@ namespace AW2.Game.Gobs
             StoreCurrentShipLocation();
         }
 
-        public override void Die(DeathCause cause)
-        {
-            if (Dead) return;
-            if (Owner != null)
-                Owner.Die(cause);
-            base.Die(cause);
-        }
-
         public override void Dispose()
         {
             Game.DataEngine.Devices.Remove(Weapon1);

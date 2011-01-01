@@ -39,34 +39,16 @@ namespace AW2.Game
         private delegate SubjectWord SubjectWordProvider(RecipientType recipient);
 
         public static readonly TimeSpan LAST_DAMAGER_KILL_TIMEWINDOW = TimeSpan.FromSeconds(6);
-        private static string[] g_suicidePhrases = new[]
-        {
-            "{0} nailed {0:reflexivePronoun}", "{0} ended up as {0:genetivePronoun} own nemesis",
-            "{0} stumbled over {0:genetivePronoun} own feet", "{0} screwed up",
-            "{0} terminated {0:reflexivePronoun}", "{0} crushed {0:reflexivePronoun}",
-            "{0} destroyed {0:reflexivePronoun}", "{0} iced {0:reflexivePronoun}",
-            "{0} got it all wrong",
-        };
-        private static string[] g_killPhrases = new[]
-        {
-            "{0} nailed {1}", "{0} put {1} to rest", "{0} did {1} in",  "{0} iced {1}",
-            "{0} put {1} on {1:genetivePronoun} knees", "{0} terminated {1}", "{0} crushed {1}", "{0} destroyed {1}",
-            "{0} ran over {1}", "{0} showed {1} how it's done", "{0} taught {1} a lesson",
-            "{0} made {1} appreciate life", "{0} survived, {1} didn't", "{0} stepped on {1:genetive} foot",
-            "{0:genetive} forcefulness broke {1}",
-        };
-        private static string[] g_omgs = new[]
-        {
-            "OMG", "W00T", "WHOA", "GROOVY", "WICKED", "AWESOME", "INSANE", "SLAMMIN'",
-            "CRACKIN'", "KINKY", "JIGGY", "NEAT", "FAR OUT", "SLICK", "SMOKING", "SOLID",
-            "SPIFFY", "CHICKY", "COOL", "L33T", "BRUTAL",
-        };
+        private static string[] g_suicidePhrases;
+        private static string[] g_killPhrases;
+        private static string[] g_omgs;
         private string _killPhrase;
         private string _specialPhrase;
         private SubjectWordProvider[] _subjectNameProviders;
         private Gob _dead;
         private DeathCauseType _type;
         private Gob _other;
+        private TimeSpan _killTime;
 
         /// <summary>
         /// The gob that died.
@@ -93,7 +75,7 @@ namespace AW2.Game
             {
                 if (_dead.Owner == null) return false;
                 if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager &&
-                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
+                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > _killTime)
                 {
                     _other = _dead.LastDamager.Ship;
                     return false;
@@ -112,7 +94,7 @@ namespace AW2.Game
             {
                 if (_dead.Owner == null) return false;
                 if (_dead.LastDamager != null && _dead.LastDamager.Ship != null && _dead.Owner != _dead.LastDamager &&
-                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > AssaultWingCore.Instance.DataEngine.ArenaTotalTime)
+                    _dead.LastDamagerTime + LAST_DAMAGER_KILL_TIMEWINDOW > _killTime)
                 {
                     _other = _dead.LastDamager.Ship;
                     return true;
@@ -149,15 +131,21 @@ namespace AW2.Game
         private SubjectWordProvider KillerNameProvider { get { return recipient => recipient == RecipientType.Killer ? SubjectWord.You : KillerName; } }
         private SubjectWordProvider CorpseNameProvider { get { return recipient => recipient == RecipientType.Corpse ? SubjectWord.You : CorpseName; } }
 
+        static DeathCause()
+        {
+            ResetPhraseSets();
+        }
+
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
         /// <param name="other">The gob that caused the death.</param>
         public DeathCause(Gob dead, DeathCauseType type, Gob other)
         {
-            if (_dead == null) throw new ArgumentNullException("dead");
+            if (dead == null) throw new ArgumentNullException("dead");
             _dead = dead;
             _type = type;
             _other = other;
+            _killTime = _dead.Arena.TotalTime;
             if (IsSuicide)
             {
                 _killPhrase = ChoosePhrase(g_suicidePhrases);
@@ -171,6 +159,7 @@ namespace AW2.Game
             AssignSpecialPhrase();
         }
 
+
         /// <param name="dead">The gob that died.</param>
         /// <param name="type">The type of cause of death.</param>
         public DeathCause(Gob dead, DeathCauseType type)
@@ -183,6 +172,32 @@ namespace AW2.Game
             g_suicidePhrases = suicidePhrases;
             g_killPhrases = killPhrases;
             g_omgs = omgs;
+        }
+
+        public static void ResetPhraseSets()
+        {
+            g_suicidePhrases = new[]
+            {
+                "{0} nailed {0:reflexivePronoun}", "{0} ended up as {0:genetivePronoun} own nemesis",
+                "{0} stumbled over {0:genetivePronoun} own feet", "{0} screwed up",
+                "{0} terminated {0:reflexivePronoun}", "{0} crushed {0:reflexivePronoun}",
+                "{0} destroyed {0:reflexivePronoun}", "{0} iced {0:reflexivePronoun}",
+                "{0} got it all wrong",
+            };
+            g_killPhrases = new[]
+            {
+                "{0} nailed {1}", "{0} put {1} to rest", "{0} did {1} in",  "{0} iced {1}",
+                "{0} put {1} on {1:genetivePronoun} knees", "{0} terminated {1}", "{0} crushed {1}", "{0} destroyed {1}",
+                "{0} ran over {1}", "{0} showed {1} how it's done", "{0} taught {1} a lesson",
+                "{0} made {1} appreciate life", "{0} survived, {1} didn't", "{0} stepped on {1:genetive} foot",
+                "{0:genetive} forcefulness broke {1}",
+            };
+            g_omgs = new[]
+            {
+                "OMG", "W00T", "WHOA", "GROOVY", "WICKED", "AWESOME", "INSANE", "SLAMMIN'",
+                "CRACKIN'", "KINKY", "JIGGY", "NEAT", "FAR OUT", "SLICK", "SMOKING", "SOLID",
+                "SPIFFY", "CHICKY", "COOL", "L33T", "BRUTAL",
+            };
         }
 
         public override string ToString()
@@ -263,14 +278,17 @@ namespace AW2.Game
         {
             private Player _player1, _player2;
             private Gob _gob1, _gob2, _gob2Nature;
+            private Arena _arena;
 
             [SetUp]
             public void Setup()
             {
+                DeathCause.ResetPhraseSets();
                 _player1 = new Player(null, "Player 1", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
                 _player2 = new Player(null, "Player 2", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
-                _gob1 = new Gob { Owner = _player1 };
-                _gob2 = new Gob { Owner = _player2 };
+                _arena = new Arena();
+                _gob1 = new Gob { Owner = _player1, MaxDamageLevel = 100, Arena = _arena };
+                _gob2 = new Gob { Owner = _player2, MaxDamageLevel = 100, Arena = _arena };
                 _gob2Nature = new Gob { Owner = null };
             }
 
@@ -319,6 +337,18 @@ namespace AW2.Game
             {
                 AssertSuicide("{0} nailed {0:reflexivePronoun}", "You nailed yourself", "Player 1 nailed himself");
                 AssertSuicide("{0} ended up as {0:genetivePronoun} own nemesis", "You ended up as your own nemesis", "Player 1 ended up as his own nemesis");
+            }
+
+            [Test]
+            public void TestLastDamager()
+            {
+                _arena.TotalTime = TimeSpan.FromSeconds(10);
+                _gob1.InflictDamage(10, new DeathCause(_gob1, DeathCauseType.Damage, _gob2));
+                _arena.TotalTime = TimeSpan.FromSeconds(11);
+                var cause = new DeathCause(_gob1, DeathCauseType.Unspecified); // no explicit killer
+                Assert.IsFalse(cause.IsSuicide);
+                Assert.IsTrue(cause.IsKill); // _gob2 did last recent damage
+                Assert.AreEqual(_player2, cause.Killer); // so _player2 is the implicit killer
             }
         }
 #endif

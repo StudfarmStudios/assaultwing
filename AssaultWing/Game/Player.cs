@@ -387,18 +387,6 @@ namespace AW2.Game
             });
         }
 
-        /// <summary>
-        /// Performs necessary operations when the player's ship dies.
-        /// </summary>
-        /// <param name="cause">The cause of death of the player's ship</param>
-        public void Die(DeathCause cause)
-        {
-            Die_HandleCounters(cause);
-            Die_SendMessages(cause);
-            _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
-            if (Game.NetworkMode == NetworkMode.Server) MustUpdateToClients = true;
-        }
-
         public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
             return new AW2.Graphics.PlayerViewport(this, onScreen, () => PostprocessEffectNames);
@@ -509,6 +497,15 @@ namespace AW2.Game
 
         #region Private methods
 
+        private void ShipDeathHandler(DeathCause cause)
+        {
+            Die_HandleCounters(cause);
+            Die_SendMessages(cause);
+            Ship = null;
+            _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
+            if (Game.NetworkMode == NetworkMode.Server) MustUpdateToClients = true;
+        }
+
         private void Die_HandleCounters(DeathCause cause)
         {
             if (cause.IsSuicide) _suicides++;
@@ -526,21 +523,17 @@ namespace AW2.Game
 
         private void Die_SendMessages(DeathCause cause)
         {
-            if (cause.IsKill)
-                CreateKillMessage(cause.Killer.Owner, Ship.Pos);
-            if (cause.IsSuicide)
-                CreateSuicideMessage(this, Ship.Pos);
+            if (cause.IsKill) CreateKillMessage(cause.Killer.Owner, Ship.Pos);
+            if (cause.IsSuicide) CreateSuicideMessage(this, Ship.Pos);
             if (cause.IsSpecial)
             {
                 var specialMessage = new PlayerMessage(cause.SpecialMessage, SPECIAL_KILL_COLOR);
                 foreach (var plr in Game.DataEngine.Players) plr.SendMessage(specialMessage);
             }
-            if (cause.Killer != null && cause.Killer.Owner != null && !cause.IsSuicide)
-                cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
+            if (cause.IsKill) cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
             var bystanderMessage = new PlayerMessage(cause.BystanderMessage, DEFAULT_COLOR);
             foreach (var plr in cause.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
             SendMessage(new PlayerMessage(cause.DeathMessage, cause.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
-            Ship = null;
         }
 
         /// <summary>
@@ -572,12 +565,11 @@ namespace AW2.Game
         /// </summary>
         private void CreateShip()
         {
-            // Gain ownership over the ship only after its position has been set.
-            // This way the ship won't be affecting its own spawn position.
-            Ship = null;
+            if (Ship != null) throw new InvalidOperationException("Player already has a ship");
             Gob.CreateGob<Ship>(Game, ShipName, newShip =>
             {
                 newShip.Owner = this;
+                newShip.Death += ShipDeathHandler;
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
@@ -612,9 +604,9 @@ namespace AW2.Game
 
         /// <summary>
         /// Attenuates the player's viewport shake for passed time.
-        /// </summary>
         /// This method should be called regularly. It decreases <c>relativeShakeDamage</c>.
         /// <param name="seconds">Passed time in seconds.</param>
+        /// </summary>
         private void AttenuateShake(float seconds)
         {
             // Attenuation is done along a steepening curve;

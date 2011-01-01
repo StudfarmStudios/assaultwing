@@ -364,12 +364,12 @@ namespace AW2.Game
         /// <summary>
         /// The last player to damage this gob
         /// </summary>
-        public Player LastDamager { get; set; }
+        public Player LastDamager { get; private set; }
 
         /// <summary>
         /// The timespan then the damager damaged this gob
         /// </summary>
-        public TimeSpan LastDamagerTime { get; set; }
+        public TimeSpan LastDamagerTime { get; private set; }
 
         /// <summary>
         /// Drawing mode of 2D graphics of the gob.
@@ -788,8 +788,9 @@ namespace AW2.Game
         /// refer to each other.
         /// Overriding methods should not do anything if the property <b>Dead</b> is true.
         /// <param name="cause">The cause of death.</param>
-        public virtual void Die(DeathCause cause)
+        public void Die(DeathCause cause)
         {
+            if (Dead) return;
             if (Game.NetworkMode == NetworkMode.Client && IsRelevant) return;
             DieImpl(cause, false);
         }
@@ -1216,6 +1217,8 @@ namespace AW2.Game
 
         #region Damage methods
 
+        public event Action<DeathCause> Death;
+
         /// <summary>
         /// The amount of damage, between 0 and <b>MaxDamageLevel</b>.
         /// 0 means the entity is in perfect condition;
@@ -1226,7 +1229,7 @@ namespace AW2.Game
         /// <summary>
         /// The maximum amount of damage the entity can sustain.
         /// </summary>
-        public float MaxDamageLevel { get { return _maxDamage; } }
+        public float MaxDamageLevel { get { return _maxDamage; } set { _maxDamage = value; } }
 
         /// <summary>
         /// Inflicts damage on the entity.
@@ -1236,23 +1239,15 @@ namespace AW2.Game
         /// <param name="cause">Cause of death if the damage results in death.</param>
         public virtual void InflictDamage(float damageAmount, DeathCause cause)
         {
-            if (Game.NetworkMode == NetworkMode.Client) return;
-
-            if (cause.Killer != null &&
-                cause.Killer.Owner != null &&
-                damageAmount > 0)
+            if (cause.Killer != null && cause.Killer.Owner != null && damageAmount > 0)
             {
                 LastDamager = cause.Killer.Owner;
-                LastDamagerTime = Game.DataEngine.ArenaTotalTime;
+                LastDamagerTime = Arena.TotalTime;
             }
-
             _damage += damageAmount;
             _damage = MathHelper.Clamp(_damage, 0, _maxDamage);
-
-            if (damageAmount > 0)
-                _bleachDamage += damageAmount;
-            if (_damage == _maxDamage)
-                Die(cause);
+            if (damageAmount > 0) _bleachDamage += damageAmount;
+            if (_damage == _maxDamage) Die(cause);
         }
 
         #endregion Damage methods
@@ -1358,20 +1353,17 @@ namespace AW2.Game
         /// <param name="forceRemove">Force removal of the dead gob. Useful for clients.</param>
         private void DieImpl(DeathCause cause, bool forceRemove)
         {
-            if (Dead) return;
+            if (Dead) throw new InvalidOperationException("Gob is already dead");
             _dead = true;
-
+            if (Death != null) Death(cause);
             Arena.Gobs.Remove(this, forceRemove);
-            // Create death gobs.
             foreach (var gobType in _deathGobTypes)
-            {
                 CreateGob<Gob>(Game, gobType, gob =>
                 {
                     gob.ResetPos(Pos, Vector2.Zero, Rotation);
                     gob.Owner = Owner;
                     Arena.Gobs.Add(gob);
                 });
-            }
         }
 
         /// <summary>

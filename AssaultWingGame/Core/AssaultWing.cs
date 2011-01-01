@@ -266,10 +266,10 @@ namespace AW2.Core
             if (NetworkMode != NetworkMode.Client)
                 throw new InvalidOperationException("Cannot stop client while in mode " + NetworkMode);
             DeactivateAllMessageHandlers();
-            NetworkMode = NetworkMode.Standalone;
             NetworkEngine.StopClient();
             DataEngine.RemoveRemoteSpectators();
             StopGameplay(); // gameplay cannot continue because it's initialized only for a client
+            NetworkMode = NetworkMode.Standalone;
             if (errorOrNull != null)
             {
                 var dialogData = new CustomOverlayDialogData(this,

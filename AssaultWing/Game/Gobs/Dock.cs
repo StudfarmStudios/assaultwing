@@ -15,8 +15,7 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan DOCK_SOUND_STOP_DELAY = TimeSpan.FromSeconds(0.5);
 
         /// <summary>
-        /// Speed of repairing damageable gobs, measured in damage/second.
-        /// Use a negative value for repairing, positive for damaging.
+        /// Speed of repairing damageable gobs, measured in repaired damage/second.
         /// </summary>
         [TypeParameter]
         private float _repairSpeed;
@@ -96,9 +95,10 @@ namespace AW2.Game.Gobs
 
                 if (ship != null && canDock)
                 {
-                    ship.InflictDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, Game.GameTime.ElapsedGameTime), new DeathCause(ship));
-                    ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, Game.GameTime.ElapsedGameTime);
-                    ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, Game.GameTime.ElapsedGameTime);
+                    var elapsedTime = Game.GameTime.ElapsedGameTime;
+                    ship.RepairDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, elapsedTime));
+                    ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, elapsedTime);
+                    ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, elapsedTime);
                 }
             }
         }

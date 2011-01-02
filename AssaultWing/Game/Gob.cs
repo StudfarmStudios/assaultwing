@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.Arenas;
+using AW2.Game.GobUtils;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -788,28 +789,29 @@ namespace AW2.Game
         /// refer to each other.
         /// Overriding methods should not do anything if the property <b>Dead</b> is true.
         /// <param name="cause">The cause of death.</param>
-        public void Die(DeathCause cause)
+        public void Die(BoundDamageInfo info)
         {
             if (Dead) return;
             if (Game.NetworkMode == NetworkMode.Client && IsRelevant) return;
-            DieImpl(cause, false);
+            DieImpl(new Coroner(info), false);
         }
 
         public void Die()
         {
-            Die(new DeathCause(this));
+            Die(DamageInfo.Unspecified.Bind(this, Arena.TotalTime));
         }
 
         /// <summary>
         /// Kills the gob, i.e. performs a death ritual and removes the gob from the game world.
-        /// Compared to <see cref="Die(DeathCause)"/>, this method forces death on game clients.
+        /// Compared to <see cref="Die(BoundDamageInfo)"/>, this method forces death on game clients.
         /// Therefore this method is to be called only when interpreting the game server's kill
         /// messages.
         /// </summary>
-        /// <seealso cref="Die(DeathCause)"/>
+        /// <seealso cref="Die(BoundDamageInfo)"/>
         public void DieOnClient()
         {
-            DieImpl(new DeathCause(this), true);
+            var coroner = new Coroner(DamageInfo.Unspecified.Bind(this, Arena.TotalTime));
+            DieImpl(coroner, true);
         }
 
         /// <summary>
@@ -1217,7 +1219,7 @@ namespace AW2.Game
 
         #region Damage methods
 
-        public event Action<DeathCause> Death;
+        public event Action<Coroner> Death;
 
         /// <summary>
         /// The amount of damage, between 0 and <b>MaxDamageLevel</b>.
@@ -1231,23 +1233,24 @@ namespace AW2.Game
         /// </summary>
         public float MaxDamageLevel { get { return _maxDamage; } set { _maxDamage = value; } }
 
-        /// <summary>
-        /// Inflicts damage on the entity.
-        /// </summary>
-        /// <param name="damageAmount">If positive, amount of damage;
-        /// if negative, amount of repair.</param>
-        /// <param name="cause">Cause of death if the damage results in death.</param>
-        public virtual void InflictDamage(float damageAmount, DeathCause cause)
+        public virtual void InflictDamage(float damageAmount, DamageInfo info)
         {
-            if (cause.Killer != null && cause.Killer.Owner != null && cause.Killer.Owner != Owner && damageAmount > 0)
+            if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
+            var boundInfo = info.Bind(this, Arena.TotalTime);
+            if (boundInfo.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
             {
-                LastDamager = cause.Killer.Owner;
+                LastDamager = boundInfo.PlayerCause;
                 LastDamagerTimeout = Arena.TotalTime + TimeSpan.FromSeconds(6);
             }
-            _damage += damageAmount;
-            _damage = MathHelper.Clamp(_damage, 0, _maxDamage);
-            if (damageAmount > 0) _bleachDamage += damageAmount;
-            if (_damage == _maxDamage) Die(cause);
+            _damage = Math.Min(_maxDamage, _damage + damageAmount);
+            _bleachDamage += damageAmount;
+            if (_damage == _maxDamage) Die(boundInfo);
+        }
+
+        public void RepairDamage(float repairAmount)
+        {
+            if (repairAmount < 0) throw new ArgumentOutOfRangeException("repairAmount");
+            _damage = Math.Max(0, _damage - repairAmount);
         }
 
         #endregion Damage methods
@@ -1345,17 +1348,12 @@ namespace AW2.Game
             this._deathGobTypes = deathGobTypes;
         }
 
-        /// <summary>
-        /// The core implementation of the public methods <see cref="Die(DeathCause)"/>
-        /// and <see cref="DieOnClient()"/>.
-        /// </summary>
-        /// <param name="cause">The cause of death.</param>
         /// <param name="forceRemove">Force removal of the dead gob. Useful for clients.</param>
-        private void DieImpl(DeathCause cause, bool forceRemove)
+        private void DieImpl(Coroner coroner, bool forceRemove)
         {
             if (Dead) throw new InvalidOperationException("Gob is already dead");
             _dead = true;
-            if (Death != null) Death(cause);
+            if (Death != null) Death(coroner);
             Arena.Gobs.Remove(this, forceRemove);
             foreach (var gobType in _deathGobTypes)
                 CreateGob<Gob>(Game, gobType, gob =>

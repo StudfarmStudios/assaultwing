@@ -135,7 +135,7 @@
     <Compile Include="Game\CollisionAreaType.cs" />
     <Compile Include="Game\CollisionMaterialType.cs" />
     <Compile Include="Game\DataEngine.cs" />
-    <Compile Include="Game\DeathCause.cs" />
+    <Compile Include="Game\GobUtils\DamageInfo.cs" />
     <Compile Include="Game\GameContent.cs" />
     <Compile Include="Game\GameplayMode.cs" />
     <Compile Include="Game\Gob.cs" />
@@ -165,6 +165,7 @@
     <Compile Include="Game\Gobs\WallModel.cs" />
     <Compile Include="Game\Gobs\WallPolygon.cs" />
     <Compile Include="Game\GobUtils\ChargeProvider.cs" />
+    <Compile Include="Game\GobUtils\Coroner.cs" />
     <Compile Include="Game\GobUtils\EquipInfo.cs" />
     <Compile Include="Game\GobUtils\FiringOperator.cs" />
     <Compile Include="Game\GobUtils\FiringOperatorContinuous.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="Game\GobUtils\ShipDeviceInfo.cs" />
     <Compile Include="Game\GobUtils\ShipInfo.cs" />
     <Compile Include="Game\GobUtils\ShipLocationPredicter.cs" />
+    <Compile Include="Game\GobUtils\SubjectWord.cs" />
     <Compile Include="Game\GobUtils\WallIndexMap.cs" />
     <Compile Include="Game\GobUtils\Weapon.cs" />
     <Compile Include="Game\GobUtils\WeaponInfo.cs" />

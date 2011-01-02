@@ -4,7 +4,7 @@
    <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <ticks type="System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000000</ticks>
    </networkUpdatePeriod>
-  <repairSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">-100</repairSpeed>
+  <repairSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</repairSpeed>
   <weapon1ChargeSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">200</weapon1ChargeSpeed>
   <weapon2ChargeSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">200</weapon2ChargeSpeed>
   <mass type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000</mass>

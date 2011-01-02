@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -136,7 +137,7 @@ namespace AW2.Game.Gobs
             if (!_damageDealt)
             {
                 var target = Target.GetValue();
-                if (target != null) target.InflictDamage(impactDamage, new DeathCause(target, this));
+                if (target != null) target.InflictDamage(impactDamage, new DamageInfo(this));
                 _damageDealt = true;
             }
             Alpha = alphaCurve.Evaluate(AgeInGameSeconds);

@@ -190,7 +190,7 @@ namespace AW2.Core
 #endif
             DataEngine.Spectators.Add(new Player(this, "Newbie", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", leftKeyboardControls));
             DataEngine.Spectators.Add(new Player(this, "Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", rightKeyboardControls));
-            DataEngine.Spectators.Add(new Player(this, "Loser", (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", middleKeyboardControls));
+            // DataEngine.Spectators.Add(new Player(this, "Loser", (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", middleKeyboardControls));
 
             GameState = GameState.Intro;
             base.BeginRun();
@@ -465,7 +465,7 @@ namespace AW2.Core
                 {
                     // K + P = kill players
                     var ships = DataEngine.Players.Select(p => p.Ship).Where(s => s != null);
-                    foreach (var ship in ships) ship.Die(new DeathCause(ship));
+                    foreach (var ship in ships) ship.Die();
                 }
 
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))

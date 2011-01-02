@@ -562,22 +562,15 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Time in milliseconds when the ship took the last damage
+        /// When the ship took damage previous time, measured in game time.
         /// </summary>
         public TimeSpan LastDamageTaken { get; set; }
 
-        public override void InflictDamage(float damageAmount, DeathCause cause)
+        public override void InflictDamage(float damageAmount, DamageInfo cause)
         {
-            // If player takes damage (something substracted from health) mark the GameTime so
-            // that a dock can check whether the player can actually dock.
-            if (damageAmount > 0)
-            {
-                LastDamageTaken = Game.DataEngine.ArenaTotalTime;
-            }
-
+            if (damageAmount > 0) LastDamageTaken = Game.DataEngine.ArenaTotalTime;
             float realDamage = _armour.Evaluate(damageAmount);
-            if (Owner != null)
-                Owner.IncreaseShake(realDamage);
+            if (Owner != null) Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
         }
 

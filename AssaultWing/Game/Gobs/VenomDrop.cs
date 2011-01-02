@@ -1,5 +1,6 @@
 ﻿using System;
 using AW2.Game.BonusActions;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -37,7 +38,7 @@ namespace AW2.Game.Gobs
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
             {
-                theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, this));
+                theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
                 DoDamageOverTime(theirArea.Owner);
             }
             Die();
@@ -47,8 +48,11 @@ namespace AW2.Game.Gobs
         {
             var player = target.Owner;
             if (!(target is Ship) || player == null) return; // TODO: damage over time for all gobs
-            var dot = new DamageBuffBonusAction(TypeName, _damageOverTimeBonusIconName, _clingDamagePerSecond);
-            dot.Player = player;
+            var dot = new DamageBuffBonusAction(TypeName, _damageOverTimeBonusIconName, _clingDamagePerSecond)
+            {
+                Player = player,
+                Cause = this,
+            };
             dot.SetDuration(_clingTime);
             if (dot.DoAction()) player.BonusActions.AddOrReplace(dot);
         }

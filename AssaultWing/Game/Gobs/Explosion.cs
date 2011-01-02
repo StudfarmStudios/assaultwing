@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -129,7 +130,7 @@ namespace AW2.Game.Gobs
             {
                 float distance = theirArea.Area.DistanceTo(this.Pos);
                 float damage = _inflictDamage.Evaluate(distance);
-                theirArea.Owner.InflictDamage(damage, new DeathCause(theirArea.Owner, this));
+                theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
             }
         }
 

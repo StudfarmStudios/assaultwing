@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.Arenas;
+using AW2.Game.GobUtils;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
@@ -869,7 +870,7 @@ namespace AW2.Game
                     {
                         if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
                             movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier),
-                                new DeathCause(movableGob, unmovableGob));
+                                new DamageInfo(unmovableGob));
                     }
                     /* TODO: What if the unmovable gob wants to be damaged, too?
                     if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0)
@@ -943,13 +944,13 @@ namespace AW2.Game
                     {
                         if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
                             gob1.InflictDamage(CollisionDamage(gob1, move1Delta, damageMultiplier),
-                                new DeathCause(gob1, gob2));
+                                new DamageInfo(gob2));
                     }
                     if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
                     {
                         if (move2after.Length() > MINIMUM_COLLISION_DELTA)
                             gob2.InflictDamage(CollisionDamage(gob2, move2after, damageMultiplier),
-                                new DeathCause(gob2, gob1));
+                                new DamageInfo(gob1));
                     }
                     PlayGobCollisionSound(gob1, gob2, move1Delta, move2after);
                 }

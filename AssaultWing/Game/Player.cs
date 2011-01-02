@@ -434,7 +434,7 @@ namespace AW2.Game
         public override void Dispose()
         {
             base.Dispose();
-            if (Ship != null) Ship.Die(new DeathCause(Ship));
+            if (Ship != null) Ship.Die();
         }
 
         public override string ToString()
@@ -502,43 +502,43 @@ namespace AW2.Game
 
         #region Private methods
 
-        private void ShipDeathHandler(DeathCause cause)
+        private void ShipDeathHandler(Coroner coroner)
         {
-            Die_HandleCounters(cause);
-            Die_SendMessages(cause);
+            Die_HandleCounters(coroner);
+            Die_SendMessages(coroner);
             Ship = null;
             _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
             if (Game.NetworkMode == NetworkMode.Server) MustUpdateToClients = true;
         }
 
-        private void Die_HandleCounters(DeathCause cause)
+        private void Die_HandleCounters(Coroner coroner)
         {
-            if (cause.IsSuicide) _suicides++;
-            if (cause.IsKill)
+            if (coroner.IsSuicide) _suicides++;
+            if (coroner.IsKill)
             {
-                cause.ScoringPlayer._kills++;
-                cause.ScoringPlayer.KillsWithoutDying++;
+                coroner.ScoringPlayer._kills++;
+                coroner.ScoringPlayer.KillsWithoutDying++;
                 if (Game.NetworkMode == NetworkMode.Server)
-                    cause.ScoringPlayer.MustUpdateToClients = true;
+                    coroner.ScoringPlayer.MustUpdateToClients = true;
             }
             Lives--;
             KillsWithoutDying = 0;
             BonusActions.Clear();
         }
 
-        private void Die_SendMessages(DeathCause cause)
+        private void Die_SendMessages(Coroner coroner)
         {
-            if (cause.IsKill) CreateKillMessage(cause.ScoringPlayer, Ship.Pos);
-            if (cause.IsSuicide) CreateSuicideMessage(this, Ship.Pos);
-            if (cause.IsSpecial)
+            if (coroner.IsKill) CreateKillMessage(coroner.ScoringPlayer, Ship.Pos);
+            if (coroner.IsSuicide) CreateSuicideMessage(this, Ship.Pos);
+            if (coroner.IsSpecial)
             {
-                var specialMessage = new PlayerMessage(cause.SpecialMessage, SPECIAL_KILL_COLOR);
+                var specialMessage = new PlayerMessage(coroner.SpecialMessage, SPECIAL_KILL_COLOR);
                 foreach (var plr in Game.DataEngine.Players) plr.SendMessage(specialMessage);
             }
-            if (cause.IsKill) cause.ScoringPlayer.SendMessage(new PlayerMessage(cause.MessageToScoringPlayer, KILL_COLOR));
-            var bystanderMessage = new PlayerMessage(cause.MessageToBystander, DEFAULT_COLOR);
-            foreach (var plr in cause.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
-            SendMessage(new PlayerMessage(cause.MessageToCorpse, cause.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
+            if (coroner.IsKill) coroner.ScoringPlayer.SendMessage(new PlayerMessage(coroner.MessageToScoringPlayer, KILL_COLOR));
+            var bystanderMessage = new PlayerMessage(coroner.MessageToBystander, DEFAULT_COLOR);
+            foreach (var plr in coroner.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
+            SendMessage(new PlayerMessage(coroner.MessageToCorpse, coroner.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
         }
 
         /// <summary>

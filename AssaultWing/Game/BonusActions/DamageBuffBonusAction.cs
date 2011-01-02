@@ -19,6 +19,8 @@ namespace AW2.Game.BonusActions
         [TypeParameter]
         private float _damagePerSecond;
 
+        public Gob Cause { get; set; }
+
         /// <summary>
         /// This constructor is only for serialization.
         /// </summary>
@@ -70,7 +72,13 @@ namespace AW2.Game.BonusActions
             float damage = Player.Game.PhysicsEngine.ApplyChange(_damagePerSecond, Player.Game.GameTime.ElapsedGameTime);
             Player.Game.PostFrameLogicEngine.DoOnce += () =>
             {
-                if (Player.Ship != null) Player.Ship.InflictDamage(damage, new DeathCause(Player.Ship));
+                if (Player.Ship != null)
+                {
+                    if (damage > 0)
+                        Player.Ship.InflictDamage(damage, new DamageInfo(Cause));
+                    else
+                        Player.Ship.RepairDamage(-damage);
+                }
             };
         }
 

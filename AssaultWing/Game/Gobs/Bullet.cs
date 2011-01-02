@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 
@@ -116,7 +117,7 @@ namespace AW2.Game.Gobs
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             if ((theirArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
-                theirArea.Owner.InflictDamage(_impactDamage, new DeathCause(theirArea.Owner, this));
+                theirArea.Owner.InflictDamage(_impactDamage, new DamageInfo(this));
             Arena.MakeHole(Pos, _impactHoleRadius);
             Die();
         }

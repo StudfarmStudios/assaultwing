@@ -136,7 +136,7 @@ namespace AW2.Game.Gobs
             if (!_damageDealt)
             {
                 var target = Target.GetValue();
-                if (target != null) target.InflictDamage(impactDamage, new DeathCause(target, DeathCauseType.Damage, this));
+                if (target != null) target.InflictDamage(impactDamage, new DeathCause(target, this));
                 _damageDealt = true;
             }
             Alpha = alphaCurve.Evaluate(AgeInGameSeconds);

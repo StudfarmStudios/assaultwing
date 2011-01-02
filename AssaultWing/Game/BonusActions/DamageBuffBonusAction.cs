@@ -70,7 +70,7 @@ namespace AW2.Game.BonusActions
             float damage = Player.Game.PhysicsEngine.ApplyChange(_damagePerSecond, Player.Game.GameTime.ElapsedGameTime);
             Player.Game.PostFrameLogicEngine.DoOnce += () =>
             {
-                if (Player.Ship != null) Player.Ship.InflictDamage(damage, new DeathCause(Player.Ship, DeathCauseType.Damage));
+                if (Player.Ship != null) Player.Ship.InflictDamage(damage, new DeathCause(Player.Ship));
             };
         }
 

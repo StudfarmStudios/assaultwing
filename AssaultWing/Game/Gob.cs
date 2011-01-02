@@ -367,9 +367,9 @@ namespace AW2.Game
         public Player LastDamager { get; private set; }
 
         /// <summary>
-        /// The timespan then the damager damaged this gob
+        /// Last time when <see cref="LastDamager"/> is relevant, in game time.
         /// </summary>
-        public TimeSpan LastDamagerTime { get; private set; }
+        public TimeSpan LastDamagerTimeout { get; private set; }
 
         /// <summary>
         /// Drawing mode of 2D graphics of the gob.
@@ -797,7 +797,7 @@ namespace AW2.Game
 
         public void Die()
         {
-            Die(new DeathCause(this, DeathCauseType.Unspecified));
+            Die(new DeathCause(this));
         }
 
         /// <summary>
@@ -809,7 +809,7 @@ namespace AW2.Game
         /// <seealso cref="Die(DeathCause)"/>
         public void DieOnClient()
         {
-            DieImpl(new DeathCause(this, DeathCauseType.Unspecified), true);
+            DieImpl(new DeathCause(this), true);
         }
 
         /// <summary>
@@ -1239,10 +1239,10 @@ namespace AW2.Game
         /// <param name="cause">Cause of death if the damage results in death.</param>
         public virtual void InflictDamage(float damageAmount, DeathCause cause)
         {
-            if (cause.Killer != null && cause.Killer.Owner != null && damageAmount > 0)
+            if (cause.Killer != null && cause.Killer.Owner != null && cause.Killer.Owner != Owner && damageAmount > 0)
             {
                 LastDamager = cause.Killer.Owner;
-                LastDamagerTime = Arena.TotalTime;
+                LastDamagerTimeout = Arena.TotalTime + TimeSpan.FromSeconds(6);
             }
             _damage += damageAmount;
             _damage = MathHelper.Clamp(_damage, 0, _maxDamage);

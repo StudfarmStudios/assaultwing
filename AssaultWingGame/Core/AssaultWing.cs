@@ -14,6 +14,7 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
+using AW2.UI.Mouse;
 
 namespace AW2.Core
 {
@@ -141,43 +142,55 @@ namespace AW2.Core
 
             // Hardcoded for now!!!
 
-            PlayerControls plr1Controls;
-            plr1Controls.Thrust = new KeyboardKey(Keys.Up);
-            plr1Controls.Left = new KeyboardKey(Keys.Left);
-            plr1Controls.Right = new KeyboardKey(Keys.Right);
-            plr1Controls.Down = new KeyboardKey(Keys.Down);
-            plr1Controls.Fire1 = new KeyboardKey(Keys.RightControl);
-            plr1Controls.Fire2 = new KeyboardKey(Keys.RightShift);
-            plr1Controls.Extra = new KeyboardKey(Keys.Down);
-
-            PlayerControls plr2Controls;
-#if false // mouse control
-            //plr2Controls.Thrust = new MouseDirection(MouseDirections.Up, 2, 7, 5);
-            plr2Controls.Thrust = new MouseButton(MouseButtons.Left);
-            plr2Controls.Left = new MouseDirection(MouseDirections.Left, 2, 9, 5);
-            plr2Controls.Right = new MouseDirection(MouseDirections.Right, 2, 9, 5);
-            plr2Controls.Down = new MouseDirection(MouseDirections.Down, 2, 12, 5);
-            //plr2Controls.Fire1 = new MouseDirection(MouseDirections.Down, 0, 12, 20);
-            //plr2Controls.Fire2 = new MouseButton(MouseButtons.Right);
-            plr2Controls.Fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1);
-            plr2Controls.Fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1);
-            plr2Controls.Extra = new KeyboardKey(Keys.CapsLock);
-            _uiEngine.MouseControlsEnabled = true;
-#else
-            plr2Controls.Thrust = new KeyboardKey(Keys.W);
-            plr2Controls.Left = new KeyboardKey(Keys.A);
-            plr2Controls.Right = new KeyboardKey(Keys.D);
-            plr2Controls.Down = new KeyboardKey(Keys.X);
-            plr2Controls.Fire1 = new KeyboardKey(Keys.LeftControl);
-            plr2Controls.Fire2 = new KeyboardKey(Keys.LeftShift);
-            plr2Controls.Extra = new KeyboardKey(Keys.X);
-            UIEngine.MouseControlsEnabled = false;
+            var leftKeyboardControls = new PlayerControls
+            {
+                Thrust = new KeyboardKey(Keys.Up),
+                Left = new KeyboardKey(Keys.Left),
+                Right = new KeyboardKey(Keys.Right),
+                Down = new KeyboardKey(Keys.Down),
+                Fire1 = new KeyboardKey(Keys.RightControl),
+                Fire2 = new KeyboardKey(Keys.RightShift),
+                Extra = new KeyboardKey(Keys.Down),
+            };
+            var rightKeyboardControls = new PlayerControls
+            {
+                Thrust = new KeyboardKey(Keys.W),
+                Left = new KeyboardKey(Keys.A),
+                Right = new KeyboardKey(Keys.D),
+                Down = new KeyboardKey(Keys.X),
+                Fire1 = new KeyboardKey(Keys.LeftControl),
+                Fire2 = new KeyboardKey(Keys.LeftShift),
+                Extra = new KeyboardKey(Keys.X),
+            };
+            var middleKeyboardControls = new PlayerControls
+            {
+                Thrust = new KeyboardKey(Keys.I),
+                Left = new KeyboardKey(Keys.J),
+                Right = new KeyboardKey(Keys.L),
+                Down = new KeyboardKey(Keys.M),
+                Fire1 = new KeyboardKey(Keys.B),
+                Fire2 = new KeyboardKey(Keys.N),
+                Extra = new KeyboardKey(Keys.M),
+            };
+#if false
+            var mouseControls = new PlayerControls
+            {
+                //Thrust = new MouseDirection(MouseDirections.Up, 2, 7, 5),
+                Thrust = new MouseButton(MouseButtons.Left),
+                Left = new MouseDirection(MouseDirections.Left, 2, 9, 5),
+                Right = new MouseDirection(MouseDirections.Right, 2, 9, 5),
+                Down = new MouseDirection(MouseDirections.Down, 2, 12, 5),
+                //Fire1 = new MouseDirection(MouseDirections.Down, 0, 12, 20),
+                //Fire2 = new MouseButton(MouseButtons.Right),
+                Fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1),
+                Fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1),
+                Extra = new KeyboardKey(Keys.CapsLock),
+            };
+            UIEngine.MouseControlsEnabled = true;
 #endif
-
-            var player1 = new Player(this, "Newbie", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", plr1Controls);
-            var player2 = new Player(this, "Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", plr2Controls);
-            DataEngine.Spectators.Add(player1);
-            DataEngine.Spectators.Add(player2);
+            DataEngine.Spectators.Add(new Player(this, "Newbie", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", leftKeyboardControls));
+            DataEngine.Spectators.Add(new Player(this, "Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", rightKeyboardControls));
+            DataEngine.Spectators.Add(new Player(this, "Loser", (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", middleKeyboardControls));
 
             GameState = GameState.Intro;
             base.BeginRun();
@@ -452,7 +465,7 @@ namespace AW2.Core
                 {
                     // K + P = kill players
                     var ships = DataEngine.Players.Select(p => p.Ship).Where(s => s != null);
-                    foreach (var ship in ships) ship.Die(new DeathCause(ship, DeathCauseType.Unspecified));
+                    foreach (var ship in ships) ship.Die(new DeathCause(ship));
                 }
 
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))

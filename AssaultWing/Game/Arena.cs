@@ -869,7 +869,7 @@ namespace AW2.Game
                     {
                         if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
                             movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier),
-                                new DeathCause(movableGob, DeathCauseType.Collision, unmovableGob));
+                                new DeathCause(movableGob, unmovableGob));
                     }
                     /* TODO: What if the unmovable gob wants to be damaged, too?
                     if ((unmovableArea.Type2 & CollisionAreaType.PhysicalDamageable) != 0)
@@ -943,13 +943,13 @@ namespace AW2.Game
                     {
                         if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
                             gob1.InflictDamage(CollisionDamage(gob1, move1Delta, damageMultiplier),
-                                new DeathCause(gob1, DeathCauseType.Collision, gob2));
+                                new DeathCause(gob1, gob2));
                     }
                     if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
                     {
                         if (move2after.Length() > MINIMUM_COLLISION_DELTA)
                             gob2.InflictDamage(CollisionDamage(gob2, move2after, damageMultiplier),
-                                new DeathCause(gob2, DeathCauseType.Collision, gob1));
+                                new DeathCause(gob2, gob1));
                     }
                     PlayGobCollisionSound(gob1, gob2, move1Delta, move2after);
                 }

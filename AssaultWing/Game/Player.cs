@@ -434,7 +434,12 @@ namespace AW2.Game
         public override void Dispose()
         {
             base.Dispose();
-            if (Ship != null) Ship.Die(new DeathCause(Ship, DeathCauseType.Unspecified));
+            if (Ship != null) Ship.Die(new DeathCause(Ship));
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
 
         #endregion General public methods
@@ -511,10 +516,10 @@ namespace AW2.Game
             if (cause.IsSuicide) _suicides++;
             if (cause.IsKill)
             {
-                cause.Killer.Owner._kills++;
-                cause.Killer.Owner.KillsWithoutDying++;
+                cause.ScoringPlayer._kills++;
+                cause.ScoringPlayer.KillsWithoutDying++;
                 if (Game.NetworkMode == NetworkMode.Server)
-                    cause.Killer.Owner.MustUpdateToClients = true;
+                    cause.ScoringPlayer.MustUpdateToClients = true;
             }
             Lives--;
             KillsWithoutDying = 0;
@@ -523,17 +528,17 @@ namespace AW2.Game
 
         private void Die_SendMessages(DeathCause cause)
         {
-            if (cause.IsKill) CreateKillMessage(cause.Killer.Owner, Ship.Pos);
+            if (cause.IsKill) CreateKillMessage(cause.ScoringPlayer, Ship.Pos);
             if (cause.IsSuicide) CreateSuicideMessage(this, Ship.Pos);
             if (cause.IsSpecial)
             {
                 var specialMessage = new PlayerMessage(cause.SpecialMessage, SPECIAL_KILL_COLOR);
                 foreach (var plr in Game.DataEngine.Players) plr.SendMessage(specialMessage);
             }
-            if (cause.IsKill) cause.Killer.Owner.SendMessage(new PlayerMessage(cause.KillMessage, KILL_COLOR));
-            var bystanderMessage = new PlayerMessage(cause.BystanderMessage, DEFAULT_COLOR);
+            if (cause.IsKill) cause.ScoringPlayer.SendMessage(new PlayerMessage(cause.MessageToScoringPlayer, KILL_COLOR));
+            var bystanderMessage = new PlayerMessage(cause.MessageToBystander, DEFAULT_COLOR);
             foreach (var plr in cause.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
-            SendMessage(new PlayerMessage(cause.DeathMessage, cause.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
+            SendMessage(new PlayerMessage(cause.MessageToCorpse, cause.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
         }
 
         /// <summary>

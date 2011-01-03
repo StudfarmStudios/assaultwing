@@ -12,6 +12,7 @@ using AW2.Helpers.Serialization;
 using AW2.Net.ManagementMessages;
 using AW2.Net.Messages;
 using AW2.UI;
+using AW2.Net.Connections;
 
 namespace AW2.Net.MessageHandling
 {
@@ -30,20 +31,20 @@ namespace AW2.Net.MessageHandling
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
         }
 
-        public static IEnumerable<IMessageHandler> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply, Action<JoinGameServerReply> handleJoinGameServerReply)
+        public static IEnumerable<IMessageHandler> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply)
         {
             yield return new MessageHandler<GameServerListReply>(false, IMessageHandler.SourceType.Management, handleGameServerListReply);
-            yield return new MessageHandler<JoinGameServerReply>(false, IMessageHandler.SourceType.Management, handleJoinGameServerReply);
+            yield return new MessageHandler<JoinGameServerReply>(false, IMessageHandler.SourceType.Management, HandleJoinGameServerReply);
 
             // These messages only game servers receive
             yield return new MessageHandler<ClientJoinMessage>(false, IMessageHandler.SourceType.Management, HandleClientJoinMessage);
             yield return new MessageHandler<PingMessage>(false, IMessageHandler.SourceType.Management, HandlePingMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers(Action<StartGameMessage> handleStartGameMessage)
+        public static IEnumerable<IMessageHandler> GetClientMenuHandlers()
         {
             yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
-            yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, handleStartGameMessage);
+            yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
@@ -91,6 +92,13 @@ namespace AW2.Net.MessageHandling
         }
 
         #region Handler implementations
+
+        private static void HandleJoinGameServerReply(JoinGameServerReply mess)
+        {
+            DeactivateHandlers(GetStandaloneMenuHandlers(null));
+            AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
+            AssaultWing.Instance.StartClient(mess.GameServerEndPoints, ClientConnectedCallback);
+        }
 
         private static void HandleClientJoinMessage(ClientJoinMessage mess)
         {
@@ -290,6 +298,39 @@ namespace AW2.Net.MessageHandling
             var dialogData = new CustomOverlayDialogData(game, "Server closed connection.\n" + mess.Info,
                 new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu));
             game.ShowDialog(dialogData);
+        }
+
+        private static void HandleStartGameMessage(StartGameMessage mess)
+        {
+            var game = AssaultWing.Instance;
+            if (game.IsLoadingArena) return;
+            game.SelectedArenaName = mess.ArenaToPlay;
+            game.MenuEngine.ProgressBarAction(
+                () => game.PrepareArena(game.SelectedArenaName),
+                () =>
+                {
+                    MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleGobCreationMessage));
+                    game.IsClientAllowedToStartArena = true;
+                    game.StartArenaButStayInMenu();
+                });
+        }
+
+        private static void ClientConnectedCallback(Result<Connection> result)
+        {
+            if (!result.Successful)
+            {
+                Log.Write("Failed to connect to server: " + result.Error);
+                AssaultWing.Instance.StopClient("Failed to connect to server");
+                return;
+            }
+            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
+
+            // HACK: Force one local player.
+            AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
+
+            var joinRequest = new GameServerHandshakeRequest { CanonicalStrings = CanonicalString.CanonicalForms };
+            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(joinRequest);
+            AssaultWing.Instance.MenuEngine.ActivateComponent(AW2.Menu.MenuComponentType.Equip);
         }
     }
 }

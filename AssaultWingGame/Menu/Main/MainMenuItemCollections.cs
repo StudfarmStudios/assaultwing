@@ -26,6 +26,11 @@ namespace AW2.Menu.Main
         public MainMenuItemCollections(MenuEngineImpl menuEngine)
         {
             _menuEngine = menuEngine;
+            InitializeStartItems(menuEngine);
+        }
+
+        private void InitializeStartItems(MenuEngineImpl menuEngine)
+        {
             StartItems = new MainMenuItemCollection("Start Menu");
             StartItems.Add(new MainMenuItem(menuEngine)
             {
@@ -41,9 +46,7 @@ namespace AW2.Menu.Main
                     component.SetItems(NetworkItems);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                     menuEngine.Game.NetworkEngine.ConnectToManagementServer();
-                    MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(
-                        HandleGameServerListReply,
-                        HandleJoinGameServerReply));
+                    MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
                     menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
                 }
             });
@@ -93,46 +96,6 @@ namespace AW2.Menu.Main
                         };
                         _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
                     }
-                });
-        }
-
-        private void HandleJoinGameServerReply(JoinGameServerReply mess)
-        {
-            MessageHandlers.DeactivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(null, null));
-            _menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-            _menuEngine.Game.StartClient(mess.GameServerEndPoints, ClientConnectedCallback);
-        }
-
-        private void ClientConnectedCallback(AW2.Net.Result<AW2.Net.Connections.Connection> result)
-        {
-            if (!result.Successful)
-            {
-                Log.Write("Failed to connect to server: " + result.Error);
-                _menuEngine.Game.StopClient("Failed to connect to server");
-                return;
-            }
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers(HandleStartGameMessage));
-
-            // HACK: Force one local player.
-            _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
-
-            var joinRequest = new GameServerHandshakeRequest { CanonicalStrings = CanonicalString.CanonicalForms };
-            _menuEngine.Game.NetworkEngine.GameServerConnection.Send(joinRequest);
-            _menuEngine.ActivateComponent(MenuComponentType.Equip);
-        }
-
-        private void HandleStartGameMessage(StartGameMessage mess)
-        {
-            var game = _menuEngine.Game;
-            if (game.IsLoadingArena) return;
-            game.SelectedArenaName = mess.ArenaToPlay;
-            _menuEngine.ProgressBarAction(
-                () => game.PrepareArena(game.SelectedArenaName),
-                () =>
-                {
-                    MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleGobCreationMessage));
-                    game.IsClientAllowedToStartArena = true;
-                    _menuEngine.Game.StartArenaButStayInMenu();
                 });
         }
     }

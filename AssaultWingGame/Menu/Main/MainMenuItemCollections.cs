@@ -1,8 +1,8 @@
-﻿using AW2.Core;
+﻿using System;
+using AW2.Core;
 using AW2.Helpers;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
-using AW2.Net.Messages;
 
 namespace AW2.Menu.Main
 {
@@ -23,11 +23,18 @@ namespace AW2.Menu.Main
         /// </summary>
         public MainMenuItemCollection NetworkItems { get; private set; }
 
+        /// <summary>
+        /// Menu for choosing general settings.
+        /// </summary>
+        public MainMenuItemCollection SetupItems { get; private set; }
+
         public MainMenuItemCollections(MenuEngineImpl menuEngine)
         {
             _menuEngine = menuEngine;
             InitializeStartItems(menuEngine);
             NetworkItems = new MainMenuItemCollection("Battlefront Menu");
+            SetupItems = new MainMenuItemCollection("Setup Menu");
+            RefreshSetupItems(menuEngine);
         }
 
         private void InitializeStartItems(MenuEngineImpl menuEngine)
@@ -53,13 +60,39 @@ namespace AW2.Menu.Main
             StartItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Setup",
-                Action = component => Log.Write("NOTE: Main menu item 'Setup' is not implemented")
+                Action = component => component.SetItems(SetupItems)
             });
             StartItems.Add(new MainMenuItem(menuEngine)
             {
                 Name = "Quit",
                 Action = component => AssaultWingProgram.Instance.Exit()
             });
+        }
+
+        private void RefreshSetupItems(MenuEngineImpl menuEngine)
+        {
+            SetupItems.Clear();
+            Func<string, Func<float>, Action<float>, MainMenuItem> getMenuItemForVolumeSetting = (name, get, set) => new MainMenuItem(menuEngine)
+            {
+                Name = string.Format("{0} {1:0} %", name, get() * 100),
+                Action = component =>
+                {
+                    if (get() >= 1)
+                        set(0);
+                    else
+                        set(Math.Min(1, get() + 0.25f));
+                    RefreshSetupItems(menuEngine);
+                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                }
+            };
+            SetupItems.Add(getMenuItemForVolumeSetting(
+                "Music volume",
+                () => menuEngine.Game.Settings.Sound.MusicVolume,
+                volume => menuEngine.Game.Settings.Sound.MusicVolume = volume));
+            SetupItems.Add(getMenuItemForVolumeSetting(
+                "Sound effect volume",
+                () => menuEngine.Game.Settings.Sound.SoundVolume,
+                volume => menuEngine.Game.Settings.Sound.SoundVolume = volume));
         }
 
         private void RefreshNetworkItems()

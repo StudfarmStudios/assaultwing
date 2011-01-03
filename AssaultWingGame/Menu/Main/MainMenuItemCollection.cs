@@ -27,6 +27,11 @@ namespace AW2.Menu.Main
             _menuItems.Add(item);
         }
 
+        public void Clear()
+        {
+            _menuItems.Clear();
+        }
+
         public IEnumerator<MainMenuItem> GetEnumerator()
         {
             return _menuItems.GetEnumerator();

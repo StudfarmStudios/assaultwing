@@ -27,6 +27,7 @@ namespace AW2.Menu.Main
         {
             _menuEngine = menuEngine;
             InitializeStartItems(menuEngine);
+            NetworkItems = new MainMenuItemCollection("Battlefront Menu");
         }
 
         private void InitializeStartItems(MenuEngineImpl menuEngine)
@@ -42,12 +43,11 @@ namespace AW2.Menu.Main
                 Name = "Play at the Battlefront",
                 Action = component =>
                 {
-                    InitializeNetworkItems();
+                    menuEngine.Game.NetworkEngine.ConnectToManagementServer();
+                    RefreshNetworkItems();
                     component.SetItems(NetworkItems);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-                    menuEngine.Game.NetworkEngine.ConnectToManagementServer();
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
-                    menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
                 }
             });
             StartItems.Add(new MainMenuItem(menuEngine)
@@ -62,9 +62,9 @@ namespace AW2.Menu.Main
             });
         }
 
-        private void InitializeNetworkItems()
+        private void RefreshNetworkItems()
         {
-            NetworkItems = new MainMenuItemCollection("Battlefront Menu");
+            NetworkItems.Clear();
             NetworkItems.Add(new MainMenuItem(_menuEngine)
             {
                 Name = "Play as Server",
@@ -78,6 +78,12 @@ namespace AW2.Menu.Main
                     _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
                 }
             });
+            NetworkItems.Add(new MainMenuItem(_menuEngine)
+            {
+                Name = "Refresh Server List",
+                Action = component => RefreshNetworkItems(),
+            });
+            _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
         }
 
         private void HandleGameServerListReply(GameServerListReply mess)

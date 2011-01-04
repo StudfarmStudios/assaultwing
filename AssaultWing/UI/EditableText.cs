@@ -95,6 +95,12 @@ namespace AW2.UI
             }
         }
 
+        public void Clear()
+        {
+            Content = "";
+            CaretPosition = 0;
+        }
+
         private void InterpretKey(Keys key)
         {
             switch (key)

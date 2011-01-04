@@ -49,13 +49,13 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new MessageHandler<GameSettingsRequest>(false, IMessageHandler.SourceType.Server, HandleGameSettingsRequest);
+            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessageOnClient);
         }
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
             yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<ArenaFinishMessage>(false, IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
-            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerMessageMessageOnClient);
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
             yield return new GameplayMessageHandler<GobCreationMessage>(false, IMessageHandler.SourceType.Server, handleGobCreationMessage);
@@ -67,12 +67,12 @@ namespace AW2.Net.MessageHandling
         {
             yield return new MessageHandler<GameServerHandshakeRequest>(false, IMessageHandler.SourceType.Client, HandleGameServerHandshakeRequest);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Client, HandlePlayerSettingsRequestOnServer);
+            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
         public static IEnumerable<IMessageHandler> GetServerGameplayHandlers()
         {
             yield return new MessageHandler<PlayerControlsMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerControlsMessage);
-            yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
         public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)

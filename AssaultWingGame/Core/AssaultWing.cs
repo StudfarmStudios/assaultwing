@@ -312,6 +312,30 @@ namespace AW2.Core
             }
         }
 
+        public void SendMessageToAllPlayers(string text, Player from)
+        {
+            var messageContent = text.Trim();
+            if (messageContent == "") return;
+            var preText = from.Name + ">";
+            var textColor = from.PlayerColor;
+            var message = new PlayerMessage(preText, messageContent, textColor);
+            switch (NetworkMode)
+            {
+                case NetworkMode.Server:
+                    foreach (var plr in DataEngine.Players) plr.Messages.Add(message);
+                    break;
+                case NetworkMode.Client:
+                    foreach (var plr in DataEngine.Players.Where(plr => !plr.IsRemote)) plr.Messages.Add(message);
+                    NetworkEngine.GameServerConnection.Send(new PlayerMessageMessage
+                    {
+                        PlayerID = -1,
+                        Message = message,
+                    });
+                    break;
+                default: throw new InvalidOperationException("Text messages not supported in mode " + NetworkMode);
+            }
+        }
+
         protected override string GetStatusText()
         {
             string myStatusText = "";

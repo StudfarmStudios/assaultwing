@@ -398,7 +398,6 @@ namespace AW2.Game
             KillsWithoutDying = 0;
             Lives = Game.DataEngine.GameplayMode.StartLives;
             BonusActions.Clear();
-            Messages.Clear();
             Ship = null;
         }
 

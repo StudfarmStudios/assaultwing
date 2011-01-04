@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Graphics;
@@ -11,6 +12,15 @@ namespace AW2.Menu.Equip
         private static readonly Vector2 LEFT_PANE_POS = new Vector2(334, 164);
 
         private int _playerListIndex; // access through property PlayerListIndex
+
+        public EquipMenuComponent MenuComponent { get; private set; }
+        public MenuEngineImpl MenuEngine { get { return MenuComponent.MenuEngine; } }
+        public MenuContent Content { get { return MenuComponent.Content; } }
+        public EquipMenuControls Controls { get { return MenuComponent.Controls; } }
+        public Vector2 LeftPanePos { get { return MenuComponent.Pos + LEFT_PANE_POS; } }
+        public abstract Texture2D TabTexture { get; }
+
+        protected Vector2 StatusPanePos { get { return MenuComponent.Pos + new Vector2(537, 160); } }
         protected int PlayerListCursorIndex
         {
             get
@@ -20,13 +30,6 @@ namespace AW2.Menu.Equip
             }
             set { _playerListIndex = value; }
         }
-
-        public EquipMenuComponent MenuComponent { get; private set; }
-        public MenuEngineImpl MenuEngine { get { return MenuComponent.MenuEngine; } }
-        public MenuContent Content { get { return MenuComponent.Content; } }
-        public EquipMenuControls Controls { get { return MenuComponent.Controls; } }
-        public Vector2 LeftPanePos { get { return MenuComponent.Pos + LEFT_PANE_POS; } }
-        public abstract Texture2D TabTexture { get; }
 
         private Vector2 PlayerListLineHeight { get { return new Vector2(0, 30); } }
         private Vector2 GetPlayerListPos(Vector2 view)
@@ -44,9 +47,7 @@ namespace AW2.Menu.Equip
 
         protected void DrawLargeStatusBackground(Vector2 view, SpriteBatch spriteBatch)
         {
-            var data = MenuEngine.Game.DataEngine;
-            var statusPanePos = MenuComponent.Pos - view + new Vector2(537, 160);
-            spriteBatch.Draw(Content.StatusPaneTexture, statusPanePos, Color.White);
+            spriteBatch.Draw(Content.StatusPaneTexture, StatusPanePos - view, Color.White);
         }
 
         protected void DrawPlayerListDisplay(Vector2 view, SpriteBatch spriteBatch)

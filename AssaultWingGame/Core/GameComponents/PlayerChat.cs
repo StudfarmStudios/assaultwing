@@ -48,7 +48,10 @@ namespace AW2.Core.GameComponents
             if (_chatControl.Pulse)
             {
                 if (IsTyping)
-                    SendMessage();
+                {
+                    _game.SendMessageToAllPlayers(_message.Content, _game.DataEngine.Players.First(plr => !plr.IsRemote));
+                    _message = null;
+                }
                 else
                     _message = new EditableText("", 40, EditableText.Keysets.All);
             }
@@ -69,32 +72,6 @@ namespace AW2.Core.GameComponents
             var viewport = Game.Window.ClientBounds;
             var textSize = _typingFont.MeasureString(text);
             return new Vector2(viewport.Width / 2, viewport.Height / 2 + 300 - _typingFont.LineSpacing * 3) - textSize / 2;
-        }
-
-        private void SendMessage()
-        {
-            var messageContent = _message.Content.Trim();
-            _message = null;
-            if (messageContent == "") return;
-            var sendingPlayer = Game.DataEngine.Players.First(plr => !plr.IsRemote);
-            var preText = sendingPlayer.Name + ">";
-            var textColor = sendingPlayer.PlayerColor;
-            var message = new PlayerMessage(preText, messageContent, textColor);
-            switch (Game.NetworkMode)
-            {
-                case NetworkMode.Server:
-                    foreach (var plr in Game.DataEngine.Players) plr.Messages.Add(message);
-                    break;
-                case NetworkMode.Client:
-                    foreach (var plr in Game.DataEngine.Players.Where(plr => !plr.IsRemote)) plr.Messages.Add(message);
-                    _game.NetworkEngine.GameServerConnection.Send(new PlayerMessageMessage
-                    {
-                        PlayerID = -1,
-                        Message = message,
-                    });
-                    break;
-                default: throw new InvalidOperationException("Text messages not supported in mode " + Game.NetworkMode);
-            }
         }
     }
 }

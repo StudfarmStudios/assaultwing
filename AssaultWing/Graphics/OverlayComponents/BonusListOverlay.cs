@@ -183,15 +183,15 @@ namespace AW2.Graphics.OverlayComponents
             float duration = (endSeconds - nowSeconds) / (endSeconds - startSeconds);
             int durationHeight = (int)Math.Round(duration * _bonusDurationTexture.Height);
             int durationY = _bonusDurationTexture.Height - durationHeight;
-            Rectangle durationClip = new Rectangle(0, durationY, _bonusDurationTexture.Width, durationHeight);
-            Vector2 durationPos = bonusPos - backgroundOrigin + new Vector2(14, 8 + durationY);
+            var durationClip = new Rectangle(0, durationY, _bonusDurationTexture.Width, durationHeight);
+            var durationPos = bonusPos - backgroundOrigin + new Vector2(14, 8 + durationY);
             spriteBatch.Draw(_bonusDurationTexture,
                 durationPos, durationClip, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
             // Draw bonus text.
             // Round coordinates for beautiful text.
-            Vector2 textSize = _bonusFont.MeasureString(bonusText);
-            Vector2 textPos = bonusPos - backgroundOrigin + new Vector2(32, 25.5f - textSize.Y / 2);
+            var textSize = _bonusFont.MeasureString(bonusText);
+            var textPos = bonusPos - backgroundOrigin + new Vector2(32, 25.5f - textSize.Y / 2);
             spriteBatch.DrawString(_bonusFont, bonusText, textPos.Round(), Color.White);
         }
 
@@ -208,7 +208,7 @@ namespace AW2.Graphics.OverlayComponents
             //Remove expired bonusOverlays from the queue
             for (int i = _displayQueue.Count - 1; i >= 1; i--)
             {
-                BonusOverlay bonusOverlay = _displayQueue[i];
+                var bonusOverlay = _displayQueue[i];
                 if (bonusOverlay.displayPosition.X >= 0 && bonusOverlay.bonusEntryDirection == DisplayDirection.Exit)
                     _displayQueue.RemoveAt(i);
             }

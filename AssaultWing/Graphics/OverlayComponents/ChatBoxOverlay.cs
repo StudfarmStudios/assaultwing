@@ -79,8 +79,8 @@ namespace AW2.Graphics.OverlayComponents
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
                 var preTextColor = Color.Multiply(Player.PRETEXT_COLOR, alpha);
                 var textColor = Color.Multiply(item.Message.TextColor, alpha);
-                spriteBatch.DrawString(_chatBoxFont, item.Message.PreText, preTextPos, preTextColor);
-                spriteBatch.DrawString(_chatBoxFont, item.Message.Text, textPos, textColor);
+                spriteBatch.DrawString(_chatBoxFont, item.Message.PreText, preTextPos.Round(), preTextColor);
+                spriteBatch.DrawString(_chatBoxFont, item.Message.Text, textPos.Round(), textColor);
                 messageY += _chatBoxFont.LineSpacing;
             }
         }

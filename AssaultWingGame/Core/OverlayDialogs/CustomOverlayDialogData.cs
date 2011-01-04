@@ -29,7 +29,7 @@ namespace AW2.Core.OverlayDialogs
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
             var textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
             var textSize = _font.MeasureString(_text);
-            spriteBatch.DrawString(_font, _text, AWMathHelper.Round(textCenter - textSize / 2), Color.White);
+            spriteBatch.DrawString(_font, _text, (textCenter - textSize / 2).Round(), Color.White);
         }
 
         public override void LoadContent()

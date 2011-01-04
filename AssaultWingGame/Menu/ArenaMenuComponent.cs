@@ -24,7 +24,6 @@ namespace AW2.Menu
         private MultiControl _controlUp, _controlDown;
         private TriggeredCallbackCollection _controlCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
-        private SpriteFont _menuBigFont, _menuSmallFont;
         private Texture2D _backgroundTexture, _cursorTexture, _highlightTexture, _tagTexture, _infoBackgroundTexture;
 
         /// <summary>
@@ -49,6 +48,15 @@ namespace AW2.Menu
         private int _arenaListStart;
 
         private List<ArenaInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
+        private Vector2 ArenaPreviewPos { get { return _pos + new Vector2(430, 232); } }
+        private Vector2 InfoBoxPos { get { return ArenaPreviewPos + new Vector2(-3, 188); } }
+        private Vector2 InfoBoxHeaderPos { get { return InfoBoxPos + new Vector2(20, 20); } }
+        private Vector2 GetInfoBoxLinePos(int line)
+        {
+            var infoBoxLineHeight = new Vector2(0, 14);
+            var infoBoxContentPos = InfoBoxHeaderPos + new Vector2(0, 38);
+            return infoBoxContentPos + infoBoxLineHeight * line;
+        }
 
         public override bool Active
         {
@@ -90,8 +98,6 @@ namespace AW2.Menu
         public override void LoadContent()
         {
             var content = MenuEngine.Game.Content;
-            _menuBigFont = content.Load<SpriteFont>("MenuFontBig");
-            _menuSmallFont = content.Load<SpriteFont>("MenuFontSmall");
             _backgroundTexture = content.Load<Texture2D>("menu_levels_bg");
             _cursorTexture = content.Load<Texture2D>("menu_levels_cursor");
             _highlightTexture = content.Load<Texture2D>("menu_levels_hilite");
@@ -116,58 +122,53 @@ namespace AW2.Menu
             if (!Active) return;
 
             // Draw arena list.
-            Vector2 lineDeltaPos = new Vector2(0, 40);
-            Vector2 arenaNamePos = _pos - view + new Vector2(147, 237);
-            Vector2 arenaTagPos = _pos - view + new Vector2(283, 235);
+            var lineDeltaPos = new Vector2(0, 40);
+            var firstArenaNamePos = _pos - view + new Vector2(147, 237);
+            var firstArenaTagPos = _pos - view + new Vector2(283, 235);
             for (int i = 0; i < MENU_ITEM_COUNT && _arenaListStart + i < ArenaInfos.Count; ++i)
             {
                 int arenaI = _arenaListStart + i;
-                spriteBatch.DrawString(_menuSmallFont, ArenaInfos[arenaI].Name, arenaNamePos + i * lineDeltaPos, Color.White);
-                if (arenaI == _currentArena)
-                    spriteBatch.Draw(_tagTexture, arenaTagPos + i * lineDeltaPos, Color.White);
+                var arenaNamePos = firstArenaNamePos + i * lineDeltaPos;
+                spriteBatch.DrawString(Content.FontSmall, ArenaInfos[arenaI].Name, arenaNamePos.Round(), Color.White);
+                var arenaTagPos = firstArenaTagPos + i * lineDeltaPos;
+                if (arenaI == _currentArena) spriteBatch.Draw(_tagTexture, arenaTagPos.Round(), Color.White);
             }
 
             // Draw condolences.
             if (ArenaInfos.Count == 0)
-                spriteBatch.DrawString(_menuBigFont, "No arenas, can't play, sorry!",
-                    _pos - view + new Vector2(540, 297), Color.White);
+            {
+                var condolencesPos = _pos - view + new Vector2(540, 297);
+                spriteBatch.DrawString(Content.FontBig, "No arenas, can't play, sorry!", condolencesPos.Round(), Color.White);
+            }
 
             // Draw cursor and highlight.
-            Vector2 highlightPos = _pos - view + new Vector2(124, 223) + (_currentArena - _arenaListStart) * lineDeltaPos;
-            Vector2 cursorPos = highlightPos + new Vector2(2, 1);
-            Vector2 arenaPreviewPos = _pos-view + new Vector2(430, 232);
-            Vector2 infoBoxPos = arenaPreviewPos + new Vector2(-3, 188);
-            Vector2 infoBoxHeaderPos = infoBoxPos + new Vector2(20, 20);
-            Vector2 infoBoxContentPos = infoBoxHeaderPos + new Vector2(0, 38);
-            Vector2 infoBoxLineHeight = new Vector2(0, 14);
-            Vector2 infoBoxColumnWidth = new Vector2(220, 0);
-            ArenaInfo info = _selectedArena.Info;
+            var highlightPos = _pos - view + new Vector2(124, 223) + (_currentArena - _arenaListStart) * lineDeltaPos;
+            var cursorPos = highlightPos + new Vector2(2, 1);
+            var infoBoxColumnWidth = new Vector2(220, 0);
+            var info = _selectedArena.Info;
             var content = MenuEngine.Game.Content;
-            string previewName = content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
+            var previewName = content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
             var previewTexture = content.Load<Texture2D>(previewName);
             spriteBatch.Draw(_highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(_cursorTexture, cursorPos, Color.Multiply(Color.White, _cursorFade.Evaluate((float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds)));
 
-            spriteBatch.Draw(previewTexture, arenaPreviewPos, Color.White);
-            spriteBatch.Draw(_infoBackgroundTexture, infoBoxPos, Color.White);
-            spriteBatch.DrawString(_menuBigFont, info.Name, infoBoxHeaderPos, Color.White);
-            
-            spriteBatch.DrawString(_menuSmallFont, "Size", infoBoxContentPos, Color.White);
-            spriteBatch.DrawString(_menuSmallFont, info.Size.ToString(), infoBoxContentPos + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.Size.ToString()).X, 0)), ArenaInfo.GetColorForSize(info.Size));
-            
-            spriteBatch.DrawString(_menuSmallFont, "Ideal Players", infoBoxContentPos + (infoBoxLineHeight * 1), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, info.IdealPlayers, infoBoxContentPos + (infoBoxLineHeight * 1) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.IdealPlayers).X, 0)), Color.YellowGreen);
+            spriteBatch.Draw(previewTexture, ArenaPreviewPos - view, Color.White);
+            spriteBatch.Draw(_infoBackgroundTexture, InfoBoxPos - view, Color.White);
+            spriteBatch.DrawString(Content.FontBig, info.Name, (InfoBoxHeaderPos - view).Round(), Color.White);
+            Action<string, string, int, Color> drawInfoLine = (item, value, line, valueColor) =>
+            {
+                var itemPos = GetInfoBoxLinePos(line) - view;
+                var valuePos = itemPos + infoBoxColumnWidth - new Vector2(Content.FontSmall.MeasureString(value).X, 0);
+                spriteBatch.DrawString(Content.FontSmall, item, itemPos.Round(), Color.White);
+                spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), valueColor);
+            };
+            drawInfoLine("Size", info.Size.ToString(), 0, ArenaInfo.GetColorForSize(info.Size));
+            drawInfoLine("Ideal Players", info.IdealPlayers, 1, Color.YellowGreen);
+            drawInfoLine("Bonus Amount", info.BonusAmount.ToString(), 2, ArenaInfo.GetColorForBonusAmount(info.BonusAmount));
+            drawInfoLine("Docks", info.Docks, 3, Color.YellowGreen);
+            drawInfoLine("Flight Easiness", info.FlightEasiness.ToString(), 4, ArenaInfo.GetColorForFlightEasiness(info.FlightEasiness));
 
-            spriteBatch.DrawString(_menuSmallFont, "Bonus Amount", infoBoxContentPos + (infoBoxLineHeight * 2), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, info.BonusAmount.ToString(), infoBoxContentPos + (infoBoxLineHeight * 2) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.BonusAmount.ToString()).X, 0)), ArenaInfo.GetColorForBonusAmount(info.BonusAmount));
-            
-            spriteBatch.DrawString(_menuSmallFont, "Docks", infoBoxContentPos + (infoBoxLineHeight * 3), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, info.Docks, infoBoxContentPos + (infoBoxLineHeight * 3) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.Docks).X, 0)), Color.YellowGreen);
-            
-            spriteBatch.DrawString(_menuSmallFont, "Flight Easiness", infoBoxContentPos + (infoBoxLineHeight * 4), Color.White);
-            spriteBatch.DrawString(_menuSmallFont, info.FlightEasiness.ToString(), infoBoxContentPos + (infoBoxLineHeight * 4) + (infoBoxColumnWidth - new Vector2(_menuSmallFont.MeasureString(info.FlightEasiness.ToString()).X, 0)), ArenaInfo.GetColorForFlightEasiness(info.FlightEasiness));
-
-            spriteBatch.DrawString(_menuSmallFont, info.InfoText, infoBoxContentPos + infoBoxColumnWidth + new Vector2(16, 0), new Color(218, 159, 33));
+            spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoBoxLinePos(0) - view + infoBoxColumnWidth + new Vector2(16, 0)).Round(), new Color(218, 159, 33));
         }
 
         private void InitializeControlCallbacks()
@@ -178,10 +179,10 @@ namespace AW2.Menu
                 _cursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             };
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
-            { 
-                MenuEngine.ActivateComponent(MenuComponentType.Equip); 
+            {
+                MenuEngine.ActivateComponent(MenuComponentType.Equip);
             }));
-           
+
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlDone, () =>
             {
                 if (_currentArena >= 0 && _currentArena < ArenaInfos.Count)
@@ -191,12 +192,12 @@ namespace AW2.Menu
                     MenuEngine.ActivateComponent(MenuComponentType.Equip);
                 }
             }));
-            
+
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlUp, () =>
             {
                 --_currentArena;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
-                
+
             }));
             _controlCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
             {
@@ -209,7 +210,7 @@ namespace AW2.Menu
         {
             MenuEngine.Game.SelectedArenaName = ArenaInfos[_currentArena].Name;
         }
-        
+
         /// <summary>
         /// Sets up the menu component's controls based on players' current control setup.
         /// </summary>

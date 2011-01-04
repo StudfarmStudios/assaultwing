@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game;
+using AW2.Helpers;
 
 namespace AW2.Graphics.OverlayComponents
 {
@@ -72,8 +73,8 @@ namespace AW2.Graphics.OverlayComponents
             var halfColor = Color.Multiply(Color.White, alpha * 0.5f);
             var healthText = ((int)Math.Ceiling(relativeHealth * 100)).ToString() + "%";
             var textSize = _healthFont.MeasureString(healthText);
-            var textPos = new Vector2((int)((Dimensions.X - textSize.X) / 2), _barBackgroundTexture.Height);
-            spriteBatch.DrawString(_healthFont, healthText, textPos, halfColor);
+            var textPos = new Vector2((Dimensions.X - textSize.X) / 2, _barBackgroundTexture.Height);
+            spriteBatch.DrawString(_healthFont, healthText, textPos.Round(), halfColor);
             return halfColor;
         }
     }

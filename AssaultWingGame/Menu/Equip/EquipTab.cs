@@ -215,7 +215,7 @@ namespace AW2.Menu.Equip
                 spriteBatch.Draw(Content.PlayerNameBackgroundTexture, GetPlayerPanePos(playerI) - view, player.PlayerColor);
                 spriteBatch.Draw(Content.PlayerNameBorderTexture, GetPlayerPanePos(playerI) - view, Color.White);
                 spriteBatch.Draw(Content.PlayerPaneTexture, GetPlayerPanePos(playerI) - view + PlayerPaneMainDeltaPos, Color.White);
-                spriteBatch.DrawString(Content.FontSmall, player.Name, GetPlayerNamePos(playerI, player.Name) - view, Color.White);
+                spriteBatch.DrawString(Content.FontSmall, player.Name, (GetPlayerNamePos(playerI, player.Name) - view).Round(), Color.White);
 
                 // Draw icons of selected equipment.
                 _equipmentSelectors[playerI, (int)EquipMenuItem.Ship].Draw(view, spriteBatch);
@@ -233,18 +233,30 @@ namespace AW2.Menu.Equip
                 {
                     var partialTextSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content.Substring(0, _playerNames[playerI].CaretPosition));
                     var totalTextSize = Content.FontSmall.MeasureString(_playerNames[playerI].Content);
-                    partialTextSize.Y = 0;
-                    // Pixel perfect, otherwise thin textures look stupid
-                    partialTextSize.X = (float)Math.Round(partialTextSize.X - totalTextSize.X / 2);
-                    var textCursorPos = hiliteTexturePos + partialTextSize + new Vector2(91, 24);
-                    spriteBatch.Draw(Content.ListTextCursorTexture, textCursorPos, Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
+                    var textCursorPos = hiliteTexturePos + new Vector2(partialTextSize.X - totalTextSize.X / 2 + 91, 24);
+                    spriteBatch.Draw(Content.ListTextCursorTexture, textCursorPos.Round(), Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
                 }
 
                 var cursorTexture = _currentItems[playerI] == EquipMenuItem.Name ? Content.ListCursorTexture : Content.CursorMainTexture;
                 var cursorTexturePos = _currentItems[playerI] == EquipMenuItem.Name ? GetPlayerPanePos(playerI) - view : GetPlayerCursorPos(playerI) - view;
                 spriteBatch.Draw(cursorTexture, cursorTexturePos, Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
-                spriteBatch.DrawString(Content.FontSmall, playerItemName, GetPlayerItemNamePos(playerI, playerItemName) - view, Color.White);
+                spriteBatch.DrawString(Content.FontSmall, playerItemName, (GetPlayerItemNamePos(playerI, playerItemName) - view).Round(), Color.White);
             }
+        }
+
+        private Vector2 InfoDisplayPos { get { return MenuComponent.Pos + new Vector2(560, 186); } }
+        private Vector2 InfoDataPos { get { return InfoDisplayPos + new Vector2(200, 100); } }
+        private Vector2 GetInfoTextPos(string text)
+        {
+            return InfoDataPos + new Vector2(177, 194) - Content.FontSmall.MeasureString(text) / 2;
+        }
+
+        private void DrawInfoValue(Vector2 view, SpriteBatch spriteBatch, int line, Enum value)
+        {
+            var infoDataValueLineHeight = 21;
+            var infoDataValuePos = InfoDataPos - view + new Vector2(350, 8);
+            var valuePos = infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(value.ToString()).X, -infoDataValueLineHeight * line);
+            spriteBatch.DrawString(Content.FontSmall, value.ToString(), valuePos.Round(), EquipInfo.GetColor(value));
         }
 
         private void DrawShipInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
@@ -256,27 +268,22 @@ namespace AW2.Menu.Equip
                 var player = MenuPanePlayers.ElementAt(0).Item1;
                 var ship = (Ship)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ShipName);
                 var info = ship.ShipInfo;
-                var infoDisplayPos = MenuComponent.Pos - view + new Vector2(560, 186);
-                var infoDataPos = infoDisplayPos + new Vector2(200, 100);
-                var infoDataValuePos = infoDataPos + new Vector2(350, 8);
-                var infoDataValueLineHeight = new Vector2(0, 21);
-                var infoTextPos = infoDataPos + new Vector2(177, 194) - Content.FontSmall.MeasureString(info.InfoText) / 2;
 
                 var shipPicture = MenuEngine.Game.Content.Load<Texture2D>(info.PictureName);
                 var shipTitlePicture = MenuEngine.Game.Content.Load<Texture2D>(info.TitlePictureName);
                 var infoHeaders = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_shipinfo_headers");
 
-                spriteBatch.Draw(shipPicture, infoDisplayPos + new Vector2(-6, 0), Color.White);
-                spriteBatch.Draw(shipTitlePicture, infoDisplayPos + new Vector2(190, 18), Color.White);
-                spriteBatch.Draw(infoHeaders, infoDataPos, Color.White);
+                spriteBatch.Draw(shipPicture, InfoDisplayPos - view + new Vector2(-6, 0), Color.White);
+                spriteBatch.Draw(shipTitlePicture, InfoDisplayPos - view + new Vector2(190, 18), Color.White);
+                spriteBatch.Draw(infoHeaders, InfoDataPos - view, Color.White);
 
-                spriteBatch.DrawString(Content.FontSmall, info.Hull.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.Hull.ToString()).X, 0), EquipInfo.GetColorForAmountType(info.Hull));
-                spriteBatch.DrawString(Content.FontSmall, info.Armor.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.Armor.ToString()).X, 0) + (infoDataValueLineHeight), EquipInfo.GetColorForAmountType(info.Armor));
-                spriteBatch.DrawString(Content.FontSmall, info.Speed.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.Speed.ToString()).X, 0) + (infoDataValueLineHeight * 2), EquipInfo.GetColorForAmountType(info.Speed));
-                spriteBatch.DrawString(Content.FontSmall, info.Steering.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.Steering.ToString()).X, 0) + (infoDataValueLineHeight * 3), EquipInfo.GetColorForAmountType(info.Steering));
-                spriteBatch.DrawString(Content.FontSmall, info.ModEnergy.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.ModEnergy.ToString()).X, 0) + (infoDataValueLineHeight * 4), EquipInfo.GetColorForAmountType(info.ModEnergy));
-                spriteBatch.DrawString(Content.FontSmall, info.SpecialEnergy.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.SpecialEnergy.ToString()).X, 0) + (infoDataValueLineHeight * 5), EquipInfo.GetColorForAmountType(info.SpecialEnergy));
-                spriteBatch.DrawString(Content.FontSmall, info.InfoText, infoTextPos, new Color(218, 159, 33));
+                DrawInfoValue(view, spriteBatch, 0, info.Hull);
+                DrawInfoValue(view, spriteBatch, 1, info.Armor);
+                DrawInfoValue(view, spriteBatch, 2, info.Speed);
+                DrawInfoValue(view, spriteBatch, 3, info.Steering);
+                DrawInfoValue(view, spriteBatch, 4, info.ModEnergy);
+                DrawInfoValue(view, spriteBatch, 5, info.SpecialEnergy);
+                spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
             }
         }
 
@@ -293,24 +300,19 @@ namespace AW2.Menu.Equip
                 if (_currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Weapon2) device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
 
                 var info = device.DeviceInfo;
-                var infoDisplayPos = MenuComponent.Pos - view + new Vector2(560, 186);
-                var infoDataPos = infoDisplayPos + new Vector2(200, 100);
-                var infoDataValuePos = infoDataPos + new Vector2(350, 8);
-                var infoDataValueLineHeight = new Vector2(0, 21);
-                var infoTextPos = infoDataPos + new Vector2(177, 194) - Content.FontSmall.MeasureString(info.InfoText) / 2;
 
                 var devicePicture = MenuEngine.Game.Content.Load<Texture2D>(info.PictureName);
                 var deviceTitlePicture = MenuEngine.Game.Content.Load<Texture2D>(info.TitlePictureName);
                 var deviceHeaders = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_deviceinfo_headers");
 
-                spriteBatch.Draw(devicePicture, infoDisplayPos + new Vector2(-6, 0), Color.White);
-                spriteBatch.Draw(deviceTitlePicture, infoDisplayPos + new Vector2(190, 18), Color.White);
-                spriteBatch.Draw(deviceHeaders, infoDataPos, Color.White);
+                spriteBatch.Draw(devicePicture, InfoDisplayPos - view + new Vector2(-6, 0), Color.White);
+                spriteBatch.Draw(deviceTitlePicture, InfoDisplayPos - view + new Vector2(190, 18), Color.White);
+                spriteBatch.Draw(deviceHeaders, InfoDataPos - view, Color.White);
 
-                spriteBatch.DrawString(Content.FontSmall, info.ReloadSpeed.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.ReloadSpeed.ToString()).X, 0), EquipInfo.GetColorForAmountType(info.ReloadSpeed));
-                spriteBatch.DrawString(Content.FontSmall, info.EnergyUsage.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.EnergyUsage.ToString()).X, 0) + (infoDataValueLineHeight), EquipInfo.GetColorForAmountType(info.EnergyUsage));
-                spriteBatch.DrawString(Content.FontSmall, info.UsageType.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.UsageType.ToString()).X, 0) + (infoDataValueLineHeight * 2), EquipInfo.GetColorForUsageType(info.UsageType));
-                spriteBatch.DrawString(Content.FontSmall, info.InfoText, infoTextPos, new Color(218, 159, 33));
+                DrawInfoValue(view, spriteBatch, 0, info.ReloadSpeed);
+                DrawInfoValue(view, spriteBatch, 1, info.EnergyUsage);
+                DrawInfoValue(view, spriteBatch, 2, info.UsageType);
+                spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
             }
         }
 
@@ -323,14 +325,10 @@ namespace AW2.Menu.Equip
                 var player = MenuPanePlayers.ElementAt(0).Item1;
                 var weapon = (Weapon)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
                 var info = weapon.WeaponInfo;
-                var infoDisplayPos = MenuComponent.Pos - view + new Vector2(560, 186);
-                var infoDataPos = infoDisplayPos + new Vector2(200, 164);
-                var infoDataValuePos = infoDataPos + new Vector2(350, 8);
-                var infoDataValueLineHeight = new Vector2(0, 21);
-                spriteBatch.Draw(Content.WeaponHeaders, infoDataPos, Color.White);
-                spriteBatch.DrawString(Content.FontSmall, info.SingleShotDamage.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.SingleShotDamage.ToString()).X, 0), EquipInfo.GetColorForAmountType(info.SingleShotDamage));
-                spriteBatch.DrawString(Content.FontSmall, info.ShotSpeed.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.ShotSpeed.ToString()).X, 0) + (infoDataValueLineHeight), EquipInfo.GetColorForAmountType(info.ShotSpeed));
-                spriteBatch.DrawString(Content.FontSmall, info.RecoilMomentum.ToString(), infoDataValuePos - new Vector2(Content.FontSmall.MeasureString(info.RecoilMomentum.ToString()).X, 0) + (infoDataValueLineHeight * 2), EquipInfo.GetReversedColorForAmountType(info.RecoilMomentum));
+                spriteBatch.Draw(Content.WeaponHeaders, InfoDataPos + new Vector2(0, 64) - view, Color.White);
+                DrawInfoValue(view, spriteBatch, 3, info.SingleShotDamage);
+                DrawInfoValue(view, spriteBatch, 4, info.ShotSpeed);
+                DrawInfoValue(view, spriteBatch, 5, info.RecoilMomentum);
             }
         }
 

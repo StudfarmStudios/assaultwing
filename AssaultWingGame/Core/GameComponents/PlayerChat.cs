@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using AW2.UI;
 using AW2.Net.Messages;
 using AW2.Game;
+using AW2.Helpers;
 
 namespace AW2.Core.GameComponents
 {
@@ -63,7 +64,7 @@ namespace AW2.Core.GameComponents
             if (!IsTyping) return;
             var text = string.Format("{0}>{1}<", Game.DataEngine.Players.First(plr => !plr.IsRemote).Name, _message.Content);
             _spriteBatch.Begin();
-            _spriteBatch.DrawString(_typingFont, text, GetTypingPos(text), TypingColor);
+            _spriteBatch.DrawString(_typingFont, text, GetTypingPos(text).Round(), TypingColor);
             _spriteBatch.End();
         }
 

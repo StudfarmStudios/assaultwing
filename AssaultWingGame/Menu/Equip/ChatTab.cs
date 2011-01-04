@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AW2.Game;
+using AW2.Helpers;
 using AW2.UI;
 
 namespace AW2.Menu.Equip
@@ -53,8 +54,8 @@ namespace AW2.Menu.Equip
             {
                 var preTextSize = Font.MeasureString(item.Message.PreText);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
-                spriteBatch.DrawString(Font, item.Message.PreText, preTextPos, Player.PRETEXT_COLOR);
-                spriteBatch.DrawString(Font, item.Message.Text, textPos, item.Message.TextColor);
+                spriteBatch.DrawString(Font, item.Message.PreText, preTextPos.Round(), Player.PRETEXT_COLOR);
+                spriteBatch.DrawString(Font, item.Message.Text, textPos.Round(), item.Message.TextColor);
                 preTextPos -= lineDelta;
             }
         }
@@ -63,7 +64,7 @@ namespace AW2.Menu.Equip
         {
             var text = string.Format("{0}>{1}<", MenuEngine.Game.DataEngine.Players.First(plr => !plr.IsRemote).Name, _message.Content);
             var x = _message.CaretPosition;
-            spriteBatch.DrawString(Font, text, TypingPos - view, Color.White);
+            spriteBatch.DrawString(Font, text, (TypingPos - view).Round(), Color.White);
         }
     }
 }

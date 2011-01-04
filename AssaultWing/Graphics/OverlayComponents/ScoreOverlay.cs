@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game;
-using AW2.Game.Gobs;
+using AW2.Helpers;
 
 namespace AW2.Graphics.OverlayComponents
 {
@@ -32,7 +30,7 @@ namespace AW2.Graphics.OverlayComponents
             // Draw scoredisplay background
             spriteBatch.Draw(_scoreBackgroundTexture, Vector2.Zero, Color.White);
 
-            Vector2 textTopLeft = new Vector2(5, 10);
+            var textTopLeft = new Vector2(5, 10);
             int numberColumnWidth = 16;
             int playerNameWidth = 115;
             int textMargin = 10;
@@ -42,25 +40,18 @@ namespace AW2.Graphics.OverlayComponents
 
             foreach (var entry in standings)
             {
-                int currentStanding = line + 1;
-                Vector2 standingSize = _scoreFont.MeasureString(currentStanding.ToString());
-                Vector2 standingPos = textTopLeft + new Vector2(numberColumnWidth - standingSize.X, line * scoreLineSpacing);
-                Vector2 playerNamePos = textTopLeft + new Vector2(numberColumnWidth + textMargin, line * scoreLineSpacing);
-                Vector2 scorePos = textTopLeft + new Vector2(numberColumnWidth + (textMargin * 2) + playerNameWidth, line * scoreLineSpacing);
-                string scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
-                Color rowColor = entry.PlayerColor;
-
-                if (_player.ID == entry.SpectatorId)
-                {
-                    rowColor = Color.White;
-                }
-
-                spriteBatch.DrawString(_scoreFont, currentStanding.ToString(), standingPos, rowColor);
-                spriteBatch.DrawString(_scoreFont, entry.Name, playerNamePos, rowColor);
-                spriteBatch.DrawString(_scoreFont, scoreText, scorePos, rowColor);
+                var currentStanding = line + 1;
+                var standingSize = _scoreFont.MeasureString(currentStanding.ToString());
+                var standingPos = textTopLeft + new Vector2(numberColumnWidth - standingSize.X, line * scoreLineSpacing);
+                var playerNamePos = textTopLeft + new Vector2(numberColumnWidth + textMargin, line * scoreLineSpacing);
+                var scorePos = textTopLeft + new Vector2(numberColumnWidth + (textMargin * 2) + playerNameWidth, line * scoreLineSpacing);
+                var scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
+                var rowColor = _player.ID == entry.SpectatorId ? Color.White : entry.PlayerColor;
+                spriteBatch.DrawString(_scoreFont, currentStanding.ToString(), standingPos.Round(), rowColor);
+                spriteBatch.DrawString(_scoreFont, entry.Name, playerNamePos.Round(), rowColor);
+                spriteBatch.DrawString(_scoreFont, scoreText, scorePos.Round(), rowColor);
                 ++line;
             }
-
         }
 
         public override void LoadContent()

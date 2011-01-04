@@ -379,19 +379,19 @@ namespace AW2.Menu
         {
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _spriteBatch.DrawString(_smallFont, "4th Milestone 2010-05-15",
-                new Vector2(10, ViewportHeight - _smallFont.LineSpacing), Color.White);
+                new Vector2(10, ViewportHeight - _smallFont.LineSpacing).Round(), Color.White);
             if (IsHelpTextVisible)
             {
                 var helpTextPos = new Vector2(
                     (int)(((float)ViewportWidth - _smallFont.MeasureString(_helpText).X) / 2),
                     ViewportHeight - _smallFont.LineSpacing);
-                _spriteBatch.DrawString(_smallFont, _helpText, helpTextPos, Color.White);
+                _spriteBatch.DrawString(_smallFont, _helpText, helpTextPos.Round(), Color.White);
             }
             string copyrightText = "Studfarm Studios";
             var copyrightTextPos = new Vector2(
                 ViewportWidth - (int)_smallFont.MeasureString(copyrightText).X - 10,
                 ViewportHeight - _smallFont.LineSpacing);
-            _spriteBatch.DrawString(_smallFont, copyrightText, copyrightTextPos, Color.White);
+            _spriteBatch.DrawString(_smallFont, copyrightText, copyrightTextPos.Round(), Color.White);
             _spriteBatch.End();
         }
     }

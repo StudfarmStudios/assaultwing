@@ -56,7 +56,7 @@ namespace AW2.Menu.Equip
             spriteBatch.Draw(Content.PlayerNameBackground, LeftPanePos - view, Color.White);
             foreach (var plr in MenuEngine.Game.DataEngine.Players)
             {
-                spriteBatch.DrawString(Content.FontSmall, plr.Name, currentPlayerPos, plr.PlayerColor);
+                spriteBatch.DrawString(Content.FontSmall, plr.Name, currentPlayerPos.Round(), plr.PlayerColor);
                 currentPlayerPos += PlayerListLineHeight;
             }
         }

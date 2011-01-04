@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Helpers;
 
 namespace AW2.Menu.Main
 {
@@ -50,7 +51,7 @@ namespace AW2.Menu.Main
         {
             var highlightToTextDelta = new Vector2(34, 1);
             var pos = GetHighlightPos(origin) + highlightToTextDelta;
-            spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, text, pos, Color.White);
+            spriteBatch.DrawString(_menuEngine.MenuContent.FontBig, text, pos.Round(), Color.White);
         }
 
         protected void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin, Vector2 cursorDelta)

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.GobUtils;
+using AW2.Helpers;
 using AW2.Menu.Equip;
 
 namespace AW2.Menu
@@ -195,39 +196,32 @@ namespace AW2.Menu
 
         private void DrawStatusDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
-            var data = MenuEngine.Game.DataEngine;
-
-            // Setup positions for statusdisplay texts
-            Vector2 statusDisplayTextPos = Pos - view + new Vector2(885, 618);
-            Vector2 statusDisplayRowHeight = new Vector2(0, 12);
-            Vector2 statusDisplayColumnWidth = new Vector2(75, 0);
-
-            // Setup statusdisplay texts
-            string statusDisplayPlayerAmount = "" + data.Players.Count();
-            string statusDisplayArenaName = MenuEngine.Game.SelectedArenaName;
-            string statusDisplayStatus = MenuEngine.Game.NetworkMode == NetworkMode.Server
-                ? "server"
-                : "connected";
+            Action<int, string, string, Color, Color> drawInfo = (line, item, value, itemColor, valueColor) =>
+            {
+                var statusDisplayRowHeight = new Vector2(0, 12);
+                var statusDisplayColumnWidth = new Vector2(75, 0);
+                var statusDisplayTextPos = Pos - view + new Vector2(885, 618);
+                var itemPos = statusDisplayTextPos + statusDisplayRowHeight * line;
+                var valuePos = itemPos + statusDisplayColumnWidth;
+                spriteBatch.DrawString(Content.FontSmall, item, itemPos.Round(), itemColor);
+                spriteBatch.DrawString(Content.FontSmall, value, valuePos.Round(), valueColor);
+            };
 
             // Draw common statusdisplay texts for all modes
-            spriteBatch.DrawString(Content.FontSmall, "Players", statusDisplayTextPos, Color.White);
-            spriteBatch.DrawString(Content.FontSmall, statusDisplayPlayerAmount, statusDisplayTextPos + statusDisplayColumnWidth, Color.GreenYellow);
-            spriteBatch.DrawString(Content.FontSmall, "Arena", statusDisplayTextPos + statusDisplayRowHeight * 4, Color.White);
-            spriteBatch.DrawString(Content.FontSmall, statusDisplayArenaName, statusDisplayTextPos + statusDisplayRowHeight * 5, Color.GreenYellow);
+            drawInfo(0, "Players", MenuEngine.Game.DataEngine.Players.Count().ToString(), Color.White, Color.GreenYellow);
+            drawInfo(4, "Arena", "", Color.White, Color.White);
+            drawInfo(5, MenuEngine.Game.SelectedArenaName, "", Color.GreenYellow, Color.GreenYellow);
 
             // Draw network game statusdisplay texts
-            if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone)
+            switch (MenuEngine.Game.NetworkMode)
             {
-                spriteBatch.DrawString(Content.FontSmall, "Status", statusDisplayTextPos + statusDisplayRowHeight, Color.White);
-                spriteBatch.DrawString(Content.FontSmall, statusDisplayStatus, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight, Color.GreenYellow);
-            }
-
-            // Draw client statusdisplay texts
-            if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
-            {
-                spriteBatch.DrawString(Content.FontSmall, "Ping", statusDisplayTextPos + statusDisplayRowHeight * 2, Color.White);
-                var textAndColor = GetPingTextAndColor();
-                spriteBatch.DrawString(Content.FontSmall, textAndColor.Item1, statusDisplayTextPos + statusDisplayColumnWidth + statusDisplayRowHeight * 2, textAndColor.Item2);
+                case NetworkMode.Server:
+                    drawInfo(1, "Status", "server", Color.White, Color.GreenYellow);
+                    break;
+                case NetworkMode.Client:
+                    drawInfo(1, "Status", "connected", Color.White, Color.GreenYellow);
+                    drawInfo(2, "Ping", GetPingTextAndColor().Item1, Color.White, GetPingTextAndColor().Item2);
+                    break;
             }
         }
 

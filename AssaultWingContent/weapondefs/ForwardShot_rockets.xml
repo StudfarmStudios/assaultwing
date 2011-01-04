@@ -7,9 +7,9 @@
 	<infoText type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">High Explosive Rocket Propelling 
 Emitter System  -HERPES-
 
-Fires 6 semi-guided rockects in 3 
-series of 2 rockets. These are petrol 
-powered so it will run out in some point</infoText>
+Fires 6 semi-guided rockets in 3 pairs.
+They are petrol powered and will
+eventually run out of juice.</infoText>
 	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</reloadSpeed>
 	<energyUsage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</energyUsage>
 	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>

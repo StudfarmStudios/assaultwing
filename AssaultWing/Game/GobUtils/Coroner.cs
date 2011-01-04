@@ -8,8 +8,13 @@ using AW2.Helpers;
 
 namespace AW2.Game.GobUtils
 {
+    /// <summary>
+    /// Analyses the death of a gob based on the BoundDamageInfo about
+    /// the last damage the gob received.
+    /// </summary>
     public class Coroner
     {
+        public enum DeathTypeType { Suicide, Kill };
         private enum RecipientType { ScoringPlayer, Bystander, Corpse };
         private delegate SubjectWord SubjectWordProvider(RecipientType recipient);
 
@@ -19,51 +24,33 @@ namespace AW2.Game.GobUtils
         private string _killPhrase;
         private string _specialPhrase;
         private SubjectWordProvider[] _subjectNameProviders;
-        private BoundDamageInfo _info;
 
         /// <summary>
-        /// The player that is credited for the death. May be <c>null</c>. May not be <c>Killer.Owner</c>.
+        /// The reason of the death.
+        /// </summary>
+        public DeathTypeType DeathType { get; private set; }
+
+        /// <summary>
+        /// The player who gets a frag for the death. May be <c>null</c> if no-one gets a frag.
         /// </summary>
         public Player ScoringPlayer { get; private set; }
 
         /// <summary>
-        /// Is the death a suicide of a player, i.e. caused by anything but 
-        /// an opposing player.
+        /// The player whose gob was killed. May be <c>null</c>.
         /// </summary>
-        public bool IsSuicide
-        {
-            get
-            {
-                if (_info.Target.Owner == null) return false;
-                return ScoringPlayer == null || ScoringPlayer == _info.Target.Owner;
-            }
-        }
-
-        /// <summary>
-        /// Is the death a kill by some player.
-        /// </summary>
-        public bool IsKill
-        {
-            get
-            {
-                if (_info.Target.Owner == null) return false;
-                return ScoringPlayer != null && ScoringPlayer != _info.Target.Owner;
-            }
-        }
-
-        public bool IsSpecial { get { return _specialPhrase != null; } }
+        public Player KilledPlayer { get; private set; }
 
         public string MessageToScoringPlayer { get { return GetMessageFor(RecipientType.ScoringPlayer); } }
         public string MessageToBystander { get { return GetMessageFor(RecipientType.Bystander); } }
         public string MessageToCorpse { get { return GetMessageFor(RecipientType.Corpse); } }
 
         /// <summary>
-        /// Special message for everyone. Defined only if <see cref="IsSpecial"/> is true.
+        /// Special message for everyone. May be <c>null</c>.
         /// </summary>
         public string SpecialMessage { get { return _specialPhrase; } }
 
         private SubjectWord ScoringPlayerName { get { return SubjectWord.FromProperNoun(ScoringPlayer != null ? ScoringPlayer.Name : "Nature"); } }
-        private SubjectWord CorpseName { get { return SubjectWord.FromProperNoun(_info.Target.Owner.Name); } }
+        private SubjectWord CorpseName { get { return SubjectWord.FromProperNoun(KilledPlayer.Name); } }
         private SubjectWordProvider ScoringPlayerNameProvider { get { return recipient => recipient == RecipientType.ScoringPlayer ? SubjectWord.You : ScoringPlayerName; } }
         private SubjectWordProvider CorpseNameProvider { get { return recipient => recipient == RecipientType.Corpse ? SubjectWord.You : CorpseName; } }
 
@@ -110,20 +97,36 @@ namespace AW2.Game.GobUtils
 
         public Coroner(BoundDamageInfo info)
         {
-            _info = info;
-            FindScoringPlayer();
+            AnalyzeDeath(info);
             AssignKillPhrase();
             AssignSpecialPhrase();
         }
 
         public IEnumerable<Player> GetBystanders(IEnumerable<Player> everybody)
         {
-            var excluded = new[]
+            return everybody.Except(new[] { KilledPlayer, ScoringPlayer });
+        }
+
+        private void AnalyzeDeath(BoundDamageInfo info)
+        {
+            Action markAsSuicide = () =>
             {
-                _info.Target.Owner,
-                _info.Cause == null ? null : _info.Cause.Owner
+                DeathType = DeathTypeType.Suicide;
+                ScoringPlayer = null;
             };
-            return everybody.Except(excluded);
+            Action<Player> markAsKill = killer =>
+            {
+                if (killer == null) throw new ArgumentNullException("killer");
+                DeathType = DeathTypeType.Kill;
+                ScoringPlayer = killer;
+            };
+            if (info.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
+                markAsKill(info.PlayerCause);
+            else if (info.Target.LastDamagerTimeout >= info.Time && info.Target.LastDamager != null)
+                markAsKill(info.Target.LastDamager);
+            else
+                markAsSuicide();
+            KilledPlayer = info.Target.Owner;
         }
 
         private string GetMessageFor(RecipientType recipient)
@@ -136,25 +139,19 @@ namespace AW2.Game.GobUtils
             return _subjectNameProviders.Select(x => x(recipient)).ToArray();
         }
 
-        private void FindScoringPlayer()
-        {
-            if (_info.Target.LastDamagerTimeout >= _info.Time && _info.Target.LastDamager != null)
-                ScoringPlayer = _info.Target.LastDamager;
-            else
-                ScoringPlayer = _info.Cause != null ? _info.Cause.Owner : null;
-        }
-
         private void AssignKillPhrase()
         {
-            if (IsSuicide)
+            switch (DeathType)
             {
-                _killPhrase = ChoosePhrase(g_suicidePhrases);
-                _subjectNameProviders = new[] { CorpseNameProvider };
-            }
-            else
-            {
-                _killPhrase = ChoosePhrase(g_killPhrases);
-                _subjectNameProviders = new[] { ScoringPlayerNameProvider, CorpseNameProvider };
+                default: throw new ApplicationException("Unexpected DeathType " + DeathType);
+                case DeathTypeType.Suicide:
+                    _killPhrase = ChoosePhrase(g_suicidePhrases);
+                    _subjectNameProviders = new[] { CorpseNameProvider };
+                    break;
+                case DeathTypeType.Kill:
+                    _killPhrase = ChoosePhrase(g_killPhrases);
+                    _subjectNameProviders = new[] { ScoringPlayerNameProvider, CorpseNameProvider };
+                    break;
             }
         }
 
@@ -165,24 +162,24 @@ namespace AW2.Game.GobUtils
 
         private void AssignSpecialPhrase()
         {
-            if (_info.Cause == null || _info.Cause.Owner == null) return;
-            if (_info.Cause.Owner.KillsWithoutDying < 3) return;
+            if (ScoringPlayer == null) return;
+            if (ScoringPlayer.KillsWithoutDying < 3) return;
             var hypePhrase =
-                _info.Cause.Owner.KillsWithoutDying < 6 ? "is on fire" :
-                _info.Cause.Owner.KillsWithoutDying < 12 ? "is unstoppable" :
-                _info.Cause.Owner.KillsWithoutDying < 24 ? "wreaks havoc" :
+                ScoringPlayer.KillsWithoutDying < 6 ? "is on fire" :
+                ScoringPlayer.KillsWithoutDying < 12 ? "is unstoppable" :
+                ScoringPlayer.KillsWithoutDying < 24 ? "wreaks havoc" :
                 "rules everyone";
             var randomOmg = RandomHelper.GetRandomFloat() < 0.6f ? "" : ", " + g_omgs[RandomHelper.GetRandomInt(g_omgs.Length)];
-            _specialPhrase = string.Format("{0} {1} with {2} kills{3}!", _info.Cause.Owner.Name, hypePhrase, _info.Cause.Owner.KillsWithoutDying, randomOmg);
+            _specialPhrase = string.Format("{0} {1} with {2} kills{3}!", ScoringPlayer.Name, hypePhrase, ScoringPlayer.KillsWithoutDying, randomOmg);
         }
     }
 
 #if DEBUG
     [TestFixture]
-    public class UnitTests
+    public class CoronerTests
     {
         private Player _player1, _player2, _player3;
-        private Gob _gob1, _gob2, _gob2Nature;
+        private Gob _gob1, _gob2, _gob2Nature, _gob1DamagedBy2;
         private Arena _arena;
 
         [SetUp]
@@ -194,8 +191,11 @@ namespace AW2.Game.GobUtils
             _player3 = new Player(null, "Player 3", CanonicalString.Null, CanonicalString.Null, CanonicalString.Null, new UI.PlayerControls());
             _arena = new Arena();
             _gob1 = new Gob { Owner = _player1, MaxDamageLevel = 100, Arena = _arena };
+            _gob1DamagedBy2 = new Gob { Owner = _player1, MaxDamageLevel = 100, Arena = _arena };
             _gob2 = new Gob { Owner = _player2, MaxDamageLevel = 100, Arena = _arena };
             _gob2Nature = new Gob { Owner = null };
+            _arena.TotalTime = TimeSpan.FromSeconds(10);
+            _gob1DamagedBy2.InflictDamage(10, new DamageInfo(_gob2));
         }
 
         private void AssertSuicideMessages(string suicidePhrase, string deathMessage, string bystanderMessage)
@@ -204,8 +204,7 @@ namespace AW2.Game.GobUtils
             var info = new DamageInfo(_gob2Nature).Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
             Assert.AreEqual(null, coroner.ScoringPlayer);
-            Assert.IsFalse(coroner.IsKill);
-            Assert.IsTrue(coroner.IsSuicide);
+            Assert.AreEqual(Coroner.DeathTypeType.Suicide, coroner.DeathType);
             Assert.AreEqual(deathMessage, coroner.MessageToCorpse);
             Assert.AreEqual(bystanderMessage, coroner.MessageToBystander);
         }
@@ -216,8 +215,7 @@ namespace AW2.Game.GobUtils
             var info = new DamageInfo(_gob2).Bind(_gob1, TimeSpan.FromSeconds(10));
             var coroner = new Coroner(info);
             Assert.AreEqual(_player2, coroner.ScoringPlayer);
-            Assert.IsTrue(coroner.IsKill);
-            Assert.IsFalse(coroner.IsSuicide);
+            Assert.AreEqual(Coroner.DeathTypeType.Kill, coroner.DeathType);
             Assert.AreEqual(killMessage, coroner.MessageToScoringPlayer);
             Assert.AreEqual(deathMessage, coroner.MessageToCorpse);
             Assert.AreEqual(bystanderMessage, coroner.MessageToBystander);
@@ -252,24 +250,49 @@ namespace AW2.Game.GobUtils
         [Test]
         public void TestLastDamager()
         {
-            _arena.TotalTime = TimeSpan.FromSeconds(10);
-            _gob1.InflictDamage(10, new DamageInfo(_gob2));
-            var info = DamageInfo.Unspecified.Bind(_gob1, TimeSpan.FromSeconds(11)); // no explicit killer
-            var coroner = new Coroner(info);
-            Assert.IsFalse(coroner.IsSuicide);
-            Assert.IsTrue(coroner.IsKill);
-            Assert.AreEqual(_player2, coroner.ScoringPlayer); // _gob2 did last recent damage, so _player2 scores
+            Func<Player, Gob> getGob = owner => new Gob { Owner = owner, MaxDamageLevel = 100, Arena = _arena };
+            Func<Player, DamageInfo> getInfo = causeOwner => new DamageInfo(getGob(causeOwner));
+            Func<Player, DamageInfo, DamageInfo, Coroner> getCoronerFromInfo = (targetPlayer, damageInfo1, damageInfo2) =>
+            {
+                var target = getGob(targetPlayer);
+                _arena.TotalTime = TimeSpan.FromSeconds(10);
+                target.InflictDamage(10, damageInfo1);
+                var info = damageInfo2.Bind(target, TimeSpan.FromSeconds(11));
+                return new Coroner(info);
+            };
+            Func<Player, Player, Player, Coroner> getCoronerFromPlayer = (targetPlayer, sourcePlayer1, sourcePlayer2) =>
+                getCoronerFromInfo(targetPlayer, getInfo(sourcePlayer1), getInfo(sourcePlayer2));
+            Action<Coroner, Player, Coroner.DeathTypeType> assertCoroner = (coroner, expectedScoringPlayer, expectedDeathType) =>
+            {
+                Assert.AreEqual(expectedDeathType, coroner.DeathType);
+                Assert.AreEqual(expectedScoringPlayer, coroner.ScoringPlayer);
+            };
+            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, DamageInfo.Unspecified), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(null)), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromInfo(_player1, getInfo(null), DamageInfo.Unspecified), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(_player1)), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromInfo(_player1, getInfo(_player1), DamageInfo.Unspecified), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromInfo(_player1, DamageInfo.Unspecified, getInfo(_player2)), _player2, Coroner.DeathTypeType.Kill);
+            assertCoroner(getCoronerFromInfo(_player1, getInfo(_player2), DamageInfo.Unspecified), _player2, Coroner.DeathTypeType.Kill);
+            assertCoroner(getCoronerFromPlayer(_player1, null, null), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromPlayer(_player1, null, _player1), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromPlayer(_player1, null, _player2), _player2, Coroner.DeathTypeType.Kill);
+            assertCoroner(getCoronerFromPlayer(_player1, _player1, null), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromPlayer(_player1, _player1, _player1), null, Coroner.DeathTypeType.Suicide);
+            assertCoroner(getCoronerFromPlayer(_player1, _player1, _player2), _player2, Coroner.DeathTypeType.Kill);
+            assertCoroner(getCoronerFromPlayer(_player1, _player2, null), _player2, Coroner.DeathTypeType.Kill);
+            assertCoroner(getCoronerFromPlayer(_player1, _player2, _player1), _player2, Coroner.DeathTypeType.Kill);
+            assertCoroner(getCoronerFromPlayer(_player1, _player2, _player2), _player2, Coroner.DeathTypeType.Kill);
+            assertCoroner(getCoronerFromPlayer(_player1, _player2, _player3), _player3, Coroner.DeathTypeType.Kill);
         }
 
         [Test]
         public void TestLastDamagerTooLate()
         {
-            _arena.TotalTime = TimeSpan.FromSeconds(10);
-            _gob1.InflictDamage(10, new DamageInfo(_gob2));
-            var info = DamageInfo.Unspecified.Bind(_gob1, TimeSpan.FromSeconds(30));
+            var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2, TimeSpan.FromSeconds(30));
+            Assert.AreEqual(BoundDamageInfo.SourceTypeType.Unspecified, info.SourceType);
             var coroner = new Coroner(info);
-            Assert.IsTrue(coroner.IsSuicide);
-            Assert.IsFalse(coroner.IsKill);
+            Assert.AreEqual(Coroner.DeathTypeType.Suicide, coroner.DeathType);
             Assert.AreEqual(null, coroner.ScoringPlayer);
         }
 
@@ -298,6 +321,15 @@ namespace AW2.Game.GobUtils
             var coroner = new Coroner(info);
             var bystanders = coroner.GetBystanders(new[] { _player1, _player2, _player3 }).ToArray();
             Assert.AreEqual(new[] { _player2, _player3 }, bystanders);
+        }
+
+        [Test]
+        public void TestBystandersKillLastDamager()
+        {
+            var info = DamageInfo.Unspecified.Bind(_gob1DamagedBy2, TimeSpan.FromSeconds(11));
+            var coroner = new Coroner(info);
+            var bystanders = coroner.GetBystanders(new[] { _player1, _player2, _player3 }).ToArray();
+            Assert.AreEqual(new[] { _player3 }, bystanders);
         }
     }
 #endif

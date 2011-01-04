@@ -1109,6 +1109,11 @@ namespace AW2.Game
             ++_disabledCount;
         }
 
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", TypeName, ID);
+        }
+
         #endregion Gob public methods
 
         #region Gob methods related to thrusters

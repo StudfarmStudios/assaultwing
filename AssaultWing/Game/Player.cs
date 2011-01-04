@@ -513,13 +513,18 @@ namespace AW2.Game
 
         private void Die_HandleCounters(Coroner coroner)
         {
-            if (coroner.IsSuicide) _suicides++;
-            if (coroner.IsKill)
+            switch (coroner.DeathType)
             {
-                coroner.ScoringPlayer._kills++;
-                coroner.ScoringPlayer.KillsWithoutDying++;
-                if (Game.NetworkMode == NetworkMode.Server)
-                    coroner.ScoringPlayer.MustUpdateToClients = true;
+                default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
+                case Coroner.DeathTypeType.Suicide:
+                    _suicides++;
+                    break;
+                case Coroner.DeathTypeType.Kill:
+                    coroner.ScoringPlayer._kills++;
+                    coroner.ScoringPlayer.KillsWithoutDying++;
+                    if (Game.NetworkMode == NetworkMode.Server)
+                        coroner.ScoringPlayer.MustUpdateToClients = true;
+                    break;
             }
             Lives--;
             KillsWithoutDying = 0;
@@ -528,17 +533,26 @@ namespace AW2.Game
 
         private void Die_SendMessages(Coroner coroner)
         {
-            if (coroner.IsKill) CreateKillMessage(coroner.ScoringPlayer, Ship.Pos);
-            if (coroner.IsSuicide) CreateSuicideMessage(this, Ship.Pos);
-            if (coroner.IsSpecial)
+            switch (coroner.DeathType)
+            {
+                default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
+                case Coroner.DeathTypeType.Kill:
+                    CreateKillMessage(coroner.ScoringPlayer, Ship.Pos);
+                    coroner.ScoringPlayer.SendMessage(new PlayerMessage(coroner.MessageToScoringPlayer, KILL_COLOR));
+                    SendMessage(new PlayerMessage(coroner.MessageToCorpse, DEATH_COLOR));
+                    break;
+                case Coroner.DeathTypeType.Suicide:
+                    CreateSuicideMessage(this, Ship.Pos);
+                    SendMessage(new PlayerMessage(coroner.MessageToCorpse, SUICIDE_COLOR));
+                    break;
+            }
+            var bystanderMessage = new PlayerMessage(coroner.MessageToBystander, DEFAULT_COLOR);
+            foreach (var plr in coroner.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
+            if (coroner.SpecialMessage != null)
             {
                 var specialMessage = new PlayerMessage(coroner.SpecialMessage, SPECIAL_KILL_COLOR);
                 foreach (var plr in Game.DataEngine.Players) plr.SendMessage(specialMessage);
             }
-            if (coroner.IsKill) coroner.ScoringPlayer.SendMessage(new PlayerMessage(coroner.MessageToScoringPlayer, KILL_COLOR));
-            var bystanderMessage = new PlayerMessage(coroner.MessageToBystander, DEFAULT_COLOR);
-            foreach (var plr in coroner.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
-            SendMessage(new PlayerMessage(coroner.MessageToCorpse, coroner.IsSuicide ? SUICIDE_COLOR : DEATH_COLOR));
         }
 
         /// <summary>

@@ -541,7 +541,7 @@ namespace AW2.Core
                 UpdateGameServerInfoToManagementServer();
                 if (player != null)
                 {
-                    player.NewMessage += message =>
+                    player.Messages.NewMessage += message =>
                     {
                         if (player.IsRemote)
                             try

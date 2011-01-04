@@ -18,17 +18,6 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
-        public class PlayerMessageEntry
-        {
-            public PlayerMessage Message { get; private set; }
-            public TimeSpan EntryTime { get; private set; }
-            public PlayerMessageEntry(PlayerMessage message, TimeSpan entryTime)
-            {
-                Message = message;
-                EntryTime = entryTime;
-            }
-        }
-
         public static readonly Color PRETEXT_COLOR = new Color(1f, 1f, 1f);
         public static readonly Color DEFAULT_COLOR = new Color(0.9f, 0.9f, 0.9f);
         public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f);
@@ -37,7 +26,6 @@ namespace AW2.Game
         public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f);
         public static readonly Color SPECIAL_KILL_COLOR = new Color(255, 228, 0);
         public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
-        private const int MESSAGE_KEEP_COUNT = 100;
 
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
@@ -224,7 +212,7 @@ namespace AW2.Game
         /// <summary>
         /// Messages to display in the player's chat box, oldest first.
         /// </summary>
-        public List<PlayerMessageEntry> Messages { get; private set; }
+        public ChatContainer Messages { get; private set; }
 
         public PostprocessEffectNameContainer PostprocessEffectNames { get; private set; }
 
@@ -255,8 +243,6 @@ namespace AW2.Game
         public int Suicides { get { return _suicides; } set { _suicides = value; } }
 
         #endregion Player properties about statistics
-
-        public event Action<PlayerMessage> NewMessage;
 
         #region Constructors
 
@@ -333,7 +319,7 @@ namespace AW2.Game
             ShipName = shipTypeName;
             Weapon2Name = weapon2Name;
             ExtraDeviceName = extraDeviceName;
-            Messages = new List<PlayerMessageEntry>();
+            Messages = new ChatContainer();
             PlayerColor = Color.Gray;
             BonusActions = new GameActionCollection(this);
             PostprocessEffectNames = new PostprocessEffectNameContainer(this);
@@ -414,21 +400,6 @@ namespace AW2.Game
             BonusActions.Clear();
             Messages.Clear();
             Ship = null;
-        }
-
-        public void SendMessage(string message)
-        {
-            SendMessage(new PlayerMessage(message, DEFAULT_COLOR));
-        }
-
-        /// <summary>
-        /// Sends a message to the player. The message will be displayed on the player's screen.
-        /// </summary>
-        public void SendMessage(PlayerMessage message)
-        {
-            Messages.Add(new PlayerMessageEntry(message, Game.DataEngine.ArenaTotalTime));
-            if (Messages.Count >= 2 * MESSAGE_KEEP_COUNT) Messages.RemoveRange(0, Messages.Count - MESSAGE_KEEP_COUNT);
-            if (NewMessage != null) NewMessage(message);
         }
 
         public override void Dispose()
@@ -538,20 +509,20 @@ namespace AW2.Game
                 default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
                 case Coroner.DeathTypeType.Kill:
                     CreateKillMessage(coroner.ScoringPlayer, Ship.Pos);
-                    coroner.ScoringPlayer.SendMessage(new PlayerMessage(coroner.MessageToScoringPlayer, KILL_COLOR));
-                    SendMessage(new PlayerMessage(coroner.MessageToCorpse, DEATH_COLOR));
+                    coroner.ScoringPlayer.Messages.Add(new PlayerMessage(coroner.MessageToScoringPlayer, KILL_COLOR));
+                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, DEATH_COLOR));
                     break;
                 case Coroner.DeathTypeType.Suicide:
                     CreateSuicideMessage(this, Ship.Pos);
-                    SendMessage(new PlayerMessage(coroner.MessageToCorpse, SUICIDE_COLOR));
+                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, SUICIDE_COLOR));
                     break;
             }
             var bystanderMessage = new PlayerMessage(coroner.MessageToBystander, DEFAULT_COLOR);
-            foreach (var plr in coroner.GetBystanders(Game.DataEngine.Players)) plr.SendMessage(bystanderMessage);
+            foreach (var plr in coroner.GetBystanders(Game.DataEngine.Players)) plr.Messages.Add(bystanderMessage);
             if (coroner.SpecialMessage != null)
             {
                 var specialMessage = new PlayerMessage(coroner.SpecialMessage, SPECIAL_KILL_COLOR);
-                foreach (var plr in Game.DataEngine.Players) plr.SendMessage(specialMessage);
+                foreach (var plr in Game.DataEngine.Players) plr.Messages.Add(specialMessage);
             }
         }
 

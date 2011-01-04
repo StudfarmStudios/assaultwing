@@ -24,7 +24,7 @@ namespace AW2.Game.Gobs.Bonus
             gameAction.SetDuration(duration);
             if (!gameAction.DoAction())
             {
-                player.SendMessage("Useless bonus discarded");
+                player.Messages.Add(new PlayerMessage("Useless bonus discarded", Player.DEFAULT_COLOR));
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace AW2.Game.Gobs.Bonus
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });
             player.BonusActions.AddOrReplace(gameAction);
-            player.SendMessage(new PlayerMessage("You collected " + gameAction.BonusText, player.PlayerColor));
+            player.Messages.Add(new PlayerMessage("You collected " + gameAction.BonusText, player.PlayerColor));
         }
     }
 }

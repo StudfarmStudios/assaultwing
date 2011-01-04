@@ -83,10 +83,10 @@ namespace AW2.Core.GameComponents
             switch (Game.NetworkMode)
             {
                 case NetworkMode.Server:
-                    foreach (var plr in Game.DataEngine.Players) plr.SendMessage(message);
+                    foreach (var plr in Game.DataEngine.Players) plr.Messages.Add(message);
                     break;
                 case NetworkMode.Client:
-                    foreach (var plr in Game.DataEngine.Players.Where(plr => !plr.IsRemote)) plr.SendMessage(message);
+                    foreach (var plr in Game.DataEngine.Players.Where(plr => !plr.IsRemote)) plr.Messages.Add(message);
                     _game.NetworkEngine.GameServerConnection.Send(new PlayerMessageMessage
                     {
                         PlayerID = -1,

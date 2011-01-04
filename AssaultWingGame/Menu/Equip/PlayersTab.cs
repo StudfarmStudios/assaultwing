@@ -12,19 +12,7 @@ namespace AW2.Menu.Equip
 {
     public class PlayersTab : EquipMenuTab
     {
-        private int _playerListIndex; // access through property PlayerListIndex
-
         public override Texture2D TabTexture { get { return Content.TabPlayersTexture; } }
-
-        private int PlayerListIndex
-        {
-            get
-            {
-                _playerListIndex = _playerListIndex.Clamp(0, MenuEngine.Game.DataEngine.Players.Count() - 1);
-                return _playerListIndex;
-            }
-            set { _playerListIndex = value; }
-        }
 
         public PlayersTab(EquipMenuComponent menuComponent)
             : base(menuComponent)
@@ -35,13 +23,13 @@ namespace AW2.Menu.Equip
         {
             if (Controls.ListDown.Pulse)
             {
-                ++PlayerListIndex;
+                ++PlayerListCursorIndex;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
             if (Controls.ListUp.Pulse)
             {
-                --PlayerListIndex;
+                --PlayerListCursorIndex;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
                 MenuComponent.ListCursorFadeStartTime = MenuEngine.Game.GameTime.TotalRealTime;
             }
@@ -51,26 +39,8 @@ namespace AW2.Menu.Equip
         {
             DrawLargeStatusBackground(view, spriteBatch);
             DrawPlayerListDisplay(view, spriteBatch);
-            DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(PlayerListIndex));
-        }
-
-        private void DrawPlayerListDisplay(Vector2 view, SpriteBatch spriteBatch)
-        {
-            var playerListPos = MenuComponent.Pos - view + new Vector2(360, 201);
-            var currentPlayerPos = playerListPos;
-            var lineHeight = new Vector2(0, 30);
-            var cursorPos = playerListPos + (lineHeight * PlayerListIndex) + new Vector2(-27, -37);
-
-            float cursorTime = (float)(MenuEngine.Game.GameTime.TotalRealTime - MenuComponent.ListCursorFadeStartTime).TotalSeconds;
-            spriteBatch.Draw(Content.PlayerNameBackground, LeftPanePos - view, Color.White);
-            spriteBatch.Draw(Content.ListCursorTexture, cursorPos, Color.White);
-            spriteBatch.Draw(Content.ListHiliteTexture, cursorPos, Color.Multiply(Color.White, EquipMenuComponent.CursorFade.Evaluate(cursorTime)));
-
-            foreach (var plr in MenuEngine.Game.DataEngine.Players)
-            {
-                spriteBatch.DrawString(Content.FontSmall, plr.Name, currentPlayerPos, plr.PlayerColor);
-                currentPlayerPos += lineHeight;
-            }
+            DrawPlayerListCursor(view, spriteBatch);
+            DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(PlayerListCursorIndex));
         }
 
         private void DrawPlayerInfoDisplay(Vector2 view, SpriteBatch spriteBatch, Player player)

@@ -51,7 +51,7 @@ namespace AW2.Graphics.OverlayComponents
             // a reference to it. This does not happen as of 2010-12-12 but future code changes
             // may introduce a memory leak. A good permanent fix would be to use the weak event
             // pattern from WPF in Player.NewMessage.
-            _player.NewMessage += HandleNewPlayerMessage;
+            _player.Messages.NewMessage += HandleNewPlayerMessage;
         }
 
         public override void LoadContent()
@@ -62,31 +62,32 @@ namespace AW2.Graphics.OverlayComponents
 
         public override void Dispose()
         {
-            _player.NewMessage -= HandleNewPlayerMessage;
+            _player.Messages.NewMessage -= HandleNewPlayerMessage;
             base.Dispose();
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             var messageY = 0f;
-            for (int i = 0, messageI = _player.Messages.Count - 1; i < VISIBLE_LINES && messageI >= 0; ++i, --messageI, messageY += _chatBoxFont.LineSpacing)
+            foreach (var item in _player.Messages.Reversed().Take(VISIBLE_LINES))
             {
-                float alpha = GetMessageAlpha(messageI);
+                float alpha = GetMessageAlpha(item);
                 if (alpha == 0) continue;
-                var preTextSize = _chatBoxFont.MeasureString(_player.Messages[messageI].Message.PreText);
-                var textSize = _chatBoxFont.MeasureString(_player.Messages[messageI].Message.Text);
+                var preTextSize = _chatBoxFont.MeasureString(item.Message.PreText);
+                var textSize = _chatBoxFont.MeasureString(item.Message.Text);
                 var preTextPos = new Vector2((Dimensions.X - textSize.X - preTextSize.X) / 2, messageY);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
                 var preTextColor = Color.Multiply(Player.PRETEXT_COLOR, alpha);
-                var textColor = Color.Multiply(_player.Messages[messageI].Message.TextColor, alpha);
-                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Message.PreText, preTextPos, preTextColor);
-                spriteBatch.DrawString(_chatBoxFont, _player.Messages[messageI].Message.Text, textPos, textColor);
+                var textColor = Color.Multiply(item.Message.TextColor, alpha);
+                spriteBatch.DrawString(_chatBoxFont, item.Message.PreText, preTextPos, preTextColor);
+                spriteBatch.DrawString(_chatBoxFont, item.Message.Text, textPos, textColor);
+                messageY += _chatBoxFont.LineSpacing;
             }
         }
 
-        private float GetMessageAlpha(int messageIndex)
+        private float GetMessageAlpha(ChatContainer.Item item)
         {
-            return g_messageFadeoutCurve.Evaluate(_player.Messages[messageIndex].EntryTime.SecondsAgoGameTime());
+            return g_messageFadeoutCurve.Evaluate(item.EntryRealTime.SecondsAgoRealTime());
         }
 
         private void HandleNewPlayerMessage(PlayerMessage message)

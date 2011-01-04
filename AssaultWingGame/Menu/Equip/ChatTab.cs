@@ -17,15 +17,21 @@ namespace AW2.Menu.Equip
         {
         }
 
-        public override void Draw(Microsoft.Xna.Framework.Vector2 view, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
+        public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             DrawLargeStatusBackground(view, spriteBatch);
+            DrawPlayerListDisplay(view, spriteBatch);
+            DrawChatMessages(view, spriteBatch);
             DrawChatTextInputBox(view, spriteBatch);
+        }
+
+        private void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch)
+        {
         }
 
         private void DrawChatTextInputBox(Vector2 view, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Content.PlayerNameBackground, LeftPanePos - view, Color.White);
+            
         }
     }
 }

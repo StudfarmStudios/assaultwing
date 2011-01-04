@@ -299,6 +299,7 @@ namespace AW2.Core
                 case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
                 case GameState.GameAndMenu: GameState = GameState.Menu; break;
             }
+            MenuEngine.Enabled = false;
         }
 
         public void CutNetworkConnections()

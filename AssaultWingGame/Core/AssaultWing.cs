@@ -82,7 +82,6 @@ namespace AW2.Core
             _frameRunControl = new KeyboardKey(Keys.F7);
             _frameStep = false;
             _addedGobs = new List<Gob>();
-            DataEngine.NewArena += NewArenaHandler;
             DataEngine.SpectatorAdded += SpectatorAddedHandler;
             DataEngine.SpectatorRemoved += SpectatorRemovedHandler;
             NetworkEngine.Enabled = true;
@@ -208,7 +207,11 @@ namespace AW2.Core
             Log.Write("Saving settings to file");
             Settings.ToFile();
             if (NetworkMode == NetworkMode.Server)
+            {
                 MessageHandlers.ActivateHandlers(MessageHandlers.GetServerGameplayHandlers());
+                DataEngine.Arena.GobAdded += gob => { if (gob.IsRelevant) _addedGobs.Add(gob); };
+                DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
+            }
             if (GameState != Core.GameState.GameAndMenu) base.StartArena();
             PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             GameState = GameState.Gameplay;
@@ -539,19 +542,9 @@ namespace AW2.Core
             NetworkEngine.MessageHandlers.Clear();
         }
 
-        private void NewArenaHandler(Arena arena)
+        private void GobRemovedFromArenaHandler(Gob gob)
         {
-            arena.GobAdded += gob =>
-            {
-                if (NetworkMode == NetworkMode.Server && gob.IsRelevant) _addedGobs.Add(gob);
-            };
-            arena.GobRemoved += gob => GobRemovedFromArenaHandler(arena, gob);
-        }
-
-        private void GobRemovedFromArenaHandler(Arena arena, Gob gob)
-        {
-            if (NetworkMode != NetworkMode.Server || !gob.IsRelevant) return;
-            if (!arena.IsActive) throw new ApplicationException("Removing a gob from an inactive arena during network game");
+            if (!gob.IsRelevant) return;
             var message = new GobDeletionMessage();
             message.GobId = gob.ID;
             NetworkEngine.SendToGameClients(message);

@@ -3614,6 +3614,7 @@
           <typeName>dock</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>187</staticID>
           <pos>
@@ -3633,6 +3634,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>188</staticID>
           <pos>
@@ -3652,6 +3654,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>189</staticID>
           <pos>
@@ -3671,6 +3674,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>190</staticID>
           <pos>
@@ -3690,6 +3694,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>191</staticID>
           <pos>
@@ -3709,6 +3714,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>192</staticID>
           <pos>
@@ -3728,6 +3734,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>193</staticID>
           <pos>
@@ -3747,6 +3754,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>194</staticID>
           <pos>
@@ -3766,6 +3774,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>195</staticID>
           <pos>
@@ -3785,6 +3794,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>196</staticID>
           <pos>
@@ -3804,6 +3814,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>197</staticID>
           <pos>
@@ -3823,6 +3834,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>198</staticID>
           <pos>
@@ -3842,6 +3854,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>199</staticID>
           <pos>
@@ -3861,6 +3874,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>200</staticID>
           <pos>
@@ -3880,6 +3894,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>201</staticID>
           <pos>
@@ -3899,6 +3914,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>202</staticID>
           <pos>
@@ -3918,6 +3934,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>203</staticID>
           <pos>
@@ -3937,6 +3954,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>204</staticID>
           <pos>
@@ -3956,6 +3974,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>205</staticID>
           <pos>
@@ -3975,6 +3994,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>206</staticID>
           <pos>
@@ -3994,6 +4014,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>207</staticID>
           <pos>
@@ -4013,6 +4034,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>208</staticID>
           <pos>
@@ -4032,6 +4054,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>209</staticID>
           <pos>
@@ -4051,6 +4074,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>210</staticID>
           <pos>
@@ -4070,6 +4094,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>211</staticID>
           <pos>
@@ -4089,6 +4114,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>212</staticID>
           <pos>
@@ -4108,6 +4134,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>213</staticID>
           <pos>
@@ -4127,6 +4154,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>214</staticID>
           <pos>
@@ -4146,6 +4174,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>215</staticID>
           <pos>
@@ -4165,6 +4194,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>216</staticID>
           <pos>
@@ -4184,6 +4214,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>217</staticID>
           <pos>
@@ -4203,6 +4234,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>218</staticID>
           <pos>
@@ -4222,6 +4254,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>219</staticID>
           <pos>
@@ -4241,6 +4274,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>220</staticID>
           <pos>
@@ -4260,6 +4294,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>221</staticID>
           <pos>
@@ -4279,6 +4314,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>222</staticID>
           <pos>
@@ -4298,6 +4334,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>223</staticID>
           <pos>
@@ -4317,6 +4354,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>224</staticID>
           <pos>
@@ -4336,6 +4374,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>225</staticID>
           <pos>
@@ -4355,6 +4394,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>226</staticID>
           <pos>
@@ -4374,6 +4414,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>227</staticID>
           <pos>
@@ -4393,6 +4434,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>228</staticID>
           <pos>
@@ -4412,6 +4454,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>229</staticID>
           <pos>
@@ -4431,6 +4474,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>230</staticID>
           <pos>
@@ -4450,6 +4494,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>231</staticID>
           <pos>
@@ -4469,6 +4514,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>232</staticID>
           <pos>
@@ -4488,6 +4534,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>233</staticID>
           <pos>
@@ -4507,6 +4554,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>234</staticID>
           <pos>
@@ -4526,6 +4574,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>235</staticID>
           <pos>
@@ -4545,6 +4594,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>236</staticID>
           <pos>
@@ -4564,6 +4614,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>237</staticID>
           <pos>
@@ -4583,6 +4634,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>238</staticID>
           <pos>
@@ -4602,6 +4654,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>239</staticID>
           <pos>
@@ -4621,6 +4674,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>240</staticID>
           <pos>
@@ -4640,6 +4694,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>241</staticID>
           <pos>
@@ -4659,6 +4714,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>242</staticID>
           <pos>
@@ -4678,6 +4734,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>243</staticID>
           <pos>
@@ -4697,6 +4754,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>244</staticID>
           <pos>
@@ -4716,6 +4774,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>245</staticID>
           <pos>
@@ -4735,6 +4794,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>246</staticID>
           <pos>
@@ -4754,6 +4814,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>247</staticID>
           <pos>
@@ -4773,6 +4834,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>248</staticID>
           <pos>
@@ -4792,6 +4854,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>249</staticID>
           <pos>
@@ -4811,6 +4874,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>250</staticID>
           <pos>
@@ -4830,6 +4894,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>251</staticID>
           <pos>
@@ -4849,6 +4914,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>252</staticID>
           <pos>
@@ -4868,6 +4934,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>253</staticID>
           <pos>
@@ -4887,6 +4954,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>254</staticID>
           <pos>
@@ -4906,6 +4974,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>255</staticID>
           <pos>
@@ -4925,6 +4994,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>256</staticID>
           <pos>
@@ -4944,6 +5014,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>257</staticID>
           <pos>
@@ -4963,6 +5034,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>258</staticID>
           <pos>
@@ -4982,6 +5054,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>259</staticID>
           <pos>
@@ -5001,6 +5074,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>260</staticID>
           <pos>
@@ -5020,6 +5094,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>261</staticID>
           <pos>
@@ -5039,6 +5114,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>262</staticID>
           <pos>
@@ -5058,6 +5134,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>263</staticID>
           <pos>
@@ -5077,6 +5154,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>264</staticID>
           <pos>
@@ -5096,6 +5174,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>265</staticID>
           <pos>
@@ -5115,6 +5194,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>266</staticID>
           <pos>
@@ -5134,6 +5214,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>267</staticID>
           <pos>
@@ -5153,6 +5234,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>268</staticID>
           <pos>
@@ -5172,6 +5254,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>269</staticID>
           <pos>
@@ -5191,6 +5274,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>270</staticID>
           <pos>
@@ -5210,6 +5294,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>271</staticID>
           <pos>
@@ -5229,6 +5314,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>272</staticID>
           <pos>
@@ -5248,6 +5334,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>273</staticID>
           <pos>
@@ -5267,6 +5354,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>274</staticID>
           <pos>
@@ -5286,6 +5374,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>275</staticID>
           <pos>
@@ -5305,6 +5394,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>276</staticID>
           <pos>
@@ -5324,6 +5414,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>277</staticID>
           <pos>
@@ -5343,6 +5434,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>278</staticID>
           <pos>
@@ -5362,6 +5454,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>279</staticID>
           <pos>
@@ -5381,6 +5474,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>280</staticID>
           <pos>
@@ -5400,6 +5494,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>281</staticID>
           <pos>
@@ -5419,6 +5514,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>282</staticID>
           <pos>
@@ -5438,6 +5534,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>283</staticID>
           <pos>
@@ -5457,6 +5554,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>284</staticID>
           <pos>
@@ -5476,6 +5574,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>285</staticID>
           <pos>
@@ -5495,6 +5594,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>286</staticID>
           <pos>
@@ -5514,6 +5614,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>287</staticID>
           <pos>
@@ -5533,6 +5634,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>288</staticID>
           <pos>
@@ -5552,6 +5654,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>289</staticID>
           <pos>
@@ -5571,6 +5674,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>290</staticID>
           <pos>
@@ -5590,6 +5694,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>291</staticID>
           <pos>
@@ -5609,6 +5714,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>292</staticID>
           <pos>
@@ -5628,6 +5734,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>293</staticID>
           <pos>
@@ -5647,6 +5754,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>294</staticID>
           <pos>
@@ -5666,6 +5774,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>295</staticID>
           <pos>
@@ -5685,6 +5794,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>296</staticID>
           <pos>
@@ -5704,6 +5814,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>297</staticID>
           <pos>
@@ -5723,6 +5834,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>298</staticID>
           <pos>
@@ -5742,6 +5854,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>299</staticID>
           <pos>
@@ -5761,6 +5874,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>300</staticID>
           <pos>
@@ -5780,6 +5894,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>301</staticID>
           <pos>
@@ -5799,6 +5914,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>302</staticID>
           <pos>
@@ -5818,6 +5934,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>303</staticID>
           <pos>
@@ -5837,6 +5954,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>304</staticID>
           <pos>
@@ -5856,6 +5974,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>305</staticID>
           <pos>
@@ -5875,6 +5994,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>306</staticID>
           <pos>
@@ -5894,6 +6014,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>307</staticID>
           <pos>
@@ -5913,6 +6034,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>308</staticID>
           <pos>
@@ -5932,6 +6054,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>309</staticID>
           <pos>
@@ -5951,6 +6074,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>310</staticID>
           <pos>
@@ -5970,6 +6094,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>311</staticID>
           <pos>
@@ -5989,6 +6114,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>312</staticID>
           <pos>
@@ -6008,6 +6134,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>313</staticID>
           <pos>
@@ -6027,6 +6154,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>314</staticID>
           <pos>
@@ -6046,6 +6174,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>315</staticID>
           <pos>
@@ -6065,6 +6194,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>316</staticID>
           <pos>
@@ -6084,6 +6214,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>317</staticID>
           <pos>
@@ -6103,6 +6234,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>318</staticID>
           <pos>
@@ -6122,6 +6254,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>319</staticID>
           <pos>
@@ -6141,6 +6274,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>320</staticID>
           <pos>
@@ -6160,6 +6294,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>321</staticID>
           <pos>
@@ -6179,6 +6314,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>322</staticID>
           <pos>
@@ -6198,6 +6334,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>323</staticID>
           <pos>
@@ -6217,6 +6354,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>324</staticID>
           <pos>
@@ -6236,6 +6374,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>325</staticID>
           <pos>
@@ -6255,6 +6394,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>326</staticID>
           <pos>
@@ -6274,6 +6414,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>327</staticID>
           <pos>
@@ -6293,6 +6434,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>328</staticID>
           <pos>
@@ -6312,6 +6454,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>329</staticID>
           <pos>
@@ -6331,6 +6474,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>330</staticID>
           <pos>
@@ -6350,6 +6494,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>331</staticID>
           <pos>
@@ -6369,6 +6514,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>332</staticID>
           <pos>
@@ -6388,6 +6534,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>333</staticID>
           <pos>
@@ -6407,6 +6554,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>334</staticID>
           <pos>
@@ -6426,6 +6574,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>335</staticID>
           <pos>
@@ -6445,6 +6594,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>336</staticID>
           <pos>
@@ -6464,6 +6614,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>337</staticID>
           <pos>
@@ -6483,6 +6634,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>338</staticID>
           <pos>
@@ -6502,6 +6654,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>339</staticID>
           <pos>
@@ -6521,6 +6674,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>340</staticID>
           <pos>
@@ -6540,6 +6694,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>341</staticID>
           <pos>
@@ -6559,6 +6714,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>342</staticID>
           <pos>
@@ -6578,6 +6734,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>343</staticID>
           <pos>
@@ -6597,6 +6754,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>344</staticID>
           <pos>
@@ -6616,6 +6774,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>345</staticID>
           <pos>
@@ -6635,6 +6794,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>346</staticID>
           <pos>
@@ -6654,6 +6814,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>347</staticID>
           <pos>
@@ -6673,6 +6834,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>348</staticID>
           <pos>
@@ -6692,6 +6854,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>349</staticID>
           <pos>
@@ -6711,6 +6874,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>350</staticID>
           <pos>
@@ -6730,6 +6894,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>351</staticID>
           <pos>
@@ -6749,6 +6914,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>352</staticID>
           <pos>
@@ -6768,6 +6934,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>353</staticID>
           <pos>
@@ -6787,6 +6954,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>354</staticID>
           <pos>
@@ -6806,6 +6974,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>355</staticID>
           <pos>
@@ -6825,6 +6994,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>356</staticID>
           <pos>
@@ -6844,6 +7014,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>357</staticID>
           <pos>
@@ -6863,6 +7034,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>358</staticID>
           <pos>
@@ -6882,6 +7054,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>359</staticID>
           <pos>
@@ -6901,6 +7074,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>360</staticID>
           <pos>
@@ -6920,6 +7094,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>361</staticID>
           <pos>
@@ -6939,6 +7114,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>362</staticID>
           <pos>
@@ -6958,6 +7134,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>363</staticID>
           <pos>
@@ -6977,6 +7154,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>364</staticID>
           <pos>
@@ -6996,6 +7174,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>365</staticID>
           <pos>
@@ -7015,6 +7194,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>366</staticID>
           <pos>
@@ -7034,6 +7214,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>367</staticID>
           <pos>
@@ -7053,6 +7234,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>368</staticID>
           <pos>
@@ -7072,6 +7254,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>369</staticID>
           <pos>
@@ -7091,6 +7274,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>370</staticID>
           <pos>
@@ -7110,6 +7294,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>371</staticID>
           <pos>
@@ -7129,6 +7314,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>372</staticID>
           <pos>
@@ -7148,6 +7334,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>373</staticID>
           <pos>
@@ -7167,6 +7354,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>374</staticID>
           <pos>
@@ -7186,6 +7374,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>375</staticID>
           <pos>
@@ -7205,6 +7394,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>376</staticID>
           <pos>
@@ -7224,6 +7414,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>377</staticID>
           <pos>
@@ -7243,6 +7434,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>378</staticID>
           <pos>
@@ -7262,6 +7454,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>379</staticID>
           <pos>
@@ -7281,6 +7474,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>380</staticID>
           <pos>
@@ -7300,6 +7494,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>381</staticID>
           <pos>
@@ -7319,6 +7514,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>382</staticID>
           <pos>
@@ -7338,6 +7534,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>383</staticID>
           <pos>
@@ -7357,6 +7554,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>384</staticID>
           <pos>
@@ -7376,6 +7574,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>385</staticID>
           <pos>
@@ -7395,6 +7594,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>386</staticID>
           <pos>
@@ -7414,6 +7614,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>387</staticID>
           <pos>
@@ -7433,6 +7634,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>388</staticID>
           <pos>
@@ -7452,6 +7654,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>389</staticID>
           <pos>
@@ -7471,6 +7674,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>390</staticID>
           <pos>
@@ -7490,6 +7694,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>391</staticID>
           <pos>
@@ -7509,6 +7714,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>392</staticID>
           <pos>
@@ -7528,6 +7734,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>393</staticID>
           <pos>
@@ -7547,6 +7754,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>394</staticID>
           <pos>
@@ -7566,6 +7774,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>395</staticID>
           <pos>
@@ -7585,6 +7794,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>396</staticID>
           <pos>
@@ -7604,6 +7814,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>397</staticID>
           <pos>
@@ -7623,6 +7834,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>398</staticID>
           <pos>
@@ -7642,6 +7854,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>399</staticID>
           <pos>
@@ -7661,6 +7874,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>400</staticID>
           <pos>
@@ -7680,6 +7894,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>401</staticID>
           <pos>
@@ -7699,6 +7914,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>402</staticID>
           <pos>
@@ -7718,6 +7934,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>403</staticID>
           <pos>
@@ -7737,6 +7954,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>404</staticID>
           <pos>
@@ -7756,6 +7974,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>405</staticID>
           <pos>
@@ -7775,6 +7994,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>406</staticID>
           <pos>
@@ -7794,6 +8014,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>407</staticID>
           <pos>
@@ -7813,6 +8034,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>408</staticID>
           <pos>
@@ -7832,6 +8054,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>409</staticID>
           <pos>
@@ -7851,6 +8074,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>410</staticID>
           <pos>
@@ -7870,6 +8094,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>411</staticID>
           <pos>
@@ -7889,6 +8114,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>412</staticID>
           <pos>
@@ -7908,6 +8134,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>413</staticID>
           <pos>
@@ -7927,6 +8154,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>414</staticID>
           <pos>
@@ -7946,6 +8174,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>415</staticID>
           <pos>
@@ -7965,6 +8194,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>416</staticID>
           <pos>
@@ -7984,6 +8214,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>417</staticID>
           <pos>
@@ -8003,6 +8234,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>418</staticID>
           <pos>
@@ -8022,6 +8254,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>419</staticID>
           <pos>
@@ -8041,6 +8274,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>420</staticID>
           <pos>
@@ -8060,6 +8294,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>421</staticID>
           <pos>
@@ -8079,6 +8314,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>422</staticID>
           <pos>
@@ -8098,6 +8334,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>423</staticID>
           <pos>
@@ -8117,6 +8354,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>424</staticID>
           <pos>
@@ -8136,6 +8374,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>425</staticID>
           <pos>
@@ -8155,6 +8394,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>426</staticID>
           <pos>
@@ -8174,6 +8414,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>427</staticID>
           <pos>
@@ -8193,6 +8434,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>428</staticID>
           <pos>
@@ -8212,6 +8454,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>429</staticID>
           <pos>
@@ -8231,6 +8474,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>430</staticID>
           <pos>
@@ -8250,6 +8494,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>431</staticID>
           <pos>
@@ -8269,6 +8514,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>432</staticID>
           <pos>
@@ -8288,6 +8534,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>433</staticID>
           <pos>
@@ -8307,6 +8554,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>434</staticID>
           <pos>
@@ -8326,6 +8574,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>435</staticID>
           <pos>
@@ -8345,6 +8594,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>436</staticID>
           <pos>
@@ -8364,6 +8614,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>437</staticID>
           <pos>
@@ -8383,6 +8634,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>438</staticID>
           <pos>
@@ -8402,6 +8654,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>439</staticID>
           <pos>
@@ -8421,6 +8674,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_crate_1</wallModelName>
           <staticID>440</staticID>
           <pos>
@@ -8500,6 +8754,7 @@
           <typeName>uniform gravity</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>444</staticID>
           <pos>
@@ -8519,6 +8774,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>445</staticID>
           <pos>
@@ -8538,6 +8794,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>446</staticID>
           <pos>
@@ -8837,6 +9094,7 @@
           <typeName>player spawn</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>457</staticID>
           <pos>
@@ -8856,6 +9114,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>458</staticID>
           <pos>
@@ -8875,6 +9134,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>459</staticID>
           <pos>
@@ -8894,6 +9154,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>460</staticID>
           <pos>
@@ -8913,6 +9174,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_metalwall_1</wallModelName>
           <staticID>461</staticID>
           <pos>
@@ -8932,6 +9194,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>462</staticID>
           <pos>
@@ -8951,6 +9214,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>463</staticID>
           <pos>
@@ -8970,6 +9234,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>464</staticID>
           <pos>
@@ -8989,6 +9254,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>465</staticID>
           <pos>
@@ -9008,6 +9274,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>466</staticID>
           <pos>
@@ -9027,6 +9294,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_pipe_1</wallModelName>
           <staticID>467</staticID>
           <pos>
@@ -9046,6 +9314,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>468</staticID>
           <pos>
@@ -9065,6 +9334,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>469</staticID>
           <pos>
@@ -9084,6 +9354,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_waveplate</wallModelName>
           <staticID>470</staticID>
           <pos>
@@ -9103,6 +9374,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>471</staticID>
           <pos>
@@ -9122,6 +9394,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_squarewall_1</wallModelName>
           <staticID>472</staticID>
           <pos>
@@ -9141,6 +9414,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>junk_rail_1</wallModelName>
           <staticID>473</staticID>
           <pos>

@@ -23,6 +23,9 @@ namespace AW2.Game.Gobs
     {
         #region Wall Fields
 
+        [RuntimeState]
+        private bool _destructible;
+
         /// <summary>
         /// The location of the wall's vertices in the game world.
         /// </summary>
@@ -85,6 +88,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public Wall()
         {
+            _destructible = true;
             Set3DModel(new[] 
                 {
                     new VertexPositionNormalTexture(new Vector3(0,0,0), -Vector3.UnitX, Vector2.Zero),
@@ -228,7 +232,7 @@ namespace AW2.Game.Gobs
         /// <param name="holeRadius">Radius of the hole, in meters.</param>
         public void MakeHole(Vector2 holePos, float holeRadius)
         {
-            if (holeRadius <= 0) return;
+            if (!_destructible || holeRadius <= 0) return;
             if (Game.NetworkMode == NetworkMode.Client) return;
             var posInIndexMap = Vector2.Transform(holePos, _indexMap.WallToIndexMapTransform).Round();
             AWMathHelper.FillCircle((int)posInIndexMap.X, (int)posInIndexMap.Y, (int)Math.Round(holeRadius), _indexMap.Remove);

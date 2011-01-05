@@ -37,6 +37,7 @@
       <parallaxName></parallaxName>
       <gobs>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_2</wallModelName>
           <staticID>2391</staticID>
           <pos>
@@ -56,6 +57,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_8</wallModelName>
           <staticID>2392</staticID>
           <pos>
@@ -75,6 +77,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_8</wallModelName>
           <staticID>2393</staticID>
           <pos>
@@ -94,6 +97,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_6</wallModelName>
           <staticID>2394</staticID>
           <pos>
@@ -113,6 +117,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_3</wallModelName>
           <staticID>2395</staticID>
           <pos>
@@ -132,6 +137,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_9</wallModelName>
           <staticID>2396</staticID>
           <pos>
@@ -151,6 +157,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_1</wallModelName>
           <staticID>2397</staticID>
           <pos>
@@ -170,6 +177,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_2</wallModelName>
           <staticID>2398</staticID>
           <pos>
@@ -189,6 +197,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_4</wallModelName>
           <staticID>2399</staticID>
           <pos>
@@ -208,6 +217,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_10</wallModelName>
           <staticID>2400</staticID>
           <pos>
@@ -227,6 +237,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_6</wallModelName>
           <staticID>2401</staticID>
           <pos>
@@ -246,6 +257,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_8</wallModelName>
           <staticID>2402</staticID>
           <pos>
@@ -265,6 +277,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_1</wallModelName>
           <staticID>2403</staticID>
           <pos>
@@ -284,6 +297,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_5</wallModelName>
           <staticID>2404</staticID>
           <pos>
@@ -303,6 +317,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_3</wallModelName>
           <staticID>2405</staticID>
           <pos>
@@ -322,6 +337,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_2</wallModelName>
           <staticID>2406</staticID>
           <pos>
@@ -341,6 +357,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_6</wallModelName>
           <staticID>2407</staticID>
           <pos>
@@ -360,6 +377,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_8</wallModelName>
           <staticID>2408</staticID>
           <pos>
@@ -379,6 +397,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_5</wallModelName>
           <staticID>2409</staticID>
           <pos>
@@ -398,6 +417,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_3</wallModelName>
           <staticID>2410</staticID>
           <pos>
@@ -417,6 +437,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_8</wallModelName>
           <staticID>2411</staticID>
           <pos>
@@ -436,6 +457,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_4</wallModelName>
           <staticID>2412</staticID>
           <pos>
@@ -455,6 +477,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_9</wallModelName>
           <staticID>2413</staticID>
           <pos>
@@ -474,6 +497,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_11</wallModelName>
           <staticID>2414</staticID>
           <pos>
@@ -493,6 +517,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_12</wallModelName>
           <staticID>2415</staticID>
           <pos>
@@ -512,6 +537,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_7</wallModelName>
           <staticID>2416</staticID>
           <pos>
@@ -531,6 +557,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snow_wall_9</wallModelName>
           <staticID>2417</staticID>
           <pos>
@@ -550,6 +577,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snowman</wallModelName>
           <staticID>2418</staticID>
           <pos>
@@ -569,6 +597,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snowman</wallModelName>
           <staticID>2419</staticID>
           <pos>
@@ -588,6 +617,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>snowman</wallModelName>
           <staticID>2420</staticID>
           <pos>

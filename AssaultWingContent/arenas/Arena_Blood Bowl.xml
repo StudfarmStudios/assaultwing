@@ -1260,6 +1260,7 @@
       <parallaxName></parallaxName>
       <gobs>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>
           <staticID>65</staticID>
           <pos>
@@ -1299,6 +1300,7 @@
           <typeName>lava spray</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>67</staticID>
           <pos>
@@ -1318,6 +1320,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>68</staticID>
           <pos>
@@ -1373,6 +1376,7 @@
           <typeName>dock</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <staticID>71</staticID>
           <pos>
@@ -1392,6 +1396,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>72</staticID>
           <pos>
@@ -1411,6 +1416,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_5</wallModelName>
           <staticID>73</staticID>
           <pos>
@@ -1430,6 +1436,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>74</staticID>
           <pos>
@@ -1449,6 +1456,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <staticID>75</staticID>
           <pos>
@@ -1468,6 +1476,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <staticID>76</staticID>
           <pos>
@@ -1487,6 +1496,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <staticID>77</staticID>
           <pos>
@@ -1506,6 +1516,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>78</staticID>
           <pos>
@@ -1525,6 +1536,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>79</staticID>
           <pos>
@@ -1544,6 +1556,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <staticID>80</staticID>
           <pos>
@@ -1563,6 +1576,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <staticID>81</staticID>
           <pos>
@@ -1582,6 +1596,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <staticID>82</staticID>
           <pos>
@@ -1601,6 +1616,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>83</staticID>
           <pos>
@@ -1620,6 +1636,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>84</staticID>
           <pos>
@@ -1639,6 +1656,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <staticID>85</staticID>
           <pos>
@@ -1658,6 +1676,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <staticID>86</staticID>
           <pos>
@@ -1677,6 +1696,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <staticID>87</staticID>
           <pos>
@@ -1696,6 +1716,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <staticID>88</staticID>
           <pos>
@@ -1715,6 +1736,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>89</staticID>
           <pos>
@@ -1734,6 +1756,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_5</wallModelName>
           <staticID>90</staticID>
           <pos>
@@ -1753,6 +1776,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <staticID>91</staticID>
           <pos>
@@ -1772,6 +1796,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>92</staticID>
           <pos>
@@ -1791,6 +1816,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>93</staticID>
           <pos>
@@ -1810,6 +1836,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <staticID>94</staticID>
           <pos>
@@ -1829,6 +1856,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>95</staticID>
           <pos>
@@ -1848,6 +1876,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <staticID>96</staticID>
           <pos>
@@ -1867,6 +1896,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <staticID>97</staticID>
           <pos>
@@ -1886,6 +1916,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <staticID>98</staticID>
           <pos>
@@ -1905,6 +1936,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <staticID>99</staticID>
           <pos>
@@ -1924,6 +1956,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>100</staticID>
           <pos>
@@ -1943,6 +1976,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <staticID>101</staticID>
           <pos>
@@ -1962,6 +1996,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <staticID>102</staticID>
           <pos>
@@ -1981,6 +2016,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <staticID>103</staticID>
           <pos>
@@ -2000,6 +2036,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>104</staticID>
           <pos>
@@ -2019,6 +2056,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <staticID>105</staticID>
           <pos>
@@ -2038,6 +2076,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <staticID>106</staticID>
           <pos>
@@ -2057,6 +2096,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <staticID>107</staticID>
           <pos>
@@ -2076,6 +2116,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <staticID>108</staticID>
           <pos>
@@ -2095,6 +2136,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <staticID>109</staticID>
           <pos>
@@ -2114,6 +2156,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>110</staticID>
           <pos>
@@ -2133,6 +2176,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <staticID>111</staticID>
           <pos>
@@ -2152,6 +2196,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <staticID>112</staticID>
           <pos>
@@ -2171,6 +2216,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>113</staticID>
           <pos>
@@ -2190,6 +2236,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <staticID>114</staticID>
           <pos>
@@ -2209,6 +2256,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>115</staticID>
           <pos>
@@ -2228,6 +2276,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <staticID>116</staticID>
           <pos>
@@ -2247,6 +2296,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>117</staticID>
           <pos>
@@ -2266,6 +2316,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>118</staticID>
           <pos>
@@ -2285,6 +2336,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <staticID>119</staticID>
           <pos>
@@ -2304,6 +2356,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <staticID>120</staticID>
           <pos>
@@ -2323,6 +2376,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <staticID>121</staticID>
           <pos>
@@ -2342,6 +2396,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <staticID>122</staticID>
           <pos>
@@ -2361,6 +2416,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <staticID>123</staticID>
           <pos>
@@ -2380,6 +2436,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>124</staticID>
           <pos>
@@ -2399,6 +2456,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <staticID>125</staticID>
           <pos>
@@ -2418,6 +2476,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <staticID>126</staticID>
           <pos>
@@ -2437,6 +2496,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <staticID>127</staticID>
           <pos>
@@ -2456,6 +2516,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <staticID>128</staticID>
           <pos>
@@ -2475,6 +2536,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <staticID>129</staticID>
           <pos>
@@ -2494,6 +2556,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <staticID>130</staticID>
           <pos>
@@ -2513,6 +2576,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>131</staticID>
           <pos>
@@ -2532,6 +2596,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>132</staticID>
           <pos>
@@ -2551,6 +2616,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <staticID>133</staticID>
           <pos>
@@ -2570,6 +2636,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>134</staticID>
           <pos>
@@ -2589,6 +2656,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <staticID>135</staticID>
           <pos>
@@ -2608,6 +2676,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <staticID>136</staticID>
           <pos>
@@ -2627,6 +2696,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_5</wallModelName>
           <staticID>137</staticID>
           <pos>
@@ -2646,6 +2716,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <staticID>138</staticID>
           <pos>
@@ -2665,6 +2736,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <staticID>139</staticID>
           <pos>
@@ -2684,6 +2756,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <staticID>140</staticID>
           <pos>
@@ -2703,6 +2776,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <staticID>141</staticID>
           <pos>
@@ -2722,6 +2796,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <staticID>142</staticID>
           <pos>
@@ -2741,6 +2816,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <staticID>143</staticID>
           <pos>
@@ -2760,6 +2836,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <staticID>144</staticID>
           <pos>
@@ -2779,6 +2856,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>145</staticID>
           <pos>
@@ -2798,6 +2876,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>146</staticID>
           <pos>
@@ -2817,6 +2896,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>147</staticID>
           <pos>
@@ -2836,6 +2916,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>148</staticID>
           <pos>
@@ -2855,6 +2936,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>149</staticID>
           <pos>
@@ -2874,6 +2956,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>150</staticID>
           <pos>
@@ -2893,6 +2976,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>151</staticID>
           <pos>
@@ -2912,6 +2996,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>152</staticID>
           <pos>
@@ -2931,6 +3016,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>153</staticID>
           <pos>
@@ -2950,6 +3036,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>154</staticID>
           <pos>
@@ -2969,6 +3056,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>155</staticID>
           <pos>
@@ -2988,6 +3076,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>156</staticID>
           <pos>
@@ -3007,6 +3096,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>157</staticID>
           <pos>
@@ -3026,6 +3116,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>158</staticID>
           <pos>
@@ -3045,6 +3136,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>159</staticID>
           <pos>
@@ -3064,6 +3156,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>160</staticID>
           <pos>
@@ -3083,6 +3176,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>161</staticID>
           <pos>
@@ -3102,6 +3196,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>162</staticID>
           <pos>
@@ -3121,6 +3216,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>163</staticID>
           <pos>
@@ -3140,6 +3236,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>164</staticID>
           <pos>
@@ -3159,6 +3256,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>165</staticID>
           <pos>
@@ -3178,6 +3276,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>166</staticID>
           <pos>
@@ -3197,6 +3296,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>167</staticID>
           <pos>
@@ -3216,6 +3316,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>168</staticID>
           <pos>
@@ -3235,6 +3336,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>169</staticID>
           <pos>
@@ -3254,6 +3356,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>170</staticID>
           <pos>
@@ -3273,6 +3376,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>171</staticID>
           <pos>
@@ -3292,6 +3396,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>172</staticID>
           <pos>
@@ -3311,6 +3416,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>173</staticID>
           <pos>
@@ -3330,6 +3436,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>174</staticID>
           <pos>
@@ -3349,6 +3456,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>175</staticID>
           <pos>
@@ -3368,6 +3476,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>176</staticID>
           <pos>
@@ -3387,6 +3496,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>177</staticID>
           <pos>
@@ -3406,6 +3516,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>178</staticID>
           <pos>
@@ -3425,6 +3536,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>179</staticID>
           <pos>
@@ -3444,6 +3556,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>180</staticID>
           <pos>
@@ -3463,6 +3576,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>181</staticID>
           <pos>
@@ -3482,6 +3596,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>182</staticID>
           <pos>
@@ -3501,6 +3616,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>183</staticID>
           <pos>
@@ -3520,6 +3636,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>184</staticID>
           <pos>
@@ -3539,6 +3656,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>185</staticID>
           <pos>
@@ -3558,6 +3676,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>186</staticID>
           <pos>
@@ -3577,6 +3696,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>187</staticID>
           <pos>
@@ -3596,6 +3716,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>188</staticID>
           <pos>
@@ -3615,6 +3736,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>189</staticID>
           <pos>
@@ -3634,6 +3756,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>190</staticID>
           <pos>
@@ -3653,6 +3776,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>191</staticID>
           <pos>
@@ -3672,6 +3796,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>192</staticID>
           <pos>
@@ -3691,6 +3816,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>193</staticID>
           <pos>
@@ -3710,6 +3836,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>194</staticID>
           <pos>
@@ -3729,6 +3856,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>195</staticID>
           <pos>
@@ -3748,6 +3876,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>196</staticID>
           <pos>
@@ -3767,6 +3896,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>197</staticID>
           <pos>
@@ -3786,6 +3916,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>198</staticID>
           <pos>
@@ -3805,6 +3936,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>199</staticID>
           <pos>
@@ -3824,6 +3956,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>200</staticID>
           <pos>
@@ -3843,6 +3976,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>201</staticID>
           <pos>
@@ -3862,6 +3996,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>202</staticID>
           <pos>
@@ -3881,6 +4016,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>203</staticID>
           <pos>
@@ -3900,6 +4036,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>204</staticID>
           <pos>
@@ -3919,6 +4056,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>205</staticID>
           <pos>
@@ -3938,6 +4076,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>206</staticID>
           <pos>
@@ -3957,6 +4096,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>207</staticID>
           <pos>
@@ -3976,6 +4116,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>208</staticID>
           <pos>
@@ -3995,6 +4136,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>209</staticID>
           <pos>
@@ -4014,6 +4156,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>210</staticID>
           <pos>
@@ -4033,6 +4176,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>211</staticID>
           <pos>
@@ -4052,6 +4196,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>212</staticID>
           <pos>
@@ -4071,6 +4216,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>213</staticID>
           <pos>
@@ -4090,6 +4236,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>214</staticID>
           <pos>
@@ -4109,6 +4256,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>215</staticID>
           <pos>
@@ -4128,6 +4276,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>216</staticID>
           <pos>
@@ -4147,6 +4296,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>217</staticID>
           <pos>
@@ -4166,6 +4316,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>218</staticID>
           <pos>
@@ -4185,6 +4336,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>219</staticID>
           <pos>
@@ -4204,6 +4356,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>220</staticID>
           <pos>
@@ -4223,6 +4376,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>221</staticID>
           <pos>
@@ -4242,6 +4396,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>222</staticID>
           <pos>
@@ -4261,6 +4416,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>223</staticID>
           <pos>
@@ -4280,6 +4436,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>224</staticID>
           <pos>
@@ -4299,6 +4456,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>225</staticID>
           <pos>
@@ -4318,6 +4476,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>226</staticID>
           <pos>
@@ -4337,6 +4496,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>227</staticID>
           <pos>
@@ -4356,6 +4516,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>228</staticID>
           <pos>
@@ -4375,6 +4536,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_bones</wallModelName>
           <staticID>229</staticID>
           <pos>
@@ -4394,6 +4556,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>230</staticID>
           <pos>
@@ -4413,6 +4576,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>231</staticID>
           <pos>
@@ -4432,6 +4596,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>232</staticID>
           <pos>
@@ -4451,6 +4616,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>233</staticID>
           <pos>
@@ -4470,6 +4636,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>234</staticID>
           <pos>
@@ -4489,6 +4656,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>235</staticID>
           <pos>
@@ -4508,6 +4676,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>236</staticID>
           <pos>
@@ -4527,6 +4696,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>237</staticID>
           <pos>
@@ -4546,6 +4716,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>238</staticID>
           <pos>
@@ -4565,6 +4736,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>239</staticID>
           <pos>
@@ -4584,6 +4756,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>240</staticID>
           <pos>
@@ -4603,6 +4776,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>241</staticID>
           <pos>
@@ -4622,6 +4796,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>242</staticID>
           <pos>
@@ -4641,6 +4816,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>243</staticID>
           <pos>
@@ -4660,6 +4836,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>244</staticID>
           <pos>
@@ -4679,6 +4856,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>245</staticID>
           <pos>
@@ -4698,6 +4876,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>246</staticID>
           <pos>
@@ -4717,6 +4896,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_horn</wallModelName>
           <staticID>247</staticID>
           <pos>
@@ -4736,6 +4916,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>248</staticID>
           <pos>
@@ -4755,6 +4936,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>249</staticID>
           <pos>
@@ -4774,6 +4956,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>250</staticID>
           <pos>
@@ -4793,6 +4976,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>251</staticID>
           <pos>
@@ -4812,6 +4996,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>252</staticID>
           <pos>
@@ -4831,6 +5016,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>253</staticID>
           <pos>
@@ -4850,6 +5036,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>254</staticID>
           <pos>
@@ -4869,6 +5056,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>255</staticID>
           <pos>
@@ -4888,6 +5076,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>256</staticID>
           <pos>
@@ -4907,6 +5096,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>257</staticID>
           <pos>
@@ -4926,6 +5116,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>258</staticID>
           <pos>
@@ -4945,6 +5136,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>259</staticID>
           <pos>
@@ -4964,6 +5156,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>260</staticID>
           <pos>
@@ -4983,6 +5176,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>261</staticID>
           <pos>
@@ -5002,6 +5196,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>262</staticID>
           <pos>
@@ -5021,6 +5216,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>263</staticID>
           <pos>
@@ -5040,6 +5236,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>264</staticID>
           <pos>
@@ -5059,6 +5256,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>265</staticID>
           <pos>
@@ -5078,6 +5276,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>266</staticID>
           <pos>
@@ -5097,6 +5296,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>267</staticID>
           <pos>
@@ -5116,6 +5316,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>268</staticID>
           <pos>
@@ -5135,6 +5336,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>269</staticID>
           <pos>
@@ -5154,6 +5356,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>270</staticID>
           <pos>
@@ -5173,6 +5376,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>271</staticID>
           <pos>
@@ -5192,6 +5396,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spear</wallModelName>
           <staticID>272</staticID>
           <pos>
@@ -5211,6 +5416,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>273</staticID>
           <pos>
@@ -5230,6 +5436,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>274</staticID>
           <pos>
@@ -5249,6 +5456,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <staticID>275</staticID>
           <pos>
@@ -5268,6 +5476,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>276</staticID>
           <pos>
@@ -5287,6 +5496,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>277</staticID>
           <pos>
@@ -5306,6 +5516,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <staticID>278</staticID>
           <pos>
@@ -5325,6 +5536,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <staticID>279</staticID>
           <pos>
@@ -5344,6 +5556,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_shield</wallModelName>
           <staticID>280</staticID>
           <pos>
@@ -5363,6 +5576,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>281</staticID>
           <pos>
@@ -5382,6 +5596,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <staticID>282</staticID>
           <pos>
@@ -5401,6 +5616,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_axe</wallModelName>
           <staticID>283</staticID>
           <pos>
@@ -5420,6 +5636,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>284</staticID>
           <pos>
@@ -5439,6 +5656,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>285</staticID>
           <pos>
@@ -5458,6 +5676,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>286</staticID>
           <pos>
@@ -5477,6 +5696,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>287</staticID>
           <pos>
@@ -5496,6 +5716,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>288</staticID>
           <pos>
@@ -5515,6 +5736,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>289</staticID>
           <pos>
@@ -5534,6 +5756,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>290</staticID>
           <pos>
@@ -5553,6 +5776,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>291</staticID>
           <pos>
@@ -5572,6 +5796,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <staticID>292</staticID>
           <pos>
@@ -5926,6 +6151,7 @@
           <typeName>lava spray</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>
           <staticID>304</staticID>
           <pos>
@@ -5945,6 +6171,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>
           <staticID>305</staticID>
           <pos>
@@ -5964,6 +6191,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>
           <staticID>306</staticID>
           <pos>
@@ -5983,6 +6211,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>
           <staticID>307</staticID>
           <pos>
@@ -6002,6 +6231,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>
           <staticID>308</staticID>
           <pos>
@@ -6021,6 +6251,7 @@
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>
           <staticID>309</staticID>
           <pos>

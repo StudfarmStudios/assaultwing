@@ -95,9 +95,20 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleJoinGameServerReply(JoinGameServerReply mess)
         {
-            DeactivateHandlers(GetStandaloneMenuHandlers(null));
-            AssaultWing.Instance.SoundEngine.PlaySound("MenuChangeItem");
-            AssaultWing.Instance.StartClient(mess.GameServerEndPoints, ClientConnectedCallback);
+            var game = AssaultWing.Instance;
+            if (mess.Success)
+            {
+                DeactivateHandlers(GetStandaloneMenuHandlers(null));
+                game.SoundEngine.PlaySound("MenuChangeItem");
+                game.StartClient(mess.GameServerEndPoints, ClientConnectedCallback);
+            }
+            else
+            {
+                Log.Write("Couldn't connect to server: " + mess.FailMessage);
+                var dialogData = new CustomOverlayDialogData(game, "Couldn't connect to server:\n" + mess.FailMessage,
+                    new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu));
+                game.ShowDialog(dialogData);
+            }
         }
 
         private static void HandleClientJoinMessage(ClientJoinMessage mess)

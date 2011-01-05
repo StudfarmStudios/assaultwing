@@ -45,7 +45,6 @@ namespace AW2.Menu
         private VertexPositionColor[] _shadowVertexData;
         private int[] _shadowIndexData; // stored as a triangle list
         private BasicEffect _effect;
-        private Curve _alphaCurve;
         private Point _shadowSize;
 
         private SpriteBatch _spriteBatch;
@@ -89,24 +88,6 @@ namespace AW2.Menu
 
         private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
-        private Curve AlphaCurve
-        {
-            get
-            {
-                if (_alphaCurve == null)
-                {
-                    _alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
-                    _alphaCurve.Keys.Add(new CurveKey(0, 0));
-                    _alphaCurve.Keys.Add(new CurveKey(500, 120));
-                    _alphaCurve.Keys.Add(new CurveKey(1000, 255));
-                    _alphaCurve.PreLoop = CurveLoopType.Constant;
-                    _alphaCurve.PostLoop = CurveLoopType.Constant;
-                    _alphaCurve.ComputeTangents(CurveTangent.Smooth);
-                }
-                return _alphaCurve;
-            }
-            set { _alphaCurve = value; }
-        }
 
         static MenuEngineImpl()
         {
@@ -300,6 +281,14 @@ namespace AW2.Menu
         /// </summary>
         private void InitializeShadow()
         {
+            var alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
+            alphaCurve.Keys.Add(new CurveKey(0, 0));
+            alphaCurve.Keys.Add(new CurveKey(500, 0.47f));
+            alphaCurve.Keys.Add(new CurveKey(1000, 1));
+            alphaCurve.PreLoop = CurveLoopType.Constant;
+            alphaCurve.PostLoop = CurveLoopType.Constant;
+            alphaCurve.ComputeTangents(CurveTangent.Smooth);
+
             _shadowSize = new Point(ViewportWidth, ViewportHeight);
             // The shadow is a rectangle that spans a grid of vertices, each
             // of them black but with different levels of alpha.
@@ -317,7 +306,7 @@ namespace AW2.Menu
                     float distance = posInShadow.Length();
                     vertexData.Add(new VertexPositionColor(
                         new Vector3(posInShadow, 0),
-                        new Color(0, 0, 0, (byte)AlphaCurve.Evaluate(distance))));
+                        Color.Multiply(Color.Black, alphaCurve.Evaluate(distance))));
                     if (y > 0)
                     {
                         if (x > 0)

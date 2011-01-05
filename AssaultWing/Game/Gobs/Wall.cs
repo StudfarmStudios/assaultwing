@@ -58,10 +58,6 @@ namespace AW2.Game.Gobs
 
         #region Properties
 
-        /// <summary>
-        /// Returns the world matrix of the gob, i.e., the translation from
-        /// game object coordinates to game world coordinates.
-        /// </summary>
         public override Matrix WorldMatrix
         {
             get
@@ -72,9 +68,6 @@ namespace AW2.Game.Gobs
             }
         }
 
-        /// <summary>
-        /// Bounding volume of the visuals of the gob, in world coordinates.
-        /// </summary>
         public override BoundingSphere DrawBounds
         {
             get
@@ -163,12 +156,9 @@ namespace AW2.Game.Gobs
 
         /// <summary>
         /// Draws the wall as a silhouette.
-        /// </summary>
-        /// Assumes that the sprite batch has been Begun already and will be
+        /// Assumes that the SpriteBatch has been Begun already and will be
         /// Ended later by someone else.
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
-        /// <param name="spriteBatch">The sprite batch to draw sprites with.</param>
+        /// </summary>
         public void DrawSilhouette(Matrix view, Matrix projection, SpriteBatch spriteBatch)
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;

@@ -2,43 +2,43 @@
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   
   <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<pictureName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_weaponpicture_bazooka</pictureName>
-	<titlePictureName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_weaponname_bazooka</titlePictureName>
-	<infoText type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Shoots 2 mass-driver type bullets that
+	<pictureName>menu_equip_weaponpicture_bazooka</pictureName>
+	<titlePictureName>menu_equip_weaponname_bazooka</titlePictureName>
+	<infoText>Shoots 2 mass-driver type bullets that
 explode heavily on impact. The side effect
 of the heavy mass is the great recoil</infoText>
-	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Great</reloadSpeed>
-	<energyUsage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</energyUsage>
+	<reloadSpeed>Great</reloadSpeed>
+	<energyUsage>Low</energyUsage>
 	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
-    <iconEquipName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_wep2_dumbfire</iconEquipName>
+    <iconEquipName>menu_equip_wep2_dumbfire</iconEquipName>
   </deviceInfo>
 
   <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<singleShotDamage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Great</singleShotDamage>
-	<shotSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</shotSpeed>
-	<recoilMomentum type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Great</recoilMomentum>
+	<singleShotDamage>Great</singleShotDamage>
+	<shotSpeed>High</shotSpeed>
+	<recoilMomentum>Great</recoilMomentum>
   </weaponInfo>
   
-  <typeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bazooka</typeName>
+  <typeName>bazooka</typeName>
   <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right</gunBarrels>
   <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">KillAll</fireAction>
-  <upgradeNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">trizooka</Item>
+  <upgradeNames>
+    <Item>trizooka</Item>
   </upgradeNames>
-  <iconName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_bouncegun</iconName>
-  <fireSound type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Bazooka</fireSound>
+  <iconName>b_icon_bouncegun</iconName>
+  <fireSound>Bazooka</fireSound>
   <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
-  <shotTypeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bomb</shotTypeName>
-  <shotSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">650</shotSpeed>
-  <loadTime type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3</loadTime>
-  <fireCharge type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">550</fireCharge>
-  <fireChargePerSecond type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">550</fireChargePerSecond>
-  <shotCount type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</shotCount>
-  <shotSpacing type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</shotSpacing>
-  <shotAngleVariation type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</shotAngleVariation>
-  <shotSpeedVariation type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10</shotSpeedVariation>
-  <recoilMomentum type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">115000</recoilMomentum>
-  <muzzleFireEngineNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">blue muzzle flame</Item>
+  <shotTypeName>bomb</shotTypeName>
+  <shotSpeed>650</shotSpeed>
+  <loadTime>3</loadTime>
+  <fireCharge>550</fireCharge>
+  <fireChargePerSecond>550</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+  <shotAngleVariation>0</shotAngleVariation>
+  <shotSpeedVariation>10</shotSpeedVariation>
+  <recoilMomentum>115000</recoilMomentum>
+  <muzzleFireEngineNames>
+    <Item>blue muzzle flame</Item>
   </muzzleFireEngineNames>
 </ShipDeviceType>

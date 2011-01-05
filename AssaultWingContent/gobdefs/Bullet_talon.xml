@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Bullet, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">talon</typeName>
-  <isRotating type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</isRotating>
-  <rotationSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10.0</rotationSpeed>
-   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <ticks type="System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000000</ticks>
+  <typeName>talon</typeName>
+  <isRotating>true</isRotating>
+  <rotationSpeed>10.0</rotationSpeed>
+   <networkUpdatePeriod>
+      <ticks>10000000</ticks>
    </networkUpdatePeriod>
-  <lifetime type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.35</lifetime>
-  <impactDamage type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">11</impactDamage>
-  <impactHoleRadius type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">5</impactHoleRadius>
-  <mass type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10</mass>
-  <scale type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.06</scale>
-  <depthLayer2D type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</depthLayer2D>
-  <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
+  <lifetime>0.35</lifetime>
+  <impactDamage>11</impactDamage>
+  <impactHoleRadius>5</impactHoleRadius>
+  <mass>10</mass>
+  <scale>0.06</scale>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+      <type>None</type>
   </drawMode2D>
-  <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
-  <bulletModelNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">windlord_claw</Item>
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">windlord_claw2</Item>
+  <layerPreference>Front</layerPreference>
+  <bulletModelNames>
+      <Item>windlord_claw</Item>
+      <Item>windlord_claw2</Item>
   </bulletModelNames>
-  <modelName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummymodel</modelName>
-  <movable type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
-  <maxDamage type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
-  <deathGobTypes type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">windlord claws</Item>
-	  <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">star flash</Item>
+  <modelName>dummymodel</modelName>
+  <movable>true</movable>
+  <maxDamage>100</maxDamage>
+  <deathGobTypes>
+      <Item>windlord claws</Item>
+	  <Item>star flash</Item>
   </deathGobTypes>
-  <birthGobTypes type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bullet glow</Item>
+  <birthGobTypes>
+      <Item>bullet glow</Item>
   </birthGobTypes>
-  <exhaustEngineNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <exhaustEngineNames>
   </exhaustEngineNames>
-  <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-         <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalShot</type>
-         <collidesAgainst type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</collidesAgainst>
-         <cannotOverlap type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalConsistencyCompromisable</cannotOverlap>
-         <collisionMaterial type="AW2.Game.CollisionMaterialType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Regular</collisionMaterial>
-         <name type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Hit</name>
+  <collisionAreas>
+      <Item>
+         <type>PhysicalShot</type>
+         <collidesAgainst>None</collidesAgainst>
+         <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+         <collisionMaterial>Regular</collisionMaterial>
+         <name>Hit</name>
          <area type="AW2.Helpers.Geometric.Point, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <location type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-               <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
-               <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
+            <location>
+               <X>0</X>
+               <Y>0</Y>
             </location>
          </area>
       </Item>

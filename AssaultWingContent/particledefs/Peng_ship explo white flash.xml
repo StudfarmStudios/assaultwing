@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">ship explo white flash</typeName>
-   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <ticks type="System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000000</ticks>
+  <typeName>ship explo white flash</typeName>
+   <networkUpdatePeriod>
+      <ticks>10000000</ticks>
    </networkUpdatePeriod>
-  <depthLayer2D type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.18</depthLayer2D>
-  <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Additive</type>
+  <depthLayer2D>0.18</depthLayer2D>
+  <drawMode2D>
+      <type>Additive</type>
   </drawMode2D>
-  <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
+  <layerPreference>Front</layerPreference>
   <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
   <playerRelated type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null">false</playerRelated>
   <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <emissionFrequency type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">19</emissionFrequency>
-      <numberToCreate type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">9</numberToCreate>
-      <radius type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">28</radius>
-      <sprayAngle type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3.142</sprayAngle>
+      <emissionFrequency>19</emissionFrequency>
+      <numberToCreate>9</numberToCreate>
+      <radius>28</radius>
+      <sprayAngle>3.142</sprayAngle>
       <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Random</facingType>
-      <textureNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-         <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">p_explo_white</Item>
+      <textureNames>
+         <Item>p_explo_white</Item>
       </textureNames>
-      <gobTypeNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <gobTypeNames>
 <!--      <Item type="&string;">hail</Item>-->
     </gobTypeNames>
       <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</value>
+        <value>0</value>
       </initialVelocity>
   </emitter>
   <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <drag type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.0</drag>
+      <drag>0.0</drag>
       <particleAge type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-         <expected type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.6</expected>
-         <variance type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.2</variance>
+         <expected>0.6</expected>
+         <variance>0.2</variance>
       </particleAge>
       <acceleration type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</value>
+        <value>0</value>
       </acceleration>
       <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.8</value>
+        <value>0.8</value>
       </rotationSpeed>
       <scale type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-         <min type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.001</min>
-         <max type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1000</max>
-         <randomAmplitude type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.2</randomAmplitude>
-         <randomMixer type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3</randomMixer>
+         <min>0.001</min>
+         <max>1000</max>
+         <randomAmplitude>0.2</randomAmplitude>
+         <randomMixer>3</randomMixer>
          <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
                <Item type="AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-                  <input type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</input>
-                  <curve type="Microsoft.Xna.Framework.Curve, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                     <preLoop type="Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Constant</preLoop>
-                     <postLoop type="Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Constant</postLoop>
-                     <keys type="Microsoft.Xna.Framework.CurveKeyCollection, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                        <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                           <position type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</position>
-                           <internalValue type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.0</internalValue>
-                           <tangentOut type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentOut>
-                           <tangentIn type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentIn>
-                           <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Smooth</continuity>
+                  <input>0</input>
+                  <curve>
+                     <preLoop>Constant</preLoop>
+                     <postLoop>Constant</postLoop>
+                     <keys>
+                        <Item>
+                           <position>0</position>
+                           <internalValue>0.0</internalValue>
+                           <tangentOut>0</tangentOut>
+                           <tangentIn>0</tangentIn>
+                           <continuity>Smooth</continuity>
                         </Item>
-                        <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                           <position type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.15</position>
-                           <internalValue type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.45</internalValue>
-                           <tangentOut type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentOut>
-                           <tangentIn type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentIn>
-                           <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Smooth</continuity>
+                        <Item>
+                           <position>0.15</position>
+                           <internalValue>0.45</internalValue>
+                           <tangentOut>0</tangentOut>
+                           <tangentIn>0</tangentIn>
+                           <continuity>Smooth</continuity>
                         </Item>
-                        <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                           <position type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</position>
-                           <internalValue type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.25</internalValue>
-                           <tangentOut type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentOut>
-                           <tangentIn type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentIn>
-                           <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Smooth</continuity>
+                        <Item>
+                           <position>1</position>
+                           <internalValue>0.25</internalValue>
+                           <tangentOut>0</tangentOut>
+                           <tangentIn>0</tangentIn>
+                           <continuity>Smooth</continuity>
                         </Item>
                      </keys>
                   </curve>
@@ -80,45 +80,45 @@
          </keys>
       </scale>
       <alpha type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-         <min type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</min>
-         <max type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</max>
-         <randomAmplitude type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.05</randomAmplitude>
-         <randomMixer type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4</randomMixer>
+         <min>0</min>
+         <max>1</max>
+         <randomAmplitude>0.05</randomAmplitude>
+         <randomMixer>4</randomMixer>
          <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
                <Item type="AW2.Game.Pengs.CurveLerpKey, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-                  <input type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</input>
-                  <curve type="Microsoft.Xna.Framework.Curve, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                     <preLoop type="Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Constant</preLoop>
-                     <postLoop type="Microsoft.Xna.Framework.CurveLoopType, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Constant</postLoop>
-                     <keys type="Microsoft.Xna.Framework.CurveKeyCollection, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                        <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                           <position type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</position>
-                           <internalValue type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.1</internalValue>
-                           <tangentOut type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentOut>
-                           <tangentIn type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentIn>
-                           <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Smooth</continuity>
+                  <input>0</input>
+                  <curve>
+                     <preLoop>Constant</preLoop>
+                     <postLoop>Constant</postLoop>
+                     <keys>
+                        <Item>
+                           <position>0</position>
+                           <internalValue>0.1</internalValue>
+                           <tangentOut>0</tangentOut>
+                           <tangentIn>0</tangentIn>
+                           <continuity>Smooth</continuity>
                         </Item>
-                        <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                           <position type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.2</position>
-                           <internalValue type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.45</internalValue>
-                           <tangentOut type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentOut>
-                           <tangentIn type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentIn>
-                           <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Smooth</continuity>
+                        <Item>
+                           <position>0.2</position>
+                           <internalValue>0.45</internalValue>
+                           <tangentOut>0</tangentOut>
+                           <tangentIn>0</tangentIn>
+                           <continuity>Smooth</continuity>
                         </Item>
-                        <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                           <position type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.4</position>
-                           <internalValue type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.26</internalValue>
-                           <tangentOut type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentOut>
-                           <tangentIn type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentIn>
-                           <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Smooth</continuity>
+                        <Item>
+                           <position>0.4</position>
+                           <internalValue>0.26</internalValue>
+                           <tangentOut>0</tangentOut>
+                           <tangentIn>0</tangentIn>
+                           <continuity>Smooth</continuity>
                         </Item>
-                        <Item type="Microsoft.Xna.Framework.CurveKey, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                           <position type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</position>
-                           <internalValue type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.0</internalValue>
-                           <tangentOut type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentOut>
-                           <tangentIn type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</tangentIn>
-                           <continuity type="Microsoft.Xna.Framework.CurveContinuity, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">Smooth</continuity>
+                        <Item>
+                           <position>1</position>
+                           <internalValue>0.0</internalValue>
+                           <tangentOut>0</tangentOut>
+                           <tangentIn>0</tangentIn>
+                           <continuity>Smooth</continuity>
                         </Item>
                      </keys>
                   </curve>
@@ -127,13 +127,13 @@
          </keys>
       </alpha>
   </updater>
-  <birthGobTypes type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
-  <deathGobTypes type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
-  <movable type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">false</movable>
-  <exhaustEngineNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
-  <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
-  <mass type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</mass>
-  <modelName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummymodel</modelName>
-  <scale type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</scale>
-  <maxDamage type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">100</maxDamage>
+  <birthGobTypes/>
+  <deathGobTypes/>
+  <movable>false</movable>
+  <exhaustEngineNames/>
+  <collisionAreas/>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <maxDamage>100</maxDamage>
 </GobType>

@@ -2,46 +2,46 @@
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
 
   <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<pictureName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_weaponpicture_rockets</pictureName>
-	<titlePictureName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_weaponname_rockets</titlePictureName>
-	<infoText type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">High Explosive Rocket Propelling 
+	<pictureName>menu_equip_weaponpicture_rockets</pictureName>
+	<titlePictureName>menu_equip_weaponname_rockets</titlePictureName>
+	<infoText>High Explosive Rocket Propelling 
 Emitter System  -HERPES-
 
 Fires 6 semi-guided rockets in 3 pairs.
 They are petrol powered and will
 eventually run out of juice.</infoText>
-	<reloadSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">High</reloadSpeed>
-	<energyUsage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</energyUsage>
+	<reloadSpeed>High</reloadSpeed>
+	<energyUsage>Average</energyUsage>
 	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
-    <iconEquipName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">menu_equip_wep2_rockets</iconEquipName>
+    <iconEquipName>menu_equip_wep2_rockets</iconEquipName>
   </deviceInfo>
 
   <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<singleShotDamage type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</singleShotDamage>
-	<shotSpeed type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Average</shotSpeed>
-	<recoilMomentum type="AW2.Game.GobUtils.EquipInfo+EquipInfoAmountType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Low</recoilMomentum>
+	<singleShotDamage>Average</singleShotDamage>
+	<shotSpeed>Average</shotSpeed>
+	<recoilMomentum>Low</recoilMomentum>
   </weaponInfo>
   
-  <typeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rockets</typeName>
+  <typeName>rockets</typeName>
   <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right</gunBarrels>
   <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
-  <upgradeNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">berserkers</Item>
+  <upgradeNames>
+    <Item>berserkers</Item>
   </upgradeNames>
-  <iconName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">b_icon_berserkers</iconName>
-  <fireSound type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">Missile</fireSound>
+  <iconName>b_icon_berserkers</iconName>
+  <fireSound>Missile</fireSound>
   <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
-  <shotTypeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">rocket</shotTypeName>
-  <shotSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">150</shotSpeed>
-  <loadTime type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">4</loadTime>
-  <fireCharge type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">400</fireCharge>
-  <fireChargePerSecond type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">500</fireChargePerSecond>
-  <shotCount type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">3</shotCount>
-  <shotSpacing type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.2</shotSpacing>
-  <shotAngleVariation type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.05</shotAngleVariation>
-  <shotSpeedVariation type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10</shotSpeedVariation>
-  <recoilMomentum type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1000</recoilMomentum>
-  <muzzleFireEngineNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">basic muzzle fire</Item>
+  <shotTypeName>rocket</shotTypeName>
+  <shotSpeed>150</shotSpeed>
+  <loadTime>4</loadTime>
+  <fireCharge>400</fireCharge>
+  <fireChargePerSecond>500</fireChargePerSecond>
+  <shotCount>3</shotCount>
+  <shotSpacing>0.2</shotSpacing>
+  <shotAngleVariation>0.05</shotAngleVariation>
+  <shotSpeedVariation>10</shotSpeedVariation>
+  <recoilMomentum>1000</recoilMomentum>
+  <muzzleFireEngineNames>
+    <Item>basic muzzle fire</Item>
   </muzzleFireEngineNames>
 </ShipDeviceType>

@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.BounceBullet, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">lava chunk</typeName>
-  <isRotating type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</isRotating>
-  <rotationSpeed type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">2.0</rotationSpeed>
-   <networkUpdatePeriod type="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <ticks type="System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">10000000</ticks>
+  <typeName>lava chunk</typeName>
+  <isRotating>true</isRotating>
+  <rotationSpeed>2.0</rotationSpeed>
+   <networkUpdatePeriod>
+      <ticks>10000000</ticks>
    </networkUpdatePeriod>
-  <lifetime type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">25</lifetime>
-  <maxDamage type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1200</maxDamage>
-  <impactDamage type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">20</impactDamage>
-  <impactHoleRadius type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</impactHoleRadius>
-  <mass type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">200</mass>
-  <scale type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</scale>
-  <bulletModelNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bloodbowl_lavachunk1</Item>
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bloodbowl_lavachunk1</Item>
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bloodbowl_lavachunk1</Item>
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">bloodbowl_lavachunk2</Item>
+  <lifetime>25</lifetime>
+  <maxDamage>1200</maxDamage>
+  <impactDamage>20</impactDamage>
+  <impactHoleRadius>0</impactHoleRadius>
+  <mass>200</mass>
+  <scale>1</scale>
+  <bulletModelNames>
+      <Item>bloodbowl_lavachunk1</Item>
+      <Item>bloodbowl_lavachunk1</Item>
+      <Item>bloodbowl_lavachunk1</Item>
+      <Item>bloodbowl_lavachunk2</Item>
   </bulletModelNames>
-  <modelName type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">dummymodel</modelName>
-  <movable type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">true</movable>
-  <depthLayer2D type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0.5</depthLayer2D>
-  <drawMode2D type="AW2.Graphics.DrawMode2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <type type="AW2.Graphics.DrawModeType2D, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</type>
+  <modelName>dummymodel</modelName>
+  <movable>true</movable>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+      <type>None</type>
   </drawMode2D>
-  <layerPreference type="AW2.Game.Gob+LayerPreferenceType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Front</layerPreference>
-  <deathGobTypes type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">large fragment explo</Item>
+  <layerPreference>Front</layerPreference>
+  <deathGobTypes>
+      <Item>large fragment explo</Item>
   </deathGobTypes>
-  <birthGobTypes type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <Item type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">large fragment glow</Item>
+  <birthGobTypes>
+      <Item>large fragment glow</Item>
   </birthGobTypes>
-  <exhaustEngineNames type="System.String[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <exhaustEngineNames>
   </exhaustEngineNames>
-  <collisionAreas type="AW2.Game.CollisionArea[], AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <Item type="AW2.Game.CollisionArea, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-         <type type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalOtherDamageableMovable</type>
-         <collidesAgainst type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">None</collidesAgainst>
-         <cannotOverlap type="AW2.Game.CollisionAreaType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">PhysicalConsistencyCompromisable</cannotOverlap>
-         <collisionMaterial type="AW2.Game.CollisionMaterialType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Bouncy</collisionMaterial>
-         <name type="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">General</name>
+  <collisionAreas>
+      <Item>
+         <type>PhysicalOtherDamageableMovable</type>
+         <collidesAgainst>None</collidesAgainst>
+         <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+         <collisionMaterial>Bouncy</collisionMaterial>
+         <name>General</name>
          <area type="AW2.Helpers.Geometric.Circle, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <center type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-               <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
-               <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
+            <center>
+               <X>0</X>
+               <Y>0</Y>
             </center>
-            <radius type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">1</radius>
-            <boundingBox type="AW2.Helpers.Geometric.Rectangle, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-               <min type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                  <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
-                  <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
+            <radius>1</radius>
+            <boundingBox>
+               <min>
+                  <X>0</X>
+                  <Y>0</Y>
                </min>
-               <max type="Microsoft.Xna.Framework.Vector2, Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-                  <X type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</X>
-                  <Y type="System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">0</Y>
+               <max>
+                  <X>0</X>
+                  <Y>0</Y>
                </max>
             </boundingBox>
          </area>

@@ -123,15 +123,7 @@ namespace AW2.Helpers.Serialization
                 if (!reader.IsStartElement(elementName))
                     throw new XmlException("Deserialisation expected start element " + elementName + " but got " + reader.Name);
 
-                // Find out type of value in XML
-                string writtenTypeName = reader.GetAttribute("type");
-                if (writtenTypeName == null)
-                    throw new XmlException("XML type attribute missing from element " + elementName);
-                Type writtenType = Type.GetType(writtenTypeName);
-                if (writtenType == null)
-                    throw new XmlException("XML suggests unknown type " + writtenTypeName);
-                if (!IsAssignableFrom(objType, writtenType))
-                    throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name);
+                var writtenType = GetWrittenType(reader, elementName, objType);
 
                 // Deserialise
                 object returnValue;
@@ -163,6 +155,23 @@ namespace AW2.Helpers.Serialization
                 e.MemberName = elementName + "." + e.MemberName;
                 throw;
             }
+        }
+
+        private static Type GetWrittenType(XmlReader reader, string elementName, Type objType)
+        {
+            var writtenTypeName = reader.GetAttribute("type");
+            if (writtenTypeName == null)
+            {
+                // Default to expected object type or to what SerializedTypeAttribute says.
+                var serializedTypeAttribute = (SerializedTypeAttribute)Attribute.GetCustomAttribute(objType, typeof(SerializedTypeAttribute));
+                if (serializedTypeAttribute == null) return objType;
+                return serializedTypeAttribute.SerializedType;
+            }
+            var writtenType = Type.GetType(writtenTypeName);
+            if (writtenType == null) throw new XmlException("XML suggests unknown type " + writtenTypeName);
+            if (!IsAssignableFrom(objType, writtenType))
+                throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name);
+            return writtenType;
         }
 
         private static object DeserializeXmlOther(XmlReader reader, Type limitationAttribute, Type writtenType)

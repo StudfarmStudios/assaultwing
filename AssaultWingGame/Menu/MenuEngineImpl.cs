@@ -216,6 +216,16 @@ namespace AW2.Menu
         }
 
         /// <summary>
+        /// Deactivates all menu components except main menu.
+        /// </summary>
+        public void DeactivateComponentsExceptMainMenu()
+        {
+            foreach (int component in Enum.GetValues(typeof(MenuComponentType)))
+                if ((MenuComponentType)component != MenuComponentType.Main)
+                    _components[component].Active = false;
+        }
+
+        /// <summary>
         /// Performs an action asynchronously, visualising progress with the progress bar.
         /// After calling this method, call <c>ProgressBar.SetSubtaskCount(int)</c> with 
         /// a suitable value.
@@ -259,9 +269,7 @@ namespace AW2.Menu
                 Game.SoundEngine.PlaySound("MenuChangeEnd");
             }
 
-            // Update menu components.
-            foreach (MenuComponent component in _components)
-                component.Update();
+            foreach (var component in _components) component.Update();
         }
 
         public override void Draw()

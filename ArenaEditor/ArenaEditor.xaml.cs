@@ -30,7 +30,11 @@ namespace AW2
             public ArenaLayer Value { get; set; }
             public override string ToString()
             {
-                return string.Format("z={0:f0} {1}{2}", Value.Z, Value.IsGameplayLayer ? "(G) " : "", Value.ParallaxName);
+                return string.Format("z={0:f0} {1}{2} gobs, {3}",
+                    Value.Z,
+                    Value.IsGameplayLayer ? "(G) " : "",
+                    Value.Gobs.Count,
+                    Value.ParallaxName);
             }
         }
 
@@ -393,13 +397,7 @@ namespace AW2
 
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
-            if (SelectedLayer == null)
-                SelectGobFromAnyLayer(viewport, pointInViewport);
-            else
-            {
-                SelectGobFromCurrentLayer(viewport, pointInViewport);
-                if (SelectedGob == null) SelectGobFromAnyLayer(viewport, pointInViewport);
-            }
+            SelectGobFromAnyLayer(viewport, pointInViewport);
         }
 
         private void SelectGobFromCurrentLayer(AWViewport viewport, Vector2 pointInViewport)

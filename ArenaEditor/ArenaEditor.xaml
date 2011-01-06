@@ -31,9 +31,21 @@
                 </StackPanel>
             </GroupBox>
             <GroupBox DockPanel.Dock="Top" Header="Layers">
-                <ListBox Name="LayerNames" MinWidth="100" MaxHeight="200"
+                <ListBox Name="LayerNames" MinWidth="100" MaxHeight="300"
                         SelectedValuePath="Value"
-                        SelectionChanged="LayerNames_SelectionChanged"/>
+                        SelectionChanged="LayerNames_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox Name="Visible" IsChecked="True"/>
+                                <Label Content="{Binding Value.Z}"/>
+                                <Label Content="{Binding Value.Gobs.Count}"/>
+                                <Label Content="gobs"/>
+                                <Label Content="{Binding Value.ParallaxName}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </GroupBox>
             <GroupBox Name="GobPropertyTools" DockPanel.Dock="Top" Header="Gob Properties">
                 <StackPanel Orientation="Vertical">

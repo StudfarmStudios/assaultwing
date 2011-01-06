@@ -393,7 +393,17 @@ namespace AW2
 
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
-            if (SelectedLayer == null) return;
+            if (SelectedLayer == null)
+                SelectGobFromAnyLayer(viewport, pointInViewport);
+            else
+            {
+                SelectGobFromCurrentLayer(viewport, pointInViewport);
+                if (SelectedGob == null) SelectGobFromAnyLayer(viewport, pointInViewport);
+            }
+        }
+
+        private void SelectGobFromCurrentLayer(AWViewport viewport, Vector2 pointInViewport)
+        {
             var ray = viewport.ToRay(pointInViewport, SelectedLayer.Z);
             var nearbyGobs =
                 from gob in SelectedLayer.Gobs
@@ -403,6 +413,17 @@ namespace AW2
                 orderby distance ascending
                 select gob;
             SelectGob(nearbyGobs.FirstOrDefault());
+        }
+
+        private void SelectGobFromAnyLayer(AWViewport viewport, Vector2 pointInViewport)
+        {
+            for (int index = LayerNames.Items.Count - 1; index >= 0; index--)
+            {
+                LayerNames.SelectedIndex = index;
+                SelectGobFromCurrentLayer(viewport, pointInViewport);
+                if (SelectedGob != null) break;
+            }
+            if (SelectedGob == null) LayerNames.SelectedIndex = -1;
         }
 
         private void DragViewport(AWViewport viewport, Point newMouseLocation)

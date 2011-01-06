@@ -25,15 +25,6 @@ namespace AW2
     /// </summary>
     public partial class ArenaEditor : System.Windows.Window
     {
-        private class GobReference
-        {
-            public Gob Value { get; set; }
-            public override string ToString()
-            {
-                return string.Format("{0}", Value.TypeName);
-            }
-        }
-
         private class LayerReference
         {
             public ArenaLayer Value { get; set; }
@@ -49,7 +40,9 @@ namespace AW2
         private System.Windows.Forms.MouseButtons _mouseButtons;
         private Point _lastMouseLocation, _dragStartLocation;
         private bool _isDragging;
+        private Gob _selectedGob;
         private object _properContent;
+        private object _gobPropertyTools;
 
         /// <summary>
         /// Must be set right after creation.
@@ -57,7 +50,7 @@ namespace AW2
         private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }
-        private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
+        private Gob SelectedGob { get { return _selectedGob; } }
         private IEnumerable<EditorViewport> EditorViewports
         {
             get { return _game.DataEngine.Viewports.Where(vp => vp is EditorViewport).Cast<EditorViewport>(); }
@@ -67,6 +60,7 @@ namespace AW2
         {
             InitializeComponent();
             SetWaitContent();
+            _gobPropertyTools = GobPropertyTools.Content;
             Loaded += (sender, eventArgs) =>
             {
                 // GraphicsDeviceService needs a window handle which is only available after the window is visible
@@ -191,7 +185,6 @@ namespace AW2
                 if (!_isDragging && e.Button == System.Windows.Forms.MouseButtons.Left)
                 {
                     if (_game.DataEngine.Arena == null) return;
-                    GobNames.Items.Clear();
                     var pointInViewport = new Vector2(e.Location.X, e.Location.Y);
                     var viewport = GetViewport(e.Location);
                     if (viewport != null) ClickViewport(viewport, pointInViewport);
@@ -255,17 +248,24 @@ namespace AW2
 
         private void LayerNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            GobNames.Items.Clear();
+            SelectGob(null);
         }
 
-        private void GobNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void SelectGob(Gob gob)
         {
-            foreach (GobReference gob in e.RemovedItems) gob.Value.BleachValue = 0;
-            foreach (GobReference gob in e.AddedItems) gob.Value.BleachValue = 0.35f;
-            if (SelectedGob == null) return;
+            if (SelectedGob != null) SelectedGob.BleachValue = 0;
+            _selectedGob = gob;
+            if (SelectedGob == null)
+            {
+                GobPropertyTools.Content = null;
+                return;
+            }
+            GobPropertyTools.Content = _gobPropertyTools;
+            SelectedGob.BleachValue = 0.35f;
+            GobType.Content = SelectedGob.TypeName;
             float newValue = SelectedGob.Rotation % MathHelper.TwoPi;
             if (newValue < 0) newValue += MathHelper.TwoPi;
-            gobRotation.Value = newValue;
+            GobRotation.Value = newValue;
         }
 
         private void DuplicateGob_Click(object sender, RoutedEventArgs e)
@@ -282,6 +282,7 @@ namespace AW2
         {
             if (SelectedGob == null) return;
             SelectedGob.Arena.Gobs.Remove(SelectedGob);
+            SelectGob(null);
         }
 
         #endregion Control event handlers
@@ -401,8 +402,7 @@ namespace AW2
                 where distance < 20 || t.HasValue
                 orderby distance ascending
                 select gob;
-            foreach (var gob in nearbyGobs) GobNames.Items.Add(new GobReference { Value = gob });
-            GobNames.SelectedIndex = 0;
+            SelectGob(nearbyGobs.FirstOrDefault());
         }
 
         private void DragViewport(AWViewport viewport, Point newMouseLocation)

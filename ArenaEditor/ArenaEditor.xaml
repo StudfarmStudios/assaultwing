@@ -35,17 +35,15 @@
                         SelectedValuePath="Value"
                         SelectionChanged="LayerNames_SelectionChanged"/>
             </GroupBox>
-            <GroupBox DockPanel.Dock="Top" Header="Gob selection">
-                <ListBox Name="GobNames" MinWidth="100" MaxHeight="400"
-                        DockPanel.Dock="Top"
-                        SelectedValuePath="Value"
-                        SelectionChanged="GobNames_SelectionChanged"/>
-            </GroupBox>
-            <GroupBox Name="GobEditControls" DockPanel.Dock="Top" Header="Gob editing">
+            <GroupBox Name="GobPropertyTools" DockPanel.Dock="Top" Header="Gob Properties">
                 <StackPanel Orientation="Vertical">
                     <DockPanel LastChildFill="True">
+                        <Label>Type:</Label>
+                        <Label Name="GobType"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True">
                         <Label>Rotation</Label>
-                        <Slider Name="gobRotation"
+                        <Slider Name="GobRotation"
                             Minimum="0" Maximum="6.28318531" TickFrequency="0.785398163"
                             SmallChange="0.196349541" LargeChange="0.785398163"
                             ValueChanged="GobRotation_ValueChanged"/>

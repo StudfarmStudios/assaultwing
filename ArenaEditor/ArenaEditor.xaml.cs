@@ -49,6 +49,7 @@ namespace AW2
         private System.Windows.Forms.MouseButtons _mouseButtons;
         private Point _lastMouseLocation, _dragStartLocation;
         private bool _isDragging;
+        private object _properContent;
 
         /// <summary>
         /// Must be set right after creation.
@@ -65,6 +66,7 @@ namespace AW2
         public ArenaEditor(string[] args)
         {
             InitializeComponent();
+            SetWaitContent();
             Loaded += (sender, eventArgs) =>
             {
                 // GraphicsDeviceService needs a window handle which is only available after the window is visible
@@ -81,6 +83,27 @@ namespace AW2
             {
                 _game.Dispose();
                 _game = null;
+            }
+        }
+
+        public void LoadArena(string arenaFilename)
+        {
+            var oldCursor = ArenaEditorWindow.Cursor;
+            try
+            {
+                ArenaEditorWindow.Cursor = Cursors.Wait;
+                var data = _game.DataEngine;
+                data.ProgressBar.Task = () => data.InitializeFromArena(arenaFilename, false);
+                data.ProgressBar.StartTask();
+                while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
+                data.ProgressBar.FinishTask();
+                _game.StartArena();
+                UpdateControlsFromArena();
+                ApplyViewSettingsToAllViewports();
+            }
+            finally
+            {
+                ArenaEditorWindow.Cursor = oldCursor;
             }
         }
 
@@ -105,24 +128,7 @@ namespace AW2
             };
             bool? success = fileDialog.ShowDialog();
             if (success.HasValue && !success.Value) return;
-            var oldCursor = ArenaEditorWindow.Cursor;
-            try
-            {
-                ArenaEditorWindow.Cursor = Cursors.Wait;
-                var arenaFilename = fileDialog.FileName;
-                var data = _game.DataEngine;
-                data.ProgressBar.Task = () => data.InitializeFromArena(arenaFilename, false);
-                data.ProgressBar.StartTask();
-                while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
-                data.ProgressBar.FinishTask();
-                _game.StartArena();
-                UpdateControlsFromArena();
-                ApplyViewSettingsToAllViewports();
-            }
-            finally
-            {
-                ArenaEditorWindow.Cursor = oldCursor;
-            }
+            LoadArena(fileDialog.FileName);
         }
 
         private void SaveArena_Click(object sender, RoutedEventArgs e)
@@ -333,7 +339,26 @@ namespace AW2
             _runner = new AWGameRunner(_game,
                 () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
                 gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));
+            _runner.Initialized += () => Dispatcher.BeginInvoke((Action)RestoreProperContent);
             _runner.Run();
+        }
+
+        private void SetWaitContent()
+        {
+            _properContent = Content;
+            Content = new Label
+            {
+                Content = "Please wait while initializing...",
+                FontSize = 22,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center,
+            };
+        }
+
+        private void RestoreProperContent()
+        {
+            Content = _properContent;
+            _properContent = null;
         }
 
         private static void UpdateArenaBin(Arena arena)

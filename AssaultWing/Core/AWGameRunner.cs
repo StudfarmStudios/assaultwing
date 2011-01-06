@@ -15,6 +15,8 @@ namespace AW2.Core
         private bool _exited;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
 
+        public event Action Initialized;
+
         private bool BackgroundLoopFinished { get { return _exited || _gameUpdateAndDrawLoopAsyncResult == null; } }
 
         public AWGameRunner(AWGame game, Action draw, Action<AWGameTime> update)
@@ -51,6 +53,7 @@ namespace AW2.Core
             var totalGameTime = TimeSpan.Zero;
             var timer = new Stopwatch();
             timer.Start();
+            if (Initialized != null) Initialized();
             while (!_exiting)
             {
                 var now = timer.Elapsed;

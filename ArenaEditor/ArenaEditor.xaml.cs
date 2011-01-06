@@ -339,8 +339,15 @@ namespace AW2
             _runner = new AWGameRunner(_game,
                 () => Dispatcher.BeginInvoke((Action)ArenaView.Invalidate),
                 gameTime => Dispatcher.BeginInvoke((Action)(() => _game.Update(gameTime))));
-            _runner.Initialized += () => Dispatcher.BeginInvoke((Action)RestoreProperContent);
+            _runner.Initialized += () => Dispatcher.BeginInvoke((Action)GameInitializedHandler);
             _runner.Run();
+        }
+
+        private void GameInitializedHandler()
+        {
+            RestoreProperContent();
+            if (_game.CommandLineOptions.ArenaFilename != null)
+                LoadArena(_game.CommandLineOptions.ArenaFilename);
         }
 
         private void SetWaitContent()

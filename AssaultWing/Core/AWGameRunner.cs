@@ -53,7 +53,11 @@ namespace AW2.Core
             var totalGameTime = TimeSpan.Zero;
             var timer = new Stopwatch();
             timer.Start();
-            if (Initialized != null) Initialized();
+            if (Initialized != null)
+            {
+                Initialized();
+                Initialized = null;
+            }
             while (!_exiting)
             {
                 var now = timer.Elapsed;

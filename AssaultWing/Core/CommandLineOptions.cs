@@ -11,12 +11,20 @@ namespace AW2.Core
         public bool PerformanceCounters { get; set; }
         public bool SaveTemplates { get; set; }
         public bool DeleteTemplates { get; set; }
+        public string ArenaFilename { get; set; }
 
         public CommandLineOptions(string[] commandLineArgs)
         {
             PerformanceCounters = commandLineArgs.Contains("--performance_counters");
             SaveTemplates = commandLineArgs.Contains("--save_templates");
             DeleteTemplates = commandLineArgs.Contains("--delete_templates");
+            ArenaFilename = GetArgValue(commandLineArgs, "--arena");
+        }
+
+        private string GetArgValue(string[] commandLineArgs, string argName)
+        {
+            int index = Array.IndexOf(commandLineArgs, argName);
+            return index >= 0 ? commandLineArgs[index + 1] : null;
         }
     }
 }

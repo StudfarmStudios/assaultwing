@@ -31,7 +31,9 @@
                 </StackPanel>
             </GroupBox>
             <GroupBox DockPanel.Dock="Top" Header="Layers">
-                <ListBox Name="layerNames" MinWidth="100" MaxHeight="200"/>
+                <ListBox Name="LayerNames" MinWidth="100" MaxHeight="200"
+                        SelectedValuePath="Value"
+                        SelectionChanged="LayerNames_SelectionChanged"/>
             </GroupBox>
             <GroupBox DockPanel.Dock="Top" Header="Gob selection">
                 <ListBox Name="GobNames" MinWidth="100" MaxHeight="400"

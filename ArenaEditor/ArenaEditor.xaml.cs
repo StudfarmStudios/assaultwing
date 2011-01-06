@@ -16,6 +16,7 @@ using AW2.Helpers.Serialization;
 using AW2.UI;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
+using AW2.Game.Arenas;
 
 namespace AW2
 {
@@ -27,10 +28,18 @@ namespace AW2
         private class GobReference
         {
             public Gob Value { get; set; }
-            public int LayerIndex { get; set; }
             public override string ToString()
             {
-                return string.Format("#{0} {1}", LayerIndex, Value.TypeName);
+                return string.Format("{0}", Value.TypeName);
+            }
+        }
+
+        private class LayerReference
+        {
+            public ArenaLayer Value { get; set; }
+            public override string ToString()
+            {
+                return string.Format("z={0:f0} {1}{2}", Value.Z, Value.IsGameplayLayer ? "(G) " : "", Value.ParallaxName);
             }
         }
 
@@ -46,6 +55,7 @@ namespace AW2
         /// </summary>
         private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
+        private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }
         private Gob SelectedGob { get { return (Gob)GobNames.SelectedValue; } }
         private IEnumerable<EditorViewport> EditorViewports
         {
@@ -237,6 +247,11 @@ namespace AW2
             ApplyViewSettingsToAllViewports();
         }
 
+        private void LayerNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            GobNames.Items.Clear();
+        }
+
         private void GobNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             foreach (GobReference gob in e.RemovedItems) gob.Value.BleachValue = 0;
@@ -345,18 +360,14 @@ namespace AW2
 
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
-            int layerIndex = 0;
-            foreach (var layer in _game.DataEngine.Arena.Layers)
+            if (SelectedLayer == null) return;
+            var ray = viewport.ToRay(pointInViewport, SelectedLayer.Z);
+            foreach (var gob in SelectedLayer.Gobs)
             {
-                var ray = viewport.ToRay(pointInViewport, layer.Z);
-                foreach (var gob in layer.Gobs)
-                {
-                    float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z));
-                    float? t = gob.DrawBounds.Intersects(ray);
-                    if (distance < 20 || t.HasValue)
-                        GobNames.Items.Add(new GobReference { Value = gob, LayerIndex = layerIndex });
-                }
-                ++layerIndex;
+                float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, SelectedLayer.Z));
+                float? t = gob.DrawBounds.Intersects(ray);
+                if (distance < 20 || t.HasValue)
+                    GobNames.Items.Add(new GobReference { Value = gob });
             }
             if (GobNames.Items.Count == 1) GobNames.SelectedIndex = 0;
         }
@@ -401,11 +412,9 @@ namespace AW2
             ArenaName.Text = arena.Info.Name;
 
             // Put arena layers on display.
-            layerNames.Items.Clear();
-            var layerNameList = arena.Layers.Select((layer, index) =>
-                string.Format("#{0} z={1:f0} {2}{3}", index, layer.Z, layer.IsGameplayLayer ? "(G) " : "", layer.ParallaxName));
-            foreach (var layerName in layerNameList)
-                layerNames.Items.Add(layerName);
+            LayerNames.Items.Clear();
+            foreach (var layer in arena.Layers)
+                LayerNames.Items.Add(new LayerReference { Value = layer });
         }
 
         private void ApplyViewSettingsToAllViewports()

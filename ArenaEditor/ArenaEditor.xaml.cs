@@ -394,14 +394,15 @@ namespace AW2
         {
             if (SelectedLayer == null) return;
             var ray = viewport.ToRay(pointInViewport, SelectedLayer.Z);
-            foreach (var gob in SelectedLayer.Gobs)
-            {
-                float distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, SelectedLayer.Z));
-                float? t = gob.DrawBounds.Intersects(ray);
-                if (distance < 20 || t.HasValue)
-                    GobNames.Items.Add(new GobReference { Value = gob });
-            }
-            if (GobNames.Items.Count == 1) GobNames.SelectedIndex = 0;
+            var nearbyGobs =
+                from gob in SelectedLayer.Gobs
+                let distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, SelectedLayer.Z))
+                let t = gob.DrawBounds.Intersects(ray)
+                where distance < 20 || t.HasValue
+                orderby distance ascending
+                select gob;
+            foreach (var gob in nearbyGobs) GobNames.Items.Add(new GobReference { Value = gob });
+            GobNames.SelectedIndex = 0;
         }
 
         private void DragViewport(AWViewport viewport, Point newMouseLocation)

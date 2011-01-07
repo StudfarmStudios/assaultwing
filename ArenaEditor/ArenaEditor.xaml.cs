@@ -28,13 +28,12 @@ namespace AW2
         private class LayerReference
         {
             public ArenaLayer Value { get; set; }
-            public override string ToString()
+            public bool Visible { get; set; }
+
+            public LayerReference(ArenaLayer value)
             {
-                return string.Format("z={0:f0} {1}{2} gobs, {3}",
-                    Value.Z,
-                    Value.IsGameplayLayer ? "(G) " : "",
-                    Value.Gobs.Count,
-                    Value.ParallaxName);
+                Value = value;
+                Visible = true;
             }
         }
 
@@ -57,7 +56,7 @@ namespace AW2
         private Gob SelectedGob { get { return _selectedGob; } }
         private IEnumerable<EditorViewport> EditorViewports
         {
-            get { return _game.DataEngine.Viewports.Where(vp => vp is EditorViewport).Cast<EditorViewport>(); }
+            get { return _game.DataEngine.Viewports.OfType<EditorViewport>(); }
         }
 
         public ArenaEditor(string[] args)
@@ -329,6 +328,9 @@ namespace AW2
                     Extra = new KeyboardKey(Keys.Enter)
                 };
                 var spectator = new EditorSpectator(_game, spectatorControls);
+                spectator.ViewportCreated += viewport =>
+                    viewport.LayerDrawing += layer =>
+                        LayerNames.Items.Cast<LayerReference>().First(lay => lay.Value == layer).Visible;
                 _game.DataEngine.Spectators.Add(spectator);
                 _game.DataEngine.Enabled = true;
                 _game.GraphicsEngine.Enabled = true;
@@ -398,7 +400,8 @@ namespace AW2
 
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
-            SelectGobFromAnyLayer(viewport, pointInViewport);
+            var visibleLayers = LayerNames.Items.Cast<LayerReference>().Where(layer => layer.Visible).Reverse();
+            SelectGobFromAnyLayer(viewport, pointInViewport, visibleLayers);
         }
 
         private void SelectGobFromCurrentLayer(AWViewport viewport, Vector2 pointInViewport)
@@ -414,11 +417,11 @@ namespace AW2
             SelectGob(nearbyGobs.FirstOrDefault());
         }
 
-        private void SelectGobFromAnyLayer(AWViewport viewport, Vector2 pointInViewport)
+        private void SelectGobFromAnyLayer(AWViewport viewport, Vector2 pointInViewport, IEnumerable<LayerReference> layers)
         {
-            for (int index = LayerNames.Items.Count - 1; index >= 0; index--)
+            foreach (var layer in layers)
             {
-                LayerNames.SelectedIndex = index;
+                LayerNames.SelectedItem = layer;
                 SelectGobFromCurrentLayer(viewport, pointInViewport);
                 if (SelectedGob != null) break;
             }
@@ -467,7 +470,7 @@ namespace AW2
             // Put arena layers on display.
             LayerNames.Items.Clear();
             foreach (var layer in arena.Layers)
-                LayerNames.Items.Add(new LayerReference { Value = layer });
+                LayerNames.Items.Add(new LayerReference(layer));
         }
 
         private void ApplyViewSettingsToAllViewports()

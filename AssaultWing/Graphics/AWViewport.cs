@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Game.Arenas;
 using AW2.Helpers;
+using AW2.Game;
 
 namespace AW2.Graphics
 {
@@ -53,8 +54,6 @@ namespace AW2.Graphics
         /// </summary>
         public float ZoomRatio { get; set; }
 
-        #region Properties
-
         /// <summary>
         /// The area of the display to draw on.
         /// </summary>
@@ -65,7 +64,8 @@ namespace AW2.Graphics
         /// </summary>
         public Rectangle OnScreen { get { return new Rectangle(Viewport.Y, Viewport.Y, Viewport.Width, Viewport.Height); } }
 
-        #endregion
+        public event Func<ArenaLayer, bool> LayerDrawing;
+        public event Action<Gob> GobDrawn;
 
         /// <summary>
         /// The minimum X and Y coordinates of the game world this viewport shows
@@ -253,6 +253,7 @@ namespace AW2.Graphics
             if (AssaultWingCore.Instance.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
             foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
             {
+                if (LayerDrawing != null && !LayerDrawing(layer)) continue;
                 gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
                 float layerScale = GetScale(layer.Z);
                 var projection = GetProjectionMatrix(layer.Z);
@@ -290,6 +291,8 @@ namespace AW2.Graphics
                 });
                 if (drawMode.HasValue)
                     drawMode.Value.EndDraw(AssaultWingCore.Instance, _spriteBatch);
+
+                if (GobDrawn != null) foreach (var gob in layer.Gobs) GobDrawn(gob);
             }
         }
 

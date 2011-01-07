@@ -40,7 +40,8 @@
                                 <TextBlock Text="Vis"/>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <CheckBox Name="Visible" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                        <CheckBox Name="Visible" Grid.Column="0" VerticalAlignment="Center"
+                                                  IsChecked="{Binding Visible, Mode=TwoWay}"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

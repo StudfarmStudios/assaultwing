@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
 
@@ -20,12 +18,7 @@ namespace AW2.Graphics
             : base(onScreen, getPostprocessEffectNames)
         {
             _spectator = spectator;
-        }
-
-        protected override void RenderGameWorld()
-        {
-            base.RenderGameWorld();
-            if (IsCirclingSmallAndInvisibleGobs) CircleSmallAndInvisibleGobs();
+            GobDrawn += gob => { if (IsCirclingSmallAndInvisibleGobs) CircleGob(gob); };
         }
 
         protected override Vector2 GetLookAtPos()
@@ -33,19 +26,11 @@ namespace AW2.Graphics
             return _spectator.LookAtPos;
         }
 
-        private void CircleSmallAndInvisibleGobs()
+        private void CircleGob(Gob gob)
         {
-            var view = ViewMatrix;
-            foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
-            {
-                var projection = GetProjectionMatrix(layer.Z);
-                foreach (var gob in layer.Gobs)
-                    if (gob.DrawBounds.Radius < SMALL_GOB_RADIUS)
-                    {
-                        Graphics3D.DebugDraw(new BoundingSphere(new Vector3(gob.Pos, 0), SMALL_GOB_RADIUS), view, projection, Matrix.Identity);
-                        Graphics3D.DebugDraw(gob.Pos, gob.Pos + SMALL_GOB_RADIUS * AWMathHelper.GetUnitVector2(gob.Rotation), view, projection, Matrix.Identity);
-                    }
-            }
+            var projection = GetProjectionMatrix(gob.Layer.Z);
+            Graphics3D.DebugDraw(new BoundingSphere(new Vector3(gob.Pos, 0), SMALL_GOB_RADIUS), ViewMatrix, projection, Matrix.Identity);
+            Graphics3D.DebugDraw(gob.Pos, gob.Pos + SMALL_GOB_RADIUS * AWMathHelper.GetUnitVector2(gob.Rotation), ViewMatrix, projection, Matrix.Identity);
         }
     }
 }

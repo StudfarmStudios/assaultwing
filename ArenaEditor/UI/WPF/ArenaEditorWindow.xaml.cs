@@ -18,12 +18,12 @@ using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 using AW2.Game.Arenas;
 
-namespace AW2
+namespace AW2.UI.WPF
 {
     /// <summary>
     /// Assault Wing Arena Editor main window.
     /// </summary>
-    public partial class ArenaEditor : System.Windows.Window
+    public partial class ArenaEditorWindow : System.Windows.Window
     {
         private class LayerReference
         {
@@ -68,7 +68,7 @@ namespace AW2
             get { return _game.DataEngine.Viewports.OfType<EditorViewport>(); }
         }
 
-        public ArenaEditor(string[] args)
+        public ArenaEditorWindow(string[] args)
         {
             InitializeComponent();
             SetWaitContent();
@@ -93,10 +93,10 @@ namespace AW2
 
         public void LoadArena(string arenaFilename)
         {
-            var oldCursor = ArenaEditorWindow.Cursor;
+            var oldCursor = Cursor;
             try
             {
-                ArenaEditorWindow.Cursor = Cursors.Wait;
+                Cursor = Cursors.Wait;
                 var data = _game.DataEngine;
                 data.ProgressBar.Task = () => data.InitializeFromArena(arenaFilename, false);
                 data.ProgressBar.StartTask();
@@ -108,7 +108,7 @@ namespace AW2
             }
             finally
             {
-                ArenaEditorWindow.Cursor = oldCursor;
+                Cursor = oldCursor;
             }
         }
 
@@ -151,10 +151,10 @@ namespace AW2
             };
             bool? success = fileDialog.ShowDialog();
             if (success.HasValue && !success.Value) return;
-            var oldCursor = ArenaEditorWindow.Cursor;
+            var oldCursor = Cursor;
             try
             {
-                ArenaEditorWindow.Cursor = Cursors.Wait;
+                Cursor = Cursors.Wait;
                 UpdateArenaBin(arena);
                 var arenaFilename = fileDialog.FileName;
                 var binFilename = System.IO.Path.ChangeExtension(arenaFilename, ".bin");
@@ -166,7 +166,7 @@ namespace AW2
             }
             finally
             {
-                ArenaEditorWindow.Cursor = oldCursor;
+                Cursor = oldCursor;
             }
         }
 

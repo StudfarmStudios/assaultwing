@@ -80,17 +80,24 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\WPF\LayerList.xaml.cs">
+      <DependentUpon>LayerList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WpfPropertyGrid.cs" />
-    <Page Include="ArenaEditor.xaml">
+    <Page Include="UI\WPF\ArenaEditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="ArenaEditor.xaml.cs">
-      <DependentUpon>ArenaEditor.xaml</DependentUpon>
+    <Compile Include="UI\WPF\ArenaEditorWindow.xaml.cs">
+      <DependentUpon>ArenaEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ArenaEditorProgram.cs" />
     <Compile Include="Game\EditorSpectator.cs" />
     <Compile Include="Graphics\EditorViewport.cs" />
+    <Page Include="UI\WPF\LayerList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

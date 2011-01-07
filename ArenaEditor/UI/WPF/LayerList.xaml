@@ -1,0 +1,45 @@
+﻿<ListView x:Class="AW2.UI.WPF.LayerList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <ListView.View>
+        <GridView>
+            <GridViewColumn>
+                <TextBlock Text="Vis"/>
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <CheckBox x:Name="Visible" Grid.Column="0" VerticalAlignment="Center"
+                                IsChecked="{Binding Visible, Mode=TwoWay}"/>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn>
+                <TextBlock Text="Depth"/>
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value.Z}"/>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn>
+                <TextBlock Text="Gobs #"/>
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value.Gobs.Count}"/>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn>
+                <TextBlock Text="Parallax"/>
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Value.ParallaxName}"/>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+        </GridView>
+    </ListView.View>
+</ListView>

@@ -289,8 +289,6 @@ namespace AW2.UI.WPF
             _game.CommandLineOptions = new CommandLineOptions(args);
             _game.SoundEngine.Enabled = false;
             _game.AllowDialogs = false;
-            _graphicsDeviceService.DeviceResetting += (sender2, eventArgs2) => _game.UnloadContent();
-            _graphicsDeviceService.DeviceReset += (sender2, eventArgs2) => _game.LoadContent();
 
             // Spectators/players can be initialized not until RunBegan because their AWViewports try to LoadContent.
             _game.RunBegan += () =>

@@ -45,7 +45,6 @@ namespace AW2
         private bool _isDragging;
         private Gob _selectedGob;
         private object _properContent;
-        private object _gobPropertyTools;
 
         /// <summary>
         /// Must be set right after creation.
@@ -53,7 +52,17 @@ namespace AW2
         private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }
-        private Gob SelectedGob { get { return _selectedGob; } }
+        private Gob SelectedGob
+        {
+            get { return _selectedGob; }
+            set
+            {
+                if (_selectedGob != null) _selectedGob.BleachValue = 0;
+                _selectedGob = value;
+                PropertyEditor.SelectedObject = _selectedGob;
+                if (_selectedGob != null) _selectedGob.BleachValue = 0.35f;
+            }
+        }
         private IEnumerable<EditorViewport> EditorViewports
         {
             get { return _game.DataEngine.Viewports.OfType<EditorViewport>(); }
@@ -63,8 +72,6 @@ namespace AW2
         {
             InitializeComponent();
             SetWaitContent();
-            _gobPropertyTools = GobPropertyTools.Content;
-            SelectGob(null);
             Loaded += (sender, eventArgs) =>
             {
                 // GraphicsDeviceService needs a window handle which is only available after the window is visible
@@ -236,40 +243,12 @@ namespace AW2
             }
         }
 
-        private void GobRotation_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (SelectedGob == null) return;
-            SelectedGob.Rotation = (float)e.NewValue;
-        }
-
         private void Zoom_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             double screenScale = ZoomRatio > 1 ? ZoomRatio : 1;
             double originalScale = ZoomRatio > 1 ? 1 : 1 / ZoomRatio;
             ZoomValue.Content = string.Format("{0:N0}:{1:N0}", screenScale, originalScale);
             ApplyViewSettingsToAllViewports();
-        }
-
-        private void LayerNames_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            SelectGob(null);
-        }
-
-        private void SelectGob(Gob gob)
-        {
-            if (SelectedGob != null) SelectedGob.BleachValue = 0;
-            _selectedGob = gob;
-            if (SelectedGob == null)
-            {
-                GobPropertyTools.Content = null;
-                return;
-            }
-            GobPropertyTools.Content = _gobPropertyTools;
-            SelectedGob.BleachValue = 0.35f;
-            GobType.Content = SelectedGob.TypeName;
-            float newValue = SelectedGob.Rotation % MathHelper.TwoPi;
-            if (newValue < 0) newValue += MathHelper.TwoPi;
-            GobRotation.Value = newValue;
         }
 
         private void DuplicateGob_Click(object sender, RoutedEventArgs e)
@@ -286,7 +265,7 @@ namespace AW2
         {
             if (SelectedGob == null) return;
             SelectedGob.Arena.Gobs.Remove(SelectedGob);
-            SelectGob(null);
+            SelectedGob = null;
         }
 
         #endregion Control event handlers
@@ -414,7 +393,7 @@ namespace AW2
                 where distance < 20 || t.HasValue
                 orderby distance ascending
                 select gob;
-            SelectGob(nearbyGobs.FirstOrDefault());
+            SelectedGob = nearbyGobs.FirstOrDefault();
         }
 
         private void SelectGobFromAnyLayer(AWViewport viewport, Vector2 pointInViewport, IEnumerable<LayerReference> layers)

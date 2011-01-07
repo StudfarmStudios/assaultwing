@@ -30,8 +30,9 @@ namespace AW2
 
         public void Run()
         {
-            var app = new Application();
-            app.Run(_editor);
+            if (Application.Current == null) new Application();
+            Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            Application.Current.Run(_editor);
         }
 
         public void Dispose()

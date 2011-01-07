@@ -31,21 +31,46 @@
                 </StackPanel>
             </GroupBox>
             <GroupBox DockPanel.Dock="Top" Header="Layers">
-                <ListBox Name="LayerNames" MinWidth="100" MaxHeight="300"
+                <ListView Name="LayerNames" MinWidth="100" MaxHeight="300"
                         SelectedValuePath="Value"
                         SelectionChanged="LayerNames_SelectionChanged">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox Name="Visible" IsChecked="True"/>
-                                <Label Content="{Binding Value.Z}"/>
-                                <Label Content="{Binding Value.Gobs.Count}"/>
-                                <Label Content="gobs"/>
-                                <Label Content="{Binding Value.ParallaxName}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn>
+                                <TextBlock Text="Vis"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Name="Visible" Grid.Column="0" IsChecked="True" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn>
+                                <TextBlock Text="Depth"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value.Z}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn>
+                                <TextBlock Text="Gobs #"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value.Gobs.Count}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn>
+                                <TextBlock Text="Parallax"/>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Value.ParallaxName}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </GroupBox>
             <GroupBox Name="GobPropertyTools" DockPanel.Dock="Top" Header="Gob Properties">
                 <StackPanel Orientation="Vertical">

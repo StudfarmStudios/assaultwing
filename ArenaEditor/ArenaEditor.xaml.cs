@@ -65,6 +65,7 @@ namespace AW2
             InitializeComponent();
             SetWaitContent();
             _gobPropertyTools = GobPropertyTools.Content;
+            SelectGob(null);
             Loaded += (sender, eventArgs) =>
             {
                 // GraphicsDeviceService needs a window handle which is only available after the window is visible

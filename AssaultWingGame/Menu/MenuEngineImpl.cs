@@ -43,7 +43,7 @@ namespace AW2.Menu
 
         // The menu system draws a shadow on the screen as this transparent 3D object.
         private VertexPositionColor[] _shadowVertexData;
-        private int[] _shadowIndexData; // stored as a triangle list
+        private short[] _shadowIndexData; // stored as a triangle list
         private BasicEffect _effect;
         private Point _shadowSize;
 
@@ -305,7 +305,7 @@ namespace AW2.Menu
             int gridWidth = (int)shadowDimensions.X / 30;
             int gridHeight = (int)shadowDimensions.Y / 30;
             var vertexData = new List<VertexPositionColor>();
-            var indexData = new List<int>();
+            var indexData = new List<short>();
             for (int y = 0; y < gridHeight; ++y)
                 for (int x = 0; x < gridWidth; ++x)
                 {
@@ -316,20 +316,21 @@ namespace AW2.Menu
                         new Vector3(posInShadow, 0),
                         Color.Multiply(Color.Black, alphaCurve.Evaluate(distance))));
                     if (y > 0)
-                    {
-                        if (x > 0)
+                        checked
                         {
-                            indexData.Add(y * gridWidth + x);
-                            indexData.Add(y * gridWidth + x - 1);
-                            indexData.Add((y - 1) * gridWidth + x);
+                            if (x > 0)
+                            {
+                                indexData.Add((short)(y * gridWidth + x));
+                                indexData.Add((short)(y * gridWidth + x - 1));
+                                indexData.Add((short)((y - 1) * gridWidth + x));
+                            }
+                            if (x < gridWidth - 1)
+                            {
+                                indexData.Add((short)(y * gridWidth + x));
+                                indexData.Add((short)((y - 1) * gridWidth + x));
+                                indexData.Add((short)((y - 1) * gridWidth + x + 1));
+                            }
                         }
-                        if (x < gridWidth - 1)
-                        {
-                            indexData.Add(y * gridWidth + x);
-                            indexData.Add((y - 1) * gridWidth + x);
-                            indexData.Add((y - 1) * gridWidth + x + 1);
-                        }
-                    }
                 }
             _shadowVertexData = vertexData.ToArray();
             _shadowIndexData = indexData.ToArray();

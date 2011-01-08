@@ -112,8 +112,8 @@ namespace AW2.Game
         /// relevant gobs but this field may be used for irrelevant gobs, too).
         /// Such identifiers are positive.
         /// <seealso cref="Gob.ID"/>
-        /// <seealso cref="Gob.leastUnusedIrrelevantId"/>
-        private static int g_leastUnusedId = 1;
+        /// <seealso cref="Gob.leastUnusedIrrelevantID"/>
+        private static int g_leastUnusedID = 1;
 
         /// <summary>
         /// Greatest int that is known not to have been used as a gob identifier
@@ -123,8 +123,8 @@ namespace AW2.Game
         /// local to one game instance (irrelevant gobs). Such identifiers
         /// are negative.
         /// <seealso cref="Gob.ID"/>
-        /// <seealso cref="Gob.leastUnusedId"/>
-        private static int g_leastUnusedIrrelevantId = -1;
+        /// <seealso cref="Gob.leastUnusedID"/>
+        private static int g_leastUnusedIrrelevantID = -1;
 
         /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.
@@ -1002,9 +1002,9 @@ namespace AW2.Game
                 ID = reader.ReadInt32();
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
-                int ownerId = reader.ReadSByte();
+                int ownerID = reader.ReadSByte();
                 _ownerProxy = new LazyProxy<int, Player>(FindPlayer);
-                _ownerProxy.SetData(ownerId);
+                _ownerProxy.SetData(ownerID);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
@@ -1403,8 +1403,8 @@ namespace AW2.Game
         {
             if (ID != INVALID_ID) return;
             ID = Game.NetworkMode == NetworkMode.Client
-                ? g_leastUnusedIrrelevantId--
-                : g_leastUnusedId++;
+                ? g_leastUnusedIrrelevantID--
+                : g_leastUnusedID++;
         }
 
         #endregion

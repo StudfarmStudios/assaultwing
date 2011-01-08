@@ -78,7 +78,7 @@ namespace AW2.Core
                 PresentationInterval = PresentInterval.Immediate,
             };
             if (GraphicsDevice != null) GraphicsDevice.Dispose();
-            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.HiDef, _parameters);
+            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.Reach, _parameters);
         }
     }
 }

@@ -5,6 +5,8 @@ float TextureWidth, TextureHeight;
 sampler TextureSampler = sampler_state
 {
 	Texture = <Texture>;
+	AddressU = Clamp;
+	AddressV = Clamp;
 };
 
 struct VertexShaderInput

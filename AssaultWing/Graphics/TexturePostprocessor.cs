@@ -36,13 +36,15 @@ namespace AW2.Graphics
                 Height = _gfx.Viewport.Height,
                 DepthStencilState = DepthStencilState.Default,
             };
-            _targets = new AutoRenderTarget2D[] {
+            _targets = new[]
+            {
                 new AutoRenderTarget2D(gfx, getRenderTargetCreationData),
                 new AutoRenderTarget2D(gfx, getRenderTargetCreationData)
             };
             _effects = new List<Effect>();
             _effectContainerUpdater = effectContainerUpdater;
-            _vertexData = new VertexPositionTexture[] {
+            _vertexData = new[]
+            {
                 new VertexPositionTexture(new Vector3(-1, -1, 0), Vector2.UnitY),
                 new VertexPositionTexture(new Vector3(-1, 1, 0), Vector2.Zero),
                 new VertexPositionTexture(new Vector3(1, -1, 0), Vector2.One),

@@ -6,6 +6,8 @@ float TextureHeight;
 sampler samplerState = sampler_state
 {
 	Texture = <Texture>;
+	AddressU = Clamp;
+	AddressV = Clamp;
 };
 
 

@@ -11,8 +11,8 @@ sampler TextureSampler : SAMPLER0 = sampler_state
 	MagFilter = LINEAR;
 	MinFilter = LINEAR;
 	MipFilter = NONE;
-	AddressU = Mirror;
-	AddressV = Mirror;
+	AddressU = Clamp;
+	AddressV = Clamp;
 };
 
 float4 PixelShaderFunction(float2 texCoord : TEXCOORD0) : COLOR0

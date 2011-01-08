@@ -58,21 +58,9 @@ namespace AW2.Helpers.Serialization
             int fieldIndex;
             var cacheKey = Tuple.Create(_type, _limitationAttribute, xmlElementName);
             if (!g_fieldIndexCache.TryGetValue(cacheKey, out fieldIndex))
-                g_fieldIndexCache[cacheKey] = fieldIndex = Array.FindIndex(_fields, f => GetElementName(f) == xmlElementName);
+                g_fieldIndexCache[cacheKey] = fieldIndex = Array.FindIndex(_fields, f => Serialization.GetSerializedName(f) == xmlElementName);
             if (fieldIndex == -1) throw new MemberSerializationException("Cannot deserialise unknown field", xmlElementName);
             return fieldIndex;
-        }
-
-        private static string GetElementName(FieldInfo field)
-        {
-            // React to SerializedNameAttribute
-            string elementName = field.Name;
-            var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
-            if (serializedNameAttribute != null)
-                elementName = serializedNameAttribute.SerializedName;
-            else if (elementName.StartsWith("_"))
-                elementName = elementName.Substring(1);
-            return elementName;
         }
     }
 }

@@ -73,7 +73,7 @@ namespace AW2.Helpers.Serialization
         {
             var writer = new StreamWriter(filename);
             var xmlWriter = Serialization.GetXmlWriter(writer);
-            Serialization.SerializeXml(xmlWriter, baseClass.Name + "Type", template, limitationAttribute);
+            Serialization.SerializeXml(xmlWriter, baseClass.Name + "Type", template, limitationAttribute, baseClass);
             xmlWriter.Close();
         }
 

@@ -57,42 +57,34 @@ namespace AW2.Helpers.Serialization
         /// <param name="elementName">Name of the XML element where the object is stored.</param>
         /// <param name="obj">The object whose partial state to serialise.</param>
         /// <param name="limitationAttribute">Limit the serialisation to fields with this attribute.</param>
-        public static void SerializeXml(XmlWriter writer, string elementName, object obj, Type limitationAttribute)
+        /// <param name="baseType">Expected type of the object. The given object must be convertible to this type.
+        /// If null, then the type of the given object is the base type.</param>
+        public static void SerializeXml(XmlWriter writer, string elementName, object obj, Type limitationAttribute, Type baseType = null)
         {
-            if (obj == null)
-                throw new Exception("Won't serialise a null obj");
-            var type = obj.GetType();
+            if (obj == null) throw new ArgumentNullException("obj");
+            var type = GetSerializedType(obj.GetType());
+            var castObj = Cast(obj, type);
 
-            // React to SerializedTypeAttribute
-            var serializedTypeAttribute = (SerializedTypeAttribute)Attribute.GetCustomAttribute(type, typeof(SerializedTypeAttribute));
-            if (serializedTypeAttribute != null)
-            {
-                type = serializedTypeAttribute.SerializedType;
-                obj = Cast(obj, type);
-            }
-
+            if (baseType == null) baseType = type;
             writer.WriteStartElement(elementName);
-            writer.WriteAttributeString("type", type.AssemblyQualifiedName);
+            if (type != baseType) writer.WriteAttributeString("type", type.AssemblyQualifiedName);
             if (type.IsPrimitive || type == typeof(string))
-                writer.WriteValue(obj);
+                writer.WriteValue(castObj);
             else if (type.IsEnum)
-                writer.WriteValue(obj.ToString());
+                writer.WriteValue(castObj.ToString());
             else if (type == typeof(Color))
             {
-                Color color = (Color)obj;
+                var color = (Color)castObj;
                 SerializeXml(writer, "R", color.R, limitationAttribute);
                 SerializeXml(writer, "G", color.G, limitationAttribute);
                 SerializeXml(writer, "B", color.B, limitationAttribute);
                 SerializeXml(writer, "A", color.A, limitationAttribute);
             }
             else if (typeof(IEnumerable).IsAssignableFrom(type))
-            {
-                IEnumerable enumerable = (IEnumerable)obj;
-                foreach (object item in enumerable)
-                    SerializeXml(writer, "Item", item, limitationAttribute);
-            }
+                foreach (object item in (IEnumerable)castObj)
+                    SerializeXml(writer, "Item", item, limitationAttribute, typeof(object));
             else
-                SerializeFieldsXml(writer, obj, limitationAttribute);
+                SerializeFieldsXml(writer, castObj, limitationAttribute);
             writer.WriteEndElement();
         }
 
@@ -160,13 +152,7 @@ namespace AW2.Helpers.Serialization
         private static Type GetWrittenType(XmlReader reader, string elementName, Type objType)
         {
             var writtenTypeName = reader.GetAttribute("type");
-            if (writtenTypeName == null)
-            {
-                // Default to expected object type or to what SerializedTypeAttribute says.
-                var serializedTypeAttribute = (SerializedTypeAttribute)Attribute.GetCustomAttribute(objType, typeof(SerializedTypeAttribute));
-                if (serializedTypeAttribute == null) return objType;
-                return serializedTypeAttribute.SerializedType;
-            }
+            if (writtenTypeName == null) return GetSerializedType(objType);
             var writtenType = Type.GetType(writtenTypeName);
             if (writtenType == null) throw new XmlException("XML suggests unknown type " + writtenTypeName);
             if (!IsAssignableFrom(objType, writtenType))
@@ -215,6 +201,14 @@ namespace AW2.Helpers.Serialization
             }
             else
                 return Serialization.CreateInstance(writtenType, array);
+        }
+
+        public static string GetSerializedName(FieldInfo field)
+        {
+            var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
+            return serializedNameAttribute != null ? serializedNameAttribute.SerializedName
+                : field.Name.StartsWith("_") ? field.Name.Substring(1)
+                : field.Name;
         }
 
         /// <summary>
@@ -369,28 +363,12 @@ namespace AW2.Helpers.Serialization
             var fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
                 ? GetFields(type, limitationAttribute, null)
                 : GetFields(type, null, null);
-
             foreach (var field in fields)
-            {
-                // React to SerializedNameAttribute and remove leading underscore from field name.
-                string elementName = field.Name;
-                var serializedNameAttribute = (SerializedNameAttribute)Attribute.GetCustomAttribute(field, typeof(SerializedNameAttribute));
-                if (serializedNameAttribute != null)
-                    elementName = serializedNameAttribute.SerializedName;
-                else if (elementName.StartsWith("_"))
-                    elementName = elementName.Substring(1);
-
-                // React to LimitationSwitchAttribute
-                var fieldLimitationAttribute = limitationAttribute;
-                var limitationSwitchAttribute = (LimitationSwitchAttribute)Attribute.GetCustomAttribute(field, typeof(LimitationSwitchAttribute));
-                if (limitationSwitchAttribute != null)
-                {
-                    if (limitationSwitchAttribute.From == limitationAttribute)
-                        fieldLimitationAttribute = limitationSwitchAttribute.To;
-                }
-
-                SerializeXml(writer, elementName, field.GetValue(obj), fieldLimitationAttribute);
-            }
+                SerializeXml(writer,
+                    GetSerializedName(field),
+                    field.GetValue(obj),
+                    GetFieldLimitationAttribute(field, limitationAttribute),
+                    GetSerializedType(field.FieldType));
         }
 
         /// <summary>
@@ -459,24 +437,21 @@ namespace AW2.Helpers.Serialization
         private static object CreateInstance(Type type)
         {
             // Structs have default values.
-            if (type.IsValueType)
-                return Activator.CreateInstance(type);
+            if (type.IsValueType) return Activator.CreateInstance(type);
 
             // System.String has no parameterless constructor so we provide a default value.
-            if (type == typeof(string))
-                return "";
+            if (type == typeof(string)) return "";
 
             // Otherwise 'type' refers to a class. Find its constructors.
-            ConstructorInfo[] constructors = type.GetConstructors();
-            if (constructors.Length == 0)
-                throw new Exception("No constructors found for type " + type.ToString());
+            var constructors = type.GetConstructors();
+            if (constructors.Length == 0) throw new ApplicationException("No constructors found for type " + type.ToString());
 
             // Call a constructor with a minimal number of parameters.
             Array.Sort(constructors, (cons1, cons2) =>
                 cons1.GetParameters().Length.CompareTo(cons2.GetParameters().Length));
-            ParameterInfo[] paramTypes = constructors[0].GetParameters();
-            List<object> parameters = new List<object>();
-            foreach (ParameterInfo paramType in paramTypes)
+            var paramTypes = constructors[0].GetParameters();
+            var parameters = new List<object>();
+            foreach (var paramType in paramTypes)
                 parameters.Add(CreateInstance(paramType.ParameterType));
             return constructors[0].Invoke(parameters.ToArray());
         }
@@ -519,7 +494,7 @@ namespace AW2.Helpers.Serialization
         /// <returns>The cast object.</returns>
         private static object Cast(object obj, Type type)
         {
-            Type objType = obj.GetType();
+            var objType = obj.GetType();
             if (type.IsAssignableFrom(objType)) return obj;
 
             // Look for cast operator in 'objType'
@@ -528,8 +503,8 @@ namespace AW2.Helpers.Serialization
                 return castMethodInfo.Invoke(null, new object[] { obj });
 
             // Fallback for IEnumerable: convert item by item
-            Type lElementType = GetIEnumerableElementType(type);
-            Type rElementType = GetIEnumerableElementType(objType);
+            var lElementType = GetIEnumerableElementType(type);
+            var rElementType = GetIEnumerableElementType(objType);
             if (lElementType != null && rElementType != null)
             {
                 if (typeof(Array).IsAssignableFrom(objType))
@@ -597,6 +572,14 @@ namespace AW2.Helpers.Serialization
             if (genericElementTypes.Any()) return genericElementTypes.First();
             if (type.GetInterface("IEnumerable") != null) return typeof(object);
             return null;
+        }
+
+        private static Type GetSerializedType(Type type)
+        {
+            var serializedTypeAttribute = (SerializedTypeAttribute)Attribute.GetCustomAttribute(type, typeof(SerializedTypeAttribute));
+            return serializedTypeAttribute != null
+                ? serializedTypeAttribute.SerializedType
+                : type;
         }
 
         /// <summary>

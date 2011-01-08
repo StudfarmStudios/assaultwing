@@ -83,6 +83,9 @@
     <Compile Include="UI\WPF\LayerList.xaml.cs">
       <DependentUpon>LayerList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\WPF\PropertyEditorWindow.xaml.cs">
+      <DependentUpon>PropertyEditorWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WpfPropertyGrid.cs" />
     <Page Include="UI\WPF\ArenaEditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -95,6 +98,10 @@
     <Compile Include="Game\EditorSpectator.cs" />
     <Compile Include="Graphics\EditorViewport.cs" />
     <Page Include="UI\WPF\LayerList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\WPF\PropertyEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -135,20 +142,20 @@
   <ItemGroup>
     <PublishFile Include="ArenaEditor.pdb">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>Optional</Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="AssaultWing.pdb">
       <Visible>False</Visible>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>Optional</Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>

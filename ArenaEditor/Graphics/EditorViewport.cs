@@ -18,7 +18,12 @@ namespace AW2.Graphics
             : base(onScreen, getPostprocessEffectNames)
         {
             _spectator = spectator;
-            GobDrawn += gob => { if (IsCirclingSmallAndInvisibleGobs) CircleGob(gob); };
+            GobDrawn += gob =>
+            {
+                if (IsCirclingSmallAndInvisibleGobs &&
+                    (gob.DrawBounds.Radius < SMALL_GOB_RADIUS || !gob.IsVisible))
+                    CircleGob(gob);
+            };
         }
 
         protected override Vector2 GetLookAtPos()

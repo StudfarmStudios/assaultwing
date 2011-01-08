@@ -45,10 +45,18 @@ namespace AW2.UI.WPF
         private bool _isDragging;
         private Gob _selectedGob;
         private object _properContent;
+        private PropertyEditorWindow _propertyEditor;
 
-        /// <summary>
-        /// Must be set right after creation.
-        /// </summary>
+        public PropertyEditorWindow PropertyEditor
+        {
+            get
+            {
+                if (_propertyEditor == null || !_propertyEditor.IsLoaded)
+                    _propertyEditor = new PropertyEditorWindow();
+                return _propertyEditor;
+            }
+        }
+
         private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }

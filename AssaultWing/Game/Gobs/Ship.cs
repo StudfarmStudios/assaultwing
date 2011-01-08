@@ -233,8 +233,8 @@ namespace AW2.Game.Gobs
                 if (_barrelBoneIndices == null)
                 {
                     var boneIs = GetNamedPositions("Gun");
-                    if (boneIs.Length != 4) throw new ApplicationException(string.Format("Unexpected number of gun barrels ({0}) in ship 3D model ({1})", boneIs.Length, ModelName));
-                    _barrelBoneIndices = boneIs.OrderBy(index => index.Key).Select(index => index.Value).ToArray();
+                    if (boneIs.Count() != 4) throw new ApplicationException(string.Format("Unexpected number of gun barrels ({0}) in ship 3D model ({1})", boneIs.Count(), ModelName));
+                    _barrelBoneIndices = boneIs.OrderBy(index => index.Item1).Select(index => index.Item2).ToArray();
                 }
                 return _barrelBoneIndices;
             }

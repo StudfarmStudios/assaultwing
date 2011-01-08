@@ -1077,13 +1077,13 @@ namespace AW2.Game
         /// <see cref="GetNamedPosition(int)"/>
         /// <param name="namePrefix">Prefix for names of positions to return.</param>
         /// <returns>A list of position names and bone indices in the gob's 3D model.</returns>
-        public KeyValuePair<string, int>[] GetNamedPositions(string namePrefix)
+        public IEnumerable<Tuple<string, int>> GetNamedPositions(string namePrefix)
         {
-            List<KeyValuePair<string, int>> boneIs = new List<KeyValuePair<string, int>>();
-            foreach (ModelBone bone in Model.Bones)
-                if (bone.Name != null && bone.Name.StartsWith(namePrefix))
-                    boneIs.Add(new KeyValuePair<string, int>(bone.Name, bone.Index));
-            return boneIs.ToArray();
+            return
+                from bone in Model.Bones
+                let name = bone.Name
+                where name != null && name.StartsWith(namePrefix)
+                select Tuple.Create(name, bone.Index);
         }
 
         /// <summary>
@@ -1127,24 +1127,20 @@ namespace AW2.Game
         /// The subclass should regularly <b>Update</b> its <b>exhaustEngines</b>.
         private void CreateExhaustEngines()
         {
-            KeyValuePair<string, int>[] boneIs = GetNamedPositions("Thruster");
-
-            // Create proper exhaust engines.
+            var boneIndices = GetNamedPositions("Thruster");
             int templates = _exhaustEngineNames.Length;
             var exhaustBoneIList = new List<int>();
             var exhaustEngineList = new List<Gob>();
-            for (int thrustI = 0; thrustI < boneIs.Length; ++thrustI)
+            foreach (var boneIndex in boneIndices)
                 for (int tempI = 0; tempI < templates; ++tempI)
-                {
                     Gob.CreateGob<Gobs.Peng>(Game, _exhaustEngineNames[tempI], gob =>
                     {
                         gob.Leader = this;
-                        gob.LeaderBone = boneIs[thrustI].Value;
+                        gob.LeaderBone = boneIndex.Item2;
                         Arena.Gobs.Add(gob);
-                        exhaustBoneIList.Add(boneIs[thrustI].Value);
+                        exhaustBoneIList.Add(boneIndex.Item2);
                         exhaustEngineList.Add(gob);
                     });
-                }
             _exhaustEngines = exhaustEngineList.ToArray();
         }
 
@@ -1295,23 +1291,19 @@ namespace AW2.Game
         /// </summary>
         private void CreateModelBirthGobs()
         {
-            KeyValuePair<string, int>[] poses = GetNamedPositions("Peng_");
-            foreach (KeyValuePair<string, int> pos in poses)
+            var poses = GetNamedPositions("Peng_");
+            foreach (var pos in poses)
             {
                 // We expect 3D model bones named like "Peng_blinker_1", where
                 // "Peng" is a special marker,
                 // "blinker" is the typename of the Peng to create,
                 // "1" is an optional number used only to make such bone names unique.
-                string[] tokens = pos.Key.Split('_');
-                if (tokens.Length < 2 || tokens.Length > 3)
-                {
-                    Log.Write("Warning: Invalid birth gob definition " + pos.Key + " in 3D model " + _modelName);
-                    continue;
-                }
+                string[] tokens = pos.Item1.Split('_');
+                if (tokens.Length < 2 || tokens.Length > 3) throw new ApplicationException("Invalid birth gob definition " + pos.Item1 + " in 3D model " + _modelName);
                 Gob.CreateGob<Gobs.Peng>(Game, (CanonicalString)tokens[1], gob =>
                 {
                     gob.Leader = this;
-                    gob.LeaderBone = pos.Value;
+                    gob.LeaderBone = pos.Item2;
                     Arena.Gobs.Add(gob);
                 });
             }
@@ -1322,19 +1314,13 @@ namespace AW2.Game
         /// </summary>
         private void InitializeModelCollisionAreas()
         {
-            foreach (ModelMesh mesh in Model.Meshes)
+            var MESH_PREFIX = "mesh_Collision";
+            foreach (var mesh in Model.Meshes.Where(m => m.Name.StartsWith(MESH_PREFIX)))
             {
-                // A specially named mesh can replace the geometric area of a named collision area.
-                if (mesh.Name.StartsWith("mesh_Collision"))
-                {
-                    string areaName = mesh.Name.Replace("mesh_Collision", "");
-                    var changeArea = _collisionAreas.FirstOrDefault(area => area.Name == areaName);
-                    if (changeArea == null)
-                        Log.Write("Warning: Gob found collision mesh \"" + areaName +
-                            "\" that didn't match any collision area name.");
-                    else
-                        changeArea.AreaGob = Graphics3D.GetOutline(mesh);
-                }
+                var areaName = mesh.Name.Substring(MESH_PREFIX.Length);
+                var changeArea = _collisionAreas.FirstOrDefault(area => area.Name == areaName);
+                if (changeArea == null) throw new ApplicationException("Gob found collision mesh '" + areaName +"' that didn't match any collision area name");
+                changeArea.AreaGob = Graphics3D.GetOutline(mesh);
             }
         }
 

@@ -62,9 +62,9 @@ namespace AW2.Core
             {
                 var now = timer.Elapsed;
                 if (now + Waiter.PRECISION < nextUpdate)
-                {
                     Waiter.Instance.Sleep(nextUpdate - now);
-                }
+                else if (now > nextUpdate + TimeSpan.FromSeconds(30))
+                    nextUpdate = now;
                 else
                 {
                     var updateInterval = _game.TargetElapsedTime;

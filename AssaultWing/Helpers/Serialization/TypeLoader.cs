@@ -49,7 +49,7 @@ namespace AW2.Helpers.Serialization
             try
             {
                 template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type",
-                    baseClass, typeof(TypeParameterAttribute));
+                    baseClass, limitationAttribute);
             }
             catch (MemberSerializationException e)
             {

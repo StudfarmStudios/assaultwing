@@ -10,7 +10,6 @@ namespace AW2.Helpers.Serialization
     /// </summary>
     internal class FieldFinder
     {
-        private static Dictionary<Tuple<Type, Type>, FieldInfo[]> g_fieldCache = new Dictionary<Tuple<Type, Type>, FieldInfo[]>();
         private static Dictionary<Tuple<Type, Type, string>, int> g_fieldIndexCache = new Dictionary<Tuple<Type, Type, string>, int>();
         private Type _type;
         private Type _limitationAttribute;
@@ -38,11 +37,7 @@ namespace AW2.Helpers.Serialization
 
         private void InitializeFields()
         {
-            var cacheKey = Tuple.Create(_type, _limitationAttribute);
-            if (g_fieldCache.TryGetValue(cacheKey, out _fields)) return;
-            g_fieldCache[cacheKey] = _fields = Attribute.IsDefined(_type, typeof(LimitedSerializationAttribute))
-                ? Serialization.GetFields(_type, _limitationAttribute, null).ToArray()
-                : Serialization.GetFields(_type, null, null).ToArray();
+            _fields = Serialization.GetFields(_type, _limitationAttribute, null).ToArray();
         }
 
         private FieldInfo FindField(string xmlElementName)

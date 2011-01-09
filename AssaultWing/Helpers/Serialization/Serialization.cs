@@ -47,6 +47,7 @@ namespace AW2.Helpers.Serialization
         private static readonly Dictionary<TypeTriple, IEnumerable<FieldInfo>> g_typeFields = new Dictionary<TypeTriple, IEnumerable<FieldInfo>>();
 
         private static Dictionary<Tuple<Type, Type>, bool> g_isAssignableFromCache = new Dictionary<Tuple<Type, Type>, bool>();
+        private static Dictionary<Tuple<Type, Type>, FieldInfo[]> g_fieldCache = new Dictionary<Tuple<Type, Type>, FieldInfo[]>();
 
         #region public methods
 
@@ -84,7 +85,7 @@ namespace AW2.Helpers.Serialization
                 foreach (object item in (IEnumerable)castObj)
                     SerializeXml(writer, "Item", item, limitationAttribute, typeof(object));
             else
-                SerializeFieldsXml(writer, castObj, limitationAttribute);
+                SerializeMembersXml(writer, castObj, limitationAttribute);
             writer.WriteEndElement();
         }
 
@@ -212,19 +213,20 @@ namespace AW2.Helpers.Serialization
         }
 
         /// <summary>
-        /// Returns the instance fields of the given object that optionally have the given attribute.
-        /// </summary>
+        /// Returns the serialisable members of a type.
         /// The search includes the object's public and non-public fields declared in its 
-        /// type and all base types. Do not modify the returned array.
-        /// <param name="obj">The object whose fields to scan for.</param>
-        /// <param name="limitationAttribute">If not <c>null</c>, return only fields with this attribute.</param>
-        /// <param name="exclusionAttribute">If not <c>null</c>, return only fields without this attribute.</param>
+        /// type and all base types.
+        /// The search is limited to members with <paramref name="limitationAttribute"/>, unless the parameter is null.
+        /// Members with <paramref name="exclusionAttribute"/> are excluded, unless the parameter is null.
+        /// </summary>
         public static IEnumerable<FieldInfo> GetFields(Type objType, Type limitationAttribute, Type exclusionAttribute)
         {
             var key = new TypeTriple(objType, limitationAttribute, exclusionAttribute);
             IEnumerable<FieldInfo> result;
             if (g_typeFields.TryGetValue(key, out result)) return result;
-            result = GetFieldsImpl(objType, limitationAttribute, exclusionAttribute);
+            result = Attribute.IsDefined(objType, typeof(LimitedSerializationAttribute), true)
+                ? GetFieldsImpl(objType, limitationAttribute, exclusionAttribute)
+                : GetFieldsImpl(objType, null, exclusionAttribute);
             g_typeFields.Add(key, result);
             return result;
         }
@@ -347,22 +349,17 @@ namespace AW2.Helpers.Serialization
         #region private methods
 
         /// <summary>
-        /// Writes out fields of an object into an XML writer.
+        /// Writes out fields and properties of an object into an XML writer.
+        /// If the type of the object or one of its ancestors has <see cref="LimitedSerializationAttribute"/>
+        /// then serialisation is limited to members that have the specified limitation attribute.
         /// </summary>
-        /// You can limit the serialisation to fields that have the specified limitation attribute.
-        /// This limitation is applied only on instances of classes that have 
-        /// LimitedSerializationAttribute.
         /// <param name="writer">Where to write the serialised values.</param>
         /// <param name="obj">The object whose fields to serialise.</param>
         /// <param name="limitationAttribute">Limit the serialisation to fields with this attribute,
         /// or serialise all fields if limitationAttribute is a null reference.</param>
-        /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
-        private static void SerializeFieldsXml(XmlWriter writer, object obj, Type limitationAttribute)
+        private static void SerializeMembersXml(XmlWriter writer, object obj, Type limitationAttribute)
         {
-            var type = obj.GetType();
-            var fields = Attribute.IsDefined(type, typeof(LimitedSerializationAttribute))
-                ? GetFields(type, limitationAttribute, null)
-                : GetFields(type, null, null);
+            var fields = GetFields(obj.GetType(), limitationAttribute, null);
             foreach (var field in fields)
                 SerializeXml(writer,
                     GetSerializedName(field),

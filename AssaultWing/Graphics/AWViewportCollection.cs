@@ -1,12 +1,9 @@
-﻿#if DEBUG
-using NUnit.Framework;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Viewport = AW2.Graphics.AWViewport;
 using AW2.Core;
+using Viewport = AW2.Graphics.AWViewport;
 
 namespace AW2.Graphics
 {
@@ -118,7 +115,7 @@ namespace AW2.Graphics
         /// <returns><b>-1</b> if <b>aspectRatio1</b> is more preferable;
         /// <b>0</b> if <b>aspectRatio1</b> is as preferable as <b>aspectRatio2</b>;
         /// <b>1</b> if <b>aspectRatio2</b> is more preferable.</returns>
-        private static int CompareAspectRatios(float aspectRatio1, float aspectRatio2)
+        public static int CompareAspectRatios(float aspectRatio1, float aspectRatio2)
         {
             float badness1 = aspectRatio1 >= 1.0f
                 ? aspectRatio1 - 1.0f
@@ -165,34 +162,5 @@ namespace AW2.Graphics
         }
 
         #endregion Private methods
-
-        #region Unit tests
-#if DEBUG
-        [TestFixture]
-        public class GraphicsEngineTest
-        {
-            [Test]
-            public void AspectRatioComparison()
-            {
-                Assert.AreEqual(0, CompareAspectRatios(1.0f, 1.0f));
-                Assert.AreEqual(0, CompareAspectRatios(0.5f, 0.5f));
-                Assert.AreEqual(0, CompareAspectRatios(2.0f, 2.0f));
-
-                Assert.AreEqual(1, CompareAspectRatios(0.5f, 1.0f));
-                Assert.AreEqual(-1, CompareAspectRatios(1.0f, 2.0f));
-                Assert.AreEqual(-1, CompareAspectRatios(1.0f, 0.5f));
-                Assert.AreEqual(1, CompareAspectRatios(2.0f, 1.0f));
-
-                Assert.AreEqual(-1, CompareAspectRatios(0.5f, Single.MaxValue));
-                Assert.AreEqual(1, CompareAspectRatios(Single.MaxValue, 0.5f));
-                Assert.AreEqual(1, CompareAspectRatios(Single.Epsilon, 2.0f));
-                Assert.AreEqual(-1, CompareAspectRatios(2.0f, Single.Epsilon));
-
-                Assert.AreEqual(1, CompareAspectRatios(0.9f, 1.1f));
-                Assert.AreEqual(-1, CompareAspectRatios(0.9f, 1.2f));
-            }
-        }
-#endif
-        #endregion Unit tests
     }
 }

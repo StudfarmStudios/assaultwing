@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B041E31A-3519-4869-85A3-5DF8C7874F45}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AW2</RootNamespace>
+    <AssemblyName>AWUnitTests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
+    <Reference Include="nunit.framework, Version=2.5.9.10348, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\GobTest.cs" />
+    <Compile Include="Game\GobUtils\CoronerTest.cs" />
+    <Compile Include="Game\GobUtils\DamageInfoTest.cs" />
+    <Compile Include="Game\GobUtils\ShipLocationPredicterTest.cs" />
+    <Compile Include="Graphics\AWViewportCollectionTest.cs" />
+    <Compile Include="Helpers\AWMathHelperTest.cs" />
+    <Compile Include="Helpers\Geometric\GeometryTest.cs" />
+    <Compile Include="Helpers\Geometric\PolygonTest.cs" />
+    <Compile Include="Helpers\Graphics3DTest.cs" />
+    <Compile Include="Helpers\LazyProxyTest.cs" />
+    <Compile Include="Helpers\MiscHelperTest.cs" />
+    <Compile Include="Helpers\RandomHelperTest.cs" />
+    <Compile Include="Helpers\Serialization\NetworkBinaryReaderTest.cs" />
+    <Compile Include="Helpers\Serialization\NetworkBinaryWriterTest.cs" />
+    <Compile Include="Helpers\SpatialGridTest.cs" />
+    <Compile Include="Net\Messages\PingTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AssaultWingGame\AssaultWingGame.csproj">
+      <Project>{6CBD4219-88EE-46F2-B321-141F35B8B4BC}</Project>
+      <Name>AssaultWingGame</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AssaultWing\AssaultWing.csproj">
+      <Project>{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}</Project>
+      <Name>AssaultWing</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

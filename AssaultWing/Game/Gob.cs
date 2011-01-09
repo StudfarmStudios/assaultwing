@@ -1,6 +1,3 @@
-#if DEBUG
-using NUnit.Framework;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -770,7 +767,7 @@ namespace AW2.Game
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
         }
 
-        private static float DampDrawRotationOffset(float drawRotationOffset)
+        public static float DampDrawRotationOffset(float drawRotationOffset)
         {
             // Reduce large rotation offsets in somewhat constant steps but small offsets
             // in smaller and smaller steps.
@@ -1433,33 +1430,5 @@ namespace AW2.Game
         }
 
         #endregion
-
-#if DEBUG
-        [TestFixture]
-        public class GobUnitTests
-        {
-            private const float STEP = 0.1f;
-
-            [Test]
-            public void TestDrawRotationOffsetDampingKeepsSign([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
-            {
-                Assert.AreEqual(Math.Sign(x), Math.Sign(DampDrawRotationOffset(x)));
-            }
-
-            [Test]
-            public void TestDrawRotationOffsetDampingShrinks([Range(-ROTATION_SMOOTHING_CUTOFF, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
-            {
-                Assert.GreaterOrEqual(Math.Abs(x), Math.Abs(DampDrawRotationOffset(x)));
-            }
-
-            [Test]
-            public void TestDrawRotationOffsetDampingDerivativeIsNotTooSteep([Range(-ROTATION_SMOOTHING_CUTOFF + STEP, ROTATION_SMOOTHING_CUTOFF, STEP)] float x)
-            {
-                var delta = DampDrawRotationOffset(x) - DampDrawRotationOffset(x - STEP);
-                Assert.GreaterOrEqual(1, delta / STEP);
-                Assert.LessOrEqual(-1, delta / STEP);
-            }
-        }
-#endif
     }
 }

@@ -1,7 +1,4 @@
-﻿#if DEBUG
-using NUnit.Framework;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Xna.Framework;

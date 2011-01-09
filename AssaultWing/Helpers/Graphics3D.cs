@@ -1,6 +1,3 @@
-#if DEBUG
-using NUnit.Framework;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -716,74 +713,5 @@ namespace AW2.Helpers
         }
 
         #endregion Utility methods for 3D graphics
-
-
-        #region Unit tests
-
-#if DEBUG
-
-        /// <summary>
-        /// Tests the Graphics3D class.
-        /// </summary>
-        [TestFixture]
-        public class Graphics3DTest
-        {
-            /// <summary>
-            /// Sets up the testing.
-            /// </summary>
-            [SetUp]
-            public void SetUp()
-            {
-            }
-            /// <summary>
-            /// Tests finding a polygonal outline for a 3D model.
-            /// </summary>
-            [Test]
-            public void TestGetOutline()
-            {
-                Vector3 z1 = Vector3.UnitZ;
-                Vector3 z2 = Vector3.Normalize(new Vector3(0,1,2));
-                Vector2 c = Vector2.Zero;
-                Vector2 q12d = new Vector2(20f, 20f);
-                Vector2 q22d = new Vector2(40f, 20f);
-                Vector2 q32d = new Vector2(30f, 40f);
-                Vector2 q42d = new Vector2(50f, 40f);
-                Vector3 q1 = new Vector3(q12d, 0f);
-                Vector3 q2 = new Vector3(q22d, 0f);
-                Vector3 q3 = new Vector3(q32d, 0f);
-                Vector3 q4 = new Vector3(q42d, 0f);
-
-                VertexPositionNormalTexture[] vertexData1 = new VertexPositionNormalTexture[] {
-                    new VertexPositionNormalTexture(q1,z1,c), // 0
-                    new VertexPositionNormalTexture(q2,z1,c), // 1
-                    new VertexPositionNormalTexture(q3,z1,c), // 2
-                    new VertexPositionNormalTexture(q4,z1,c), // 3
-                };
-                short[] indexData1 = new short[] {
-                    0,2,1, 2,1,3
-                };
-                VertexPositionNormalTexture[] vertexData2 = new VertexPositionNormalTexture[] {
-                    new VertexPositionNormalTexture(q1,z1,c), // 0
-                    new VertexPositionNormalTexture(q2,z1,c), // 1
-                    new VertexPositionNormalTexture(q3,z1,c), // 2
-                    new VertexPositionNormalTexture(q4,z1,c), // 3
-                    new VertexPositionNormalTexture(q2,z2,c), // 4
-                    new VertexPositionNormalTexture(q3,z2,c), // 5
-                };
-                short[] indexData2 = new short[] {
-                    0,2,1, 2,1,3
-                };
-
-                Polygon poly1 = Graphics3D.GetOutline(vertexData1, indexData1);
-                Polygon poly1Expected = new Polygon(new Vector2[] { q12d, q22d, q42d, q32d });
-                Assert.IsTrue(poly1Expected.Equals(poly1));
-
-                Polygon poly2 = Graphics3D.GetOutline(vertexData2, indexData2);
-                Polygon poly2Expected = new Polygon(new Vector2[] { q12d, q22d, q42d, q32d });
-                Assert.IsTrue(poly2Expected.Equals(poly2));
-            }
-        }
-#endif
-        #endregion // Unit tests
     }
 }

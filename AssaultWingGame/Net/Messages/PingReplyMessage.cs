@@ -1,7 +1,4 @@
-﻿#if DEBUG
-using NUnit.Framework;
-#endif
-using System;
+﻿using System;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
@@ -51,38 +48,4 @@ namespace AW2.Net.Messages
             FrameNumberOnReply = reader.ReadInt32();
         }
     }
-
-    #region Unit tests
-#if DEBUG
-    /// <summary>
-    /// Ping message test class.
-    /// </summary>
-    [TestFixture]
-    public class PingTest
-    {
-        /// <summary>
-        /// Tests passing of timestamp through ping messages.
-        /// </summary>
-        [Test]
-        public void TestPingTimestamp()
-        {
-            var timestamp = new TimeSpan(12, 34, 56);
-            var ping = new PingRequestMessage();
-            ping.Timestamp = timestamp;
-
-            var pingData = ping.Serialize();
-            var ping2 = (PingRequestMessage)Message.Deserialize(pingData, 0, TimeSpan.Zero);
-            var totalGameTime = new TimeSpan(23, 45, 67);
-            var frameNumber = 123;
-            var pong = ping2.GetPingReplyMessage(totalGameTime, frameNumber);
-
-            byte[] pongData = pong.Serialize();
-            var pong2 = (PingReplyMessage)Message.Deserialize(pongData, 0, TimeSpan.Zero);
-            Assert.AreEqual(timestamp, pong2.Timestamp);
-            Assert.AreEqual(totalGameTime, pong2.TotalGameTimeOnReply);
-            Assert.AreEqual(frameNumber, pong2.FrameNumberOnReply);
-        }
-    }
-#endif
-    #endregion Unit tests
 }

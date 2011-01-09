@@ -1,6 +1,3 @@
-#if DEBUG
-using NUnit.Framework;
-#endif
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -70,8 +67,6 @@ namespace AW2.Helpers
                     _cells[y, x] = new List<SpatialGridElement<T>>();
             _outerCell = new List<SpatialGridElement<T>>();
         }
-
-        #region Public methods
 
         /// <summary>
         /// Adds an element to the spatial grid.
@@ -225,10 +220,6 @@ namespace AW2.Helpers
                     if (action(cell[i].Value)) return;
         }
 
-        #endregion Public methods
-
-        #region Private methods
-
         /// <summary>
         /// Converts a rectangular area given in Cartesian coordinates into
         /// a rectangular range of grid cells that will contain all the elements
@@ -242,7 +233,7 @@ namespace AW2.Helpers
         /// <param name="gridMaxX">Where to store the maximum grid cell X index, exclusive.</param>
         /// <param name="gridMaxY">Where to store the maximum grid cell Y index, exclusive.</param>
         /// <param name="outOfBounds">Where to store the fact that the outer cell is included in the range.</param>
-        private void ConvertArea(Rectangle area, out int gridMinX, out int gridMinY,
+        public void ConvertArea(Rectangle area, out int gridMinX, out int gridMinY,
             out int gridMaxX, out int gridMaxY, out bool outOfBounds)
         {
             outOfBounds = false;
@@ -273,73 +264,6 @@ namespace AW2.Helpers
             gridMaxX = Math.Min(Math.Max(gridMaxX, 0), _cells.GetLength(1));
             gridMaxY = Math.Min(Math.Max(gridMaxY, 0), _cells.GetLength(0));
         }
-
-        #endregion Private methods
-
-        #region Unit tests
-#if DEBUG
-        [TestFixture(TypeArgs = new[] { typeof(int) })]
-        public class SpatialGridTest
-        {
-            [Test]
-            public void TestConvertArea()
-            {
-                int gridMinX, gridMinY, gridMaxX, gridMaxY;
-                bool outOfBounds;
-                var grid1 = new SpatialGrid<int>(10, new Vector2(-50), new Vector2(100));
-                Rectangle area;
-
-                area = new Rectangle(1, 1, 9, 9);
-                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-                Assert.AreEqual(5, gridMinX);
-                Assert.AreEqual(5, gridMinY);
-                Assert.AreEqual(6, gridMaxX);
-                Assert.AreEqual(6, gridMaxY);
-                Assert.AreEqual(false, outOfBounds);
-
-                area = new Rectangle(0, 0, 10, 10);
-                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-                Assert.AreEqual(5, gridMinX);
-                Assert.AreEqual(5, gridMinY);
-                Assert.AreEqual(7, gridMaxX);
-                Assert.AreEqual(7, gridMaxY);
-                Assert.AreEqual(false, outOfBounds);
-
-                area = new Rectangle(-50, -50, -50, -50);
-                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-                Assert.AreEqual(0, gridMinX);
-                Assert.AreEqual(0, gridMinY);
-                Assert.AreEqual(1, gridMaxX);
-                Assert.AreEqual(1, gridMaxY);
-                Assert.AreEqual(false, outOfBounds);
-
-                area = new Rectangle(99.9999f, 99.9999f, 99.9999f, 99.9999f);
-                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-                Assert.AreEqual(14, gridMinX);
-                Assert.AreEqual(14, gridMinY);
-                Assert.AreEqual(15, gridMaxX);
-                Assert.AreEqual(15, gridMaxY);
-                Assert.AreEqual(false, outOfBounds);
-
-                area = new Rectangle(15, -15, float.MaxValue, float.MaxValue);
-                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-                Assert.AreEqual(6, gridMinX);
-                Assert.AreEqual(3, gridMinY);
-                Assert.AreEqual(15, gridMaxX);
-                Assert.AreEqual(15, gridMaxY);
-                Assert.AreEqual(true, outOfBounds);
-
-                area = new Rectangle(-float.MaxValue, -float.MaxValue, float.MaxValue, 100.1f);
-                grid1.ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-                Assert.AreEqual(0, gridMinX);
-                Assert.AreEqual(0, gridMinY);
-                Assert.AreEqual(15, gridMaxX);
-                Assert.AreEqual(15, gridMaxY);
-                Assert.AreEqual(true, outOfBounds);
-            }
-        }
-#endif
-            #endregion Unit tests
     }
 
     /// <summary>

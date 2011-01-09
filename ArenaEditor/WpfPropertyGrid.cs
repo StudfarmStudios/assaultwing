@@ -12,6 +12,7 @@ using System.Activities.Presentation;
 using System.Activities.Presentation.Model;
 using System.Activities.Presentation.View;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Data;
 
@@ -277,11 +278,9 @@ namespace System.Windows.Controls
                         object propEntryValue = propEntry.GetValue(data, null);
                         string propName = propEntryValue.GetType().GetProperty("PropertyName").GetValue(propEntryValue, null) as string;
                         title = propEntryValue.GetType().GetProperty("DisplayName").GetValue(propEntryValue, null) as string;
-                        PropertyInfo property = this.TheSelectedObjects[0].GetType().GetProperty(propName);
-                        object[] attrs = property.GetCustomAttributes(typeof(DescriptionAttribute), true);
-
-                        if (attrs != null && attrs.Length > 0)
-                            descrip = (attrs[0] as DescriptionAttribute).Description;
+                        var property = TypeDescriptor.GetProperties(TheSelectedObjects[0]).Cast<PropertyDescriptor>().First(p => p.Name == propName);
+                        var attrs = property.Attributes.OfType<DescriptionAttribute>();
+                        if (attrs.Any()) descrip = attrs.First().Description;
                     }
                     ChangeHelpText(title, descrip);
                 }

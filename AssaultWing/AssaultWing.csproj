@@ -170,6 +170,7 @@
     <Compile Include="Game\GobUtils\GameAction.cs" />
     <Compile Include="Game\GobUtils\GameActionAttribute.cs" />
     <Compile Include="Game\GobUtils\GameActionCollection.cs" />
+    <Compile Include="Game\GobUtils\GobPropertyDescriptor.cs" />
     <Compile Include="Game\GobUtils\ShipDevice.cs" />
     <Compile Include="Game\GobUtils\ShipDeviceInfo.cs" />
     <Compile Include="Game\GobUtils\ShipInfo.cs" />

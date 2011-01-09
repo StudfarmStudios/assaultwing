@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -51,7 +52,7 @@ namespace AW2.Game
     /// <see cref="AW2.Helpers.RuntimeStateAttribute"/>
     [LimitedSerialization]
     [System.Diagnostics.DebuggerDisplay("ID:{ID} TypeName:{TypeName} Pos:{Pos} Move:{Move}")]
-    public class Gob : Clonable, IConsistencyCheckable, INetworkSerializable
+    public class Gob : Clonable, IConsistencyCheckable, INetworkSerializable, ICustomTypeDescriptor
     {
         /// <summary>
         /// Type of a gob's preferred placement to arena layers.
@@ -1430,5 +1431,71 @@ namespace AW2.Game
         }
 
         #endregion
+
+        #region ICustomTypeDescriptor Members
+
+        public AttributeCollection GetAttributes()
+        {
+            return TypeDescriptor.GetAttributes(this);
+        }
+
+        public string GetClassName()
+        {
+            return TypeDescriptor.GetClassName(this);
+        }
+
+        public string GetComponentName()
+        {
+            return TypeDescriptor.GetComponentName(this);
+        }
+
+        public TypeConverter GetConverter()
+        {
+            return TypeDescriptor.GetConverter(this);
+        }
+
+        public EventDescriptor GetDefaultEvent()
+        {
+            return TypeDescriptor.GetDefaultEvent(this);
+        }
+
+        public PropertyDescriptor GetDefaultProperty()
+        {
+            return TypeDescriptor.GetDefaultProperty(this);
+        }
+
+        public object GetEditor(Type editorBaseType)
+        {
+            return TypeDescriptor.GetEditor(this, editorBaseType);
+        }
+
+        public EventDescriptorCollection GetEvents(Attribute[] attributes)
+        {
+            return TypeDescriptor.GetEvents(this, attributes);
+        }
+
+        public EventDescriptorCollection GetEvents()
+        {
+            return TypeDescriptor.GetEvents(this);
+        }
+
+        public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PropertyDescriptorCollection GetProperties()
+        {
+            var props = Serialization.GetFields(GetType(), typeof(RuntimeStateAttribute), null)
+                .Select(m => new GobPropertyDescriptor(m));
+            return new PropertyDescriptorCollection(props.ToArray());
+        }
+
+        public object GetPropertyOwner(PropertyDescriptor pd)
+        {
+            return this;
+        }
+
+        #endregion ICustomTypeDescriptor Members
     }
 }

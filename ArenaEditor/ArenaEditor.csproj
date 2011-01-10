@@ -80,6 +80,9 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\WPF\GobSelectionPopup.xaml.cs">
+      <DependentUpon>GobSelectionPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\WPF\LayerList.xaml.cs">
       <DependentUpon>LayerList.xaml</DependentUpon>
     </Compile>
@@ -95,6 +98,10 @@
     <Compile Include="ArenaEditorProgram.cs" />
     <Compile Include="Game\EditorSpectator.cs" />
     <Compile Include="Graphics\EditorViewport.cs" />
+    <Page Include="UI\WPF\GobSelectionPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\WPF\LayerList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

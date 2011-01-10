@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -11,15 +12,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Game;
+using AW2.Game.Arenas;
 using AW2.Game.Gobs;
 using AW2.Graphics;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using AW2.UI;
-using Point = System.Drawing.Point;
-using Size = System.Drawing.Size;
-using AW2.Game.Arenas;
 using AW2.UI.WPF.PropertyValueEditors;
+using Point = System.Drawing.Point;
 
 namespace AW2.UI.WPF
 {
@@ -49,10 +48,7 @@ namespace AW2.UI.WPF
         private Gob _selectedGob;
         private object _properContent;
 
-        private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
-        private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
-        private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }
-        private Gob SelectedGob
+        public Gob SelectedGob
         {
             get { return _selectedGob; }
             set
@@ -63,6 +59,10 @@ namespace AW2.UI.WPF
                 if (_selectedGob != null) _selectedGob.BleachValue = 0.35f;
             }
         }
+
+        private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
+        private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
+        private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }
         private IEnumerable<EditorViewport> EditorViewports
         {
             get { return _game.DataEngine.Viewports.OfType<EditorViewport>(); }
@@ -383,32 +383,42 @@ namespace AW2.UI.WPF
 
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
-            var visibleLayers = LayerNames.Items.Cast<LayerReference>().Where(layer => layer.Visible).Reverse();
-            SelectGobFromAnyLayer(viewport, pointInViewport, visibleLayers);
+            var visibleLayers = LayerNames.Items
+                .Cast<LayerReference>()
+                .Where(layref => layref.Visible)
+                .Reverse();
+            var potentialGobsByLayer = visibleLayers
+                .Select(lay => new { Layer = lay, Gobs = FindGobs(viewport, pointInViewport, lay.Value) })
+                .Where(lay => lay.Gobs.Any());
+            if (potentialGobsByLayer.Any())
+            {
+                LayerNames.SelectedItem = potentialGobsByLayer.FirstOrDefault().Layer;
+                SelectedGob = potentialGobsByLayer.First().Gobs.FirstOrDefault();
+                if (potentialGobsByLayer.Count() > 1)
+                {
+                    var gobSelectionPopup = new GobSelectionPopup();
+                    gobSelectionPopup.AddRange(potentialGobsByLayer.SelectMany(lay => lay.Gobs));
+                    gobSelectionPopup.GobList.SelectionChanged += (sender, args) => SelectedGob = (Gob)args.AddedItems[0];
+                    gobSelectionPopup.Show();
+                }
+            }
+            else
+            {
+                LayerNames.SelectedItem = null;
+                SelectedGob = null;
+            }
         }
 
-        private void SelectGobFromCurrentLayer(AWViewport viewport, Vector2 pointInViewport)
+        private IEnumerable<Gob> FindGobs(AWViewport viewport, Vector2 pointInViewport, ArenaLayer layer)
         {
-            var ray = viewport.ToRay(pointInViewport, SelectedLayer.Z);
-            var nearbyGobs =
-                from gob in SelectedLayer.Gobs
-                let distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, SelectedLayer.Z))
+            var ray = viewport.ToRay(pointInViewport, layer.Z);
+            return
+                from gob in layer.Gobs
+                let distance = Vector2.Distance(gob.Pos, viewport.ToPos(pointInViewport, layer.Z))
                 let t = gob.DrawBounds.Intersects(ray)
                 where distance < 20 || t.HasValue
                 orderby distance ascending
                 select gob;
-            SelectedGob = nearbyGobs.FirstOrDefault();
-        }
-
-        private void SelectGobFromAnyLayer(AWViewport viewport, Vector2 pointInViewport, IEnumerable<LayerReference> layers)
-        {
-            foreach (var layer in layers)
-            {
-                LayerNames.SelectedItem = layer;
-                SelectGobFromCurrentLayer(viewport, pointInViewport);
-                if (SelectedGob != null) break;
-            }
-            if (SelectedGob == null) LayerNames.SelectedIndex = -1;
         }
 
         private void DragViewport(AWViewport viewport, Point newMouseLocation)

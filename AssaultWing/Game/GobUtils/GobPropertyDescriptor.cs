@@ -63,6 +63,7 @@ namespace AW2.Game.GobUtils
         {
             if (GetPropertyAttributes != null)
                 foreach (var attr in GetPropertyAttributes(field.FieldType)) yield return attr;
+            yield return new CategoryAttribute(field.DeclaringType.Name);
             foreach (var attr in field.GetCustomAttributes(false).Cast<Attribute>()) yield return attr;
         }
     }

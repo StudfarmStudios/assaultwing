@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Xna.Framework;
 using AW2.Helpers;
 
 namespace AW2.Game.GobUtils
 {
+    /// <summary>
+    /// Represents a gob property that is editable in ArenaEditor.
+    /// </summary>
     public class GobPropertyDescriptor : PropertyDescriptor
     {
         private FieldInfo _field;
 
+        public static Func<Type, IEnumerable<Attribute>> GetPropertyAttributes { get; set; }
+
         public GobPropertyDescriptor(FieldInfo field)
-            : base(BeautifyFieldName(field.Name), field.GetCustomAttributes(false).Cast<Attribute>().ToArray())
+            : base(BeautifyFieldName(field.Name), GetAttributes(field).ToArray())
         {
             _field = field;
         }
@@ -51,6 +57,13 @@ namespace AW2.Game.GobUtils
         private static string BeautifyFieldName(string fieldName)
         {
             return fieldName.Replace("_", "").Capitalize();
+        }
+
+        private static IEnumerable<Attribute> GetAttributes(FieldInfo field)
+        {
+            if (GetPropertyAttributes != null)
+                foreach (var attr in GetPropertyAttributes(field.FieldType)) yield return attr;
+            foreach (var attr in field.GetCustomAttributes(false).Cast<Attribute>()) yield return attr;
         }
     }
 }

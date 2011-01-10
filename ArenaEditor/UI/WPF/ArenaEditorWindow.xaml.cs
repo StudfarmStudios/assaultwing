@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +19,7 @@ using AW2.UI;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 using AW2.Game.Arenas;
+using AW2.UI.WPF.PropertyValueEditors;
 
 namespace AW2.UI.WPF
 {
@@ -80,6 +83,7 @@ namespace AW2.UI.WPF
         {
             InitializeComponent();
             SetWaitContent();
+            AW2.Game.GobUtils.GobPropertyDescriptor.GetPropertyAttributes = GetPropertyAttributes;
             Loaded += (sender, eventArgs) =>
             {
                 // GraphicsDeviceService needs a window handle which is only available after the window is visible
@@ -279,6 +283,11 @@ namespace AW2.UI.WPF
         #endregion Control event handlers
 
         #region Helpers
+
+        private static IEnumerable<Attribute> GetPropertyAttributes(Type propertyType)
+        {
+            if (propertyType == typeof(Vector2)) yield return new EditorAttribute(typeof(Vector2Editor), typeof(PropertyValueEditor));
+        }
 
         private void InitializeGraphicsDeviceService()
         {

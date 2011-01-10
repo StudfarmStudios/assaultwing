@@ -86,6 +86,7 @@
     <Compile Include="UI\WPF\PropertyEditorWindow.xaml.cs">
       <DependentUpon>PropertyEditorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\WPF\PropertyValueEditors\Vector2Editor.cs" />
     <Compile Include="WpfPropertyGrid.cs" />
     <Page Include="UI\WPF\ArenaEditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -102,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\WPF\PropertyEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\WPF\PropertyValueEditors\PropertyValueEditorTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -143,7 +143,7 @@ namespace AW2.Game
         [TypeParameter]
         private LayerPreferenceType _layerPreference;
 
-        [RuntimeState]
+        [RuntimeState, Browsable(false)]
         private int _staticID;
 
         /// <summary>

@@ -153,12 +153,6 @@ namespace AW2.Game
         private Vector2 _pos;
 
         /// <summary>
-        /// Movement vector of the gob.
-        /// </summary>
-        [RuntimeState]
-        private Vector2 _move;
-
-        /// <summary>
         /// Gob rotation around the Z-axis in radians.
         /// </summary>
         [RuntimeState]
@@ -204,13 +198,11 @@ namespace AW2.Game
         /// <summary>
         /// Time of birth of the gob, in game time.
         /// </summary>
-        [RuntimeState]
         private TimeSpan _birthTime;
 
         /// <summary>
         /// True iff the Die() has been called for this gob.
         /// </summary>
-        [RuntimeState]
         private bool _dead;
 
         private int _disabledCount;
@@ -273,13 +265,6 @@ namespace AW2.Game
         #endregion Fields for collisions
 
         #region Fields for damage
-
-        /// <summary>
-        /// The amount of damage; 0 means perfect condition;
-        /// <b>maxDamage</b> means totally destroyed.
-        /// </summary>
-        [RuntimeState]
-        private float _damage;
 
         /// <summary>
         /// Maximum amount of sustainable damage.
@@ -439,7 +424,7 @@ namespace AW2.Game
         /// <summary>
         /// Get or set the gob's movement vector.
         /// </summary>
-        public virtual Vector2 Move { get { return _move; } set { _move = value; } }
+        public virtual Vector2 Move { get; set; }
 
         /// <summary>
         /// Mass of the gob, measured in kilograms.
@@ -613,7 +598,7 @@ namespace AW2.Game
             _drawMode2D = new DrawMode2D(DrawModeType2D.None);
             _layerPreference = LayerPreferenceType.Front;
             _pos = Vector2.Zero;
-            _move = Vector2.Zero;
+            Move = Vector2.Zero;
             _rotation = 0;
             _mass = 1;
             _modelName = (CanonicalString)"dummymodel";
@@ -621,7 +606,7 @@ namespace AW2.Game
             _birthGobTypes = new CanonicalString[0];
             _deathGobTypes = new CanonicalString[0];
             _collisionAreas = new CollisionArea[0];
-            _damage = 0;
+            DamageLevel = 0;
             _maxDamage = 100;
             _birthTime = new TimeSpan(23, 59, 59);
             _dead = false;
@@ -978,7 +963,7 @@ namespace AW2.Game
                 if ((mode & SerializationModeFlags.VaryingData) != 0)
                 {
                     writer.Write((Vector2)_pos);
-                    writer.WriteHalf((Vector2)_move);
+                    writer.WriteHalf((Vector2)Move);
                     byte rotationAsByte = unchecked((byte)Math.Round(_rotation / MathHelper.TwoPi * 256));
                     writer.Write((byte)rotationAsByte);
                     if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
@@ -1032,7 +1017,7 @@ namespace AW2.Game
         public void ExtrapolatePosAndMove(Vector2 oldPos, Vector2 oldMove, int frameCount)
         {
             _pos = oldPos;
-            _move = oldMove;
+            Move = oldMove;
             if (Arena != null) Arena.Move(this, frameCount, false);
         }
 
@@ -1225,7 +1210,7 @@ namespace AW2.Game
         /// 0 means the entity is in perfect condition;
         /// <b>MaxDamageLevel</b> means the entity is totally destroyed.
         /// </summary>
-        public float DamageLevel { get { return _damage; } set { _damage = value; } }
+        public float DamageLevel { get; set; }
 
         /// <summary>
         /// The maximum amount of damage the entity can sustain.
@@ -1241,15 +1226,15 @@ namespace AW2.Game
                 LastDamager = boundInfo.PlayerCause;
                 LastDamagerTimeout = Arena.TotalTime + TimeSpan.FromSeconds(6);
             }
-            _damage = Math.Min(_maxDamage, _damage + damageAmount);
+            DamageLevel = Math.Min(_maxDamage, DamageLevel + damageAmount);
             _bleachDamage += damageAmount;
-            if (_damage == _maxDamage) Die(boundInfo);
+            if (DamageLevel == _maxDamage) Die(boundInfo);
         }
 
         public void RepairDamage(float repairAmount)
         {
             if (repairAmount < 0) throw new ArgumentOutOfRangeException("repairAmount");
-            _damage = Math.Max(0, _damage - repairAmount);
+            DamageLevel = Math.Max(0, DamageLevel - repairAmount);
         }
 
         #endregion Damage methods

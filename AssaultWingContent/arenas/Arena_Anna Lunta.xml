@@ -44,16 +44,7 @@
             <X>100</X>
             <Y>200</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -64,16 +55,7 @@
             <X>0</X>
             <Y>545</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-1.56</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -84,16 +66,7 @@
             <X>400</X>
             <Y>0</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -104,16 +77,7 @@
             <X>800</X>
             <Y>150</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>3.14</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -124,16 +88,7 @@
             <X>800</X>
             <Y>540</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>2.14</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -144,16 +99,7 @@
             <X>500</X>
             <Y>550</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-1.94</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -164,16 +110,7 @@
             <X>1130</X>
             <Y>60</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -184,16 +121,7 @@
             <X>1440</X>
             <Y>110</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>1.51</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -204,16 +132,7 @@
             <X>1880</X>
             <Y>70</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0.21</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -224,16 +143,7 @@
             <X>1930</X>
             <Y>360</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>1.56</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -244,16 +154,7 @@
             <X>1830</X>
             <Y>760</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-1.56</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -264,16 +165,7 @@
             <X>1970</X>
             <Y>1160</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>1.56</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -284,16 +176,7 @@
             <X>1960</X>
             <Y>1530</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>1.56</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -304,16 +187,7 @@
             <X>1890</X>
             <Y>1930</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>1.56</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -324,16 +198,7 @@
             <X>1530</X>
             <Y>1965</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>1.16</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -344,16 +209,7 @@
             <X>1150</X>
             <Y>1975</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-0.86</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -364,16 +220,7 @@
             <X>680</X>
             <Y>1805</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -384,16 +231,7 @@
             <X>310</X>
             <Y>1970</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>3.14</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -404,16 +242,7 @@
             <X>40</X>
             <Y>1860</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>3.2</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -424,16 +253,7 @@
             <X>30</X>
             <Y>1473</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>2.85</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -444,16 +264,7 @@
             <X>30</X>
             <Y>1025</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-1.61</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -464,16 +275,7 @@
             <X>330</X>
             <Y>1025</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-1.61</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -484,16 +286,7 @@
             <X>400</X>
             <Y>1625</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-1.11</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -504,16 +297,7 @@
             <X>970</X>
             <Y>1325</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0.51</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -524,16 +308,7 @@
             <X>1270</X>
             <Y>1025</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-0.51</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -544,16 +319,7 @@
             <X>1470</X>
             <Y>1525</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-0.11</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -564,16 +330,7 @@
             <X>1510</X>
             <Y>520</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-0.11</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -584,16 +341,7 @@
             <X>250</X>
             <Y>10</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>-0.11</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -604,16 +352,7 @@
             <X>840</X>
             <Y>740</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0.3</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -624,16 +363,7 @@
             <X>1840</X>
             <Y>1420</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>2.1</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.Dock, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -642,16 +372,7 @@
             <X>1004</X>
             <Y>240</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>dock</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.Dock, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -660,16 +381,7 @@
             <X>990</X>
             <Y>1370</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>dock</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.Gravity, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -682,16 +394,7 @@
             <X>0</X>
             <Y>0</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>uniform gravity</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.SpawnGob, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -724,16 +427,7 @@
             <X>0</X>
             <Y>0</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>bonus spawn</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -762,16 +456,7 @@
             <X>0</X>
             <Y>0</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>player spawn</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -790,16 +475,7 @@
             <X>0</X>
             <Y>0</Y>
           </pos>
-          <move>
-            <X>0</X>
-            <Y>0</Y>
-          </move>
           <rotation>0</rotation>
-          <birthTime>
-            <ticks>0</ticks>
-          </birthTime>
-          <dead>false</dead>
-          <damage>0</damage>
           <typeName>player spawn</typeName>
         </Item>
       </gobs>

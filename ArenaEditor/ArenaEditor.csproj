@@ -83,9 +83,6 @@
     <Compile Include="UI\WPF\LayerList.xaml.cs">
       <DependentUpon>LayerList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\WPF\PropertyEditorWindow.xaml.cs">
-      <DependentUpon>PropertyEditorWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\WPF\PropertyValueEditors\Vector2Editor.cs" />
     <Compile Include="WpfPropertyGrid.cs" />
     <Page Include="UI\WPF\ArenaEditorWindow.xaml">
@@ -99,10 +96,6 @@
     <Compile Include="Game\EditorSpectator.cs" />
     <Compile Include="Graphics\EditorViewport.cs" />
     <Page Include="UI\WPF\LayerList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\WPF\PropertyEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

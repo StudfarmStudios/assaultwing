@@ -1,8 +1,0 @@
-﻿<Window x:Class="AW2.UI.WPF.PropertyEditorWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:wpg="clr-namespace:System.Windows.Controls"
-        Width="400"
-        Title="Property Editor">
-    <wpg:WpfPropertyGrid x:Name="EditorGrid"/>
-</Window>

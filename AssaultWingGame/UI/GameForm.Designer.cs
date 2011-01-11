@@ -29,26 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameForm));
-            this._gameView = new AW2.Core.GraphicsDeviceControl();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._logView = new System.Windows.Forms.TextBox();
+            this._gameView = new AW2.Core.GraphicsDeviceControl();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // _gameView
-            // 
-            this._gameView.CausesValidation = false;
-            this._gameView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._gameView.GraphicsDeviceService = null;
-            this._gameView.Location = new System.Drawing.Point(0, 0);
-            this._gameView.Margin = new System.Windows.Forms.Padding(0);
-            this._gameView.Name = "_gameView";
-            this._gameView.Size = new System.Drawing.Size(984, 762);
-            this._gameView.TabIndex = 0;
-            this._gameView.TabStop = false;
-            this._gameView.Text = "game view";
             // 
             // splitContainer1
             // 
@@ -84,6 +72,19 @@
             this._logView.Size = new System.Drawing.Size(150, 46);
             this._logView.TabIndex = 0;
             // 
+            // _gameView
+            // 
+            this._gameView.CausesValidation = false;
+            this._gameView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._gameView.GraphicsDeviceService = null;
+            this._gameView.Location = new System.Drawing.Point(0, 0);
+            this._gameView.Margin = new System.Windows.Forms.Padding(0);
+            this._gameView.Name = "_gameView";
+            this._gameView.Size = new System.Drawing.Size(984, 762);
+            this._gameView.TabIndex = 0;
+            this._gameView.TabStop = false;
+            this._gameView.Text = "game view";
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -97,6 +98,7 @@
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 

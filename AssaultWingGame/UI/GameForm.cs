@@ -40,6 +40,9 @@ namespace AW2.UI
         }
         public GraphicsDeviceControl GameView { get { return _gameView; } }
 
+        private int FullscreenWidth { get; set; }
+        private int FullscreenHeight { get; set; }
+
         public GameForm(string[] args)
         {
             _commandLineArgs = args;
@@ -66,7 +69,7 @@ namespace AW2.UI
         {
             base.OnCreateControl();
 #if !DEBUG
-            SetFullScreen();
+            SetFullScreen(FullscreenWidth, FullscreenHeight);
 #endif
             _runner.Run();
         }
@@ -87,7 +90,7 @@ namespace AW2.UI
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
-            if (keyCode == Keys.PageUp) SetFullScreen(); // HACK !!!
+            if (keyCode == Keys.PageUp) SetFullScreen(FullscreenWidth, FullscreenHeight); // HACK !!!
             if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
             if (keyCode == Keys.Oem5) splitContainer1.Panel2Collapsed ^= true; // the § key on a Finnish keyboard
             return true; // the message won't be processed further; prevents window menu from opening
@@ -102,8 +105,29 @@ namespace AW2.UI
             base.OnClosing(e);
         }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            if (!_isFullScreen) return;
+            var beginDrawError = _graphicsDeviceService.BeginDraw(ClientSize, true);
+            if (beginDrawError == null)
+            {
+                _game.Draw();
+                _graphicsDeviceService.EndDraw(ClientSize, Handle);
+            }
+            else
+                _graphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs pevent)
+        {
+            // Doing nothing here is supposed to avoid flicker.
+        }
+
         private void InitializeGameForm()
         {
+            FullscreenWidth = Screen.FromHandle(Handle).WorkingArea.Width;
+            FullscreenHeight = Screen.FromHandle(Handle).WorkingArea.Height;
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _previousWindowedModeParameters = GetCurrentFormParameters();
             AW2.Helpers.Log.Written += AddToLogView;
@@ -136,29 +160,52 @@ namespace AW2.UI
         {
             // FIXME: Game update delegate is run in the Forms thread only because Keyboard update won't work otherwise. This should be fixed later.
             _runner = new AWGameRunner(_game,
-                () => _gameView.BeginInvoke((Action)_gameView.Invalidate),
+                () =>
+                {
+                    if (_isFullScreen)
+                        BeginInvoke((Action)Invalidate);
+                    else
+                        _gameView.BeginInvoke((Action)_gameView.Invalidate);
+                },
                 gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
         }
 
         private void SetWindowed()
         {
             if (!_isFullScreen) return;
+            _runner.Pause();
+            Application.DoEvents();
             _isFullScreen = false;
+            _gameView.Visible = true;
+            splitContainer1.Visible = true;
+            _logView.Visible = true;
+            Visible = true;
+            TopMost = false;
+            _graphicsDeviceService.ResetDevice(_previousWindowedModeParameters.Size.Width, _previousWindowedModeParameters.Size.Height, false);
             SetFormParameters(_previousWindowedModeParameters);
+            _runner.Resume();
         }
 
-        private void SetFullScreen()
+        private void SetFullScreen(int width, int height)
         {
             if (_isFullScreen) return;
+            _runner.Pause();
+            Application.DoEvents();
             _isFullScreen = true;
             _previousWindowedModeParameters = GetCurrentFormParameters();
-            SetFormParameters(GetFullScreenFormParameters());
+            SetFormParameters(GetFullScreenFormParameters(width, height));
+            _gameView.Visible = false;
+            splitContainer1.Visible = false;
+            _logView.Visible = false;
+            Visible = false;
+            _graphicsDeviceService.ResetDevice(width, height, true);
+            _runner.Resume();
         }
 
-        private static FormParameters GetFullScreenFormParameters()
+        private static FormParameters GetFullScreenFormParameters(int width, int height)
         {
             var screenArea = Screen.PrimaryScreen.Bounds;
-            return new FormParameters(FormWindowState.Normal, FormBorderStyle.None, Point.Empty, new Size(screenArea.Width, screenArea.Height));
+            return new FormParameters(FormWindowState.Normal, FormBorderStyle.None, Point.Empty, new Size(width, height));
         }
 
         private FormParameters GetCurrentFormParameters()

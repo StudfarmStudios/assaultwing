@@ -11,6 +11,9 @@ namespace AW2.Core
         private AWGame _game;
         private Action _draw;
         private Action<AWGameTime> _update;
+        private bool _initialized;
+        private bool _pausing;
+        private bool _paused;
         private bool _exiting;
         private bool _exited;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
@@ -32,6 +35,18 @@ namespace AW2.Core
         public void Run()
         {
             _gameUpdateAndDrawLoopAsyncResult = ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
+        }
+
+        public void Pause()
+        {
+            _pausing = true;
+            while (_initialized && !_paused) Waiter.Instance.Sleep(_game.TargetElapsedTime); // FIXME: busy-loop
+            _pausing = false;
+        }
+
+        public void Resume()
+        {
+            _paused = false;
         }
 
         /// <summary>
@@ -60,6 +75,7 @@ namespace AW2.Core
             }
             while (!_exiting)
             {
+                _initialized = true;
                 var now = timer.Elapsed;
                 if (now + Waiter.PRECISION < nextUpdate)
                     Waiter.Instance.Sleep(nextUpdate - now);
@@ -75,6 +91,13 @@ namespace AW2.Core
                     nextUpdate = nextNextUpdate;
                     lastUpdate = now;
                     totalGameTime += updateInterval;
+                }
+                if (_pausing)
+                {
+                    timer.Stop();
+                    _paused = true;
+                    while (_paused) Waiter.Instance.Sleep(_game.TargetElapsedTime); // FIXME: busy-loop
+                    timer.Start();
                 }
             }
         }

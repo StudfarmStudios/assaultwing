@@ -9,13 +9,12 @@ namespace AW2.Core
     public class AWGameRunner
     {
         private AWGame _game;
+        private Stopwatch _timer;
         private Action _draw;
         private Action<AWGameTime> _update;
-        private bool _initialized;
-        private bool _pausing;
-        private bool _paused;
         private bool _exiting;
         private bool _exited;
+        private SemaphoreSlim _pauseSemaphore;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
 
         public event Action Initialized;
@@ -25,8 +24,10 @@ namespace AW2.Core
         public AWGameRunner(AWGame game, Action draw, Action<AWGameTime> update)
         {
             _game = game;
+            _timer = new Stopwatch();
             _draw = draw;
             _update = update;
+            _pauseSemaphore = new SemaphoreSlim(1, 1);
         }
 
         /// <summary>
@@ -37,16 +38,21 @@ namespace AW2.Core
             _gameUpdateAndDrawLoopAsyncResult = ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
         }
 
+        /// <summary>
+        /// Prevents the update and draw loop from running but doesn't stop update timer.
+        /// Use only for short pauses.
+        /// </summary>
         public void Pause()
         {
-            _pausing = true;
-            while (_initialized && !_paused) Waiter.Instance.Sleep(_game.TargetElapsedTime); // FIXME: busy-loop
-            _pausing = false;
+            _pauseSemaphore.Wait();
         }
 
+        /// <summary>
+        /// Resumes from a previous <see cref="Pause"/>.
+        /// </summary>
         public void Resume()
         {
-            _paused = false;
+            _pauseSemaphore.Release();
         }
 
         /// <summary>
@@ -66,8 +72,7 @@ namespace AW2.Core
             var nextUpdate = TimeSpan.Zero;
             var lastUpdate = TimeSpan.Zero;
             var totalGameTime = TimeSpan.Zero;
-            var timer = new Stopwatch();
-            timer.Start();
+            _timer.Start();
             if (Initialized != null)
             {
                 Initialized();
@@ -75,8 +80,8 @@ namespace AW2.Core
             }
             while (!_exiting)
             {
-                _initialized = true;
-                var now = timer.Elapsed;
+                _pauseSemaphore.Wait();
+                var now = _timer.Elapsed;
                 if (now + Waiter.PRECISION < nextUpdate)
                     Waiter.Instance.Sleep(nextUpdate - now);
                 else if (now > nextUpdate + TimeSpan.FromSeconds(30))
@@ -85,20 +90,14 @@ namespace AW2.Core
                 {
                     var updateInterval = _game.TargetElapsedTime;
                     var nextNextUpdate = nextUpdate + updateInterval;
-                    var gameTime = new AWGameTime(totalGameTime, updateInterval, timer.Elapsed);
+                    var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
                     _update(gameTime);
                     if (now < nextNextUpdate) _draw();
                     nextUpdate = nextNextUpdate;
                     lastUpdate = now;
                     totalGameTime += updateInterval;
                 }
-                if (_pausing)
-                {
-                    timer.Stop();
-                    _paused = true;
-                    while (_paused) Waiter.Instance.Sleep(_game.TargetElapsedTime); // FIXME: busy-loop
-                    timer.Start();
-                }
+                _pauseSemaphore.Release();
             }
         }
 

@@ -35,7 +35,14 @@ namespace AW2.Menu.Main
         {
             _menuEngine = menuEngine;
             InitializeStartItems(menuEngine);
+            var lastUpdate = TimeSpan.Zero;
             NetworkItems = new MainMenuItemCollection("Battlefront Menu");
+            NetworkItems.Update = () =>
+            {
+                if (lastUpdate.SecondsAgoRealTime() < 15) return;
+                lastUpdate = _menuEngine.Game.GameTime.TotalRealTime;
+                RefreshNetworkItems();
+            };
             SetupItems = new MainMenuItemCollection("Setup Menu");
             RefreshSetupItems(menuEngine);
         }
@@ -132,11 +139,6 @@ namespace AW2.Menu.Main
                     // HACK: Force one local player
                     _menuEngine.Game.DataEngine.Spectators.Remove(player => _menuEngine.Game.DataEngine.Spectators.Count > 1);
                 }
-            });
-            NetworkItems.Add(new MainMenuItem(_menuEngine)
-            {
-                Name = "Refresh Server List",
-                Action = component => RefreshNetworkItems(),
             });
             _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(new GameServerListRequest());
         }

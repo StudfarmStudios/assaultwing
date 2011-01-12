@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 using AW2.Menu.Main;
 using AW2.UI;
+using AW2.Helpers;
 
 namespace AW2.Menu
 {
@@ -13,8 +14,6 @@ namespace AW2.Menu
     /// </summary>
     public class MainMenuComponent : MenuComponent
     {
-        #region Fields
-
         private MainMenuItemCollections _itemCollections;
         private MainMenuItemCollection _currentItems;
 
@@ -27,10 +26,6 @@ namespace AW2.Menu
         private Control _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
-
-        #endregion Fields
-
-        #region Properties
 
         public override bool Active
         {
@@ -50,14 +45,15 @@ namespace AW2.Menu
 
         public override Vector2 Center { get { return _pos + new Vector2(700, 495); } }
 
-        #endregion Properties
+        private MainMenuItem CurrentItem
+        {
+            get
+            {
+                _currentItem = _currentItem.Clamp(0, _currentItems.Count - 1);
+                return _currentItems[_currentItem];
+            }
+        }
 
-        #region Constructor
-
-        /// <summary>
-        /// Creates a main menu component for a menu system.
-        /// </summary>
-        /// <param name="menuEngine">The menu system.</param>
         public MainMenuComponent(MenuEngineImpl menuEngine)
             : base(menuEngine)
         {
@@ -65,10 +61,6 @@ namespace AW2.Menu
             _pos = new Vector2(0, 698);
             SetItems(_itemCollections.StartItems);
         }
-
-        #endregion Constructor
-
-        #region Public methods
 
         public void SetItems(MainMenuItemCollection items)
         {
@@ -82,19 +74,16 @@ namespace AW2.Menu
             if (_currentItems != _itemCollections.NetworkItems && MenuEngine.Game.NetworkMode != NetworkMode.Standalone) throw new ApplicationException("Unexpected NetworkMode " + MenuEngine.Game.NetworkMode);
             _commonCallbacks.Update();
             foreach (var menuItem in _currentItems) menuItem.Update();
+            _currentItems.Update();
         }
 
         public override void Draw(Vector2 view, SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(MenuEngine.MenuContent.MainBackground, _pos - view, Color.White);
-            _currentItems[_currentItem].DrawHighlight(spriteBatch, _pos - view);
+            CurrentItem.DrawHighlight(spriteBatch, _pos - view);
             for (int i = 0; i < _currentItems.Count; ++i)
                 _currentItems[i].Draw(spriteBatch, _pos - view);
         }
-
-        #endregion Public methods
-
-        #region Private methods
 
         private void InitializeControlCallbacks()
         {
@@ -117,7 +106,7 @@ namespace AW2.Menu
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () =>
             {
-                _currentItems[_currentItem].Action(this);
+                CurrentItem.Action(this);
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
@@ -152,7 +141,5 @@ namespace AW2.Menu
                 _controlSelect.Add(player.Controls.Fire1);
             }
         }
-
-        #endregion Private methods
     }
 }

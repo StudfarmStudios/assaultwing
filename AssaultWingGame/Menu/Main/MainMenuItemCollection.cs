@@ -13,11 +13,13 @@ namespace AW2.Menu.Main
         public string Name { get; private set; }
         public int Count { get { return _menuItems.Count; } }
         public MainMenuItem this[int i] { get { return _menuItems[i]; } }
+        public Action Update { get; set; }
 
         public MainMenuItemCollection(string name)
         {
             if (name == null || name == "") throw new ArgumentNullException("Null or empty menu mode name");
             Name = name;
+            Update = () => { };
             _menuItems = new List<MainMenuItem>();
         }
 

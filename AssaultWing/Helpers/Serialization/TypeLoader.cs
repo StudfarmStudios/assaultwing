@@ -41,7 +41,7 @@ namespace AW2.Helpers.Serialization
         /// <summary>
         /// Loads a type template from file, or null on error.
         /// </summary>
-        public static object LoadTemplate(string filename, Type baseClass, Type limitationAttribute)
+        public static object LoadTemplate(string filename, Type baseClass, Type limitationAttribute, bool tolerant)
         {
             var fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
             var xmlReader = Serialization.GetXmlReader(fs);
@@ -49,7 +49,7 @@ namespace AW2.Helpers.Serialization
             try
             {
                 template = Serialization.DeserializeXml(xmlReader, baseClass.Name + "Type",
-                    baseClass, limitationAttribute);
+                    baseClass, limitationAttribute, tolerant);
             }
             catch (MemberSerializationException e)
             {
@@ -162,9 +162,9 @@ namespace AW2.Helpers.Serialization
             return true;
         }
 
-        protected virtual object LoadTemplate(string filename)
+        protected virtual object LoadTemplate(string filename, bool tolerant = false)
         {
-            return LoadTemplate(filename, _baseClass, typeof(TypeParameterAttribute));
+            return LoadTemplate(filename, _baseClass, typeof(TypeParameterAttribute), tolerant);
         }
 
         #endregion

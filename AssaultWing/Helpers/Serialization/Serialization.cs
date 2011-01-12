@@ -100,8 +100,9 @@ namespace AW2.Helpers.Serialization
         /// <param name="elementName">Name of the XML element where the object is stored.</param>
         /// <param name="objType">Type of the value to deserialise.</param>
         /// <param name="limitationAttribute">Limit the deserialisation to fields with this attribute.</param>
+        /// <param name="tolerant">If true, errors are not raised for missing or extra XML elements.</param>
         /// <returns>The deserialised object.</returns>
-        public static object DeserializeXml(XmlReader reader, string elementName, Type objType, Type limitationAttribute)
+        public static object DeserializeXml(XmlReader reader, string elementName, Type objType, Type limitationAttribute, bool tolerant)
         {
             try
             {
@@ -129,11 +130,11 @@ namespace AW2.Helpers.Serialization
                 else if (writtenType.IsEnum)
                     returnValue = DeserializeXmlEnum(reader, writtenType);
                 else if (writtenType == typeof(Color))
-                    returnValue = DeserializeXmlColor(reader, limitationAttribute);
+                    returnValue = DeserializeXmlColor(reader, limitationAttribute, tolerant);
                 else if (IsIEnumerable(writtenType))
-                    returnValue = DeserializeXmlIEnumerable(reader, objType, limitationAttribute, writtenType);
+                    returnValue = DeserializeXmlIEnumerable(reader, objType, limitationAttribute, writtenType, tolerant);
                 else
-                    returnValue = DeserializeXmlOther(reader, limitationAttribute, writtenType);
+                    returnValue = DeserializeXmlOther(reader, limitationAttribute, writtenType, tolerant);
 
                 if (!emptyXmlElement)
                     reader.ReadEndElement();
@@ -161,10 +162,10 @@ namespace AW2.Helpers.Serialization
             return writtenType;
         }
 
-        private static object DeserializeXmlOther(XmlReader reader, Type limitationAttribute, Type writtenType)
+        private static object DeserializeXmlOther(XmlReader reader, Type limitationAttribute, Type writtenType, bool tolerant)
         {
             var returnValue = Serialization.CreateInstance(writtenType);
-            DeserializeFieldsXml(reader, returnValue, limitationAttribute);
+            DeserializeFieldsXml(reader, returnValue, limitationAttribute, tolerant);
             return returnValue;
         }
 
@@ -174,16 +175,16 @@ namespace AW2.Helpers.Serialization
             return Enum.Parse(writtenType, enumStr);
         }
 
-        private static object DeserializeXmlColor(XmlReader reader, Type limitationAttribute)
+        private static object DeserializeXmlColor(XmlReader reader, Type limitationAttribute, bool tolerant)
         {
-            byte r = (byte)DeserializeXml(reader, "R", typeof(byte), limitationAttribute);
-            byte g = (byte)DeserializeXml(reader, "G", typeof(byte), limitationAttribute);
-            byte b = (byte)DeserializeXml(reader, "B", typeof(byte), limitationAttribute);
-            byte a = (byte)DeserializeXml(reader, "A", typeof(byte), limitationAttribute);
+            byte r = (byte)DeserializeXml(reader, "R", typeof(byte), limitationAttribute, tolerant);
+            byte g = (byte)DeserializeXml(reader, "G", typeof(byte), limitationAttribute, tolerant);
+            byte b = (byte)DeserializeXml(reader, "B", typeof(byte), limitationAttribute, tolerant);
+            byte a = (byte)DeserializeXml(reader, "A", typeof(byte), limitationAttribute, tolerant);
             return new Color(r, g, b, a);
         }
 
-        private static object DeserializeXmlIEnumerable(XmlReader reader, Type objType, Type limitationAttribute, Type writtenType)
+        private static object DeserializeXmlIEnumerable(XmlReader reader, Type objType, Type limitationAttribute, Type writtenType, bool tolerant)
         {
             // Read as 'objType' so that the possibly needed cast to 'writtenType'
             // can be done nicely on the element type and not on the IEnumerable type.
@@ -192,7 +193,7 @@ namespace AW2.Helpers.Serialization
             IList array = (IList)Activator.CreateInstance(listType);
             while (reader.IsStartElement("Item"))
             {
-                object item = DeserializeXml(reader, "Item", elementType, limitationAttribute);
+                object item = DeserializeXml(reader, "Item", elementType, limitationAttribute, tolerant);
                 array.Add(item);
             }
             if (writtenType.IsArray)
@@ -386,18 +387,18 @@ namespace AW2.Helpers.Serialization
         /// <param name="limitationAttribute">Limit the deserialisation to fields with this attribute,
         /// or deserialise all fields if limitationAttribute is a null reference.</param>
         /// <seealso cref="AW2.Helpers.LimitedSerializationAttribute"/>
-        private static void DeserializeFieldsXml(XmlReader reader, object obj, Type limitationAttribute)
+        private static void DeserializeFieldsXml(XmlReader reader, object obj, Type limitationAttribute, bool tolerant)
         {
             try
             {
                 var type = obj.GetType();
-                var fieldFinder = new FieldFinder(obj.GetType(), limitationAttribute);
+                var fieldFinder = new FieldFinder(obj.GetType(), limitationAttribute, tolerant);
                 // NOTE: There is no guarantee about the order of the fields.
                 while (reader.IsStartElement())
                 {
                     var field = fieldFinder.Find(reader.Name);
                     var fieldLimitationAttribute = GetFieldLimitationAttribute(field, limitationAttribute);
-                    object value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute);
+                    object value = DeserializeXml(reader, reader.Name, field.FieldType, fieldLimitationAttribute, tolerant);
                     field.SetValue(obj, value);
                 }
                 fieldFinder.CheckForMissing();

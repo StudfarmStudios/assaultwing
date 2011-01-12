@@ -281,6 +281,7 @@
     <Compile Include="Helpers\SuspendableThread.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AWSettings.cs" />
+    <Compile Include="Settings\GraphicsSettings.cs" />
     <Compile Include="Settings\NetSettings.cs" />
     <Compile Include="Settings\SoundSettings.cs" />
     <Compile Include="Sound\AWMusic.cs" />

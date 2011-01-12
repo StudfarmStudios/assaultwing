@@ -15,13 +15,15 @@ namespace AW2.Helpers.Serialization
         private Type _limitationAttribute;
         private FieldInfo[] _fields;
         private bool[] _fieldFounds;
+        private bool _tolerant;
 
-        public FieldFinder(Type type, Type limitationAttribute)
+        public FieldFinder(Type type, Type limitationAttribute, bool tolerant)
         {
             _type = type;
             _limitationAttribute = limitationAttribute;
             InitializeFields();
             _fieldFounds = new bool[_fields.Length];
+            _tolerant = tolerant;
         }
 
         public FieldInfo Find(string xmlElementName)
@@ -32,7 +34,7 @@ namespace AW2.Helpers.Serialization
         public void CheckForMissing()
         {
             int missingIndex = Array.FindIndex(_fieldFounds, f => !f);
-            if (missingIndex >= 0) throw new MemberSerializationException("Value not found", _fields[missingIndex].Name);
+            if (missingIndex >= 0 && !_tolerant) throw new MemberSerializationException("Value not found", _fields[missingIndex].Name);
         }
 
         private void InitializeFields()
@@ -43,7 +45,7 @@ namespace AW2.Helpers.Serialization
         private FieldInfo FindField(string xmlElementName)
         {
             int fieldIndex = FindFieldIndex(xmlElementName);
-            if (_fieldFounds[fieldIndex]) throw new MemberSerializationException("Field deserialised twice", xmlElementName);
+            if (_fieldFounds[fieldIndex] && !_tolerant) throw new MemberSerializationException("Field deserialised twice", xmlElementName);
             _fieldFounds[fieldIndex] = true;
             return _fields[fieldIndex];
         }
@@ -54,7 +56,7 @@ namespace AW2.Helpers.Serialization
             var cacheKey = Tuple.Create(_type, _limitationAttribute, xmlElementName);
             if (!g_fieldIndexCache.TryGetValue(cacheKey, out fieldIndex))
                 g_fieldIndexCache[cacheKey] = fieldIndex = Array.FindIndex(_fields, f => Serialization.GetSerializedName(f) == xmlElementName);
-            if (fieldIndex == -1) throw new MemberSerializationException("Cannot deserialise unknown field", xmlElementName);
+            if (fieldIndex == -1 && !_tolerant) throw new MemberSerializationException("Cannot deserialise unknown field", xmlElementName);
             return fieldIndex;
         }
     }

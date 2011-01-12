@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Helpers;
 using AW2.Net.ManagementMessages;
@@ -72,27 +75,44 @@ namespace AW2.Menu.Main
         private void RefreshSetupItems(MenuEngineImpl menuEngine)
         {
             SetupItems.Clear();
-            Func<string, Func<float>, Action<float>, MainMenuItem> getMenuItemForVolumeSetting = (name, get, set) => new MainMenuItem(menuEngine)
+            Func<string, Action, MainMenuItem> getSetupItem = (name, action) => new MainMenuItem(menuEngine)
             {
-                Name = string.Format("{0} {1:0} %", name, get() * 100),
+                Name = name,
                 Action = component =>
                 {
-                    if (get() >= 1)
-                        set(0);
-                    else
-                        set(Math.Min(1, get() + 0.25f));
+                    action();
                     RefreshSetupItems(menuEngine);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }
             };
-            SetupItems.Add(getMenuItemForVolumeSetting(
+            Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => getSetupItem(
+                string.Format("{0} {1:0} %", name, get() * 100),
+                () => set(get() >= 1 ? 0 : Math.Min(1, get() + 0.25f)));
+            SetupItems.Add(getVolumeSetupItem(
                 "Music volume",
                 () => menuEngine.Game.Settings.Sound.MusicVolume,
                 volume => menuEngine.Game.Settings.Sound.MusicVolume = volume));
-            SetupItems.Add(getMenuItemForVolumeSetting(
+            SetupItems.Add(getVolumeSetupItem(
                 "Sound effect volume",
                 () => menuEngine.Game.Settings.Sound.SoundVolume,
                 volume => menuEngine.Game.Settings.Sound.SoundVolume = volume));
+            Func<int> curWidth = () => menuEngine.Game.Settings.Graphics.FullscreenWidth;
+            Func<int> curHeight = () => menuEngine.Game.Settings.Graphics.FullscreenHeight;
+            SetupItems.Add(getSetupItem(
+                string.Format("Fullscreen resolution {0}x{1}", curWidth(), curHeight()),
+                () =>
+                {
+                    var modes = GetDisplayModes();
+                    var newMode = modes.SkipWhile(m => m.Width != curWidth() || m.Height != curHeight()).Skip(1).FirstOrDefault()
+                        ?? modes.First();
+                    menuEngine.Game.Settings.Graphics.FullscreenWidth = newMode.Width;
+                    menuEngine.Game.Settings.Graphics.FullscreenHeight = newMode.Height;
+                }));
+        }
+
+        private static IEnumerable<DisplayMode> GetDisplayModes()
+        {
+            return GraphicsAdapter.DefaultAdapter.SupportedDisplayModes[SurfaceFormat.Color];
         }
 
         private void RefreshNetworkItems()

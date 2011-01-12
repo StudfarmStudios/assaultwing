@@ -112,7 +112,7 @@ namespace AW2.Menu
             _controlCallbacks.Update();
             _currentArena = _currentArena.Clamp(0, ArenaInfos.Count - 1);
             if (oldCurrentArena != _currentArena)
-                _selectedArena = (Arena)TypeLoader.LoadTemplate(ArenaInfos[_currentArena].FileName, typeof(Arena), typeof(TypeParameterAttribute));
+                _selectedArena = (Arena)TypeLoader.LoadTemplate(ArenaInfos[_currentArena].FileName, typeof(Arena), typeof(TypeParameterAttribute), false);
             _arenaListStart = _arenaListStart.Clamp(_currentArena - MENU_ITEM_COUNT + 1, _currentArena);
         }
 

@@ -40,9 +40,6 @@ namespace AW2.UI
         }
         public GraphicsDeviceControl GameView { get { return _gameView; } }
 
-        private int FullscreenWidth { get; set; }
-        private int FullscreenHeight { get; set; }
-
         public GameForm(string[] args)
         {
             _commandLineArgs = args;
@@ -69,7 +66,7 @@ namespace AW2.UI
         {
             base.OnCreateControl();
 #if !DEBUG
-            SetFullScreen(FullscreenWidth, FullscreenHeight);
+            SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight);
 #endif
             _runner.Run();
         }
@@ -90,7 +87,7 @@ namespace AW2.UI
             if (msg.Msg != WM_KEYDOWN && msg.Msg != WM_SYSKEYDOWN) throw new ArgumentException("Unexpected value " + msg.Msg);
             var keyCode = keyData & Keys.KeyCode;
             var modifiers = keyData & Keys.Modifiers;
-            if (keyCode == Keys.PageUp) SetFullScreen(FullscreenWidth, FullscreenHeight); // HACK !!!
+            if (keyCode == Keys.PageUp) SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight); // HACK !!!
             if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
             if (keyCode == Keys.Oem5) splitContainer1.Panel2Collapsed ^= true; // the § key on a Finnish keyboard
             return true; // the message won't be processed further; prevents window menu from opening
@@ -126,8 +123,6 @@ namespace AW2.UI
 
         private void InitializeGameForm()
         {
-            FullscreenWidth = Screen.FromHandle(Handle).WorkingArea.Width;
-            FullscreenHeight = Screen.FromHandle(Handle).WorkingArea.Height;
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _previousWindowedModeParameters = GetCurrentFormParameters();
             AW2.Helpers.Log.Written += AddToLogView;

@@ -364,7 +364,7 @@ namespace AW2.Game
         /// </summary>
         public static Arena FromFile(AssaultWingCore game, string filename)
         {
-            var arena = (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute));
+            var arena = (Arena)TypeLoader.LoadTemplate(filename, typeof(Arena), typeof(TypeParameterAttribute), false);
             arena.Game = game;
             return arena;
         }

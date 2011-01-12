@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Settings
 {
@@ -12,8 +13,8 @@ namespace AW2.Settings
 
         public GraphicsSettings()
         {
-            FullscreenWidth = 1024;
-            FullscreenHeight = 768;
+            FullscreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            FullscreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
     }
 }

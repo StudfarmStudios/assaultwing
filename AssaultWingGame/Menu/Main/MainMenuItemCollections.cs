@@ -112,7 +112,9 @@ namespace AW2.Menu.Main
 
         private static IEnumerable<DisplayMode> GetDisplayModes()
         {
-            return GraphicsAdapter.DefaultAdapter.SupportedDisplayModes[SurfaceFormat.Color];
+            var goodAspectRatio = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.AspectRatio;
+            return GraphicsAdapter.DefaultAdapter.SupportedDisplayModes[SurfaceFormat.Color]
+                .Where(mode => mode.Height >= 600 && mode.Width >= 1024 && Math.Abs(goodAspectRatio - mode.AspectRatio) < 0.1);
         }
 
         private void RefreshNetworkItems()

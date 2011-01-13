@@ -273,6 +273,7 @@
     <Compile Include="Helpers\Serialization\SerializedNameAttribute.cs" />
     <Compile Include="Helpers\Serialization\SerializedTypeAttribute.cs" />
     <Compile Include="Helpers\Serialization\ShallowCopyAttribute.cs" />
+    <Compile Include="Helpers\Serialization\ChangingState.cs" />
     <Compile Include="Helpers\Serialization\TypeLoader.cs" />
     <Compile Include="Helpers\Serialization\TypeParameterAttribute.cs" />
     <Compile Include="Helpers\SpatialGrid.cs" />

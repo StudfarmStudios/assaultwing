@@ -54,6 +54,7 @@
     <Compile Include="Helpers\LazyProxyTest.cs" />
     <Compile Include="Helpers\MiscHelperTest.cs" />
     <Compile Include="Helpers\RandomHelperTest.cs" />
+    <Compile Include="Helpers\Serialization\ChangingStateTest.cs" />
     <Compile Include="Helpers\Serialization\NetworkBinaryReaderTest.cs" />
     <Compile Include="Helpers\Serialization\NetworkBinaryWriterTest.cs" />
     <Compile Include="Helpers\SpatialGridTest.cs" />

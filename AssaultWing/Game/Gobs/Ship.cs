@@ -277,11 +277,8 @@ namespace AW2.Game.Gobs
             _armour = new Curve();
             _armour.PreLoop = CurveLoopType.Linear;
             _armour.PostLoop = CurveLoopType.Linear;
-            _armour.Keys.Add(new CurveKey(-500, -500, 1, 500 * 1, CurveContinuity.Smooth));
-            _armour.Keys.Add(new CurveKey(0, 0, 500 * 1, 10 * 0.3f, CurveContinuity.Smooth));
-            _armour.Keys.Add(new CurveKey(10, 7, 10 * 1, 40 * 1, CurveContinuity.Smooth));
-            _armour.Keys.Add(new CurveKey(50, 50, 40 * 1, 450 * 1, CurveContinuity.Smooth));
-            _armour.Keys.Add(new CurveKey(500, 500, 450 * 1, 1, CurveContinuity.Smooth));
+            _armour.Keys.Add(new CurveKey(0, 0, 1, 1, CurveContinuity.Smooth));
+            _armour.Keys.Add(new CurveKey(1, 1, 1, 1, CurveContinuity.Smooth));
             _birthAlpha = new Curve();
             _birthAlpha.PreLoop = CurveLoopType.Constant;
             _birthAlpha.PostLoop = CurveLoopType.Constant;

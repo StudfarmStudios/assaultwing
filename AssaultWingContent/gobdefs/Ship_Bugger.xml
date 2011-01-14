@@ -82,45 +82,24 @@ without missing its target</infoText>
       </Item>
   </collisionAreas>
   <armour>
-      <preLoop>Linear</preLoop>
-      <postLoop>Linear</postLoop>
-      <keys>
-         <Item>
-            <position>-500</position>
-            <internalValue>-500</internalValue>
-            <tangentOut>500</tangentOut>
-            <tangentIn>1</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-         <Item>
-            <position>0</position>
-            <internalValue>0</internalValue>
-            <tangentOut>3</tangentOut>
-            <tangentIn>500</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-         <Item>
-            <position>10</position>
-            <internalValue>7</internalValue>
-            <tangentOut>40</tangentOut>
-            <tangentIn>10</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-         <Item>
-            <position>50</position>
-            <internalValue>50</internalValue>
-            <tangentOut>450</tangentOut>
-            <tangentIn>40</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-         <Item>
-            <position>500</position>
-            <internalValue>500</internalValue>
-            <tangentOut>1</tangentOut>
-            <tangentIn>450</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-      </keys>
+    <preLoop>Linear</preLoop>
+    <postLoop>Linear</postLoop>
+    <keys>
+      <Item>
+        <position>0</position>
+        <internalValue>0</internalValue>
+        <tangentOut>1</tangentOut>
+        <tangentIn>1</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>1</position>
+        <internalValue>1</internalValue>
+        <tangentOut>1</tangentOut>
+        <tangentIn>1</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+    </keys>
   </armour>
   <birthAlpha>
       <preLoop>Constant</preLoop>

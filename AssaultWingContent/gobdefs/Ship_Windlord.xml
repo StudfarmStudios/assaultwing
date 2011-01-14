@@ -21,7 +21,7 @@ with its ship-ripping claws</infoText>
   </shipInfo>  
   
   <mass>500</mass>
-  <maxDamage>1360</maxDamage>
+  <maxDamage>2000</maxDamage>
   <weapon1TypeName>talon swoop</weapon1TypeName>
   <extraDeviceChargeMax>800</extraDeviceChargeMax>
   <weapon2ChargeMax>1150</weapon2ChargeMax>

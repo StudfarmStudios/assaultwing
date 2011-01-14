@@ -21,7 +21,7 @@ without missing its target</infoText>
   </shipInfo>  
   
   <mass>350</mass>
-  <maxDamage>800</maxDamage>
+  <maxDamage>1400</maxDamage>
   <weapon1TypeName>lightning gun</weapon1TypeName>
   <extraDeviceChargeMax>1100</extraDeviceChargeMax>
   <weapon2ChargeMax>900</weapon2ChargeMax>

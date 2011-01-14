@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
@@ -442,6 +443,7 @@ namespace AW2.Game
                 if (gob.Dead) return;
             }
 
+            var colliders = new List<CollisionArea>();
             int attempts = 0;
             while (moveTime > MOVEMENT_ACCURACY && attempts < MOVE_TRY_MAXIMUM)
             {
@@ -453,7 +455,7 @@ namespace AW2.Game
                 for (int chunk = 0; chunk < moveChunkCount; ++chunk)
                 {
                     var currentChunkMoveTime = chunkMoveTime;
-                    TryMove(gob, ref currentChunkMoveTime, allowSideEffects);
+                    colliders.AddRange(TryMove(gob, ref currentChunkMoveTime, allowSideEffects));
                     moveTime -= chunkMoveTime - currentChunkMoveTime;
                     if (currentChunkMoveTime > TimeSpan.Zero) break; // stop iterating chunks if the gob collided
                 }
@@ -463,6 +465,15 @@ namespace AW2.Game
                 // there's nothing more we can do.
                 if (gob.Move == oldMove)
                     break;
+            }
+            foreach (var collider in colliders.Distinct())
+            {
+                if (allowSideEffects)
+                {
+                    gob.Collide(gobPhysical, collider, false);
+                    collider.Owner.Collide(collider, gobPhysical, false);
+                }
+                PerformCollision(gobPhysical, collider, allowSideEffects);
             }
             if (gobPhysical != null) Register(gobPhysical);
             ArenaBoundaryActions(gob, allowSideEffects);
@@ -675,28 +686,30 @@ namespace AW2.Game
 
         /// <summary>
         /// Tries to move a gob, stopping it at the first physical collision 
-        /// and performing the physical collision.
+        /// and performing the physical collision. Returns the collision areas
+        /// of other gobs this gob collided into (there may be repetition).
         /// </summary>
         /// <param name="gob">The gob to move.</param>
         /// <param name="moveTime">Remaining duration of the move</param>
         /// <param name="allowSideEffects">Should effects other than changing the gob's
         /// position and movement be allowed.</param>
-        private void TryMove(Gob gob, ref TimeSpan moveTime, bool allowSideEffects)
+        private IEnumerable<CollisionArea> TryMove(Gob gob, ref TimeSpan moveTime, bool allowSideEffects)
         {
-            Vector2 oldPos = gob.Pos;
-            Vector2 oldMove = gob.Move;
-            TimeSpan moveGood = TimeSpan.Zero; // last known safe position
-            TimeSpan moveBad = moveTime; // last known unsafe position, if 'badFound'
-            bool badFound = false;
-            CollisionArea gobPhysical = gob.PhysicalArea;
-            bool badDueToOverlappers = false;
+            var colliders = new List<CollisionArea>();
+            var oldPos = gob.Pos;
+            var oldMove = gob.Move;
+            var moveGood = TimeSpan.Zero; // last known safe position
+            var moveBad = moveTime; // last known unsafe position, if 'badFound'
+            var badFound = false;
+            var gobPhysical = gob.PhysicalArea;
+            var badDueToOverlappers = false;
 
             // Find out last non-collision position and first colliding position, 
             // up to required accuracy.
-            TimeSpan moveTry = moveTime;
-            TimeSpan lastMoveTry = TimeSpan.Zero;
-            float oldMoveLength = oldMove.Length();
-            bool firstIteration = true;
+            var moveTry = moveTime;
+            var lastMoveTry = TimeSpan.Zero;
+            var oldMoveLength = oldMove.Length();
+            var firstIteration = true;
             while (firstIteration || moveBad - moveGood > COLLISION_ACCURACY)
             {
                 firstIteration = false;
@@ -720,12 +733,15 @@ namespace AW2.Game
             if (badFound)
             {
                 gob.Pos = LerpGobPos(oldPos, oldMove, moveBad);
-                PerformPhysicalCollisions(gob, allowSideEffects, gobPhysical, badDueToOverlappers);
+                if (badDueToOverlappers)
+                    colliders.AddRange(GetPhysicalColliders(gob, gobPhysical));
+                ArenaBoundaryActions(gob, allowSideEffects);
             }
 
             // Return to last non-colliding position.
             gob.Pos = LerpGobPos(oldPos, oldMove, moveGood);
             moveTime -= moveGood;
+            return colliders;
         }
 
         private static Vector2 LerpGobPos(Vector2 startPos, Vector2 move, TimeSpan moveTime)
@@ -733,20 +749,11 @@ namespace AW2.Game
             return startPos + move * (float)moveTime.TotalSeconds;
         }
 
-        private void PerformPhysicalCollisions(Gob gob, bool allowSideEffects, CollisionArea gobPhysical, bool badDueToOverlappers)
+        private IEnumerable<CollisionArea> GetPhysicalColliders(Gob gob, CollisionArea gobPhysical)
         {
-            if (badDueToOverlappers)
-                ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
-                {
-                    if (allowSideEffects)
-                    {
-                        gob.Collide(gobPhysical, area2, false);
-                        area2.Owner.Collide(area2, gobPhysical, false);
-                    }
-                    PerformCollision(gobPhysical, area2, allowSideEffects);
-                    return gob.Dead;
-                });
-            ArenaBoundaryActions(gob, allowSideEffects);
+            var colliders = new List<CollisionArea>();
+            ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, area2 => { colliders.Add(area2); return false;});
+            return colliders;
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
 
-  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <deviceInfo>
 	<pictureName>menu_equip_weaponpicture_rockets</pictureName>
 	<titlePictureName>menu_equip_weaponname_rockets</titlePictureName>
 	<infoText>High Explosive Rocket Propelling 
@@ -12,11 +12,11 @@ They are petrol powered and will
 eventually run out of juice.</infoText>
 	<reloadSpeed>High</reloadSpeed>
 	<energyUsage>Average</energyUsage>
-	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
+	<usageType>Single</usageType>
     <iconEquipName>menu_equip_wep2_rockets</iconEquipName>
   </deviceInfo>
 
-  <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <weaponInfo>
 	<singleShotDamage>Average</singleShotDamage>
 	<shotSpeed>Average</shotSpeed>
 	<recoilMomentum>Low</recoilMomentum>
@@ -30,7 +30,7 @@ eventually run out of juice.</infoText>
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>
   <fireSound>Missile</fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
+  <fireSoundType>EveryShot</fireSoundType>
   <shotTypeName>rocket</shotTypeName>
   <shotSpeed>150</shotSpeed>
   <loadTime>4</loadTime>

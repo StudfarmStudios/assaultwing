@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   
-  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <deviceInfo>
 	<pictureName>dummytexture</pictureName>
 	<titlePictureName>dummytexture</titlePictureName>
 	<infoText>Info</infoText>
 	<reloadSpeed>Average</reloadSpeed>
 	<energyUsage>Average</energyUsage>
-	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
+	<usageType>Single</usageType>
     <iconEquipName>dummytexture</iconEquipName>
   </deviceInfo>
 
-  <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <weaponInfo>
 	<singleShotDamage>Average</singleShotDamage>
 	<shotSpeed>Average</shotSpeed>
 	<recoilMomentum>Average</recoilMomentum>
@@ -25,7 +25,7 @@
   <loadTime>0.5</loadTime>
   <iconName>dummytexture</iconName>
   <fireSound>dummysound</fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
+  <fireSoundType>EveryShot</fireSoundType>
   <shotCount>6</shotCount>
   <shotSpacing>0</shotSpacing>
   <shotAngleVariation>0.2</shotAngleVariation>

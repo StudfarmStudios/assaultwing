@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   
-  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <deviceInfo>
 	<pictureName>menu_equip_weaponpicture_mines</pictureName>
 	<titlePictureName>menu_equip_weaponname_mines</titlePictureName>
 	<infoText>This was the first weapon to implement
@@ -9,11 +9,11 @@ NAGS to allow objects to stay in mid-air.
 Unloads 5 mines into a random formation</infoText>
 	<reloadSpeed>Average</reloadSpeed>
 	<energyUsage>Poor</energyUsage>
-	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
+	<usageType>Single</usageType>
     <iconEquipName>menu_equip_wep2_mines</iconEquipName>
   </deviceInfo>
 
-  <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <weaponInfo>
 	<singleShotDamage>Average</singleShotDamage>
 	<shotSpeed>Poor</shotSpeed>
 	<recoilMomentum>Poor</recoilMomentum>
@@ -27,7 +27,7 @@ Unloads 5 mines into a random formation</infoText>
   </upgradeNames>
   <iconName>b_icon_mines</iconName>
   <fireSound>DropMines</fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Once</fireSoundType>
+  <fireSoundType>Once</fireSoundType>
   <shotTypeName>mine</shotTypeName>
   <shotSpeed>200</shotSpeed>
   <loadTime>8</loadTime>

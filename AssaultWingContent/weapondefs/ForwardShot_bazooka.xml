@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   
-  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <deviceInfo>
 	<pictureName>menu_equip_weaponpicture_bazooka</pictureName>
 	<titlePictureName>menu_equip_weaponname_bazooka</titlePictureName>
 	<infoText>Shoots 2 mass-driver type bullets that
@@ -9,11 +9,11 @@ explode heavily on impact. The side effect
 of the heavy mass is the great recoil</infoText>
 	<reloadSpeed>Great</reloadSpeed>
 	<energyUsage>Low</energyUsage>
-	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
+	<usageType>Single</usageType>
     <iconEquipName>menu_equip_wep2_dumbfire</iconEquipName>
   </deviceInfo>
 
-  <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <weaponInfo>
 	<singleShotDamage>Great</singleShotDamage>
 	<shotSpeed>High</shotSpeed>
 	<recoilMomentum>Great</recoilMomentum>
@@ -27,7 +27,7 @@ of the heavy mass is the great recoil</infoText>
   </upgradeNames>
   <iconName>b_icon_bouncegun</iconName>
   <fireSound>Bazooka</fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
+  <fireSoundType>EveryShot</fireSoundType>
   <shotTypeName>bomb</shotTypeName>
   <shotSpeed>650</shotSpeed>
   <loadTime>3</loadTime>

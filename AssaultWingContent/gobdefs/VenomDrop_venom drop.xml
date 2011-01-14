@@ -6,7 +6,7 @@
   <lifetime>1</lifetime>
   <damageOverTimeBonusIconName>b_icon_venomdrop</damageOverTimeBonusIconName>
   <clingDamagePerSecond>10</clingDamagePerSecond>
-  <clingTime>5</clingTime>
+  <clingTime>9</clingTime>
   <impactDamage>20</impactDamage>
   <impactHoleRadius>0</impactHoleRadius>
   <bulletModelNames>

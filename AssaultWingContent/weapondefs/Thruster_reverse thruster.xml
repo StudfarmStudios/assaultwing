@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.Thruster, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   
-  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <deviceInfo>
 	<pictureName>menu_equip_devicepicture_revthrust</pictureName>
 	<titlePictureName>menu_equip_devicename_revthrust</titlePictureName>
 	<infoText>With this baby you can fly backwards.
@@ -9,7 +9,7 @@ Get an extra boost when the device has
 been unused for 3 seconds</infoText>
 	<reloadSpeed>Great</reloadSpeed>
 	<energyUsage>Average</energyUsage>
-	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Continuous</usageType>
+	<usageType>Continuous</usageType>
     <iconEquipName>menu_equip_mod_revthrust</iconEquipName>
   </deviceInfo>
   
@@ -25,5 +25,5 @@ been unused for 3 seconds</infoText>
   <shotCount>1</shotCount>
   <shotSpacing>0</shotSpacing>
   <fireSound></fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
+  <fireSoundType>EveryShot</fireSoundType>
 </ShipDeviceType>

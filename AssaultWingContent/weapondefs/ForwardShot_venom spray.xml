@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  
-  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<pictureName>dummytexture</pictureName>
-	<titlePictureName>dummytexture</titlePictureName>
-	<infoText>Info</infoText>
-	<reloadSpeed>Average</reloadSpeed>
-	<energyUsage>Average</energyUsage>
-	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
+
+  <deviceInfo>
+    <pictureName>dummytexture</pictureName>
+    <titlePictureName>dummytexture</titlePictureName>
+    <infoText>Info</infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
     <iconEquipName>dummytexture</iconEquipName>
   </deviceInfo>
-  
-  <weaponInfo type="AW2.Game.GobUtils.WeaponInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-	<singleShotDamage>Average</singleShotDamage>
-	<shotSpeed>Average</shotSpeed>
-	<recoilMomentum>Average</recoilMomentum>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Average</recoilMomentum>
   </weaponInfo>
-  
+
   <typeName>venom spray</typeName>
-  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right</gunBarrels>
-  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">ShootContinuously</fireAction>
+  <gunBarrels>Left, Right</gunBarrels>
+  <fireAction>Shoot</fireAction>
   <upgradeNames>
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>
   <shotSpeed>650</shotSpeed>
   <fireSound>VenomSpray</fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">EveryShot</fireSoundType>
+  <fireSoundType>Once</fireSoundType>
   <shotCount>1</shotCount>
   <shotSpacing>0.65</shotSpacing>
   <shotTypeName>venom drop</shotTypeName>
-  <loadTime>0.25</loadTime>
+  <loadTime>0.65</loadTime>
   <fireCharge>200</fireCharge>
   <fireChargePerSecond>200</fireChargePerSecond>
   <shotAngleVariation>0.1</shotAngleVariation>
   <shotSpeedVariation>60</shotSpeedVariation>
   <recoilMomentum>3</recoilMomentum>
   <muzzleFireEngineNames>
-	<Item>venom splash</Item>
+    <Item>venom splash</Item>
   </muzzleFireEngineNames>
 </ShipDeviceType>

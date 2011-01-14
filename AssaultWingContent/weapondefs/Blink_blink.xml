@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ShipDeviceType type="AW2.Game.Weapons.Blink, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   
-  <deviceInfo type="AW2.Game.GobUtils.ShipDeviceInfo, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <deviceInfo>
 	<pictureName>menu_equip_devicepicture_blink</pictureName>
 	<titlePictureName>menu_equip_devicename_blink</titlePictureName>
 	<infoText>Blink makes your ship go into another
@@ -11,13 +11,13 @@ safety this device wont allow you to
 blink inside a wall</infoText>
 	<reloadSpeed>High</reloadSpeed>
 	<energyUsage>Low</energyUsage>
-	<usageType type="AW2.Game.GobUtils.EquipInfo+EquipInfoUsageType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Single</usageType>
+	<usageType>Single</usageType>
     <iconEquipName>menu_equip_mod_blink</iconEquipName>
   </deviceInfo>
   
   <typeName>blink</typeName>
   <fireSound>Blink</fireSound>
-  <fireSoundType type="AW2.Game.GobUtils.ShipDevice+FiringSoundType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Once</fireSoundType>
+  <fireSoundType>Once</fireSoundType>
   <blinkMoveSpeed>1200</blinkMoveSpeed>
   <blinkArea type="AW2.Helpers.Geometric.Circle, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <center>

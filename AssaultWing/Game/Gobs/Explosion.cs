@@ -57,7 +57,8 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private string _sound;
 
-        private bool _firstCollisionChecked;
+        private TimeSpan? _damageTime;
+        private bool _collisionAreaRemoved;
 
         #endregion Explosion fields
 
@@ -104,10 +105,10 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (!_firstCollisionChecked)
+            if (!_collisionAreaRemoved)
             {
-                _firstCollisionChecked = true;
                 RemoveCollisionAreas(area => area.Name != "Force");
+                _collisionAreaRemoved = true;
             }
             if (Arena.TotalTime >= _flowEndTime)
                 Die();
@@ -126,8 +127,9 @@ namespace AW2.Game.Gobs
                     _flowSpeed.Evaluate(differenceLength);
                 Game.PhysicsEngine.ApplyDrag(theirArea.Owner, flow, 0.003f);
             }
-            else if (myArea.Name == "Hit")
+            else if (myArea.Name == "Hit" && (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime))
             {
+                _damageTime = Game.GameTime.TotalGameTime;
                 float distance = theirArea.Area.DistanceTo(this.Pos);
                 float damage = _inflictDamage.Evaluate(distance);
                 theirArea.Owner.InflictDamage(damage, new DamageInfo(this));

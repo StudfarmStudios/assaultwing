@@ -8,7 +8,7 @@
   <particleEngineNames>
       <Item>fragments</Item>
       <Item>explo shockwave</Item>
-      <Item>shockwave</Item>
+      <!--<Item>shockwave</Item>-->
       <Item>explo white flash</Item>
       <Item>mine explo center</Item>
       <Item>large fragments</Item>

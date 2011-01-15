@@ -29,7 +29,7 @@
     <!--<Item>dumb glow</Item> -->
   </birthGobTypes>
   <deathGobTypes>
-    <Item>bomb explosion</Item>
+    <Item>mine explosion</Item>
   </deathGobTypes>
   <exhaustEngineNames>
     <!--<Item>dumbfirethrust1</Item> -->

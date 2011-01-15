@@ -4,13 +4,13 @@
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
    </networkUpdatePeriod>
-  <impactHoleRadius>27</impactHoleRadius>
+  <impactHoleRadius>32</impactHoleRadius>
   <particleEngineNames>
       <Item>fragments</Item>
       <Item>explo shockwave</Item>
-      <!--<Item>shockwave</Item>-->
+      <Item>shockwave</Item>
       <Item>explo white flash</Item>
-      <Item>explo center</Item>
+      <Item>mine explo center</Item>
       <Item>large fragments</Item>
       <Item>explo smoke</Item>
       <Item>explo dots</Item>
@@ -88,7 +88,7 @@
       <keys>
          <Item>
             <position>0</position>
-            <internalValue>40</internalValue>
+            <internalValue>65</internalValue>
             <tangentOut>0</tangentOut>
             <tangentIn>0</tangentIn>
             <continuity>Smooth</continuity>
@@ -97,7 +97,7 @@
             <position>150</position>
             <internalValue>0</internalValue>
             <tangentOut>0</tangentOut>
-            <tangentIn>-40</tangentIn>
+            <tangentIn>-65</tangentIn>
             <continuity>Smooth</continuity>
          </Item>
       </keys>

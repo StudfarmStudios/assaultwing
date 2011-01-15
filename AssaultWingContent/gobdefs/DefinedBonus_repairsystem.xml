@@ -16,9 +16,9 @@
   <gameAction type="AW2.Game.BonusActions.DamageBuffBonusAction, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
     <buffName>nanobot repair</buffName>
     <bonusIconName>b_icon_repair</bonusIconName>
-    <damagePerSecond>-30</damagePerSecond>
+    <damagePerSecond>-10</damagePerSecond>
   </gameAction>
-  <duration>60</duration>
+  <duration>40</duration>
   <layerPreference>Front</layerPreference>
   <movable>true</movable>
   <exhaustEngineNames/>

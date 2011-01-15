@@ -61,7 +61,7 @@
                         </Item>
                         <Item>
                            <position>0.12</position>
-                           <internalValue>1.8</internalValue>
+                           <internalValue>1.95</internalValue>
                            <tangentOut>0</tangentOut>
                            <tangentIn>0</tangentIn>
                            <continuity>Smooth</continuity>

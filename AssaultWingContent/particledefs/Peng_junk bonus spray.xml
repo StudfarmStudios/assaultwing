@@ -24,7 +24,6 @@
          <Item>upgradeweapon2</Item>
 		 <Item>upgradeweapon1loadtime</Item>
 		 <Item>repairsystem</Item>
-		 <Item>instanthealth</Item>
 		 <Item>kamikaze</Item>
       </gobTypeNames>
       <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

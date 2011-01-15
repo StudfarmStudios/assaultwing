@@ -123,7 +123,6 @@
     <Compile Include="Game\Arenas\ArenaInfo.cs" />
     <Compile Include="Game\Arenas\ArenaTypeLoader.cs" />
     <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
-    <Compile Include="Game\BonusActions\InstantHealthBonusAction.cs" />
     <Compile Include="Game\BonusActions\SelfDestructBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
     <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />

@@ -3307,10 +3307,6 @@
               <weight>1</weight>
               <spawnTypeName>repairsystem</spawnTypeName>
             </Item>
-            <Item>
-              <weight>1</weight>
-              <spawnTypeName>instanthealth</spawnTypeName>
-            </Item>
           </spawnTypes>
           <staticID>0</staticID>
           <pos>
@@ -3344,10 +3340,6 @@
             <Item>
               <weight>1</weight>
               <spawnTypeName>repairsystem</spawnTypeName>
-            </Item>
-            <Item>
-              <weight>1</weight>
-              <spawnTypeName>instanthealth</spawnTypeName>
             </Item>
             <Item>
               <weight>1</weight>

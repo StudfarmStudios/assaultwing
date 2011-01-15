@@ -14,7 +14,7 @@ namespace AW2.Graphics.OverlayComponents
     /// </summary>
     public class ChatBoxOverlay : OverlayComponent
     {
-        private const float SHADOW_THICKNESS = 3;
+        private const float SHADOW_THICKNESS = 2;
         private const int VISIBLE_LINES = 5;
         private static Curve g_messageFadeoutCurve;
         private Player _player;

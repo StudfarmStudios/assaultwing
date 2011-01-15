@@ -1488,12 +1488,6 @@
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="gobdefs\DefinedBonus_instanthealth.xml">
-      <Name>DefinedBonus_instanthealth</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="gobdefs\DefinedBonus_kamikaze.xml">
       <Name>DefinedBonus_kamikaze</Name>
       <Importer>XmlImporter</Importer>

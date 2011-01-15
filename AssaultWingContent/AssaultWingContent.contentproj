@@ -2523,12 +2523,14 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="weapondefs\LightningGun_lightning gun.xml">
       <Name>LightningGun_lightning gun</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="weapondefs\Thruster_reverse thruster.xml">
       <Name>Thruster_reverse thruster</Name>

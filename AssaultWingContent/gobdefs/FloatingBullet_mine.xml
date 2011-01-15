@@ -4,8 +4,8 @@
   <isRotating>true</isRotating>
   <rotationSpeed>0.2</rotationSpeed>
   <hoverThrust>4000</hoverThrust>
-  <attractionForce>30000</attractionForce>
-  <spreadingForce>10000</spreadingForce>
+  <attractionForce>50000</attractionForce>
+  <spreadingForce>12000</spreadingForce>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
   </networkUpdatePeriod>
@@ -46,7 +46,7 @@
           <X>0</X>
           <Y>0</Y>
         </center>
-        <radius>110</radius>
+        <radius>120</radius>
         <boundingBox>
           <min>
             <X>0</X>
@@ -70,7 +70,7 @@
           <X>0</X>
           <Y>0</Y>
         </center>
-        <radius>1500</radius>
+        <radius>2500</radius>
         <boundingBox>
           <min>
             <X>0</X>
@@ -94,7 +94,7 @@
           <X>0</X>
           <Y>0</Y>
         </center>
-        <radius>700</radius>
+        <radius>1500</radius>
         <boundingBox>
           <min>
             <X>0</X>

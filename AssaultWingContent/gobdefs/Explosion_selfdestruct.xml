@@ -93,30 +93,16 @@
     <keys>
       <Item>
         <position>0</position>
-        <internalValue>1000</internalValue>
+        <internalValue>2000</internalValue>
         <tangentOut>0</tangentOut>
         <tangentIn>0</tangentIn>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
-        <position>50</position>
-        <internalValue>600</internalValue>
-        <tangentOut>-2</tangentOut>
-        <tangentIn>-2</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>100</position>
-        <internalValue>300</internalValue>
-        <tangentOut>-2</tangentOut>
-        <tangentIn>-2</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
         <position>300</position>
         <internalValue>0</internalValue>
-        <tangentOut>-2</tangentOut>
-        <tangentIn>-2</tangentIn>
+        <tangentOut>0</tangentOut>
+        <tangentIn>-2000</tangentIn>
         <continuity>Smooth</continuity>
       </Item>
     </keys>

@@ -4733,6 +4733,7 @@
           <rotation>5.98318529</rotation>
           <typeName>wall model</typeName>
         </Item>
+		<!--
         <Item type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <input>0</input>
           <particles />
@@ -4743,7 +4744,7 @@
           </pos>
           <rotation>5.73200655</rotation>
           <typeName>junk spray</typeName>
-        </Item>
+        </Item> -->
         <Item type="AW2.Game.Gobs.Dock, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <staticID>0</staticID>
           <pos>
@@ -5176,6 +5177,7 @@
           <rotation>0.923125148</rotation>
           <typeName>wall model</typeName>
         </Item>
+		<!--
         <Item type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <input>0</input>
           <particles />
@@ -5186,7 +5188,7 @@
           </pos>
           <rotation>3.62200618</rotation>
           <typeName>junk spray</typeName>
-        </Item>
+        </Item>-->
         <Item type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <input>0</input>
           <particles />

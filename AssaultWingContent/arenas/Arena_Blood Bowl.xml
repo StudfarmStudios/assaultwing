@@ -694,6 +694,7 @@
           <rotation>1.61984158</rotation>
           <typeName>wall model</typeName>
         </Item>
+		<!--
         <Item type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <input>0</input>
           <particles />
@@ -704,7 +705,7 @@
           </pos>
           <rotation>4.55098343</rotation>
           <typeName>lava spray</typeName>
-        </Item>
+        </Item> -->
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <destructible>true</destructible>
           <wallModelName>bloodbowl_metalbar</wallModelName>
@@ -3393,6 +3394,7 @@
           <rotation>0</rotation>
           <typeName>uniform gravity</typeName>
         </Item>
+		<!--
         <Item type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <input>0</input>
           <particles />
@@ -3403,7 +3405,7 @@
           </pos>
           <rotation>4.16530752</rotation>
           <typeName>lava spray</typeName>
-        </Item>
+        </Item> 
         <Item type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <input>0</input>
           <particles />
@@ -3414,7 +3416,7 @@
           </pos>
           <rotation>0.385676771</rotation>
           <typeName>lava spray</typeName>
-        </Item>
+        </Item>-->
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <destructible>true</destructible>
           <wallModelName>bloodbowl_volcano</wallModelName>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Explosion, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName>bomb explosion</typeName>
+  <typeName>mine explosion</typeName>
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
    </networkUpdatePeriod>

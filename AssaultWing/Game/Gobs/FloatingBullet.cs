@@ -65,7 +65,8 @@ namespace AW2.Game.Gobs
             switch (myArea.Name)
             {
                 case "Magnet":
-                    if (theirArea.Owner.Owner != Owner)
+                    // Seek only enemies, don't mind neutral gobs
+                    if (theirArea.Owner.Owner != null && theirArea.Owner.Owner != Owner)
                         MoveTowards(theirArea.Owner.Pos, _attractionForce);
                     break;
                 case "Spread":

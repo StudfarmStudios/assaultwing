@@ -1553,6 +1553,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\Gravity_uniform gravity.xml">
       <Name>Gravity_uniform gravity</Name>

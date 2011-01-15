@@ -23,7 +23,7 @@
   <upgradeNames>
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>
-  <shotSpeed>500</shotSpeed>
+  <shotSpeed>480</shotSpeed>
   <fireSound>Talon</fireSound>
   <fireSoundType>Once</fireSoundType>
   <shotCount>6</shotCount>
@@ -33,7 +33,7 @@
   <fireCharge>100</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <shotAngleVariation>0.39</shotAngleVariation>
-  <shotSpeedVariation>60</shotSpeedVariation>
+  <shotSpeedVariation>100</shotSpeedVariation>
   <recoilMomentum>500</recoilMomentum>
   <muzzleFireEngineNames>
     <Item>basic muzzle fire</Item>

@@ -1565,6 +1565,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\MovingWall_moving wall.xml">
       <Name>MovingWall_moving wall</Name>
@@ -2515,6 +2516,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="weapondefs\ForwardShot_venom spray.xml">
       <Name>ForwardShot_venom spray</Name>

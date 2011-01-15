@@ -14,6 +14,7 @@ namespace AW2.Graphics.OverlayComponents
     /// </summary>
     public class ChatBoxOverlay : OverlayComponent
     {
+        private const float SHADOW_THICKNESS = 3;
         private const int VISIBLE_LINES = 5;
         private static Curve g_messageFadeoutCurve;
         private Player _player;
@@ -24,7 +25,7 @@ namespace AW2.Graphics.OverlayComponents
             get
             {
                 var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-                return new Point(gfx.Viewport.Width, _chatBoxFont.LineSpacing * VISIBLE_LINES);
+                return new Point(gfx.Viewport.Width, (int)(_chatBoxFont.LineSpacing * VISIBLE_LINES + 2 * SHADOW_THICKNESS));
             }
         }
 
@@ -68,7 +69,7 @@ namespace AW2.Graphics.OverlayComponents
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
-            var messageY = 0f;
+            var messageY = SHADOW_THICKNESS;
             foreach (var item in _player.Messages.Reversed().Take(VISIBLE_LINES))
             {
                 float alpha = GetMessageAlpha(item);
@@ -77,12 +78,21 @@ namespace AW2.Graphics.OverlayComponents
                 var textSize = _chatBoxFont.MeasureString(item.Message.Text);
                 var preTextPos = new Vector2((Dimensions.X - textSize.X - preTextSize.X) / 2, messageY);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
-                var preTextColor = Color.Multiply(Player.PRETEXT_COLOR, alpha);
-                var textColor = Color.Multiply(item.Message.TextColor, alpha);
-                spriteBatch.DrawString(_chatBoxFont, item.Message.PreText, preTextPos.Round(), preTextColor);
-                spriteBatch.DrawString(_chatBoxFont, item.Message.Text, textPos.Round(), textColor);
+                DrawText(spriteBatch, item.Message.PreText, preTextPos.Round(), Player.PRETEXT_COLOR, alpha);
+                DrawText(spriteBatch, item.Message.Text, textPos.Round(), item.Message.TextColor, alpha);
                 messageY += _chatBoxFont.LineSpacing;
             }
+        }
+
+        private void DrawText(SpriteBatch spriteBatch, string text, Vector2 pos, Color baseColor, float alpha)
+        {
+            var textColor = Color.Multiply(baseColor, alpha);
+            var shadowColor = Color.Multiply(Color.Black, 0.4f * alpha);
+            spriteBatch.DrawString(_chatBoxFont, text, pos + new Vector2(-SHADOW_THICKNESS, -SHADOW_THICKNESS), shadowColor);
+            spriteBatch.DrawString(_chatBoxFont, text, pos + new Vector2(SHADOW_THICKNESS, -SHADOW_THICKNESS), shadowColor);
+            spriteBatch.DrawString(_chatBoxFont, text, pos + new Vector2(-SHADOW_THICKNESS, SHADOW_THICKNESS), shadowColor);
+            spriteBatch.DrawString(_chatBoxFont, text, pos + new Vector2(SHADOW_THICKNESS, SHADOW_THICKNESS), shadowColor);
+            spriteBatch.DrawString(_chatBoxFont, text, pos, textColor);
         }
 
         private float GetMessageAlpha(ChatContainer.Item item)

@@ -106,8 +106,18 @@ namespace AW2.Menu
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
                 MenuEngine.Game.CutNetworkConnections();
+                UpdateFullScreenResolution();
                 _currentItems = _itemCollections.StartItems;
             }));
+        }
+
+        private void UpdateFullScreenResolution()
+        {
+            var window = MenuEngine.Game.Window;
+            var gfxSetup = MenuEngine.Game.Settings.Graphics;
+            if (!window.IsFullScreen) return;
+            if (window.ClientBounds.Width == gfxSetup.FullscreenWidth && window.ClientBounds.Height == gfxSetup.FullscreenHeight) return;
+            window.SetFullScreen(gfxSetup.FullscreenWidth, gfxSetup.FullscreenHeight);
         }
 
         /// <summary>

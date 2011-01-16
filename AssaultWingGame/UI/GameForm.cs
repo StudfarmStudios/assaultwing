@@ -141,7 +141,10 @@ namespace AW2.UI
             _game.Window = new Window(
                 () => Text,
                 text => BeginInvoke((Action)(() => Text = text)),
-                () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height));
+                () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height),
+                () => _isFullScreen,
+                SetWindowed,
+                SetFullScreen);
             _gameView.Draw += _game.Draw;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
@@ -183,7 +186,7 @@ namespace AW2.UI
 
         private void SetFullScreen(int width, int height)
         {
-            if (_isFullScreen) return;
+            if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;
             _runner.Pause();
             Application.DoEvents();
             _isFullScreen = true;

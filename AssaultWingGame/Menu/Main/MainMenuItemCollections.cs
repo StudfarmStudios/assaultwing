@@ -78,16 +78,11 @@ namespace AW2.Menu.Main
         private void RefreshSetupItems(MenuEngineImpl menuEngine)
         {
             SetupItems.Clear();
-            Func<string, Action, MainMenuItem> getSetupItem_OLD = (name, action) => new MainMenuItem(menuEngine, name,
-                component =>
+            SetupItems.Add(GetSetupItemBase(menuEngine, "Reset to defaults", component =>
                 {
-                    action();
-                    RefreshSetupItems(menuEngine);
-                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-                },
-                component =>
-                {
-                });
+                    menuEngine.Game.Settings.Sound.Reset();
+                    menuEngine.Game.Settings.Graphics.Reset();
+                }));
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => GetSetupItem(menuEngine,
                 string.Format("{0} {1:0} %", name, get() * 100),
                 Enumerable.Range(0, 21).Select(x => x * 0.05f),
@@ -111,16 +106,25 @@ namespace AW2.Menu.Main
                 }));
         }
 
+        private MainMenuItem GetSetupItemBase(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft = null)
+        {
+            Func<Action<MainMenuComponent>, Action<MainMenuComponent>> decorateAction = plainAction => component =>
+            {
+                plainAction(component);
+                RefreshSetupItems(menuEngine);
+                menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+            };
+            return new MainMenuItem(menuEngine, name, decorateAction(action), decorateAction(actionLeft ?? (x => { })));
+        }
+
         private MainMenuItem GetSetupItem<T>(MenuEngineImpl menuEngine, string name, IEnumerable<T> items, Func<T> get, Action<T> set)
         {
             Action<IEnumerable<T>> chooseNext = orderedItems =>
             {
                 var remainingItems = orderedItems.SkipWhile(x => !x.Equals(get())).Skip(1);
                 set(remainingItems.Any() ? remainingItems.First() : orderedItems.Last());
-                RefreshSetupItems(menuEngine);
-                menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
             };
-            return new MainMenuItem(menuEngine, name, component => chooseNext(items), component => chooseNext(items.Reverse()));
+            return GetSetupItemBase(menuEngine, name, component => chooseNext(items), component => chooseNext(items.Reverse()));
         }
 
         private void RefreshNetworkItems()

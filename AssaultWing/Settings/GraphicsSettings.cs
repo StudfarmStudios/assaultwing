@@ -13,6 +13,11 @@ namespace AW2.Settings
 
         public GraphicsSettings()
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
             FullscreenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             FullscreenHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }

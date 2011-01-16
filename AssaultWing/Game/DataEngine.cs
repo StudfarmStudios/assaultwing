@@ -191,7 +191,9 @@ namespace AW2.Game
 
         public object GetTypeTemplate(CanonicalString typeName)
         {
-            return _templates[typeName];
+            object result;
+            _templates.TryGetValue(typeName, out result);
+            return result;
         }
 
         /// <summary>

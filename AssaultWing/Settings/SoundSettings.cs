@@ -12,8 +12,8 @@ namespace AW2.Settings
 
         public SoundSettings()
         {
-            SoundVolume = 0.75f;
-            MusicVolume = 0.75f;
+            SoundVolume = 0.25f;
+            MusicVolume = 0.35f;
         }
     }
 }

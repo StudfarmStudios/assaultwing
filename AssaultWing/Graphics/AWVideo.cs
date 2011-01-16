@@ -16,9 +16,9 @@ namespace AW2.Graphics
 
         public bool IsFinished { get { CheckState(); return _isFinished; } }
 
-        public AWVideo(Video video)
+        public AWVideo(Video video, float volume)
         {
-            _videoPlayer = new VideoPlayer();
+            _videoPlayer = new VideoPlayer{ Volume = volume };
             _videoPlayer.Play(video);
             _videoPlayer.Pause();
         }

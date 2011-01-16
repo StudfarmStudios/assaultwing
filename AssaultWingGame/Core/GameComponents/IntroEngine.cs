@@ -39,7 +39,7 @@ namespace AW2.Core.GameComponents
         {
             base.Initialize();
             _skipControl = new KeyboardKey(Microsoft.Xna.Framework.Input.Keys.Escape);
-            _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"));
+            _introVideo = new AWVideo(Game.Content.Load<Video>("aw_intro"), Game.Settings.Sound.MusicVolume);
         }
 
         public override void LoadContent()

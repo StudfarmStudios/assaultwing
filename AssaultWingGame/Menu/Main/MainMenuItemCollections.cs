@@ -94,7 +94,7 @@ namespace AW2.Menu.Main
             };
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => getSetupItem(
                 string.Format("{0} {1:0} %", name, get() * 100),
-                () => set(get() >= 1 ? 0 : Math.Min(1, get() + 0.25f)));
+                () => set(get() >= 1 ? 0 : Math.Min(1, get() + 0.05f)));
             SetupItems.Add(getVolumeSetupItem(
                 "Music volume",
                 () => menuEngine.Game.Settings.Sound.MusicVolume,

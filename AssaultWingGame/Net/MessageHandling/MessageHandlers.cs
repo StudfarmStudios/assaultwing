@@ -243,6 +243,7 @@ namespace AW2.Net.MessageHandling
         private static void HandlePlayerSettingsRequestOnServer(PlayerSettingsRequest mess)
         {
             var clientConn = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
+            if (clientConn.ConnectionStatus.IsDropped) return;
             clientConn.ConnectionStatus.IsPlayingArena = mess.IsGameClientPlayingArena;
             if (!mess.IsRegisteredToServer)
             {

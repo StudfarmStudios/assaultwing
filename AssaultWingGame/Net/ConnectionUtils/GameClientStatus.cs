@@ -18,5 +18,7 @@
         /// This property is maintained by the game client.
         /// </summary>
         public bool IsPlayingArena { get; set; }
+
+        public bool IsDropped { get; set; }
     }
 }

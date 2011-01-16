@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="AW2.UI.WPF.RotationKnob"
+             x:Name="KnobRoot"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AW2.UI.WPF"
+             PreviewMouseLeftButtonDown="MouseLeftButtonDownHandler"
+             PreviewMouseUp="MouseUpHandler"
+             PreviewMouseMove="MouseMoveHandler">
+    <Canvas x:Name="KnobCanvas" Width="15" Height="15" RenderTransformOrigin="0.5,0.5">
+        <Canvas.RenderTransform>
+            <RotateTransform Angle="{Binding ElementName=KnobRoot, Path=WpfAngle}"/>
+        </Canvas.RenderTransform>
+        <Ellipse Width="15" Height="15" x:Name="KnobEllipse"
+                 Stroke="Black" StrokeThickness="1" Fill="GhostWhite">
+        </Ellipse>
+        <Line X1="15" Y1="7.5" X2="7.5" Y2="7.5" Stroke="Black">
+        </Line>
+    </Canvas>
+</UserControl>

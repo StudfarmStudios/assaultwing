@@ -4,8 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select Gob" MaxHeight="300" Width="200">
     <ListBox x:Name="GobList"
-             ItemsSource="{Binding Gobs, ElementName=SelectionWindow}"
-             SelectionChanged="ListBox_SelectionChanged">
+             ItemsSource="{Binding Gobs, ElementName=SelectionWindow}">
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <TextBlock Text="{Binding TypeName.Value}"/>

@@ -46,6 +46,7 @@ namespace AW2.UI.WPF
         private Point _lastMouseLocation, _dragStartLocation;
         private bool _isDragging;
         private Gob _selectedGob;
+        private GobSelectionPopup _gobSelector;
         private object _properContent;
 
         public Gob SelectedGob
@@ -57,6 +58,19 @@ namespace AW2.UI.WPF
                 _selectedGob = value;
                 PropertyEditor.SelectedObject = _selectedGob;
                 if (_selectedGob != null) _selectedGob.BleachValue = 0.35f;
+            }
+        }
+
+        public GobSelectionPopup GobSelector
+        {
+            get
+            {
+                if (_gobSelector == null || !_gobSelector.IsLoaded)
+                {
+                    _gobSelector = new GobSelectionPopup { Owner = this };
+                    _gobSelector.GobList.SelectionChanged += (sender, args) => SelectedGob = args.AddedItems.Cast<Gob>().FirstOrDefault();
+                }
+                return _gobSelector;
             }
         }
 
@@ -395,19 +409,12 @@ namespace AW2.UI.WPF
                 .Where(lay => lay.Gobs.Any());
             if (potentialGobsByLayer.Any())
             {
-                LayerNames.SelectedItem = potentialGobsByLayer.FirstOrDefault().Layer;
                 SelectedGob = potentialGobsByLayer.First().Gobs.FirstOrDefault();
-                if (potentialGobsByLayer.Count() > 1)
-                {
-                    var gobSelectionPopup = new GobSelectionPopup();
-                    gobSelectionPopup.AddRange(potentialGobsByLayer.SelectMany(lay => lay.Gobs));
-                    gobSelectionPopup.GobList.SelectionChanged += (sender, args) => SelectedGob = (Gob)args.AddedItems[0];
-                    gobSelectionPopup.Show();
-                }
+                GobSelector.SetGobs(potentialGobsByLayer.SelectMany(lay => lay.Gobs));
+                if (potentialGobsByLayer.Count() > 1) _gobSelector.Show();
             }
             else
             {
-                LayerNames.SelectedItem = null;
                 SelectedGob = null;
             }
         }

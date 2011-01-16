@@ -15,20 +15,10 @@ namespace AW2.UI.WPF
             InitializeComponent();
         }
 
-        public void AddRange(IEnumerable<Gob> gobs)
+        public void SetGobs(IEnumerable<Gob> gobs)
         {
+            Gobs.Clear();
             foreach (var gob in gobs) Gobs.Add(gob);
-        }
-
-        protected override void OnMouseLeave(System.Windows.Input.MouseEventArgs e)
-        {
-            base.OnMouseLeave(e);
-            Close();
-        }
-
-        private void ListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            Close();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace AW2.Menu
         /// </summary>
         private int _currentItem = 0;
 
-        private MultiControl _controlUp, _controlDown, _controlSelect;
+        private MultiControl _controlUp, _controlDown, _controlSelect, _controlSelectLeft;
         private Control _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
@@ -87,27 +87,22 @@ namespace AW2.Menu
 
         private void InitializeControlCallbacks()
         {
-            _commonCallbacks = new TriggeredCallbackCollection();
-            _commonCallbacks.TriggeredCallback = () =>
+            _commonCallbacks = new TriggeredCallbackCollection
             {
-                MenuEngine.ResetCursorFade();
+                TriggeredCallback = MenuEngine.ResetCursorFade
             };
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlUp, () =>
             {
-                if (_currentItem > 0)
-                    --_currentItem;
+                if (_currentItem > 0) --_currentItem;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlDown, () =>
             {
-                if (_currentItem < _currentItems.Count - 1)
-                    ++_currentItem;
+                if (_currentItem < _currentItems.Count - 1) ++_currentItem;
                 MenuEngine.Game.SoundEngine.PlaySound("MenuBrowseItem");
             }));
-            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () =>
-            {
-                CurrentItem.Action(this);
-            }));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelect, () => CurrentItem.Action(this)));
+            _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlSelectLeft, () => CurrentItem.ActionLeft(this)));
             _commonCallbacks.Callbacks.Add(new TriggeredCallback(_controlBack, () =>
             {
                 MenuEngine.Game.CutNetworkConnections();
@@ -123,6 +118,7 @@ namespace AW2.Menu
             if (_controlUp != null) _controlUp.Dispose();
             if (_controlDown != null) _controlDown.Dispose();
             if (_controlSelect != null) _controlSelect.Dispose();
+            if (_controlSelectLeft != null) _controlSelectLeft.Dispose();
             if (_controlBack != null) _controlBack.Dispose();
 
             _controlBack = new KeyboardKey(Keys.Escape);
@@ -132,6 +128,9 @@ namespace AW2.Menu
             _controlDown.Add(new KeyboardKey(Keys.Down));
             _controlSelect = new MultiControl();
             _controlSelect.Add(new KeyboardKey(Keys.Enter));
+            _controlSelect.Add(new KeyboardKey(Keys.Right));
+            _controlSelectLeft = new MultiControl();
+            _controlSelectLeft.Add(new KeyboardKey(Keys.Left));
 
             foreach (var player in MenuEngine.Game.DataEngine.Spectators)
             {
@@ -139,6 +138,8 @@ namespace AW2.Menu
                 _controlUp.Add(player.Controls.Thrust);
                 _controlDown.Add(player.Controls.Down);
                 _controlSelect.Add(player.Controls.Fire1);
+                _controlSelect.Add(player.Controls.Right);
+                _controlSelectLeft.Add(player.Controls.Left);
             }
         }
     }

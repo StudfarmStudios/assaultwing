@@ -9,8 +9,8 @@ namespace AW2.Menu.Main
     {
         private EditableText _text;
 
-        public MainMenuTextField(MenuEngineImpl menuEngine, EditableText text)
-            : base(menuEngine)
+        public MainMenuTextField(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action, EditableText text)
+            : base(menuEngine, name, action)
         {
             _text = text;
         }

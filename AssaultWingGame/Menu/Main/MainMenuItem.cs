@@ -12,6 +12,7 @@ namespace AW2.Menu.Main
     public class MainMenuItem
     {
         protected MenuEngineImpl _menuEngine;
+        private MenuEngineImpl menuEngine;
 
         /// <summary>
         /// Index of the menu item in a menu item collection. Set by the menu item collection.
@@ -21,18 +22,31 @@ namespace AW2.Menu.Main
         /// <summary>
         /// Visible name of the menu item.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <summary>
-        /// Action to perform on triggering the menu item.
+        /// Action to perform on triggering the menu item or pressing Right on the menu item.
         /// </summary>
-        public Action<MainMenuComponent> Action { get; set; }
+        public Action<MainMenuComponent> Action { get; private set; }
+
+        /// <summary>
+        /// Action to perform on pressing Left on the menu item.
+        /// </summary>
+        public Action<MainMenuComponent> ActionLeft { get; private set; }
 
         protected SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
 
-        public MainMenuItem(MenuEngineImpl menuEngine)
+        public MainMenuItem(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action)
+            : this(menuEngine, name, action, component => { })
+        {
+        }
+
+        public MainMenuItem(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft)
         {
             _menuEngine = menuEngine;
+            Name = name;
+            Action = action;
+            ActionLeft = actionLeft;
         }
 
         public virtual void Update() { }

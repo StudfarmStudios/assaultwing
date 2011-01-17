@@ -5321,7 +5321,7 @@ cleaning their mess away.</infoText>
       <Y>0.03</Y>
       <Z>0.004</Z>
     </fogColor>
-    <fogEnabled>true</fogEnabled>
+    <fogEnabled>false</fogEnabled>
     <fogEnd>1470.78711</fogEnd>
     <fogStart>1000</fogStart>
   </lighting>

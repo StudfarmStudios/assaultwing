@@ -69,6 +69,16 @@
           <rotation>1.6</rotation>
           <typeName>prop model</typeName>
         </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_rock_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>5107</X>
+            <Y>2205.20117</Y>
+          </pos>
+          <rotation>3</rotation>
+          <typeName>prop model</typeName>
+        </Item>
       </gobs>
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -540,6 +550,96 @@
           <rotation>1.44452953</rotation>
           <typeName>prop model</typeName>
         </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2858.62061</X>
+            <Y>244.482758</Y>
+          </pos>
+          <rotation>1.8</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2786.20679</X>
+            <Y>187.586182</Y>
+          </pos>
+          <rotation>3.5</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2879.3103</X>
+            <Y>206.551743</Y>
+          </pos>
+          <rotation>5.5</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>902.7585</X>
+            <Y>3494.48315</Y>
+          </pos>
+          <rotation>4</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>861.3795</X>
+            <Y>3694.48315</Y>
+          </pos>
+          <rotation>1</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>809.6554</X>
+            <Y>3630.69</Y>
+          </pos>
+          <rotation>2.5</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>926.8967</X>
+            <Y>3516.897</Y>
+          </pos>
+          <rotation>6</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2130.34424</X>
+            <Y>3815.173</Y>
+          </pos>
+          <rotation>2.3</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_trunk</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2175.17188</X>
+            <Y>3735.863</Y>
+          </pos>
+          <rotation>4.7</rotation>
+          <typeName>prop model</typeName>
+        </Item>
       </gobs>
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -548,7 +648,7 @@
       <parallaxName></parallaxName>
       <gobs>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_4</propModelName>
+          <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>3740</X>
@@ -558,7 +658,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>3550</X>
@@ -568,7 +668,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>2576.33984</X>
@@ -578,7 +678,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>1020</X>
@@ -588,7 +688,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>800</X>
@@ -598,17 +698,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_4</propModelName>
-          <staticID>0</staticID>
-          <pos>
-            <X>1200</X>
-            <Y>1600</Y>
-          </pos>
-          <rotation>1.45</rotation>
-          <typeName>prop model</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>500</X>
@@ -618,7 +708,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_4</propModelName>
+          <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>50</X>
@@ -628,7 +718,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>2100</X>
@@ -638,7 +728,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>1900</X>
@@ -648,7 +738,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>-200</X>
@@ -658,7 +748,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_4</propModelName>
+          <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>2000</X>
@@ -668,17 +758,17 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>980</X>
+            <X>981.690063</X>
             <Y>2430</Y>
           </pos>
           <rotation>1.121</rotation>
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_4</propModelName>
+          <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>-134.790131</X>
@@ -688,7 +778,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_4</propModelName>
+          <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>1650</X>
@@ -698,7 +788,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>30</X>
@@ -708,7 +798,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>2860</X>
@@ -718,7 +808,7 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_5</propModelName>
+          <propModelName>amazon_darkwall_2</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>3628.74976</X>
@@ -728,13 +818,53 @@
           <typeName>prop model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <propModelName>amazon_wall_4</propModelName>
+          <propModelName>amazon_darkwall_1</propModelName>
           <staticID>0</staticID>
           <pos>
             <X>3086.96</X>
             <Y>3738.60986</Y>
           </pos>
           <rotation>3.642269</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_darkwall_2</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2840.63013</X>
+            <Y>205.360016</Y>
+          </pos>
+          <rotation>2</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_darkwall_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>868.520264</X>
+            <Y>3594.17</Y>
+          </pos>
+          <rotation>2</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_darkwall_2</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2158.92</X>
+            <Y>3798.19971</Y>
+          </pos>
+          <rotation>4</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_darkwall_2</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>1237.83</X>
+            <Y>1574.77</Y>
+          </pos>
+          <rotation>4</rotation>
           <typeName>prop model</typeName>
         </Item>
       </gobs>
@@ -866,8 +996,8 @@
           <propModelName>amazon_snare_1</propModelName>
           <staticID>0</staticID>
           <pos>
-            <X>399.52005</X>
-            <Y>3746.22</Y>
+            <X>400.610046</X>
+            <Y>3747.30981</Y>
           </pos>
           <rotation>3.96318555</rotation>
           <typeName>prop model</typeName>
@@ -1060,6 +1190,76 @@
             <Y>3331.65967</Y>
           </pos>
           <rotation>2</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_snare_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>1427.25</X>
+            <Y>3526.99</Y>
+          </pos>
+          <rotation>-1.6</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_snare_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2238.63062</X>
+            <Y>665.7094</Y>
+          </pos>
+          <rotation>4</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_snare_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>1580.80054</X>
+            <Y>3512.68</Y>
+          </pos>
+          <rotation>1.9</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_snare_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>997.3999</X>
+            <Y>354.249146</Y>
+          </pos>
+          <rotation>5</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_snare_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>588.5104</X>
+            <Y>705.0893</Y>
+          </pos>
+          <rotation>3</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_snare_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2145.97949</X>
+            <Y>207.909332</Y>
+          </pos>
+          <rotation>2.5</rotation>
+          <typeName>prop model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.PropModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <propModelName>amazon_snare_1</propModelName>
+          <staticID>0</staticID>
+          <pos>
+            <X>2601.4</X>
+            <Y>3728.27979</Y>
+          </pos>
+          <rotation>3.2</rotation>
           <typeName>prop model</typeName>
         </Item>
       </gobs>
@@ -1264,7 +1464,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1026</staticID>
+          <staticID>647</staticID>
           <pos>
             <X>2715</X>
             <Y>3696</Y>
@@ -1275,7 +1475,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1027</staticID>
+          <staticID>648</staticID>
           <pos>
             <X>-511</X>
             <Y>823.000061</Y>
@@ -1286,7 +1486,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1028</staticID>
+          <staticID>649</staticID>
           <pos>
             <X>769</X>
             <Y>67.00003</Y>
@@ -1297,7 +1497,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1029</staticID>
+          <staticID>650</staticID>
           <pos>
             <X>1751</X>
             <Y>4020.00024</Y>
@@ -1308,7 +1508,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1030</staticID>
+          <staticID>651</staticID>
           <pos>
             <X>1195</X>
             <Y>3091</Y>
@@ -1319,7 +1519,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1031</staticID>
+          <staticID>652</staticID>
           <pos>
             <X>2166</X>
             <Y>82</Y>
@@ -1330,7 +1530,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1032</staticID>
+          <staticID>653</staticID>
           <pos>
             <X>3611</X>
             <Y>3873</Y>
@@ -1341,7 +1541,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1033</staticID>
+          <staticID>654</staticID>
           <pos>
             <X>78.00003</X>
             <Y>3541</Y>
@@ -1352,7 +1552,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1034</staticID>
+          <staticID>655</staticID>
           <pos>
             <X>3977</X>
             <Y>443</Y>
@@ -1363,7 +1563,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1035</staticID>
+          <staticID>656</staticID>
           <pos>
             <X>3968</X>
             <Y>2050</Y>
@@ -1374,7 +1574,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1036</staticID>
+          <staticID>657</staticID>
           <pos>
             <X>3821</X>
             <Y>2530</Y>
@@ -1385,7 +1585,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1037</staticID>
+          <staticID>658</staticID>
           <pos>
             <X>3599</X>
             <Y>2987</Y>
@@ -1396,7 +1596,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1038</staticID>
+          <staticID>659</staticID>
           <pos>
             <X>1086</X>
             <Y>3941</Y>
@@ -1407,7 +1607,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1039</staticID>
+          <staticID>660</staticID>
           <pos>
             <X>3719.00024</X>
             <Y>3018</Y>
@@ -1418,7 +1618,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1040</staticID>
+          <staticID>661</staticID>
           <pos>
             <X>1565</X>
             <Y>3911.99951</Y>
@@ -1429,7 +1629,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1041</staticID>
+          <staticID>662</staticID>
           <pos>
             <X>1559</X>
             <Y>2987</Y>
@@ -1440,7 +1640,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1042</staticID>
+          <staticID>663</staticID>
           <pos>
             <X>2929.99976</X>
             <Y>3158</Y>
@@ -1451,7 +1651,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1043</staticID>
+          <staticID>664</staticID>
           <pos>
             <X>528</X>
             <Y>3098</Y>
@@ -1462,7 +1662,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1044</staticID>
+          <staticID>665</staticID>
           <pos>
             <X>3420</X>
             <Y>-290.999969</Y>
@@ -1473,7 +1673,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1045</staticID>
+          <staticID>666</staticID>
           <pos>
             <X>1538</X>
             <Y>3265</Y>
@@ -1484,7 +1684,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1046</staticID>
+          <staticID>667</staticID>
           <pos>
             <X>416.999939</X>
             <Y>2939</Y>
@@ -1495,7 +1695,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1047</staticID>
+          <staticID>668</staticID>
           <pos>
             <X>615</X>
             <Y>753</Y>
@@ -1506,7 +1706,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1048</staticID>
+          <staticID>669</staticID>
           <pos>
             <X>1515</X>
             <Y>-389</Y>
@@ -1517,7 +1717,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1049</staticID>
+          <staticID>670</staticID>
           <pos>
             <X>590</X>
             <Y>10</Y>
@@ -1528,7 +1728,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1050</staticID>
+          <staticID>671</staticID>
           <pos>
             <X>1026</X>
             <Y>3133</Y>
@@ -1539,7 +1739,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1051</staticID>
+          <staticID>672</staticID>
           <pos>
             <X>592.999939</X>
             <Y>2959</Y>
@@ -1550,7 +1750,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1052</staticID>
+          <staticID>673</staticID>
           <pos>
             <X>85</X>
             <Y>3689</Y>
@@ -1561,7 +1761,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1053</staticID>
+          <staticID>674</staticID>
           <pos>
             <X>90.00002</X>
             <Y>3077</Y>
@@ -1572,7 +1772,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1054</staticID>
+          <staticID>675</staticID>
           <pos>
             <X>2736.99976</X>
             <Y>3057</Y>
@@ -1583,7 +1783,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1055</staticID>
+          <staticID>676</staticID>
           <pos>
             <X>1779.00024</X>
             <Y>51.000042</Y>
@@ -1594,7 +1794,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1056</staticID>
+          <staticID>677</staticID>
           <pos>
             <X>1751</X>
             <Y>3980.99976</Y>
@@ -1605,7 +1805,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1057</staticID>
+          <staticID>678</staticID>
           <pos>
             <X>45.0000038</X>
             <Y>2422</Y>
@@ -1616,7 +1816,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1058</staticID>
+          <staticID>679</staticID>
           <pos>
             <X>612</X>
             <Y>3949</Y>
@@ -1627,7 +1827,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1059</staticID>
+          <staticID>680</staticID>
           <pos>
             <X>17.9999828</X>
             <Y>1230</Y>
@@ -1638,7 +1838,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>1060</staticID>
+          <staticID>681</staticID>
           <pos>
             <X>3753.00024</X>
             <Y>82</Y>
@@ -1649,7 +1849,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1061</staticID>
+          <staticID>682</staticID>
           <pos>
             <X>2612</X>
             <Y>-5.000001</Y>
@@ -1660,7 +1860,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1062</staticID>
+          <staticID>683</staticID>
           <pos>
             <X>3510</X>
             <Y>3258</Y>
@@ -1671,7 +1871,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1063</staticID>
+          <staticID>684</staticID>
           <pos>
             <X>2895</X>
             <Y>2959</Y>
@@ -1682,7 +1882,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>1064</staticID>
+          <staticID>685</staticID>
           <pos>
             <X>3251.99951</X>
             <Y>3088</Y>
@@ -1693,7 +1893,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1065</staticID>
+          <staticID>686</staticID>
           <pos>
             <X>3610</X>
             <Y>3050</Y>
@@ -1704,7 +1904,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_12</wallModelName>
           <destructible>true</destructible>
-          <staticID>1066</staticID>
+          <staticID>687</staticID>
           <pos>
             <X>3936</X>
             <Y>1640</Y>
@@ -1715,7 +1915,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1067</staticID>
+          <staticID>688</staticID>
           <pos>
             <X>2839</X>
             <Y>3999</Y>
@@ -1726,7 +1926,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1068</staticID>
+          <staticID>689</staticID>
           <pos>
             <X>3617</X>
             <Y>3350</Y>
@@ -1737,7 +1937,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1069</staticID>
+          <staticID>690</staticID>
           <pos>
             <X>3414</X>
             <Y>3824</Y>
@@ -1748,7 +1948,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1070</staticID>
+          <staticID>691</staticID>
           <pos>
             <X>4062</X>
             <Y>137</Y>
@@ -1759,7 +1959,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>1071</staticID>
+          <staticID>692</staticID>
           <pos>
             <X>4088</X>
             <Y>969</Y>
@@ -1770,7 +1970,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1072</staticID>
+          <staticID>693</staticID>
           <pos>
             <X>3308</X>
             <Y>9.999993</Y>
@@ -1781,7 +1981,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1073</staticID>
+          <staticID>694</staticID>
           <pos>
             <X>3985</X>
             <Y>1410</Y>
@@ -1792,7 +1992,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1074</staticID>
+          <staticID>695</staticID>
           <pos>
             <X>3992</X>
             <Y>2150</Y>
@@ -1803,7 +2003,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1075</staticID>
+          <staticID>696</staticID>
           <pos>
             <X>3895</X>
             <Y>2670</Y>
@@ -1814,7 +2014,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>1076</staticID>
+          <staticID>697</staticID>
           <pos>
             <X>3890</X>
             <Y>3050</Y>
@@ -1825,7 +2025,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>1077</staticID>
+          <staticID>698</staticID>
           <pos>
             <X>3841</X>
             <Y>3451</Y>
@@ -1836,7 +2036,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1078</staticID>
+          <staticID>699</staticID>
           <pos>
             <X>3790</X>
             <Y>3850</Y>
@@ -1847,7 +2047,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1079</staticID>
+          <staticID>700</staticID>
           <pos>
             <X>3321</X>
             <Y>3901</Y>
@@ -1858,7 +2058,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1080</staticID>
+          <staticID>701</staticID>
           <pos>
             <X>2950</X>
             <Y>3790</Y>
@@ -1869,7 +2069,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>1081</staticID>
+          <staticID>702</staticID>
           <pos>
             <X>2391</X>
             <Y>2957</Y>
@@ -1880,7 +2080,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1082</staticID>
+          <staticID>703</staticID>
           <pos>
             <X>1246</X>
             <Y>3160</Y>
@@ -1891,7 +2091,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1083</staticID>
+          <staticID>704</staticID>
           <pos>
             <X>194.000122</X>
             <Y>3373</Y>
@@ -1902,7 +2102,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1084</staticID>
+          <staticID>705</staticID>
           <pos>
             <X>1301</X>
             <Y>66.00007</Y>
@@ -1913,7 +2113,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1085</staticID>
+          <staticID>706</staticID>
           <pos>
             <X>307</X>
             <Y>3067</Y>
@@ -1924,7 +2124,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1086</staticID>
+          <staticID>707</staticID>
           <pos>
             <X>994</X>
             <Y>3021</Y>
@@ -1935,7 +2135,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1087</staticID>
+          <staticID>708</staticID>
           <pos>
             <X>2529</X>
             <Y>3994</Y>
@@ -1946,7 +2146,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1088</staticID>
+          <staticID>709</staticID>
           <pos>
             <X>2223</X>
             <Y>26.0000172</Y>
@@ -1957,7 +2157,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1089</staticID>
+          <staticID>710</staticID>
           <pos>
             <X>246</X>
             <Y>3991</Y>
@@ -1968,7 +2168,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1090</staticID>
+          <staticID>711</staticID>
           <pos>
             <X>320</X>
             <Y>0</Y>
@@ -1979,10 +2179,10 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>1091</staticID>
+          <staticID>712</staticID>
           <pos>
             <X>1678</X>
-            <Y>3214</Y>
+            <Y>3215</Y>
           </pos>
           <rotation>2.01152158</rotation>
           <typeName>wall model</typeName>
@@ -1990,7 +2190,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>1092</staticID>
+          <staticID>713</staticID>
           <pos>
             <X>1037.00012</X>
             <Y>3922.00024</Y>
@@ -2001,7 +2201,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>1093</staticID>
+          <staticID>714</staticID>
           <pos>
             <X>1.00003052</X>
             <Y>400</Y>
@@ -2012,7 +2212,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>1094</staticID>
+          <staticID>715</staticID>
           <pos>
             <X>69.9999847</X>
             <Y>1958</Y>
@@ -2023,7 +2223,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>1095</staticID>
+          <staticID>716</staticID>
           <pos>
             <X>1291.99988</X>
             <Y>3899</Y>
@@ -2034,7 +2234,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>1096</staticID>
+          <staticID>717</staticID>
           <pos>
             <X>-78.00002</X>
             <Y>834</Y>
@@ -2045,7 +2245,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1097</staticID>
+          <staticID>718</staticID>
           <pos>
             <X>690</X>
             <Y>25</Y>
@@ -2056,7 +2256,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_12</wallModelName>
           <destructible>true</destructible>
-          <staticID>1098</staticID>
+          <staticID>719</staticID>
           <pos>
             <X>0</X>
             <Y>70</Y>
@@ -2067,7 +2267,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1099</staticID>
+          <staticID>720</staticID>
           <pos>
             <X>1204.00012</X>
             <Y>-57.9999924</Y>
@@ -2078,7 +2278,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1100</staticID>
+          <staticID>721</staticID>
           <pos>
             <X>442</X>
             <Y>2965</Y>
@@ -2089,7 +2289,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1101</staticID>
+          <staticID>722</staticID>
           <pos>
             <X>-9.999998</X>
             <Y>1625</Y>
@@ -2100,7 +2300,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1102</staticID>
+          <staticID>723</staticID>
           <pos>
             <X>917.999939</X>
             <Y>-20.9999943</Y>
@@ -2111,7 +2311,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1103</staticID>
+          <staticID>724</staticID>
           <pos>
             <X>1213</X>
             <Y>31.0000076</Y>
@@ -2122,7 +2322,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>1104</staticID>
+          <staticID>725</staticID>
           <pos>
             <X>3067</X>
             <Y>3126</Y>
@@ -2133,7 +2333,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1105</staticID>
+          <staticID>726</staticID>
           <pos>
             <X>3960</X>
             <Y>3041.00024</Y>
@@ -2144,7 +2344,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1106</staticID>
+          <staticID>727</staticID>
           <pos>
             <X>4063</X>
             <Y>1216</Y>
@@ -2155,7 +2355,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1107</staticID>
+          <staticID>728</staticID>
           <pos>
             <X>3384</X>
             <Y>3357</Y>
@@ -2166,7 +2366,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1108</staticID>
+          <staticID>729</staticID>
           <pos>
             <X>-532</X>
             <Y>991.000061</Y>
@@ -2177,7 +2377,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1109</staticID>
+          <staticID>730</staticID>
           <pos>
             <X>1072</X>
             <Y>3218</Y>
@@ -2188,7 +2388,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1110</staticID>
+          <staticID>731</staticID>
           <pos>
             <X>126.999969</X>
             <Y>607</Y>
@@ -2199,7 +2399,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1111</staticID>
+          <staticID>732</staticID>
           <pos>
             <X>2650</X>
             <Y>3155</Y>
@@ -2210,7 +2410,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1112</staticID>
+          <staticID>733</staticID>
           <pos>
             <X>3160</X>
             <Y>3828</Y>
@@ -2221,7 +2421,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1113</staticID>
+          <staticID>734</staticID>
           <pos>
             <X>3800</X>
             <Y>2904</Y>
@@ -2232,7 +2432,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1114</staticID>
+          <staticID>735</staticID>
           <pos>
             <X>2361</X>
             <Y>3986</Y>
@@ -2243,7 +2443,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1115</staticID>
+          <staticID>736</staticID>
           <pos>
             <X>603.9999</X>
             <Y>742</Y>
@@ -2254,7 +2454,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1116</staticID>
+          <staticID>737</staticID>
           <pos>
             <X>1582</X>
             <Y>2950</Y>
@@ -2265,7 +2465,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1117</staticID>
+          <staticID>738</staticID>
           <pos>
             <X>3443.00024</X>
             <Y>3170</Y>
@@ -2276,7 +2476,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1118</staticID>
+          <staticID>739</staticID>
           <pos>
             <X>144.000015</X>
             <Y>2781</Y>
@@ -2287,7 +2487,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1119</staticID>
+          <staticID>740</staticID>
           <pos>
             <X>931</X>
             <Y>25.9999981</Y>
@@ -2298,7 +2498,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1120</staticID>
+          <staticID>741</staticID>
           <pos>
             <X>1014</X>
             <Y>2994</Y>
@@ -2309,7 +2509,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1121</staticID>
+          <staticID>742</staticID>
           <pos>
             <X>2492</X>
             <Y>4004.99976</Y>
@@ -2320,7 +2520,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1122</staticID>
+          <staticID>743</staticID>
           <pos>
             <X>3631</X>
             <Y>202.000015</Y>
@@ -2331,7 +2531,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1123</staticID>
+          <staticID>744</staticID>
           <pos>
             <X>111.000069</X>
             <Y>2980</Y>
@@ -2342,7 +2542,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1124</staticID>
+          <staticID>745</staticID>
           <pos>
             <X>209</X>
             <Y>914</Y>
@@ -2582,7 +2782,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1137</staticID>
+          <staticID>758</staticID>
           <pos>
             <X>2185</X>
             <Y>-296.000061</Y>
@@ -2593,7 +2793,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1138</staticID>
+          <staticID>759</staticID>
           <pos>
             <X>2967</X>
             <Y>5.0000267</Y>
@@ -2604,7 +2804,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1139</staticID>
+          <staticID>760</staticID>
           <pos>
             <X>3646</X>
             <Y>48.99997</Y>
@@ -2615,7 +2815,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1140</staticID>
+          <staticID>761</staticID>
           <pos>
             <X>474.999939</X>
             <Y>3216</Y>
@@ -2626,7 +2826,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1141</staticID>
+          <staticID>762</staticID>
           <pos>
             <X>3311</X>
             <Y>3039.99976</Y>
@@ -2637,7 +2837,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1142</staticID>
+          <staticID>763</staticID>
           <pos>
             <X>3222</X>
             <Y>2918</Y>
@@ -2648,7 +2848,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1143</staticID>
+          <staticID>764</staticID>
           <pos>
             <X>2784</X>
             <Y>3606</Y>
@@ -2659,7 +2859,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1144</staticID>
+          <staticID>765</staticID>
           <pos>
             <X>3405</X>
             <Y>287.000031</Y>
@@ -2670,7 +2870,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1145</staticID>
+          <staticID>766</staticID>
           <pos>
             <X>2979</X>
             <Y>3768</Y>
@@ -2681,7 +2881,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1146</staticID>
+          <staticID>767</staticID>
           <pos>
             <X>3607</X>
             <Y>3391</Y>
@@ -2692,7 +2892,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1147</staticID>
+          <staticID>768</staticID>
           <pos>
             <X>3243</X>
             <Y>3907</Y>
@@ -2703,7 +2903,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1148</staticID>
+          <staticID>769</staticID>
           <pos>
             <X>3893.99976</X>
             <Y>3657</Y>
@@ -2714,7 +2914,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1149</staticID>
+          <staticID>770</staticID>
           <pos>
             <X>2678</X>
             <Y>4423.00049</Y>
@@ -2725,7 +2925,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1150</staticID>
+          <staticID>771</staticID>
           <pos>
             <X>3228</X>
             <Y>3197</Y>
@@ -2736,7 +2936,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1151</staticID>
+          <staticID>772</staticID>
           <pos>
             <X>3153.99976</X>
             <Y>670</Y>
@@ -2747,7 +2947,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1152</staticID>
+          <staticID>773</staticID>
           <pos>
             <X>2410</X>
             <Y>2965</Y>
@@ -2758,7 +2958,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1153</staticID>
+          <staticID>774</staticID>
           <pos>
             <X>3951</X>
             <Y>2360</Y>
@@ -2769,7 +2969,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1154</staticID>
+          <staticID>775</staticID>
           <pos>
             <X>3496</X>
             <Y>61</Y>
@@ -2780,7 +2980,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1155</staticID>
+          <staticID>776</staticID>
           <pos>
             <X>3955</X>
             <Y>2955</Y>
@@ -2791,7 +2991,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1156</staticID>
+          <staticID>777</staticID>
           <pos>
             <X>3362</X>
             <Y>3857</Y>
@@ -2802,7 +3002,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1157</staticID>
+          <staticID>778</staticID>
           <pos>
             <X>3281</X>
             <Y>3341</Y>
@@ -2813,7 +3013,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1158</staticID>
+          <staticID>779</staticID>
           <pos>
             <X>633</X>
             <Y>3088</Y>
@@ -2824,7 +3024,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_12</wallModelName>
           <destructible>true</destructible>
-          <staticID>1159</staticID>
+          <staticID>780</staticID>
           <pos>
             <X>3504</X>
             <Y>3384</Y>
@@ -2835,7 +3035,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1160</staticID>
+          <staticID>781</staticID>
           <pos>
             <X>2752</X>
             <Y>3689</Y>
@@ -2846,7 +3046,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1161</staticID>
+          <staticID>782</staticID>
           <pos>
             <X>3987</X>
             <Y>1572</Y>
@@ -2857,7 +3057,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1162</staticID>
+          <staticID>783</staticID>
           <pos>
             <X>3562</X>
             <Y>241</Y>
@@ -2868,7 +3068,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1163</staticID>
+          <staticID>784</staticID>
           <pos>
             <X>507.0001</X>
             <Y>60.0000229</Y>
@@ -2879,7 +3079,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1164</staticID>
+          <staticID>785</staticID>
           <pos>
             <X>157.000015</X>
             <Y>1034.00012</Y>
@@ -2890,7 +3090,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1165</staticID>
+          <staticID>786</staticID>
           <pos>
             <X>3779.00024</X>
             <Y>3818</Y>
@@ -2901,7 +3101,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1166</staticID>
+          <staticID>787</staticID>
           <pos>
             <X>3803</X>
             <Y>1044</Y>
@@ -2912,7 +3112,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1167</staticID>
+          <staticID>788</staticID>
           <pos>
             <X>3996.99976</X>
             <Y>1386</Y>
@@ -2923,7 +3123,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1168</staticID>
+          <staticID>789</staticID>
           <pos>
             <X>2800</X>
             <Y>3609</Y>
@@ -2934,7 +3134,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1169</staticID>
+          <staticID>790</staticID>
           <pos>
             <X>3414.99976</X>
             <Y>3268</Y>
@@ -2945,7 +3145,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1170</staticID>
+          <staticID>791</staticID>
           <pos>
             <X>2908</X>
             <Y>3050</Y>
@@ -2956,7 +3156,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1171</staticID>
+          <staticID>792</staticID>
           <pos>
             <X>3504</X>
             <Y>3848</Y>
@@ -2967,7 +3167,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1172</staticID>
+          <staticID>793</staticID>
           <pos>
             <X>3222</X>
             <Y>-559</Y>
@@ -2978,7 +3178,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1173</staticID>
+          <staticID>794</staticID>
           <pos>
             <X>946</X>
             <Y>3098</Y>
@@ -2989,7 +3189,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1174</staticID>
+          <staticID>795</staticID>
           <pos>
             <X>3830.99951</X>
             <Y>690</Y>
@@ -3000,7 +3200,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1175</staticID>
+          <staticID>796</staticID>
           <pos>
             <X>511</X>
             <Y>926</Y>
@@ -3011,7 +3211,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1176</staticID>
+          <staticID>797</staticID>
           <pos>
             <X>-30.9998474</X>
             <Y>150.999969</Y>
@@ -3022,7 +3222,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1177</staticID>
+          <staticID>798</staticID>
           <pos>
             <X>-61.99987</X>
             <Y>-353.000031</Y>
@@ -3033,7 +3233,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1178</staticID>
+          <staticID>799</staticID>
           <pos>
             <X>2595.00024</X>
             <Y>4005</Y>
@@ -3044,7 +3244,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_12</wallModelName>
           <destructible>true</destructible>
-          <staticID>1179</staticID>
+          <staticID>800</staticID>
           <pos>
             <X>2946</X>
             <Y>3939</Y>
@@ -3055,7 +3255,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1180</staticID>
+          <staticID>801</staticID>
           <pos>
             <X>1920</X>
             <Y>-11.9999981</Y>
@@ -3066,7 +3266,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1181</staticID>
+          <staticID>802</staticID>
           <pos>
             <X>3112</X>
             <Y>3855</Y>
@@ -3077,7 +3277,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1182</staticID>
+          <staticID>803</staticID>
           <pos>
             <X>892</X>
             <Y>3044</Y>
@@ -3088,7 +3288,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1183</staticID>
+          <staticID>804</staticID>
           <pos>
             <X>3933</X>
             <Y>2479</Y>
@@ -3099,7 +3299,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1184</staticID>
+          <staticID>805</staticID>
           <pos>
             <X>4067</X>
             <Y>1742</Y>
@@ -3110,7 +3310,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1185</staticID>
+          <staticID>806</staticID>
           <pos>
             <X>2175</X>
             <Y>2997</Y>
@@ -3121,7 +3321,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1186</staticID>
+          <staticID>807</staticID>
           <pos>
             <X>1471.99988</X>
             <Y>3051</Y>
@@ -3132,7 +3332,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1187</staticID>
+          <staticID>808</staticID>
           <pos>
             <X>545.999939</X>
             <Y>3010</Y>
@@ -3143,7 +3343,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1188</staticID>
+          <staticID>809</staticID>
           <pos>
             <X>3603</X>
             <Y>3288</Y>
@@ -3154,7 +3354,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1189</staticID>
+          <staticID>810</staticID>
           <pos>
             <X>19.9999847</X>
             <Y>3922.99976</Y>
@@ -3165,7 +3365,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1190</staticID>
+          <staticID>811</staticID>
           <pos>
             <X>227.000031</X>
             <Y>2849</Y>
@@ -3176,7 +3376,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1191</staticID>
+          <staticID>812</staticID>
           <pos>
             <X>227.000031</X>
             <Y>2849</Y>
@@ -3187,7 +3387,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1192</staticID>
+          <staticID>813</staticID>
           <pos>
             <X>163.999985</X>
             <Y>3551</Y>
@@ -3198,7 +3398,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1193</staticID>
+          <staticID>814</staticID>
           <pos>
             <X>-12.9999933</X>
             <Y>3695</Y>
@@ -3209,7 +3409,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1194</staticID>
+          <staticID>815</staticID>
           <pos>
             <X>3991</X>
             <Y>555</Y>
@@ -3220,7 +3420,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>1195</staticID>
+          <staticID>816</staticID>
           <pos>
             <X>2106</X>
             <Y>4023</Y>
@@ -3231,7 +3431,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>1196</staticID>
+          <staticID>817</staticID>
           <pos>
             <X>3428</X>
             <Y>931</Y>
@@ -3242,7 +3442,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1197</staticID>
+          <staticID>818</staticID>
           <pos>
             <X>3864</X>
             <Y>957</Y>
@@ -3253,7 +3453,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1198</staticID>
+          <staticID>819</staticID>
           <pos>
             <X>3341</X>
             <Y>273</Y>
@@ -3264,7 +3464,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1199</staticID>
+          <staticID>820</staticID>
           <pos>
             <X>2665</X>
             <Y>974</Y>
@@ -3275,7 +3475,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>1200</staticID>
+          <staticID>821</staticID>
           <pos>
             <X>213.000061</X>
             <Y>1014.00012</Y>
@@ -3286,7 +3486,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1201</staticID>
+          <staticID>822</staticID>
           <pos>
             <X>604.000061</X>
             <Y>982</Y>
@@ -3297,7 +3497,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1202</staticID>
+          <staticID>823</staticID>
           <pos>
             <X>2472</X>
             <Y>971</Y>
@@ -3308,7 +3508,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1203</staticID>
+          <staticID>824</staticID>
           <pos>
             <X>947.000061</X>
             <Y>961</Y>
@@ -3319,7 +3519,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1204</staticID>
+          <staticID>825</staticID>
           <pos>
             <X>114</X>
             <Y>728.000061</Y>
@@ -3330,7 +3530,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>1205</staticID>
+          <staticID>826</staticID>
           <pos>
             <X>377</X>
             <Y>822</Y>
@@ -3341,7 +3541,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1206</staticID>
+          <staticID>827</staticID>
           <pos>
             <X>887</X>
             <Y>826.000061</Y>
@@ -3352,7 +3552,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1207</staticID>
+          <staticID>828</staticID>
           <pos>
             <X>590</X>
             <Y>773</Y>
@@ -3363,7 +3563,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1208</staticID>
+          <staticID>829</staticID>
           <pos>
             <X>70</X>
             <Y>808</Y>
@@ -3374,7 +3574,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1209</staticID>
+          <staticID>830</staticID>
           <pos>
             <X>25.9997921</X>
             <Y>490</Y>
@@ -3385,7 +3585,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1210</staticID>
+          <staticID>831</staticID>
           <pos>
             <X>281.000122</X>
             <Y>684</Y>
@@ -3396,7 +3596,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1211</staticID>
+          <staticID>832</staticID>
           <pos>
             <X>220.999786</X>
             <Y>678</Y>
@@ -3407,7 +3607,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1212</staticID>
+          <staticID>833</staticID>
           <pos>
             <X>414.999725</X>
             <Y>673</Y>
@@ -3418,7 +3618,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1213</staticID>
+          <staticID>834</staticID>
           <pos>
             <X>310</X>
             <Y>585</Y>
@@ -3429,7 +3629,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1214</staticID>
+          <staticID>835</staticID>
           <pos>
             <X>311.9998</X>
             <Y>1000</Y>
@@ -3440,7 +3640,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1215</staticID>
+          <staticID>836</staticID>
           <pos>
             <X>685.0001</X>
             <Y>1009.00012</Y>
@@ -3451,7 +3651,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1216</staticID>
+          <staticID>837</staticID>
           <pos>
             <X>709.999756</X>
             <Y>1010.00006</Y>
@@ -3462,7 +3662,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1217</staticID>
+          <staticID>838</staticID>
           <pos>
             <X>483</X>
             <Y>1033</Y>
@@ -3473,7 +3673,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1218</staticID>
+          <staticID>839</staticID>
           <pos>
             <X>749</X>
             <Y>779</Y>
@@ -3484,7 +3684,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1219</staticID>
+          <staticID>840</staticID>
           <pos>
             <X>1350</X>
             <Y>945</Y>
@@ -3495,7 +3695,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1220</staticID>
+          <staticID>841</staticID>
           <pos>
             <X>1668</X>
             <Y>1002</Y>
@@ -3506,7 +3706,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1221</staticID>
+          <staticID>842</staticID>
           <pos>
             <X>1377.99988</X>
             <Y>989</Y>
@@ -3517,7 +3717,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1222</staticID>
+          <staticID>843</staticID>
           <pos>
             <X>1481</X>
             <Y>1018.99994</Y>
@@ -3528,7 +3728,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1223</staticID>
+          <staticID>844</staticID>
           <pos>
             <X>1482</X>
             <Y>1056</Y>
@@ -3539,7 +3739,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1224</staticID>
+          <staticID>845</staticID>
           <pos>
             <X>1063.99988</X>
             <Y>1066.00012</Y>
@@ -3550,7 +3750,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1225</staticID>
+          <staticID>846</staticID>
           <pos>
             <X>978</X>
             <Y>1004</Y>
@@ -3561,7 +3761,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1226</staticID>
+          <staticID>847</staticID>
           <pos>
             <X>909.9997</X>
             <Y>1005.00012</Y>
@@ -3572,7 +3772,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>1227</staticID>
+          <staticID>848</staticID>
           <pos>
             <X>948.9998</X>
             <Y>723</Y>
@@ -3583,7 +3783,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1228</staticID>
+          <staticID>849</staticID>
           <pos>
             <X>1135.00024</X>
             <Y>816.000061</Y>
@@ -3594,7 +3794,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1229</staticID>
+          <staticID>850</staticID>
           <pos>
             <X>612</X>
             <Y>462</Y>
@@ -3605,7 +3805,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1230</staticID>
+          <staticID>851</staticID>
           <pos>
             <X>649.999756</X>
             <Y>384.000061</Y>
@@ -3616,7 +3816,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1231</staticID>
+          <staticID>852</staticID>
           <pos>
             <X>514.9999</X>
             <Y>489</Y>
@@ -3627,7 +3827,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1232</staticID>
+          <staticID>853</staticID>
           <pos>
             <X>95.00015</X>
             <Y>-77.00003</Y>
@@ -3638,7 +3838,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1233</staticID>
+          <staticID>854</staticID>
           <pos>
             <X>1204.99976</X>
             <Y>904</Y>
@@ -3649,7 +3849,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1234</staticID>
+          <staticID>855</staticID>
           <pos>
             <X>3675.00024</X>
             <Y>946</Y>
@@ -3660,7 +3860,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>1235</staticID>
+          <staticID>856</staticID>
           <pos>
             <X>2843</X>
             <Y>962</Y>
@@ -3671,7 +3871,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>1236</staticID>
+          <staticID>857</staticID>
           <pos>
             <X>3576</X>
             <Y>800</Y>
@@ -3682,7 +3882,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1237</staticID>
+          <staticID>858</staticID>
           <pos>
             <X>3766</X>
             <Y>769</Y>
@@ -3693,7 +3893,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1238</staticID>
+          <staticID>859</staticID>
           <pos>
             <X>3640.99976</X>
             <Y>865</Y>
@@ -3704,7 +3904,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1239</staticID>
+          <staticID>860</staticID>
           <pos>
             <X>3980</X>
             <Y>611</Y>
@@ -3715,7 +3915,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1240</staticID>
+          <staticID>861</staticID>
           <pos>
             <X>3342</X>
             <Y>3979</Y>
@@ -3726,7 +3926,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1241</staticID>
+          <staticID>862</staticID>
           <pos>
             <X>3266</X>
             <Y>791.999756</Y>
@@ -3737,7 +3937,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>1242</staticID>
+          <staticID>863</staticID>
           <pos>
             <X>3037.99976</X>
             <Y>741</Y>
@@ -3748,7 +3948,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1243</staticID>
+          <staticID>864</staticID>
           <pos>
             <X>3737</X>
             <Y>713.999939</Y>
@@ -3759,7 +3959,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1244</staticID>
+          <staticID>865</staticID>
           <pos>
             <X>3563</X>
             <Y>1042</Y>
@@ -3770,7 +3970,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1245</staticID>
+          <staticID>866</staticID>
           <pos>
             <X>3666.99976</X>
             <Y>1066</Y>
@@ -3781,7 +3981,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1246</staticID>
+          <staticID>867</staticID>
           <pos>
             <X>3593.99976</X>
             <Y>748</Y>
@@ -3792,7 +3992,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1247</staticID>
+          <staticID>868</staticID>
           <pos>
             <X>3222</X>
             <Y>265.999939</Y>
@@ -3803,7 +4003,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1248</staticID>
+          <staticID>869</staticID>
           <pos>
             <X>3162</X>
             <Y>919</Y>
@@ -3814,7 +4014,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1249</staticID>
+          <staticID>870</staticID>
           <pos>
             <X>149.999939</X>
             <Y>2763</Y>
@@ -3825,7 +4025,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>1250</staticID>
+          <staticID>871</staticID>
           <pos>
             <X>2566</X>
             <Y>814</Y>
@@ -3836,7 +4036,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1251</staticID>
+          <staticID>872</staticID>
           <pos>
             <X>2599.00024</X>
             <Y>814.000061</Y>
@@ -3847,7 +4047,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1252</staticID>
+          <staticID>873</staticID>
           <pos>
             <X>2443</X>
             <Y>1022.00006</Y>
@@ -3858,7 +4058,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1253</staticID>
+          <staticID>874</staticID>
           <pos>
             <X>2848</X>
             <Y>665</Y>
@@ -3869,7 +4069,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1254</staticID>
+          <staticID>875</staticID>
           <pos>
             <X>3887.99976</X>
             <Y>1096</Y>
@@ -3880,7 +4080,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1255</staticID>
+          <staticID>876</staticID>
           <pos>
             <X>2635.99976</X>
             <Y>752</Y>
@@ -3891,7 +4091,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1256</staticID>
+          <staticID>877</staticID>
           <pos>
             <X>2964.99976</X>
             <Y>949</Y>
@@ -3902,7 +4102,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1257</staticID>
+          <staticID>878</staticID>
           <pos>
             <X>2528</X>
             <Y>816</Y>
@@ -3913,7 +4113,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1258</staticID>
+          <staticID>879</staticID>
           <pos>
             <X>3177</X>
             <Y>974</Y>
@@ -3924,7 +4124,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1259</staticID>
+          <staticID>880</staticID>
           <pos>
             <X>3881</X>
             <Y>1200</Y>
@@ -3935,7 +4135,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1260</staticID>
+          <staticID>881</staticID>
           <pos>
             <X>3215</X>
             <Y>975</Y>
@@ -3946,7 +4146,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1261</staticID>
+          <staticID>882</staticID>
           <pos>
             <X>2337.99976</X>
             <Y>983.000061</Y>
@@ -3957,7 +4157,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1262</staticID>
+          <staticID>883</staticID>
           <pos>
             <X>91.00001</X>
             <Y>2274</Y>
@@ -3968,7 +4168,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1263</staticID>
+          <staticID>884</staticID>
           <pos>
             <X>615</X>
             <Y>373</Y>
@@ -3979,7 +4179,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>1264</staticID>
+          <staticID>885</staticID>
           <pos>
             <X>2002.99976</X>
             <Y>1954</Y>
@@ -3990,7 +4190,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1265</staticID>
+          <staticID>886</staticID>
           <pos>
             <X>3231.00024</X>
             <Y>1925</Y>
@@ -4001,7 +4201,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1266</staticID>
+          <staticID>887</staticID>
           <pos>
             <X>803.000244</X>
             <Y>1962</Y>
@@ -4012,7 +4212,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1267</staticID>
+          <staticID>888</staticID>
           <pos>
             <X>2240.99976</X>
             <Y>2006</Y>
@@ -4023,7 +4223,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1268</staticID>
+          <staticID>889</staticID>
           <pos>
             <X>1791</X>
             <Y>1970.00012</Y>
@@ -4034,7 +4234,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1269</staticID>
+          <staticID>890</staticID>
           <pos>
             <X>1888</X>
             <Y>2043</Y>
@@ -4045,7 +4245,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1270</staticID>
+          <staticID>891</staticID>
           <pos>
             <X>2088</X>
             <Y>2107</Y>
@@ -4056,7 +4256,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1271</staticID>
+          <staticID>892</staticID>
           <pos>
             <X>1948.99951</X>
             <Y>1833</Y>
@@ -4067,7 +4267,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1272</staticID>
+          <staticID>893</staticID>
           <pos>
             <X>2011.00012</X>
             <Y>2112</Y>
@@ -4078,7 +4278,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1273</staticID>
+          <staticID>894</staticID>
           <pos>
             <X>2020.99976</X>
             <Y>2128</Y>
@@ -4089,7 +4289,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1274</staticID>
+          <staticID>895</staticID>
           <pos>
             <X>2105.99976</X>
             <Y>1877</Y>
@@ -4100,7 +4300,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1275</staticID>
+          <staticID>896</staticID>
           <pos>
             <X>1694</X>
             <Y>2025.00012</Y>
@@ -4111,7 +4311,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1276</staticID>
+          <staticID>897</staticID>
           <pos>
             <X>1723.99976</X>
             <Y>2139</Y>
@@ -4122,7 +4322,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1277</staticID>
+          <staticID>898</staticID>
           <pos>
             <X>2288.99976</X>
             <Y>2058</Y>
@@ -4133,7 +4333,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1278</staticID>
+          <staticID>899</staticID>
           <pos>
             <X>2374.99976</X>
             <Y>2959</Y>
@@ -4144,7 +4344,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1279</staticID>
+          <staticID>900</staticID>
           <pos>
             <X>2327</X>
             <Y>1906</Y>
@@ -4155,7 +4355,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1280</staticID>
+          <staticID>901</staticID>
           <pos>
             <X>3328</X>
             <Y>1821</Y>
@@ -4166,7 +4366,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1281</staticID>
+          <staticID>902</staticID>
           <pos>
             <X>824</X>
             <Y>2110</Y>
@@ -4177,7 +4377,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1282</staticID>
+          <staticID>903</staticID>
           <pos>
             <X>696</X>
             <Y>2101</Y>
@@ -4188,7 +4388,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1283</staticID>
+          <staticID>904</staticID>
           <pos>
             <X>851.000061</X>
             <Y>2061.99976</Y>
@@ -4199,7 +4399,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1284</staticID>
+          <staticID>905</staticID>
           <pos>
             <X>3231.99976</X>
             <Y>1834</Y>
@@ -4210,7 +4410,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1285</staticID>
+          <staticID>906</staticID>
           <pos>
             <X>779.999756</X>
             <Y>1874</Y>
@@ -4221,7 +4421,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1286</staticID>
+          <staticID>907</staticID>
           <pos>
             <X>3296</X>
             <Y>2027</Y>
@@ -4232,7 +4432,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1287</staticID>
+          <staticID>908</staticID>
           <pos>
             <X>925</X>
             <Y>1921.99988</Y>
@@ -4243,7 +4443,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1288</staticID>
+          <staticID>909</staticID>
           <pos>
             <X>2179.99951</X>
             <Y>2161</Y>
@@ -4254,7 +4454,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1289</staticID>
+          <staticID>910</staticID>
           <pos>
             <X>3361.99951</X>
             <Y>1908</Y>
@@ -4265,7 +4465,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1290</staticID>
+          <staticID>911</staticID>
           <pos>
             <X>3134</X>
             <Y>2025</Y>
@@ -4276,7 +4476,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1291</staticID>
+          <staticID>912</staticID>
           <pos>
             <X>903</X>
             <Y>1999</Y>
@@ -4287,7 +4487,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1292</staticID>
+          <staticID>913</staticID>
           <pos>
             <X>706</X>
             <Y>1951</Y>
@@ -4298,7 +4498,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1293</staticID>
+          <staticID>914</staticID>
           <pos>
             <X>3192</X>
             <Y>2059</Y>
@@ -4309,7 +4509,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1294</staticID>
+          <staticID>915</staticID>
           <pos>
             <X>3390.99976</X>
             <Y>972</Y>
@@ -4320,7 +4520,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1295</staticID>
+          <staticID>916</staticID>
           <pos>
             <X>1543</X>
             <Y>917</Y>
@@ -4331,7 +4531,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1296</staticID>
+          <staticID>917</staticID>
           <pos>
             <X>1442.00012</X>
             <Y>834</Y>
@@ -4342,7 +4542,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1297</staticID>
+          <staticID>918</staticID>
           <pos>
             <X>965.999756</X>
             <Y>622</Y>
@@ -4353,7 +4553,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1298</staticID>
+          <staticID>919</staticID>
           <pos>
             <X>3025</X>
             <Y>1050</Y>
@@ -4364,7 +4564,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1299</staticID>
+          <staticID>920</staticID>
           <pos>
             <X>1746</X>
             <Y>948</Y>
@@ -4375,7 +4575,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1300</staticID>
+          <staticID>921</staticID>
           <pos>
             <X>1576.99976</X>
             <Y>883</Y>
@@ -4386,7 +4586,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1301</staticID>
+          <staticID>922</staticID>
           <pos>
             <X>1284</X>
             <Y>1106</Y>
@@ -4397,7 +4597,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1302</staticID>
+          <staticID>923</staticID>
           <pos>
             <X>1289</X>
             <Y>1147.00012</Y>
@@ -4408,7 +4608,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_12</wallModelName>
           <destructible>true</destructible>
-          <staticID>1303</staticID>
+          <staticID>924</staticID>
           <pos>
             <X>810</X>
             <Y>2963</Y>
@@ -4419,7 +4619,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1304</staticID>
+          <staticID>925</staticID>
           <pos>
             <X>831</X>
             <Y>2901</Y>
@@ -4430,7 +4630,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1305</staticID>
+          <staticID>926</staticID>
           <pos>
             <X>882.999939</X>
             <Y>3014</Y>
@@ -4441,7 +4641,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1306</staticID>
+          <staticID>927</staticID>
           <pos>
             <X>779</X>
             <Y>2895</Y>
@@ -4452,7 +4652,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1307</staticID>
+          <staticID>928</staticID>
           <pos>
             <X>1308</X>
             <Y>3007</Y>
@@ -4463,7 +4663,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1308</staticID>
+          <staticID>929</staticID>
           <pos>
             <X>1115</X>
             <Y>2932</Y>
@@ -4474,7 +4674,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1309</staticID>
+          <staticID>930</staticID>
           <pos>
             <X>294</X>
             <Y>2880</Y>
@@ -4485,7 +4685,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1310</staticID>
+          <staticID>931</staticID>
           <pos>
             <X>338</X>
             <Y>3467</Y>
@@ -4496,7 +4696,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1311</staticID>
+          <staticID>932</staticID>
           <pos>
             <X>323.999969</X>
             <Y>3547</Y>
@@ -4507,7 +4707,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1312</staticID>
+          <staticID>933</staticID>
           <pos>
             <X>433</X>
             <Y>3978</Y>
@@ -4518,7 +4718,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_leaf_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1313</staticID>
+          <staticID>934</staticID>
           <pos>
             <X>524</X>
             <Y>3840</Y>
@@ -4529,7 +4729,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1314</staticID>
+          <staticID>935</staticID>
           <pos>
             <X>1323</X>
             <Y>3217</Y>
@@ -4540,7 +4740,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1315</staticID>
+          <staticID>936</staticID>
           <pos>
             <X>1348</X>
             <Y>3224</Y>
@@ -4551,7 +4751,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1316</staticID>
+          <staticID>937</staticID>
           <pos>
             <X>683</X>
             <Y>3226</Y>
@@ -4562,7 +4762,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>1317</staticID>
+          <staticID>938</staticID>
           <pos>
             <X>34.9999771</X>
             <Y>2633</Y>
@@ -4573,7 +4773,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1318</staticID>
+          <staticID>939</staticID>
           <pos>
             <X>2330.00024</X>
             <Y>3657.99976</Y>
@@ -4584,7 +4784,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1319</staticID>
+          <staticID>940</staticID>
           <pos>
             <X>2255</X>
             <Y>3678</Y>
@@ -4595,7 +4795,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1320</staticID>
+          <staticID>941</staticID>
           <pos>
             <X>1408</X>
             <Y>774</Y>
@@ -4606,7 +4806,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>1321</staticID>
+          <staticID>942</staticID>
           <pos>
             <X>1992.00024</X>
             <Y>431.999756</Y>
@@ -4617,7 +4817,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1322</staticID>
+          <staticID>943</staticID>
           <pos>
             <X>1796</X>
             <Y>456.999939</Y>
@@ -4628,7 +4828,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1323</staticID>
+          <staticID>944</staticID>
           <pos>
             <X>572</X>
             <Y>3956</Y>
@@ -4639,7 +4839,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1324</staticID>
+          <staticID>945</staticID>
           <pos>
             <X>1907.99976</X>
             <Y>486.000061</Y>
@@ -4650,7 +4850,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_golds</wallModelName>
           <destructible>true</destructible>
-          <staticID>1325</staticID>
+          <staticID>946</staticID>
           <pos>
             <X>2061.99976</X>
             <Y>494</Y>
@@ -4661,7 +4861,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1326</staticID>
+          <staticID>947</staticID>
           <pos>
             <X>1943.99976</X>
             <Y>423</Y>
@@ -4672,7 +4872,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1327</staticID>
+          <staticID>948</staticID>
           <pos>
             <X>1850.99988</X>
             <Y>470</Y>
@@ -4683,7 +4883,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1328</staticID>
+          <staticID>949</staticID>
           <pos>
             <X>2861.99976</X>
             <Y>5.4359436E-05</Y>
@@ -4694,7 +4894,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>1329</staticID>
+          <staticID>950</staticID>
           <pos>
             <X>2231</X>
             <Y>61.99994</Y>
@@ -4705,7 +4905,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>1330</staticID>
+          <staticID>951</staticID>
           <pos>
             <X>2478</X>
             <Y>3124</Y>
@@ -4716,7 +4916,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1331</staticID>
+          <staticID>952</staticID>
           <pos>
             <X>2398.99976</X>
             <Y>3101</Y>
@@ -4727,7 +4927,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1332</staticID>
+          <staticID>953</staticID>
           <pos>
             <X>2208.00024</X>
             <Y>3080</Y>
@@ -4738,7 +4938,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1333</staticID>
+          <staticID>954</staticID>
           <pos>
             <X>2639.99976</X>
             <Y>2889</Y>
@@ -4749,7 +4949,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>1334</staticID>
+          <staticID>955</staticID>
           <pos>
             <X>2972</X>
             <Y>2920</Y>
@@ -4760,7 +4960,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_grass_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1335</staticID>
+          <staticID>956</staticID>
           <pos>
             <X>2916</X>
             <Y>2974</Y>
@@ -4771,7 +4971,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_hack_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1336</staticID>
+          <staticID>957</staticID>
           <pos>
             <X>3109</X>
             <Y>2886</Y>
@@ -4782,7 +4982,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_shovel_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1337</staticID>
+          <staticID>958</staticID>
           <pos>
             <X>2777</X>
             <Y>718</Y>
@@ -4793,7 +4993,7 @@
         <Item type="AW2.Game.Gobs.WallModel, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <wallModelName>amazon_chest_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>1338</staticID>
+          <staticID>959</staticID>
           <pos>
             <X>1350.00024</X>
             <Y>3923</Y>
@@ -5135,7 +5335,7 @@ intense battles in open spaces</infoText>
       <Y>0.1</Y>
       <Z>0.06</Z>
     </fogColor>
-    <fogEnabled>true</fogEnabled>
+    <fogEnabled>false</fogEnabled>
     <fogEnd>1470.78711</fogEnd>
     <fogStart>1000</fogStart>
   </lighting>

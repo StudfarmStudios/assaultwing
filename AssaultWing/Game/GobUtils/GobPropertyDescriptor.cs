@@ -15,7 +15,7 @@ namespace AW2.Game.GobUtils
     {
         private FieldInfo _field;
 
-        public static Func<Type, IEnumerable<Attribute>> GetPropertyAttributes { get; set; }
+        public static Func<FieldInfo, IEnumerable<Attribute>> GetPropertyAttributes { get; set; }
 
         public GobPropertyDescriptor(FieldInfo field)
             : base(BeautifyFieldName(field.Name), GetAttributes(field).ToArray())
@@ -62,7 +62,7 @@ namespace AW2.Game.GobUtils
         private static IEnumerable<Attribute> GetAttributes(FieldInfo field)
         {
             if (GetPropertyAttributes != null)
-                foreach (var attr in GetPropertyAttributes(field.FieldType)) yield return attr;
+                foreach (var attr in GetPropertyAttributes(field)) yield return attr;
             yield return new CategoryAttribute(field.DeclaringType.Name);
             foreach (var attr in field.GetCustomAttributes(false).Cast<Attribute>()) yield return attr;
         }

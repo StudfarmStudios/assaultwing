@@ -12,7 +12,6 @@ namespace AW2.Menu.Main
     public class MainMenuItem
     {
         protected MenuEngineImpl _menuEngine;
-        private MenuEngineImpl menuEngine;
 
         /// <summary>
         /// Index of the menu item in a menu item collection. Set by the menu item collection.

@@ -287,9 +287,10 @@ namespace AW2.UI.WPF
 
         #region Helpers
 
-        private static IEnumerable<Attribute> GetPropertyAttributes(Type propertyType)
+        private static IEnumerable<Attribute> GetPropertyAttributes(System.Reflection.FieldInfo field)
         {
-            if (propertyType == typeof(Vector2)) yield return new EditorAttribute(typeof(Vector2Editor), typeof(PropertyValueEditor));
+            if (field.Name.ToLower().Contains("rotation")) yield return new EditorAttribute(typeof(RotationEditor), typeof(PropertyValueEditor));
+            if (field.FieldType == typeof(Vector2)) yield return new EditorAttribute(typeof(Vector2Editor), typeof(PropertyValueEditor));
         }
 
         private void InitializeGraphicsDeviceService()

@@ -8,7 +8,10 @@
              PreviewMouseMove="MouseMoveHandler">
     <Canvas x:Name="KnobCanvas" Width="15" Height="15" RenderTransformOrigin="0.5,0.5">
         <Canvas.RenderTransform>
-            <RotateTransform Angle="{Binding ElementName=KnobRoot, Path=WpfAngle}"/>
+            <TransformGroup>
+                <RotateTransform Angle="{Binding ElementName=KnobRoot, Path=Degrees}"/>
+                <ScaleTransform ScaleY="-1"/>
+            </TransformGroup>
         </Canvas.RenderTransform>
         <Ellipse Width="15" Height="15" x:Name="KnobEllipse"
                  Stroke="Black" StrokeThickness="1" Fill="GhostWhite">

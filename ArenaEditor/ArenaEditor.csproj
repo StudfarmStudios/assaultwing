@@ -80,6 +80,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\WPF\RadianToDegreeConverter.cs" />
     <Compile Include="UI\WPF\GobSelectionPopup.xaml.cs">
       <DependentUpon>GobSelectionPopup.xaml</DependentUpon>
     </Compile>
@@ -87,6 +88,7 @@
       <DependentUpon>LayerList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\WPF\PropertyValueEditors\Vector2Editor.cs" />
+    <Compile Include="UI\WPF\PropertyValueEditors\RotationEditor.cs" />
     <Compile Include="UI\WPF\RotationKnob.xaml.cs">
       <DependentUpon>RotationKnob.xaml</DependentUpon>
     </Compile>

@@ -1,32 +1,41 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using WpfMouse = System.Windows.Input.Mouse;
 using Microsoft.Xna.Framework;
+using AW2.Helpers;
+using WpfMouse = System.Windows.Input.Mouse;
 
 namespace AW2.UI.WPF
 {
-    public partial class RotationKnob : UserControl
+    public partial class RotationKnob : UserControl, INotifyPropertyChanged
     {
-        public static readonly DependencyProperty AngleProperty =
-            DependencyProperty.Register("WpfAngle", typeof(double), typeof(RotationKnob), new UIPropertyMetadata(0.0));
+        public static readonly DependencyProperty DegreesProperty =
+            DependencyProperty.Register("Degrees", typeof(float), typeof(RotationKnob), new UIPropertyMetadata(0.0f));
 
-        public double WpfAngle
-        {
-            get { return (double)GetValue(AngleProperty); }
-            set { SetValue(AngleProperty, value); }
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public float AWAngle
+        public float Degrees
         {
-            get { return MathHelper.ToRadians(-(float)WpfAngle); }
+            get { return (float)GetValue(DegreesProperty); }
+            set
+            {
+                if (value != Degrees) OnPropertyChanged("Degrees");
+                SetValue(DegreesProperty, value);
+            }
         }
 
         public RotationKnob()
         {
             InitializeComponent();
+        }
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs e)
@@ -43,16 +52,13 @@ namespace AW2.UI.WPF
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
-            if (WpfMouse.Captured == this)
-            {
-                var mousePosPoint = WpfMouse.GetPosition(this);
-                var mousePos = new Vector2((float)mousePosPoint.X, (float)mousePosPoint.Y);
-                var knobCenter = new Vector2((float)ActualWidth, (float)ActualHeight) / 2;
-                var relativeMousePos = mousePos - knobCenter;
-                var dot = Vector2.Dot(relativeMousePos, Vector2.UnitX);
-                var acos = MathHelper.ToDegrees((float)Math.Acos(dot / relativeMousePos.Length()));
-                WpfAngle = relativeMousePos.Y >= 0 ? acos : -acos;
-            }
+            if (WpfMouse.Captured != this) return;
+            var mousePosPoint = WpfMouse.GetPosition(this);
+            var mousePos = new Vector2((float)mousePosPoint.X, (float)-mousePosPoint.Y);
+            var knobCenter = new Vector2((float)ActualWidth, (float)-ActualHeight) / 2;
+            var deltaPos = mousePos - knobCenter;
+            var degrees = MathHelper.ToDegrees(deltaPos.Angle());
+            Degrees = degrees.Modulo(360);
         }
     }
 }

@@ -3375,27 +3375,11 @@
           <spawnInterval>15</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
+              <weight>6</weight>
               <spawnTypeName>upgradeweapon2</spawnTypeName>
             </Item>
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>upgradeweapon2</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>upgradeweapon2</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>upgradeweapon2</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>repairsystem</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
+              <weight>4</weight>
               <spawnTypeName>repairsystem</spawnTypeName>
             </Item>
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
@@ -3425,39 +3409,15 @@
           <spawnInterval>15</spawnInterval>
           <spawnTypes>
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
+              <weight>6</weight>
               <spawnTypeName>upgradeweapon2</spawnTypeName>
             </Item>
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>upgradeweapon2</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>upgradeweapon2</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>upgradeweapon2</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
+              <weight>5</weight>
               <spawnTypeName>repairsystem</spawnTypeName>
             </Item>
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>repairsystem</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>repairsystem</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
-              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
-            </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-              <weight>1</weight>
+              <weight>3</weight>
               <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
             </Item>
             <Item type="AW2.Game.Gobs.SpawnType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

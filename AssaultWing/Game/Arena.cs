@@ -466,15 +466,12 @@ namespace AW2.Game
                 if (gob.Move == oldMove)
                     break;
             }
-            foreach (var collider in colliders.Distinct())
-            {
-                if (allowSideEffects)
+            if (allowSideEffects)
+                foreach (var collider in colliders.Distinct())
                 {
                     gob.Collide(gobPhysical, collider, false);
                     collider.Owner.Collide(collider, gobPhysical, false);
                 }
-                PerformCollision(gobPhysical, collider, allowSideEffects);
-            }
             if (gobPhysical != null) Register(gobPhysical);
             ArenaBoundaryActions(gob, allowSideEffects);
         }
@@ -734,7 +731,11 @@ namespace AW2.Game
             {
                 gob.Pos = LerpGobPos(oldPos, oldMove, moveBad);
                 if (badDueToOverlappers)
-                    colliders.AddRange(GetPhysicalColliders(gob, gobPhysical));
+                {
+                    var physicalColliders = GetPhysicalColliders(gob, gobPhysical);
+                    colliders.AddRange(physicalColliders);
+                    foreach (var collider in colliders) PerformCollision(gobPhysical, collider, allowSideEffects);
+                }
                 ArenaBoundaryActions(gob, allowSideEffects);
             }
 

@@ -62,19 +62,21 @@ namespace AW2.Game.Gobs
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
+            var collidedWithFriend = theirArea.Owner.Owner == Owner;
+            var collidedWithNeutral = theirArea.Owner.Owner == null;
             switch (myArea.Name)
             {
                 case "Magnet":
-                    // Seek only enemies, don't mind neutral gobs
-                    if (theirArea.Owner.Owner != null && theirArea.Owner.Owner != Owner)
+                    if (!collidedWithNeutral && !collidedWithFriend)
                         MoveTowards(theirArea.Owner.Pos, _attractionForce);
                     break;
                 case "Spread":
-                    if (theirArea.Owner.Owner == Owner)
+                    if (collidedWithFriend)
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
                 default:
-                    base.Collide(myArea, theirArea, stuck);
+                    if (!collidedWithFriend)
+                        base.Collide(myArea, theirArea, stuck);
                     break;
             }
         }

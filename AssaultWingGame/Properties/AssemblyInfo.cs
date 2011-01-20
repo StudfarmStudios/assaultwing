@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("Assault Wing")]
 [assembly: AssemblyDescription("Fast-paced multiplayer online shoot'em up")]
 [assembly: AssemblyCompany("Studfarm Studios")]
-[assembly: AssemblyCopyright("Copyright © 2010")]
+[assembly: AssemblyCopyright("Copyright © 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

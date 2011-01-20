@@ -1409,6 +1409,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="arenas\Arena_Junk.xml">
       <Name>Arena_Junk</Name>

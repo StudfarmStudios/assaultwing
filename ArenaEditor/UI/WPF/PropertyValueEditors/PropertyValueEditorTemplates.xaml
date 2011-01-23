@@ -1,4 +1,4 @@
-﻿<ResourceDictionary
+﻿<ResourceDictionary x:Class="AW2.UI.WPF.PropertyValueEditors.PropertyValueEditorTemplates"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="clr-namespace:AW2.UI.WPF">
@@ -11,8 +11,9 @@
             <ui:RotationKnob x:Name="Knob"
                     Degrees="{Binding Path=Value, Mode=TwoWay, 
                         Converter={StaticResource AngleConverter}}"/>
-            <TextBlock Margin='4,0,0,0' VerticalAlignment='Center'
-                       Text="{Binding ElementName=Knob, Path=Degrees, StringFormat=\{0:f1\}°}"/>
+            <TextBox Margin='4,0,0,0' VerticalAlignment='Center' KeyDown="TextBox_KeyDown"
+                     Text="{Binding Mode=TwoWay, ElementName=Knob, Path=Degrees, StringFormat=\{0:f1\}}"/>
+            <TextBlock Margin='0,0,0,0' VerticalAlignment='Center' Text="°"/>
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

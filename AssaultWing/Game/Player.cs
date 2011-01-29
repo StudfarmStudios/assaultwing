@@ -455,8 +455,8 @@ namespace AW2.Game
                 var newExtraDeviceName = reader.ReadCanonicalString();
                 PlayerColor = reader.ReadColor();
                 if (Game.DataEngine.GetTypeTemplate(newShipName) is Ship) ShipName = newShipName;
-                if (Game.DataEngine.GetTypeTemplate(newShipName) is Weapon) Weapon2Name = newWeapon2Name;
-                if (Game.DataEngine.GetTypeTemplate(newShipName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
+                if (Game.DataEngine.GetTypeTemplate(newWeapon2Name) is Weapon) Weapon2Name = newWeapon2Name;
+                if (Game.DataEngine.GetTypeTemplate(newExtraDeviceName) is ShipDevice) ExtraDeviceName = newExtraDeviceName;
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 
 namespace AW2.Helpers
 {
@@ -68,6 +69,16 @@ namespace AW2.Helpers
             Assert.Null(a);
             Assert.AreEqual(1, b);
             Assert.AreEqual(0, index);
+        }
+
+        [Test]
+        public void TestBytesToString()
+        {
+            var bytes = new byte[] { 0, 1, 2, 3, 0xff, 40, 0x80, 0x7f };
+            var firstFour = MiscHelper.BytesToString(new ArraySegment<byte>(bytes, 0, 4));
+            Assert.AreEqual("00,01,02,03", firstFour);
+            var lastFour = MiscHelper.BytesToString(new ArraySegment<byte>(bytes, 4, 4));
+            Assert.AreEqual("FF,28,80,7F", lastFour);
         }
     }
 }

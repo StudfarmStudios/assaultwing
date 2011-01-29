@@ -112,5 +112,15 @@ namespace AW2.Helpers
                     throw;
             }
         }
+
+        public static string BytesToString(ArraySegment<byte> buffer)
+        {
+            var bytes = buffer.Array
+                .Skip(buffer.Offset)
+                .Take(buffer.Count)
+                .Select(a => a.ToString("X2"))
+                .ToArray();
+            return string.Join(",", bytes);
+        }
     }
 }

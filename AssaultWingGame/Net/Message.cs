@@ -68,7 +68,7 @@ namespace AW2.Net
         /// or negative if the message was created locally and was not
         /// received from a connection.
         /// </summary>
-        public int ConnectionID { get; private set; }
+        public int ConnectionID { get; set; }
 
         public TimeSpan CreationTime { get; protected set; }
 
@@ -79,7 +79,7 @@ namespace AW2.Net
         /// </summary>
         /// <param name="header">Buffer containing the header (and maybe something else).</param>
         /// <returns><c>true</c> if the header is valid, or <c>false</c> otherwise.</returns>
-        public static bool IsValidHeader(byte[] header)
+        public static bool IsValidHeader(ArraySegment<byte> header)
         {
             // Message header structure:
             // byte protocol_identifier
@@ -88,12 +88,12 @@ namespace AW2.Net
             // byte protocol_version
             // word message_body_length
             // word reserved
-            if (header == null) throw new ArgumentNullException("Null header");
-            if (header.Length < HEADER_LENGTH) return false;
-            byte protocolIdentifier = header[(int)MessageHeaderIndex.ProtocolIdentifier];
+            if (header.Array == null) throw new ArgumentNullException("header.Array");
+            if (header.Count < HEADER_LENGTH) return false;
+            byte protocolIdentifier = header.Array[header.Offset + (int)MessageHeaderIndex.ProtocolIdentifier];
             if (protocolIdentifier != Message.PROTOCOL_IDENTIFIER) return false;
             if (GetMessageSubclass(header) == null) return false;
-            byte versionIdentifier = header[(int)MessageHeaderIndex.ProtocolVersion];
+            byte versionIdentifier = header.Array[header.Offset + (int)MessageHeaderIndex.ProtocolVersion];
             if (versionIdentifier != Message.VERSION_IDENTIFIER) return false;
             // These can be anything:
             // word message_body_length
@@ -105,19 +105,19 @@ namespace AW2.Net
         /// Returns the length of message body in bytes.
         /// </summary>
         /// <param name="header">Buffer containing the header of the message.</param>
-        public static int GetBodyLength(byte[] header)
+        public static int GetBodyLength(ArraySegment<byte> header)
         {
-            return unchecked((ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(header, 4)));
+            return unchecked((ushort)IPAddress.NetworkToHostOrder(BitConverter.ToInt16(header.Array, header.Offset + 4)));
         }
 
         /// <summary>
         /// Returns the message subclass referred to in a deserialised message header.
         /// </summary>
         /// <param name="header">Buffer containing the header of the message.</param>
-        public static Type GetMessageSubclass(byte[] header)
+        public static Type GetMessageSubclass(ArraySegment<byte> header)
         {
-            byte topicIdentifier = header[(int)MessageHeaderIndex.MessageTopic];
-            var flags = (MessageHeaderFlags)header[(int)MessageHeaderIndex.MessageFlags];
+            byte topicIdentifier = header.Array[header.Offset + (int)MessageHeaderIndex.MessageTopic];
+            var flags = (MessageHeaderFlags)header.Array[header.Offset + (int)MessageHeaderIndex.MessageFlags];
             return MessageType.GetMessageSubclass(topicIdentifier, (flags & MessageHeaderFlags.Reply) != 0);
         }
 
@@ -167,19 +167,20 @@ namespace AW2.Net
             return data;
         }
 
+        /// <summary>
+        /// The caller must set Message.ConnectionID by hand.
+        /// </summary>
         /// <param name="headerAndBody">Buffer containing the header and the body of the message.</param>
-        /// <param name="connectionId">Identifier of the connection where the message was received.</param>
         /// <param name="creationTime">Creation timestamp of the message</param>
-        public static Message Deserialize(byte[] headerAndBody, int connectionId, TimeSpan creationTime)
+        public static Message Deserialize(ArraySegment<byte> headerAndBody, TimeSpan creationTime)
         {
-            if (headerAndBody == null) throw new ArgumentNullException("headerAndBody", "Null message content");
+            if (headerAndBody.Array == null) throw new ArgumentNullException("headerAndBody.Array");
             if (!IsValidHeader(headerAndBody)) throw new ArgumentException("Invalid message header", "headerAndBody");
-            int bodyLength = GetBodyLength(headerAndBody);
-            int expectedLength = HEADER_LENGTH + bodyLength;
-            if (expectedLength > headerAndBody.Length) throw new ArgumentException("Message length mismatch (" + expectedLength + " expected, " + headerAndBody.Length + " got)");
+            int expectedLength = HEADER_LENGTH + GetBodyLength(headerAndBody);
+            if (expectedLength > headerAndBody.Count) throw new ArgumentException("Message length mismatch (" + expectedLength + " expected, " + headerAndBody.Count + " got)");
             var message = (Message)GetMessageSubclass(headerAndBody).GetConstructor(System.Type.EmptyTypes).Invoke(null);
-            message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody, HEADER_LENGTH, headerAndBody.Length - HEADER_LENGTH, false)));
-            message.ConnectionID = connectionId;
+            message.Deserialize(new NetworkBinaryReader(new MemoryStream(headerAndBody.Array, HEADER_LENGTH, headerAndBody.Count - HEADER_LENGTH, false)));
+            message.ConnectionID = AW2.Net.Connections.Connection.INVALID_ID;
             message.CreationTime = creationTime;
             return message;
         }
@@ -218,7 +219,7 @@ namespace AW2.Net
         {
             ConnectionID = -1;
         }
-        
+
         /// <summary>
         /// Scans through <see cref="Message"/> subclasses and registers their message type identifiers
         /// for future deserialisation.

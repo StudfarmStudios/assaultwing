@@ -64,11 +64,6 @@ namespace AW2.Net.Connections
         private IPEndPoint _remoteUDPEndPoint;
         private object _lock = new object();
 
-        /// <summary>
-        /// Received messages that are waiting for consumption by the client program.
-        /// </summary>
-        private TypedQueue<Message> _messages;
-
 #if DEBUG_SENT_BYTE_COUNT
         private static TimeSpan _lastPrintTime = new TimeSpan(-1);
         private static Dictionary<Type, int> _messageSizes = new Dictionary<Type, int>();
@@ -149,7 +144,7 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Received messages that are waiting for consumption by the client program.
         /// </summary>
-        public ITypedQueue<Message> Messages { get { return _messages; } }
+        public ThreadSafeWrapper<ITypedQueue<Message>> Messages { get; private set; }
 
         /// <summary>
         /// Results of connection attempts.
@@ -159,7 +154,7 @@ namespace AW2.Net.Connections
         /// <summary>
         /// Information about general error situations in background threads.
         /// </summary>
-        public ThreadSafeWrapper<Queue<Exception>> Errors
+        public ThreadSafeWrapper<Queue<string>> Errors
         {
             get
             {
@@ -242,14 +237,16 @@ namespace AW2.Net.Connections
             }
             catch (SocketException e)
             {
-                Errors.Do(queue => queue.Enqueue(e));
+                Errors.Do(queue => queue.Enqueue("SocketException in Send: " + e.SocketErrorCode));
             }
 
         }
 
         public T TryDequeueMessage<T>() where T : Message
         {
-            return Messages.TryDequeue<T>(m => m.CreationTime <= Game.GameTime.TotalRealTime - SIMULATED_NETWORK_LAG);
+            T value = default(T);
+            Messages.Do(queue => value = queue.TryDequeue<T>(m => m.CreationTime <= Game.GameTime.TotalRealTime - SIMULATED_NETWORK_LAG));
+            return value;
         }
 
         /// <summary>
@@ -274,8 +271,8 @@ namespace AW2.Net.Connections
                 while (queue.Count > 0)
                 {
                     errorsFound = true;
-                    Exception e = queue.Dequeue();
-                    AW2.Helpers.Log.Write("Error occurred with " + Name + ": " + e.Message);
+                    var e = queue.Dequeue();
+                    AW2.Helpers.Log.Write("Error occurred with " + Name + ": " + e);
                 }
             });
             if (errorsFound)
@@ -285,23 +282,17 @@ namespace AW2.Net.Connections
             }
         }
 
-        /// <summary>
-        /// Returns the number of bytes waiting to be sent through this connection.
-        /// </summary>
-        public int GetSendQueueSize()
+        private void HandleMessageBuffer(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint)
         {
-            if (IsDisposed) return 0;
-            return _tcpSocket.GetSendQueueSize();
+            var message = Message.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime);
+            message.ConnectionID = ID;
+            HandleMessage(message, remoteEndPoint);
         }
 
-        /// <summary>
-        /// Interprets a received buffer as a message from the network.
-        /// </summary>
-        public void HandleMessage(NetBuffer messageHeaderAndBody)
+        public void HandleMessage(Message message, IPEndPoint remoteEndPoint)
         {
-            var message = Message.Deserialize(messageHeaderAndBody.Buffer, ID, Game.GameTime.TotalRealTime);
-            if (!TryHandleMessageInternally(message, messageHeaderAndBody.EndPoint))
-                _messages.Enqueue(message);
+            if (!TryHandleMessageInternally(message, remoteEndPoint))
+                Messages.Do(queue => queue.Enqueue(message));
         }
 
         public static void HandleNewConnection(Result<Connection> result)
@@ -335,7 +326,7 @@ namespace AW2.Net.Connections
         /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
         protected virtual void DisposeImpl(bool error)
         {
-            _tcpSocket.Dispose(error);
+            _tcpSocket.Dispose();
         }
 
         /// <summary>
@@ -351,8 +342,7 @@ namespace AW2.Net.Connections
         {
             if (tcpSocket == null) throw new ArgumentNullException("tcpSocket", "Null socket argument");
             if (!tcpSocket.Connected) throw new ArgumentException("Socket not connected", "tcpSocket");
-            _tcpSocket = new AWTCPSocket(tcpSocket, HandleMessage);
-            _tcpSocket.StartThreads();
+            _tcpSocket = new AWTCPSocket(tcpSocket, HandleMessageBuffer);
         }
 
         /// <summary>
@@ -363,7 +353,7 @@ namespace AW2.Net.Connections
             Game = game;
             ID = g_leastUnusedID++;
             Name = "Connection " + ID;
-            _messages = new TypedQueue<Message>();
+            Messages = new ThreadSafeWrapper<ITypedQueue<Message>>(new TypedQueue<Message>());
             PingInfo = new PingInfo(this);
         }
 
@@ -374,7 +364,7 @@ namespace AW2.Net.Connections
         private void SendViaTCP(byte[] data)
         {
             if (_tcpSocket == null) throw new InvalidOperationException("Connection has no TCP socket for sending a message");
-            _tcpSocket.Send(data, null);
+            _tcpSocket.Send(data);
         }
 
         /// <summary>

@@ -1,43 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Windows.Forms;
 using AW2.Helpers;
-using System.Threading;
-using System.Net;
 
 namespace AW2.Net.ConnectionUtils
 {
     /// <summary>
-    /// Assault Wing wrapper around a Berkely socket. Handles threads that read and write
+    /// Assault Wing wrapper around a Berkeley socket. Handles threads that read and write
     /// to the socket and stores received data.
     /// </summary>
     public abstract class AWSocket
     {
+        public delegate void MessageHandler(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint);
+
         #region Fields
 
-        private static readonly TimeSpan SEND_TIMEOUT_MILLISECONDS = TimeSpan.FromSeconds(10);
-        private static readonly TimeSpan RECEIVE_TIMEOUT_MILLISECONDS = TimeSpan.FromSeconds(10);
+        protected const int BUFFER_LENGTH = 65536;
+        private static readonly TimeSpan SEND_TIMEOUT = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan RECEIVE_TIMEOUT = TimeSpan.FromSeconds(10);
+        private static readonly IPEndPoint UNSPECIFIED_IP_ENDPOINT = new IPEndPoint(IPAddress.Any, 0);
 
-        protected Socket _socket;
-        protected MessageReadThread.MessageHandler _messageHandler;
+        private static Stack<SocketAsyncEventArgs> g_sendArgs = new Stack<SocketAsyncEventArgs>();
+
+        private Socket _socket;
+        protected MessageHandler _messageHandler;
         private int _isDisposed;
-
-        /// <summary>
-        /// Buffer of serialised messages waiting to be pushed to the socket.
-        /// </summary>
-        protected ThreadSafeWrapper<Queue<NetBuffer>> _sendBuffers;
-
-        /// <summary>
-        /// The thread that is continuously reading incoming data from the socket.
-        /// </summary>
-        private SuspendableThread _readThread;
-
-        /// <summary>
-        /// The thread that is continuously sending outgoing data to the socket.
-        /// </summary>
-        private SuspendableThread _sendThread;
 
         #endregion Fields
 
@@ -76,16 +67,16 @@ namespace AW2.Net.ConnectionUtils
         }
 
         /// <summary>
-        /// Information about general error situations in background threads.
+        /// Error messages produced by the socket.
         /// </summary>
-        public ThreadSafeWrapper<Queue<Exception>> Errors { get; private set; }
+        public ThreadSafeWrapper<Queue<string>> Errors { get; private set; }
 
         #endregion Properties
 
         /// <param name="socket">A socket to the remote host. This <see cref="AWSocket"/>
         /// instance owns the socket and will dispose of it.</param>
         /// <param name="messageHandler">Delegate that handles received message data.</param>
-        protected AWSocket(Socket socket, MessageReadThread.MessageHandler messageHandler)
+        protected AWSocket(Socket socket, MessageHandler messageHandler)
         {
             if (socket == null) throw new ArgumentNullException("socket", "Null socket argument");
             if (messageHandler == null) throw new ArgumentNullException("messageHandler", "Null message handler");
@@ -93,19 +84,13 @@ namespace AW2.Net.ConnectionUtils
             _socket = socket;
             ConfigureSocket(_socket);
             _messageHandler = messageHandler;
-            _sendBuffers = new ThreadSafeWrapper<Queue<NetBuffer>>(new Queue<NetBuffer>());
-            Errors = new ThreadSafeWrapper<Queue<Exception>>(new Queue<Exception>());
-            _readThread = CreateReadThread();
-            _sendThread = CreateWriteThread();
+            Errors = new ThreadSafeWrapper<Queue<string>>(new Queue<string>());
+            StartReceiving();
         }
 
-        /// <summary>
-        /// Call this once after constructor to start message threads.
-        /// </summary>
-        public void StartThreads()
+        public void Send(byte[] data)
         {
-            _readThread.Start();
-            _sendThread.Start();
+            Send(data, UNSPECIFIED_IP_ENDPOINT);
         }
 
         /// <summary>
@@ -114,58 +99,48 @@ namespace AW2.Net.ConnectionUtils
         /// </summary>
         public void Send(byte[] data, IPEndPoint remoteEndPoint)
         {
-            _sendBuffers.Do(queue => queue.Enqueue(new NetBuffer(data, remoteEndPoint)));
+            // TODO: Let caller write data directly into sendArgs.Buffer !!! Expose a MemoryWriter and ask final data length from it
+            var sendArgs = GetSendArgs(remoteEndPoint);
+            sendArgs.SetBuffer(0, data.Length);
+            Array.Copy(data, sendArgs.Buffer, data.Length);
+            UseSocket(socket =>
+            {
+                var isPending = socket.SendToAsync(sendArgs);
+                if (!isPending) SendToCompleted(socket, sendArgs);
+            });
         }
 
-        /// <summary>
-        /// Returns the number of bytes waiting to be pushed through the socket.
-        /// </summary>
-        public int GetSendQueueSize()
+        public void Dispose()
         {
-            if (IsDisposed) return 0;
-            int count = 0;
-            _sendBuffers.Do(queue => count += queue.Sum(buffer => buffer.Buffer.Length));
-            return count;
-        }
-
-        /// <param name="error">If <c>true</c> then an internal error has occurred.</param>
-        public virtual void Dispose(bool error)
-        {
+            UseSocket(socket =>
+            {
+                if (socket.Connected) socket.Shutdown(SocketShutdown.Both);
+            });
             if (Interlocked.Exchange(ref _isDisposed, 1) > 0) return;
             Application.ApplicationExit -= ApplicationExitCallback;
-            TerminateThread(_readThread);
-            TerminateThread(_sendThread);
-            _readThread = null;
-            _sendThread = null;
-            _socket.Close();
+            UseSocket(socket => socket.Close());
         }
 
-        protected abstract SuspendableThread CreateReadThread();
-        protected abstract SuspendableThread CreateWriteThread();
+        protected abstract void StartReceiving();
 
-        private void TerminateThread(SuspendableThread thread)
+        protected void CheckSocketError(SocketAsyncEventArgs args)
         {
-            if (thread == null) return;
-            thread.Terminate();
-            if (!thread.Join(TimeSpan.FromSeconds(1)))
-                AW2.Helpers.Log.Write("WARNING: Unable to kill " + thread.Name);
+            if (args.SocketError == SocketError.Success) return;
+            Errors.Do(queue => queue.Enqueue(string.Format("Error in {0}: {1}", args.LastOperation, args.SocketError)));
         }
 
-        private void ApplicationExitCallback(object caller, EventArgs args)
+        protected void UseSocket(Action<Socket> action)
         {
-            Dispose(false);
-        }
-
-        protected void ThreadExceptionHandler(Exception e)
-        {
-            Errors.Do(queue => queue.Enqueue(e));
+            lock (_socket)
+            {
+                if (!IsDisposed) action(_socket);
+            }
         }
 
         private static void ConfigureSocket(Socket socket)
         {
-            socket.Blocking = true;
-            socket.SendTimeout = (int)SEND_TIMEOUT_MILLISECONDS.TotalMilliseconds;
-            socket.ReceiveTimeout = (int)RECEIVE_TIMEOUT_MILLISECONDS.TotalMilliseconds;
+            socket.SendTimeout = (int)SEND_TIMEOUT.TotalMilliseconds;
+            socket.ReceiveTimeout = (int)RECEIVE_TIMEOUT.TotalMilliseconds;
             DisableNagleAlgorithm(socket);
         }
 
@@ -209,6 +184,38 @@ namespace AW2.Net.ConnectionUtils
                 Log.Write("Error reading Socket property " + prop.Name + ": " + e);
             };
             return null;
+        }
+
+        private SocketAsyncEventArgs GetSendArgs(IPEndPoint remoteEndPoint)
+        {
+            SocketAsyncEventArgs sendArgs = null;
+            lock (g_sendArgs)
+            {
+                if (g_sendArgs.Any()) sendArgs = g_sendArgs.Pop();
+            }
+            if (sendArgs == null)
+            {
+                sendArgs = new SocketAsyncEventArgs();
+                sendArgs.Completed += SendToCompleted;
+                sendArgs.SetBuffer(new byte[BUFFER_LENGTH], 0, BUFFER_LENGTH);
+            }
+            // Note: SocketAsyncEventArgs.RemoteEndPoint is ignored by TCP sockets
+            sendArgs.RemoteEndPoint = remoteEndPoint;
+            return sendArgs;
+        }
+
+        private void SendToCompleted(object sender, SocketAsyncEventArgs args)
+        {
+            CheckSocketError(args);
+            lock (g_sendArgs)
+            {
+                g_sendArgs.Push(args);
+            }
+        }
+
+        private void ApplicationExitCallback(object caller, EventArgs args)
+        {
+            Dispose();
         }
     }
 }

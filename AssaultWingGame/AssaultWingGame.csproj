@@ -154,16 +154,9 @@
     <Compile Include="Net\ConnectionUtils\AWUDPSocket.cs" />
     <Compile Include="Net\ConnectionUtils\ConnectAsyncState.cs" />
     <Compile Include="Net\ConnectionUtils\ConnectionAttemptListener.cs" />
-    <Compile Include="Net\ConnectionUtils\MessageReadThread.cs" />
-    <Compile Include="Net\ConnectionUtils\MessageSendThread.cs" />
-    <Compile Include="Net\ConnectionUtils\NetBuffer.cs" />
     <Compile Include="Net\ConnectionUtils\PingInfo.cs" />
     <Compile Include="Net\ConnectionUtils\StaticPortMapper.cs" />
-    <Compile Include="Net\ConnectionUtils\TCPMessageReadThread.cs" />
-    <Compile Include="Net\ConnectionUtils\TCPMessageSendThread.cs" />
     <Compile Include="Net\ConnectionUtils\ThreadSafeWrapper.cs" />
-    <Compile Include="Net\ConnectionUtils\UDPMessageReadThread.cs" />
-    <Compile Include="Net\ConnectionUtils\UDPMessageSendThread.cs" />
     <Compile Include="Net\GameplayMessage.cs" />
     <Compile Include="Net\GameServerInfo.cs" />
     <Compile Include="Net\ManagementMessage.cs" />

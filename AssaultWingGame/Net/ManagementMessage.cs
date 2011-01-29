@@ -65,9 +65,9 @@ namespace AW2.Net
                 .ToList();
         }
 
-        public new static ManagementMessage Deserialize(byte[] data, int byteCount, TimeSpan creationTime)
+        public new static ManagementMessage Deserialize(ArraySegment<byte> data, TimeSpan creationTime)
         {
-            string text = Encoding.ASCII.GetString(data, 0, byteCount);
+            var text = Encoding.ASCII.GetString(data.Array, data.Offset, data.Count);
             var tokens = Tokenize(text);
             var operation = tokens[0]["operation"];
             var subclass = GetSubclass(operation);

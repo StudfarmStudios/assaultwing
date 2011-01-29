@@ -276,9 +276,6 @@
     <Compile Include="Helpers\Serialization\TypeLoader.cs" />
     <Compile Include="Helpers\Serialization\TypeParameterAttribute.cs" />
     <Compile Include="Helpers\SpatialGrid.cs" />
-    <Compile Include="Helpers\StepwiseAction.cs" />
-    <Compile Include="Helpers\SuspendableStepwiseThread.cs" />
-    <Compile Include="Helpers\SuspendableThread.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AWSettings.cs" />
     <Compile Include="Settings\GraphicsSettings.cs" />

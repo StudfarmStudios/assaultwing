@@ -96,7 +96,7 @@ namespace AW2.Net
         /// </summary>
         private Action<Result<Connection>> _startServerConnectionHandler;
 
-        private List<NetBuffer> _udpMessagesToHandle;
+        private ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>> _udpMessagesToHandle;
         private ConnectionAttemptListener _connectionAttemptListener;
 
         #endregion Fields
@@ -109,7 +109,7 @@ namespace AW2.Net
             _game = game;
             _gameClientConnections = new List<GameClientConnection>();
             _removedClientConnections = new List<GameClientConnection>();
-            _udpMessagesToHandle = new List<NetBuffer>();
+            _udpMessagesToHandle = new ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>>(new List<Tuple<Message, IPEndPoint>>());
             MessageHandlers = new List<IMessageHandler>();
             InitializeUDPSocket();
         }
@@ -301,14 +301,6 @@ namespace AW2.Net
         }
 
         /// <summary>
-        /// Returns the number of bytes waiting to be sent through the network.
-        /// </summary>
-        public int GetSendQueueSize()
-        {
-            return AllConnections.Sum(conn => conn.GetSendQueueSize());
-        }
-
-        /// <summary>
         /// Round-trip ping time to the game server.
         /// </summary>
         public TimeSpan ServerPingTime
@@ -457,8 +449,8 @@ namespace AW2.Net
                 while (queue.Count > 0)
                 {
                     errorsFound = true;
-                    var e = queue.Dequeue();
-                    Log.Write("Error occurred with UDP socket", e);
+                    var errorMessage = queue.Dequeue();
+                    Log.Write("Error occurred with UDP socket: " + errorMessage);
                 }
             });
             if (errorsFound)
@@ -502,7 +494,6 @@ namespace AW2.Net
         private void InitializeUDPSocket()
         {
             UDPSocket = new AWUDPSocket(HandleUDPMessage);
-            UDPSocket.StartThreads();
         }
 
         private void DisposeUDPSocket()
@@ -514,40 +505,41 @@ namespace AW2.Net
 
         private void FlushUnhandledUDPMessages()
         {
-            lock (_udpMessagesToHandle) _udpMessagesToHandle.Clear();
+            _udpMessagesToHandle.Do(list => list.Clear());
         }
 
-        private void HandleUDPMessage(NetBuffer messageHeaderAndBody)
+        private void HandleUDPMessage(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint)
         {
-            lock (_udpMessagesToHandle) _udpMessagesToHandle.Add(messageHeaderAndBody);
+            var message = remoteEndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint)
+                ? ManagementMessage.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime)
+                : Message.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime);
+            _udpMessagesToHandle.Do(list => list.Add(Tuple.Create(message, remoteEndPoint)));
         }
 
         private void HandleUDPMessages()
         {
-            lock (_udpMessagesToHandle)
+            _udpMessagesToHandle.Do(messages =>
             {
-                foreach (var messageHeaderAndBody in _udpMessagesToHandle)
+                foreach (var messageAndEndPoint in messages)
                 {
-                    if (messageHeaderAndBody.EndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint))
+                    if (messageAndEndPoint.Item1 is ManagementMessage)
                     {
-                        var message = ManagementMessage.Deserialize(messageHeaderAndBody.Buffer, messageHeaderAndBody.Length, Game.GameTime.TotalRealTime);
-                        ManagementServerConnection.Messages.Enqueue(message);
+                        messageAndEndPoint.Item1.ConnectionID = ManagementServerConnection.ID;
+                        ManagementServerConnection.Messages.Do(queue => queue.Enqueue(messageAndEndPoint.Item1));
                     }
                     else
                     {
-                        var connection = GetConnection(messageHeaderAndBody.EndPoint);
-                        if (connection == null)
+                        // Messages from unknown sources will be silently ignored.
+                        var connection = GetConnection(messageAndEndPoint.Item2);
+                        if (connection != null)
                         {
-#if DEBUG
-                            Log.Write("Note: Ignoring an UDP message from unknown source " + messageHeaderAndBody.EndPoint);
-#endif
-                            break;
+                            messageAndEndPoint.Item1.ConnectionID = connection.ID;
+                            connection.HandleMessage(messageAndEndPoint.Item1, messageAndEndPoint.Item2);
                         }
-                        connection.HandleMessage(messageHeaderAndBody);
                     }
                 }
-                _udpMessagesToHandle.Clear();
-            }
+                messages.Clear();
+            });
         }
 
         /// <summary>
@@ -557,6 +549,9 @@ namespace AW2.Net
         {
             // Compare IP address from TCP end point because UDP end point may still
             // be unknown. IP address should be the same in both end points.
+            // Note: This limits us to one game client behind each NAT except the NAT
+            // of the game server. This can be fixed by making the management server pass
+            // the game client's UDP end point to the game server.
             return AllConnections.FirstOrDefault(conn => conn.RemoteIPAddress.Equals(remoteUDPEndPoint.Address));
         }
 
@@ -591,14 +586,6 @@ namespace AW2.Net
             conn.ConnectionStatus.CurrentArenaName = null;
         }
 
-        private void TerminateThread(SuspendableThread thread)
-        {
-            if (thread == null) return;
-            thread.Terminate();
-            if (!thread.Join(TimeSpan.FromSeconds(1)))
-                AW2.Helpers.Log.Write("WARNING: NetworkEngine was unable to kill " + thread.Name);
-        }
-
         private void ApplicationExitCallback(object caller, EventArgs args)
         {
             Dispose();
@@ -630,7 +617,7 @@ namespace AW2.Net
             Type lastMessageType = null; // to avoid flooding log messages
             Connection lastConnection = null;
             foreach (var connection in AllConnections)
-                connection.Messages.Prune(
+                connection.Messages.Do(queue => queue.Prune(
                     message => message.CreationTime < Game.GameTime.TotalRealTime - TimeSpan.FromSeconds(30),
                     message =>
                     {
@@ -640,7 +627,7 @@ namespace AW2.Net
                             lastConnection = connection;
                             Log.Write("WARNING: Purging messages of type " + message.Type + " received from " + connection.Name);
                         }
-                    });
+                    }));
         }
 
         #endregion Private methods

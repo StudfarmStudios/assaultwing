@@ -9,9 +9,9 @@ namespace AW2.Net.Messages
     [MessageType(0x27, false)]
     public class ArenaFinishMessage : GameplayMessage
     {
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.Serialize(writer);
+            base.SerializeBody(writer);
             // Arena finish (request) message structure:
             // empty
         }

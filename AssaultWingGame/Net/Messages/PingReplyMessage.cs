@@ -30,7 +30,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public int FrameNumberOnReply { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Ping request message structure (during game):
             // TimeSpan: timestamp originally sent in a ping request message

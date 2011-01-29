@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Net.ConnectionUtils
 {
@@ -88,21 +90,22 @@ namespace AW2.Net.ConnectionUtils
             StartReceiving();
         }
 
-        public void Send(byte[] data)
+        public void Send(Action<NetworkBinaryWriter> writeData)
         {
-            Send(data, UNSPECIFIED_IP_ENDPOINT);
+            Send(writeData, UNSPECIFIED_IP_ENDPOINT);
         }
 
         /// <summary>
         /// Sends raw byte data to the remote host. The data is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
-        public void Send(byte[] data, IPEndPoint remoteEndPoint)
+        public void Send(Action<NetworkBinaryWriter> writeData, IPEndPoint remoteEndPoint)
         {
-            // TODO: Let caller write data directly into sendArgs.Buffer !!! Expose a MemoryWriter and ask final data length from it
             var sendArgs = GetSendArgs(remoteEndPoint);
-            sendArgs.SetBuffer(0, data.Length);
-            Array.Copy(data, sendArgs.Buffer, data.Length);
+            var stream = new MemoryStream(sendArgs.Buffer);
+            var writer = new NetworkBinaryWriter(stream);
+            writeData(writer);
+            sendArgs.SetBuffer(0, (int)writer.BaseStream.Position);
             UseSocket(socket =>
             {
                 var isPending = socket.SendToAsync(sendArgs);

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
 using AW2.Core;
-using AW2.Net.ManagementMessages;
-using AW2.Net.Messages;
 
 namespace AW2.Net.Connections
 {
@@ -26,7 +24,7 @@ namespace AW2.Net.Connections
         {
             var managementMessage = message as ManagementMessage;
             if (managementMessage == null) throw new ArgumentException("Only ManagementMessage instances can be sent to management server", "message");
-            Game.NetworkEngine.UDPSocket.Send(managementMessage.Serialize(), RemoteUDPEndPoint);
+            Game.NetworkEngine.UDPSocket.Send(managementMessage.Serialize, RemoteUDPEndPoint);
         }
 
         public override void UpdatePingInfo()

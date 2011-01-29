@@ -14,7 +14,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public int PlayerID { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             checked
             {

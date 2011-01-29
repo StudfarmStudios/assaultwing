@@ -32,7 +32,7 @@ namespace AW2.Net.Messages
             return reply;
         }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Ping request message structure (during game):
             // long: ticks of the timestamp

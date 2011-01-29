@@ -1,15 +1,14 @@
 //#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Windows.Forms;
 using AW2.Core;
 using AW2.Helpers;
 using AW2.Helpers.Collections;
+using AW2.Helpers.Serialization;
 using AW2.Net.ConnectionUtils;
 using AW2.Net.Messages;
 
@@ -212,11 +211,10 @@ namespace AW2.Net.Connections
             if (IsDisposed) return;
             try
             {
-                var data = message.Serialize();
                 switch (message.SendType)
                 {
-                    case MessageSendType.TCP: SendViaTCP(data); break;
-                    case MessageSendType.UDP: SendViaUDP(data); break;
+                    case MessageSendType.TCP: SendViaTCP(message.Serialize); break;
+                    case MessageSendType.UDP: SendViaUDP(message.Serialize); break;
                     default: throw new MessageException("Unknown send type " + message.SendType);
                 }
 #if DEBUG_SENT_BYTE_COUNT
@@ -361,22 +359,22 @@ namespace AW2.Net.Connections
         /// Sends raw byte data to the remote host via TCP. The data is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
-        private void SendViaTCP(byte[] data)
+        private void SendViaTCP(Action<NetworkBinaryWriter> writeData)
         {
             if (_tcpSocket == null) throw new InvalidOperationException("Connection has no TCP socket for sending a message");
-            _tcpSocket.Send(data);
+            _tcpSocket.Send(writeData);
         }
 
         /// <summary>
         /// Sends raw byte data to the remote host via UDP. The data is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
-        private void SendViaUDP(byte[] data)
+        private void SendViaUDP(Action<NetworkBinaryWriter> writeData)
         {
             // Cannot send messages via UDP before the connection is handshaked. But hey,
             // UDP is an unreliable protocol, so let's just dump the message silently in that case.
             if (!IsHandshaken) return;
-            Game.NetworkEngine.UDPSocket.Send(data, RemoteUDPEndPoint);
+            Game.NetworkEngine.UDPSocket.Send(writeData, RemoteUDPEndPoint);
         }
 
         /// <summary>

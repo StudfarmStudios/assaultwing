@@ -20,9 +20,9 @@ namespace AW2.Net.Messages
         public PlayerMessage Message { get; set; }
         public bool AllPlayers { get { return PlayerID == -1; } }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.Serialize(writer);
+            base.SerializeBody(writer);
             checked
             {
                 // Player message (request) message structure:

@@ -17,7 +17,7 @@ namespace AW2.Net.Messages
     {
         public string ArenaToPlay { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Start game (request) message structure:
             // variable-length string: name of arena to play

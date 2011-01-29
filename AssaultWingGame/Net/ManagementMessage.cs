@@ -82,14 +82,14 @@ namespace AW2.Net
             return g_subclasses[operation];
         }
 
-        public override byte[] Serialize()
+        public override void Serialize(NetworkBinaryWriter writer)
         {
-            return Encoding.ASCII.GetBytes(Text);
+            writer.Write(Encoding.ASCII.GetBytes(Text));
         }
 
         protected abstract void Deserialize(List<Dictionary<string, string>> tokenizedLines);
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             throw new NotImplementedException();
         }

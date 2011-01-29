@@ -29,7 +29,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public bool IsGameClientPlayingArena { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             checked
             {

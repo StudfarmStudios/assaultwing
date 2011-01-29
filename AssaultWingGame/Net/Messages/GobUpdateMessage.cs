@@ -51,9 +51,9 @@ namespace AW2.Net.Messages
             }
         }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.Serialize(writer);
+            base.SerializeBody(writer);
             // Gob update (request) message structure:
             // int: number of gobs to update, K
             // K ints: identifiers of the gobs

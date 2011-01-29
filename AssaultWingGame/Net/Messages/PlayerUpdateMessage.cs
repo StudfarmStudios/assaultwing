@@ -14,9 +14,9 @@ namespace AW2.Net.Messages
         /// </summary>
         public int PlayerID { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.Serialize(writer);
+            base.SerializeBody(writer);
             // Player update (request) message structure:
             // int: player identifier
             // word: data length N

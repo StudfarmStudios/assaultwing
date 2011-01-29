@@ -14,9 +14,9 @@ namespace AW2.Net.Messages
         /// </summary>
         public int GobId { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.Serialize(writer);
+            base.SerializeBody(writer);
             // Player controls (request) message structure:
             // int: gob identifier
             writer.Write((int)GobId);

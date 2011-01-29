@@ -37,9 +37,9 @@ namespace AW2.Net.Messages
             ControlStates = new ControlState[PlayerControls.CONTROL_COUNT];
         }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.Serialize(writer);
+            base.SerializeBody(writer);
             checked
             {
                 // Player controls (request) message structure:

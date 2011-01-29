@@ -26,7 +26,7 @@ namespace AW2.Net
             FrameNumber = AssaultWingCore.Instance.DataEngine.ArenaFrameCount;
         }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             writer.Write((int)FrameNumber);
         }

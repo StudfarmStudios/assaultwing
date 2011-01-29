@@ -12,7 +12,7 @@ namespace AW2.Net.Messages
     {
         public string ArenaToPlay { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             checked
             {

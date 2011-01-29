@@ -17,7 +17,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public IList<string> CanonicalStrings { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Join server request structure:
             // int: number of canonical strings, K

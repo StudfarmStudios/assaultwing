@@ -15,7 +15,7 @@ namespace AW2.Net.Messages
         /// </summary>
         public string Info { get; set; }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Connection closing (request) message structure:
             // variable length string: info about the closing of the connection

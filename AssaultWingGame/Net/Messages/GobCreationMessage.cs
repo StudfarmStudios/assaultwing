@@ -40,9 +40,9 @@ namespace AW2.Net.Messages
             }
         }
 
-        protected override void Serialize(NetworkBinaryWriter writer)
+        protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.Serialize(writer);
+            base.SerializeBody(writer);
             checked
             {
                 // Gob creation (request) message structure:

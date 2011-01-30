@@ -97,7 +97,7 @@ namespace AW2.UI
         {
             _runner.Exit();
             Application.DoEvents(); // finish processing BeginInvoke()d Update() and Draw() calls
-            _graphicsDeviceService.Dispose();
+            if (_graphicsDeviceService != null) _graphicsDeviceService.Dispose();
             _graphicsDeviceService = null;
             base.OnClosing(e);
         }

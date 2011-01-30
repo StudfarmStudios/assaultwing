@@ -195,6 +195,12 @@ namespace AW2.Core
             base.BeginRun();
         }
 
+        public override void EndRun()
+        {
+            GameState = Core.GameState.Initializing;
+            base.EndRun();
+        }
+
         public void StartArenaButStayInMenu()
         {
             if (NetworkMode != Core.NetworkMode.Client) throw new InvalidOperationException("Only client can start arena on background");

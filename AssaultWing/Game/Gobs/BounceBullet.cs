@@ -9,19 +9,30 @@ namespace AW2.Game.Gobs
     /// Bounce bullet dies by timer, if not sooner.
     /// </summary>
     [LimitedSerialization]
-    class BounceBullet : Bullet
+    public class BounceBullet : Bullet
     {
+        private int _deathBySlownessCounter;
+
         /// <summary>
         /// Only for serialisation.
         /// </summary>
         public BounceBullet()
-            : base()
         {
         }
 
         public BounceBullet(CanonicalString typeName)
             : base(typeName)
         {
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (Move.LengthSquared() < 1 * 1)
+                _deathBySlownessCounter++;
+            else
+                _deathBySlownessCounter = 0;
+            if (_deathBySlownessCounter > 3) Die();
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)

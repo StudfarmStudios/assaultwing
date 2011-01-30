@@ -748,7 +748,7 @@ namespace AW2.Game
         /// physical laws apply to the gob and the gob's exhaust engines updated.
         public virtual void Update()
         {
-            Arena.Move(this, 1, true);
+            Arena.Move(this, Game.TargetElapsedTime, true);
             DrawPosOffset *= 0.95f; // reduces the offset to less than 5 % in 60 updates
             DrawRotationOffset = DampDrawRotationOffset(DrawRotationOffset);
         }

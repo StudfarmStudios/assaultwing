@@ -95,29 +95,6 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Removes elements from the spatial grid.
-        /// </summary>
-        /// The all found instances of the given value are removed.
-        /// The search will cover the given area and perhaps some more.
-        /// <param name="obj">The actual object to remove.</param>
-        /// <param name="area">The minimal area to search for the instances.</param>
-        public void Remove(T obj, Rectangle area)
-        {
-            int gridMinX, gridMinY, gridMaxX, gridMaxY;
-            bool outOfBounds;
-            ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-
-            if (outOfBounds)
-                _outerCell.RemoveAll(element => element.Value.Equals(obj));
-            for (int y = gridMinY; y < gridMaxY; ++y)
-                for (int x = gridMinX; x < gridMaxX; ++x)
-                    _cells[y, x].RemoveAll(element => element.Value.Equals(obj));
-
-            // We can't update 'boundingBoxMax' effectively to be a tight bound,
-            // but it still maintains its invariant.
-        }
-
-        /// <summary>
         /// Removes an element from the spatial grid.
         /// </summary>
         /// <param name="element">The element to remove.</param>
@@ -185,18 +162,18 @@ namespace AW2.Helpers
             ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
 
             if (outOfBounds)
-                for (int i = 0; i < _outerCell.Count; ++i)
+                for (int i = _outerCell.Count - 1; i >= 0; i--)
                 {
-                    SpatialGridElement<T> cellElement = _outerCell[i];
+                    var cellElement = _outerCell[i];
                     if (!Geometry.Intersect(cellElement.BoundingBox, area)) continue;
                     if (action(cellElement.Value)) return;
                 }
-            for (int y = gridMinY; y < gridMaxY; ++y)
-                for (int x = gridMinX; x < gridMaxX; ++x)
+            for (int y = gridMinY; y < gridMaxY; y++)
+                for (int x = gridMinX; x < gridMaxX; x++)
                 {
                     var cell = _cells[y, x];
                     // We come here very often -- avoid foreach created iterator overhead.
-                    for (int i = 0; i < cell.Count; ++i)
+                    for (int i = cell.Count - 1; i >= 0; i--)
                     {
                         var cellElement = cell[i];
                         if (!Geometry.Intersect(cellElement.BoundingBox, area)) continue;
@@ -215,7 +192,7 @@ namespace AW2.Helpers
         {
             for (int i = 0; i < _outerCell.Count; ++i)
                 if (action(_outerCell[i].Value)) return;
-            foreach (List<SpatialGridElement<T>> cell in _cells)
+            foreach (var cell in _cells)
                 for (int i = 0; i < cell.Count; ++i)
                     if (action(cell[i].Value)) return;
         }

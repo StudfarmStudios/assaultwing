@@ -422,7 +422,7 @@ namespace AW2.Game
         /// <summary>
         /// As <see cref="Move(Gob, int, bool)"/> but time delta is specified in game time.
         /// </summary>
-        private void Move(Gob gob, TimeSpan moveTime, bool allowSideEffects)
+        public void Move(Gob gob, TimeSpan moveTime, bool allowSideEffects)
         {
             if (!gob.Movable) return;
             if (gob.Disabled) return;

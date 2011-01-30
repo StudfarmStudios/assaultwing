@@ -98,6 +98,7 @@ namespace AW2.Core
         /// </summary>
         public virtual void EndRun()
         {
+            OnExiting(this, new EventArgs());
         }
 
         /// <summary>
@@ -106,7 +107,6 @@ namespace AW2.Core
         protected virtual void OnExiting(object sender, EventArgs args)
         {
             if (Exiting != null) Exiting(sender, args);
-            throw new NotImplementedException();
         }
     }
 }

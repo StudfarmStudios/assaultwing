@@ -13,13 +13,11 @@ namespace AW2.Core
         private Action _draw;
         private Action<AWGameTime> _update;
         private bool _exiting;
-        private bool _exited;
         private SemaphoreSlim _pauseSemaphore;
+        private SemaphoreSlim _exitSemaphore;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
 
         public event Action Initialized;
-
-        private bool BackgroundLoopFinished { get { return _exited || _gameUpdateAndDrawLoopAsyncResult == null; } }
 
         public AWGameRunner(AWGame game, Action draw, Action<AWGameTime> update)
         {
@@ -28,6 +26,7 @@ namespace AW2.Core
             _draw = draw;
             _update = update;
             _pauseSemaphore = new SemaphoreSlim(1, 1);
+            _exitSemaphore = new SemaphoreSlim(1, 1);
         }
 
         /// <summary>
@@ -35,6 +34,8 @@ namespace AW2.Core
         /// </summary>
         public void Run()
         {
+            _exitSemaphore.Wait();
+            if (_exiting) return;
             _gameUpdateAndDrawLoopAsyncResult = ((Action)GameUpdateAndDrawLoop).BeginInvoke(GameUpdateAndDrawLoopEnd, null);
         }
 
@@ -61,7 +62,8 @@ namespace AW2.Core
         public void Exit()
         {
             _exiting = true;
-            while (!BackgroundLoopFinished) Thread.Sleep(100);
+            _exitSemaphore.Wait();
+            _exitSemaphore.Release();
         }
 
         private void GameUpdateAndDrawLoop()
@@ -106,7 +108,7 @@ namespace AW2.Core
             var deleg = (Action)((AsyncResult)result).AsyncDelegate;
             deleg.EndInvoke(result);
             _game.EndRun();
-            _exited = true;
+            _exitSemaphore.Release();
         }
     }
 }

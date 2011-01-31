@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using AW2.Game.Gobs;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -11,10 +11,10 @@ namespace AW2.Game.Pengs
     /// <summary>
     /// Particle emitter spilling stuff radially outwards from a circle sector 
     /// (or a full circle) in a radius from its center.
-    /// </summary>
     /// The center is located at the origin of the peng's coordinate system.
+    /// </summary>
     [LimitedSerialization]
-    public class SprayEmitter : ParticleEmitter, IConsistencyCheckable
+    public class SprayEmitter : IConsistencyCheckable
     {
         /// <summary>
         /// Type of initial particle facing.
@@ -41,10 +41,31 @@ namespace AW2.Game.Pengs
         #region SprayEmitter fields
 
         /// <summary>
+        /// Names of textures of particles to emit.
+        /// </summary>
+        [TypeParameter]
+        private CanonicalString[] _textureNames;
+
+        /// <summary>
+        /// Names of types of gobs to emit.
+        /// </summary>
+        [TypeParameter]
+        private CanonicalString[] _gobTypeNames;
+
+        [RuntimeState]
+        private bool _paused;
+
+        [ExcludeFromDeepCopy]
+        private Peng _peng;
+
+        [ExcludeFromDeepCopy]
+        private Texture2D[] _textures;
+
+        /// <summary>
         /// Radius of emission circle.
         /// </summary>
         [TypeParameter]
-        float radius;
+        private float _radius;
 
         /// <summary>
         /// Half width of emission sector, in radians.
@@ -52,13 +73,13 @@ namespace AW2.Game.Pengs
         /// Setting spray angle to pi (3.14159...) will spray particles
         /// in a full circle.
         [TypeParameter]
-        float sprayAngle;
+        private float _sprayAngle;
 
         /// <summary>
         /// Type of particle facing at emission.
         /// </summary>
         [TypeParameter]
-        FacingType facingType;
+        private FacingType _facingType;
 
         /// <summary>
         /// Initial magnitude of particle velocity, in meters per second.
@@ -66,65 +87,112 @@ namespace AW2.Game.Pengs
         /// The 'age' argument of this peng parameter will always be set to zero.
         /// The direction of particle velocity will be away from the emission center.
         [TypeParameter, ShallowCopy]
-        PengParameter initialVelocity;
+        private PengParameter _initialVelocity;
 
         /// <summary>
         /// Emission frequency, in number of particles per second.
         /// </summary>
         [TypeParameter]
-        float emissionFrequency;
+        private float _emissionFrequency;
 
         /// <summary>
         /// Number of particles to create, or negative for no limit.
         /// </summary>
         [TypeParameter, RuntimeState]
-        int numberToCreate;
+        private int _numberToCreate;
 
         /// <summary>
         /// Time of next particle birth, in game time.
         /// </summary>
-        TimeSpan _nextBirth;
+        private TimeSpan _nextBirth;
 
-        int _numberCreated;
+        private int _numberCreated;
 
         #endregion SprayEmitter fields
 
-        public override bool Paused
+        #region Properties
+
+        /// <summary>
+        /// Names of textures of particles to emit.
+        /// </summary>
+        public CanonicalString[] TextureNames { get { return _textureNames; } }
+
+        /// <summary>
+        /// Textures in the same order as in <see cref="_textureNames"/>.
+        /// </summary>
+        public Texture2D[] Textures { get { return _textures; } private set { _textures = value; } }
+
+        /// <summary>
+        /// Names of types of gobs to emit.
+        /// </summary>
+        public CanonicalString[] GobTypeNames { get { return _gobTypeNames; } }
+
+        /// <summary>
+        /// The peng this emitter belongs to.
+        /// </summary>
+        public Peng Peng { get { return _peng; } set { _peng = value; } }
+
+        /// <summary>
+        /// If <c>true</c>, no particles will be emitted.
+        /// </summary>
+        public bool Paused
         {
+            get { return _paused; }
             set
             {
-                if (Paused && !value)
+                if (_paused && !value)
                 {
                     // Forget about creating particles whose creation was due 
                     // while we were paused.
                     if (_nextBirth < Peng.Arena.TotalTime)
                         _nextBirth = Peng.Arena.TotalTime;
                 }
-                base.Paused = value;
+                _paused = value;
             }
         }
 
-        public override bool Finished { get { return numberToCreate > 0 && _numberCreated >= numberToCreate; } }
+        /// <summary>
+        /// <c>true</c> if emitting has finished for good, <c>false</c> otherwise.
+        /// </summary>
+        public bool Finished { get { return _numberToCreate > 0 && _numberCreated >= _numberToCreate; } }
 
-        /// This constructor is for serialisation.
+        #endregion Properties
+
+        /// <summary>
+        /// This constructor only is for serialisation.
+        /// </summary>
         public SprayEmitter()
         {
-            radius = 15;
-            sprayAngle = MathHelper.PiOver4;
-            facingType = FacingType.Random;
-            initialVelocity = new CurveLerp();
-            emissionFrequency = 10;
-            numberToCreate = -1;
+            _textureNames = new[] { (CanonicalString)"dummytexture" };
+            _gobTypeNames = new[] { (CanonicalString)"dummygob" };
+            _paused = false;
+            _radius = 15;
+            _sprayAngle = MathHelper.PiOver4;
+            _facingType = FacingType.Random;
+            _initialVelocity = new CurveLerp();
+            _emissionFrequency = 10;
+            _numberToCreate = -1;
             _nextBirth = new TimeSpan(-1);
+        }
+
+        public void LoadContent()
+        {
+            Textures = new Texture2D[TextureNames.Length];
+            for (int i = 0; i < TextureNames.Length; ++i)
+                Textures[i] = Peng.Game.Content.Load<Texture2D>(TextureNames[i]);
+        }
+
+        public void UnloadContent()
+        {
         }
 
         /// <summary>
         /// Returns created particles, adds created gobs to <c>DataEngine</c>.
+        /// Returns <c>null</c> if no particles were created.
         /// </summary>
-        /// <returns>Created particles, or <c>null</c> if no particles were created.</returns>
-        public override IEnumerable<Particle> Emit()
+        public IEnumerable<Particle> Emit()
         {
-            if (paused) return null;
+            if (_paused) return null;
             if (Finished) return null;
             List<Particle> particles = null;
 
@@ -133,15 +201,15 @@ namespace AW2.Game.Pengs
                 _nextBirth = Peng.Arena.TotalTime;
 
             // Count how many to create.
-            int createCount = Math.Max(0, (int)(1 + emissionFrequency * (Peng.Arena.TotalTime - _nextBirth).TotalSeconds));
-            if (numberToCreate >= 0)
+            int createCount = Math.Max(0, (int)(1 + _emissionFrequency * (Peng.Arena.TotalTime - _nextBirth).TotalSeconds));
+            if (_numberToCreate >= 0)
             {
-                createCount = Math.Min(createCount, numberToCreate);
+                createCount = Math.Min(createCount, _numberToCreate);
                 _numberCreated += createCount;
             }
-            _nextBirth += TimeSpan.FromSeconds(createCount / emissionFrequency);
+            _nextBirth += TimeSpan.FromSeconds(createCount / _emissionFrequency);
 
-            if (createCount > 0 && textureNames.Length > 0)
+            if (createCount > 0 && _textureNames.Length > 0)
                 particles = new List<Particle>();
 
             // Create the particles. They are created 
@@ -151,21 +219,21 @@ namespace AW2.Game.Pengs
             for (int i = 0; i < createCount; ++i)
             {
                 // Find out type of emitted thing (which gob or particle) and create it.
-                int emitType = RandomHelper.GetRandomInt(textureNames.Length + gobTypeNames.Length);
+                int emitType = RandomHelper.GetRandomInt(_textureNames.Length + _gobTypeNames.Length);
 
                 // The emitted thing init routine must be an Action<Gob>
                 // so that it can be passed to Gob.CreateGob. Particle init
                 // is included in the same routine because of large similarities.
                 Action<Gob> emittedThingInit = gob => GobCreation(gob, createCount, i, emitType, ref particles);
-                if (emitType < textureNames.Length)
+                if (emitType < _textureNames.Length)
                     emittedThingInit(null);
                 else
-                    Gob.CreateGob<Gob>(Peng.Game, gobTypeNames[emitType - textureNames.Length], emittedThingInit);
+                    Gob.CreateGob<Gob>(Peng.Game, _gobTypeNames[emitType - _textureNames.Length], emittedThingInit);
             }
             return particles;
         }
 
-        public override void Reset()
+        public void Reset()
         {
             _numberCreated = 0;
         }
@@ -184,13 +252,13 @@ namespace AW2.Game.Pengs
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 // Make sure there's no null references.
-                if (initialVelocity == null)
+                if (_initialVelocity == null)
                     throw new Exception("Serialization error: SprayEmitter initialVelocity not defined");
 
-                if (emissionFrequency <= 0 || emissionFrequency > 100000)
+                if (_emissionFrequency <= 0 || _emissionFrequency > 100000)
                 {
-                    Log.Write("Correcting insane emission frequency " + emissionFrequency);
-                    emissionFrequency = MathHelper.Clamp(emissionFrequency, 1, 100000);
+                    Log.Write("Correcting insane emission frequency " + _emissionFrequency);
+                    _emissionFrequency = MathHelper.Clamp(_emissionFrequency, 1, 100000);
                 }
             }
             _nextBirth = new TimeSpan(-1);
@@ -215,15 +283,15 @@ namespace AW2.Game.Pengs
                 switch (Peng.ParticleCoordinates)
                 {
                     case Peng.CoordinateSystem.Peng:
-                        RandomHelper.GetRandomCirclePoint(radius, -sprayAngle, sprayAngle,
+                        RandomHelper.GetRandomCirclePoint(_radius, -_sprayAngle, _sprayAngle,
                             out pos, out directionUnit, out directionAngle);
-                        move = initialVelocity.GetValue(0, pengInput, random) * directionUnit;
-                        switch (facingType)
+                        move = _initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                        switch (_facingType)
                         {
                             case FacingType.Directed: rotation = 0; break;
                             case FacingType.Forward: rotation = directionAngle; break;
                             case FacingType.Random: rotation = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi); break;
-                            default: throw new Exception("SprayEmitter: Unhandled particle facing type " + facingType);
+                            default: throw new Exception("SprayEmitter: Unhandled particle facing type " + _facingType);
                         }
                         break;
                     case Peng.CoordinateSystem.Game:
@@ -233,29 +301,29 @@ namespace AW2.Game.Pengs
                             var endPos = Peng.Pos + Peng.DrawPosOffset;
                             var iPos = Vector2.Lerp(startPos, endPos, posWeight);
                             var drawRotation = Peng.Rotation + Peng.DrawRotationOffset;
-                            RandomHelper.GetRandomCirclePoint(radius, drawRotation - sprayAngle, drawRotation + sprayAngle,
+                            RandomHelper.GetRandomCirclePoint(_radius, drawRotation - _sprayAngle, drawRotation + _sprayAngle,
                                 out pos, out directionUnit, out directionAngle);
                             pos += iPos;
-                            move = Peng.Move + initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                            move = Peng.Move + _initialVelocity.GetValue(0, pengInput, random) * directionUnit;
 
                             // HACK: 'move' will be added to 'pos' in PhysicalUpdater during this same frame
                             pos -= Peng.Game.PhysicsEngine.ApplyChange(move, Peng.Game.GameTime.ElapsedGameTime);
 
-                            switch (facingType)
+                            switch (_facingType)
                             {
                                 case FacingType.Directed: rotation = Peng.Rotation; break;
                                 case FacingType.Forward: rotation = directionAngle; break;
                                 case FacingType.Random: rotation = RandomHelper.GetRandomFloat(0, MathHelper.TwoPi); break;
-                                default: throw new Exception("SprayEmitter: Unhandled particle facing type " + facingType);
+                                default: throw new Exception("SprayEmitter: Unhandled particle facing type " + _facingType);
                             }
                         }
                         break;
                     default:
-                        throw new Exception("SprayEmitter: Unhandled peng coordinate system " + Peng.ParticleCoordinates);
+                        throw new ApplicationException("SprayEmitter: Unhandled peng coordinate system " + Peng.ParticleCoordinates);
                 }
 
                 // Set the thing's parameters.
-                if (emitType < textureNames.Length)
+                if (emitType < _textureNames.Length)
                 {
                     var particle = new Particle
                     {
@@ -270,6 +338,7 @@ namespace AW2.Game.Pengs
                         Rotation = rotation,
                         Scale = 1,
                         TextureIndex = emitType,
+                        Timeout = Peng.Arena.TotalTime + TimeSpan.FromSeconds(Peng.ParticleUpdater.ParticleAge.GetRandomValue()),
                     };
                     particles.Add(particle);
                 }

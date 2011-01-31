@@ -41,21 +41,21 @@ namespace AW2.Game.Gobs
         #region Peng fields
 
         [TypeParameter]
-        ParticleEmitter emitter;
+        private SprayEmitter _emitter;
         [TypeParameter, ShallowCopy]
-        ParticleUpdater updater;
+        private PhysicalUpdater _updater;
 
         /// <summary>
         /// The coordinate system in which to interpret our particles' <c>pos</c> field.
         /// </summary>
         [TypeParameter]
-        CoordinateSystem coordinateSystem;
+        private CoordinateSystem _coordinateSystem;
 
         /// <summary>
         /// Marks peng to have dependency to Player
         /// </summary>
         [TypeParameter]
-        bool playerRelated;
+        private bool _playerRelated;
 
         /// <summary>
         /// External input argument of the peng, between 0 and 1.
@@ -63,13 +63,13 @@ namespace AW2.Game.Gobs
         /// This value can be set by anyone and it may affect the behaviour
         /// of the peng's emitter and updater.
         [RuntimeState]
-        float input;
+        private float _input;
 
         /// <summary>
         /// Currently active particles of this peng.
         /// </summary>
         [RuntimeState]
-        List<Particle> particles;
+        private List<Particle> _particles;
 
         /// <summary>
         /// Drawing position (Pos + DrawPosOffset) of the peng in the previous frame, or NaN if unspecified.
@@ -87,17 +87,18 @@ namespace AW2.Game.Gobs
         private TimeSpan _oldPosTimestamp;
 
         [ExcludeFromDeepCopy]
-        Gob _leader;
+        private Gob _leader;
 
         #endregion Peng fields
 
         #region Peng properties
 
+        public PhysicalUpdater ParticleUpdater { get { return _updater; } }
         public override bool IsRelevant { get { return false; } }
 
         public override IEnumerable<CanonicalString> TextureNames
         {
-            get { return base.TextureNames.Union(emitter.TextureNames); }
+            get { return base.TextureNames.Union(_emitter.TextureNames); }
         }
 
         public override Vector2 Pos
@@ -150,12 +151,12 @@ namespace AW2.Game.Gobs
         /// </summary>
         /// This value can be set by anyone and it may affect the behaviour
         /// of the peng's emitter and updater.
-        public float Input { get { return input; } set { input = value; } }
+        public float Input { get { return _input; } set { _input = value; } }
 
         /// <summary>
         /// If <c>true</c>, the peng won't emit new particles.
         /// </summary>
-        public bool Paused { get { return emitter.Paused; } set { emitter.Paused = value; } }
+        public bool Paused { get { return _emitter.Paused; } set { _emitter.Paused = value; } }
 
         /// <summary>
         /// If true, the peng stays alive even when all particles have been emitted and they have died.
@@ -166,12 +167,12 @@ namespace AW2.Game.Gobs
         /// The coordinate system in which to interpret the <c>pos</c> field of
         /// the particles of this peng.
         /// </summary>
-        public CoordinateSystem ParticleCoordinates { get { return coordinateSystem; } set { coordinateSystem = value; } }
+        public CoordinateSystem ParticleCoordinates { get { return _coordinateSystem; } set { _coordinateSystem = value; } }
 
         /// <summary>
         /// Marks peng to have dependency to Player
         /// </summary>
-        public bool PlayerRelated { get { return playerRelated; } set { playerRelated = value; } }
+        public bool PlayerRelated { get { return _playerRelated; } set { _playerRelated = value; } }
 
         /// <summary>
         /// <c>null</c> or the gob that determines the origin of the peng's coordinate system.
@@ -208,15 +209,14 @@ namespace AW2.Game.Gobs
         #endregion Peng properties
 
         /// <summary>
-        /// Creates an uninitialised peng.
-        /// </summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public Peng()
         {
-            emitter = new SprayEmitter();
-            updater = new PhysicalUpdater();
-            coordinateSystem = CoordinateSystem.Game;
-            particles = new List<Particle>();
+            _emitter = new SprayEmitter();
+            _updater = new PhysicalUpdater();
+            _coordinateSystem = CoordinateSystem.Game;
+            _particles = new List<Particle>();
 
             // Set better defaults than class Gob does.
             DrawMode2D = new DrawMode2D(DrawModeType2D.Transparent);
@@ -230,13 +230,13 @@ namespace AW2.Game.Gobs
         public Peng(CanonicalString typeName)
             : base(typeName)
         {
-            input = 0;
+            _input = 0;
             Leader = null;
             LeaderBone = -1;
             _oldDrawPos = new Vector2(Single.NaN);
             _prevDrawPos = new Vector2(Single.NaN);
             _oldPosTimestamp = TimeSpan.Zero;
-            particles = new List<Particle>();
+            _particles = new List<Particle>();
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace AW2.Game.Gobs
         /// </summary>
         public void Restart()
         {
-            emitter.Reset();
+            _emitter.Reset();
         }
 
         #region Methods related to gobs' functionality in the game world
@@ -258,13 +258,13 @@ namespace AW2.Game.Gobs
         public override void LoadContent()
         {
             base.LoadContent();
-            emitter.LoadContent();
+            _emitter.LoadContent();
         }
 
         public override void UnloadContent()
         {
             base.UnloadContent();
-            emitter.UnloadContent();
+            _emitter.UnloadContent();
         }
 
         public override void Update()
@@ -278,22 +278,22 @@ namespace AW2.Game.Gobs
 
         private void CreateParticles()
         {
-            var newParticles = emitter.Emit();
+            var newParticles = _emitter.Emit();
             if (newParticles != null)
-                particles.AddRange(newParticles);
+                _particles.AddRange(newParticles);
         }
 
         private void UpdateAndKillParticles()
         {
             int write = 0;
-            for (int read = 0; read < particles.Count; read++)
-                if (!updater.Update(particles[read]))
+            for (int read = 0; read < _particles.Count; read++)
+                if (!_updater.Update(_particles[read]))
                 {
                     // Keep particles[read]
-                    if (write != read) particles[write] = particles[read];
+                    if (write != read) _particles[write] = _particles[read];
                     write++;
                 }
-            particles.RemoveRange(write, particles.Count - write);
+            _particles.RemoveRange(write, _particles.Count - write);
         }
 
         private void CheckDeath()
@@ -306,7 +306,7 @@ namespace AW2.Game.Gobs
             }
 
             // Die if we're finished.
-            if (!IsKeptAlive && particles.Count == 0 && emitter.Finished)
+            if (!IsKeptAlive && _particles.Count == 0 && _emitter.Finished)
                 Die();
         }
 
@@ -316,11 +316,11 @@ namespace AW2.Game.Gobs
             var viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
             var pengToGame = WorldMatrix;
             var pengColor = PlayerRelated && Owner != null ? Owner.PlayerColor : Color.White;
-            foreach (var particle in particles)
+            foreach (var particle in _particles)
             {
                 Vector2 posCenter; // particle center position in game world coordinates
                 float drawRotation;
-                switch (coordinateSystem)
+                switch (_coordinateSystem)
                 {
                     case CoordinateSystem.Peng:
                         posCenter = Vector2.Transform(particle.Pos, pengToGame);
@@ -330,7 +330,7 @@ namespace AW2.Game.Gobs
                         posCenter = particle.Pos;
                         drawRotation = particle.Rotation;
                         break;
-                    default: throw new ApplicationException("Unknown CoordinateSystem: " + coordinateSystem);
+                    default: throw new ApplicationException("Unknown CoordinateSystem: " + _coordinateSystem);
                 }
                 var screenCenter = Vector2.Transform(posCenter, gameToScreen);
                 drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
@@ -339,7 +339,7 @@ namespace AW2.Game.Gobs
                 // particle's position in its lifespan.
                 float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
 
-                var texture = emitter.Textures[particle.TextureIndex];
+                var texture = _emitter.Textures[particle.TextureIndex];
                 var color = Color.Multiply(pengColor, particle.Alpha);
                 spriteBatch.Draw(texture, screenCenter, null, color, drawRotation,
                     new Vector2(texture.Width, texture.Height) / 2, particle.Scale * scale,
@@ -374,7 +374,7 @@ namespace AW2.Game.Gobs
         public override void Cloned()
         {
             base.Cloned();
-            emitter.Peng = this;
+            _emitter.Peng = this;
         }
 
         /// <summary>
@@ -390,16 +390,16 @@ namespace AW2.Game.Gobs
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
                 // Make sure there's no null references.
-                if (emitter == null)
+                if (_emitter == null)
                     throw new Exception("Serialization error: Peng emitter not defined in " + TypeName);
-                if (updater == null)
+                if (_updater == null)
                     throw new Exception("Serialization error: Peng updater not defined in " + TypeName);
             }
             if (limitationAttribute == typeof(RuntimeStateAttribute))
             {
                 // Make sure there's no null references.
-                if (particles == null)
-                    particles = new List<Particle>();
+                if (_particles == null)
+                    _particles = new List<Particle>();
             }
         }
 

@@ -184,8 +184,6 @@
     <Compile Include="Game\Pengs\CurveLerpKey.cs" />
     <Compile Include="Game\Pengs\CurveLerpKeyCollection.cs" />
     <Compile Include="Game\Pengs\Particle.cs" />
-    <Compile Include="Game\Pengs\ParticleEmitter.cs" />
-    <Compile Include="Game\Pengs\ParticleUpdater.cs" />
     <Compile Include="Game\Pengs\PengParameter.cs" />
     <Compile Include="Game\Pengs\PhysicalUpdater.cs" />
     <Compile Include="Game\Pengs\SprayEmitter.cs" />

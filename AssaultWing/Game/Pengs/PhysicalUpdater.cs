@@ -12,7 +12,7 @@ namespace AW2.Game.Pengs
     /// Physical updater uses the following:
     /// - Particle.timeout is the time of death of the particle
     [LimitedSerialization]
-    public class PhysicalUpdater : ParticleUpdater, IConsistencyCheckable
+    public class PhysicalUpdater : IConsistencyCheckable
     {
         /// <summary>
         /// The range of lifetimes of particles, in seconds.
@@ -54,6 +54,8 @@ namespace AW2.Game.Pengs
         [TypeParameter]
         private float _drag;
 
+        public ExpectedValue ParticleAge { get { return _particleAge; } }
+
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
@@ -71,16 +73,9 @@ namespace AW2.Game.Pengs
         {
             // Note: This method is run potentially very often. It must be kept quick.
 
-            var now = AssaultWingCore.Instance.DataEngine.ArenaTotalTime;
-
-            // Initialise custom particle fields
-            if (particle.Timeout == TimeSpan.Zero)
-                particle.Timeout = now + TimeSpan.FromSeconds(_particleAge.GetRandomValue());
-
-            // Kill a timed out particle
-            if (particle.Timeout <= now) return true;
-
-            var lifePos = (now - particle.BirthTime).Ticks / (float)(particle.Timeout - particle.BirthTime).Ticks;
+            var lifePos = (AssaultWingCore.Instance.DataEngine.ArenaTotalTime - particle.BirthTime).Ticks
+                / (float)(particle.Timeout - particle.BirthTime).Ticks;
+            if (lifePos >= 1) return true;
             UpdateVisualProperties(particle, lifePos);
             UpdatePhysicalProperties(particle, lifePos);
             return false;

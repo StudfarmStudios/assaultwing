@@ -29,7 +29,7 @@ namespace AW2.Game.Pengs
 
         /// <summary>
         /// Index of the texture to draw the particle with, as listed in
-        /// <see cref="ParticleEmitter.Textures"/>.
+        /// <see cref="SprayEmitter.Textures"/>.
         /// </summary>
         public int TextureIndex;
 

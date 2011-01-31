@@ -271,19 +271,33 @@ namespace AW2.Game.Gobs
         {
             base.Update();
             UpdateOldDrawPos();
+            CreateParticles();
+            UpdateAndKillParticles();
+            CheckDeath();
+        }
 
-            // Create particles.
+        private void CreateParticles()
+        {
             var newParticles = emitter.Emit();
             if (newParticles != null)
                 particles.AddRange(newParticles);
+        }
 
-            // Update and kill particles.
-            for (int i = 0; i < particles.Count; )
-                if (updater.Update(particles[i]))
-                    particles.RemoveAt(i);
-                else
-                    ++i;
+        private void UpdateAndKillParticles()
+        {
+            int write = 0;
+            for (int read = 0; read < particles.Count; read++)
+                if (!updater.Update(particles[read]))
+                {
+                    // Keep particles[read]
+                    if (write != read) particles[write] = particles[read];
+                    write++;
+                }
+            particles.RemoveRange(write, particles.Count - write);
+        }
 
+        private void CheckDeath()
+        {
             // Die by our leader.
             if (Leader != null && (Leader.Dead || Leader.IsDisposed))
             {

@@ -78,6 +78,7 @@ namespace AW2.Game.Pengs
             if (lifePos >= 1) return true;
             UpdateVisualProperties(particle, lifePos);
             UpdatePhysicalProperties(particle, lifePos);
+            particle.UpdateCounter++;
             return false;
         }
 
@@ -85,17 +86,19 @@ namespace AW2.Game.Pengs
         {
             particle.LayerDepth = lifePos;
             particle.Scale = _scale.GetValue(lifePos, particle.PengInput, particle.Random);
-            particle.Alpha = _alpha.GetValue(lifePos, particle.PengInput, particle.Random);
+            // Optimisation: CurveLerp.GetValue is not too fast, call it only sometimes.
+            if ((particle.UpdateCounter & 0x03) == 0) particle.Alpha = _alpha.GetValue(lifePos, particle.PengInput, particle.Random);
         }
 
         private void UpdatePhysicalProperties(Particle particle, float lifePos)
         {
             var elapsedSeconds = (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-            var accelerationValue = _acceleration.GetValue(lifePos, particle.PengInput, particle.Random);
-            var rotationSpeedValue = _rotationSpeed.GetValue(lifePos, particle.PengInput, particle.Random);
+            // Optimisation: CurveLerp.GetValue is not too fast, call it only sometimes.
+            if ((particle.UpdateCounter & 0x0f) == 0) particle.LastAcceleration = _acceleration.GetValue(lifePos, particle.PengInput, particle.Random);
+            if ((particle.UpdateCounter & 0x07) == 0) particle.LastRotationSpeed = _rotationSpeed.GetValue(lifePos, particle.PengInput, particle.Random);
             particle.Pos += particle.Move * elapsedSeconds;
-            particle.Move += particle.DirectionVector * accelerationValue * elapsedSeconds;
-            particle.Rotation += rotationSpeedValue * elapsedSeconds;
+            particle.Move += particle.DirectionVector * particle.LastAcceleration * elapsedSeconds;
+            particle.Rotation += particle.LastRotationSpeed * elapsedSeconds;
             particle.Move *= (float)Math.Pow(1 - _drag, elapsedSeconds);
         }
 

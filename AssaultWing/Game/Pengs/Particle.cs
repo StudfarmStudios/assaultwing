@@ -82,5 +82,9 @@ namespace AW2.Game.Pengs
         /// The particle's random seed.
         /// </summary>
         public int Random;
+
+        public int UpdateCounter;
+        public float LastAcceleration;
+        public float LastRotationSpeed;
     }
 }

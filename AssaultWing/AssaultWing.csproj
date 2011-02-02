@@ -180,6 +180,7 @@
     <Compile Include="Game\GobUtils\WeaponInfo.cs" />
     <Compile Include="Game\LogicEngine.cs" />
     <Compile Include="Game\Pengs\ConstantValue.cs" />
+    <Compile Include="Game\Pengs\SimpleCurve.cs" />
     <Compile Include="Game\Pengs\CurveLerp.cs" />
     <Compile Include="Game\Pengs\CurveLerpKey.cs" />
     <Compile Include="Game\Pengs\CurveLerpKeyCollection.cs" />

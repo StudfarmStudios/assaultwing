@@ -12,7 +12,7 @@ namespace AW2.Game.Pengs
     /// Physical updater uses the following:
     /// - Particle.timeout is the time of death of the particle
     [LimitedSerialization]
-    public class PhysicalUpdater : IConsistencyCheckable
+    public class PhysicalUpdater
     {
         /// <summary>
         /// The range of lifetimes of particles, in seconds.
@@ -54,6 +54,9 @@ namespace AW2.Game.Pengs
         [TypeParameter]
         private float _drag;
 
+        private float _dragMultiplier;
+        private float _elapsedSeconds;
+
         public ExpectedValue ParticleAge { get { return _particleAge; } }
 
         /// <summary>
@@ -67,6 +70,13 @@ namespace AW2.Game.Pengs
             _scale = new CurveLerp();
             _alpha = new CurveLerp();
             _drag = 0;
+        }
+
+        public void Activate()
+        {
+            // Precalculate some values to speed up Update()
+            _elapsedSeconds = (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
+            _dragMultiplier = (float)Math.Pow(1 - _drag, _elapsedSeconds);
         }
 
         public bool Update(Particle particle)
@@ -86,27 +96,19 @@ namespace AW2.Game.Pengs
         {
             particle.LayerDepth = lifePos;
             particle.Scale = _scale.GetValue(lifePos, particle.PengInput, particle.Random);
-            // Optimisation: CurveLerp.GetValue is not too fast, call it only sometimes.
+            // Optimisation: PengParameter.GetValue may be somewhat slow, call it only sometimes.
             if ((particle.UpdateCounter & 0x03) == 0) particle.Alpha = _alpha.GetValue(lifePos, particle.PengInput, particle.Random);
         }
 
         private void UpdatePhysicalProperties(Particle particle, float lifePos)
         {
-            var elapsedSeconds = (float)AssaultWingCore.Instance.GameTime.ElapsedGameTime.TotalSeconds;
-            // Optimisation: CurveLerp.GetValue is not too fast, call it only sometimes.
+            // Optimisation: PengParameter.GetValue may be somewhat slow, call it only sometimes.
             if ((particle.UpdateCounter & 0x0f) == 0) particle.LastAcceleration = _acceleration.GetValue(lifePos, particle.PengInput, particle.Random);
             if ((particle.UpdateCounter & 0x07) == 0) particle.LastRotationSpeed = _rotationSpeed.GetValue(lifePos, particle.PengInput, particle.Random);
-            particle.Pos += particle.Move * elapsedSeconds;
-            particle.Move += particle.DirectionVector * particle.LastAcceleration * elapsedSeconds;
-            particle.Rotation += particle.LastRotationSpeed * elapsedSeconds;
-            particle.Move *= (float)Math.Pow(1 - _drag, elapsedSeconds);
-        }
-
-        public void MakeConsistent(Type limitationAttribute)
-        {
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-            }
+            particle.Pos += particle.Move * _elapsedSeconds;
+            particle.Move += particle.DirectionVector * particle.LastAcceleration * _elapsedSeconds;
+            particle.Rotation += particle.LastRotationSpeed * _elapsedSeconds;
+            particle.Move *= _dragMultiplier;
         }
     }
 }

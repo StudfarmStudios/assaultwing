@@ -252,6 +252,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            _updater.Activate();
             Movable = false; // Peng stays put or moves with its leader
         }
 

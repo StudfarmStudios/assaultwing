@@ -7,6 +7,7 @@ namespace AW2.Game.Pengs
     /// <summary>
     /// A collection of <see cref="CurveLerpKey"/>s.
     /// </summary>
+    [Obsolete]
     public class CurveLerpKeyCollection
     {
         /// <summary>

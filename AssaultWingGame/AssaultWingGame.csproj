@@ -128,7 +128,6 @@
     <Compile Include="Menu\Equip\ChatTab.cs" />
     <Compile Include="Menu\Equip\EquipMenuControls.cs" />
     <Compile Include="Menu\Equip\EquipMenuTab.cs" />
-    <Compile Include="Menu\Equip\EquipMenuTabs.cs" />
     <Compile Include="Menu\Equip\EquipTab.cs" />
     <Compile Include="Menu\Equip\MatchTab.cs" />
     <Compile Include="Menu\Equip\PlayersTab.cs" />

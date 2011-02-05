@@ -2,52 +2,52 @@
 <GobType type="AW2.Game.Gobs.Peng, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName>playerglow</typeName>
   <networkUpdatePeriod>
-      <ticks>10000000</ticks>
+    <ticks>10000000</ticks>
   </networkUpdatePeriod>
   <layerPreference>Back</layerPreference>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>Transparent</type>
+    <type>Transparent</type>
   </drawMode2D>
-  <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
-  <playerRelated type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null">true</playerRelated>
-  <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <emissionFrequency>3</emissionFrequency>
-      <numberToCreate>1</numberToCreate>
-      <radius>0</radius>
-      <sprayAngle>0.0</sprayAngle>
-      <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Directed</facingType>
-      <textureNames>
-         <Item>player_white</Item>
-      </textureNames>
-      <gobTypeNames>
+  <coordinateSystem>Peng</coordinateSystem>
+  <playerRelated>true</playerRelated>
+  <emitter>
+    <emissionFrequency>3</emissionFrequency>
+    <numberToCreate>1</numberToCreate>
+    <radius>0</radius>
+    <sprayAngle>0.0</sprayAngle>
+    <facingType>Directed</facingType>
+    <textureNames>
+      <Item>player_white</Item>
+    </textureNames>
+    <gobTypeNames>
     </gobTypeNames>
-      <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value>0</value>
-      </initialVelocity>
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value>0</value>
+    </initialVelocity>
   </emitter>
-  <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <drag>0.0</drag>
-      <particleAge type="AW2.Game.Pengs.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-         <expected>1000000</expected>
-         <variance>0</variance>
-      </particleAge>
-      <accelerationInputScale>0</accelerationInputScale>
+  <updater>
+    <areParticlesImmortal>true</areParticlesImmortal>
+    <drag>0.0</drag>
+    <particleAge type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value>0.1</value>
+    </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>
     <acceleration type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value>0</value>
-      </acceleration>
+      <value>0</value>
+    </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value>0</value>
-      </rotationSpeed>
-      <scaleInputScale>0</scaleInputScale>
+      <value>0</value>
+    </rotationSpeed>
+    <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value>1.2</value>
-      </scale>
-      <alphaInputScale>0</alphaInputScale>
+      <value>1.2</value>
+    </scale>
+    <alphaInputScale>0</alphaInputScale>
     <alpha type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <value>0.78</value>
-      </alpha>
+      <value>0.78</value>
+    </alpha>
   </updater>
   <birthGobTypes/>
   <deathGobTypes/>

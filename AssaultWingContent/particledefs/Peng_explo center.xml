@@ -9,14 +9,14 @@
       <type>Additive</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Game</coordinateSystem>
-  <playerRelated type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null">false</playerRelated>
-  <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <coordinateSystem>Game</coordinateSystem>
+  <playerRelated>false</playerRelated>
+  <emitter>
       <emissionFrequency>3</emissionFrequency>
       <numberToCreate>1</numberToCreate>
       <radius>0</radius>
       <sprayAngle>0.0</sprayAngle>
-      <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Directed</facingType>
+      <facingType>Directed</facingType>
       <textureNames>
          <Item>p_explo_center</Item>
       </textureNames>
@@ -27,7 +27,8 @@
         <value>0</value>
       </initialVelocity>
   </emitter>
-  <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <updater>
+    <areParticlesImmortal>false</areParticlesImmortal>
       <drag>0.0</drag>
       <particleAge type="AW2.Game.Pengs.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <expected>1.15</expected>

@@ -9,14 +9,14 @@
     <type>Transparent</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <coordinateSystem type="AW2.Game.Gobs.Peng+CoordinateSystem, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Peng</coordinateSystem>
-  <playerRelated type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null">false</playerRelated>
-  <emitter type="AW2.Game.Pengs.SprayEmitter, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <coordinateSystem>Peng</coordinateSystem>
+  <playerRelated>false</playerRelated>
+  <emitter>
     <emissionFrequency>5.2</emissionFrequency>
     <numberToCreate>-1</numberToCreate>
     <radius>130</radius>
     <sprayAngle>3.142</sprayAngle>
-    <facingType type="AW2.Game.Pengs.SprayEmitter+FacingType, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Random</facingType>
+    <facingType>Random</facingType>
     <textureNames>
       <Item>p_smoke</Item>
       <!--<Item>p_dark_smoke</Item> -->
@@ -27,7 +27,8 @@
       <value>8.8</value>
     </initialVelocity>
   </emitter>
-  <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <updater>
+    <areParticlesImmortal>false</areParticlesImmortal>
     <drag>0.0</drag>
     <particleAge type="AW2.Game.Pengs.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <expected>12</expected>

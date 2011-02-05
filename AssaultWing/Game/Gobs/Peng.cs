@@ -20,7 +20,7 @@ namespace AW2.Game.Gobs
     /// at <c>Pos</c> in game coordinates and it is turned <c>Rotation</c> 
     /// radians from game coordinate's orientation.
     [LimitedSerialization]
-    public class Peng : Gob, IConsistencyCheckable
+    public class Peng : Gob
     {
         /// <summary>
         /// Type of coordinate system to use with particles.
@@ -93,7 +93,6 @@ namespace AW2.Game.Gobs
 
         #region Peng properties
 
-        public PhysicalUpdater ParticleUpdater { get { return _updater; } }
         public override bool IsRelevant { get { return false; } }
 
         public override IEnumerable<CanonicalString> TextureNames
@@ -366,15 +365,6 @@ namespace AW2.Game.Gobs
         {
             base.Cloned();
             _emitter.Peng = this;
-        }
-
-        public override void MakeConsistent(Type limitationAttribute)
-        {
-            base.MakeConsistent(limitationAttribute);
-            if (limitationAttribute == typeof(TypeParameterAttribute))
-            {
-                // TODO: precalc
-            }
         }
     }
 }

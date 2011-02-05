@@ -22,6 +22,7 @@ namespace AW2.Game.Pengs
     /// value which uses the random value as a seed in a random sequence of its own,
     /// and picks the n'th value in this sequence.
     /// </summary>
+    [Obsolete("SimpleCurve can do everything CurveLerp can do")]
     public class CurveLerp : PengParameter, IConsistencyCheckable
     {
         /// <summary>

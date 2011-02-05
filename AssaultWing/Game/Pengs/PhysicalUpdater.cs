@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AW2.Core;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -12,8 +13,20 @@ namespace AW2.Game.Pengs
     /// Physical updater uses the following:
     /// - Particle.timeout is the time of death of the particle
     [LimitedSerialization]
-    public class PhysicalUpdater
+    public class PhysicalUpdater : IConsistencyCheckable
     {
+        private class ParticleValues
+        {
+            public int AgeInFrames { get; set; }
+            public float[] Alpha { get; set; }
+            public float[] Scale { get; set; }
+            public float[] RotationSpeed { get; set; }
+            public float[] Acceleration { get; set; }
+        }
+
+        private const int PRECALC_COUNT = 10;
+        private List<ParticleValues> _precalculatedValues;
+
         /// <summary>
         /// The range of lifetimes of particles, in seconds.
         /// </summary>
@@ -78,10 +91,11 @@ namespace AW2.Game.Pengs
         [TypeParameter]
         private float _drag;
 
+        [TypeParameter]
+        private bool _areParticlesImmortal;
+
         private float _dragMultiplier;
         private float _elapsedSeconds;
-
-        public PengParameter ParticleAge { get { return _particleAge; } }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -110,36 +124,60 @@ namespace AW2.Game.Pengs
         public bool Update(Particle particle)
         {
             // Note: This method is run potentially very often. It must be kept quick.
-
-            var lifePos = (AssaultWingCore.Instance.DataEngine.ArenaTotalTime - particle.BirthTime).Ticks
-                / (float)(particle.Timeout - particle.BirthTime).Ticks;
-            if (lifePos >= 1) return true;
-            UpdateVisualProperties(particle, lifePos);
-            UpdatePhysicalProperties(particle, lifePos);
-            particle.UpdateCounter++;
+            var precalcIndex = Math.Abs(particle.Random) % PRECALC_COUNT;
+            var values = _precalculatedValues[precalcIndex];
+            if (particle.AgeInFrames >= values.AgeInFrames)
+            {
+                if (_areParticlesImmortal)
+                    particle.AgeInFrames -= values.AgeInFrames;
+                else
+                    return true;
+            }
+            UpdateVisualProperties(particle, values);
+            UpdatePhysicalProperties(particle, values);
+            particle.AgeInFrames++;
             return false;
         }
 
-        private void UpdateVisualProperties(Particle particle, float lifePos)
+        private void UpdateVisualProperties(Particle particle, ParticleValues values)
         {
-            particle.LayerDepth = lifePos;
-            particle.Scale = _scale.GetValue(lifePos, particle.Random) + particle.PengInput * _scaleInputScale;
-            // Optimisation: PengParameter.GetValue may be somewhat slow, call it only sometimes.
-            if ((particle.UpdateCounter & 0x03) == 0)
-                particle.Alpha = _alpha.GetValue(lifePos, particle.Random) + particle.PengInput * _alphaInputScale;
+            particle.LayerDepth = particle.AgeInFrames / (float)values.AgeInFrames;
+            particle.Scale = values.Scale[particle.AgeInFrames] + particle.PengInput * _scaleInputScale;
+            particle.Alpha = values.Alpha[particle.AgeInFrames] + particle.PengInput * _alphaInputScale;
         }
 
-        private void UpdatePhysicalProperties(Particle particle, float lifePos)
+        private void UpdatePhysicalProperties(Particle particle, ParticleValues values)
         {
-            // Optimisation: PengParameter.GetValue may be somewhat slow, call it only sometimes.
-            if ((particle.UpdateCounter & 0x0f) == 0)
-                particle.LastAcceleration = _acceleration.GetValue(lifePos, particle.Random) + particle.PengInput * _accelerationInputScale;
-            if ((particle.UpdateCounter & 0x07) == 0) particle.LastRotationSpeed =
-                _rotationSpeed.GetValue(lifePos, particle.Random) + particle.PengInput * _rotationSpeedInputScale;
+            var acceleration = values.Acceleration[particle.AgeInFrames] + particle.PengInput * _accelerationInputScale;
+            var rotationSpeed = values.RotationSpeed[particle.AgeInFrames] + particle.PengInput * _rotationSpeedInputScale;
             particle.Pos += particle.Move * _elapsedSeconds;
-            particle.Move += particle.DirectionVector * particle.LastAcceleration * _elapsedSeconds;
-            particle.Rotation += particle.LastRotationSpeed * _elapsedSeconds;
+            particle.Move += particle.DirectionVector * acceleration * _elapsedSeconds;
+            particle.Rotation += rotationSpeed * _elapsedSeconds;
             particle.Move *= _dragMultiplier;
+        }
+
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            if (limitationAttribute == typeof(TypeParameterAttribute))
+            {
+                Func<int, int, PengParameter, float[]> getValues = (ageInFrames, random, curve) =>
+                    Enumerable.Range(0, ageInFrames + 1)
+                        .Select(x => curve.GetValue(x / (float)ageInFrames, random))
+                        .ToArray();
+                var precalcs =
+                    from dummy in Enumerable.Range(0, PRECALC_COUNT)
+                    let random = RandomHelper.GetRandomInt()
+                    let ageInFrames = (int)Math.Ceiling(_particleAge.GetValue(0, random) * AssaultWingCore.Instance.TargetFPS)
+                    select new ParticleValues
+                    {
+                        AgeInFrames = ageInFrames,
+                        Alpha = getValues(ageInFrames, random, _alpha),
+                        Scale = getValues(ageInFrames, random, _scale),
+                        RotationSpeed = getValues(ageInFrames, random, _rotationSpeed),
+                        Acceleration = getValues(ageInFrames, random, _acceleration),
+                    };
+                _precalculatedValues = precalcs.ToList();
+            }
         }
     }
 }

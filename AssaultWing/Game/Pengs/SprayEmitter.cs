@@ -169,7 +169,7 @@ namespace AW2.Game.Pengs
             _radius = 15;
             _sprayAngle = MathHelper.PiOver4;
             _facingType = FacingType.Random;
-            _initialVelocity = new CurveLerp();
+            _initialVelocity = new SimpleCurve();
             _emissionFrequency = 10;
             _numberToCreate = -1;
             _nextBirth = new TimeSpan(-1);
@@ -327,7 +327,6 @@ namespace AW2.Game.Pengs
                     var particle = new Particle
                     {
                         Alpha = 1,
-                        BirthTime = Peng.Arena.TotalTime,
                         Move = move,
                         PengInput = Peng.Input,
                         Pos = pos,
@@ -337,7 +336,6 @@ namespace AW2.Game.Pengs
                         Rotation = rotation,
                         Scale = 1,
                         TextureIndex = emitType,
-                        Timeout = Peng.Arena.TotalTime + TimeSpan.FromSeconds(Peng.ParticleUpdater.ParticleAge.GetValue(0, random)),
                     };
                     particles.Add(particle);
                 }

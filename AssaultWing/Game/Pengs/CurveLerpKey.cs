@@ -7,6 +7,7 @@ namespace AW2.Game.Pengs
     /// <summary>
     /// A key for a <see cref="CurveLerp"/>.
     /// </summary>
+    [Obsolete]
     public class CurveLerpKey : IConsistencyCheckable
     {
         private float _input;

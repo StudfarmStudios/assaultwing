@@ -17,17 +17,6 @@ namespace AW2.Game.Pengs
     public class Particle
     {
         /// <summary>
-        /// Time of birth of the particle, in game time.
-        /// </summary>
-        public TimeSpan BirthTime;
-
-        /// <summary>
-        /// Custom timeout, in game time.
-        /// </summary>
-        /// The meaning of this field is decided by the particle updater.
-        public TimeSpan Timeout;
-
-        /// <summary>
         /// Index of the texture to draw the particle with, as listed in
         /// <see cref="SprayEmitter.Textures"/>.
         /// </summary>
@@ -83,8 +72,6 @@ namespace AW2.Game.Pengs
         /// </summary>
         public int Random;
 
-        public int UpdateCounter;
-        public float LastAcceleration;
-        public float LastRotationSpeed;
+        public int AgeInFrames;
     }
 }

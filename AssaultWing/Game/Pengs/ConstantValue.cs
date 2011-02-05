@@ -14,7 +14,7 @@ namespace AW2.Game.Pengs
             _value = 0;
         }
 
-        public float GetValue(float age, float input, int random)
+        public float GetValue(float age, int random)
         {
             return _value;
         }

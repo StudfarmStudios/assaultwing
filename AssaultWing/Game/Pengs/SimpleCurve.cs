@@ -34,7 +34,7 @@ namespace AW2.Game.Pengs
             _keys = new[] { 0.5f, 1.2f, 1.3f, 0.7f };
         }
 
-        public float GetValue(float age, float input, int random)
+        public float GetValue(float age, int random)
         {
             var floatIndex = (Math.Abs(age) % 1f) * (_keys.Length - 1);
             var index = (int)floatIndex;

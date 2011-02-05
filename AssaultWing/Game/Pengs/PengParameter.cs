@@ -13,9 +13,8 @@ namespace AW2.Game.Pengs
         /// Returns the particle management parameter's value for the given arguments.
         /// </summary>
         /// <param name="age">Particle age</param>
-        /// <param name="input">External peng input value</param>
         /// <param name="random">Particle random seed</param>
         /// <returns>Parameter's value for the given arguments</returns>
-        float GetValue(float age, float input, int random);
+        float GetValue(float age, int random);
     }
 }

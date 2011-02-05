@@ -33,10 +33,12 @@
          <expected>0.8</expected>
          <variance>0.3</variance>
       </particleAge>
-      <acceleration type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <accelerationInputScale>0</accelerationInputScale>
+    <acceleration type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <value>0</value>
       </acceleration>
-      <rotationSpeed type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <rotationSpeedInputScale>0</rotationSpeedInputScale>
+    <rotationSpeed type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <min>-1000000</min>
          <max>1000000</max>
          <randomAmplitude>6.6157</randomAmplitude>
@@ -62,7 +64,8 @@
             </keys>
          </keys>
       </rotationSpeed>
-      <scale type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <scaleInputScale>0</scaleInputScale>
+    <scale type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <min>0.001</min>
          <max>1000</max>
          <randomAmplitude>0.01</randomAmplitude>
@@ -102,7 +105,8 @@
             </keys>
          </keys>
       </scale>
-      <alpha type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <alphaInputScale>0</alphaInputScale>
+    <alpha type="AW2.Game.Pengs.CurveLerp, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <min>0</min>
          <max>1</max>
          <randomAmplitude>0.1</randomAmplitude>

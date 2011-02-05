@@ -276,7 +276,6 @@ namespace AW2.Game.Pengs
             {
                 bool lastAttempt = attempt == maxAttempts - 1;
                 attemptOk = true;
-                float pengInput = Peng.Input;
                 int random = RandomHelper.GetRandomInt();
                 float directionAngle, rotation;
                 Vector2 directionUnit, pos, move;
@@ -285,7 +284,7 @@ namespace AW2.Game.Pengs
                     case Peng.CoordinateSystem.Peng:
                         RandomHelper.GetRandomCirclePoint(_radius, -_sprayAngle, _sprayAngle,
                             out pos, out directionUnit, out directionAngle);
-                        move = _initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                        move = _initialVelocity.GetValue(0, random) * directionUnit;
                         switch (_facingType)
                         {
                             case FacingType.Directed: rotation = 0; break;
@@ -304,7 +303,7 @@ namespace AW2.Game.Pengs
                             RandomHelper.GetRandomCirclePoint(_radius, drawRotation - _sprayAngle, drawRotation + _sprayAngle,
                                 out pos, out directionUnit, out directionAngle);
                             pos += iPos;
-                            move = Peng.Move + _initialVelocity.GetValue(0, pengInput, random) * directionUnit;
+                            move = Peng.Move + _initialVelocity.GetValue(0, random) * directionUnit;
 
                             // HACK: 'move' will be added to 'pos' in PhysicalUpdater during this same frame
                             pos -= Peng.Game.PhysicsEngine.ApplyChange(move, Peng.Game.GameTime.ElapsedGameTime);
@@ -330,7 +329,7 @@ namespace AW2.Game.Pengs
                         Alpha = 1,
                         BirthTime = Peng.Arena.TotalTime,
                         Move = move,
-                        PengInput = pengInput,
+                        PengInput = Peng.Input,
                         Pos = pos,
                         Random = random,
                         Direction = directionAngle,
@@ -338,7 +337,7 @@ namespace AW2.Game.Pengs
                         Rotation = rotation,
                         Scale = 1,
                         TextureIndex = emitType,
-                        Timeout = Peng.Arena.TotalTime + TimeSpan.FromSeconds(Peng.ParticleUpdater.ParticleAge.GetValue(0, pengInput, random)),
+                        Timeout = Peng.Arena.TotalTime + TimeSpan.FromSeconds(Peng.ParticleUpdater.ParticleAge.GetValue(0, random)),
                     };
                     particles.Add(particle);
                 }

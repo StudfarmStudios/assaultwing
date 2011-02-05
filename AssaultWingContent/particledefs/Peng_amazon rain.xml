@@ -32,6 +32,7 @@
       <expected>11</expected>
       <variance>4</variance>
     </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>
     <acceleration type="AW2.Game.Pengs.SimpleCurve, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <randomAmplitude>4</randomAmplitude>
       <randomMixer>1</randomMixer>
@@ -55,9 +56,11 @@
         <Item>7.0</Item>
       </keys>
     </acceleration>
+    <rotationSpeedInputScale>0</rotationSpeedInputScale>
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <value>1.15</value>
     </rotationSpeed>
+    <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.SimpleCurve, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <randomAmplitude>0.01</randomAmplitude>
       <randomMixer>3</randomMixer>
@@ -66,6 +69,7 @@
         <Item>0.2</Item>
       </keys>
     </scale>
+    <alphaInputScale>0</alphaInputScale>
     <alpha type="AW2.Game.Pengs.SimpleCurve, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <randomAmplitude>0</randomAmplitude>
       <randomMixer>4</randomMixer>

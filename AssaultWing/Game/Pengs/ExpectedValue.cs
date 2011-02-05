@@ -17,7 +17,7 @@ namespace AW2.Game.Pengs
             _variance = 2;
         }
 
-        public float GetValue(float age, float input, int random)
+        public float GetValue(float age, int random)
         {
             return _expected + _variance * (random / (float)int.MaxValue);
         }

@@ -1,5 +1,7 @@
+using System;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
+using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Pengs
 {
@@ -20,7 +22,7 @@ namespace AW2.Game.Pengs
     /// value which uses the random value as a seed in a random sequence of its own,
     /// and picks the n'th value in this sequence.
     /// </summary>
-    public class CurveLerp : PengParameter
+    public class CurveLerp : PengParameter, IConsistencyCheckable
     {
         /// <summary>
         /// The least possible value of the parameter. 
@@ -68,36 +70,16 @@ namespace AW2.Game.Pengs
             _keys.Add(new CurveLerpKey(1, curve1));
         }
 
-        public float GetValue(float age, float input, int random)
+        public float GetValue(float age, int random)
         {
-            float value = float.NaN;
-
-            // Find key or keys that are next to 'input'.
-            if (input <= _keys[0].Input)
-            {
-                // Use the curve of least specified 'input'.
-                value = _keys[0].Curve.Evaluate(age);
-            }
-            else if (input >= _keys[_keys.Count-1].Input)
-            {
-                // Use the curve of the greatest specified 'input'.
-                value = _keys[_keys.Count-1].Curve.Evaluate(age);
-            }
-            else 
-            {
-                // Linear search -- 'keys' are assumed to be a small collection.
-                int i = 0;
-                while (_keys[i + 1].Input < input) ++i;
-
-                // 'input' is between keys at i and i+1.
-                // Linearly interpolate between them.
-                float weight2 = (input - _keys[i].Input) / (_keys[i+1].Input - _keys[i].Input);
-                value = MathHelper.Lerp(_keys[i].Curve.Evaluate(age), _keys[i + 1].Curve.Evaluate(age), weight2);
-            }
-
-            // Add random and clamp to limits.
+            float value = _keys[0].Curve.Evaluate(age);
             int ourRandom = RandomHelper.MixRandomInt(random, _randomMixer);
             return MathHelper.Clamp(value + _randomAmplitude * (ourRandom / (float)int.MaxValue), _min, _max);
+        }
+
+        public void MakeConsistent(Type limitationAttribute)
+        {
+            if (_keys.Count != 1) throw new NotImplementedException("Only single-input CurveLerps are supported");
         }
     }
 }

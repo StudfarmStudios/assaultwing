@@ -28,10 +28,22 @@ namespace AW2.Game.Pengs
         private PengParameter _acceleration;
 
         /// <summary>
+        /// Scales the input parameter before adding it to the acceleration base value.
+        /// </summary>
+        [TypeParameter]
+        private float _accelerationInputScale;
+
+        /// <summary>
         /// Particle rotation speed, in radians per second.
         /// </summary>
         [TypeParameter, ShallowCopy]
         private PengParameter _rotationSpeed;
+
+        /// <summary>
+        /// Scales the input parameter before adding it to the rotationSpeed base value.
+        /// </summary>
+        [TypeParameter]
+        private float _rotationSpeedInputScale;
 
         /// <summary>
         /// Scale of particles.
@@ -40,10 +52,22 @@ namespace AW2.Game.Pengs
         private PengParameter _scale;
 
         /// <summary>
+        /// Scales the input parameter before adding it to the scale base value.
+        /// </summary>
+        [TypeParameter]
+        private float _scaleInputScale;
+
+        /// <summary>
         /// Alpha of particles. 0 is transparent, 1 is opaque.
         /// </summary>
         [TypeParameter, ShallowCopy]
         private PengParameter _alpha;
+
+        /// <summary>
+        /// Scales the input parameter before adding it to the alpha base value.
+        /// </summary>
+        [TypeParameter]
+        private float _alphaInputScale;
 
         /// <summary>
         /// Amount of drag of particles. Drag is the decrement of velocity in one second
@@ -65,10 +89,14 @@ namespace AW2.Game.Pengs
         public PhysicalUpdater()
         {
             _particleAge = new ExpectedValue();
-            _acceleration = new CurveLerp();
-            _rotationSpeed = new CurveLerp();
-            _scale = new CurveLerp();
-            _alpha = new CurveLerp();
+            _acceleration = new SimpleCurve();
+            _accelerationInputScale = 0;
+            _rotationSpeed = new SimpleCurve();
+            _rotationSpeedInputScale = 0;
+            _scale = new SimpleCurve();
+            _scaleInputScale = 0;
+            _alpha = new SimpleCurve();
+            _alphaInputScale = 0;
             _drag = 0;
         }
 
@@ -95,16 +123,19 @@ namespace AW2.Game.Pengs
         private void UpdateVisualProperties(Particle particle, float lifePos)
         {
             particle.LayerDepth = lifePos;
-            particle.Scale = _scale.GetValue(lifePos, particle.PengInput, particle.Random);
+            particle.Scale = _scale.GetValue(lifePos, particle.Random) + particle.PengInput * _scaleInputScale;
             // Optimisation: PengParameter.GetValue may be somewhat slow, call it only sometimes.
-            if ((particle.UpdateCounter & 0x03) == 0) particle.Alpha = _alpha.GetValue(lifePos, particle.PengInput, particle.Random);
+            if ((particle.UpdateCounter & 0x03) == 0)
+                particle.Alpha = _alpha.GetValue(lifePos, particle.Random) + particle.PengInput * _alphaInputScale;
         }
 
         private void UpdatePhysicalProperties(Particle particle, float lifePos)
         {
             // Optimisation: PengParameter.GetValue may be somewhat slow, call it only sometimes.
-            if ((particle.UpdateCounter & 0x0f) == 0) particle.LastAcceleration = _acceleration.GetValue(lifePos, particle.PengInput, particle.Random);
-            if ((particle.UpdateCounter & 0x07) == 0) particle.LastRotationSpeed = _rotationSpeed.GetValue(lifePos, particle.PengInput, particle.Random);
+            if ((particle.UpdateCounter & 0x0f) == 0)
+                particle.LastAcceleration = _acceleration.GetValue(lifePos, particle.Random) + particle.PengInput * _accelerationInputScale;
+            if ((particle.UpdateCounter & 0x07) == 0) particle.LastRotationSpeed =
+                _rotationSpeed.GetValue(lifePos, particle.Random) + particle.PengInput * _rotationSpeedInputScale;
             particle.Pos += particle.Move * _elapsedSeconds;
             particle.Move += particle.DirectionVector * particle.LastAcceleration * _elapsedSeconds;
             particle.Rotation += particle.LastRotationSpeed * _elapsedSeconds;

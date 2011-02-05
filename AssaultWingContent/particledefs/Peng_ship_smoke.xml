@@ -24,13 +24,9 @@
     </textureNames>
     <gobTypeNames>
     </gobTypeNames>
-    <initialVelocity type="AW2.Game.Pengs.SimpleCurve, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <randomAmplitude>10</randomAmplitude>
-      <randomMixer>0</randomMixer>
-      <keys>
-        <Item>10</Item>
-        <Item>10</Item>
-      </keys>
+    <initialVelocity type="AW2.Game.Pengs.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <expected>10</expected>
+      <variance>10</variance>
     </initialVelocity>
   </emitter>
   <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

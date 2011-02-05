@@ -21,6 +21,7 @@ namespace AW2.Graphics.OverlayComponents
         private Texture2D _radarDisplayTexture;
         private Texture2D _shipOnRadarTexture;
         private Texture2D _dockOnRadarTexture;
+        private List<Dock> _docks;
 
         public override Point Dimensions
         {
@@ -31,6 +32,8 @@ namespace AW2.Graphics.OverlayComponents
             : base(viewport, HorizontalAlignment.Left, VerticalAlignment.Top)
         {
             _player = viewport.Player;
+            _docks = _player.Game.DataEngine.Arena.Gobs.OfType<Dock>().ToList();
+            _player.Game.DataEngine.Arena.GobAdded += GobAddedHandler;
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
@@ -54,13 +57,20 @@ namespace AW2.Graphics.OverlayComponents
         private void DrawDocks(SpriteBatch spriteBatch)
         {
             var arenaToRadarTransform = AssaultWingCore.Instance.DataEngine.ArenaToRadarTransform;
-            foreach (var dock in AssaultWingCore.Instance.DataEngine.Arena.Gobs.OfType<Dock>())
+            bool deadDocks = false;
+            foreach (var dock in _docks)
             {
+                if (dock.Dead)
+                {
+                    deadDocks = true;
+                    continue;
+                }
                 var posInArena = dock.Pos;
                 var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
                 spriteBatch.Draw(_dockOnRadarTexture, posOnRadar, null, Color.White, 0,
                     _dockOnRadarTexture.Dimensions() / 2, 0.1f, SpriteEffects.None, 0);
             }
+            if (deadDocks) _docks.RemoveAll(dock => dock.Dead);
         }
 
         private void DrawShips(SpriteBatch spriteBatch)
@@ -71,15 +81,8 @@ namespace AW2.Graphics.OverlayComponents
                 if (player.Ship == null || player.Ship.Dead) continue;
                 var posInArena = player.Ship.Pos;
                 var posOnRadar = RADAR_DISPLAY_TOP_LEFT + Vector2.Transform(posInArena, arenaToRadarTransform);
-                Color shipColor = player.PlayerColor;
-                float shipScale = 0.4f;
-
-                if (_player.ID == player.ID)
-                {
-                    shipColor = Color.White;
-                    shipScale = 0.7f;
-                }
-
+                var shipColor = _player.ID == player.ID ? Color.White : player.PlayerColor;
+                var shipScale = _player.ID == player.ID ? 0.7f : 0.4f;
                 spriteBatch.Draw(_shipOnRadarTexture, posOnRadar, null, shipColor, 0,
                     _shipOnRadarTexture.Dimensions() / 2, shipScale, SpriteEffects.None, 0);
             }
@@ -90,6 +93,17 @@ namespace AW2.Graphics.OverlayComponents
             _radarDisplayTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("gui_radar_bg");
             _shipOnRadarTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("gui_playerinfo_white_ball");
             _dockOnRadarTexture = AssaultWingCore.Instance.Content.Load<Texture2D>("p_green_box");
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            _player.Game.DataEngine.Arena.GobAdded -= GobAddedHandler;
+        }
+
+        private void GobAddedHandler(Gob gob)
+        {
+            if (gob is Dock) _docks.Add((Dock)gob);
         }
     }
 }

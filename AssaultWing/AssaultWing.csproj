@@ -243,10 +243,7 @@
     <Compile Include="Helpers\LazyProxy.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Helpers\Math\AWMathHelper.cs" />
-    <Compile Include="Helpers\Math\ConstantValue.cs" />
-    <Compile Include="Helpers\Math\ExpectedValue.cs" />
-    <Compile Include="Helpers\Math\ExpectedValueCurve.cs" />
-    <Compile Include="Helpers\Math\FloatFactory.cs" />
+    <Compile Include="Game\Pengs\ExpectedValue.cs" />
     <Compile Include="Helpers\Math\Half.cs" />
     <Compile Include="Helpers\Math\InterpolatingValue.cs" />
     <Compile Include="Helpers\Math\MovementCurve.cs" />

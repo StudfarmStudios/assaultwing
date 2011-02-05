@@ -338,7 +338,7 @@ namespace AW2.Game.Pengs
                         Rotation = rotation,
                         Scale = 1,
                         TextureIndex = emitType,
-                        Timeout = Peng.Arena.TotalTime + TimeSpan.FromSeconds(Peng.ParticleUpdater.ParticleAge.GetRandomValue()),
+                        Timeout = Peng.Arena.TotalTime + TimeSpan.FromSeconds(Peng.ParticleUpdater.ParticleAge.GetValue(0, pengInput, random)),
                     };
                     particles.Add(particle);
                 }

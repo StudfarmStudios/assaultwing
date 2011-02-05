@@ -18,7 +18,7 @@ namespace AW2.Game.Pengs
         /// The range of lifetimes of particles, in seconds.
         /// </summary>
         [TypeParameter]
-        private ExpectedValue _particleAge;
+        private PengParameter _particleAge;
 
         /// <summary>
         /// Acceleration of particles in the initial emission direction,
@@ -57,14 +57,14 @@ namespace AW2.Game.Pengs
         private float _dragMultiplier;
         private float _elapsedSeconds;
 
-        public ExpectedValue ParticleAge { get { return _particleAge; } }
+        public PengParameter ParticleAge { get { return _particleAge; } }
 
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
         public PhysicalUpdater()
         {
-            _particleAge = new ExpectedValue(5, 2);
+            _particleAge = new ExpectedValue();
             _acceleration = new CurveLerp();
             _rotationSpeed = new CurveLerp();
             _scale = new CurveLerp();

@@ -30,7 +30,7 @@
   </emitter>
   <updater type="AW2.Game.Pengs.PhysicalUpdater, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <drag>0.0</drag>
-      <particleAge type="AW2.Helpers.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <particleAge type="AW2.Game.Pengs.ExpectedValue, AssaultWing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
          <expected>0.2</expected>
          <variance>0.1</variance>
       </particleAge>

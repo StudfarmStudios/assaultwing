@@ -112,6 +112,7 @@ namespace AW2.Game.Pengs
             _alpha = new SimpleCurve();
             _alphaInputScale = 0;
             _drag = 0;
+            _areParticlesImmortal = false;
         }
 
         public void Activate()

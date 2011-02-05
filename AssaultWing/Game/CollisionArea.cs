@@ -75,6 +75,7 @@ namespace AW2.Game
         private IGeomPrimitive _transformedArea;
         private Matrix _oldWorldMatrix;
 
+        [ExcludeFromDeepCopy]
         private Gob _owner;
 
         private object _collisionData;

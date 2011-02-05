@@ -159,11 +159,6 @@ namespace AW2.Game.Gobs
         public bool Paused { get { return _emitter.Paused; } set { _emitter.Paused = value; } }
 
         /// <summary>
-        /// If true, the peng stays alive even when all particles have been emitted and they have died.
-        /// </summary>
-        public bool IsKeptAlive { get; set; }
-
-        /// <summary>
         /// The coordinate system in which to interpret the <c>pos</c> field of
         /// the particles of this peng.
         /// </summary>
@@ -307,7 +302,7 @@ namespace AW2.Game.Gobs
             }
 
             // Die if we're finished.
-            if (!IsKeptAlive && _particles.Count == 0 && _emitter.Finished)
+            if (_particles.Count == 0 && _emitter.Finished)
                 Die();
         }
 
@@ -367,43 +362,19 @@ namespace AW2.Game.Gobs
             _oldPosTimestamp = Arena.TotalTime;
         }
 
-        #region IConsistencyCheckable and Clonable Members
-
-        /// <summary>
-        /// Called on a cloned object after the cloning.
-        /// </summary>
         public override void Cloned()
         {
             base.Cloned();
             _emitter.Peng = this;
         }
 
-        /// <summary>
-        /// Makes the instance consistent in respect of fields marked with a
-        /// limitation attribute.
-        /// </summary>
-        /// <param name="limitationAttribute">Check only fields marked with 
-        /// this limitation attribute.</param>
-        /// <see cref="Serialization"/>
         public override void MakeConsistent(Type limitationAttribute)
         {
             base.MakeConsistent(limitationAttribute);
             if (limitationAttribute == typeof(TypeParameterAttribute))
             {
-                // Make sure there's no null references.
-                if (_emitter == null)
-                    throw new Exception("Serialization error: Peng emitter not defined in " + TypeName);
-                if (_updater == null)
-                    throw new Exception("Serialization error: Peng updater not defined in " + TypeName);
-            }
-            if (limitationAttribute == typeof(RuntimeStateAttribute))
-            {
-                // Make sure there's no null references.
-                if (_particles == null)
-                    _particles = new List<Particle>();
+                // TODO: precalc
             }
         }
-
-        #endregion IConsistencyCheckable Members
     }
 }

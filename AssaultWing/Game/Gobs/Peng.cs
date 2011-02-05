@@ -309,24 +309,33 @@ namespace AW2.Game.Gobs
         {
             var gfxViewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
             var viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
-            var pengToGame = WorldMatrix;
             var pengColor = PlayerRelated && Owner != null ? Owner.PlayerColor : Color.White;
-            foreach (var particle in _particles)
+            var posCenter = Vector2.Zero; // particle center position in game world coordinates; used only inside the loop
+            var drawRotation = 0f; // used only inside the loop
+            Action<Particle> updatePosCenterAndDrawRotation;
+            switch (_coordinateSystem)
             {
-                Vector2 posCenter; // particle center position in game world coordinates
-                float drawRotation;
-                switch (_coordinateSystem)
-                {
-                    case CoordinateSystem.Peng:
+                case CoordinateSystem.Peng:
+                    var pengToGame = WorldMatrix;
+                    var pengRotation = Rotation + DrawRotationOffset;
+                    updatePosCenterAndDrawRotation = particle =>
+                    {
                         posCenter = Vector2.Transform(particle.Pos, pengToGame);
-                        drawRotation = particle.Rotation + Rotation + DrawRotationOffset;
-                        break;
-                    case CoordinateSystem.Game:
+                        drawRotation = particle.Rotation + pengRotation;
+                    };
+                    break;
+                case CoordinateSystem.Game:
+                    updatePosCenterAndDrawRotation = particle =>
+                    {
                         posCenter = particle.Pos;
                         drawRotation = particle.Rotation;
-                        break;
-                    default: throw new ApplicationException("Unknown CoordinateSystem: " + _coordinateSystem);
-                }
+                    };
+                    break;
+                default: throw new ApplicationException("Unknown CoordinateSystem: " + _coordinateSystem);
+            }
+            foreach (var particle in _particles)
+            {
+                updatePosCenterAndDrawRotation(particle);
                 var screenCenter = Vector2.Transform(posCenter, gameToScreen);
                 drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
 

@@ -402,6 +402,7 @@ namespace AW2.Core
             }
             base.Draw();
         }
+
         protected virtual string GetStatusText()
         {
             var newStatusText = "Assault Wing [~" + _framesSinceLastCheck + " fps]";

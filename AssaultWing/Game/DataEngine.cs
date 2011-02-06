@@ -216,6 +216,7 @@ namespace AW2.Game
 
         public void RearrangeViewports()
         {
+            if (Arena == null) return;
             var localPlayers = Game.DataEngine.Spectators.Where(player => player.NeedsViewport).ToList();
             if (Viewports != null) Viewports.Dispose();
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, localPlayers.Count(),

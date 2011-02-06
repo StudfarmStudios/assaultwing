@@ -98,7 +98,8 @@ namespace AW2.Graphics.OverlayComponents
         public override void Dispose()
         {
             base.Dispose();
-            _player.Game.DataEngine.Arena.GobAdded -= GobAddedHandler;
+            var arena = _player.Game.DataEngine.Arena;
+            if (arena != null) arena.GobAdded -= GobAddedHandler;
         }
 
         private void GobAddedHandler(Gob gob)

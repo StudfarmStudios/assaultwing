@@ -104,11 +104,11 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                if (Leader == null) return base.Pos;
+                if (Leader == null) return base.Pos + DrawPosOffset;
                 if (LeaderBone == -1)
                     return Leader.Pos + Leader.DrawPosOffset;
                 else
-                    return Leader.GetNamedPosition(LeaderBone);
+                    return Leader.GetNamedPosition(LeaderBone) + Leader.DrawPosOffset;
             }
         }
 
@@ -191,7 +191,7 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationOffset, Pos + DrawPosOffset);
+                return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationOffset, Pos);
             }
         }
 

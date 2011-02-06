@@ -95,6 +95,8 @@ namespace AW2.Game.Gobs
         [ExcludeFromDeepCopy]
         private Gob _leader;
 
+        private Vector2[] _particlePosesTemp; // for Draw2D()
+
         #endregion Peng fields
 
         #region Peng properties
@@ -247,6 +249,12 @@ namespace AW2.Game.Gobs
             _emitter.Reset();
         }
 
+        public override void Cloned()
+        {
+            base.Cloned();
+            _emitter.Peng = this;
+        }
+
         #region Methods related to gobs' functionality in the game world
 
         public override void Activate()
@@ -276,6 +284,39 @@ namespace AW2.Game.Gobs
             UpdateAndKillParticles();
             CheckDeath();
         }
+
+        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
+        {
+            Func<Particle, Vector2> getParticleCenterInGameWorld;
+            Func<Particle, float> getDrawRotation;
+            GetPosAndRotationAccessors(out getParticleCenterInGameWorld, out getDrawRotation);
+            if (_particlePosesTemp == null || _particlePosesTemp.Length < _particles.Count)
+                _particlePosesTemp = new Vector2[_particles.Count * 2]; // allocate extra reserve for future
+            for (int i = 0; i < _particles.Count; i++)
+                _particlePosesTemp[i] = getParticleCenterInGameWorld(_particles[i]);
+            Vector2.Transform(_particlePosesTemp, 0, ref gameToScreen, _particlePosesTemp, 0, _particles.Count);
+            var pengColor = PlayerRelated && Owner != null ? Owner.PlayerColor : Color.White;
+            for (int index = 0; index < _particles.Count; index++)
+            {
+                var particle = _particles[index];
+                var screenCenter = _particlePosesTemp[index];
+                var drawRotation = -getDrawRotation(particle); // negated, because screen Y coordinates are reversed
+
+                // Sprite depth will be our given depth layer slightly adjusted by
+                // particle's position in its lifespan.
+                float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
+
+                var texture = _emitter.Textures[particle.TextureIndex];
+                var color = Color.Multiply(pengColor, particle.Alpha);
+                spriteBatch.Draw(texture, screenCenter, null, color, drawRotation,
+                    new Vector2(texture.Width, texture.Height) / 2, particle.Scale * scale,
+                    SpriteEffects.None, layerDepth);
+            }
+        }
+
+        #endregion Methods related to gobs' functionality in the game world
+
+        #region Private methods
 
         private void CreateParticles()
         {
@@ -311,67 +352,6 @@ namespace AW2.Game.Gobs
                 Die();
         }
 
-        public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
-        {
-            var gfxViewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
-            var viewportSize = new Vector3(gfxViewport.Width, gfxViewport.Height, gfxViewport.MaxDepth - gfxViewport.MinDepth);
-            var pengColor = PlayerRelated && Owner != null ? Owner.PlayerColor : Color.White;
-            var posCenter = Vector2.Zero; // particle center position in game world coordinates; used only inside the loop
-            var drawRotation = 0f; // used only inside the loop
-            Action<Particle> updatePosCenterAndDrawRotation;
-            switch (_coordinateSystem)
-            {
-                case CoordinateSystem.Peng:
-                    {
-                        var pengToGame = WorldMatrix;
-                        var pengRotation = Rotation;
-                        updatePosCenterAndDrawRotation = particle =>
-                        {
-                            posCenter = Vector2.Transform(particle.Pos, pengToGame);
-                            drawRotation = particle.Rotation + pengRotation;
-                        };
-                        break;
-                    }
-                case CoordinateSystem.Game:
-                    updatePosCenterAndDrawRotation = particle =>
-                    {
-                        posCenter = particle.Pos;
-                        drawRotation = particle.Rotation;
-                    };
-                    break;
-                case CoordinateSystem.FixedToPeng:
-                    {
-                        var pengPos = Pos;
-                        var pengRotation = Rotation;
-                        updatePosCenterAndDrawRotation = particle =>
-                        {
-                            posCenter = pengPos;
-                            drawRotation = pengRotation;
-                        };
-                        break;
-                    }
-                default: throw new ApplicationException("Unknown CoordinateSystem: " + _coordinateSystem);
-            }
-            foreach (var particle in _particles)
-            {
-                updatePosCenterAndDrawRotation(particle);
-                var screenCenter = Vector2.Transform(posCenter, gameToScreen); // TODO !!! use Vector2.Transform(Vector2[], Matrix)
-                drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
-
-                // Sprite depth will be our given depth layer slightly adjusted by
-                // particle's position in its lifespan.
-                float layerDepth = MathHelper.Clamp(DepthLayer2D * 0.99f + 0.0098f * particle.LayerDepth, 0, 1);
-
-                var texture = _emitter.Textures[particle.TextureIndex];
-                var color = Color.Multiply(pengColor, particle.Alpha);
-                spriteBatch.Draw(texture, screenCenter, null, color, drawRotation,
-                    new Vector2(texture.Width, texture.Height) / 2, particle.Scale * scale,
-                    SpriteEffects.None, layerDepth);
-            }
-        }
-
-        #endregion Methods related to gobs' functionality in the game world
-
         /// <summary>
         /// Maintains a valid state of field <c>oldPos</c>.
         /// </summary>
@@ -389,10 +369,34 @@ namespace AW2.Game.Gobs
             _oldPosTimestamp = Arena.TotalTime;
         }
 
-        public override void Cloned()
+        private void GetPosAndRotationAccessors(out Func<Particle, Vector2> getParticleCenterInGameWorld, out Func<Particle, float> getDrawRotation)
         {
-            base.Cloned();
-            _emitter.Peng = this;
+            switch (_coordinateSystem)
+            {
+                case CoordinateSystem.Peng:
+                    {
+                        var pengToGame = WorldMatrix;
+                        var pengRotation = Rotation;
+                        getParticleCenterInGameWorld = particle => Vector2.Transform(particle.Pos, pengToGame);
+                        getDrawRotation = particle => particle.Rotation + pengRotation;
+                        break;
+                    }
+                case CoordinateSystem.Game:
+                    getParticleCenterInGameWorld = particle => particle.Pos;
+                    getDrawRotation = particle => particle.Rotation;
+                    break;
+                case CoordinateSystem.FixedToPeng:
+                    {
+                        var pengPos = Pos;
+                        var pengRotation = Rotation;
+                        getParticleCenterInGameWorld = particle => pengPos;
+                        getDrawRotation = particle => pengRotation;
+                        break;
+                    }
+                default: throw new ApplicationException("Unknown CoordinateSystem: " + _coordinateSystem);
+            }
         }
+
+        #endregion Private methods
     }
 }

@@ -9,7 +9,7 @@
   <drawMode2D>
     <type>Transparent</type>
   </drawMode2D>
-  <coordinateSystem>Peng</coordinateSystem>
+  <coordinateSystem>FixedToPeng</coordinateSystem>
   <playerRelated>true</playerRelated>
   <emitter>
     <emissionFrequency>3</emissionFrequency>

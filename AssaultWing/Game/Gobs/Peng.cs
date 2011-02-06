@@ -36,6 +36,12 @@ namespace AW2.Game.Gobs
             /// Game world coordinate system.
             /// </summary>
             Game,
+
+            /// <summary>
+            /// Particles stay at the peng's position.
+            /// Particle position, movement, acceleration and rotation are copied from the peng.
+            /// </summary>
+            FixedToPeng,
         }
 
         #region Peng fields
@@ -137,11 +143,11 @@ namespace AW2.Game.Gobs
         {
             get
             {
-                if (Leader == null) return base.Rotation;
+                if (Leader == null) return base.Rotation + DrawRotationOffset;
                 if (LeaderBone == -1)
                     return Leader.Rotation + Leader.DrawRotationOffset;
                 else
-                    return Leader.GetBoneRotation(LeaderBone);
+                    return Leader.GetBoneRotation(LeaderBone) + Leader.DrawRotationOffset;
             }
         }
 
@@ -316,14 +322,16 @@ namespace AW2.Game.Gobs
             switch (_coordinateSystem)
             {
                 case CoordinateSystem.Peng:
-                    var pengToGame = WorldMatrix;
-                    var pengRotation = Rotation + DrawRotationOffset;
-                    updatePosCenterAndDrawRotation = particle =>
                     {
-                        posCenter = Vector2.Transform(particle.Pos, pengToGame);
-                        drawRotation = particle.Rotation + pengRotation;
-                    };
-                    break;
+                        var pengToGame = WorldMatrix;
+                        var pengRotation = Rotation;
+                        updatePosCenterAndDrawRotation = particle =>
+                        {
+                            posCenter = Vector2.Transform(particle.Pos, pengToGame);
+                            drawRotation = particle.Rotation + pengRotation;
+                        };
+                        break;
+                    }
                 case CoordinateSystem.Game:
                     updatePosCenterAndDrawRotation = particle =>
                     {
@@ -331,12 +339,23 @@ namespace AW2.Game.Gobs
                         drawRotation = particle.Rotation;
                     };
                     break;
+                case CoordinateSystem.FixedToPeng:
+                    {
+                        var pengPos = Pos;
+                        var pengRotation = Rotation;
+                        updatePosCenterAndDrawRotation = particle =>
+                        {
+                            posCenter = pengPos;
+                            drawRotation = pengRotation;
+                        };
+                        break;
+                    }
                 default: throw new ApplicationException("Unknown CoordinateSystem: " + _coordinateSystem);
             }
             foreach (var particle in _particles)
             {
                 updatePosCenterAndDrawRotation(particle);
-                var screenCenter = Vector2.Transform(posCenter, gameToScreen);
+                var screenCenter = Vector2.Transform(posCenter, gameToScreen); // TODO !!! use Vector2.Transform(Vector2[], Matrix)
                 drawRotation = -drawRotation; // negated, because screen Y coordinates are reversed
 
                 // Sprite depth will be our given depth layer slightly adjusted by

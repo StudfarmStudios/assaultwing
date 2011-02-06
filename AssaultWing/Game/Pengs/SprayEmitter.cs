@@ -317,6 +317,12 @@ namespace AW2.Game.Pengs
                             }
                         }
                         break;
+                    case Peng.CoordinateSystem.FixedToPeng:
+                        pos = Vector2.Zero;
+                        move = Vector2.Zero;
+                        rotation = 0;
+                        directionAngle = 0;
+                        break;
                     default:
                         throw new ApplicationException("SprayEmitter: Unhandled peng coordinate system " + Peng.ParticleCoordinates);
                 }

@@ -68,26 +68,6 @@ namespace AW2.Graphics
         public event Action<Gob> GobDrawn;
 
         /// <summary>
-        /// The minimum X and Y coordinates of the game world this viewport shows
-        /// at a depth.
-        /// </summary>
-        /// <param name="z">The depth.</param>
-        public Vector2 WorldAreaMin(float z)
-        {
-            return GetLookAtPos() - new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
-        }
-
-        /// <summary>
-        /// The maximum X and Y coordinates of the game world this viewport shows
-        /// at a depth.
-        /// </summary>
-        /// <param name="z">The depth.</param>
-        public Vector2 WorldAreaMax(float z)
-        {
-            return GetLookAtPos() + new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
-        }
-
-        /// <summary>
         /// The matrix for projecting world coordinates to view coordinates.
         /// </summary>
         protected Matrix GetProjectionMatrix(float z)
@@ -145,42 +125,13 @@ namespace AW2.Graphics
         /// <b>true</b> otherwise.</returns>
         public bool Intersects(BoundingSphere volume, float z)
         {
-            // We add one unit to the bounding sphere to account for rounding of floating-point
-            // world coordinates to integer-valued screen pixels.
-            Vector2 min = WorldAreaMin(z);
-            Vector2 max = WorldAreaMax(z);
-            if (volume.Center.X + volume.Radius + 1f < min.X)
-                return false;
-            if (volume.Center.Y + volume.Radius + 1f < min.Y)
-                return false;
-            if (max.X < volume.Center.X - volume.Radius - 1f)
-                return false;
-            if (max.Y < volume.Center.Y - volume.Radius - 1f)
-                return false;
-            return true;
-        }
-
-        /// <summary>
-        /// Checks if a bounding volume might be visible in the viewport.
-        /// </summary>
-        /// <param name="volume">The bounding volume.</param>
-        /// <param name="z">The depth at which the volume resides.</param>
-        /// <returns><b>false</b> if the bounding volume definitely cannot be seen in the viewport;
-        /// <b>true</b> otherwise.</returns>
-        public bool Intersects(BoundingBox volume, float z)
-        {
-            // We add one unit to the bounding box to account for rounding of floating-point
-            // world coordinates to integer-valued screen pixels.
-            Vector2 min = WorldAreaMin(z);
-            Vector2 max = WorldAreaMax(z);
-            if (volume.Max.X + 1f < min.X)
-                return false;
-            if (volume.Max.Y + 1f < min.Y)
-                return false;
-            if (max.X < volume.Min.X - 1f)
-                return false;
-            if (max.Y < volume.Min.Y - 1f)
-                return false;
+            Vector2 min, max;
+            GetWorldAreaMinAndMax(z, out min, out max);
+            var safeRadius = volume.Radius + 1f;
+            if (volume.Center.X + safeRadius < min.X) return false;
+            if (volume.Center.Y + safeRadius < min.Y) return false;
+            if (max.X < volume.Center.X - safeRadius) return false;
+            if (max.Y < volume.Center.Y - safeRadius) return false;
             return true;
         }
 
@@ -341,6 +292,17 @@ namespace AW2.Graphics
         private float GetScale(float z)
         {
             return 1000 / (1000 - z);
+        }
+
+        /// <summary>
+        /// Returns the minimum and maximum coordinates of the game world this viewport shows at a depth.
+        /// </summary>
+        private void GetWorldAreaMinAndMax(float z, out Vector2 min, out Vector2 max)
+        {
+            var lookAtPos = GetLookAtPos();
+            var halfDiagonal = new Vector2(Viewport.Width, Viewport.Height) / (2 * ZoomRatio * GetScale(z));
+            min = lookAtPos - halfDiagonal;
+            max = lookAtPos + halfDiagonal;
         }
 
         private void DoInMyViewport(Action action)

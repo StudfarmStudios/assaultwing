@@ -1707,6 +1707,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="particledefs\Peng_basic_muzzle_fire.xml">
       <Name>Peng_basic_muzzle_fire</Name>

@@ -12,8 +12,10 @@ namespace AW2.Core
         private Stopwatch _timer;
         private Action _draw;
         private Action<AWGameTime> _update;
+        private bool _paused;
+        private bool _pauseDisabled;
+        private object _pausedLock;
         private bool _exiting;
-        private SemaphoreSlim _pauseSemaphore;
         private SemaphoreSlim _exitSemaphore;
         private IAsyncResult _gameUpdateAndDrawLoopAsyncResult;
 
@@ -25,7 +27,7 @@ namespace AW2.Core
             _timer = new Stopwatch();
             _draw = draw;
             _update = update;
-            _pauseSemaphore = new SemaphoreSlim(1, 1);
+            _pausedLock = new object();
             _exitSemaphore = new SemaphoreSlim(1, 1);
         }
 
@@ -45,7 +47,12 @@ namespace AW2.Core
         /// </summary>
         public void Pause()
         {
-            _pauseSemaphore.Wait();
+            if (_pauseDisabled) return;
+            lock (_pausedLock)
+            {
+                if (_paused) return;
+                Monitor.Enter(_timer, ref _paused);
+            }
         }
 
         /// <summary>
@@ -53,7 +60,12 @@ namespace AW2.Core
         /// </summary>
         public void Resume()
         {
-            _pauseSemaphore.Release();
+            lock (_pausedLock)
+            {
+                if (!_paused) return;
+                Monitor.Exit(_timer);
+                _paused = false;
+            }
         }
 
         /// <summary>
@@ -62,6 +74,8 @@ namespace AW2.Core
         public void Exit()
         {
             _exiting = true;
+            _pauseDisabled = true;
+            Resume();
             _exitSemaphore.Wait();
             _exitSemaphore.Release();
         }
@@ -82,24 +96,25 @@ namespace AW2.Core
             }
             while (!_exiting)
             {
-                _pauseSemaphore.Wait();
-                var now = _timer.Elapsed;
-                if (now + Waiter.PRECISION < nextUpdate)
-                    Waiter.Instance.Sleep(nextUpdate - now);
-                else if (now > nextUpdate + TimeSpan.FromSeconds(30))
-                    nextUpdate = now;
-                else
+                lock (_timer)
                 {
-                    var updateInterval = _game.TargetElapsedTime;
-                    var nextNextUpdate = nextUpdate + updateInterval;
-                    var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
-                    _update(gameTime);
-                    if (now < nextNextUpdate) _draw();
-                    nextUpdate = nextNextUpdate;
-                    lastUpdate = now;
-                    totalGameTime += updateInterval;
+                    var now = _timer.Elapsed;
+                    if (now + Waiter.PRECISION < nextUpdate)
+                        Waiter.Instance.Sleep(nextUpdate - now);
+                    else if (now > nextUpdate + TimeSpan.FromSeconds(30))
+                        nextUpdate = now;
+                    else
+                    {
+                        var updateInterval = _game.TargetElapsedTime;
+                        var nextNextUpdate = nextUpdate + updateInterval;
+                        var gameTime = new AWGameTime(totalGameTime, updateInterval, _timer.Elapsed);
+                        _update(gameTime);
+                        if (now < nextNextUpdate) _draw();
+                        nextUpdate = nextNextUpdate;
+                        lastUpdate = now;
+                        totalGameTime += updateInterval;
+                    }
                 }
-                _pauseSemaphore.Release();
             }
         }
 

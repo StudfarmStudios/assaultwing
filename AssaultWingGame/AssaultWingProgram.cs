@@ -57,6 +57,7 @@ namespace AW2
 
         private void ThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
+            _form.SetWindowed();
             ReportException(e.Exception);
             Exit();
         }

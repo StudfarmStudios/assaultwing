@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using AW2.Core;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
@@ -14,14 +15,21 @@ namespace AW2.UI
             public FormBorderStyle BorderStyle { get; private set; }
             public Point Location { get; private set; }
             public Size Size { get; private set; }
+            public bool Visible { get; private set; }
+            public bool ShowIcon { get; private set; }
+            public bool TopMost { get; private set; }
 
-            public FormParameters(FormWindowState windowState, FormBorderStyle borderStyle, Point location, Size size)
+            public FormParameters(FormWindowState windowState, FormBorderStyle borderStyle, Point location, Size size,
+                bool visible, bool showIcon, bool topMost)
                 : this()
             {
                 WindowState = windowState;
                 BorderStyle = borderStyle;
                 Location = location;
                 Size = size;
+                Visible = visible;
+                ShowIcon = showIcon;
+                TopMost = topMost;
             }
         }
 
@@ -31,7 +39,9 @@ namespace AW2.UI
         private string[] _commandLineArgs;
         
         private bool _isFullScreen;
+        private int _isChangingFullScreen;
         private FormParameters _previousWindowedModeParameters;
+        private Icon _originalIcon;
 
         public Rectangle ClientBoundsMin
         {
@@ -125,6 +135,7 @@ namespace AW2.UI
         {
             Size = MinimumSize; // Forms crops MinimumSize automatically down to screen size but not Size
             _previousWindowedModeParameters = GetCurrentFormParameters();
+            _originalIcon = Icon;
             AW2.Helpers.Log.Written += AddToLogView;
         }
 
@@ -143,8 +154,8 @@ namespace AW2.UI
                 text => BeginInvoke((Action)(() => Text = text)),
                 () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height),
                 () => _isFullScreen,
-                SetWindowed,
-                SetFullScreen);
+                () => BeginInvoke((Action)(() => SetWindowed())),
+                (width, height) => BeginInvoke((Action)(() => SetFullScreen(width, height))));
             _gameView.Draw += _game.Draw;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
@@ -168,47 +179,57 @@ namespace AW2.UI
                 gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
         }
 
-        private void SetWindowed()
+        public void SetWindowed()
         {
-            if (!_isFullScreen) return;
-            _runner.Pause();
-            Application.DoEvents();
-            _isFullScreen = false;
-            _gameView.Visible = true;
-            splitContainer1.Visible = true;
-            _logView.Visible = true;
-            Visible = true;
-            TopMost = false;
-            _graphicsDeviceService.ResetDevice(_previousWindowedModeParameters.Size.Width, _previousWindowedModeParameters.Size.Height, false);
-            SetFormParameters(_previousWindowedModeParameters);
-            _runner.Resume();
+            if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
+            try
+            {
+                if (!_isFullScreen) return;
+                _runner.Pause();
+                Application.DoEvents();
+                _isFullScreen = false;
+                _graphicsDeviceService.ResetDevice(_previousWindowedModeParameters.Size.Width, _previousWindowedModeParameters.Size.Height, false);
+                SetFormParameters(_previousWindowedModeParameters);
+                _gameView.Visible = true;
+                _runner.Resume();
+            }
+            finally
+            {
+                _isChangingFullScreen = 0;
+            }
         }
 
-        private void SetFullScreen(int width, int height)
+        public void SetFullScreen(int width, int height)
         {
-            if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;
-            _runner.Pause();
-            Application.DoEvents();
-            _isFullScreen = true;
-            _previousWindowedModeParameters = GetCurrentFormParameters();
-            SetFormParameters(GetFullScreenFormParameters(width, height));
-            _gameView.Visible = false;
-            splitContainer1.Visible = false;
-            _logView.Visible = false;
-            Visible = false;
-            _graphicsDeviceService.ResetDevice(width, height, true);
-            _runner.Resume();
+            if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
+            try
+            {
+                if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;
+                _runner.Pause();
+                Application.DoEvents();
+                if (!_isFullScreen) _previousWindowedModeParameters = GetCurrentFormParameters();
+                _isFullScreen = true;
+                _gameView.Visible = false;
+                SetFormParameters(GetFullScreenFormParameters(width, height));
+                _graphicsDeviceService.ResetDevice(width, height, true);
+                _runner.Resume();
+            }
+            finally
+            {
+                _isChangingFullScreen = 0;
+            }
         }
 
         private static FormParameters GetFullScreenFormParameters(int width, int height)
         {
             var screenArea = Screen.PrimaryScreen.Bounds;
-            return new FormParameters(FormWindowState.Normal, FormBorderStyle.None, Point.Empty, new Size(width, height));
+            return new FormParameters(FormWindowState.Normal, FormBorderStyle.None, Point.Empty, new Size(width, height),
+                false, false, false);
         }
 
         private FormParameters GetCurrentFormParameters()
         {
-            return new FormParameters(WindowState, FormBorderStyle, Location, ClientSize);
+            return new FormParameters(WindowState, FormBorderStyle, Location, ClientSize, true, true, false);
         }
 
         private void SetFormParameters(FormParameters parameters)
@@ -217,6 +238,9 @@ namespace AW2.UI
             FormBorderStyle = parameters.BorderStyle;
             Location = parameters.Location;
             ClientSize = parameters.Size;
+            Visible = parameters.Visible;
+            ShowIcon = parameters.ShowIcon;
+            TopMost = parameters.TopMost;
         }
 
         private void AddToLogView(string text)

@@ -2,7 +2,7 @@
     x:Class="AW2.UI.WPF.ArenaEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:aw="clr-namespace:AW2.Core;assembly=AssaultWing"
+    xmlns:aw="clr-namespace:AW2.Core;assembly=AssaultWingCore"
     xmlns:ui="clr-namespace:AW2.UI.WPF"
     xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:wpg="clr-namespace:System.Windows.Controls"

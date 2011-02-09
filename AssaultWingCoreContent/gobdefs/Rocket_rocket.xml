@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Rocket, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <impactDamage>140</impactDamage>
+  <thrustForce>70000</thrustForce>
+  <thrustDuration>3.5</thrustDuration>
+  <maxSpeed>425</maxSpeed>
+  <fallTurnSpeed>1</fallTurnSpeed>
+  <targetTurnSpeed>2</targetTurnSpeed>
+  <findTargetRange>1000</findTargetRange>
+  <typeName>rocket</typeName>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <mass>80</mass>
+  <modelName>missile</modelName>
+  <scale>0.0387</scale>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <movable>true</movable>
+  <maxDamage>100</maxDamage>
+  <birthGobTypes>
+    <!--  <Item>rocket glow</Item> -->
+  </birthGobTypes>
+  <deathGobTypes>
+    <Item>rocket explosion</Item>
+  </deathGobTypes>
+  <exhaustEngineNames>
+    <Item>windlord engine 1</Item>
+    <Item>windlord engine 2</Item>
+  </exhaustEngineNames>
+  <collisionAreas>
+    <Item>
+      <type>PhysicalShot</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Hit</name>
+      <area type="AW2.Helpers.Geometric.Point, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <location>
+          <X>0</X>
+          <Y>0</Y>
+        </location>
+      </area>
+    </Item>
+  </collisionAreas>
+
+
+</GobType>

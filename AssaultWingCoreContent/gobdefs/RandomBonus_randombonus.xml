@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Bonus.RandomBonus, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>randombonus</typeName>
+  <networkUpdatePeriod>
+      <ticks>10000000</ticks>
+   </networkUpdatePeriod>
+  <duration>0</duration>
+  <lifetime>30</lifetime>
+  <maxDamage>300</maxDamage>
+  <mass>50</mass>
+  <modelName>bonus</modelName>
+  <scale>0.12</scale>
+  <depthLayer2D>0.6</depthLayer2D>
+  <drawMode2D>
+      <type>None</type>
+  </drawMode2D>
+  <gameAction type="AW2.Game.GobUtils.GameAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  </gameAction>
+  <layerPreference>Front</layerPreference>
+  <movable>true</movable>
+  <exhaustEngineNames/>
+  <birthGobTypes>
+      <Item>bonus birth</Item>
+      <Item>bonus blink</Item>
+  </birthGobTypes>
+  <deathGobTypes>
+      <Item>bonus collect flash</Item>
+	     <Item>bonus collect</Item>
+  </deathGobTypes>
+<!--  <possibilities type="AW2.Game.Gobs.Bonus.BonusActionPossibility[], AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <Item type="AW2.Game.Gobs.Bonus.BonusActionPossibility, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <weight>1</weight>
+         <action type="AW2.Game.Gobs.Bonus.BonusAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Explode</action>
+      </Item>
+      <Item type="AW2.Game.Gobs.Bonus.BonusActionPossibility, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <weight>2</weight>
+         <action type="AW2.Game.Gobs.Bonus.BonusAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">UpgradeWeapon2</action>
+         <duration>30</duration>
+      </Item>
+      <Item type="AW2.Game.Gobs.Bonus.BonusActionPossibility, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <weight>1.5</weight>
+         <action type="AW2.Game.Gobs.Bonus.BonusAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">UpgradeWeapon1LoadTime</action>
+         <duration>60</duration>
+      </Item>
+  </possibilities>
+  -->
+  <collisionAreas>
+      <Item>
+         <type>PhysicalOtherDamageableMovable</type>
+         <collidesAgainst>None</collidesAgainst>
+         <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+         <collisionMaterial>Regular</collisionMaterial>
+         <name>General</name>
+         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <center>
+               <X>0</X>
+               <Y>0</Y>
+            </center>
+            <radius>70</radius>
+            <boundingBox>
+               <min>
+                  <X>0</X>
+                  <Y>0</Y>
+               </min>
+               <max>
+                  <X>0</X>
+                  <Y>0</Y>
+               </max>
+            </boundingBox>
+         </area>
+      </Item>
+      <Item>
+         <type>Receptor</type>
+         <collidesAgainst>PhysicalShip</collidesAgainst>
+         <cannotOverlap>None</cannotOverlap>
+         <collisionMaterial>Regular</collisionMaterial>
+         <name>Activate</name>
+         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <center>
+               <X>0</X>
+               <Y>0</Y>
+            </center>
+            <radius>140</radius>
+            <boundingBox>
+               <min>
+                  <X>0</X>
+                  <Y>0</Y>
+               </min>
+               <max>
+                  <X>0</X>
+                  <Y>0</Y>
+               </max>
+            </boundingBox>
+         </area>
+      </Item>
+  </collisionAreas>
+</GobType>

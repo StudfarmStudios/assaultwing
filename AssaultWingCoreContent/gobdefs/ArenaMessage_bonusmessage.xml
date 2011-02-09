@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GobType type="AW2.Game.Gobs.ArenaMessage, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>bonusmessage</typeName>
+  <depthLayer2D>0.9</depthLayer2D>
+  <drawMode2D>
+    <type>Transparent</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <birthGobTypes />
+  <deathGobTypes />
+  <movable>false</movable>
+  <networkUpdatePeriod>
+    <ticks>0</ticks>
+  </networkUpdatePeriod>
+  <exhaustEngineNames />
+  <collisionAreas />
+  <maxDamage>100</maxDamage>
+  <scaleCurve>
+    <preLoop>Constant</preLoop>
+    <postLoop>Constant</postLoop>
+    <keys>
+      <Item>
+        <position>0.0</position>
+        <internalValue>0.15</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>0.3</position>
+        <internalValue>1</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>0.5</position>
+        <internalValue>1</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+    </keys>
+  </scaleCurve>
+  <alphaCurve>
+    <preLoop>Constant</preLoop>
+    <postLoop>Constant</postLoop>
+    <keys>
+      <Item>
+        <position>0.0</position>
+        <internalValue>0.0</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>0.2</position>
+        <internalValue>1</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>2.0</position>
+        <internalValue>1</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>2.5</position>
+        <internalValue>0</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+    </keys>
+  </alphaCurve>
+</GobType>

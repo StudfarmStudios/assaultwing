@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GobType type="AW2.Game.Gobs.Lightning, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>lightning</typeName>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <impactDamage>85</impactDamage>
+  <wildness>0.3</wildness>
+  <fineness>20</fineness>
+  <thickness>0.5</thickness>
+  <textureName>lightning</textureName>
+  <alphaCurve>
+    <preLoop>Constant</preLoop>
+    <postLoop>Constant</postLoop>
+    <keys>
+      <Item>
+        <position>0</position>
+        <internalValue>1</internalValue>
+        <tangentOut>-0.0465796478</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>0.3</position>
+        <internalValue>0</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>-2.71247</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+    </keys>
+  </alphaCurve>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <birthGobTypes/>
+  <deathGobTypes/>
+  <movable>false</movable>
+  <networkUpdatePeriod>
+    <ticks>0</ticks>
+  </networkUpdatePeriod>
+  <exhaustEngineNames />
+  <collisionAreas />
+  <maxDamage>100</maxDamage>
+</GobType>

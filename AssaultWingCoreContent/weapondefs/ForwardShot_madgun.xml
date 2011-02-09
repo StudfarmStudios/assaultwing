@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  
+  <deviceInfo>
+	<pictureName>dummytexture</pictureName>
+	<titlePictureName>dummytexture</titlePictureName>
+	<infoText>Info</infoText>
+	<reloadSpeed>Average</reloadSpeed>
+	<energyUsage>Average</energyUsage>
+	<usageType>Single</usageType>
+    <iconEquipName>dummytexture</iconEquipName>
+  </deviceInfo>
+  
+  <weaponInfo>
+	<singleShotDamage>Average</singleShotDamage>
+	<shotSpeed>Average</shotSpeed>
+	<recoilMomentum>Average</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>trizooka</typeName>
+  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right, Middle</gunBarrels>
+  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">KillAll</fireAction>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>b_icon_bouncegun</iconName>
+  <fireSound>Bazooka</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <shotTypeName>bomb</shotTypeName>
+  <shotSpeed>650</shotSpeed>
+  <loadTime>3</loadTime>
+  <fireCharge>550</fireCharge>
+  <fireChargePerSecond>550</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+  <shotAngleVariation>0</shotAngleVariation>
+  <shotSpeedVariation>10</shotSpeedVariation>
+  <recoilMomentum>115000</recoilMomentum>
+  <muzzleFireEngineNames>
+    <Item>blue muzzle flame</Item>
+  </muzzleFireEngineNames>
+</ShipDeviceType>

@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}</ProjectGuid>
+    <ProjectGuid>{6CBD4219-88EE-46F2-B321-141F35B8B4BC}</ProjectGuid>
     <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>Library</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AW2</RootNamespace>
     <AssemblyName>AssaultWing</AssemblyName>
@@ -14,22 +14,32 @@
     <XnaFrameworkVersion>v4.0</XnaFrameworkVersion>
     <XnaPlatform>Windows</XnaPlatform>
     <XnaProfile>Reach</XnaProfile>
-    <XnaCrossPlatformGroupID>e08490cb-b1a7-42e0-8ffc-bd41c4ee7f13</XnaCrossPlatformGroupID>
-    <XnaOutputType>Library</XnaOutputType>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <XnaCrossPlatformGroupID>f9146fd4-8f0e-42ea-b25c-75704518d187</XnaCrossPlatformGroupID>
+    <XnaOutputType>Game</XnaOutputType>
+    <ApplicationIcon>AssaultWing.ico</ApplicationIcon>
+    <Thumbnail>GameThumbnail.png</Thumbnail>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <InstallUrl>http://koti.welho.com/vvnurmi/aw2/install/</InstallUrl>
+    <ProductName>Assault Wing - Galactic Battlefront</ProductName>
+    <PublisherName>Studfarm Studios</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>index.html</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <ApplicationRevision>69</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -37,25 +47,31 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS;NO_TYPELOADER_DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>false</XnaCompressContent>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\x86\Release</OutputPath>
+    <OutputPath>bin\x86\Release\</OutputPath>
     <DefineConstants>TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
@@ -80,239 +96,198 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Core">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net">
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\AssaultWingCore.cs" />
-    <Compile Include="Core\AWGame.cs" />
-    <Compile Include="Core\AWGameComponent.cs" />
-    <Compile Include="Core\AWGameComponentCollection.cs" />
-    <Compile Include="Core\AWGameRunner.cs" />
-    <Compile Include="Core\AWGameTime.cs" />
-    <Compile Include="Core\CommandLineOptions.cs" />
-    <Compile Include="Core\GameComponents\PostFrameLogicEngine.cs" />
-    <Compile Include="Core\GameComponents\PreFrameLogicEngine.cs" />
-    <Compile Include="Core\GraphicsDeviceControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Core\GraphicsDeviceService.cs" />
-    <Compile Include="Core\NetworkMode.cs" />
-    <Compile Include="Core\Waiter.cs" />
-    <Compile Include="Core\Window.cs" />
-    <Compile Include="Game\ActionGob.cs" />
-    <Compile Include="Game\Arena.cs" />
-    <Compile Include="Game\Arenas\ArenaBin.cs" />
-    <Compile Include="Game\Arenas\ArenaLayer.cs" />
-    <Compile Include="Game\Arenas\ArenaLayerGobCollection.cs" />
-    <Compile Include="Game\Arenas\LightingSettings.cs" />
-    <Compile Include="Game\Arenas\ArenaLoadException.cs" />
-    <Compile Include="Game\Arenas\ArenaInfo.cs" />
-    <Compile Include="Game\Arenas\ArenaTypeLoader.cs" />
-    <Compile Include="Game\BonusActions\DamageBuffBonusAction.cs" />
-    <Compile Include="Game\BonusActions\SelfDestructBonusAction.cs" />
-    <Compile Include="Game\BonusActions\Weapon1UpgradeLoadTimeBonusAction.cs" />
-    <Compile Include="Game\BonusActions\Weapon2UpgradeBonusAction.cs" />
-    <Compile Include="Game\ChatContainer.cs" />
-    <Compile Include="Game\CollisionArea.cs" />
-    <Compile Include="Game\CollisionAreaType.cs" />
-    <Compile Include="Game\CollisionMaterialType.cs" />
-    <Compile Include="Game\DataEngine.cs" />
-    <Compile Include="Game\GobUtils\DamageInfo.cs" />
-    <Compile Include="Game\GameContent.cs" />
-    <Compile Include="Game\GameplayMode.cs" />
-    <Compile Include="Game\Gob.cs" />
-    <Compile Include="Game\Arenas\GobCollection.cs" />
-    <Compile Include="Game\Gobs\ArenaMessage.cs" />
-    <Compile Include="Game\Gobs\Bonus\Bonus.cs" />
-    <Compile Include="Game\Gobs\Bonus\DefinedBonus.cs" />
-    <Compile Include="Game\Gobs\Bonus\RandomBonus.cs" />
-    <Compile Include="Game\Gobs\BounceBullet.cs" />
-    <Compile Include="Game\Gobs\Bullet.cs" />
-    <Compile Include="Game\Gobs\CollisionTrigger.cs" />
-    <Compile Include="Game\Gobs\Dock.cs" />
-    <Compile Include="Game\Gobs\Explosion.cs" />
-    <Compile Include="Game\Gobs\FloatingBullet.cs" />
-    <Compile Include="Game\Gobs\Gravity.cs" />
-    <Compile Include="Game\Gobs\Lightning.cs" />
-    <Compile Include="Game\Gobs\MovingWall.cs" />
-    <Compile Include="Game\Gobs\Peng.cs" />
-    <Compile Include="Game\Gobs\PropModel.cs" />
-    <Compile Include="Game\Gobs\Rocket.cs" />
-    <Compile Include="Game\Gobs\Ship.cs" />
-    <Compile Include="Game\Gobs\SnakeShip.cs" />
-    <Compile Include="Game\Gobs\SpawnGob.cs" />
-    <Compile Include="Game\Gobs\SpawnPlayer.cs" />
-    <Compile Include="Game\Gobs\VenomDrop.cs" />
-    <Compile Include="Game\Gobs\Wall.cs" />
-    <Compile Include="Game\Gobs\WallModel.cs" />
-    <Compile Include="Game\Gobs\WallPolygon.cs" />
-    <Compile Include="Game\GobUtils\ChargeProvider.cs" />
-    <Compile Include="Game\GobUtils\Coroner.cs" />
-    <Compile Include="Game\GobUtils\EquipInfo.cs" />
-    <Compile Include="Game\GobUtils\FiringOperator.cs" />
-    <Compile Include="Game\GobUtils\FiringOperatorContinuous.cs" />
-    <Compile Include="Game\GobUtils\FiringOperatorSingle.cs" />
-    <Compile Include="Game\GobUtils\GameAction.cs" />
-    <Compile Include="Game\GobUtils\GameActionAttribute.cs" />
-    <Compile Include="Game\GobUtils\GameActionCollection.cs" />
-    <Compile Include="Game\GobUtils\GobPropertyDescriptor.cs" />
-    <Compile Include="Game\GobUtils\ShipDevice.cs" />
-    <Compile Include="Game\GobUtils\ShipDeviceInfo.cs" />
-    <Compile Include="Game\GobUtils\ShipInfo.cs" />
-    <Compile Include="Game\GobUtils\ShipLocationPredicter.cs" />
-    <Compile Include="Game\GobUtils\SubjectWord.cs" />
-    <Compile Include="Game\GobUtils\WallIndexMap.cs" />
-    <Compile Include="Game\GobUtils\Weapon.cs" />
-    <Compile Include="Game\GobUtils\WeaponInfo.cs" />
-    <Compile Include="Game\LogicEngine.cs" />
-    <Compile Include="Game\Pengs\ConstantValue.cs" />
-    <Compile Include="Game\Pengs\SimpleCurve.cs" />
-    <Compile Include="Game\Pengs\CurveLerp.cs" />
-    <Compile Include="Game\Pengs\CurveLerpKey.cs" />
-    <Compile Include="Game\Pengs\CurveLerpKeyCollection.cs" />
-    <Compile Include="Game\Pengs\Particle.cs" />
-    <Compile Include="Game\Pengs\PengParameter.cs" />
-    <Compile Include="Game\Pengs\PhysicalUpdater.cs" />
-    <Compile Include="Game\Pengs\SprayEmitter.cs" />
-    <Compile Include="Game\PhysicsEngine.cs" />
-    <Compile Include="Game\Player.cs" />
-    <Compile Include="Game\PlayerMessage.cs" />
-    <Compile Include="Game\PostprocessEffectNameContainer.cs" />
-    <Compile Include="Game\Spectator.cs" />
-    <Compile Include="Game\Weapons\Blink.cs" />
-    <Compile Include="Game\Weapons\ForwardShot.cs" />
-    <Compile Include="Game\Weapons\LightningGun.cs" />
-    <Compile Include="Game\Weapons\SelfDestruct.cs" />
-    <Compile Include="Game\Weapons\ShipBarrelTypes.cs" />
-    <Compile Include="Game\GobUtils\TargetSelection.cs" />
-    <Compile Include="Game\Weapons\Thruster.cs" />
-    <Compile Include="Graphics\AutoRenderTarget2D.cs" />
-    <Compile Include="Graphics\AWContentManager.cs" />
-    <Compile Include="Graphics\AWVideo.cs" />
-    <Compile Include="Graphics\AWViewport.cs" />
-    <Compile Include="Graphics\AWViewportCollection.cs" />
-    <Compile Include="Graphics\DrawMode2D.cs" />
-    <Compile Include="Graphics\GraphicsEngineImpl.cs" />
-    <Compile Include="Graphics\HorizontalAlignment.cs" />
-    <Compile Include="Graphics\OverlayComponent.cs" />
-    <Compile Include="Graphics\OverlayComponents\BonusListOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\ChatBoxOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\GobTrackerItem.cs" />
-    <Compile Include="Graphics\OverlayComponents\GobTrackerOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\MiniStatusOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\PlayerStatusOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\ProgressBar.cs" />
-    <Compile Include="Graphics\OverlayComponents\RadarOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\ScoreOverlay.cs" />
-    <Compile Include="Graphics\PlayerViewport.cs" />
-    <Compile Include="Graphics\TexturePostprocessor.cs" />
-    <Compile Include="Graphics\VerticalAlignment.cs" />
-    <Compile Include="Helpers\AbortableThreadPool.cs" />
-    <Compile Include="Helpers\AWPerformanceCounter.cs" />
-    <Compile Include="Helpers\CanonicalString.cs" />
-    <Compile Include="Helpers\Clonable.cs" />
-    <Compile Include="Helpers\Collections\IndexedItemCollection.cs" />
-    <Compile Include="Helpers\Collections\IObservableCollection.cs" />
-    <Compile Include="Helpers\Collections\ITypedQueue.cs" />
-    <Compile Include="Helpers\Collections\NamedItemCollection.cs" />
-    <Compile Include="Helpers\Collections\TypedQueue.cs" />
-    <Compile Include="Helpers\Converter.cs" />
-    <Compile Include="Helpers\Geometric\Circle.cs" />
-    <Compile Include="Helpers\Geometric\Everything.cs" />
-    <Compile Include="Helpers\Geometric\Geometry.cs" />
-    <Compile Include="Helpers\Geometric\IGeomPrimitive.cs" />
-    <Compile Include="Helpers\Geometric\Point.cs" />
-    <Compile Include="Helpers\Geometric\Polygon.cs" />
-    <Compile Include="Helpers\Geometric\Rectangle.cs" />
-    <Compile Include="Helpers\Geometric\Triangle.cs" />
-    <Compile Include="Helpers\Graphics3D.cs" />
-    <Compile Include="Helpers\LazyProxy.cs" />
-    <Compile Include="Helpers\Log.cs" />
-    <Compile Include="Helpers\Math\AWMathHelper.cs" />
-    <Compile Include="Game\Pengs\ExpectedValue.cs" />
-    <Compile Include="Helpers\Math\Half.cs" />
-    <Compile Include="Helpers\Math\InterpolatingValue.cs" />
-    <Compile Include="Helpers\Math\MovementCurve.cs" />
-    <Compile Include="Helpers\Math\Statistics.cs" />
-    <Compile Include="Helpers\MiscHelper.cs" />
-    <Compile Include="Helpers\Paths.cs" />
-    <Compile Include="Helpers\PriorityQueue.cs" />
-    <Compile Include="Helpers\RandomHelper.cs" />
-    <Compile Include="Helpers\Serialization\ExcludeFromDeepCopyAttribute.cs" />
-    <Compile Include="Helpers\Serialization\FieldFinder.cs" />
-    <Compile Include="Helpers\Serialization\IAWSerializable.cs" />
-    <Compile Include="Helpers\Serialization\IConsistencyCheckable.cs" />
-    <Compile Include="Helpers\Serialization\INetworkSerializable.cs" />
-    <Compile Include="Helpers\Serialization\LimitationSwitchAttribute.cs" />
-    <Compile Include="Helpers\Serialization\LimitedSerializationAttribute.cs" />
-    <Compile Include="Helpers\Serialization\MemberSerializationException.cs" />
-    <Compile Include="Helpers\Serialization\NetworkBinaryReader.cs" />
-    <Compile Include="Helpers\Serialization\NetworkBinaryWriter.cs" />
-    <Compile Include="Helpers\Serialization\RuntimeStateAttribute.cs" />
-    <Compile Include="Helpers\Serialization\Serialization.cs" />
-    <Compile Include="Helpers\Serialization\SerializationModeFlags.cs" />
-    <Compile Include="Helpers\Serialization\SerializedNameAttribute.cs" />
-    <Compile Include="Helpers\Serialization\SerializedTypeAttribute.cs" />
-    <Compile Include="Helpers\Serialization\ShallowCopyAttribute.cs" />
-    <Compile Include="Helpers\Serialization\ChangingState.cs" />
-    <Compile Include="Helpers\Serialization\TypeLoader.cs" />
-    <Compile Include="Helpers\Serialization\TypeParameterAttribute.cs" />
-    <Compile Include="Helpers\SpatialGrid.cs" />
+    <Compile Include="AssaultWingProgram.cs" />
+    <Compile Include="Core\AssaultWing.cs" />
+    <Compile Include="Core\GameComponents\IntroEngine.cs" />
+    <Compile Include="Core\GameComponents\OverlayDialog.cs" />
+    <Compile Include="Core\GameComponents\PlayerChat.cs" />
+    <Compile Include="Core\GameComponents\StartupScreen.cs" />
+    <Compile Include="Core\GameState.cs" />
+    <Compile Include="Core\OverlayDialogs\CustomOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayDialogs\GameOverOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayDialogs\OverlayDialogData.cs" />
+    <Compile Include="Menu\ArenaMenuComponent.cs" />
+    <Compile Include="Menu\EquipmentSelector.cs" />
+    <Compile Include="Menu\EquipMenuComponent.cs" />
+    <Compile Include="Menu\Equip\ChatTab.cs" />
+    <Compile Include="Menu\Equip\EquipMenuControls.cs" />
+    <Compile Include="Menu\Equip\EquipMenuTab.cs" />
+    <Compile Include="Menu\Equip\EquipTab.cs" />
+    <Compile Include="Menu\Equip\MatchTab.cs" />
+    <Compile Include="Menu\Equip\PlayersTab.cs" />
+    <Compile Include="Menu\MainMenuComponent.cs" />
+    <Compile Include="Menu\Main\MainMenuItem.cs" />
+    <Compile Include="Menu\Main\MainMenuItemCollection.cs" />
+    <Compile Include="Menu\Main\MainMenuItemCollections.cs" />
+    <Compile Include="Menu\Main\MainMenuTextField.cs" />
+    <Compile Include="Menu\MenuComponent.cs" />
+    <Compile Include="Menu\MenuComponentType.cs" />
+    <Compile Include="Menu\MenuContent.cs" />
+    <Compile Include="Menu\MenuEngineImpl.cs" />
+    <Compile Include="Net\ConnectionUtils\GameClientStatus.cs" />
+    <Compile Include="Net\MessageHandling\MessageHandlers.cs" />
+    <Compile Include="Net\AWEndPoint.cs" />
+    <Compile Include="Net\ConnectionException.cs" />
+    <Compile Include="Net\Connections\Connection.cs" />
+    <Compile Include="Net\Connections\GameClientConnection.cs" />
+    <Compile Include="Net\Connections\GameServerConnection.cs" />
+    <Compile Include="Net\Connections\ManagementServerConnection.cs" />
+    <Compile Include="Net\ConnectionUtils\AWSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\AWTCPSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\AWUDPSocket.cs" />
+    <Compile Include="Net\ConnectionUtils\ConnectAsyncState.cs" />
+    <Compile Include="Net\ConnectionUtils\ConnectionAttemptListener.cs" />
+    <Compile Include="Net\ConnectionUtils\PingInfo.cs" />
+    <Compile Include="Net\ConnectionUtils\StaticPortMapper.cs" />
+    <Compile Include="Net\ConnectionUtils\ThreadSafeWrapper.cs" />
+    <Compile Include="Net\GameplayMessage.cs" />
+    <Compile Include="Net\GameServerInfo.cs" />
+    <Compile Include="Net\ManagementMessage.cs" />
+    <Compile Include="Net\ManagementMessageAttribute.cs" />
+    <Compile Include="Net\ManagementMessages\ClientJoinMessage.cs" />
+    <Compile Include="Net\ManagementMessages\GameServerListReply.cs" />
+    <Compile Include="Net\ManagementMessages\GameServerListRequest.cs" />
+    <Compile Include="Net\ManagementMessages\JoinGameServerReply.cs" />
+    <Compile Include="Net\ManagementMessages\JoinGameServerRequest.cs" />
+    <Compile Include="Net\ManagementMessages\PingMessage.cs" />
+    <Compile Include="Net\ManagementMessages\PongMessage.cs" />
+    <Compile Include="Net\ManagementMessages\RegisterGameServerMessage.cs" />
+    <Compile Include="Net\ManagementMessages\UnregisterGameServerMessage.cs" />
+    <Compile Include="Net\ManagementMessages\UpdateGameServerMessage.cs" />
+    <Compile Include="Net\Message.cs" />
+    <Compile Include="Net\MessageException.cs" />
+    <Compile Include="Net\MessageHandling\GameplayMessageHandler.cs" />
+    <Compile Include="Net\MessageHandling\IMessageHandler.cs" />
+    <Compile Include="Net\MessageHandling\MessageHandler.cs" />
+    <Compile Include="Net\MessageHeaderFlags.cs" />
+    <Compile Include="Net\MessageSendType.cs" />
+    <Compile Include="Net\Messages\ArenaFinishMessage.cs" />
+    <Compile Include="Net\Messages\ConnectionClosingMessage.cs" />
+    <Compile Include="Net\Messages\GameSettingsRequest.cs" />
+    <Compile Include="Net\Messages\GobCreationMessage.cs" />
+    <Compile Include="Net\Messages\GobDeletionMessage.cs" />
+    <Compile Include="Net\Messages\GobUpdateMessage.cs" />
+    <Compile Include="Net\Messages\GameServerHandshakeRequest.cs" />
+    <Compile Include="Net\Messages\PingReplyMessage.cs" />
+    <Compile Include="Net\Messages\PingRequestMessage.cs" />
+    <Compile Include="Net\Messages\PlayerControlsMessage.cs" />
+    <Compile Include="Net\Messages\PlayerDeletionMessage.cs" />
+    <Compile Include="Net\Messages\PlayerMessageMessage.cs" />
+    <Compile Include="Net\Messages\PlayerSettingsReply.cs" />
+    <Compile Include="Net\Messages\PlayerSettingsRequest.cs" />
+    <Compile Include="Net\Messages\PlayerUpdateMessage.cs" />
+    <Compile Include="Net\Messages\StartGameMessage.cs" />
+    <Compile Include="Net\MessageType.cs" />
+    <Compile Include="Net\MessageTypeAttribute.cs" />
+    <Compile Include="Net\NetworkEngine.cs" />
+    <Compile Include="Net\NetworkException.cs" />
+    <Compile Include="Net\Result.cs" />
+    <Compile Include="Net\StreamMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\AWSettings.cs" />
-    <Compile Include="Settings\GraphicsSettings.cs" />
-    <Compile Include="Settings\NetSettings.cs" />
-    <Compile Include="Settings\SoundSettings.cs" />
-    <Compile Include="Sound\AWMusic.cs" />
-    <Compile Include="Sound\AWSound.cs" />
-    <Compile Include="Sound\BackgroundMusic.cs" />
-    <Compile Include="Sound\SoundEngine.cs" />
-    <Compile Include="Sound\SoundEngineXACT.cs" />
-    <Compile Include="Sound\SoundEngineXNA.cs" />
-    <Compile Include="Sound\SoundInstance.cs" />
-    <Compile Include="Sound\SoundInstanceXACT.cs" />
-    <Compile Include="Sound\SoundInstanceXNA.cs" />
-    <Compile Include="UI\Control.cs" />
-    <Compile Include="UI\ControlState.cs" />
-    <Compile Include="UI\EditableText.cs" />
-    <Compile Include="UI\InputState.cs" />
-    <Compile Include="UI\Keyboard.cs" />
-    <Compile Include="UI\Mouse\MouseButton.cs" />
-    <Compile Include="UI\Mouse\MouseButtons.cs" />
-    <Compile Include="UI\Mouse\MouseDirection.cs" />
-    <Compile Include="UI\Mouse\MouseDirections.cs" />
-    <Compile Include="UI\Mouse\MouseWheelDirection.cs" />
-    <Compile Include="UI\Mouse\MouseWheelDirections.cs" />
-    <Compile Include="UI\MultiControl.cs" />
-    <Compile Include="UI\PlayerControls.cs" />
-    <Compile Include="UI\PlayerControlType.cs" />
-    <Compile Include="UI\RemoteControl.cs" />
-    <Compile Include="UI\TriggeredCallback.cs" />
-    <Compile Include="UI\TriggeredCallbackCollection.cs" />
-    <Compile Include="UI\UIEngineImpl.cs" />
+    <Compile Include="UI\GameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\GameForm.Designer.cs">
+      <DependentUpon>GameForm.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AssaultWing.ico" />
+    <Content Include="GameThumbnail.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Xna.Framework.4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft XNA Framework Redistributable 4.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\GameForm.resx">
+      <DependentUpon>GameForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AssaultWingContent\AssaultWingContent.contentproj">
-      <Project>{10BBD3AE-07F8-424F-BA02-9AE8FD49CFAD}</Project>
-      <Name>AssaultWingContent %28Content%29</Name>
+      <Project>{73425008-E11E-4105-B964-2F2005136F75}</Project>
+      <Name>AssaultWingContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
+    <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj">
+      <Project>{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}</Project>
+      <Name>AssaultWingCore</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PublishFile Include="AssaultWingCore.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="AssaultWing.pdb">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="NATUPNPLib">
+      <Guid>{1C565858-F302-471E-B409-F180AA4ABEC6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

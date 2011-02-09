@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWing", "AssaultWing\AssaultWing.csproj", "{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingCore", "AssaultWingCore\AssaultWingCore.csproj", "{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingContent", "AssaultWingContent\AssaultWingContent.contentproj", "{10BBD3AE-07F8-424F-BA02-9AE8FD49CFAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingCoreContent", "AssaultWingCoreContent\AssaultWingCoreContent.contentproj", "{10BBD3AE-07F8-424F-BA02-9AE8FD49CFAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingGame", "AssaultWingGame\AssaultWingGame.csproj", "{6CBD4219-88EE-46F2-B321-141F35B8B4BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWing", "AssaultWing\AssaultWing.csproj", "{6CBD4219-88EE-46F2-B321-141F35B8B4BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArenaEditor", "ArenaEditor\ArenaEditor.csproj", "{7D1FEEBA-B018-4E61-9D5C-CE731D36052A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingGameContent", "AssaultWingGameContent\AssaultWingGameContent.contentproj", "{73425008-E11E-4105-B964-2F2005136F75}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssaultWingContent", "AssaultWingContent\AssaultWingContent.contentproj", "{73425008-E11E-4105-B964-2F2005136F75}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWUnitTests", "AWUnitTests\AWUnitTests.csproj", "{B041E31A-3519-4869-85A3-5DF8C7874F45}"
 EndProject

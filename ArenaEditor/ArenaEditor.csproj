@@ -145,9 +145,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AssaultWing\AssaultWing.csproj">
+    <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj">
       <Project>{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}</Project>
-      <Name>AssaultWing</Name>
+      <Name>AssaultWingCore</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

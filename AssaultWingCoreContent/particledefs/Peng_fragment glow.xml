@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>fragment glow</typeName>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <depthLayer2D>0.3</depthLayer2D>
+  <drawMode2D>
+    <type>Additive</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <coordinateSystem>FixedToPeng</coordinateSystem>
+  <playerRelated>false</playerRelated>
+  <emitter>
+    <emissionFrequency>3</emissionFrequency>
+    <numberToCreate>1</numberToCreate>
+    <radius>1</radius>
+    <sprayAngle>0.0</sprayAngle>
+    <facingType>Random</facingType>
+    <textureNames>
+      <Item>p_explo_center</Item>
+    </textureNames>
+    <gobTypeNames>
+    </gobTypeNames>
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value>0</value>
+    </initialVelocity>
+  </emitter>
+  <updater>
+    <areParticlesImmortal>true</areParticlesImmortal>
+    <drag>0.0</drag>
+    <particleAge type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value>0.1</value>
+    </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>
+    <acceleration type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value>0</value>
+    </acceleration>
+    <rotationSpeedInputScale>0</rotationSpeedInputScale>
+    <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value>0</value>
+    </rotationSpeed>
+    <scaleInputScale>0</scaleInputScale>
+    <scale type="AW2.Game.Pengs.ExpectedValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <expected>0.1</expected>
+      <variance>0.01</variance>
+    </scale>
+    <alphaInputScale>0</alphaInputScale>
+    <alpha type="AW2.Game.Pengs.ExpectedValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <expected>0.5</expected>
+      <variance>0.05</variance>
+    </alpha>
+  </updater>
+  <birthGobTypes/>
+  <deathGobTypes/>
+  <movable>false</movable>
+  <exhaustEngineNames/>
+  <collisionAreas/>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <maxDamage>100</maxDamage>
+</GobType>

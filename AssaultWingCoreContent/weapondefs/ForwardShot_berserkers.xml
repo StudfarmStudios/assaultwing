@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.ForwardShot, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  
+  <deviceInfo>
+	<pictureName>dummytexture</pictureName>
+	<titlePictureName>dummytexture</titlePictureName>
+	<infoText>Info</infoText>
+	<reloadSpeed>Average</reloadSpeed>
+	<energyUsage>Average</energyUsage>
+	<usageType>Single</usageType>
+    <iconEquipName>dummytexture</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+	<singleShotDamage>Average</singleShotDamage>
+	<shotSpeed>Average</shotSpeed>
+	<recoilMomentum>Average</recoilMomentum>
+  </weaponInfo>
+  
+  <typeName>berserkers</typeName>
+  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right</gunBarrels>
+  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>b_icon_berserkers</iconName>
+  <fireSound>Missile</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <shotTypeName>berserker</shotTypeName>
+  <shotSpeed>150</shotSpeed>
+  <loadTime>5</loadTime>
+  <fireCharge>600</fireCharge>
+  <fireChargePerSecond>500</fireChargePerSecond>
+  <shotCount>9</shotCount>
+  <shotSpacing>0.07</shotSpacing>
+  <shotAngleVariation>0.25</shotAngleVariation>
+  <shotSpeedVariation>50</shotSpeedVariation>
+  <recoilMomentum>1000</recoilMomentum>
+  <muzzleFireEngineNames>
+    <Item>basic muzzle fire</Item>
+  </muzzleFireEngineNames>
+</ShipDeviceType>

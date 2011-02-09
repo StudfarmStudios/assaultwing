@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Bullet, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>exploding fragment</typeName>
+  <isRotating>true</isRotating>
+  <rotationSpeed>0.0</rotationSpeed>
+   <networkUpdatePeriod>
+      <ticks>10000000</ticks>
+   </networkUpdatePeriod>
+  <lifetime>30</lifetime>
+  <impactDamage>5</impactDamage>
+  <impactHoleRadius>0</impactHoleRadius>
+  <mass>30</mass>
+  <scale>0.04</scale>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+      <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <bulletModelNames>
+      <Item>fragment</Item>
+  </bulletModelNames>
+  <modelName>dummymodel</modelName>
+  <movable>true</movable>
+  <maxDamage>100</maxDamage>
+  <deathGobTypes>
+      <Item>fragment explo</Item>
+  </deathGobTypes>
+  <birthGobTypes>
+      <Item>fragment glow</Item>
+	     <Item>fragment smoke</Item>
+  </birthGobTypes>
+  <exhaustEngineNames>
+  </exhaustEngineNames>
+  <collisionAreas>
+      <Item>
+         <type>PhysicalShot</type>
+         <collidesAgainst>None</collidesAgainst>
+         <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+         <collisionMaterial>Regular</collisionMaterial>
+         <name>Hit</name>
+         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <center>
+               <X>0</X>
+               <Y>0</Y>
+            </center>
+            <radius>5</radius>
+            <boundingBox>
+               <min>
+                  <X>0</X>
+                  <Y>0</Y>
+               </min>
+               <max>
+                  <X>0</X>
+                  <Y>0</Y>
+               </max>
+            </boundingBox>
+         </area>
+      </Item>
+  </collisionAreas>
+</GobType>

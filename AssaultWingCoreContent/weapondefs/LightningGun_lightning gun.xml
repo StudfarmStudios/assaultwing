@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.LightningGun, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+
+  <deviceInfo>
+    <pictureName>dummytexture</pictureName>
+    <titlePictureName>dummytexture</titlePictureName>
+    <infoText>Info</infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>dummytexture</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Average</singleShotDamage>
+    <shotSpeed>Average</shotSpeed>
+    <recoilMomentum>Average</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>lightning gun</typeName>
+  <range>350</range>
+  <fireSound>LightningWeapon</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>dummytexture</iconName>
+  <shotTypeName>lightning</shotTypeName>
+  <loadTime>1</loadTime>
+  <fireCharge>100</fireCharge>
+  <fireChargePerSecond>500</fireChargePerSecond>
+  <recoilMomentum>0</recoilMomentum>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+</ShipDeviceType>

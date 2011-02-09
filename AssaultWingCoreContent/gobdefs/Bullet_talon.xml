@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Bullet, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>talon</typeName>
+  <isRotating>true</isRotating>
+  <rotationSpeed>10.0</rotationSpeed>
+   <networkUpdatePeriod>
+      <ticks>10000000</ticks>
+   </networkUpdatePeriod>
+  <lifetime>0.5</lifetime>
+  <impactDamage>10</impactDamage>
+  <impactHoleRadius>5</impactHoleRadius>
+  <mass>10</mass>
+  <scale>0.06</scale>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+      <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <bulletModelNames>
+      <Item>windlord_claw</Item>
+      <Item>windlord_claw2</Item>
+  </bulletModelNames>
+  <modelName>dummymodel</modelName>
+  <movable>true</movable>
+  <maxDamage>100</maxDamage>
+  <deathGobTypes>
+      <Item>windlord claws</Item>
+	  <Item>star flash</Item>
+  </deathGobTypes>
+  <birthGobTypes>
+      <Item>bullet glow</Item>
+  </birthGobTypes>
+  <exhaustEngineNames>
+  </exhaustEngineNames>
+  <collisionAreas>
+      <Item>
+         <type>PhysicalShot</type>
+         <collidesAgainst>None</collidesAgainst>
+         <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+         <collisionMaterial>Regular</collisionMaterial>
+         <name>Hit</name>
+         <area type="AW2.Helpers.Geometric.Point, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <location>
+               <X>0</X>
+               <Y>0</Y>
+            </location>
+         </area>
+      </Item>
+  </collisionAreas>
+</GobType>

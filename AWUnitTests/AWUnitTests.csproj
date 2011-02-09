@@ -62,13 +62,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AssaultWingGame\AssaultWingGame.csproj">
+    <ProjectReference Include="..\AssaultWing\AssaultWing.csproj">
       <Project>{6CBD4219-88EE-46F2-B321-141F35B8B4BC}</Project>
       <Name>AssaultWingGame</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AssaultWing\AssaultWing.csproj">
+    <ProjectReference Include="..\AssaultWingCore\AssaultWingCore.csproj">
       <Project>{2F76D6B0-B171-4A7B-822E-B2B4BDA87C4C}</Project>
-      <Name>AssaultWing</Name>
+      <Name>AssaultWingCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

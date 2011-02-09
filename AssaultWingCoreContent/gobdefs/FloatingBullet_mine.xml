@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.FloatingBullet, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>mine</typeName>
+  <isRotating>true</isRotating>
+  <rotationSpeed>0.2</rotationSpeed>
+  <hoverThrust>4000</hoverThrust>
+  <attractionForce>50000</attractionForce>
+  <spreadingForce>12000</spreadingForce>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <lifetime>45</lifetime>
+  <impactDamage>150</impactDamage>
+  <impactHoleRadius>0</impactHoleRadius>
+  <mass>120</mass>
+  <scale>0.047</scale>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <bulletModelNames>
+    <Item>mine</Item>
+  </bulletModelNames>
+  <modelName>dummymodel</modelName>
+  <movable>true</movable>
+  <maxDamage>100</maxDamage>
+  <birthGobTypes>
+    <!--<Item>dumb glow</Item> -->
+  </birthGobTypes>
+  <deathGobTypes>
+    <Item>mine explosion</Item>
+  </deathGobTypes>
+  <exhaustEngineNames>
+    <!--<Item>dumbfirethrust1</Item> -->
+  </exhaustEngineNames>
+  <collisionAreas>
+    <Item>
+      <type>PhysicalShot</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Hit</name>
+      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>120</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+    <Item>
+      <type>Receptor</type>
+      <collidesAgainst>PhysicalDamageable</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Magnet</name>
+      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>2500</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+    <Item>
+      <type>Force</type>
+      <collidesAgainst>PhysicalShot</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Spread</name>
+      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>1500</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+  </collisionAreas>
+
+</GobType>

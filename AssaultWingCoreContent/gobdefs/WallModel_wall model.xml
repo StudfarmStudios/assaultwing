@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>wall model</typeName>
+   <networkUpdatePeriod>
+      <ticks>10000000</ticks>
+   </networkUpdatePeriod>
+  <scale>1</scale>
+  <deathGobTypes>
+  </deathGobTypes>
+  <collisionAreas>
+  </collisionAreas>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+      <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <birthGobTypes/>
+  <exhaustEngineNames/>
+  <maxDamage>100</maxDamage>
+  <movable>false</movable>
+</GobType>

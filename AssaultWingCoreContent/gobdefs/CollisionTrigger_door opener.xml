@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.CollisionTrigger, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>door opener</typeName>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <scale>1</scale>
+  <deathGobTypes>
+  </deathGobTypes>
+  <collisionAreas>
+    <Item>
+      <type>PhysicalOtherUndamageableUnmovable</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
+      <collisionMaterial>Rough</collisionMaterial>
+      <name>General</name>
+      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>20</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+  </collisionAreas>
+  <mass>1</mass>
+  <modelName>dumbfire</modelName>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>None</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <birthGobTypes/>
+  <exhaustEngineNames/>
+  <maxDamage>100</maxDamage>
+  <movable>false</movable>
+</GobType>

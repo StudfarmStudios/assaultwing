@@ -61,6 +61,12 @@ namespace AW2.UI
             InitializeRunner();
         }
 
+        public void FinishGame()
+        {
+            _runner.Exit();
+            Application.DoEvents(); // finish processing BeginInvoke()d Update() and Draw() calls
+        }
+
         public new void Dispose()
         {
             if (_game != null)
@@ -105,8 +111,7 @@ namespace AW2.UI
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            _runner.Exit();
-            Application.DoEvents(); // finish processing BeginInvoke()d Update() and Draw() calls
+            FinishGame();
             if (_graphicsDeviceService != null) _graphicsDeviceService.Dispose();
             _graphicsDeviceService = null;
             base.OnClosing(e);

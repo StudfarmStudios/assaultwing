@@ -13,6 +13,12 @@ namespace AW2
     public class AssaultWingProgram : IDisposable
     {
         private GameForm _form;
+        private static string[] g_errorCaptions = new[]
+        {
+            "Oops, something went wrong!",
+            "Wait... How did this happen?",
+            "You found a bug, congratulations!"
+        };
 
         public static AssaultWingProgram Instance { get; private set; }
 
@@ -57,6 +63,7 @@ namespace AW2
 
         private void ThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
+            _form.FinishGame();
             _form.SetWindowed();
             ReportException(e.Exception);
             Exit();
@@ -65,15 +72,14 @@ namespace AW2
         private static void ReportException(Exception e)
         {
             Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
-            string dateTime = DateTime.Now.ToUniversalTime().ToString("u");
-            string computer = Environment.MachineName;
-            string errorInfo = e.ToString();
-            string caption = "Oops, something went wrong!";
-            string intro = "Please send an automatic error report to the developers. "
-                + "The contents of the report are below.";
-            string header = string.Format("{0} {1}", dateTime, computer);
-            string report = string.Format("{0} {1}\n{2}", dateTime, computer, errorInfo);
-            var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo);
+            var dateTime = DateTime.Now.ToUniversalTime().ToString("u");
+            var computer = Environment.MachineName;
+            var errorInfo = e.ToString();
+            var caption = g_errorCaptions[RandomHelper.GetRandomInt(g_errorCaptions.Length)];
+            var intro = "Want to send this automatic error report to the developers to help solve the problem?";
+            var header = string.Format("{0} {1}", dateTime, computer);
+            var report = string.Format("{0} {1}\n{2}", dateTime, computer, errorInfo);
+            var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             if (result == DialogResult.Yes) SendMail(header, report);
         }
 

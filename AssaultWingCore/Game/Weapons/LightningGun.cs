@@ -33,7 +33,11 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            FireAtTarget(TargetSelection.ChooseTarget(Arena.Gobs.GameplayLayer.Gobs, Owner, _range));
+            var potentialTargets =
+                from player in Owner.Game.DataEngine.Players
+                where player.Ship != null
+                select player.Ship;
+            FireAtTarget(TargetSelection.ChooseTarget(potentialTargets, Owner, _range));
         }
 
         protected override void CreateVisualsImpl()

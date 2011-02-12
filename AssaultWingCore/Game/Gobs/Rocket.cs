@@ -205,7 +205,11 @@ namespace AW2.Game.Gobs
         private void UpdateTarget()
         {
             var oldTarget = Target;
-            var newBestTarget = TargetSelection.ChooseTarget(Arena.Gobs.GameplayLayer.Gobs, this, _findTargetRange);
+            var potentialTargets =
+                from player in Game.DataEngine.Players
+                where player.Ship != null
+                select player.Ship;
+            var newBestTarget = TargetSelection.ChooseTarget(potentialTargets, this, _findTargetRange);
             if (newBestTarget != null &&
                 (newBestTarget.Owner == null || newBestTarget.Owner == Owner) &&
                 RandomHelper.GetRandomFloat() < 0.9)

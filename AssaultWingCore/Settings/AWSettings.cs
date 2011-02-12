@@ -41,20 +41,17 @@ namespace AW2.Settings
         public static AWSettings FromFile()
         {
             if (File.Exists(SettingsFilename))
-                try
-                {
-                    return (AWSettings)TypeLoader.LoadTemplate(SettingsFilename, typeof(AWSettings), null, true);
-                }
-                catch (MemberSerializationException e)
-                {
-                    Log.Write("Error while reading settings from " + SettingsFilename + ": " + e);
-                }
+            {
+                var settings = (AWSettings)TypeLoader.LoadTemplate(SettingsFilename, typeof(AWSettings), null, true);
+                if (settings != null) return settings;
+                Log.Write("Errors while reading settings from " + SettingsFilename);
+            }
 
             // Create a new settings file
             Log.Write("Creating a new settings file " + SettingsFilename);
-            var settings = new AWSettings();
-            settings.ToFile();
-            return settings;
+            var newSettings = new AWSettings();
+            newSettings.ToFile();
+            return newSettings;
         }
 
         public AWSettings()

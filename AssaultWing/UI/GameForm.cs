@@ -195,7 +195,6 @@ namespace AW2.UI
                 _isFullScreen = false;
                 _graphicsDeviceService.ResetDevice(_previousWindowedModeParameters.Size.Width, _previousWindowedModeParameters.Size.Height, false);
                 SetFormParameters(_previousWindowedModeParameters);
-                _gameView.Visible = true;
                 _runner.Resume();
             }
             finally
@@ -214,7 +213,6 @@ namespace AW2.UI
                 Application.DoEvents();
                 if (!_isFullScreen) _previousWindowedModeParameters = GetCurrentFormParameters();
                 _isFullScreen = true;
-                _gameView.Visible = false;
                 SetFormParameters(GetFullScreenFormParameters(width, height));
                 _graphicsDeviceService.ResetDevice(width, height, true);
                 _runner.Resume();

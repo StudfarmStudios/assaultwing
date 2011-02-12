@@ -68,7 +68,7 @@ namespace AW2.Helpers.Serialization
 
             if (baseType == null) baseType = type;
             writer.WriteStartElement(elementName);
-            if (type != baseType) writer.WriteAttributeString("type", type.AssemblyQualifiedName);
+            if (type != baseType) writer.WriteAttributeString("type", type.FullName);
             if (type.IsPrimitive || type == typeof(string))
                 writer.WriteValue(castObj);
             else if (type.IsEnum)

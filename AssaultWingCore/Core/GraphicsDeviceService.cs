@@ -126,10 +126,10 @@ namespace AW2.Core
                     deviceNeedsReset = true;
                     break;
                 default:
-                    // If the device state is ok, check whether it is big enough.
                     var pp = GraphicsDevice.PresentationParameters;
-                    deviceNeedsReset = clientSize.Width > pp.BackBufferWidth ||
-                                       clientSize.Height > pp.BackBufferHeight;
+                    deviceNeedsReset = pp.IsFullScreen
+                        ? clientSize.Width != pp.BackBufferWidth || clientSize.Height != pp.BackBufferHeight
+                        : clientSize.Width > pp.BackBufferWidth || clientSize.Height > pp.BackBufferHeight;
                     break;
             }
             if (deviceNeedsReset)

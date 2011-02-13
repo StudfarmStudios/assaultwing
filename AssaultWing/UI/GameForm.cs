@@ -106,6 +106,7 @@ namespace AW2.UI
             if (keyCode == Keys.PageUp) SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight); // HACK !!!
             if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
             if (keyCode == Keys.Oem5) _splitContainer.Panel2Collapsed ^= true; // the § key on a Finnish keyboard
+            if (keyCode == Keys.F4 && modifiers == Keys.Alt) AssaultWingProgram.Instance.Exit();
             return true; // the message won't be processed further; prevents window menu from opening
         }
 

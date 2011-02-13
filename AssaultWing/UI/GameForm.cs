@@ -229,12 +229,13 @@ namespace AW2.UI
         {
             var screenArea = Screen.PrimaryScreen.Bounds;
             return new FormParameters(FormWindowState.Normal, FormBorderStyle.None, Point.Empty, new Size(width, height),
-                false, false, false);
+                visible: false, showIcon: false, topMost: false);
         }
 
         private FormParameters GetCurrentFormParameters()
         {
-            return new FormParameters(WindowState, FormBorderStyle, Location, ClientSize, true, true, false);
+            return new FormParameters(WindowState, FormBorderStyle, Location, ClientSize,
+                visible: true, showIcon: true, topMost: false);
         }
 
         private void SetFormParameters(FormParameters parameters)
@@ -242,10 +243,10 @@ namespace AW2.UI
             WindowState = parameters.WindowState;
             FormBorderStyle = parameters.BorderStyle;
             Location = parameters.Location;
-            ClientSize = parameters.Size;
-            Visible = parameters.Visible;
             ShowIcon = parameters.ShowIcon;
-            TopMost = parameters.TopMost;
+            Visible = parameters.Visible; // Control.set_Visible tampers with ClientSize
+            TopMost = parameters.TopMost; // Control.set_TopMost tampers with ClientSize
+            ClientSize = parameters.Size; // ...therefore set ClientSize last
         }
 
         private void AddToLogView(string text)

@@ -152,7 +152,7 @@ namespace AW2.Core
         /// is lost, or if we are running inside the Form designer), we must use
         /// regular System.Drawing method to display a status message.
         /// </summary>
-        public void PaintUsingSystemDrawing(System.Drawing.Graphics graphics, Font font, RectangleF rectangle, string text)
+        public static void PaintUsingSystemDrawing(System.Drawing.Graphics graphics, Font font, RectangleF rectangle, string text)
         {
             graphics.Clear(Color.CornflowerBlue);
             using (var brush = new SolidBrush(Color.Black))

@@ -29,35 +29,35 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GameForm));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this._splitContainer = new System.Windows.Forms.SplitContainer();
             this._logView = new System.Windows.Forms.TextBox();
             this._gameView = new AW2.Core.GraphicsDeviceControl();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._splitContainer)).BeginInit();
+            this._splitContainer.Panel1.SuspendLayout();
+            this._splitContainer.Panel2.SuspendLayout();
+            this._splitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
-            // splitContainer1
+            // _splitContainer
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this._splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._splitContainer.Location = new System.Drawing.Point(0, 0);
+            this._splitContainer.Margin = new System.Windows.Forms.Padding(0);
+            this._splitContainer.Name = "_splitContainer";
+            this._splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer1.Panel1
+            // _splitContainer.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this._gameView);
+            this._splitContainer.Panel1.Controls.Add(this._gameView);
             // 
-            // splitContainer1.Panel2
+            // _splitContainer.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this._logView);
-            this.splitContainer1.Panel2Collapsed = true;
-            this.splitContainer1.Panel2MinSize = 0;
-            this.splitContainer1.Size = new System.Drawing.Size(984, 762);
-            this.splitContainer1.SplitterDistance = 328;
-            this.splitContainer1.TabIndex = 1;
+            this._splitContainer.Panel2.Controls.Add(this._logView);
+            this._splitContainer.Panel2Collapsed = true;
+            this._splitContainer.Panel2MinSize = 0;
+            this._splitContainer.Size = new System.Drawing.Size(984, 762);
+            this._splitContainer.SplitterDistance = 328;
+            this._splitContainer.TabIndex = 1;
             // 
             // _logView
             // 
@@ -90,16 +90,16 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 762);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this._splitContainer);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1000, 800);
             this.Name = "GameForm";
             this.Text = "Assault Wing";
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this._splitContainer.Panel1.ResumeLayout(false);
+            this._splitContainer.Panel2.ResumeLayout(false);
+            this._splitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this._splitContainer)).EndInit();
+            this._splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -107,7 +107,7 @@
         #endregion
 
         private AW2.Core.GraphicsDeviceControl _gameView;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer _splitContainer;
         private System.Windows.Forms.TextBox _logView;
     }
 }

@@ -105,7 +105,7 @@ namespace AW2.UI
             var modifiers = keyData & Keys.Modifiers;
             if (keyCode == Keys.PageUp) SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight); // HACK !!!
             if (keyCode == Keys.PageDown) SetWindowed(); // HACK !!!
-            if (keyCode == Keys.Oem5) splitContainer1.Panel2Collapsed ^= true; // the § key on a Finnish keyboard
+            if (keyCode == Keys.Oem5) _splitContainer.Panel2Collapsed ^= true; // the § key on a Finnish keyboard
             return true; // the message won't be processed further; prevents window menu from opening
         }
 
@@ -128,7 +128,7 @@ namespace AW2.UI
                 _graphicsDeviceService.EndDraw(ClientSize, Handle);
             }
             else
-                _graphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
+                GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
         }
 
         protected override void OnPaintBackground(PaintEventArgs pevent)
@@ -195,6 +195,7 @@ namespace AW2.UI
                 _isFullScreen = false;
                 _graphicsDeviceService.ResetDevice(_previousWindowedModeParameters.Size.Width, _previousWindowedModeParameters.Size.Height, false);
                 SetFormParameters(_previousWindowedModeParameters);
+                _splitContainer.Visible = true;
                 _runner.Resume();
             }
             finally
@@ -213,6 +214,7 @@ namespace AW2.UI
                 Application.DoEvents();
                 if (!_isFullScreen) _previousWindowedModeParameters = GetCurrentFormParameters();
                 _isFullScreen = true;
+                _splitContainer.Visible = false;
                 SetFormParameters(GetFullScreenFormParameters(width, height));
                 _graphicsDeviceService.ResetDevice(width, height, true);
                 _runner.Resume();

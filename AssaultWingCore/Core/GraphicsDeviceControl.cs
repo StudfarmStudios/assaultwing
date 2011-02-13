@@ -38,7 +38,9 @@ namespace AW2.Core
                 GraphicsDeviceService.EndDraw(ClientSize, Handle);
             }
             else
+            {
                 GraphicsDeviceService.PaintUsingSystemDrawing(e.Graphics, Font, ClientRectangle, beginDrawError);
+            }
         }
 
         /// <summary>

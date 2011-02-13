@@ -397,6 +397,32 @@ namespace AW2.Helpers
         }
 
         [Test]
+        public void TestRectangleStretch()
+        {
+            int width;
+            int height;
+            var rect = new Rectangle(50, 30, 150, 200);
+
+            width = 0; height = 0;
+            Assert.Throws<ArgumentException>(() => rect.Clamp(ref width, ref height));
+
+            width = 100; height = 110;
+            rect.Stretch(ref width, ref height);
+            Assert.AreEqual(150, width);
+            Assert.AreEqual(165, height);
+
+            width = 300; height = 50;
+            rect.Stretch(ref width, ref height);
+            Assert.AreEqual(150, width);
+            Assert.AreEqual(25, height);
+
+            width = 60; height = 300;
+            rect.Stretch(ref width, ref height);
+            Assert.AreEqual(40, width);
+            Assert.AreEqual(200, height);
+        }
+
+        [Test]
         public void TestRotate90()
         {
             Assert.AreEqual(new Vector2(0, 0), new Vector2(0, 0).Rotate90());

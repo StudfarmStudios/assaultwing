@@ -74,7 +74,7 @@ namespace AW2.Core.GameComponents
                 int width = videoFrame.Width;
                 int height = videoFrame.Height;
                 var titleSafeArea = Game.GraphicsDeviceService.GraphicsDevice.Viewport.TitleSafeArea;
-                titleSafeArea.Clamp(ref width, ref height);
+                titleSafeArea.Stretch(ref width, ref height);
                 var destinationRect = new Rectangle((titleSafeArea.Width - width) / 2, (titleSafeArea.Height - height) / 2, width, height);
                 _spriteBatch.Draw(videoFrame, destinationRect, Color.White);
                 _spriteBatch.End();

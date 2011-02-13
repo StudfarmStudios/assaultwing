@@ -431,6 +431,26 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Stretches width and height to the Rectangle, preserving aspect ratio.
+        /// </summary>
+        public static void Stretch(this Rectangle rect, ref int width, ref int height)
+        {
+            if (width == 0 || height == 0) throw new ArgumentException("Width and height must be non-zero");
+            if (width * rect.Height < rect.Width * height)
+            {
+                // Limited by height
+                width = rect.Height * width / height;
+                height = rect.Height;
+            }
+            else
+            {
+                // Limited by width
+                height = rect.Width * height / width;
+                width = rect.Width;
+            }
+        }
+
+        /// <summary>
         /// Returns the number of seconds this <see cref="TimeSpan"/> 
         /// is in the past relative to the current game time.
         /// </summary>

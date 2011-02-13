@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
 using AW2.Helpers.Geometric;
-using IndexPair = System.Collections.Generic.KeyValuePair<Microsoft.Xna.Framework.Vector3, Microsoft.Xna.Framework.Vector3>;
+using IndexPair = System.Tuple<Microsoft.Xna.Framework.Vector3, Microsoft.Xna.Framework.Vector3>;
 
 namespace AW2.Helpers
 {
@@ -16,54 +16,20 @@ namespace AW2.Helpers
     /// <see cref="Graphics3D.GetOutline(VertexPositionNormalTexture[], short[])"/>
     internal class IndexPairEqualityComparer : IEqualityComparer<IndexPair>
     {
-        #region IEqualityComparer<IndexPair> Members
-
         /// <summary>
         /// Two index pairs are equal if they represent the same vertex location,
         /// regardless of order.
         /// </summary>
-        /// <param name="x">One index pair.</param>
-        /// <param name="y">Another index pair.</param>
-        /// <returns>True iff the two index pairs are equal.</returns>
         public bool Equals(IndexPair x, IndexPair y)
         {
-            return (x.Key.Equals(y.Key) && x.Value.Equals(y.Value))
-                || (x.Key.Equals(y.Value) && x.Value.Equals(y.Key));
+            return (x.Item1.Equals(y.Item1) && x.Item2.Equals(y.Item2))
+                || (x.Item1.Equals(y.Item2) && x.Item2.Equals(y.Item1));
         }
 
         public int GetHashCode(IndexPair obj)
         {
-            return obj.Key.GetHashCode() ^ obj.Value.GetHashCode();
+            return obj.Item1.GetHashCode() ^ obj.Item2.GetHashCode();
         }
-
-        #endregion
-    }
-    
-    /// <summary>
-    /// Describes a custom vertex format structure that contains position, texture coordinates and normal data. 
-    /// </summary>
-    /// <see cref="Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture"/>
-    [System.Diagnostics.DebuggerDisplay("pos = {position} tex = {texture} norm = {normal}")]
-    public struct VertexPositionTextureNormal
-    {
-        Vector3 position;
-        Vector2 textureCoordinate;
-        Vector3 normal;
-
-        /// <summary>
-        /// The vertex position.
-        /// </summary>
-        public Vector3 Position { get { return position; } set { position = value; } }
-        
-        /// <summary>
-        /// The texture coordinates.
-        /// </summary>
-        public Vector2 TextureCoordinate { get { return textureCoordinate; } set { textureCoordinate = value; } }
-        
-        /// <summary>
-        /// The vertex normal.
-        /// </summary>
-        public Vector3 Normal { get { return normal; } set { normal = value; } }
     }
 
     /// <summary>
@@ -267,8 +233,8 @@ namespace AW2.Helpers
             // We refer to vertices by their coordinates and not by their index
             // in vertexData because 3DSMax has the habit of saving the same vertex
             // multiple times, each time with a different normal (understandable, yes).
-            IndexPairEqualityComparer comparer = new IndexPairEqualityComparer();
-            Dictionary<IndexPair, int> faceUseCounts = new Dictionary<KeyValuePair<Vector3, Vector3>, int>(indexData.Length, comparer);
+            var comparer = new IndexPairEqualityComparer();
+            var faceUseCounts = new Dictionary<IndexPair, int>(indexData.Length, comparer);
             for (int index = 0; index + 2 < indexData.Length; index += 3)
                 for (int vertI = 0; vertI < 3; ++vertI)
                 {
@@ -280,7 +246,7 @@ namespace AW2.Helpers
                     ++faceUseCounts[face];
                 }
 
-            List<Vector2> polyVertices = new List<Vector2>();
+            var polyVertices = new List<Vector2>();
             
             // Find first polygon vertex.
             Vector3 firstIndex = new Vector3(Single.NaN, Single.NaN, Single.NaN);
@@ -289,8 +255,8 @@ namespace AW2.Helpers
             foreach (KeyValuePair<IndexPair, int> faceUseCount in faceUseCounts)
                 if (faceUseCount.Value == 1)
                 {
-                    prevIndex = firstIndex = faceUseCount.Key.Key;
-                    nextIndex = faceUseCount.Key.Value;
+                    prevIndex = firstIndex = faceUseCount.Key.Item1;
+                    nextIndex = faceUseCount.Key.Item2;
                     polyVertices.Add(new Vector2(firstIndex.X, firstIndex.Y));
                     break;
                 }
@@ -300,26 +266,25 @@ namespace AW2.Helpers
             {
                 bool foundNext = false;
                 foreach (KeyValuePair<IndexPair, int> faceUseCount in faceUseCounts)
-                    if (faceUseCount.Value == 1 && faceUseCount.Key.Key.Equals(nextIndex)
-                        && !faceUseCount.Key.Value.Equals(prevIndex))
+                    if (faceUseCount.Value == 1 && faceUseCount.Key.Item1.Equals(nextIndex)
+                        && !faceUseCount.Key.Item2.Equals(prevIndex))
                     {
                         polyVertices.Add(new Vector2(nextIndex.X, nextIndex.Y));
                         prevIndex = nextIndex;
-                        nextIndex = faceUseCount.Key.Value;
+                        nextIndex = faceUseCount.Key.Item2;
                         foundNext = true;
                         break;
                     }
-                    else if (faceUseCount.Value == 1 && faceUseCount.Key.Value.Equals(nextIndex)
-                        && !faceUseCount.Key.Key.Equals(prevIndex))
+                    else if (faceUseCount.Value == 1 && faceUseCount.Key.Item2.Equals(nextIndex)
+                        && !faceUseCount.Key.Item1.Equals(prevIndex))
                 {
                     polyVertices.Add(new Vector2(nextIndex.X, nextIndex.Y));
                     prevIndex = nextIndex;
-                    nextIndex = faceUseCount.Key.Key;
+                    nextIndex = faceUseCount.Key.Item1;
                     foundNext = true;
                     break;
                 }
-                if (!foundNext)
-                    throw new ArgumentException("Unable to find outline for 3D model");
+                if (!foundNext) throw new ArgumentException("Unable to find outline for 3D model");
             }
 
             return new Polygon(polyVertices.ToArray());

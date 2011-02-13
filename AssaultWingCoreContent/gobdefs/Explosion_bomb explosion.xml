@@ -4,7 +4,7 @@
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
    </networkUpdatePeriod>
-  <impactHoleRadius>27</impactHoleRadius>
+  <impactHoleRadius>42</impactHoleRadius>
   <particleEngineNames>
       <Item>fragments</Item>
       <Item>explo shockwave</Item>

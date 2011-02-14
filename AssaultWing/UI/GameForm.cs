@@ -37,7 +37,7 @@ namespace AW2.UI
         private AWGameRunner _runner;
         private GraphicsDeviceService _graphicsDeviceService;
         private string[] _commandLineArgs;
-        
+
         private bool _isFullScreen;
         private int _isChangingFullScreen;
         private FormParameters _previousWindowedModeParameters;
@@ -78,12 +78,51 @@ namespace AW2.UI
             base.Dispose();
         }
 
+        public void SetWindowed()
+        {
+            if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
+            try
+            {
+                if (!_isFullScreen) return;
+                _runner.Pause();
+                Application.DoEvents();
+                _isFullScreen = false;
+                _graphicsDeviceService.SetWindowed();
+                SetFormParameters(_previousWindowedModeParameters);
+                _splitContainer.Visible = true;
+                _runner.Resume();
+            }
+            finally
+            {
+                _isChangingFullScreen = 0;
+            }
+        }
+
+        public void SetFullScreen(int width, int height)
+        {
+            if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
+            try
+            {
+                if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;
+                _runner.Pause();
+                Application.DoEvents();
+                if (!_isFullScreen) _previousWindowedModeParameters = GetCurrentFormParameters();
+                _isFullScreen = true;
+                _splitContainer.Visible = false;
+                SetFormParameters(GetFullScreenFormParameters(width, height));
+                _graphicsDeviceService.SetFullScreen(width, height);
+                _runner.Resume();
+            }
+            finally
+            {
+                _isChangingFullScreen = 0;
+            }
+        }
+
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
-#if !DEBUG
-            SetFullScreen(_game.Settings.Graphics.FullscreenWidth, _game.Settings.Graphics.FullscreenHeight);
-#endif
+            ApplyGraphicsSettings();
             _runner.Run();
         }
 
@@ -156,12 +195,15 @@ namespace AW2.UI
             AssaultWingCore.Instance = _game; // HACK: support older code that uses the static instance
             _game.CommandLineOptions = new CommandLineOptions(args);
             _game.Window = new Window(
-                () => Text,
-                text => BeginInvoke((Action)(() => Text = text)),
-                () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height),
-                () => _isFullScreen,
-                () => BeginInvoke((Action)(() => SetWindowed())),
-                (width, height) => BeginInvoke((Action)(() => SetFullScreen(width, height))));
+                getTitle: () => Text,
+                setTitle: text => BeginInvoke((Action)(() => Text = text)),
+                getClientBounds: () => new Rectangle(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height),
+                getFullScreen: () => _isFullScreen,
+                setWindowed: () => BeginInvoke((Action)(() => SetWindowed())),
+                setFullScreen: (width, height) => BeginInvoke((Action)(() => SetFullScreen(width, height))),
+                isVerticalSynced: () => _graphicsDeviceService.IsVerticalSynced,
+                enableVerticalSync: _graphicsDeviceService.EnableVerticalSync,
+                disableVerticalSync: _graphicsDeviceService.DisableVerticalSync);
             _gameView.Draw += _game.Draw;
             _gameView.Resize += (sender, eventArgs) => _game.DataEngine.RearrangeViewports();
         }
@@ -185,45 +227,16 @@ namespace AW2.UI
                 gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
         }
 
-        public void SetWindowed()
+        private void ApplyGraphicsSettings()
         {
-            if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
-            try
-            {
-                if (!_isFullScreen) return;
-                _runner.Pause();
-                Application.DoEvents();
-                _isFullScreen = false;
-                _graphicsDeviceService.ResetDevice(_previousWindowedModeParameters.Size.Width, _previousWindowedModeParameters.Size.Height, false);
-                SetFormParameters(_previousWindowedModeParameters);
-                _splitContainer.Visible = true;
-                _runner.Resume();
-            }
-            finally
-            {
-                _isChangingFullScreen = 0;
-            }
-        }
-
-        public void SetFullScreen(int width, int height)
-        {
-            if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
-            try
-            {
-                if (_isFullScreen && width == ClientSize.Width && height == ClientSize.Height) return;
-                _runner.Pause();
-                Application.DoEvents();
-                if (!_isFullScreen) _previousWindowedModeParameters = GetCurrentFormParameters();
-                _isFullScreen = true;
-                _splitContainer.Visible = false;
-                SetFormParameters(GetFullScreenFormParameters(width, height));
-                _graphicsDeviceService.ResetDevice(width, height, true);
-                _runner.Resume();
-            }
-            finally
-            {
-                _isChangingFullScreen = 0;
-            }
+            var gfxSetup = _game.Settings.Graphics;
+            if (gfxSetup.IsVerticalSynced)
+                _graphicsDeviceService.EnableVerticalSync();
+            else
+                _graphicsDeviceService.DisableVerticalSync();
+#if !DEBUG
+            SetFullScreen(gfxSetup.FullscreenWidth, gfxSetup.FullscreenHeight);
+#endif
         }
 
         private static FormParameters GetFullScreenFormParameters(int width, int height)

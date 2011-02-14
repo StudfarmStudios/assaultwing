@@ -35,10 +35,23 @@ namespace AW2.Core
         public event EventHandler<EventArgs> DeviceResetting;
 
         public GraphicsDevice GraphicsDevice { get; private set; }
+        public bool IsVerticalSynced { get { return _parameters.PresentationInterval != PresentInterval.Immediate; } }
 
         public GraphicsDeviceService(IntPtr windowHandle)
         {
-            SetWindow(windowHandle);
+            var screenBounds = System.Windows.Forms.Screen.FromHandle(windowHandle).Bounds;
+            _parameters = new PresentationParameters
+            {
+                BackBufferWidth = screenBounds.Width,
+                BackBufferHeight = screenBounds.Height,
+                BackBufferFormat = SurfaceFormat.Color,
+                DepthStencilFormat = DepthFormat.Depth24,
+                DeviceWindowHandle = windowHandle,
+                IsFullScreen = false,
+                PresentationInterval = PresentInterval.Immediate,
+            };
+            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.Reach, _parameters);
+            if (DeviceCreated != null) DeviceCreated(this, EventArgs.Empty);
         }
 
         public void Dispose()
@@ -48,17 +61,35 @@ namespace AW2.Core
             GraphicsDevice = null;
         }
 
-        /// <summary>
-        /// Resets the graphics device to whichever is bigger out of the specified
-        /// resolution or its current size. This behavior means the device will
-        /// demand-grow to the largest of all its GraphicsDeviceControl clients.
-        /// </summary>
-        public void ResetDevice(int width, int height, bool isFullscreen)
+        public void SetFullScreen(int width, int height)
+        {
+            _parameters.BackBufferWidth = width;
+            _parameters.BackBufferHeight = height;
+            _parameters.IsFullScreen = true;
+            ResetDevice();
+        }
+
+        public void SetWindowed()
+        {
+            _parameters.IsFullScreen = false;
+            ResetDevice();
+        }
+
+        public void EnableVerticalSync()
+        {
+            _parameters.PresentationInterval = PresentInterval.One;
+            ResetDevice();
+        }
+
+        public void DisableVerticalSync()
+        {
+            _parameters.PresentationInterval = PresentInterval.Immediate;
+            ResetDevice();
+        }
+
+        private void ResetDevice()
         {
             if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
-            _parameters.BackBufferWidth = isFullscreen ? width : Math.Max(_parameters.BackBufferWidth, width);
-            _parameters.BackBufferHeight = isFullscreen ? height : Math.Max(_parameters.BackBufferHeight, height);
-            _parameters.IsFullScreen = isFullscreen;
             GraphicsDevice.Reset(_parameters);
             if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
         }
@@ -136,7 +167,7 @@ namespace AW2.Core
             {
                 try
                 {
-                    ResetDevice(clientSize.Width, clientSize.Height, isFullscreen);
+                    EnsureBackBufferSize(clientSize.Width, clientSize.Height);
                 }
                 catch (Exception e)
                 {
@@ -166,22 +197,11 @@ namespace AW2.Core
             }
         }
 
-        private void SetWindow(IntPtr windowHandle)
+        private void EnsureBackBufferSize(int width, int height)
         {
-            var screenBounds = System.Windows.Forms.Screen.FromHandle(windowHandle).Bounds;
-            _parameters = new PresentationParameters
-            {
-                BackBufferWidth = screenBounds.Width,
-                BackBufferHeight = screenBounds.Height,
-                BackBufferFormat = SurfaceFormat.Color,
-                DepthStencilFormat = DepthFormat.Depth24,
-                DeviceWindowHandle = windowHandle,
-                IsFullScreen = false,
-                PresentationInterval = PresentInterval.Immediate,
-            };
-            if (GraphicsDevice != null) GraphicsDevice.Dispose();
-            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.Reach, _parameters);
-            if (DeviceCreated != null) DeviceCreated(this, EventArgs.Empty);
+            _parameters.BackBufferWidth = Math.Max(_parameters.BackBufferWidth, width);
+            _parameters.BackBufferHeight = Math.Max(_parameters.BackBufferHeight, height);
+            ResetDevice();
         }
     }
 }

@@ -303,12 +303,15 @@ namespace AW2.UI.WPF
         {
             _game = new AssaultWingCore(_graphicsDeviceService);
             _game.Window = new Core.Window(
-                () => Title,
-                text => Dispatcher.Invoke((Action)(() => Title = text)),
-                () => new Rectangle(ArenaView.Bounds.X, ArenaView.Bounds.Y, ArenaView.Bounds.Width, ArenaView.Bounds.Height),
-                () => false,
-                () => { },
-                (width, height) => { });
+                getTitle: () => Title,
+                setTitle: text => Dispatcher.Invoke((Action)(() => Title = text)),
+                getClientBounds: () => new Rectangle(ArenaView.Bounds.X, ArenaView.Bounds.Y, ArenaView.Bounds.Width, ArenaView.Bounds.Height),
+                getFullScreen: () => false,
+                setWindowed: () => { },
+                setFullScreen: (width, height) => { },
+                isVerticalSynced: () => false,
+                enableVerticalSync: () => { },
+                disableVerticalSync: () => { });
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
             _game.CommandLineOptions = new CommandLineOptions(args);
             _game.SoundEngine.Enabled = false;

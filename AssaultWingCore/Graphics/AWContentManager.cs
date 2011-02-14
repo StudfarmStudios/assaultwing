@@ -73,7 +73,7 @@ namespace AW2.Graphics
         private static string GetAssetFullName<T>(string assetName)
         {
             string assetFullName;
-            if (assetName.Contains('\\'))
+            if (assetName.Contains(@"\"))
                 assetFullName = assetName;
             else
             {

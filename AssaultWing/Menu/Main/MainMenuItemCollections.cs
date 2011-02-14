@@ -104,6 +104,11 @@ namespace AW2.Menu.Main
                     menuEngine.Game.Settings.Graphics.FullscreenWidth = size.Item1;
                     menuEngine.Game.Settings.Graphics.FullscreenHeight = size.Item2;
                 }));
+            SetupItems.Add(GetSetupItem(menuEngine,
+                string.Format("Vertical sync {0}", menuEngine.Game.Settings.Graphics.IsVerticalSynced),
+                new[] { false, true },
+                () => menuEngine.Game.Settings.Graphics.IsVerticalSynced,
+                vsync => menuEngine.Game.Settings.Graphics.IsVerticalSynced = vsync));
         }
 
         private MainMenuItem GetSetupItemBase(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft = null)

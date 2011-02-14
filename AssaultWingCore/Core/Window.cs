@@ -18,9 +18,13 @@ namespace AW2.Core
         public bool IsFullScreen { get { return _getFullScreen(); } }
         public Action SetWindowed { get; private set; }
         public Action<int, int> SetFullScreen { get; private set; }
+        public Func<bool> IsVerticalSynced { get; private set; }
+        public Action EnableVerticalSync { get; private set; }
+        public Action DisableVerticalSync { get; private set; }
 
         public Window(Func<string> getTitle, Action<string> setTitle, Func<Rectangle> getClientBounds,
-            Func<bool> getFullScreen, Action setWindowed, Action<int, int> setFullScreen)
+            Func<bool> getFullScreen, Action setWindowed, Action<int, int> setFullScreen, Func<bool> isVerticalSynced,
+            Action enableVerticalSync, Action disableVerticalSync)
         {
             _getTitle = getTitle;
             _setTitle = setTitle;
@@ -28,6 +32,9 @@ namespace AW2.Core
             _getFullScreen = getFullScreen;
             SetWindowed = setWindowed;
             SetFullScreen = setFullScreen;
+            IsVerticalSynced = isVerticalSynced;
+            EnableVerticalSync = enableVerticalSync;
+            DisableVerticalSync = disableVerticalSync;
         }
     }
 }

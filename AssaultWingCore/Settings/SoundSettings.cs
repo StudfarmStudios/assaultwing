@@ -17,8 +17,8 @@ namespace AW2.Settings
 
         public void Reset()
         {
-            SoundVolume = 0.25f;
-            MusicVolume = 0.35f;
+            SoundVolume = 0.8f;
+            MusicVolume = 0.8f;
         }
     }
 }

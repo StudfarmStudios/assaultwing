@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Explosion, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName>rocket explosion</typeName>
-  <networkUpdatePeriod>
+  <typeName>berserker explosion</typeName>
+   <networkUpdatePeriod>
       <ticks>10000000</ticks>
-  </networkUpdatePeriod>
-  <impactHoleRadius>24</impactHoleRadius>
+   </networkUpdatePeriod>
+  <impactHoleRadius>27</impactHoleRadius>
   <particleEngineNames>
       <Item>fragments</Item>
       <Item>explo shockwave</Item>
@@ -14,7 +14,7 @@
       <Item>explo smoke</Item>
       <Item>explo dots</Item>
   </particleEngineNames>
-  <sound>MissileHit</sound>
+  <sound>Explosion</sound>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
       <type>None</type>
@@ -24,7 +24,7 @@
   <mass>1</mass>
   <modelName>dummymodel</modelName>
   <scale>1.0</scale>
-  <maxDamage>70</maxDamage>
+  <maxDamage>100</maxDamage>
   <birthGobTypes>
   </birthGobTypes>
   <exhaustEngineNames>
@@ -43,7 +43,7 @@
                <X>0</X>
                <Y>0</Y>
             </center>
-            <radius>130</radius>
+            <radius>150</radius>
             <boundingBox>
                <min>
                   <X>0</X>
@@ -67,7 +67,7 @@
                <X>0</X>
                <Y>0</Y>
             </center>
-            <radius>140</radius>
+            <radius>170</radius>
             <boundingBox>
                <min>
                   <X>0</X>
@@ -87,16 +87,16 @@
       <keys>
          <Item>
             <position>0</position>
-            <internalValue>20</internalValue>
+            <internalValue>40</internalValue>
             <tangentOut>0</tangentOut>
             <tangentIn>0</tangentIn>
             <continuity>Smooth</continuity>
          </Item>
          <Item>
-            <position>130</position>
+            <position>150</position>
             <internalValue>0</internalValue>
-            <tangentOut>-2</tangentOut>
-            <tangentIn>-2</tangentIn>
+            <tangentOut>0</tangentOut>
+            <tangentIn>-40</tangentIn>
             <continuity>Smooth</continuity>
          </Item>
       </keys>
@@ -108,8 +108,8 @@
       <keys>
          <Item>
             <position>0</position>
-            <internalValue>1000</internalValue>
-            <tangentOut>-1500</tangentOut>
+            <internalValue>2000</internalValue>
+            <tangentOut>-2000</tangentOut>
             <tangentIn>0</tangentIn>
             <continuity>Smooth</continuity>
          </Item>
@@ -117,7 +117,7 @@
             <position>170</position>
             <internalValue>0</internalValue>
             <tangentOut>0</tangentOut>
-            <tangentIn>-1500</tangentIn>
+            <tangentIn>-2000</tangentIn>
             <continuity>Smooth</continuity>
          </Item>
       </keys>

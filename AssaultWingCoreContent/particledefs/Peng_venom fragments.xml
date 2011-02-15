@@ -21,7 +21,6 @@
          <Item>p_snakehaze</Item>
       </textureNames>
       <gobTypeNames>
-      <!--<Item type="&string;">bullet cinder</Item>-->
     </gobTypeNames>
       <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
         <value>90</value>

@@ -14,7 +14,6 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
-using AW2.UI.Mouse;
 
 namespace AW2.Core
 {
@@ -139,57 +138,12 @@ namespace AW2.Core
             DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "reverse thruster", "blink" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "mines" };
 
-            // Hardcoded for now!!!
-
-            var leftKeyboardControls = new PlayerControls
-            {
-                Thrust = new KeyboardKey(Keys.Up),
-                Left = new KeyboardKey(Keys.Left),
-                Right = new KeyboardKey(Keys.Right),
-                Down = new KeyboardKey(Keys.Down),
-                Fire1 = new KeyboardKey(Keys.RightControl),
-                Fire2 = new KeyboardKey(Keys.RightShift),
-                Extra = new KeyboardKey(Keys.Down),
-            };
-            var rightKeyboardControls = new PlayerControls
-            {
-                Thrust = new KeyboardKey(Keys.W),
-                Left = new KeyboardKey(Keys.A),
-                Right = new KeyboardKey(Keys.D),
-                Down = new KeyboardKey(Keys.X),
-                Fire1 = new KeyboardKey(Keys.LeftControl),
-                Fire2 = new KeyboardKey(Keys.LeftShift),
-                Extra = new KeyboardKey(Keys.X),
-            };
-            var middleKeyboardControls = new PlayerControls
-            {
-                Thrust = new KeyboardKey(Keys.I),
-                Left = new KeyboardKey(Keys.J),
-                Right = new KeyboardKey(Keys.L),
-                Down = new KeyboardKey(Keys.M),
-                Fire1 = new KeyboardKey(Keys.B),
-                Fire2 = new KeyboardKey(Keys.N),
-                Extra = new KeyboardKey(Keys.M),
-            };
-#if false
-            var mouseControls = new PlayerControls
-            {
-                //Thrust = new MouseDirection(MouseDirections.Up, 2, 7, 5),
-                Thrust = new MouseButton(MouseButtons.Left),
-                Left = new MouseDirection(MouseDirections.Left, 2, 9, 5),
-                Right = new MouseDirection(MouseDirections.Right, 2, 9, 5),
-                Down = new MouseDirection(MouseDirections.Down, 2, 12, 5),
-                //Fire1 = new MouseDirection(MouseDirections.Down, 0, 12, 20),
-                //Fire2 = new MouseButton(MouseButtons.Right),
-                Fire1 = new MouseWheelDirection(MouseWheelDirections.Forward, 0, 1, 1),
-                Fire2 = new MouseWheelDirection(MouseWheelDirections.Backward, 0, 1, 1),
-                Extra = new KeyboardKey(Keys.CapsLock),
-            };
-            UIEngine.MouseControlsEnabled = true;
-#endif
-            DataEngine.Spectators.Add(new Player(this, "Newbie", (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster", leftKeyboardControls));
-            DataEngine.Spectators.Add(new Player(this, "Lamer", (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", rightKeyboardControls));
-            // DataEngine.Spectators.Add(new Player(this, "Loser", (CanonicalString)"Plissken", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster", middleKeyboardControls));
+            DataEngine.Spectators.Add(new Player(this, "Newbie",
+                (CanonicalString)"Windlord", (CanonicalString)"rockets", (CanonicalString)"reverse thruster",
+                PlayerControls.FromSettings(Settings.Controls.Player1)));
+            DataEngine.Spectators.Add(new Player(this, "Lamer",
+                (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"reverse thruster",
+                PlayerControls.FromSettings(Settings.Controls.Player2)));
 
             GameState = GameState.Intro;
             base.BeginRun();

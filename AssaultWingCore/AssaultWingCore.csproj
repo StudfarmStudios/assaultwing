@@ -274,6 +274,7 @@
     <Compile Include="Helpers\SpatialGrid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\AWSettings.cs" />
+    <Compile Include="Settings\ControlsSettings.cs" />
     <Compile Include="Settings\GraphicsSettings.cs" />
     <Compile Include="Settings\NetSettings.cs" />
     <Compile Include="Settings\SoundSettings.cs" />
@@ -291,12 +292,6 @@
     <Compile Include="UI\EditableText.cs" />
     <Compile Include="UI\InputState.cs" />
     <Compile Include="UI\Keyboard.cs" />
-    <Compile Include="UI\Mouse\MouseButton.cs" />
-    <Compile Include="UI\Mouse\MouseButtons.cs" />
-    <Compile Include="UI\Mouse\MouseDirection.cs" />
-    <Compile Include="UI\Mouse\MouseDirections.cs" />
-    <Compile Include="UI\Mouse\MouseWheelDirection.cs" />
-    <Compile Include="UI\Mouse\MouseWheelDirections.cs" />
     <Compile Include="UI\MultiControl.cs" />
     <Compile Include="UI\PlayerControls.cs" />
     <Compile Include="UI\PlayerControlType.cs" />

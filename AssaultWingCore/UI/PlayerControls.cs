@@ -1,4 +1,5 @@
 using System;
+using AW2.Settings;
 
 namespace AW2.UI
 {
@@ -65,6 +66,20 @@ namespace AW2.UI
                     default: throw new ArgumentException("Unknown control type " + Enum.GetName(typeof(PlayerControlType), type));
                 }
             }
+        }
+
+        public static PlayerControls FromSettings(PlayerControlsSettings settings)
+        {
+            return new PlayerControls
+            {
+                Thrust = settings.Thrust.GetControl(),
+                Left = settings.Left.GetControl(),
+                Right = settings.Right.GetControl(),
+                Down = settings.Down.GetControl(),
+                Fire1 = settings.Fire1.GetControl(),
+                Fire2 = settings.Fire2.GetControl(),
+                Extra = settings.Extra.GetControl(),
+            };
         }
 
         public ControlState[] GetStates()

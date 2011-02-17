@@ -11,10 +11,12 @@ namespace AW2.Settings
         private SoundSettings _sound;
         private NetSettings _net;
         private GraphicsSettings _graphics;
+        private ControlsSettings _controls;
 
         public SoundSettings Sound { get { return _sound; } private set { _sound = value; } }
         public NetSettings Net { get { return _net; } private set { _net = value; } }
         public GraphicsSettings Graphics { get { return _graphics; } private set { _graphics = value; } }
+        public ControlsSettings Controls { get { return _controls; } private set { _controls = value; } }
 
         private static string SettingsDirectory
         {
@@ -59,6 +61,7 @@ namespace AW2.Settings
             Sound = new SoundSettings();
             Net = new NetSettings();
             Graphics = new GraphicsSettings();
+            Controls = new ControlsSettings();
         }
 
         public void ToFile()

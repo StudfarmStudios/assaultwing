@@ -10,6 +10,11 @@ namespace AW2.Settings
 
         public NetSettings()
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
             _managementServerAddress = "vs1164254.server4you.net";
         }
     }

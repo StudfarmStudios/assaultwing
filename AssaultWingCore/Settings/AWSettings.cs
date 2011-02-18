@@ -68,5 +68,13 @@ namespace AW2.Settings
         {
             TypeLoader.SaveTemplate(this, SettingsFilename, typeof(AWSettings), null);
         }
+
+        public void Reset()
+        {
+            Sound.Reset();
+            Net.Reset();
+            Graphics.Reset();
+            Controls.Reset();
+        }
     }
 }

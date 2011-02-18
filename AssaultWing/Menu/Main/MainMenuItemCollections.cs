@@ -8,6 +8,7 @@ using AW2.Helpers;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Settings;
+using AW2.UI;
 
 namespace AW2.Menu.Main
 {
@@ -80,11 +81,11 @@ namespace AW2.Menu.Main
         private void RefreshSetupItems(MenuEngineImpl menuEngine)
         {
             SetupItems.Clear();
-            SetupItems.Add(GetSetupItemBase(menuEngine, () => "Reset to defaults", component =>
-                {
-                    menuEngine.Game.Settings.Sound.Reset();
-                    menuEngine.Game.Settings.Graphics.Reset();
-                }));
+            SetupItems.Add(GetSetupItemBase(menuEngine, () => "Reset all settings to defaults",
+                component => _menuEngine.Game.ShowDialog(new CustomOverlayDialogData(_menuEngine.Game,
+                    "Are you sure to reset all settings\nto their defaults? (Yes/No)",
+                    new TriggeredCallback(TriggeredCallback.GetYesControl(), menuEngine.Game.Settings.Reset),
+                    new TriggeredCallback(TriggeredCallback.GetNoControl(), () => {})))));
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => GetSetupItem(menuEngine,
                 () => string.Format("{0} {1:0} %", name, get() * 100),
                 Enumerable.Range(0, 21).Select(x => x * 0.05f),

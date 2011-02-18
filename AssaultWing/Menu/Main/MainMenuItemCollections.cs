@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Core.OverlayDialogs;
 using AW2.Helpers;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
+using AW2.Settings;
 
 namespace AW2.Menu.Main
 {
@@ -36,14 +38,14 @@ namespace AW2.Menu.Main
             _menuEngine = menuEngine;
             InitializeStartItems(menuEngine);
             var lastUpdate = TimeSpan.Zero;
-            NetworkItems = new MainMenuItemCollection("Battlefront Menu");
+            NetworkItems = new MainMenuItemCollection("Play at the Battlefront");
             NetworkItems.Update = () =>
             {
                 if (lastUpdate.SecondsAgoRealTime() < 15) return;
                 lastUpdate = _menuEngine.Game.GameTime.TotalRealTime;
                 RefreshNetworkItems();
             };
-            SetupItems = new MainMenuItemCollection("Setup Menu");
+            SetupItems = new MainMenuItemCollection("General Setup");
             RefreshSetupItems(menuEngine);
         }
 
@@ -58,9 +60,9 @@ namespace AW2.Menu.Main
         private void InitializeStartItems(MenuEngineImpl menuEngine)
         {
             StartItems = new MainMenuItemCollection("Start Menu");
-            StartItems.Add(new MainMenuItem(menuEngine, "Play Local",
+            StartItems.Add(new MainMenuItem(menuEngine, () => "Play Local",
                 component => component.MenuEngine.ActivateComponent(MenuComponentType.Equip)));
-            StartItems.Add(new MainMenuItem(menuEngine, "Play at the Battlefront",
+            StartItems.Add(new MainMenuItem(menuEngine, () => "Play at the Battlefront",
                 component =>
                 {
                     menuEngine.Game.NetworkEngine.ConnectToManagementServer();
@@ -69,22 +71,22 @@ namespace AW2.Menu.Main
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
                 }));
-            StartItems.Add(new MainMenuItem(menuEngine, "Setup",
+            StartItems.Add(new MainMenuItem(menuEngine, () => "Setup",
                 component => component.SetItems(SetupItems)));
-            StartItems.Add(new MainMenuItem(menuEngine, "Quit",
+            StartItems.Add(new MainMenuItem(menuEngine, () => "Quit",
                 component => AssaultWingProgram.Instance.Exit()));
         }
 
         private void RefreshSetupItems(MenuEngineImpl menuEngine)
         {
             SetupItems.Clear();
-            SetupItems.Add(GetSetupItemBase(menuEngine, "Reset to defaults", component =>
+            SetupItems.Add(GetSetupItemBase(menuEngine, () => "Reset to defaults", component =>
                 {
                     menuEngine.Game.Settings.Sound.Reset();
                     menuEngine.Game.Settings.Graphics.Reset();
                 }));
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => GetSetupItem(menuEngine,
-                string.Format("{0} {1:0} %", name, get() * 100),
+                () => string.Format("{0} {1:0} %", name, get() * 100),
                 Enumerable.Range(0, 21).Select(x => x * 0.05f),
                 get, set);
             SetupItems.Add(getVolumeSetupItem("Music volume",
@@ -96,7 +98,7 @@ namespace AW2.Menu.Main
             Func<int> curWidth = () => menuEngine.Game.Settings.Graphics.FullscreenWidth;
             Func<int> curHeight = () => menuEngine.Game.Settings.Graphics.FullscreenHeight;
             SetupItems.Add(GetSetupItem(menuEngine,
-                string.Format("Fullscreen resolution {0}x{1}", curWidth(), curHeight()),
+                () => string.Format("Fullscreen resolution {0}x{1}", curWidth(), curHeight()),
                 GetDisplayModes(),
                 () => Tuple.Create(curWidth(), curHeight()),
                 size =>
@@ -105,37 +107,40 @@ namespace AW2.Menu.Main
                     menuEngine.Game.Settings.Graphics.FullscreenHeight = size.Item2;
                 }));
             SetupItems.Add(GetSetupItem(menuEngine,
-                string.Format("Vertical sync {0}", menuEngine.Game.Settings.Graphics.IsVerticalSynced),
+                () => string.Format("Vertical sync {0}", menuEngine.Game.Settings.Graphics.IsVerticalSynced ? "Enabled" : "Disabled"),
                 new[] { false, true },
                 () => menuEngine.Game.Settings.Graphics.IsVerticalSynced,
                 vsync => menuEngine.Game.Settings.Graphics.IsVerticalSynced = vsync));
+            SetupItems.Add(GetSetupItemBase(menuEngine, () => "Player 1 controls...",
+                component => component.SetItems(GetControlsItems(menuEngine, menuEngine.Game.Settings.Controls.Player1))));
+            SetupItems.Add(GetSetupItemBase(menuEngine, () => "Player 2 controls...",
+                component => component.SetItems(GetControlsItems(menuEngine, menuEngine.Game.Settings.Controls.Player2))));
         }
 
-        private MainMenuItem GetSetupItemBase(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft = null)
+        private MainMenuItem GetSetupItemBase(MenuEngineImpl menuEngine, Func<string> getName, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft = null)
         {
             Func<Action<MainMenuComponent>, Action<MainMenuComponent>> decorateAction = plainAction => component =>
             {
                 plainAction(component);
-                RefreshSetupItems(menuEngine);
                 menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
             };
-            return new MainMenuItem(menuEngine, name, decorateAction(action), decorateAction(actionLeft ?? (x => { })));
+            return new MainMenuItem(menuEngine, getName, decorateAction(action), decorateAction(actionLeft ?? (x => { })));
         }
 
-        private MainMenuItem GetSetupItem<T>(MenuEngineImpl menuEngine, string name, IEnumerable<T> items, Func<T> get, Action<T> set)
+        private MainMenuItem GetSetupItem<T>(MenuEngineImpl menuEngine, Func<string> getName, IEnumerable<T> items, Func<T> get, Action<T> set)
         {
             Action<IEnumerable<T>> chooseNext = orderedItems =>
             {
                 var remainingItems = orderedItems.SkipWhile(x => !x.Equals(get())).Skip(1);
                 set(remainingItems.Any() ? remainingItems.First() : orderedItems.Last());
             };
-            return GetSetupItemBase(menuEngine, name, component => chooseNext(items), component => chooseNext(items.Reverse()));
+            return GetSetupItemBase(menuEngine, getName, component => chooseNext(items), component => chooseNext(items.Reverse()));
         }
 
         private void RefreshNetworkItems()
         {
             NetworkItems.Clear();
-            NetworkItems.Add(new MainMenuItem(_menuEngine, "Play as Server",
+            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Play as Server",
                 component =>
                 {
                     if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
@@ -151,18 +156,39 @@ namespace AW2.Menu.Main
         private void HandleGameServerListReply(GameServerListReply mess)
         {
             foreach (var server in mess.GameServers)
+            {
+                var menuItemText = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers);
+                var joinRequest = new JoinGameServerRequest
+                {
+                    GameServerManagementID = server.ManagementID,
+                    PrivateUDPEndPoint = _menuEngine.Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
+                };
                 NetworkItems.Add(new MainMenuItem(_menuEngine,
-                    string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers),
+                    () => menuItemText,
                     component =>
                     {
                         if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
-                        var joinRequest = new JoinGameServerRequest
-                        {
-                            GameServerManagementID = server.ManagementID,
-                            PrivateUDPEndPoint = _menuEngine.Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
-                        };
                         _menuEngine.Game.NetworkEngine.ManagementServerConnection.Send(joinRequest);
                     }));
+            }
+        }
+
+        private MainMenuItemCollection GetControlsItems(MenuEngineImpl menuEngine, PlayerControlsSettings controls)
+        {
+            var items = new MainMenuItemCollection("Controls Setup");
+            Func<string, Func<IControlType>, Action<IControlType>, MainMenuItem> getControlsItem = (name, get, set) =>
+                new MainMenuItem(menuEngine, () => string.Format("{0}    {1}", name, get()),
+                    component => menuEngine.Game.ShowDialog(
+                        new KeypressOverlayDialogData(menuEngine.Game, "Hit key for " + name,
+                            key => set(new KeyControlType(key)))));
+            items.Add(getControlsItem("Thrust", () => controls.Thrust, ctrl => controls.Thrust = ctrl));
+            items.Add(getControlsItem("Left", () => controls.Left, ctrl => controls.Left = ctrl));
+            items.Add(getControlsItem("Right", () => controls.Right, ctrl => controls.Right = ctrl));
+            items.Add(getControlsItem("Down", () => controls.Down, ctrl => controls.Down = ctrl));
+            items.Add(getControlsItem("Fire1", () => controls.Fire1, ctrl => controls.Fire1 = ctrl));
+            items.Add(getControlsItem("Fire2", () => controls.Fire2, ctrl => controls.Fire2 = ctrl));
+            items.Add(getControlsItem("Extra", () => controls.Extra, ctrl => controls.Extra = ctrl));
+            return items;
         }
     }
 }

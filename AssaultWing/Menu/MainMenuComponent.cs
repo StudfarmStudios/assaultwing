@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -107,6 +108,7 @@ namespace AW2.Menu
             {
                 MenuEngine.Game.CutNetworkConnections();
                 ApplyGraphicsSettings();
+                ApplyPlayerControlsSettings();
                 _currentItems = _itemCollections.StartItems;
             }));
         }
@@ -122,6 +124,13 @@ namespace AW2.Menu
             }
             if (gfxSetup.IsVerticalSynced && !window.IsVerticalSynced()) window.EnableVerticalSync();
             if (!gfxSetup.IsVerticalSynced && window.IsVerticalSynced()) window.DisableVerticalSync();
+        }
+
+        private void ApplyPlayerControlsSettings()
+        {
+            var players = MenuEngine.Game.DataEngine.Players;
+            var controls = new[] { MenuEngine.Game.Settings.Controls.Player1, MenuEngine.Game.Settings.Controls.Player2 };
+            players.Zip(controls, (plr, ctrls) => plr.Controls = PlayerControls.FromSettings(ctrls)).ToArray();
         }
 
         /// <summary>

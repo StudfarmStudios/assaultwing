@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Graphics;
 using AW2.UI;
@@ -35,9 +36,12 @@ namespace AW2.Core.OverlayDialogs
         /// </summary>
         public virtual void Update()
         {
-            bool goAway = false;
-            foreach (var action in _actions) goAway |= action.Update();
-            if (goAway) _game.HideDialog();
+            if (_actions.Any(action => action.Update())) Hide();
+        }
+
+        public void Hide()
+        {
+            _game.HideDialog();
         }
     }
 }

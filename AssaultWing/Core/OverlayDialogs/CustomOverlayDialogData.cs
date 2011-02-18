@@ -11,7 +11,6 @@ namespace AW2.Core.OverlayDialogs
     public class CustomOverlayDialogData : OverlayDialogData
     {
         private string _text;
-        private SpriteFont _font;
 
         /// <summary>
         /// Creates contents for an overlay dialog displaying arena over.
@@ -27,14 +26,10 @@ namespace AW2.Core.OverlayDialogs
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+            var font = AssaultWing.Instance.MenuEngine.MenuContent.FontBig;
             var textCenter = new Vector2(gfx.Viewport.Width, gfx.Viewport.Height) / 2;
-            var textSize = _font.MeasureString(_text);
-            spriteBatch.DrawString(_font, _text, (textCenter - textSize / 2).Round(), Color.White);
-        }
-
-        public override void LoadContent()
-        {
-            _font = AssaultWingCore.Instance.Content.Load<SpriteFont>("MenuFontBig");
+            var textSize = font.MeasureString(_text);
+            spriteBatch.DrawString(font, _text, (textCenter - textSize / 2).Round(), Color.White);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace AW2.Game
         /// <summary>
         /// The controls the player uses in menus and in game.
         /// </summary>
-        public PlayerControls Controls { get; private set; }
+        public PlayerControls Controls { get; set; }
 
         /// <summary>
         /// Does the spectator need a viewport on the game window.

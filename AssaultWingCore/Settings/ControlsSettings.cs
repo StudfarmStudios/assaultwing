@@ -22,6 +22,11 @@ namespace AW2.Settings
         {
             return new KeyboardKey(_key);
         }
+
+        public override string ToString()
+        {
+            return _key.ToString();
+        }
     }
 
     public class PlayerControlsSettings

@@ -21,7 +21,7 @@ namespace AW2.Menu.Main
         /// <summary>
         /// Visible name of the menu item.
         /// </summary>
-        public string Name { get; private set; }
+        public Func<string> Name { get; private set; }
 
         /// <summary>
         /// Action to perform on triggering the menu item or pressing Right on the menu item.
@@ -35,15 +35,15 @@ namespace AW2.Menu.Main
 
         protected SpriteFont Font { get { return _menuEngine.MenuContent.FontBig; } }
 
-        public MainMenuItem(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action)
-            : this(menuEngine, name, action, component => { })
+        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action<MainMenuComponent> action)
+            : this(menuEngine, getName, action, component => { })
         {
         }
 
-        public MainMenuItem(MenuEngineImpl menuEngine, string name, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft)
+        public MainMenuItem(MenuEngineImpl menuEngine, Func<string> getName, Action<MainMenuComponent> action, Action<MainMenuComponent> actionLeft)
         {
             _menuEngine = menuEngine;
-            Name = name;
+            Name = getName;
             Action = action;
             ActionLeft = actionLeft;
         }
@@ -52,7 +52,7 @@ namespace AW2.Menu.Main
 
         public virtual void Draw(SpriteBatch spriteBatch, Vector2 origin)
         {
-            Draw(spriteBatch, origin, Name);
+            Draw(spriteBatch, origin, Name());
         }
 
         public virtual void DrawHighlight(SpriteBatch spriteBatch, Vector2 origin)

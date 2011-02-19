@@ -53,7 +53,7 @@ namespace AW2.Graphics.OverlayComponents
 
             if (ScaleByDistance)
             {
-                var farDistance = AssaultWingCore.Instance.DataEngine.Arena.Dimensions.Length();
+                var farDistance = 4000;
                 var distance = Vector2.Distance(Gob.Pos, trackerPos);
                 scale = MathHelper.Max(0, (farDistance - distance) / farDistance);
             }

@@ -5,11 +5,16 @@ using AW2.Helpers.Serialization;
 
 namespace AW2.Settings
 {
+    [LimitedSerialization]
     public class AWSettings
     {
+        [TypeParameter]
         private SoundSettings _sound;
+        [TypeParameter]
         private NetSettings _net;
+        [TypeParameter]
         private GraphicsSettings _graphics;
+        [TypeParameter]
         private ControlsSettings _controls;
 
         public SoundSettings Sound { get { return _sound; } private set { _sound = value; } }
@@ -17,29 +22,27 @@ namespace AW2.Settings
         public GraphicsSettings Graphics { get { return _graphics; } private set { _graphics = value; } }
         public ControlsSettings Controls { get { return _controls; } private set { _controls = value; } }
 
-        public static string SettingsDirectory { get; set; }
+        private string Filename { get; set; }
 
-        private static string SettingsFilename { get { return Path.Combine(SettingsDirectory, "AssaultWing.config"); } }
+        private static string GetSettingsFilename(string directory) { return Path.Combine(directory, "AssaultWing.config"); }
 
-        public static AWSettings FromFile()
+        public static AWSettings FromFile(string directory)
         {
-            if (File.Exists(SettingsFilename))
+            var filename = GetSettingsFilename(directory);
+            if (File.Exists(filename))
             {
-                var settings = (AWSettings)TypeLoader.LoadTemplate(SettingsFilename, typeof(AWSettings), null, true);
-                if (settings != null) return settings;
-                Log.Write("Errors while reading settings from " + SettingsFilename);
+                var settings = (AWSettings)TypeLoader.LoadTemplate(filename, typeof(AWSettings), null, true);
+                if (settings != null)
+                {
+                    settings.Filename = filename;
+                    return settings;
+                }
+                Log.Write("Errors while reading settings from " + filename);
             }
-
-            // Create a new settings file
-            Log.Write("Creating a new settings file " + SettingsFilename);
-            var newSettings = new AWSettings();
+            Log.Write("Creating a new settings file " + filename);
+            var newSettings = new AWSettings { Filename = filename };
             newSettings.ToFile();
             return newSettings;
-        }
-
-        static AWSettings()
-        {
-            SettingsDirectory = Environment.CurrentDirectory;
         }
 
         public AWSettings()
@@ -52,7 +55,7 @@ namespace AW2.Settings
 
         public void ToFile()
         {
-            TypeLoader.SaveTemplate(this, SettingsFilename, typeof(AWSettings), null);
+            TypeLoader.SaveTemplate(this, Filename, typeof(AWSettings), typeof(TypeParameterAttribute));
         }
 
         public void Reset()

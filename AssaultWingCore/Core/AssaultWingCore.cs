@@ -126,12 +126,11 @@ namespace AW2.Core
         public AssaultWingCore(GraphicsDeviceService graphicsDeviceService)
             : base(graphicsDeviceService)
         {
-            Log.Write("Creating an Assault Wing instance");
+            Log.Write("Assault Wing version " + Version);
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
 
-            Log.Write("Loading settings from file");
-            AWSettings.SettingsDirectory = SettingsDirectory;
-            Settings = AWSettings.FromFile();
+            Log.Write("Loading settings from " + SettingsDirectory);
+            Settings = AWSettings.FromFile(SettingsDirectory);
             InitializeGraphics();
 
             NetworkMode = NetworkMode.Standalone;

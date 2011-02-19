@@ -15,7 +15,7 @@ namespace AW2
         private GameForm _form;
         private static string[] g_errorCaptions = new[]
         {
-            "Oops, something went wrong!",
+            "Oops, Assault Wing crashed!",
             "Wait... How did this happen?",
             "You found a bug, congratulations!"
         };
@@ -72,13 +72,14 @@ namespace AW2
         private static void ReportException(Exception e)
         {
             Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
+            var version = "Assault Wing " + AssaultWing.Instance.Version;
             var dateTime = DateTime.Now.ToUniversalTime().ToString("u");
             var computer = Environment.MachineName;
             var errorInfo = e.ToString();
             var caption = g_errorCaptions[RandomHelper.GetRandomInt(g_errorCaptions.Length)];
             var intro = "Want to send this automatic error report to the developers to help solve the problem?";
             var header = string.Format("{0} {1}", dateTime, computer);
-            var report = string.Format("{0} {1}\n{2}", dateTime, computer, errorInfo);
+            var report = string.Format("{0}\n{1} {2}\n{3}", version, dateTime, computer, errorInfo);
             var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
             if (result == DialogResult.Yes) SendMail(header, report);
         }

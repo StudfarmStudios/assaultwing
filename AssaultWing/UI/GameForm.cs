@@ -126,6 +126,16 @@ namespace AW2.UI
             _runner.Run();
         }
 
+        protected override void OnDeactivate(EventArgs e)
+        {
+            // Note: If GraphicsDevice is in fullscreen mode but Windows' focus is not on the game,
+            // subsequent calls to Gob.LoadContent fail for some reason so that the loaded 3D model
+            // is empty. (This happens even if the model is returned straight from the cache!) This
+            // seems to be a "feature" in XNA itself, as it is reproducible in a pristine XNA project.
+            if (_isFullScreen) SetWindowed();
+            base.OnDeactivate(e);
+        }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             // Constants from windows.h

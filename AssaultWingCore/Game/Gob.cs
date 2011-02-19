@@ -727,7 +727,6 @@ namespace AW2.Game
             LoadContent();
             if (Arena.IsForPlaying)
             {
-                InitializeModelCollisionAreas();
                 TransformUnmovableCollisionAreas();
                 CreateBirthGobs();
                 CreateModelBirthGobs();
@@ -818,9 +817,6 @@ namespace AW2.Game
             // Draw each mesh in the 3D model.
             foreach (var mesh in Model.Meshes)
             {
-                if (mesh.Name.StartsWith("mesh_Collision"))
-                    continue;
-
                 // Apply alpha.
                 float oldAlpha = 1;
                 if (_alpha < 1)
@@ -1289,21 +1285,6 @@ namespace AW2.Game
                     gob.LeaderBone = pos.Item2;
                     Arena.Gobs.Add(gob);
                 });
-            }
-        }
-
-        /// <summary>
-        /// Creates collision areas from specially named 3D model meshes.
-        /// </summary>
-        private void InitializeModelCollisionAreas()
-        {
-            var MESH_PREFIX = "mesh_Collision";
-            foreach (var mesh in Model.Meshes.Where(m => m.Name.StartsWith(MESH_PREFIX)))
-            {
-                var areaName = mesh.Name.Substring(MESH_PREFIX.Length);
-                var changeArea = _collisionAreas.FirstOrDefault(area => area.Name == areaName);
-                if (changeArea == null) throw new ApplicationException("Gob found collision mesh '" + areaName +"' that didn't match any collision area name");
-                changeArea.AreaGob = Graphics3D.GetOutline(mesh);
             }
         }
 

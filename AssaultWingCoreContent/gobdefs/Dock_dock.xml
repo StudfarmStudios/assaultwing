@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Dock, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName>dock</typeName>
-   <networkUpdatePeriod>
-      <ticks>10000000</ticks>
-   </networkUpdatePeriod>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
   <repairSpeed>100</repairSpeed>
   <weapon1ChargeSpeed>200</weapon1ChargeSpeed>
   <weapon2ChargeSpeed>200</weapon2ChargeSpeed>
@@ -12,7 +12,7 @@
   <modelName>dock</modelName>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>None</type>
+    <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <movable>true</movable>
@@ -22,53 +22,103 @@
   <deathGobTypes>
   </deathGobTypes>
   <collisionAreas>
-      <Item>
-         <type>PhysicalOtherUndamageableUnmovable</type>
-         <collidesAgainst>None</collidesAgainst>
-         <cannotOverlap>None</cannotOverlap>
-         <collisionMaterial>Rough</collisionMaterial>
-         <name>General</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <center>
-               <X>0</X>
-               <Y>0</Y>
-            </center>
-            <radius>300</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
-      </Item>
-      <Item>
-         <type>PhysicalOtherUndamageableUnmovable</type>
-         <collidesAgainst>None</collidesAgainst>
-         <cannotOverlap>PhysicalDamageable</cannotOverlap>
-         <collisionMaterial>Sticky</collisionMaterial>
-         <name>Dock</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <center>
-               <X>0</X>
-               <Y>300</Y>
-            </center>
-            <radius>200</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
-      </Item>
+    <Item>
+      <type>PhysicalOtherUndamageableUnmovable</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Rough</collisionMaterial>
+      <name>General</name>
+      <area type="AW2.Helpers.Geometric.Polygon">
+        <vertices>
+          <Item>
+            <X>-106.797379</X>
+            <Y>-17.9878712</Y>
+          </Item>
+          <Item>
+            <X>-108.02597</X>
+            <Y>-10.002039</Y>
+          </Item>
+          <Item>
+            <X>-66.25394</X>
+            <Y>26.2413425</Y>
+          </Item>
+          <Item>
+            <X>-74.23978</X>
+            <Y>30.5414047</Y>
+          </Item>
+          <Item>
+            <X>-74.23978</X>
+            <Y>44.05589</Y>
+          </Item>
+          <Item>
+            <X>-55.7333679</X>
+            <Y>49.76522</Y>
+          </Item>
+          <Item>
+            <X>58.8347549</X>
+            <Y>49.04113</Y>
+          </Item>
+          <Item>
+            <X>76.1755</X>
+            <Y>44.4515877</Y>
+          </Item>
+          <Item>
+            <X>76.26241</X>
+            <Y>31.7699928</Y>
+          </Item>
+          <Item>
+            <X>64.59081</X>
+            <Y>26.2413425</Y>
+          </Item>
+          <Item>
+            <X>108.205719</X>
+            <Y>-8.159159</Y>
+          </Item>
+          <Item>
+            <X>106.977142</X>
+            <Y>-18.6021671</Y>
+          </Item>
+          <Item>
+            <X>95.91983</X>
+            <Y>-22.2879353</Y>
+          </Item>
+          <Item>
+            <X>53.53351</X>
+            <Y>-54.2312546</Y>
+          </Item>
+          <Item>
+            <X>-54.5823441</X>
+            <Y>-51.77407</Y>
+          </Item>
+        </vertices>
+      </area>
+    </Item>
+    <Item>
+      <type>PhysicalOtherUndamageableUnmovable</type>
+      <collidesAgainst>None</collidesAgainst>
+      <cannotOverlap>PhysicalDamageable</cannotOverlap>
+      <collisionMaterial>Sticky</collisionMaterial>
+      <name>Dock</name>
+      <area type="AW2.Helpers.Geometric.Polygon">
+        <vertices>
+          <Item>
+            <X>57.74559</X>
+            <Y>49.4310226</Y>
+          </Item>
+          <Item>
+            <X>-55.27347</X>
+            <Y>49.8395271</Y>
+          </Item>
+          <Item>
+            <X>-49.58703</X>
+            <Y>60.489502</Y>
+          </Item>
+          <Item>
+            <X>51.39166</X>
+            <Y>60.8469276</Y>
+          </Item>
+        </vertices>
+      </area>
+    </Item>
   </collisionAreas>
 </GobType>

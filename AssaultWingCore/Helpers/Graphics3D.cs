@@ -200,15 +200,24 @@ namespace AW2.Helpers
         /// <summary>
         /// Finds out a polygonal outline for a 3D mesh.
         /// </summary>
+        /// <remarks>
+        /// <para>
         /// As the return value is only a simple polygon (and because of implementation
         /// details), the interior of the input should be simply connected, i.e. the
         /// model must define one piece without holes and without two pieces connected
         /// by a single vertex. Otherwise the return value is undefined (but will still
         /// try to be nice).
-        /// <param name="mesh">The 3D mesh.</param>
-        /// <returns>A polygonal outline for the 3D mesh.</returns>
+        /// </para>
+        /// <para>
+        /// Tip: To save a ModelMesh <c>mesh</c> as an outline in an XML file, try this in Visual Studio Immediate Window:
+        /// <code>System.Type.GetType("AW2.Helpers.Serialization.TypeLoader, AssaultWingCore").InvokeMember("SaveTemplate", System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public, null, null, new object[] { GetOutline(mesh), @"c:\temp\mesh_outline.xml", System.Type.GetType("AW2.Helpers.Geometric.IGeomPrimitive, AssaultWingCore"), System.Type.GetType("AW2.Helpers.Serialization.RuntimeStateAttribute, AssaultWingCore")})</code>
+        /// This can useful for creating collision areas from 3D model data.
+        /// </para>
+        /// </remarks>
         public static Polygon GetOutline(ModelMesh mesh)
         {
+            // Note: Don't delete this method even though it's not called from anywhere.
+            // It is a useful tool for converting 3D model meshes into collision area polygons.
             var vertexData = new List<VertexPositionNormalTexture>();
             var indexData = new List<short>();
             GetMeshData(mesh, vertexData, indexData);

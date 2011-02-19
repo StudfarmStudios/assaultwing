@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
@@ -49,7 +50,6 @@ namespace AW2.Menu
 
         private SpriteBatch _spriteBatch;
         private Texture2D _backgroundTexture;
-        private SpriteFont _smallFont;
 
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
         public MenuContent MenuContent { get; private set; }
@@ -133,7 +133,6 @@ namespace AW2.Menu
             _effect.VertexColorEnabled = true;
             _effect.TextureEnabled = false;
             _backgroundTexture = Game.Content.Load<Texture2D>("menu_rustywall_bg");
-            _smallFont = Game.Content.Load<SpriteFont>("MenuFontSmall");
 
             // Propagate LoadContent to other menu components that are known to
             // contain references to graphics content.
@@ -376,20 +375,21 @@ namespace AW2.Menu
         private void DrawStaticText()
         {
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-            _spriteBatch.DrawString(_smallFont, "4th Milestone 2010-05-15",
-                new Vector2(10, ViewportHeight - _smallFont.LineSpacing).Round(), Color.White);
+            var versionText = "Assault Wing " + Game.Version;
+            _spriteBatch.DrawString(MenuContent.FontSmall, versionText,
+                new Vector2(10, ViewportHeight - MenuContent.FontSmall.LineSpacing).Round(), Color.White);
             if (IsHelpTextVisible)
             {
                 var helpTextPos = new Vector2(
-                    (int)(((float)ViewportWidth - _smallFont.MeasureString(_helpText).X) / 2),
-                    ViewportHeight - _smallFont.LineSpacing);
-                _spriteBatch.DrawString(_smallFont, _helpText, helpTextPos.Round(), Color.White);
+                    (int)(((float)ViewportWidth - MenuContent.FontSmall.MeasureString(_helpText).X) / 2),
+                    ViewportHeight - MenuContent.FontSmall.LineSpacing);
+                _spriteBatch.DrawString(MenuContent.FontSmall, _helpText, helpTextPos.Round(), Color.White);
             }
-            string copyrightText = "Studfarm Studios";
+            var copyrightText = "Studfarm Studios";
             var copyrightTextPos = new Vector2(
-                ViewportWidth - (int)_smallFont.MeasureString(copyrightText).X - 10,
-                ViewportHeight - _smallFont.LineSpacing);
-            _spriteBatch.DrawString(_smallFont, copyrightText, copyrightTextPos.Round(), Color.White);
+                ViewportWidth - (int)MenuContent.FontSmall.MeasureString(copyrightText).X - 10,
+                ViewportHeight - MenuContent.FontSmall.LineSpacing);
+            _spriteBatch.DrawString(MenuContent.FontSmall, copyrightText, copyrightTextPos.Round(), Color.White);
             _spriteBatch.End();
         }
     }

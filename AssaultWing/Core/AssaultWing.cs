@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
@@ -34,6 +35,25 @@ namespace AW2.Core
         /// The AssaultWing instance. Avoid using this remnant of the old times.
         /// </summary>
         public static new AssaultWing Instance { get { return (AssaultWing)AssaultWingCore.Instance; } }
+
+        public override Version Version
+        {
+            get
+            {
+                return ApplicationDeployment.IsNetworkDeployed
+                    ? ApplicationDeployment.CurrentDeployment.CurrentVersion
+                    : base.Version;
+            }
+        }
+        public override string SettingsDirectory
+        {
+            get
+            {
+                return ApplicationDeployment.IsNetworkDeployed
+                    ? ApplicationDeployment.CurrentDeployment.DataDirectory
+                    : base.SettingsDirectory;
+            }
+        }
 
         public GameState GameState
         {

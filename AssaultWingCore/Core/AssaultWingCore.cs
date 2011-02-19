@@ -55,6 +55,8 @@ namespace AW2.Core
         /// </summary>
         public static AssaultWingCore Instance { get; set; }
 
+        public virtual Version Version { get { return new Version(); } }
+        public virtual string SettingsDirectory { get { return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); } }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
         public CommandLineOptions CommandLineOptions { get; set; }
@@ -128,6 +130,7 @@ namespace AW2.Core
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
 
             Log.Write("Loading settings from file");
+            AWSettings.SettingsDirectory = SettingsDirectory;
             Settings = AWSettings.FromFile();
             InitializeGraphics();
 

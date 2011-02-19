@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Deployment.Application;
 using System.IO;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -18,27 +17,9 @@ namespace AW2.Settings
         public GraphicsSettings Graphics { get { return _graphics; } private set { _graphics = value; } }
         public ControlsSettings Controls { get { return _controls; } private set { _controls = value; } }
 
-        private static string SettingsDirectory
-        {
-            get
-            {
-                if (ApplicationDeployment.IsNetworkDeployed)
-                    return ApplicationDeployment.CurrentDeployment.DataDirectory;
-                else
-                {
-                    var assemblyFilename = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                    return Path.GetDirectoryName(assemblyFilename);
-                }
-            }
-        }
+        public static string SettingsDirectory { get; set; }
 
-        private static string SettingsFilename
-        {
-            get
-            {
-                return Path.Combine(SettingsDirectory, "AssaultWing.config");
-            }
-        }
+        private static string SettingsFilename { get { return Path.Combine(SettingsDirectory, "AssaultWing.config"); } }
 
         public static AWSettings FromFile()
         {
@@ -54,6 +35,11 @@ namespace AW2.Settings
             var newSettings = new AWSettings();
             newSettings.ToFile();
             return newSettings;
+        }
+
+        static AWSettings()
+        {
+            SettingsDirectory = Environment.CurrentDirectory;
         }
 
         public AWSettings()

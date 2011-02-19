@@ -80,6 +80,7 @@ namespace AW2.UI
 
         public void SetWindowed()
         {
+            if (_graphicsDeviceService == null) return;
             if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
             try
             {
@@ -100,6 +101,7 @@ namespace AW2.UI
 
         public void SetFullScreen(int width, int height)
         {
+            if (_graphicsDeviceService == null) return;
             if (Interlocked.CompareExchange(ref _isChangingFullScreen, 1, 0) != 0) return;
             try
             {

@@ -48,6 +48,7 @@ namespace AW2.Helpers.Serialization
 
         private static Dictionary<Tuple<Type, Type>, bool> g_isAssignableFromCache = new Dictionary<Tuple<Type, Type>, bool>();
         private static Dictionary<Tuple<Type, Type>, FieldInfo[]> g_fieldCache = new Dictionary<Tuple<Type, Type>, FieldInfo[]>();
+        private static Dictionary<string, Type> g_typeNameToType = new Dictionary<string, Type>();
 
         #region public methods
 
@@ -155,10 +156,22 @@ namespace AW2.Helpers.Serialization
         {
             var writtenTypeName = reader.GetAttribute("type");
             if (writtenTypeName == null) return GetSerializedType(objType);
-            var writtenType = Type.GetType(writtenTypeName);
-            if (writtenType == null) throw new XmlException("XML suggests unknown type " + writtenTypeName);
+            Type writtenType;
+            if (!g_typeNameToType.TryGetValue(writtenTypeName, out writtenType))
+            {
+                writtenType = Type.GetType(writtenTypeName)
+                    ?? AppDomain.CurrentDomain.GetAssemblies()
+                        .Select(assembly => assembly.GetType(writtenTypeName))
+                        .Where(type => type != null)
+                        .FirstOrDefault();
+                if (writtenType == null)
+                    throw new XmlException("XML suggests unknown type " + writtenTypeName,
+                        null, reader.LineNumber(), reader.LinePosition());
+                g_typeNameToType.Add(writtenTypeName, writtenType);
+            }
             if (!IsAssignableFrom(objType, writtenType))
-                throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name);
+                throw new XmlException("XML suggests type " + writtenTypeName + " that is not assignable to expected type " + objType.Name,
+                    null, reader.LineNumber(), reader.LinePosition());
             return writtenType;
         }
 
@@ -422,6 +435,12 @@ namespace AW2.Helpers.Serialization
         {
             var lineInfo = reader as IXmlLineInfo;
             return lineInfo != null ? lineInfo.LineNumber : 0;
+        }
+
+        private static int LinePosition(this XmlReader reader)
+        {
+            var lineInfo = reader as IXmlLineInfo;
+            return lineInfo != null ? lineInfo.LinePosition : 0;
         }
 
         /// <summary>

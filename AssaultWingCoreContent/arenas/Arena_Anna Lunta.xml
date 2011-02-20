@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArenaType>
   <layers>
-    <Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-4882.353</z>
       <parallaxName>parallax_icy_backdrop</parallaxName>
       <gobs />
     </Item>
-    <Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-2030.303</z>
       <parallaxName>parallax_icy_clouds</parallaxName>
       <gobs />
     </Item>
-    <Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-1325.58142</z>
       <parallaxName>parallax_icy_flakes_2</parallaxName>
       <gobs />
     </Item>
-    <Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-960.7843</z>
       <parallaxName>parallax_icy_flakes</parallaxName>
       <gobs />
     </Item>
-    <Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs />
     </Item>
-    <Item>
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>true</isGameplayLayer>
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_2</wallModelName>
-          <staticID>2391</staticID>
+          <destructible>true</destructible>
+          <staticID>1</staticID>
           <pos>
             <X>100</X>
             <Y>200</Y>
@@ -47,10 +47,10 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
-          <staticID>2392</staticID>
+          <destructible>true</destructible>
+          <staticID>2</staticID>
           <pos>
             <X>0</X>
             <Y>545</Y>
@@ -58,10 +58,10 @@
           <rotation>-1.56</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
-          <staticID>2393</staticID>
+          <destructible>true</destructible>
+          <staticID>3</staticID>
           <pos>
             <X>400</X>
             <Y>0</Y>
@@ -69,10 +69,10 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_6</wallModelName>
-          <staticID>2394</staticID>
+          <destructible>true</destructible>
+          <staticID>4</staticID>
           <pos>
             <X>800</X>
             <Y>150</Y>
@@ -80,10 +80,10 @@
           <rotation>3.14</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_3</wallModelName>
-          <staticID>2395</staticID>
+          <destructible>true</destructible>
+          <staticID>5</staticID>
           <pos>
             <X>800</X>
             <Y>540</Y>
@@ -91,10 +91,10 @@
           <rotation>2.14</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_9</wallModelName>
-          <staticID>2396</staticID>
+          <destructible>true</destructible>
+          <staticID>6</staticID>
           <pos>
             <X>500</X>
             <Y>550</Y>
@@ -102,10 +102,10 @@
           <rotation>-1.94</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_1</wallModelName>
-          <staticID>2397</staticID>
+          <destructible>true</destructible>
+          <staticID>7</staticID>
           <pos>
             <X>1130</X>
             <Y>60</Y>
@@ -113,10 +113,10 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_2</wallModelName>
-          <staticID>2398</staticID>
+          <destructible>true</destructible>
+          <staticID>8</staticID>
           <pos>
             <X>1440</X>
             <Y>110</Y>
@@ -124,10 +124,10 @@
           <rotation>1.51</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_4</wallModelName>
-          <staticID>2399</staticID>
+          <destructible>true</destructible>
+          <staticID>9</staticID>
           <pos>
             <X>1880</X>
             <Y>70</Y>
@@ -135,10 +135,10 @@
           <rotation>0.21</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_10</wallModelName>
-          <staticID>2400</staticID>
+          <destructible>true</destructible>
+          <staticID>10</staticID>
           <pos>
             <X>1930</X>
             <Y>360</Y>
@@ -146,10 +146,10 @@
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_6</wallModelName>
-          <staticID>2401</staticID>
+          <destructible>true</destructible>
+          <staticID>11</staticID>
           <pos>
             <X>1830</X>
             <Y>760</Y>
@@ -157,10 +157,10 @@
           <rotation>-1.56</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
-          <staticID>2402</staticID>
+          <destructible>true</destructible>
+          <staticID>12</staticID>
           <pos>
             <X>1970</X>
             <Y>1160</Y>
@@ -168,10 +168,10 @@
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_1</wallModelName>
-          <staticID>2403</staticID>
+          <destructible>true</destructible>
+          <staticID>13</staticID>
           <pos>
             <X>1960</X>
             <Y>1530</Y>
@@ -179,10 +179,10 @@
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_5</wallModelName>
-          <staticID>2404</staticID>
+          <destructible>true</destructible>
+          <staticID>14</staticID>
           <pos>
             <X>1890</X>
             <Y>1930</Y>
@@ -190,10 +190,10 @@
           <rotation>1.56</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_3</wallModelName>
-          <staticID>2405</staticID>
+          <destructible>true</destructible>
+          <staticID>15</staticID>
           <pos>
             <X>1530</X>
             <Y>1965</Y>
@@ -201,10 +201,10 @@
           <rotation>1.16</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_2</wallModelName>
-          <staticID>2406</staticID>
+          <destructible>true</destructible>
+          <staticID>16</staticID>
           <pos>
             <X>1150</X>
             <Y>1975</Y>
@@ -212,10 +212,10 @@
           <rotation>-0.86</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_6</wallModelName>
-          <staticID>2407</staticID>
+          <destructible>true</destructible>
+          <staticID>17</staticID>
           <pos>
             <X>680</X>
             <Y>1805</Y>
@@ -223,10 +223,10 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
-          <staticID>2408</staticID>
+          <destructible>true</destructible>
+          <staticID>18</staticID>
           <pos>
             <X>310</X>
             <Y>1970</Y>
@@ -234,10 +234,10 @@
           <rotation>3.14</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_5</wallModelName>
-          <staticID>2409</staticID>
+          <destructible>true</destructible>
+          <staticID>19</staticID>
           <pos>
             <X>40</X>
             <Y>1860</Y>
@@ -245,10 +245,10 @@
           <rotation>3.2</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_3</wallModelName>
-          <staticID>2410</staticID>
+          <destructible>true</destructible>
+          <staticID>20</staticID>
           <pos>
             <X>30</X>
             <Y>1473</Y>
@@ -256,10 +256,10 @@
           <rotation>2.85</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
-          <staticID>2411</staticID>
+          <destructible>true</destructible>
+          <staticID>21</staticID>
           <pos>
             <X>30</X>
             <Y>1025</Y>
@@ -267,10 +267,10 @@
           <rotation>-1.61</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_4</wallModelName>
-          <staticID>2412</staticID>
+          <destructible>true</destructible>
+          <staticID>22</staticID>
           <pos>
             <X>330</X>
             <Y>1025</Y>
@@ -278,10 +278,10 @@
           <rotation>-1.61</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_9</wallModelName>
-          <staticID>2413</staticID>
+          <destructible>true</destructible>
+          <staticID>23</staticID>
           <pos>
             <X>400</X>
             <Y>1625</Y>
@@ -289,10 +289,10 @@
           <rotation>-1.11</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_11</wallModelName>
-          <staticID>2414</staticID>
+          <destructible>true</destructible>
+          <staticID>24</staticID>
           <pos>
             <X>970</X>
             <Y>1325</Y>
@@ -300,10 +300,10 @@
           <rotation>0.51</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_12</wallModelName>
-          <staticID>2415</staticID>
+          <destructible>true</destructible>
+          <staticID>25</staticID>
           <pos>
             <X>1270</X>
             <Y>1025</Y>
@@ -311,10 +311,10 @@
           <rotation>-0.51</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_7</wallModelName>
-          <staticID>2416</staticID>
+          <destructible>true</destructible>
+          <staticID>26</staticID>
           <pos>
             <X>1470</X>
             <Y>1525</Y>
@@ -322,10 +322,10 @@
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_9</wallModelName>
-          <staticID>2417</staticID>
+          <destructible>true</destructible>
+          <staticID>27</staticID>
           <pos>
             <X>1510</X>
             <Y>520</Y>
@@ -333,10 +333,10 @@
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snowman</wallModelName>
-          <staticID>2418</staticID>
+          <destructible>true</destructible>
+          <staticID>28</staticID>
           <pos>
             <X>250</X>
             <Y>10</Y>
@@ -344,10 +344,10 @@
           <rotation>-0.11</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snowman</wallModelName>
-          <staticID>2419</staticID>
+          <destructible>true</destructible>
+          <staticID>29</staticID>
           <pos>
             <X>840</X>
             <Y>740</Y>
@@ -355,10 +355,10 @@
           <rotation>0.3</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <destructible>true</destructible>
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snowman</wallModelName>
-          <staticID>2420</staticID>
+          <destructible>true</destructible>
+          <staticID>30</staticID>
           <pos>
             <X>1840</X>
             <Y>1420</Y>
@@ -366,7 +366,18 @@
           <rotation>2.1</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Dock, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>snow_iglu</wallModelName>
+          <destructible>true</destructible>
+          <staticID>31</staticID>
+          <pos>
+            <X>891</X>
+            <Y>645.000061</Y>
+          </pos>
+          <rotation>-0.11</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
             <X>1004</X>
@@ -375,7 +386,7 @@
           <rotation>0</rotation>
           <typeName>dock</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Dock, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
             <X>990</X>
@@ -384,7 +395,7 @@
           <rotation>0</rotation>
           <typeName>dock</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Gravity, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Gravity">
           <force>
             <X>0</X>
             <Y>-30</Y>
@@ -397,8 +408,8 @@
           <rotation>0</rotation>
           <typeName>uniform gravity</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnGob, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Circle">
             <center>
               <X>1340</X>
               <Y>170</Y>
@@ -417,7 +428,7 @@
           </spawnArea>
           <spawnInterval>20</spawnInterval>
           <spawnTypes>
-            <Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>2</weight>
               <spawnTypeName>upgradeweapon2</spawnTypeName>
             </Item>
@@ -430,22 +441,22 @@
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Polygon, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <vertices type="Microsoft.Xna.Framework.Vector2[], Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553">
-              <Item>
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Polygon">
+            <vertices>
+              <Item type="Microsoft.Xna.Framework.Vector2">
                 <X>1700</X>
                 <Y>1700</Y>
               </Item>
-              <Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
                 <X>1700</X>
                 <Y>1100</Y>
               </Item>
-              <Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
                 <X>1800</X>
                 <Y>1800</Y>
               </Item>
-              <Item>
+              <Item type="Microsoft.Xna.Framework.Vector2">
                 <X>1100</X>
                 <Y>1700</Y>
               </Item>
@@ -459,8 +470,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>0</X>
               <Y>0</Y>
@@ -481,7 +492,6 @@
       </gobs>
     </Item>
   </layers>
-  
   <info>
     <name>Anna Lunta</name>
     <dimensions>
@@ -489,21 +499,20 @@
       <Y>2000</Y>
     </dimensions>
     <docks>2</docks>
-    <idealPlayers>3-5</idealPlayers>
     <previewName>preview_arena_annalunta</previewName>
-    <size>Small</size>
-	<bonusAmount>Little</bonusAmount>
-	<flightEasiness>Average</flightEasiness>
     <infoText>This arena should be either
 deleted or redone</infoText>
+    <idealPlayers>3-5</idealPlayers>
+    <size>Small</size>
+    <bonusAmount>Little</bonusAmount>
+    <flightEasiness>Average</flightEasiness>
   </info>
-  
   <backgroundMusic>
-    <Item>
+    <Item type="AW2.Sound.BackgroundMusic">
       <fileName>BG_Amazon</fileName>
       <volume>0.4</volume>
     </Item>
-    <Item>
+    <Item type="AW2.Sound.BackgroundMusic">
       <fileName>BG_Dark</fileName>
       <volume>0.4</volume>
     </Item>

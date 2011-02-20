@@ -1695,6 +1695,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\snow_iglu.X">
+      <Name>snow_iglu</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng_airstreaks.xml">
       <Name>Peng_airstreaks</Name>
       <Importer>XmlImporter</Importer>

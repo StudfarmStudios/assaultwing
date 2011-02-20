@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArenaType>
   <layers>
-    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-4882.353</z>
       <parallaxName>parallax_rock</parallaxName>
       <gobs />
     </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-920</z>
       <parallaxName>parallax_red_fog</parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -22,7 +22,7 @@
           <rotation>4.35480165</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -32,7 +32,7 @@
           <rotation>5.897508</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -42,7 +42,7 @@
           <rotation>5.28042555</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -52,7 +52,7 @@
           <rotation>5.28042555</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -62,7 +62,7 @@
           <rotation>2.824969</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -72,7 +72,7 @@
           <rotation>5.7432375</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -82,7 +82,7 @@
           <rotation>4.44481039</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -92,7 +92,7 @@
           <rotation>5.371606</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -102,7 +102,7 @@
           <rotation>3.66058421</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -112,7 +112,7 @@
           <rotation>0.266630352</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -122,7 +122,7 @@
           <rotation>0.8065776</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -132,7 +132,7 @@
           <rotation>3.27490759</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -142,7 +142,7 @@
           <rotation>0.8065775</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -152,7 +152,7 @@
           <rotation>3.337998</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -162,7 +162,7 @@
           <rotation>1.03798342</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -172,7 +172,7 @@
           <rotation>0.189495027</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -182,7 +182,7 @@
           <rotation>2.72091532</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -192,7 +192,7 @@
           <rotation>1.57793069</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -202,7 +202,7 @@
           <rotation>5.28042555</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -212,7 +212,7 @@
           <rotation>4.3676753</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -222,7 +222,7 @@
           <rotation>3.387043</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -232,7 +232,7 @@
           <rotation>0.8065776</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -242,7 +242,7 @@
           <rotation>0.6523069</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -252,7 +252,7 @@
           <rotation>5.631102</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -262,7 +262,7 @@
           <rotation>0.8065775</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -272,7 +272,7 @@
           <rotation>3.429178</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -282,7 +282,7 @@
           <rotation>3.056375</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -292,7 +292,7 @@
           <rotation>3.85698986</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -302,7 +302,7 @@
           <rotation>3.04350162</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -312,7 +312,7 @@
           <rotation>4.894749</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -322,7 +322,7 @@
           <rotation>3.27490759</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -332,7 +332,7 @@
           <rotation>3.84294486</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -342,7 +342,7 @@
           <rotation>5.37043428</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -352,7 +352,7 @@
           <rotation>4.123396</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -362,7 +362,7 @@
           <rotation>3.58344865</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -372,7 +372,7 @@
           <rotation>5.15424538</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -382,7 +382,7 @@
           <rotation>1.42366016</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -392,7 +392,7 @@
           <rotation>0.8065777</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -402,7 +402,7 @@
           <rotation>5.848463</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -412,7 +412,7 @@
           <rotation>5.7432375</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -422,7 +422,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -432,7 +432,7 @@
           <rotation>1.886472</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -442,7 +442,7 @@
           <rotation>1.03798354</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -452,7 +452,7 @@
           <rotation>1.88647187</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bg_wall3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -462,7 +462,7 @@
           <rotation>1.26938951</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -472,7 +472,7 @@
           <rotation>4.8176136</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -482,7 +482,7 @@
           <rotation>2.11787772</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -492,7 +492,7 @@
           <rotation>5.35756159</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -502,7 +502,7 @@
           <rotation>1.34652543</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -512,7 +512,7 @@
           <rotation>2.88923073</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -522,7 +522,7 @@
           <rotation>5.434696</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -532,7 +532,7 @@
           <rotation>5.03497458</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -542,7 +542,7 @@
           <rotation>5.666102</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -552,7 +552,7 @@
           <rotation>6.206049</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -562,7 +562,7 @@
           <rotation>4.417892</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -572,7 +572,7 @@
           <rotation>1.50079536</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -582,7 +582,7 @@
           <rotation>3.429178</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -592,7 +592,7 @@
           <rotation>4.78261328</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -602,7 +602,7 @@
           <rotation>5.399696</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_rock3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -614,18 +614,18 @@
         </Item>
       </gobs>
     </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-700</z>
       <parallaxName>parallax_red_fog</parallaxName>
       <gobs />
     </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-550</z>
       <parallaxName></parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -636,7 +636,7 @@
           <rotation>1.56</rotation>
           <typeName>junk sparkrain</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -649,12 +649,12 @@
         </Item>
       </gobs>
     </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -665,7 +665,7 @@
           <rotation>0</rotation>
           <typeName>dock effect</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -678,12 +678,12 @@
         </Item>
       </gobs>
     </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>true</isGameplayLayer>
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>false</destructible>
           <staticID>65</staticID>
@@ -694,7 +694,7 @@
           <rotation>1.61984158</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>66</staticID>
@@ -705,7 +705,7 @@
           <rotation>3.0854125</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>false</destructible>
           <staticID>67</staticID>
@@ -716,7 +716,7 @@
           <rotation>3.16254783</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Dock, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
             <X>114.999985</X>
@@ -725,7 +725,7 @@
           <rotation>0</rotation>
           <typeName>dock</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Dock, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Dock">
           <staticID>0</staticID>
           <pos>
             <X>2860.99976</X>
@@ -734,7 +734,7 @@
           <rotation>0</rotation>
           <typeName>dock</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <destructible>true</destructible>
           <staticID>70</staticID>
@@ -745,7 +745,7 @@
           <rotation>1.54270625</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>true</destructible>
           <staticID>71</staticID>
@@ -756,7 +756,7 @@
           <rotation>0.455066532</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_5</wallModelName>
           <destructible>true</destructible>
           <staticID>72</staticID>
@@ -767,7 +767,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>true</destructible>
           <staticID>73</staticID>
@@ -778,7 +778,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <destructible>true</destructible>
           <staticID>74</staticID>
@@ -789,7 +789,7 @@
           <rotation>0.6942178</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <destructible>true</destructible>
           <staticID>75</staticID>
@@ -800,7 +800,7 @@
           <rotation>2.26501417</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <destructible>true</destructible>
           <staticID>76</staticID>
@@ -811,7 +811,7 @@
           <rotation>1.57079637</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>true</destructible>
           <staticID>77</staticID>
@@ -822,7 +822,7 @@
           <rotation>5.083185</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>true</destructible>
           <staticID>78</staticID>
@@ -833,7 +833,7 @@
           <rotation>2.46833</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <destructible>true</destructible>
           <staticID>79</staticID>
@@ -844,7 +844,7 @@
           <rotation>0.154270619</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <destructible>false</destructible>
           <staticID>80</staticID>
@@ -855,7 +855,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <destructible>false</destructible>
           <staticID>81</staticID>
@@ -866,7 +866,7 @@
           <rotation>5.86228371</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>false</destructible>
           <staticID>82</staticID>
@@ -877,7 +877,7 @@
           <rotation>1.14928436</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>false</destructible>
           <staticID>83</staticID>
@@ -888,7 +888,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <destructible>true</destructible>
           <staticID>84</staticID>
@@ -899,7 +899,7 @@
           <rotation>3.0854125</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <destructible>true</destructible>
           <staticID>85</staticID>
@@ -910,7 +910,7 @@
           <rotation>0.9256237</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <destructible>false</destructible>
           <staticID>86</staticID>
@@ -921,7 +921,7 @@
           <rotation>1.61984158</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <destructible>false</destructible>
           <staticID>87</staticID>
@@ -932,7 +932,7 @@
           <rotation>3.62535954</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>true</destructible>
           <staticID>88</staticID>
@@ -943,7 +943,7 @@
           <rotation>4.025081</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_5</wallModelName>
           <destructible>false</destructible>
           <staticID>89</staticID>
@@ -954,7 +954,7 @@
           <rotation>6.09368944</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <destructible>false</destructible>
           <staticID>90</staticID>
@@ -965,7 +965,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>true</destructible>
           <staticID>91</staticID>
@@ -976,7 +976,7 @@
           <rotation>0.6170825</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>true</destructible>
           <staticID>92</staticID>
@@ -987,7 +987,7 @@
           <rotation>2.95232177</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <destructible>true</destructible>
           <staticID>93</staticID>
@@ -998,7 +998,7 @@
           <rotation>1.31130028</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>false</destructible>
           <staticID>94</staticID>
@@ -1009,7 +1009,7 @@
           <rotation>3.3862083</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <destructible>true</destructible>
           <staticID>95</staticID>
@@ -1020,7 +1020,7 @@
           <rotation>4.0110364</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <destructible>true</destructible>
           <staticID>96</staticID>
@@ -1031,7 +1031,7 @@
           <rotation>3.31681848</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <destructible>false</destructible>
           <staticID>97</staticID>
@@ -1042,7 +1042,7 @@
           <rotation>0.6942178</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <destructible>true</destructible>
           <staticID>98</staticID>
@@ -1053,7 +1053,7 @@
           <rotation>2.39119458</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>false</destructible>
           <staticID>99</staticID>
@@ -1064,7 +1064,7 @@
           <rotation>1.3884356</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <destructible>true</destructible>
           <staticID>100</staticID>
@@ -1075,7 +1075,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <destructible>true</destructible>
           <staticID>101</staticID>
@@ -1086,7 +1086,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <destructible>true</destructible>
           <staticID>102</staticID>
@@ -1097,7 +1097,7 @@
           <rotation>2.09669852</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>false</destructible>
           <staticID>103</staticID>
@@ -1108,7 +1108,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <destructible>true</destructible>
           <staticID>104</staticID>
@@ -1119,7 +1119,7 @@
           <rotation>3.52726912</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <destructible>true</destructible>
           <staticID>105</staticID>
@@ -1130,7 +1130,7 @@
           <rotation>1.85124743</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <destructible>true</destructible>
           <staticID>106</staticID>
@@ -1141,7 +1141,7 @@
           <rotation>3.0854125</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <destructible>false</destructible>
           <staticID>107</staticID>
@@ -1152,7 +1152,7 @@
           <rotation>3.16254783</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <destructible>false</destructible>
           <staticID>108</staticID>
@@ -1163,7 +1163,7 @@
           <rotation>1.58484137</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>false</destructible>
           <staticID>109</staticID>
@@ -1174,7 +1174,7 @@
           <rotation>2.7768712</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <destructible>true</destructible>
           <staticID>110</staticID>
@@ -1185,7 +1185,7 @@
           <rotation>0.7853982</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <destructible>true</destructible>
           <staticID>111</staticID>
@@ -1196,7 +1196,7 @@
           <rotation>0.9256237</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>true</destructible>
           <staticID>112</staticID>
@@ -1207,7 +1207,7 @@
           <rotation>2.17383385</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <destructible>false</destructible>
           <staticID>113</staticID>
@@ -1218,7 +1218,7 @@
           <rotation>1.54270625</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>false</destructible>
           <staticID>114</staticID>
@@ -1229,7 +1229,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <destructible>false</destructible>
           <staticID>115</staticID>
@@ -1240,7 +1240,7 @@
           <rotation>4.08817148</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>false</destructible>
           <staticID>116</staticID>
@@ -1251,7 +1251,7 @@
           <rotation>1.92063749</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>false</destructible>
           <staticID>117</staticID>
@@ -1262,7 +1262,7 @@
           <rotation>1.63388658</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <destructible>true</destructible>
           <staticID>118</staticID>
@@ -1273,7 +1273,7 @@
           <rotation>1.85124743</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <destructible>false</destructible>
           <staticID>119</staticID>
@@ -1284,7 +1284,7 @@
           <rotation>2.3421495</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <destructible>true</destructible>
           <staticID>120</staticID>
@@ -1295,7 +1295,7 @@
           <rotation>3.96199083</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <destructible>true</destructible>
           <staticID>121</staticID>
@@ -1306,7 +1306,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <destructible>false</destructible>
           <staticID>122</staticID>
@@ -1317,7 +1317,7 @@
           <rotation>0.154270619</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>false</destructible>
           <staticID>123</staticID>
@@ -1328,7 +1328,7 @@
           <rotation>3.61761427</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <destructible>true</destructible>
           <staticID>124</staticID>
@@ -1339,7 +1339,7 @@
           <rotation>3.73058486</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_2</wallModelName>
           <destructible>true</destructible>
           <staticID>125</staticID>
@@ -1350,7 +1350,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_10</wallModelName>
           <destructible>false</destructible>
           <staticID>126</staticID>
@@ -1361,7 +1361,7 @@
           <rotation>4.705254</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_1</wallModelName>
           <destructible>false</destructible>
           <staticID>127</staticID>
@@ -1372,7 +1372,7 @@
           <rotation>5.083185</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_4</wallModelName>
           <destructible>false</destructible>
           <staticID>128</staticID>
@@ -1383,7 +1383,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_6</wallModelName>
           <destructible>false</destructible>
           <staticID>129</staticID>
@@ -1394,7 +1394,7 @@
           <rotation>5.36447144</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>false</destructible>
           <staticID>130</staticID>
@@ -1405,7 +1405,7 @@
           <rotation>3.17659283</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>false</destructible>
           <staticID>131</staticID>
@@ -1416,7 +1416,7 @@
           <rotation>1.15702963</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <destructible>false</destructible>
           <staticID>132</staticID>
@@ -1427,7 +1427,7 @@
           <rotation>2.93114185</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>true</destructible>
           <staticID>133</staticID>
@@ -1438,7 +1438,7 @@
           <rotation>4.782389</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_3</wallModelName>
           <destructible>false</destructible>
           <staticID>134</staticID>
@@ -1449,7 +1449,7 @@
           <rotation>5.939419</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_8</wallModelName>
           <destructible>false</destructible>
           <staticID>135</staticID>
@@ -1460,7 +1460,7 @@
           <rotation>1.61984158</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_5</wallModelName>
           <destructible>true</destructible>
           <staticID>136</staticID>
@@ -1471,7 +1471,7 @@
           <rotation>3.02232218</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <destructible>false</destructible>
           <staticID>137</staticID>
@@ -1482,7 +1482,7 @@
           <rotation>5.01379538</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <destructible>true</destructible>
           <staticID>138</staticID>
@@ -1493,7 +1493,7 @@
           <rotation>3.87081051</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <destructible>true</destructible>
           <staticID>139</staticID>
@@ -1504,7 +1504,7 @@
           <rotation>3.976036</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_12</wallModelName>
           <destructible>true</destructible>
           <staticID>140</staticID>
@@ -1515,7 +1515,7 @@
           <rotation>1.46557093</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_7</wallModelName>
           <destructible>true</destructible>
           <staticID>141</staticID>
@@ -1526,7 +1526,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_9</wallModelName>
           <destructible>true</destructible>
           <staticID>142</staticID>
@@ -1537,7 +1537,7 @@
           <rotation>1.61984158</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_wall_11</wallModelName>
           <destructible>true</destructible>
           <staticID>143</staticID>
@@ -1548,7 +1548,7 @@
           <rotation>2.31405926</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>144</staticID>
@@ -1559,7 +1559,7 @@
           <rotation>4.473848</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>145</staticID>
@@ -1570,7 +1570,7 @@
           <rotation>2.7768712</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>146</staticID>
@@ -1581,7 +1581,7 @@
           <rotation>5.25924635</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>147</staticID>
@@ -1592,7 +1592,7 @@
           <rotation>4.487893</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>148</staticID>
@@ -1603,7 +1603,7 @@
           <rotation>2.57355547</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>149</staticID>
@@ -1614,7 +1614,7 @@
           <rotation>0.7713531</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>150</staticID>
@@ -1625,7 +1625,7 @@
           <rotation>0.322586328</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>151</staticID>
@@ -1636,7 +1636,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>152</staticID>
@@ -1647,7 +1647,7 @@
           <rotation>2.69973588</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>153</staticID>
@@ -1658,7 +1658,7 @@
           <rotation>5.09093046</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>154</staticID>
@@ -1669,7 +1669,7 @@
           <rotation>6.01655436</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>155</staticID>
@@ -1680,7 +1680,7 @@
           <rotation>0.6170826</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>156</staticID>
@@ -1691,7 +1691,7 @@
           <rotation>5.93941927</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>157</staticID>
@@ -1702,7 +1702,7 @@
           <rotation>6.01655436</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>158</staticID>
@@ -1713,7 +1713,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>159</staticID>
@@ -1724,7 +1724,7 @@
           <rotation>3.39395356</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>false</destructible>
           <staticID>160</staticID>
@@ -1735,7 +1735,7 @@
           <rotation>3.62535954</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>161</staticID>
@@ -1746,7 +1746,7 @@
           <rotation>2.39119458</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>162</staticID>
@@ -1757,7 +1757,7 @@
           <rotation>0.6942178</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>163</staticID>
@@ -1768,7 +1768,7 @@
           <rotation>5.441607</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>164</staticID>
@@ -1779,7 +1779,7 @@
           <rotation>2.31405926</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>165</staticID>
@@ -1790,7 +1790,7 @@
           <rotation>2.55951023</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>166</staticID>
@@ -1801,7 +1801,7 @@
           <rotation>0.308541238</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>167</staticID>
@@ -1812,7 +1812,7 @@
           <rotation>2.85400653</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>168</staticID>
@@ -1823,7 +1823,7 @@
           <rotation>4.08817148</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>169</staticID>
@@ -1834,7 +1834,7 @@
           <rotation>1.61984146</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>170</staticID>
@@ -1845,7 +1845,7 @@
           <rotation>5.245201</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>171</staticID>
@@ -1856,7 +1856,7 @@
           <rotation>3.77963018</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>172</staticID>
@@ -1867,7 +1867,7 @@
           <rotation>5.245201</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>173</staticID>
@@ -1878,7 +1878,7 @@
           <rotation>4.319577</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>174</staticID>
@@ -1889,7 +1889,7 @@
           <rotation>1.85124743</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>175</staticID>
@@ -1900,7 +1900,7 @@
           <rotation>6.170825</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>176</staticID>
@@ -1911,7 +1911,7 @@
           <rotation>5.182111</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>177</staticID>
@@ -1922,7 +1922,7 @@
           <rotation>3.471089</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>178</staticID>
@@ -1933,7 +1933,7 @@
           <rotation>0.6942178</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>179</staticID>
@@ -1944,7 +1944,7 @@
           <rotation>1.57079625</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>180</staticID>
@@ -1955,7 +1955,7 @@
           <rotation>4.536938</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>181</staticID>
@@ -1966,7 +1966,7 @@
           <rotation>1.31130028</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>182</staticID>
@@ -1977,7 +1977,7 @@
           <rotation>2.0055182</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>183</staticID>
@@ -1988,7 +1988,7 @@
           <rotation>0.5399473</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>184</staticID>
@@ -1999,7 +1999,7 @@
           <rotation>1.23416507</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>185</staticID>
@@ -2010,7 +2010,7 @@
           <rotation>5.39947176</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>186</staticID>
@@ -2021,7 +2021,7 @@
           <rotation>1.77411234</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>187</staticID>
@@ -2032,7 +2032,7 @@
           <rotation>3.23968315</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>188</staticID>
@@ -2043,7 +2043,7 @@
           <rotation>1.17107475</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>189</staticID>
@@ -2054,7 +2054,7 @@
           <rotation>2.15978861</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>190</staticID>
@@ -2065,7 +2065,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>191</staticID>
@@ -2076,7 +2076,7 @@
           <rotation>2.08265328</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>192</staticID>
@@ -2087,7 +2087,7 @@
           <rotation>3.16254759</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>193</staticID>
@@ -2098,7 +2098,7 @@
           <rotation>5.245201</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>194</staticID>
@@ -2109,7 +2109,7 @@
           <rotation>6.030599</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>195</staticID>
@@ -2120,7 +2120,7 @@
           <rotation>4.025081</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>196</staticID>
@@ -2131,7 +2131,7 @@
           <rotation>0.9396688</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>197</staticID>
@@ -2142,7 +2142,7 @@
           <rotation>0.939668834</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>198</staticID>
@@ -2153,7 +2153,7 @@
           <rotation>3.62535954</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>199</staticID>
@@ -2164,7 +2164,7 @@
           <rotation>6.01655436</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>200</staticID>
@@ -2175,7 +2175,7 @@
           <rotation>4.55098343</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>201</staticID>
@@ -2186,7 +2186,7 @@
           <rotation>4.025081</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>202</staticID>
@@ -2197,7 +2197,7 @@
           <rotation>2.26501417</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>203</staticID>
@@ -2208,7 +2208,7 @@
           <rotation>5.168066</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>204</staticID>
@@ -2219,7 +2219,7 @@
           <rotation>1.016804</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>205</staticID>
@@ -2230,7 +2230,7 @@
           <rotation>1.38843548</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>206</staticID>
@@ -2241,7 +2241,7 @@
           <rotation>5.413517</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>207</staticID>
@@ -2252,7 +2252,7 @@
           <rotation>2.93114161</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>208</staticID>
@@ -2263,7 +2263,7 @@
           <rotation>1.0027591</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>209</staticID>
@@ -2274,7 +2274,7 @@
           <rotation>1.23416507</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>210</staticID>
@@ -2285,7 +2285,7 @@
           <rotation>5.708013</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>211</staticID>
@@ -2296,7 +2296,7 @@
           <rotation>1.78815711</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>212</staticID>
@@ -2307,7 +2307,7 @@
           <rotation>3.751765</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>213</staticID>
@@ -2318,7 +2318,7 @@
           <rotation>2.85400653</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>214</staticID>
@@ -2329,7 +2329,7 @@
           <rotation>5.38542652</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>215</staticID>
@@ -2340,7 +2340,7 @@
           <rotation>5.02784</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>216</staticID>
@@ -2351,7 +2351,7 @@
           <rotation>4.93666</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>217</staticID>
@@ -2362,7 +2362,7 @@
           <rotation>1.46557093</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>218</staticID>
@@ -2373,7 +2373,7 @@
           <rotation>6.01655436</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>219</staticID>
@@ -2384,7 +2384,7 @@
           <rotation>0.7713531</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>220</staticID>
@@ -2395,7 +2395,7 @@
           <rotation>2.31405926</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>221</staticID>
@@ -2406,7 +2406,7 @@
           <rotation>0.5751723</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>222</staticID>
@@ -2417,7 +2417,7 @@
           <rotation>3.16254783</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>223</staticID>
@@ -2428,7 +2428,7 @@
           <rotation>0</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>224</staticID>
@@ -2439,7 +2439,7 @@
           <rotation>2.85400653</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>225</staticID>
@@ -2450,7 +2450,7 @@
           <rotation>5.168066</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>226</staticID>
@@ -2461,7 +2461,7 @@
           <rotation>3.23968315</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>227</staticID>
@@ -2472,7 +2472,7 @@
           <rotation>1.0027591</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_bones</wallModelName>
           <destructible>true</destructible>
           <staticID>228</staticID>
@@ -2483,7 +2483,7 @@
           <rotation>2.454285</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>229</staticID>
@@ -2494,7 +2494,7 @@
           <rotation>5.182111</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>230</staticID>
@@ -2505,7 +2505,7 @@
           <rotation>0.462812066</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>231</staticID>
@@ -2516,7 +2516,7 @@
           <rotation>3.933901</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>232</staticID>
@@ -2527,7 +2527,7 @@
           <rotation>3.31681848</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>233</staticID>
@@ -2538,7 +2538,7 @@
           <rotation>1.85124755</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>234</staticID>
@@ -2549,7 +2549,7 @@
           <rotation>0.105225347</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>235</staticID>
@@ -2560,7 +2560,7 @@
           <rotation>4.410758</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>236</staticID>
@@ -2571,7 +2571,7 @@
           <rotation>0.9256237</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>237</staticID>
@@ -2582,7 +2582,7 @@
           <rotation>4.473848</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>238</staticID>
@@ -2593,7 +2593,7 @@
           <rotation>6.170825</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>239</staticID>
@@ -2604,7 +2604,7 @@
           <rotation>5.245201</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>240</staticID>
@@ -2615,7 +2615,7 @@
           <rotation>5.974644</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>241</staticID>
@@ -2626,7 +2626,7 @@
           <rotation>0.231405929</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>242</staticID>
@@ -2637,7 +2637,7 @@
           <rotation>5.939419</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>243</staticID>
@@ -2648,7 +2648,7 @@
           <rotation>2.7909162</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>244</staticID>
@@ -2659,7 +2659,7 @@
           <rotation>5.25924635</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>245</staticID>
@@ -2670,7 +2670,7 @@
           <rotation>5.168066</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_horn</wallModelName>
           <destructible>true</destructible>
           <staticID>246</staticID>
@@ -2681,7 +2681,7 @@
           <rotation>4.81761456</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>247</staticID>
@@ -2692,7 +2692,7 @@
           <rotation>1.26939011</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>248</staticID>
@@ -2703,7 +2703,7 @@
           <rotation>2.34928441</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>249</staticID>
@@ -2714,7 +2714,7 @@
           <rotation>1.26939011</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>250</staticID>
@@ -2725,7 +2725,7 @@
           <rotation>3.57631421</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>251</staticID>
@@ -2736,7 +2736,7 @@
           <rotation>5.01379538</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>252</staticID>
@@ -2747,7 +2747,7 @@
           <rotation>1.0798943</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>253</staticID>
@@ -2758,7 +2758,7 @@
           <rotation>2.236924</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>254</staticID>
@@ -2769,7 +2769,7 @@
           <rotation>1.45152593</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>255</staticID>
@@ -2780,7 +2780,7 @@
           <rotation>0.7573081</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>256</staticID>
@@ -2791,7 +2791,7 @@
           <rotation>3.30277348</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>257</staticID>
@@ -2802,7 +2802,7 @@
           <rotation>3.79367542</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>258</staticID>
@@ -2813,7 +2813,7 @@
           <rotation>2.25096917</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>259</staticID>
@@ -2824,7 +2824,7 @@
           <rotation>3.947946</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>260</staticID>
@@ -2835,7 +2835,7 @@
           <rotation>0.343766361</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>261</staticID>
@@ -2846,7 +2846,7 @@
           <rotation>3.61131454</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>262</staticID>
@@ -2857,7 +2857,7 @@
           <rotation>1.91433775</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>263</staticID>
@@ -2868,7 +2868,7 @@
           <rotation>0.757308066</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>264</staticID>
@@ -2879,7 +2879,7 @@
           <rotation>2.7628262</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>265</staticID>
@@ -2890,7 +2890,7 @@
           <rotation>0.294496268</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>266</staticID>
@@ -2901,7 +2901,7 @@
           <rotation>0.294496268</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>267</staticID>
@@ -2912,7 +2912,7 @@
           <rotation>1.29725528</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>268</staticID>
@@ -2923,7 +2923,7 @@
           <rotation>0.6801728</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>269</staticID>
@@ -2934,7 +2934,7 @@
           <rotation>3.61131454</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>270</staticID>
@@ -2945,7 +2945,7 @@
           <rotation>3.99699116</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spear</wallModelName>
           <destructible>true</destructible>
           <staticID>271</staticID>
@@ -2956,7 +2956,7 @@
           <rotation>3.0713675</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>272</staticID>
@@ -2967,7 +2967,7 @@
           <rotation>2.25096917</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>273</staticID>
@@ -2978,7 +2978,7 @@
           <rotation>0.259496063</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_castlewall</wallModelName>
           <destructible>true</destructible>
           <staticID>274</staticID>
@@ -2989,7 +2989,7 @@
           <rotation>1.37439084</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>275</staticID>
@@ -3000,7 +3000,7 @@
           <rotation>4.93666</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>276</staticID>
@@ -3011,7 +3011,7 @@
           <rotation>2.31405926</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_demonskull</wallModelName>
           <destructible>true</destructible>
           <staticID>277</staticID>
@@ -3022,7 +3022,7 @@
           <rotation>0.848488331</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_gravestone</wallModelName>
           <destructible>true</destructible>
           <staticID>278</staticID>
@@ -3033,7 +3033,7 @@
           <rotation>6.170825</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_shield</wallModelName>
           <destructible>true</destructible>
           <staticID>279</staticID>
@@ -3044,7 +3044,7 @@
           <rotation>1.18511975</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>280</staticID>
@@ -3055,7 +3055,7 @@
           <rotation>0.84848845</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_spikefence</wallModelName>
           <destructible>true</destructible>
           <staticID>281</staticID>
@@ -3066,7 +3066,7 @@
           <rotation>3.471089</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_axe</wallModelName>
           <destructible>true</destructible>
           <staticID>282</staticID>
@@ -3077,7 +3077,7 @@
           <rotation>1.002759</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>283</staticID>
@@ -3088,7 +3088,7 @@
           <rotation>2.83996153</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>284</staticID>
@@ -3099,7 +3099,7 @@
           <rotation>3.67440486</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>285</staticID>
@@ -3110,7 +3110,7 @@
           <rotation>5.82014847</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>286</staticID>
@@ -3121,7 +3121,7 @@
           <rotation>6.205825</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>287</staticID>
@@ -3132,7 +3132,7 @@
           <rotation>2.734736</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>288</staticID>
@@ -3143,7 +3143,7 @@
           <rotation>3.35181856</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>289</staticID>
@@ -3154,7 +3154,7 @@
           <rotation>4.431713</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>290</staticID>
@@ -3165,7 +3165,7 @@
           <rotation>4.431713</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_metalbar</wallModelName>
           <destructible>true</destructible>
           <staticID>291</staticID>
@@ -3176,7 +3176,7 @@
           <rotation>4.894525</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -3187,7 +3187,7 @@
           <rotation>4.55098343</rotation>
           <typeName>lava spray</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -3198,7 +3198,7 @@
           <rotation>4.16530752</rotation>
           <typeName>lava spray</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -3209,8 +3209,8 @@
           <rotation>0.385676771</rotation>
           <typeName>lava spray</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>330</X>
               <Y>2770</Y>
@@ -3228,8 +3228,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>500</X>
               <Y>2430</Y>
@@ -3247,8 +3247,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>220</X>
               <Y>2350</Y>
@@ -3266,8 +3266,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>2620</X>
               <Y>2200</Y>
@@ -3285,8 +3285,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>220</X>
               <Y>1090</Y>
@@ -3304,8 +3304,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>290</X>
               <Y>1350</Y>
@@ -3323,8 +3323,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>2650</X>
               <Y>880</Y>
@@ -3342,8 +3342,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>150</X>
               <Y>500</Y>
@@ -3361,8 +3361,8 @@
           <rotation>0</rotation>
           <typeName>player spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnGob, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>1220</X>
               <Y>1220</Y>
@@ -3374,15 +3374,15 @@
           </spawnArea>
           <spawnInterval>15</spawnInterval>
           <spawnTypes>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>6</weight>
               <spawnTypeName>upgradeweapon2</spawnTypeName>
             </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>4</weight>
               <spawnTypeName>repairsystem</spawnTypeName>
             </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>
               <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
             </Item>
@@ -3395,8 +3395,8 @@
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnGob, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>950</X>
               <Y>25</Y>
@@ -3408,19 +3408,19 @@
           </spawnArea>
           <spawnInterval>15</spawnInterval>
           <spawnTypes>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>6</weight>
               <spawnTypeName>upgradeweapon2</spawnTypeName>
             </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>5</weight>
               <spawnTypeName>repairsystem</spawnTypeName>
             </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>3</weight>
               <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
             </Item>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>
               <spawnTypeName>kamikaze</spawnTypeName>
             </Item>
@@ -3433,8 +3433,8 @@
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.SpawnGob, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
             <min>
               <X>1490</X>
               <Y>2750</Y>
@@ -3446,7 +3446,7 @@
           </spawnArea>
           <spawnInterval>40</spawnInterval>
           <spawnTypes>
-            <Item type="AW2.Game.Gobs.SpawnType, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <Item type="AW2.Game.Gobs.SpawnType">
               <weight>1</weight>
               <spawnTypeName>repairsystem</spawnTypeName>
             </Item>
@@ -3459,7 +3459,7 @@
           <rotation>0</rotation>
           <typeName>bonus spawn</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Gravity, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Gravity">
           <force>
             <X>0</X>
             <Y>-30</Y>
@@ -3472,7 +3472,7 @@
           <rotation>0</rotation>
           <typeName>uniform gravity</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>false</destructible>
           <staticID>307</staticID>
@@ -3483,7 +3483,7 @@
           <rotation>5.953464</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>true</destructible>
           <staticID>308</staticID>
@@ -3494,7 +3494,7 @@
           <rotation>5.953464</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>true</destructible>
           <staticID>309</staticID>
@@ -3505,7 +3505,7 @@
           <rotation>5.953464</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>true</destructible>
           <staticID>310</staticID>
@@ -3516,7 +3516,7 @@
           <rotation>5.953464</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>true</destructible>
           <staticID>311</staticID>
@@ -3527,7 +3527,7 @@
           <rotation>5.953464</rotation>
           <typeName>wall model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.WallModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>bloodbowl_volcano</wallModelName>
           <destructible>false</destructible>
           <staticID>312</staticID>
@@ -3540,12 +3540,12 @@
         </Item>
       </gobs>
     </Item>
-    <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3555,7 +3555,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3565,7 +3565,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3575,7 +3575,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_4</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3585,7 +3585,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_5</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3595,7 +3595,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_6</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3605,7 +3605,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_7</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3615,7 +3615,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_8</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3625,7 +3625,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3635,7 +3635,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_10</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3645,7 +3645,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3655,7 +3655,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3665,7 +3665,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3675,7 +3675,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3685,7 +3685,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3695,7 +3695,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_castlewall</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3705,7 +3705,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_demonskull</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3715,7 +3715,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_shield</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3725,7 +3725,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_horn</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3735,7 +3735,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_gravestone</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3745,7 +3745,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3755,7 +3755,7 @@
           <rotation>4.16530657</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3765,7 +3765,7 @@
           <rotation>1.0798943</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3775,7 +3775,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_6</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3785,7 +3785,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_5</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3795,7 +3795,7 @@
           <rotation>3.54822421</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3805,7 +3805,7 @@
           <rotation>4.99975</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3815,7 +3815,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_castlewall</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3825,7 +3825,7 @@
           <rotation>5.86228371</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3835,7 +3835,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3845,7 +3845,7 @@
           <rotation>3.16254783</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_8</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3855,7 +3855,7 @@
           <rotation>3.20468283</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3865,7 +3865,7 @@
           <rotation>1.69697678</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_8</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3875,7 +3875,7 @@
           <rotation>1.61984158</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_demonskull</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3885,7 +3885,7 @@
           <rotation>5.939419</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_horn</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3895,7 +3895,7 @@
           <rotation>2.46833</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3905,7 +3905,7 @@
           <rotation>0.7853982</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3915,7 +3915,7 @@
           <rotation>5.736103</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3925,7 +3925,7 @@
           <rotation>4.64216375</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3935,7 +3935,7 @@
           <rotation>1.234165</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_castlewall</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3945,7 +3945,7 @@
           <rotation>2.08265328</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3955,7 +3955,7 @@
           <rotation>1.54270625</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3965,7 +3965,7 @@
           <rotation>0.6942178</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_4</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3975,7 +3975,7 @@
           <rotation>0.7713531</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_7</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3985,7 +3985,7 @@
           <rotation>4.473848</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -3995,7 +3995,7 @@
           <rotation>0.8065782</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4005,7 +4005,7 @@
           <rotation>1.69697678</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_10</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4015,7 +4015,7 @@
           <rotation>4.7964344</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4025,7 +4025,7 @@
           <rotation>0.168315649</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4035,7 +4035,7 @@
           <rotation>0.9256237</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4045,7 +4045,7 @@
           <rotation>2.69973588</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4055,7 +4055,7 @@
           <rotation>4.242442</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_shield</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4065,7 +4065,7 @@
           <rotation>3.54822421</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4075,7 +4075,7 @@
           <rotation>2.69973588</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4085,7 +4085,7 @@
           <rotation>3.0854125</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4095,7 +4095,7 @@
           <rotation>1.696977</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4105,7 +4105,7 @@
           <rotation>3.35181856</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4115,7 +4115,7 @@
           <rotation>2.03360844</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4125,7 +4125,7 @@
           <rotation>1.19202983</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4135,7 +4135,7 @@
           <rotation>1.42343581</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_demonskull</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4145,7 +4145,7 @@
           <rotation>4.85952473</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4155,7 +4155,7 @@
           <rotation>0.9396688</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4165,7 +4165,7 @@
           <rotation>5.87632847</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_castlewall</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4175,7 +4175,7 @@
           <rotation>1.12202954</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4185,7 +4185,7 @@
           <rotation>1.92838275</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_7</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4195,7 +4195,7 @@
           <rotation>4.242442</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_horn</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4205,7 +4205,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4215,7 +4215,7 @@
           <rotation>2.69973588</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4225,7 +4225,7 @@
           <rotation>6.01655436</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4235,7 +4235,7 @@
           <rotation>4.55098343</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4245,7 +4245,7 @@
           <rotation>3.0854125</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4255,7 +4255,7 @@
           <rotation>2.40523982</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4265,7 +4265,7 @@
           <rotation>0.59612745</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4275,7 +4275,7 @@
           <rotation>3.457044</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4285,7 +4285,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_4</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4295,7 +4295,7 @@
           <rotation>4.08817148</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_6</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4305,7 +4305,7 @@
           <rotation>3.79367518</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4315,7 +4315,7 @@
           <rotation>1.61984158</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_5</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4325,7 +4325,7 @@
           <rotation>1.0027591</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4335,7 +4335,7 @@
           <rotation>1.57079637</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_4</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4345,7 +4345,7 @@
           <rotation>3.16254783</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4355,7 +4355,7 @@
           <rotation>3.0854125</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4365,7 +4365,7 @@
           <rotation>0.462811857</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4375,7 +4375,7 @@
           <rotation>2.65069079</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4385,7 +4385,7 @@
           <rotation>1.0027591</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_10</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4395,7 +4395,7 @@
           <rotation>0.287586153</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_1</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4405,7 +4405,7 @@
           <rotation>3.85676551</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4415,7 +4415,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_2</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4425,7 +4425,7 @@
           <rotation>3.31681848</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4435,7 +4435,7 @@
           <rotation>1.57079637</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_5</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4445,7 +4445,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_3</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4455,7 +4455,7 @@
           <rotation>3.88485575</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4465,7 +4465,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_7</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4475,7 +4475,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_6</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4485,7 +4485,7 @@
           <rotation>3.54822421</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4495,7 +4495,7 @@
           <rotation>1.94242787</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4505,7 +4505,7 @@
           <rotation>3.0854125</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4515,7 +4515,7 @@
           <rotation>4.705254</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4525,7 +4525,7 @@
           <rotation>0.0352251269</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spikefence</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4535,7 +4535,7 @@
           <rotation>5.04902029</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_castlewall</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4545,7 +4545,7 @@
           <rotation>4.55098343</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_castlewall</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4555,7 +4555,7 @@
           <rotation>3.3939538</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_castlewall</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4565,7 +4565,7 @@
           <rotation>0.189495742</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4575,7 +4575,7 @@
           <rotation>1.85124743</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4585,7 +4585,7 @@
           <rotation>2.54546523</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_7</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4595,7 +4595,7 @@
           <rotation>2.94518685</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_horn</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4605,7 +4605,7 @@
           <rotation>2.0055182</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_horn</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4615,7 +4615,7 @@
           <rotation>4.47384834</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_horn</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4625,7 +4625,7 @@
           <rotation>5.58896732</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4635,7 +4635,7 @@
           <rotation>2.7768712</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4645,7 +4645,7 @@
           <rotation>2.93114185</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_shield</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4655,7 +4655,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_shield</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4665,7 +4665,7 @@
           <rotation>4.94379473</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_shield</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4675,7 +4675,7 @@
           <rotation>2.56664515</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_shield</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4685,7 +4685,7 @@
           <rotation>5.280426</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4695,7 +4695,7 @@
           <rotation>5.87632847</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4705,7 +4705,7 @@
           <rotation>0.5751723</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4715,7 +4715,7 @@
           <rotation>5.43469667</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4725,7 +4725,7 @@
           <rotation>4.20053148</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4735,7 +4735,7 @@
           <rotation>5.357561</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_bones</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4745,7 +4745,7 @@
           <rotation>1.5007956</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_12</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4755,7 +4755,7 @@
           <rotation>4.319577</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_11</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4765,7 +4765,7 @@
           <rotation>1.61984158</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_wall_9</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4775,7 +4775,7 @@
           <rotation>2.3561945</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4785,7 +4785,7 @@
           <rotation>1.731977</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4795,7 +4795,7 @@
           <rotation>0.189270765</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4805,7 +4805,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4815,7 +4815,7 @@
           <rotation>5.01379538</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4825,7 +4825,7 @@
           <rotation>5.79919338</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4835,7 +4835,7 @@
           <rotation>0.4209017</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4845,7 +4845,7 @@
           <rotation>0</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4855,7 +4855,7 @@
           <rotation>2.77709627</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4865,7 +4865,7 @@
           <rotation>2.16001368</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4875,7 +4875,7 @@
           <rotation>1.31152523</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4885,7 +4885,7 @@
           <rotation>2.005743</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4895,7 +4895,7 @@
           <rotation>5.58896732</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4905,7 +4905,7 @@
           <rotation>5.58896732</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4915,7 +4915,7 @@
           <rotation>4.354802</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4925,7 +4925,7 @@
           <rotation>5.28042555</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_spear</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4935,7 +4935,7 @@
           <rotation>4.894749</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4945,7 +4945,7 @@
           <rotation>4.0110364</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4955,7 +4955,7 @@
           <rotation>3.162548</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4965,7 +4965,7 @@
           <rotation>5.32233667</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4975,7 +4975,7 @@
           <rotation>4.85952473</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4985,7 +4985,7 @@
           <rotation>6.10773468</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.PropModel">
           <propModelName>bloodbowl_axe</propModelName>
           <staticID>0</staticID>
           <pos>
@@ -4995,7 +4995,7 @@
           <rotation>0.6311276</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -5006,7 +5006,7 @@
           <rotation>0.402970284</rotation>
           <typeName>volcano</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -5017,7 +5017,7 @@
           <rotation>4.414006</rotation>
           <typeName>volcano</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <Item type="AW2.Game.Gobs.Peng">
           <input>0</input>
           <particles />
           <staticID>0</staticID>
@@ -5047,11 +5047,11 @@ this place.</infoText>
     <flightEasiness>Average</flightEasiness>
   </info>
   <backgroundMusic>
-    <Item type="AW2.Sound.BackgroundMusic, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Sound.BackgroundMusic">
       <fileName>BG_Amazon</fileName>
       <volume>0.4</volume>
     </Item>
-    <Item type="AW2.Sound.BackgroundMusic, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Item type="AW2.Sound.BackgroundMusic">
       <fileName>BG_Dark</fileName>
       <volume>0.4</volume>
     </Item>
@@ -5096,9 +5096,9 @@ this place.</infoText>
       <Z>0.1</Z>
     </light2DiffuseColor>
     <light2Direction>
-      <X>0.527001441</X>
-      <Y>0.527001441</Y>
-      <Z>-0.6667375</Z>
+      <X>0.5270015</X>
+      <Y>0.5270015</Y>
+      <Z>-0.666737556</Z>
     </light2Direction>
     <light2Enabled>true</light2Enabled>
     <light2SpecularColor>

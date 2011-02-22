@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
+using System.Net.Sockets;
+using System.Text;
 using System.Windows.Forms;
 using AW2.Core;
 using AW2.Helpers;
@@ -12,12 +11,16 @@ namespace AW2
 #if WINDOWS || XBOX
     public class AssaultWingProgram : IDisposable
     {
+        private const string AW_BUG_REPORT_SERVER = "vs1164254.server4you.net";
+        private const int AW_BUG_REPORT_PORT = 'A' * 256 + 'W';
+
         private GameForm _form;
         private static string[] g_errorCaptions = new[]
         {
             "Oops, Assault Wing crashed!",
             "Wait... How did this happen?",
-            "You found a bug, congratulations!"
+            "You found a bug, congratulations!",
+            "We're sorry for the inconvenience",
         };
 
         public static AssaultWingProgram Instance { get; private set; }
@@ -72,44 +75,19 @@ namespace AW2
         private static void ReportException(Exception e)
         {
             Log.Write("Assault Wing fatal error! Error details:\n" + e.ToString());
-            var version = "Assault Wing " + AssaultWing.Instance.Version;
-            var dateTime = DateTime.Now.ToUniversalTime().ToString("u");
-            var computer = Environment.MachineName;
-            var errorInfo = e.ToString();
             var caption = g_errorCaptions[RandomHelper.GetRandomInt(g_errorCaptions.Length)];
             var intro = "Want to send this automatic error report to the developers to help solve the problem?";
-            var header = string.Format("{0} {1}", dateTime, computer);
-            var report = string.Format("{0}\n{1} {2}\n{3}", version, dateTime, computer, errorInfo);
+            var report = string.Format("Assault Wing {0}\nCrashed at {1:u}\nHost {2}\n\n{3}",
+                AssaultWing.Instance.Version, DateTime.Now.ToUniversalTime(), Environment.MachineName, e.ToString());
             var result = MessageBox.Show(intro + "\n\n" + report, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-            if (result == DialogResult.Yes) SendMail(header, report);
+            if (result == DialogResult.Yes) SendMail(report);
         }
 
-        private static void SendMail(string header, string body)
+        private static void SendMail(string text)
         {
-            Console.WriteLine("Initialising data");
-            var mail = CreateBugMail(header, body);
-            var smtpClient = CreateSMTPClient();
-            Console.WriteLine("Sending mail");
-            smtpClient.Send(mail);
-            Console.WriteLine("Done!");
-        }
-
-        private static SmtpClient CreateSMTPClient()
-        {
-            // See http://mail.google.com/support/bin/answer.py?hl=en&answer=77662
-            var smtpClient = new SmtpClient("smtp.gmail.com", 587); // works without SSL
-            smtpClient.EnableSsl = false;
-            smtpClient.Credentials = new NetworkCredential("assaultwing", "@2-VFpyrB#gr#");
-            return smtpClient;
-        }
-
-        private static MailMessage CreateBugMail(string header, string body)
-        {
-            // Note: Gmail changes From address to what the Gmail user settings say.
-            var mail = new MailMessage("aw-bug@gmail.com", "assaultwing@gmail.com");
-            mail.Subject = "[BUG REPORT] " + header;
-            mail.Body = body;
-            return mail;
+            var udpClient = new UdpClient();
+            var data = Encoding.Default.GetBytes(text);
+            udpClient.Send(data, data.Length, AW_BUG_REPORT_SERVER, AW_BUG_REPORT_PORT);
         }
     }
 #endif

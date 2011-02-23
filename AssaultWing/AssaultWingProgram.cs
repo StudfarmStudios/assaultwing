@@ -12,7 +12,7 @@ namespace AW2
     public class AssaultWingProgram : IDisposable
     {
         private const string AW_BUG_REPORT_SERVER = "vs1164254.server4you.net";
-        private const int AW_BUG_REPORT_PORT = 'A' * 256 + 'W';
+        private const int AW_BUG_REPORT_PORT = 'A' * 256 + 'W' - 1;
 
         private GameForm _form;
         private static string[] g_errorCaptions = new[]
@@ -86,7 +86,7 @@ namespace AW2
         private static void SendMail(string text)
         {
             var udpClient = new UdpClient();
-            var data = Encoding.Default.GetBytes(text);
+            var data = Encoding.UTF8.GetBytes(text);
             udpClient.Send(data, data.Length, AW_BUG_REPORT_SERVER, AW_BUG_REPORT_PORT);
         }
     }

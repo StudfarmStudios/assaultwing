@@ -22,6 +22,7 @@ namespace AW2.Game.BonusActions
 
         private void UpgradeWeapon()
         {
+            if (Player.Ship == null) return;
             Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, (CanonicalString)"selfdestructship");
             Player.PostprocessEffectNames.EnsureContains((CanonicalString)"bomber_rage");
         }

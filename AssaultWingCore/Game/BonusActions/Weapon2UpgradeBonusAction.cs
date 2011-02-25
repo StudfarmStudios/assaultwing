@@ -10,14 +10,9 @@ namespace AW2.Game.BonusActions
     {
         public override bool DoAction()
         {
-            if (Player.Ship != null)
-            {
-                var weapon2 = (Weapon)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.Ship.Weapon2Name);
-                if (weapon2.UpgradeNames == null || weapon2.UpgradeNames.Length == 0) return false;
-                var weaponUpgrade = weapon2.UpgradeNames[0];
-                UpgradeWeapon(weaponUpgrade);
-                SetActionMessage();
-            }
+            var success = UpgradeWeapon();
+            SetActionMessage();
+            if (!success) return false;
             return base.DoAction();
         }
 
@@ -26,9 +21,14 @@ namespace AW2.Game.BonusActions
             Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, Player.Weapon2Name);
         }
 
-        private void UpgradeWeapon(CanonicalString weaponUpgrade)
+        private bool UpgradeWeapon()
         {
+            if (Player.Ship == null) return false;
+            var weapon2 = (Weapon)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.Ship.Weapon2Name);
+            if (weapon2.UpgradeNames == null || weapon2.UpgradeNames.Length == 0) return false;
+            var weaponUpgrade = weapon2.UpgradeNames[0];
             Player.Ship.SetDeviceType(Weapon.OwnerHandleType.SecondaryWeapon, weaponUpgrade);
+            return true;
         }
 
         private void SetActionMessage()

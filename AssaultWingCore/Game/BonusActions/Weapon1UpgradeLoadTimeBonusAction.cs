@@ -10,7 +10,7 @@ namespace AW2.Game.BonusActions
 
         public override bool DoAction()
         {
-            UpgradeWeapon();
+            if (Player.Ship != null) UpgradeWeapon();
             SetActionMessage();
             return base.DoAction();
         }

@@ -37,6 +37,7 @@ namespace AW2.Graphics
         /// Repeated calls to load the same asset will return the same object instance.
         public override T Load<T>(string assetName)
         {
+            if (assetName == null) throw new ArgumentNullException("assetName");
             var assetFullName = GetAssetFullName<T>(assetName);
             object item;
             if (loadedContent.TryGetValue(assetFullName, out item)) return (T)item;

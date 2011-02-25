@@ -216,11 +216,21 @@ namespace AW2.Game
 
         public void RearrangeViewports()
         {
+            var playerCount = Game.DataEngine.Spectators.Where(player => player.NeedsViewport).Count();
+            var viewportPermutation =
+                playerCount <= 1 ? x => x
+                : playerCount == 2 ? x => x == 0 ? 1 : x == 1 ? 0 : x
+                : (Func<int, int>)(x => x == 0 ? 1 : x == 1 ? 2 : x == 2 ? 0 : x);
+            RearrangeViewports(viewportPermutation);
+        }
+
+        private void RearrangeViewports(Func<int, int> viewportToPlayerPermutation)
+        {
             if (Arena == null) return;
             var localPlayers = Game.DataEngine.Spectators.Where(player => player.NeedsViewport).ToList();
             if (Viewports != null) Viewports.Dispose();
             Viewports = new AWViewportCollection(Game.GraphicsDeviceService, localPlayers.Count(),
-                (index, rectangle) => localPlayers[index].CreateViewport(rectangle));
+                (index, rectangle) => localPlayers[viewportToPlayerPermutation(index)].CreateViewport(rectangle));
         }
 
         /// <summary>

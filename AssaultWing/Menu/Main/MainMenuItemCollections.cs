@@ -18,6 +18,7 @@ namespace AW2.Menu.Main
     public class MainMenuItemCollections
     {
         private MenuEngineImpl _menuEngine;
+        private TimeSpan _lastNetworkItemsUpdate;
 
         /// <summary>
         /// The very first menu when the game starts.
@@ -38,12 +39,10 @@ namespace AW2.Menu.Main
         {
             _menuEngine = menuEngine;
             InitializeStartItems(menuEngine);
-            var lastUpdate = TimeSpan.Zero;
             NetworkItems = new MainMenuItemCollection("Play at the Battlefront");
             NetworkItems.Update = () =>
             {
-                if (lastUpdate.SecondsAgoRealTime() < 15) return;
-                lastUpdate = _menuEngine.Game.GameTime.TotalRealTime;
+                if (_lastNetworkItemsUpdate.SecondsAgoRealTime() < 15) return;
                 RefreshNetworkItems();
             };
             SetupItems = new MainMenuItemCollection("General Setup");
@@ -140,6 +139,7 @@ namespace AW2.Menu.Main
 
         private void RefreshNetworkItems()
         {
+            _lastNetworkItemsUpdate = _menuEngine.Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
             NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Play as Server",
                 component =>

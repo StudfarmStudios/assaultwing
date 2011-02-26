@@ -567,7 +567,7 @@ namespace AW2.Core
             }
         }
 
-        private void UpdateGameServerInfoToManagementServer()
+        public void UpdateGameServerInfoToManagementServer()
         {
             var managementMessage = new UpdateGameServerMessage { CurrentClients = DataEngine.Players.Count() };
             NetworkEngine.ManagementServerConnection.Send(managementMessage);

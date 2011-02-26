@@ -203,6 +203,7 @@ namespace AW2.Net
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
             _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT);
             RegisterServerToManagementServer();
+            _game.UpdateGameServerInfoToManagementServer();
         }
 
         /// <summary>

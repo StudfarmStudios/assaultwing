@@ -58,7 +58,7 @@ namespace AW2.Sound
         }
 
         //int DSCALE = 200;
-        public void UpdateSpatial(AudioListener listener)
+        public void UpdateSpatial(AudioListener[] listeners)
         {
             if (_gob != null)
             {
@@ -67,7 +67,7 @@ namespace AW2.Sound
 
                 SoundEffect.DistanceScale = _distanceScale;
                 SoundEffect.DopplerScale = 0.05f;
-                _instance.Apply3D(listener, _emitter);//listener, _emitter);
+                _instance.Apply3D(listeners, _emitter);//listener, _emitter);
 
             }
         }

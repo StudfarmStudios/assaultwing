@@ -139,30 +139,33 @@ namespace AW2.Sound
             _createdInstances.RemoveAll(instance => instance.Target == null);
             
             List<Ship> ships = new List<Ship>();
-            Vector2 pos = new Vector2();
-            Vector2 move = new Vector2();
-            int playerCount = 0;
+            
+            
             foreach(Player p in AssaultWingCore.Instance.DataEngine.Players)
             {
                 if (p.Ship != null)
                 {
-                    pos = pos + p.Ship.Pos;
-                    move = move + p.Ship.Move;
-                    playerCount++;
-                    break;
+                    ships.Add(p.Ship);
                 }
             }
-            
-            _listener.Position = new Vector3(pos.X / playerCount, pos.Y / playerCount, 0);
-            _listener.Velocity = new Vector3(move.X / playerCount, move.Y / playerCount, 0);
-            foreach (SoundInstanceXNA instance in _playingInstances)
+            AudioListener[] listeners = new AudioListener[ships.Count];
+            for (int i = 0; i < ships.Count; i++)
             {
-                 instance.UpdateSpatial(_listener);   
+                listeners[i] = new AudioListener();
+                listeners[i].Position = new Vector3(ships[i].Pos.X, ships[i].Pos.Y, 0);
+                listeners[i].Velocity = new Vector3(ships[i].Move.X, ships[i].Move.Y, 0);
             }
-
-            foreach (WeakReference instance in _createdInstances.ToArray())
+            if (listeners.Length > 0) 
             {
-                ((SoundInstanceXNA)instance.Target).UpdateSpatial(_listener);
+                foreach (SoundInstanceXNA instance in _playingInstances)
+                {
+                    instance.UpdateSpatial(listeners);
+                }
+
+                foreach (WeakReference instance in _createdInstances.ToArray())
+                {
+                    ((SoundInstanceXNA)instance.Target).UpdateSpatial(listeners);
+                }
             }
         }
 

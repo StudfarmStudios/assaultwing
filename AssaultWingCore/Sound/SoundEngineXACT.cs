@@ -117,11 +117,22 @@ namespace AW2.Sound
         /// <summary>
         /// Returns the named cue or <code>null</code> if sounds are disabled.
         /// </summary>
-        public override SoundInstance CreateSound(string soundName)
+        public override SoundInstance CreateSound(string soundName, Gob gob)
         {
             if (!Enabled) return null;
             Cue cue = _soundBank.GetCue(soundName);
             return new SoundInstanceXACT(cue, _soundBank);
+        }
+
+        public override SoundInstance PlaySound(string soundName, Gob gob)
+        {
+            SoundInstance instance = CreateSound(soundName);
+
+            if (instance != null)
+            {
+                instance.Play();
+            }
+            return instance;
         }
 
 

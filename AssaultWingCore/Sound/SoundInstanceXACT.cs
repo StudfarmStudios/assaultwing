@@ -26,10 +26,10 @@ namespace AW2.Sound
             _cue.Stop(AudioStopOptions.AsAuthored);
         }
 
-        public override void SetGob(AW2.Game.Gob gob)
-        {
-            // Not implemented
+        public override void SetVolume(float v)
+        {            
         }
+
 
         public override void EnsureIsPlaying()
         {

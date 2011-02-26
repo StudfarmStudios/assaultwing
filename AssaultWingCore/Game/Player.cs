@@ -544,6 +544,10 @@ namespace AW2.Game
                 Ship.TurnLeft(Controls.Left.Force, Game.GameTime.ElapsedGameTime);
             if (Controls.Right.Force > 0)
                 Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
+            if (Controls.Right.Force == 0 && Controls.Left.Force == 0)
+            {
+                Ship.StopTurning();
+            }
             if (Controls.Fire1.Pulse || Controls.Fire1.Force > 0)
                 Ship.Weapon1.Fire(Controls.Fire1.State);
             if (Controls.Fire2.Pulse || Controls.Fire2.Force > 0)

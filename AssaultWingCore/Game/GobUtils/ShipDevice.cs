@@ -316,7 +316,7 @@ namespace AW2.Game.GobUtils
 
         private void PlayFiringSoundImpl()
         {
-            if (_fireSound != "") Owner.Game.SoundEngine.PlaySound(_fireSound);
+            if (_fireSound != "") Owner.Game.SoundEngine.PlaySound(_fireSound, Owner);
         }
 
         #endregion Nonpublic methods

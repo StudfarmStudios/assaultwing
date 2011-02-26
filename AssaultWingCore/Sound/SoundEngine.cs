@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using AW2.Core;
+using AW2.Game;
 
 namespace AW2.Sound
 {
@@ -56,21 +57,27 @@ namespace AW2.Sound
         /// <summary>
         /// Start a sound. Return a SoundInstance object to it, or null if sounds are disabled.
         /// </summary>
-        public SoundInstance PlaySound(string soundName)
-        {
-            SoundInstance instance = CreateSound(soundName);
-            
-            if (instance != null)
-            {
-                instance.Play();
-            }
-            return instance;
-        }
+     
+        public abstract SoundInstance PlaySound(string soundName, Gob parentGob);
+        
         
         /// <summary>
         /// Create a sound without starting it. Return a SoundInstance object, or null if sounds are disabled.
         /// </summary>
-        public abstract SoundInstance CreateSound(string soundName);
+        public abstract SoundInstance CreateSound(string soundName, Gob parentGob);
+        
+        public SoundInstance CreateSound(string soundName)
+        {
+            return CreateSound(soundName, null);
+        }
+
+        public SoundInstance PlaySound(string soundName)
+        {
+            return PlaySound(soundName, null);
+        }
+
+
+        List<SoundInstance> _createdSounds = new List<SoundInstance>();
         
 
         #endregion

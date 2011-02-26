@@ -129,7 +129,7 @@ namespace AW2.Game.Gobs
 
             // Manage exhaust engines.
             if (Arena.TotalTime >= _thrustEndTime)
-                SwitchEngineFlashAndBang(false);
+                SetExhaustEffectsEnabled(false);
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)

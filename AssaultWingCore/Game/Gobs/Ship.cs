@@ -21,6 +21,7 @@ namespace AW2.Game.Gobs
     {
         private const string SHIP_BIRTH_SOUND = "NewCraft";
         private const string SHIP_THRUST_SOUND = "Engine";
+        private const string SHIP_THRUST_TURN_SOUND = "LowEngine";
         private static readonly ControlState[] g_defaultControlStates;
 
         #region Ship fields related to flying
@@ -44,6 +45,7 @@ namespace AW2.Game.Gobs
         private float _maxSpeed;
 
         private SoundInstance _thrusterSound;
+        private SoundInstance _thrusterTurnSound;
 
         #endregion Ship fields related to flying
 
@@ -146,6 +148,10 @@ namespace AW2.Game.Gobs
         private List<Gob> _temporarilyDisabledGobs;
 
         private bool _isBirthFlashing;
+
+        private bool _turning;
+
+        private float _turnSoundBlend;
 
         #endregion Ship fields related to other things
 
@@ -345,14 +351,15 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _thrusterSound = Game.SoundEngine.CreateSound(SHIP_THRUST_SOUND);
-            SwitchEngineFlashAndBang(false);
+            _thrusterSound = Game.SoundEngine.CreateSound(SHIP_THRUST_SOUND, this);
+            _thrusterTurnSound = Game.SoundEngine.CreateSound(SHIP_THRUST_TURN_SOUND, this);
+            SetExhaustEffectsEnabled(false);
             _exhaustAmountUpdated = false;
             CreateCoughEngines();
             CreateGlow();
             Disable(); // re-enabled in Update()
             _isBirthFlashing = true;
-            Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND);
+            Game.SoundEngine.PlaySound(SHIP_BIRTH_SOUND, this);
         }
 
         public override void Update()
@@ -377,6 +384,7 @@ namespace AW2.Game.Gobs
             Game.DataEngine.Devices.Remove(Weapon2);
             Game.DataEngine.Devices.Remove(ExtraDevice);
             _thrusterSound.Dispose();
+            _thrusterTurnSound.Dispose();
             base.Dispose();
         }
 
@@ -481,9 +489,9 @@ namespace AW2.Game.Gobs
             if (Disabled) return;
             Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * _thrustForce;
             Game.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed, duration);
-            _visualThrustForce = force;
+            _visualThrustForce = force;            
             Thrusting(force);
-            SwitchEngineFlashAndBang(true);
+            SetExhaustEffectsEnabled(true);
             _exhaustAmountUpdated = true;
         }
 
@@ -519,6 +527,8 @@ namespace AW2.Game.Gobs
             //float headingFactor = 1.0f; // naive roll
             _rollAngle.Target = -_rollMax * force * headingFactor;
             _rollAngleGoalUpdated = true;
+            
+            _turning = true;
         }
 
         #endregion Ship public methods
@@ -627,13 +637,19 @@ namespace AW2.Game.Gobs
                 : g_defaultControlStates;
         }
 
-        protected override void SwitchEngineFlashAndBang(bool active)
+        protected override void SetExhaustEffectsEnabled(bool active)
         {
-            base.SwitchEngineFlashAndBang(active);
+            base.SetExhaustEffectsEnabled(active);
             if (active)
+            {
                 _thrusterSound.EnsureIsPlaying();
+                _thrusterTurnSound.EnsureIsPlaying();
+            }
             else
+            {
                 _thrusterSound.Stop();
+                _thrusterTurnSound.Stop();
+            }
         }
 
         private void InitializeDevice(ShipDevice device, ShipDevice.OwnerHandleType ownerHandle)
@@ -654,8 +670,26 @@ namespace AW2.Game.Gobs
         private void UpdateExhaustEngines()
         {
             if (!_exhaustAmountUpdated)
-                SwitchEngineFlashAndBang(false);
+                SetExhaustEffectsEnabled(false);
             _exhaustAmountUpdated = false;
+
+            // Update thruster sound volumes
+            float turnBlendTarget = Move.Length() / _maxSpeed;//  _turning ? 1 : 0);
+            if (turnBlendTarget < 0)
+                turnBlendTarget = 0;
+            if (turnBlendTarget > 1)
+                turnBlendTarget = 1;
+            if (_turnSoundBlend < turnBlendTarget)
+            {
+                _turnSoundBlend = Math.Min(turnBlendTarget, _turnSoundBlend + (float)Game.TargetElapsedTime.TotalSeconds);
+            }
+            else
+            {
+                _turnSoundBlend = Math.Max(turnBlendTarget, _turnSoundBlend - (float)Game.TargetElapsedTime.TotalSeconds);
+            }
+
+            _thrusterSound.SetVolume(_turnSoundBlend);
+            _thrusterTurnSound.SetVolume(1 - _turnSoundBlend);
         }
 
         private void UpdateCoughEngines()
@@ -699,6 +733,11 @@ namespace AW2.Game.Gobs
                 Rotation = Rotation,
                 ControlStates = GetControlStates(),
             });
+        }
+
+        public void StopTurning()
+        {
+            _turning = false;
         }
     }
 }

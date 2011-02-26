@@ -154,7 +154,7 @@ namespace AW2.Core
             PreFrameLogicEngine = new PreFrameLogicEngine(this, 2);
             LogicEngine = new LogicEngine(this, 3);
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
-            SoundEngine = new SoundEngineXACT(this, 5);
+            SoundEngine = new SoundEngineXNA(this, 5);
             GraphicsEngine = new GraphicsEngineImpl(this, 6);
 
             Components.Add(PreFrameLogicEngine);

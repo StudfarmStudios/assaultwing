@@ -1135,7 +1135,7 @@ namespace AW2.Game
             return Tuple.Create(gob != null, gob);
         }
 
-        protected virtual void SwitchEngineFlashAndBang(bool active)
+        protected virtual void SetExhaustEffectsEnabled(bool active)
         {
             foreach (var exhaustEngine in _exhaustEngines.OfType<Gobs.Peng>())
                 exhaustEngine.Paused = !active;

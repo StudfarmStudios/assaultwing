@@ -94,7 +94,7 @@ namespace AW2.Game.Gobs
 
         public override void Activate()
         {
-            Game.SoundEngine.PlaySound(_sound.ToString());
+            Game.SoundEngine.PlaySound(_sound.ToString(), this);
 
             CreateParticleEngines();
             _flowEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_flowTime);

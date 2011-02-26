@@ -7,21 +7,26 @@ using AW2.Core;
 using AW2.Game;
 using AW2.Graphics;
 using AW2.Helpers;
+using AW2.Game.Gobs;
+using System.Globalization;
 
 namespace AW2.Sound
 {
     /// <summary>
     /// Sound engine. Works as an extra abstraction for XACT audio engine.
     /// </summary>
+    /// 
+
     public class SoundEngineXNA : SoundEngine
     {
         public class SoundCue
         {
-            public SoundCue(SoundEffect[] effects, float volume, bool loop)
+            public SoundCue(SoundEffect[] effects, float volume, float distanceScale, bool loop)
             {
                 _effects = effects;
                 _volume = volume;
                 _loop = loop;
+                _distanceScale = distanceScale;
             }
 
             public SoundEffect GetEffect()
@@ -32,10 +37,17 @@ namespace AW2.Sound
 
             public bool _loop;
             public float _volume;
+            public float _distanceScale;
             public SoundEffect[] _effects;
         }
 
         Dictionary<string, SoundCue> _soundCues = new Dictionary<string, SoundCue>();
+        
+        List<SoundInstanceXNA> _playingInstances = new List<SoundInstanceXNA>(); // One-off sounds
+        List<WeakReference> _createdInstances = new List<WeakReference>(); // Sound instances with owner
+
+
+        AudioListener _listener = new AudioListener();
 
         #region Private fields
         AWMusic _music;
@@ -53,6 +65,7 @@ namespace AW2.Sound
         public SoundEngineXNA(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
         {
+            
         }
 
         #region Overridden GameComponent methods
@@ -62,12 +75,16 @@ namespace AW2.Sound
             try
             {
                 Log.Write("Sound engine initialized.");
-                string filePath = Game.Content.RootDirectory + "\\content\\sounds\\sounddefs.xml";
+                string filePath = Game.Content.RootDirectory + "\\corecontent\\sounds\\sounddefs.xml";
+
+                System.Globalization.CultureInfo ci = System.Globalization.CultureInfo.InstalledUICulture;
+                NumberFormatInfo ni = (System.Globalization.NumberFormatInfo)ci.NumberFormat.Clone();
+                ni.NumberDecimalSeparator = ".";
 
                 var allSounds = new List<string>();
 
                 var document = new XmlDocument();
-                document.Load(filePath);
+                 document.Load(filePath);
                 var soundNodes = document.SelectNodes("group/sound");
                 foreach (XmlNode sound in soundNodes)
                 {
@@ -76,8 +93,15 @@ namespace AW2.Sound
                     var loopAttribute = sound.Attributes["loop"];
                     bool loop = (loopAttribute != null ? Boolean.Parse(loopAttribute.Value) : false);
 
+                    var spatialAttribute = sound.Attributes["spatial"];
+                    bool spatial = (spatialAttribute != null ? Boolean.Parse(spatialAttribute.Value) : true);
+
                     var volumeAttribute = sound.Attributes["volume"];
-                    float volume = (volumeAttribute != null ? (float)Double.Parse(volumeAttribute.Value) : 1.0f);
+                    float volume = (volumeAttribute != null ? (float)Double.Parse(volumeAttribute.Value, ni) : 1.0f);
+                    
+                    var distAttribute = sound.Attributes["distancescale"];
+                    float dist = (distAttribute != null ? (float)Double.Parse(distAttribute.Value, ni) : 200.0f);
+
 
                     // Find all variations for a sound
                     var effects = new List<SoundEffect>();
@@ -91,7 +115,11 @@ namespace AW2.Sound
                         var effect = manager.Load<SoundEffect>(name);
                         effects.Add(effect);
                     }
-                    var cue = new SoundCue(effects.ToArray(), volume, loop);
+                    if (effects.Count == 0)
+                    {
+                        Console.WriteLine("Error loading sound " + baseName + " (missing from project?)");
+                    }
+                    var cue = new SoundCue(effects.ToArray(), volume, dist, loop);
                     _soundCues.Add(baseName, cue);
                 }
             }
@@ -107,10 +135,35 @@ namespace AW2.Sound
             if (_volumeFadeAction != null) _volumeFadeAction();
             if (_music != null) _music.Volume = ActualMusicVolume;
 
-            /*   
+            _playingInstances.RemoveAll(instance => instance.IsFinished());
+            _createdInstances.RemoveAll(instance => instance.Target == null);
             
-               _audioEngine.Update();
-               _soundEffectCategory.SetVolume(AssaultWing.Instance.Settings.Sound.SoundVolume);*/
+            List<Ship> ships = new List<Ship>();
+            Vector2 pos = new Vector2();
+            Vector2 move = new Vector2();
+            int playerCount = 0;
+            foreach(Player p in AssaultWingCore.Instance.DataEngine.Players)
+            {
+                if (p.Ship != null)
+                {
+                    pos = pos + p.Ship.Pos;
+                    move = move + p.Ship.Move;
+                    playerCount++;
+                    break;
+                }
+            }
+            
+            _listener.Position = new Vector3(pos.X / playerCount, pos.Y / playerCount, 0);
+            _listener.Velocity = new Vector3(move.X / playerCount, move.Y / playerCount, 0);
+            foreach (SoundInstanceXNA instance in _playingInstances)
+            {
+                 instance.UpdateSpatial(_listener);   
+            }
+
+            foreach (WeakReference instance in _createdInstances.ToArray())
+            {
+                ((SoundInstanceXNA)instance.Target).UpdateSpatial(_listener);
+            }
         }
 
         #endregion
@@ -174,7 +227,7 @@ namespace AW2.Sound
         /// <summary>
         /// Returns the named cue or <code>null</code> if sounds are disabled.
         /// </summary>
-        public override SoundInstance CreateSound(string soundName)
+        private SoundInstance CreateSoundInternal(string soundName, Gob parentGob)
         {
             if (!Enabled) return null;
 
@@ -188,14 +241,35 @@ namespace AW2.Sound
             SoundCue cue = _soundCues[soundName.ToLower()];
 
             SoundEffect soundEffect = cue.GetEffect();
+            
 
             SoundEffectInstance instance = soundEffect.CreateInstance();
-            instance.Volume = cue._volume;
-            instance.IsLooped = cue._loop;
 
-            return new SoundInstanceXNA(soundEffect.CreateInstance());
+            instance.IsLooped = cue._loop;
+            //Console.WriteLine("Setting vol " + cue._volume + " for " + soundName);
+            
+            return new SoundInstanceXNA(instance, parentGob, cue._volume, cue._distanceScale);
         }
-        // Instance gc'd -> sound ends?
+
+        public override SoundInstance CreateSound(string soundName, Gob parentGob)
+        {
+            SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
+            _createdInstances.Add(new WeakReference(instance));
+            return instance;
+        }
+
+        public override SoundInstance PlaySound(string soundName, Gob parentGob)
+        {
+            SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
+
+            if (instance != null)
+            {
+                instance.Play();                
+            }
+            _playingInstances.Add(instance);
+            return instance;
+        }
+
 
         #endregion
     }

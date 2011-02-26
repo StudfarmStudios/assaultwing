@@ -12,6 +12,7 @@ using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
 using Rectangle = AW2.Helpers.Geometric.Rectangle;
+using AW2.Game.Gobs;
 
 namespace AW2.Game
 {
@@ -245,6 +246,8 @@ namespace AW2.Game
         /// Indexed by bit indices of <see cref="CollisionAreaType"/>.
         private static readonly float[] COLLISION_AREA_CELL_SIZE;
 
+        private List<SoundInstance> _ambientSounds = new List<SoundInstance>();
+
         #endregion Collision related fields
 
         #region Arena properties
@@ -407,6 +410,45 @@ namespace AW2.Game
             FrameNumber = 0;
             InitializeCollisionAreas();
             InitializeGobs();
+            InitializeAmbientSounds();
+            
+        }
+        
+        private void InitializeAmbientSounds()
+        {
+            // Just in case
+            _ambientSounds.Clear();
+
+            // Background
+            Game.SoundEngine.PlaySound("amazonasAmbience");
+
+            // HACK! (Add sound property on objects or sound source gob)
+
+            CanonicalString goldObjectId = new CanonicalString("amazon_chest_1");
+            CanonicalString shovelObjectId  = new CanonicalString("amazon_shovel_1");
+            foreach (var layer in _layers)
+            {
+                foreach (var gob in layer.Gobs)
+                {
+                    CanonicalString[] names = gob.ModelNames.ToArray();
+
+                    if (names.Contains(goldObjectId))
+                    {
+                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasCoins", gob));
+                    }
+                    else if (gob.ModelNames.Contains(shovelObjectId))
+                    {
+                        _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasLeaves", gob));
+                    }
+
+                    gob.Layer = layer;
+                }
+            }
+            foreach (SoundInstance sound in _ambientSounds)
+            {
+                if (sound != null)
+                    sound.Play();
+            }
         }
 
         /// <summary>
@@ -971,7 +1013,7 @@ namespace AW2.Game
             if (moveDelta.Length() < MINIMUM_COLLISION_DELTA) return;
 
             if (!(gob is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            Game.SoundEngine.PlaySound("Collision");
+            Game.SoundEngine.PlaySound("Collision", gob);
         }
 
         private void PlayGobCollisionSound(Gob gob1, Gob gob2, Vector2 move1Delta, Vector2 move2Delta)
@@ -980,7 +1022,7 @@ namespace AW2.Game
             if (move1Delta.Length() < MINIMUM_COLLISION_DELTA && move2Delta.Length() < MINIMUM_COLLISION_DELTA) return;
 
             if (!(gob1 is Gobs.Ship) && !(gob2 is Gobs.Ship)) return; // happens a lot, we need some peaceful sound here!!!
-            Game.SoundEngine.PlaySound("Shipcollision");
+            Game.SoundEngine.PlaySound("Shipcollision", gob1);
         }
 
         private float CollisionDamage(Gob gob, Vector2 moveDelta, float damageMultiplier)

@@ -33,7 +33,7 @@ namespace AW2.Game.Gobs
         private float _weapon2ChargeSpeed;
 
         private TimeSpan _lastDockSoundTime;
-        private SoundInstance _dockSound;
+        private SoundInstance _chargingSound, _dockSound;
 
         #endregion Dock fields
 
@@ -59,13 +59,16 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoop");
+            _chargingSound = Game.SoundEngine.CreateSound("HomeBaseLoop", this);
+            _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoopLow", this);
+            if (_dockSound != null)
+                _dockSound.Play();
         }
 
         public override void Update()
         {
             base.Update();
-            if (MustBeSilent) _dockSound.Stop();
+            if (MustBeSilent) _chargingSound.Stop();
         }
 
         public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);
@@ -105,6 +108,11 @@ namespace AW2.Game.Gobs
 
         public override void Dispose()
         {
+            if (_chargingSound != null)
+            {
+                _chargingSound.Dispose();
+                _chargingSound = null;
+            }
             if (_dockSound != null)
             {
                 _dockSound.Dispose();
@@ -116,7 +124,7 @@ namespace AW2.Game.Gobs
         private void EnsureDockSoundPlaying()
         {
             _lastDockSoundTime = Arena.TotalTime;
-            _dockSound.EnsureIsPlaying();
+            _chargingSound.EnsureIsPlaying();
         }
     }
 }

@@ -87,7 +87,7 @@ namespace AW2.Game.Gobs.Bonus
             {
                 if (Game.NetworkMode != NetworkMode.Client)
                     DoBonusAction(theirArea.Owner.Owner);
-                Game.SoundEngine.PlaySound("BonusCollection");
+                Game.SoundEngine.PlaySound("BonusCollection", this);
                 Die();
             }
         }

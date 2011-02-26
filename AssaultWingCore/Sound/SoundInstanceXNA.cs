@@ -21,14 +21,15 @@ namespace AW2.Sound
             _gob = gob;
             _emitter = new AudioEmitter();
             _baseVolume = baseVolume;
+            
             SetVolume(1);
+            UpdateSpatial(DEFAULT_LISTENERS);
 
             _distanceScale = distanceScale;
         }
 
         public override void SetVolume(float vol)
         {
-
             _instance.Volume = _baseVolume * vol * AssaultWingCore.Instance.Settings.Sound.SoundVolume;
         }
 
@@ -56,7 +57,7 @@ namespace AW2.Sound
         }
         public bool IsFinished()
         {
-            return _instance.State == SoundState.Stopped;
+            return _instance.IsDisposed || _instance.State == SoundState.Stopped;
         }
 
         //int DSCALE = 200;
@@ -69,7 +70,7 @@ namespace AW2.Sound
 
                 SoundEffect.DistanceScale = _distanceScale;
                 SoundEffect.DopplerScale = 0.05f;
-                _instance.Apply3D(listeners, _emitter);//listener, _emitter);
+                _instance.Apply3D(listeners, _emitter);
 
             }
         }
@@ -78,7 +79,6 @@ namespace AW2.Sound
         {
             if (_instance.State != SoundState.Playing)
             {
-                Console.WriteLine("Re-Started " + _instance.ToString());
                 _instance.Play();
             }
         }
@@ -88,6 +88,7 @@ namespace AW2.Sound
         private AudioEmitter _emitter;
         private float _baseVolume;
         private float _distanceScale;
+        private static AudioListener[] DEFAULT_LISTENERS = new AudioListener[] { new AudioListener() };
         
     }
 }

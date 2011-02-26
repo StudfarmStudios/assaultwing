@@ -394,7 +394,9 @@ namespace AW2.Game
         /// </summary>
         public void Dispose()
         {
+            UninitializeAmbientSounds();
             UnloadContent();
+            
             foreach (var gob in Gobs) gob.Dispose();
             Gobs.Clear();
             for (int i = 0; i < _collisionAreas.Length; ++i)
@@ -413,14 +415,24 @@ namespace AW2.Game
             InitializeAmbientSounds();
             
         }
-        
+
+        private void UninitializeAmbientSounds()
+        {
+            foreach (SoundInstance sound in _ambientSounds)
+            {
+                if (sound != null)
+                    sound.Stop();
+            }
+            _ambientSounds.Clear();
+        }
+
         private void InitializeAmbientSounds()
         {
             // Just in case
-            _ambientSounds.Clear();
+            UninitializeAmbientSounds();
 
             // Background
-            Game.SoundEngine.PlaySound("amazonasAmbience");
+            _ambientSounds.Add(Game.SoundEngine.CreateSound("amazonasAmbience"));
 
             // HACK! (Add sound property on objects or sound source gob)
 

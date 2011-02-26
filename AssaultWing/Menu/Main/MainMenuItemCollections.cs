@@ -72,9 +72,18 @@ namespace AW2.Menu.Main
                     MessageHandlers.ActivateHandlers(MessageHandlers.GetStandaloneMenuHandlers(HandleGameServerListReply));
                 }));
             StartItems.Add(new MainMenuItem(menuEngine, () => "Setup",
-                component => component.SetItems(SetupItems)));
+                component =>
+                {
+                    component.SetItems(SetupItems);
+                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                }));
+                    
             StartItems.Add(new MainMenuItem(menuEngine, () => "Quit",
-                component => AssaultWingProgram.Instance.Exit()));
+                component =>
+                    {
+                        AssaultWingProgram.Instance.Exit();
+                        menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                    }));
         }
 
         private void RefreshSetupItems(MenuEngineImpl menuEngine)

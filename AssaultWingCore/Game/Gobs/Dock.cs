@@ -61,14 +61,15 @@ namespace AW2.Game.Gobs
             base.Activate();
             _chargingSound = Game.SoundEngine.CreateSound("HomeBaseLoop", this);
             _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoopLow", this);
-            if (_dockSound != null)
-                _dockSound.Play();
         }
 
         public override void Update()
         {
             base.Update();
             if (MustBeSilent) _chargingSound.Stop();
+            
+            if (_dockSound != null)
+                _dockSound.EnsureIsPlaying();
         }
 
         public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);

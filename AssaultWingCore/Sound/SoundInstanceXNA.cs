@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
+using AW2.Core;
 
 namespace AW2.Sound
 {
@@ -20,14 +21,15 @@ namespace AW2.Sound
             _gob = gob;
             _emitter = new AudioEmitter();
             _baseVolume = baseVolume;
-            _instance.Volume = _baseVolume;
+            SetVolume(1);
 
             _distanceScale = distanceScale;
         }
 
         public override void SetVolume(float vol)
         {
-            _instance.Volume = _baseVolume * vol;
+
+            _instance.Volume = _baseVolume * vol * AssaultWingCore.Instance.Settings.Sound.SoundVolume;
         }
 
         public override void Play()

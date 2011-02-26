@@ -1881,39 +1881,6 @@
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>99.9999847</X>
-            <Y>106</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>3918</X>
-            <Y>122.999916</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>2040</X>
-            <Y>3718</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
       </gobs>
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">

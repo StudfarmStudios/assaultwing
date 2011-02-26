@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <typeName>dock effect</typeName>
+  <typeName>dockeffect</typeName>
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
    </networkUpdatePeriod>
@@ -8,7 +8,7 @@
   <drawMode2D>
       <type>Additive</type>
   </drawMode2D>
-  <layerPreference>Front</layerPreference>
+  <layerPreference>Back</layerPreference>
   <coordinateSystem>Game</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>

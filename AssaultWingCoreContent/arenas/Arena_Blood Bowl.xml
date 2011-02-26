@@ -654,28 +654,6 @@
       <z>0</z>
       <parallaxName></parallaxName>
       <gobs>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>116</X>
-            <Y>80</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>2862.00024</X>
-            <Y>104</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
       </gobs>
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer">

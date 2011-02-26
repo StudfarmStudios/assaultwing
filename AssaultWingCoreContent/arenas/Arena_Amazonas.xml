@@ -1469,50 +1469,6 @@
           <rotation>1.8</rotation>
           <typeName>prop model</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>87.9999542</X>
-            <Y>3819</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>3795</X>
-            <Y>3425</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>98</X>
-            <Y>116</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <input>0</input>
-          <particles />
-          <staticID>0</staticID>
-          <pos>
-            <X>3900.00024</X>
-            <Y>89.0001144</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>dock effect</typeName>
-        </Item>
         <Item type="AW2.Game.Gobs.PropModel, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <propModelName>amazon_grass_1</propModelName>
           <staticID>0</staticID>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Rocket, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-  <impactDamage>160</impactDamage>
+  <impactDamage>200</impactDamage>
   <thrustForce>75000</thrustForce>
   <thrustDuration>3.5</thrustDuration>
   <maxSpeed>370</maxSpeed>

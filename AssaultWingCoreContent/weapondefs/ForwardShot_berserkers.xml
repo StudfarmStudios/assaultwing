@@ -30,8 +30,8 @@
   <loadTime>5</loadTime>
   <fireCharge>600</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
-  <shotCount>9</shotCount>
-  <shotSpacing>0.07</shotSpacing>
+  <shotCount>5</shotCount>
+  <shotSpacing>0.13</shotSpacing>
   <shotAngleVariation>0.25</shotAngleVariation>
   <shotSpeedVariation>50</shotSpeedVariation>
   <recoilMomentum>1000</recoilMomentum>

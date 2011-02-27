@@ -6,7 +6,7 @@ namespace AW2.Game.BonusActions
     [GameActionType(4)]
     public class Weapon1UpgradeLoadTimeBonusAction : GameAction
     {
-        private static float LOAD_TIME_MULTIPLIER = 0.6f;
+        private static float LOAD_TIME_MULTIPLIER = 0.3f;
 
         public override bool DoAction()
         {

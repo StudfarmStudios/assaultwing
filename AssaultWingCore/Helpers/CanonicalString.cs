@@ -120,7 +120,7 @@ namespace AW2.Helpers
             if (IsForLocalUseOnly) return;
             CanRegister = false;
             CanonicalForms = new List<string> { null };
-            CanonicalForms.AddRange(g_unregisteredCanonicalForms.Except(new string[] { null }).Distinct().OrderBy(v => v));
+            CanonicalForms.AddRange(g_unregisteredCanonicalForms.Except(new string[] { null }).Distinct().OrderBy(v => v, StringComparer.InvariantCultureIgnoreCase));
             g_canonicalFormsIndices.Clear();
             for (int i = 1; i < CanonicalForms.Count; ++i)
                 g_canonicalFormsIndices.Add(CanonicalForms[i], i);

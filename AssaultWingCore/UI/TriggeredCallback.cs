@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core;
-using AW2.Game;
 
 namespace AW2.UI
 {
@@ -18,18 +16,18 @@ namespace AW2.UI
 
         // These static controls are for public use through the public static methods.
         // These are never Release()d.
-        static Control enterControl = new KeyboardKey(Keys.Enter);
-        static Control escapeControl = new KeyboardKey(Keys.Escape);
-        static Control yControl = new KeyboardKey(Keys.Y);
-        static Control nControl = new KeyboardKey(Keys.N);
-        static MultiControl proceedControl = new MultiControl();
-        static MultiControl yesControl = new MultiControl();
-        static MultiControl noControl = new MultiControl();
+        private static Control enterControl = new KeyboardKey(Keys.Enter);
+        private static Control escapeControl = new KeyboardKey(Keys.Escape);
+        private static Control yControl = new KeyboardKey(Keys.Y);
+        private static Control nControl = new KeyboardKey(Keys.N);
+        private static MultiControl proceedControl = new MultiControl();
+        private static MultiControl yesControl = new MultiControl();
+        private static MultiControl noControl = new MultiControl();
 
         /// <summary>
         /// Returns a new control that is handy for triggering the proceeding of a paused thing.
-        /// </summary>
         /// The caller doesn't need to worry about Release()ing the returned control.
+        /// </summary>
         public static Control GetProceedControl()
         {
             // At each call, we hand out the same copy of the control
@@ -44,8 +42,8 @@ namespace AW2.UI
 
         /// <summary>
         /// Returns a new control that is handy for a positive answer.
-        /// </summary>
         /// The caller doesn't need to worry about Release()ing the returned control.
+        /// </summary>
         public static Control GetYesControl()
         {
             // At each call, we hand out the same copy of the control.
@@ -56,8 +54,8 @@ namespace AW2.UI
 
         /// <summary>
         /// Returns a new control that is handy for a negative answer.
-        /// </summary>
         /// The caller doesn't need to worry about Release()ing the returned control.
+        /// </summary>
         public static Control GetNoControl()
         {
             // At each call, we hand out the same copy of the control.
@@ -71,45 +69,30 @@ namespace AW2.UI
         private Control _control;
         private Action _callback;
 
-        /// <summary>
-        /// Creates a triggered callback.
-        /// </summary>
-        /// <param name="control">The triggering control.</param>
-        /// <param name="callback">The callback.</param>
         public TriggeredCallback(Control control, Action callback)
         {
             if (control == null || callback == null)
                 throw new ArgumentNullException("DialogAction got null arguments");
-            this._control = control;
-            this._callback = callback;
+            _control = control;
+            _callback = callback;
         }
 
         /// <summary>
         /// Updates the triggered callback, invoking the callback if the control triggers it.
+        /// Returns true if the callback was invoked, or false otherwise.
         /// </summary>
-        /// <returns><c>true</c> if the callback was invoked, or
-        /// <c>false</c> otherwise.</returns>
         public bool Update()
         {
-            if (_control.Pulse)
-            {
-                _callback();
-                return true;
-            }
-            return false;
+            if (!_control.Pulse) return false;
+            _callback();
+            return true;
         }
 
-        /// <summary>
-        /// Disposes of reserved resources.
-        /// </summary>
         public void Dispose()
         {
             _control.Dispose();
         }
 
-        /// <summary>
-        /// Destructor. Disposes of reserved resources.
-        /// </summary>
         ~TriggeredCallback()
         {
             Dispose();

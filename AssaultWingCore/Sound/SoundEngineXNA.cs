@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using AW2.Core;
 using AW2.Game;
-using AW2.Graphics;
 using AW2.Helpers;
-using AW2.Game.Gobs;
 using System.Globalization;
 
 namespace AW2.Sound
@@ -137,34 +136,26 @@ namespace AW2.Sound
 
             _playingInstances.RemoveAll(instance => instance.IsFinished());
             _createdInstances.RemoveAll(instance => instance.Target == null);
-            
-            List<Ship> ships = new List<Ship>();
-            
-            
-            foreach(Player p in AssaultWingCore.Instance.DataEngine.Players)
-            {
-                if (p.Ship != null)
-                {
-                    ships.Add(p.Ship);
-                }
-            }
-            AudioListener[] listeners = new AudioListener[ships.Count];
-            for (int i = 0; i < ships.Count; i++)
-            {
-                listeners[i] = new AudioListener();
-                listeners[i].Position = new Vector3(ships[i].Pos.X, ships[i].Pos.Y, 0);
-                listeners[i].Velocity = new Vector3(ships[i].Move.X, ships[i].Move.Y, 0);
-            }
-            if (listeners.Length > 0) 
-            {
-                foreach (SoundInstanceXNA instance in _playingInstances)
-                {
-                    instance.UpdateSpatial(listeners);
-                }
 
-                foreach (WeakReference instance in _createdInstances.ToArray())
+            var listeners =
+                from player in Game.DataEngine.Players
+                where !player.IsRemote
+                let move = player.Ship != null ? player.Ship.Move : Vector2.Zero
+                select new AudioListener
                 {
-                    ((SoundInstanceXNA)instance.Target).UpdateSpatial(listeners);
+                    Position = new Vector3(player.LookAtPos, 0),
+                    Velocity = new Vector3(move, 0),
+                };
+            if (listeners.Count() > 0) 
+            {
+                var listenerArray = listeners.ToArray();
+                foreach (var instance in _playingInstances)
+                {
+                    instance.UpdateSpatial(listenerArray);
+                }
+                foreach (var instance in _createdInstances)
+                {
+                    ((SoundInstanceXNA)instance.Target).UpdateSpatial(listenerArray);
                 }
             }
         }

@@ -60,7 +60,6 @@ namespace AW2.Sound
             return _instance.IsDisposed || _instance.State == SoundState.Stopped;
         }
 
-        //int DSCALE = 200;
         public void UpdateSpatial(AudioListener[] listeners)
         {
             if (_gob != null)

@@ -127,14 +127,14 @@ namespace AW2.Game.Weapons
             RemoveOldShots();
         }
 
-        protected override bool PermissionToFire(bool canFire)
+        protected override FiringPermissionAnswer PermissionToFire(bool canFire)
         {
             if (fireAction == FireAction.KillAll && liveShots.Count > 0)
             {
                 foreach (var gob in liveShots) gob.Die();
-                return false;
+                return FiringPermissionAnswer.Blocked;
             }
-            return true;
+            return FiringPermissionAnswer.Allowed;
         }
 
         protected override void ShootImpl()

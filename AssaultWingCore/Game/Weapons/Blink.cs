@@ -68,24 +68,24 @@ namespace AW2.Game.Weapons
             base.Dispose();
         }
 
-        protected override bool PermissionToFire(bool canFire)
+        protected override FiringPermissionAnswer PermissionToFire(bool canFire)
         {
             // Blink is totally controlled by the server because of complex visual effects.
-            if (Owner.Game.NetworkMode == NetworkMode.Client) return false;
+            if (Owner.Game.NetworkMode == NetworkMode.Client) return FiringPermissionAnswer.Disallowed;
 
-            if (!canFire) return false;
+            if (!canFire) return FiringPermissionAnswer.Disallowed;
             var transform =
                 Matrix.CreateRotationZ(Owner.Rotation) *
                 Matrix.CreateTranslation(new Vector3(Owner.Pos, 0));
             var targetArea = blinkArea.Transform(transform);
             Vector2 newPos;
-            bool success = Arena.GetFreePosition(Owner, targetArea, out newPos);
+            var success = Arena.GetFreePosition(Owner, targetArea, out newPos);
             if (success)
             {
                 _targetPos = newPos;
                 Owner.Disable(); // re-enabled in Update()
             }
-            return success;
+            return success ? FiringPermissionAnswer.Allowed : FiringPermissionAnswer.Disallowed;
         }
 
         protected override void ShootImpl()

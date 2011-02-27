@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Core;
@@ -28,6 +29,24 @@ namespace AW2.Game.GobUtils
             /// Play firing sound once for every shot but at most once each frame.
             /// </summary>
             EveryShot
+        }
+
+        protected enum FiringPermissionAnswer
+        {
+            /// <summary>
+            /// Firing is allowed.
+            /// </summary>
+            Allowed,
+
+            /// <summary>
+            /// Firing is not allowed. Instead, the device did something else.
+            /// </summary>
+            Blocked,
+
+            /// <summary>
+            /// Firing is not allowed.
+            /// </summary>
+            Disallowed,
         }
 
         #region Fields
@@ -234,13 +253,24 @@ namespace AW2.Game.GobUtils
         {
             if (Owner.Disabled) return;
             if (!FiringOperator.IsFirePressed(triggerState)) return;
-            bool success = PermissionToFire(FiringOperator.CanFire) && FiringOperator.TryFire();
-            if (success)
+            switch (PermissionToFire(FiringOperator.CanFire))
             {
-                if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
+                case FiringPermissionAnswer.Allowed:
+                    if (FiringOperator.TryFire())
+                    {
+                        if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
+                    }
+                    else
+                    {
+                        PlayerOwner.Game.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
+                    }
+                    break;
+                case FiringPermissionAnswer.Blocked: break;
+                case FiringPermissionAnswer.Disallowed:
+                    PlayerOwner.Game.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
+                    break;
+                default: throw new ApplicationException("Unknown FiringPermissionAnswer");
             }
-            else
-                PlayerOwner.Game.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
         }
 
         public virtual void Update()
@@ -298,7 +328,7 @@ namespace AW2.Game.GobUtils
 
         protected abstract void CreateVisualsImpl();
         protected abstract void ShootImpl();
-        protected virtual bool PermissionToFire(bool canFire) { return true; }
+        protected virtual FiringPermissionAnswer PermissionToFire(bool canFire) { return FiringPermissionAnswer.Allowed; }
 
         private void CreateVisuals()
         {

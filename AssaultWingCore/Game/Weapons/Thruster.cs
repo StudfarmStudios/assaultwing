@@ -63,12 +63,12 @@ namespace AW2.Game.Weapons
             FiringOperator = new FiringOperatorContinuous(this);
         }
 
-        protected override bool PermissionToFire(bool canFire)
+        protected override FiringPermissionAnswer PermissionToFire(bool canFire)
         {
             if (_extraForceReady <= Arena.TotalTime)
                 _extraForceEnd = Arena.TotalTime + TimeSpan.FromSeconds(extraForceChargeSeconds);
             _extraForceReady = Arena.TotalTime + TimeSpan.FromSeconds(extraForceChargeDelay);
-            return true;
+            return FiringPermissionAnswer.Allowed;
         }
 
         protected override void ShootImpl()

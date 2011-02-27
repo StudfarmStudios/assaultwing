@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
@@ -32,12 +33,19 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private float _weapon2ChargeSpeed;
 
+        [TypeParameter]
+        private CanonicalString _dockIdleEffectName;
+        [TypeParameter]
+        private CanonicalString _dockActiveEffectName;
+
         private TimeSpan _lastDockSoundTime;
         private SoundInstance _chargingSound, _dockSound;
+        private List<Peng> _dockIdleEffects;
+        private List<Peng> _dockActiveEffects;
 
         #endregion Dock fields
 
-        private bool MustBeSilent
+        private bool IsIdle
         {
             get { return _lastDockSoundTime < Arena.TotalTime - DOCK_SOUND_STOP_DELAY; }
         }
@@ -48,6 +56,8 @@ namespace AW2.Game.Gobs
             _repairSpeed = -10;
             _weapon1ChargeSpeed = 100;
             _weapon2ChargeSpeed = 100;
+            _dockIdleEffectName = (CanonicalString)"dummypeng";
+            _dockActiveEffectName = (CanonicalString)"dummypeng";
         }
 
         public Dock(CanonicalString typeName)
@@ -59,6 +69,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
+            CreateDockEffects();
             _chargingSound = Game.SoundEngine.CreateSound("HomeBaseLoop", this);
             _dockSound = Game.SoundEngine.CreateSound("HomeBaseLoopLow", this);
         }
@@ -66,10 +77,12 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (MustBeSilent) _chargingSound.Stop();
-            
-            if (_dockSound != null)
-                _dockSound.EnsureIsPlaying();
+            if (IsIdle)
+            {
+                _chargingSound.Stop();
+                EnsureEffectIdle();
+            }
+            if (_dockSound != null) _dockSound.EnsureIsPlaying();
         }
 
         public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);
@@ -80,30 +93,8 @@ namespace AW2.Game.Gobs
             // Then 'theirArea.Owner' must be damageable.
             if (myArea.Name == "Dock")
             {
-                Ship ship = theirArea.Owner as Ship;
-                bool canDock = false;
-
-                // If the ship is not null and the player hasn't taken damage for long enough time then set canDock to true (player can dock)
-                if (ship != null)
-                {
-                    TimeSpan totalGameTime = Game.DataEngine.ArenaTotalTime;
-
-                    if (ship.LastDamageTaken == TimeSpan.Zero || 
-                        totalGameTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED)
-                    {
-                        canDock = true;
-                    }
-                }
-
-                if (ship != null && theirArea.Owner.Owner != null && canDock) EnsureDockSoundPlaying();                
-
-                if (ship != null && canDock)
-                {
-                    var elapsedTime = Game.GameTime.ElapsedGameTime;
-                    ship.RepairDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, elapsedTime));
-                    ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, elapsedTime);
-                    ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, elapsedTime);
-                }
+                var ship = theirArea.Owner as Ship;
+                if (ship != null && CanRepair(ship)) RepairShip(ship);
             }
         }
 
@@ -122,10 +113,64 @@ namespace AW2.Game.Gobs
             base.Dispose();
         }
 
+        private void CreateDockEffects()
+        {
+            _dockActiveEffects = new List<Peng>();
+            _dockIdleEffects = new List<Peng>();
+            var boneIndices = GetNamedPositions("DockEffect");
+            Action<CanonicalString, int, List<Peng>> createEffect = (name, boneIndex, storage) =>
+                Gob.CreateGob<Peng>(Game, name, gob =>
+                {
+                    gob.Leader = this;
+                    gob.LeaderBone = boneIndex;
+                    Arena.Gobs.Add(gob);
+                    storage.Add(gob);
+                });
+            foreach (var boneIndex in boneIndices)
+            {
+                createEffect(_dockActiveEffectName, boneIndex.Item2, _dockActiveEffects);
+                createEffect(_dockIdleEffectName, boneIndex.Item2, _dockIdleEffects);
+            }
+        }
+
         private void EnsureDockSoundPlaying()
         {
             _lastDockSoundTime = Arena.TotalTime;
             _chargingSound.EnsureIsPlaying();
+        }
+
+        private void EnsureEffectActive()
+        {
+            foreach (var peng in _dockIdleEffects) peng.Paused = true;
+            foreach (var peng in _dockActiveEffects) peng.Paused = false;
+        }
+
+        private void EnsureEffectIdle()
+        {
+            foreach (var peng in _dockIdleEffects) peng.Paused = false;
+            foreach (var peng in _dockActiveEffects) peng.Paused = true;
+        }
+
+        private bool CanRepair(Ship ship)
+        {
+            return Game.DataEngine.ArenaTotalTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED;
+        }
+
+        private bool IsFullyRepaired(Ship ship)
+        {
+            return ship.DamageLevel == 0
+                && ship.ExtraDevice.Charge == ship.ExtraDevice.ChargeMax
+                && ship.Weapon2.Charge == ship.Weapon2.ChargeMax;
+        }
+
+        private void RepairShip(Ship ship)
+        {
+            if (!IsFullyRepaired(ship)) EnsureDockSoundPlaying();
+            EnsureEffectActive();
+            var elapsedTime = Game.GameTime.ElapsedGameTime;
+            ship.RepairDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, elapsedTime));
+            ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, elapsedTime);
+            ship.Weapon2.Charge += Game.PhysicsEngine.ApplyChange(_weapon2ChargeSpeed, elapsedTime);
         }
     }
 }

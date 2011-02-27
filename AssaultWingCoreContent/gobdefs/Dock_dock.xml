@@ -21,6 +21,8 @@
   <exhaustEngineNames/>
   <deathGobTypes>
   </deathGobTypes>
+  <dockIdleEffectName>dockeffect</dockIdleEffectName>
+  <dockActiveEffectName>dockeffect occupied</dockActiveEffectName>
   <collisionAreas>
     <Item>
       <type>PhysicalOtherUndamageableUnmovable</type>

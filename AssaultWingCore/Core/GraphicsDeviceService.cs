@@ -87,11 +87,19 @@ namespace AW2.Core
             ResetDevice();
         }
 
-        private void ResetDevice()
+        private Exception ResetDevice()
         {
             if (DeviceResetting != null) DeviceResetting(this, EventArgs.Empty);
-            GraphicsDevice.Reset(_parameters);
+            try
+            {
+                GraphicsDevice.Reset(_parameters);
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
             if (DeviceReset != null) DeviceReset(this, EventArgs.Empty);
+            return null;
         }
 
         /// <summary>
@@ -165,14 +173,11 @@ namespace AW2.Core
             }
             if (deviceNeedsReset)
             {
-                try
+                var resetException = EnsureBackBufferSize(clientSize.Width, clientSize.Height);
+                if (resetException != null)
                 {
-                    EnsureBackBufferSize(clientSize.Width, clientSize.Height);
-                }
-                catch (Exception e)
-                {
-                    Log.Write("ERROR: Graphics device reset failed", e);
-                    return "Graphics device reset failed\n\n" + e;
+                    Log.Write("Note: Graphics device reset failed", resetException);
+                    return "Graphics device reset failed\n\n" + resetException;
                 }
             }
             return null;
@@ -197,11 +202,11 @@ namespace AW2.Core
             }
         }
 
-        private void EnsureBackBufferSize(int width, int height)
+        private Exception EnsureBackBufferSize(int width, int height)
         {
             _parameters.BackBufferWidth = Math.Max(_parameters.BackBufferWidth, width);
             _parameters.BackBufferHeight = Math.Max(_parameters.BackBufferHeight, height);
-            ResetDevice();
+            return ResetDevice();
         }
     }
 }

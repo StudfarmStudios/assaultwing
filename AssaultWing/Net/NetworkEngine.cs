@@ -274,7 +274,7 @@ namespace AW2.Net
                 {
                     var message = string.Join(" and ", droppedPlayerNames.ToArray()) + " dropped out";
                     foreach (var player in Game.DataEngine.Players.Where(plr => !plr.IsRemote))
-                        player.Messages.Add(new PlayerMessage(message, Player.DEFAULT_COLOR));
+                        player.Messages.Add(new PlayerMessage(message, PlayerMessage.DEFAULT_COLOR));
                 }
             }
             Game.DataEngine.Spectators.Remove(player => player.ConnectionID == connection.ID);

@@ -24,7 +24,7 @@ namespace AW2.Game.Gobs.Bonus
             gameAction.SetDuration(duration);
             if (!gameAction.DoAction())
             {
-                player.Messages.Add(new PlayerMessage("Useless bonus discarded", Player.DEFAULT_COLOR));
+                player.Messages.Add(new PlayerMessage("Useless bonus discarded", PlayerMessage.DEFAULT_COLOR));
                 return;
             }
 

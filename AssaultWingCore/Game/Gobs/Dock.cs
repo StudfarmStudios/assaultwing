@@ -14,6 +14,8 @@ namespace AW2.Game.Gobs
         #region Dock fields
 
         private static readonly TimeSpan DOCK_SOUND_STOP_DELAY = TimeSpan.FromSeconds(0.5);
+        private static readonly TimeSpan DOCK_EFFECT_STOP_DELAY = TimeSpan.FromSeconds(0);
+        public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);
 
         /// <summary>
         /// Speed of repairing damageable gobs, measured in repaired damage/second.
@@ -38,16 +40,21 @@ namespace AW2.Game.Gobs
         [TypeParameter]
         private CanonicalString _dockActiveEffectName;
 
-        private TimeSpan _lastDockSoundTime;
+        private TimeSpan _lastDockSoundTime, _lastDockEffectTime;
         private SoundInstance _chargingSound, _dockSound;
         private List<Peng> _dockIdleEffects;
         private List<Peng> _dockActiveEffects;
 
         #endregion Dock fields
 
-        private bool IsIdle
+        private bool IsSoundIdle
         {
             get { return _lastDockSoundTime < Arena.TotalTime - DOCK_SOUND_STOP_DELAY; }
+        }
+
+        private bool IsEffectIdle
+        {
+            get { return _lastDockEffectTime < Arena.TotalTime - DOCK_EFFECT_STOP_DELAY; }
         }
 
         /// This constructor is only for serialisation.
@@ -77,15 +84,10 @@ namespace AW2.Game.Gobs
         public override void Update()
         {
             base.Update();
-            if (IsIdle)
-            {
-                _chargingSound.Stop();
-                EnsureEffectIdle();
-            }
+            if (IsSoundIdle) _chargingSound.Stop();
+            if (IsEffectIdle) EnsureEffectIdle();
             if (_dockSound != null) _dockSound.EnsureIsPlaying();
         }
-
-        public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
@@ -94,7 +96,14 @@ namespace AW2.Game.Gobs
             if (myArea.Name == "Dock")
             {
                 var ship = theirArea.Owner as Ship;
-                if (ship != null && CanRepair(ship)) RepairShip(ship);
+                if (ship != null)
+                {
+                    EnsureEffectActive();
+                    if (CanRepair(ship))
+                        RepairShip(ship);
+                    else if (ship.Owner != null)
+                        ship.Owner.NotifyRepairPending();
+                }
             }
         }
 
@@ -141,6 +150,7 @@ namespace AW2.Game.Gobs
 
         private void EnsureEffectActive()
         {
+            _lastDockEffectTime = Arena.TotalTime;
             foreach (var peng in _dockIdleEffects) peng.Paused = true;
             foreach (var peng in _dockActiveEffects) peng.Paused = false;
         }
@@ -166,7 +176,6 @@ namespace AW2.Game.Gobs
         private void RepairShip(Ship ship)
         {
             if (!IsFullyRepaired(ship)) EnsureDockSoundPlaying();
-            EnsureEffectActive();
             var elapsedTime = Game.GameTime.ElapsedGameTime;
             ship.RepairDamage(Game.PhysicsEngine.ApplyChange(_repairSpeed, elapsedTime));
             ship.ExtraDevice.Charge += Game.PhysicsEngine.ApplyChange(_weapon1ChargeSpeed, elapsedTime);

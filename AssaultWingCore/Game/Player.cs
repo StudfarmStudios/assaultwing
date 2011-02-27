@@ -18,15 +18,6 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
-        public static readonly Color PRETEXT_COLOR = new Color(1f, 1f, 1f);
-        public static readonly Color DEFAULT_COLOR = new Color(0.9f, 0.9f, 0.9f);
-        public static readonly Color BONUS_COLOR = new Color(0.3f, 0.7f, 1f);
-        public static readonly Color DEATH_COLOR = new Color(1f, 0.2f, 0.2f);
-        public static readonly Color SUICIDE_COLOR = new Color(1f, 0.5f, 0.5f);
-        public static readonly Color KILL_COLOR = new Color(0.2f, 1f, 0.2f);
-        public static readonly Color SPECIAL_KILL_COLOR = new Color(255, 228, 0);
-        public static readonly Color PLAYER_STATUS_COLOR = new Color(1f, 0.52f, 0.13f);
-
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
@@ -78,6 +69,7 @@ namespace AW2.Game
         private TimeSpan _shakeUpdateTime;
 
         private Vector2 _lastLookAtPos;
+        private TimeSpan _lastRepairPendingNotify;
 
         #endregion Player fields about general things
 
@@ -351,28 +343,6 @@ namespace AW2.Game
             }
         }
 
-        private void CreateSuicideMessage(Player perpetrator, Vector2 pos)
-        {
-            CreateDeathMessage(perpetrator, pos, "b_icon_take_life");
-        }
-
-        private void CreateKillMessage(Player perpetrator, Vector2 pos)
-        {
-            CreateDeathMessage(perpetrator, pos, "b_icon_add_kill");
-        }
-
-        private void CreateDeathMessage(Player perpetrator, Vector2 Pos, string iconName)
-        {
-            Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"deathmessage", gob =>
-            {
-                gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                gob.Message = perpetrator.Name;
-                gob.IconName = iconName;
-                gob.DrawColor = perpetrator.PlayerColor;
-                Game.DataEngine.Arena.Gobs.Add(gob);
-            });
-        }
-
         public override AW2.Graphics.AWViewport CreateViewport(Rectangle onScreen)
         {
             return new AW2.Graphics.PlayerViewport(this, onScreen, () => PostprocessEffectNames);
@@ -410,6 +380,14 @@ namespace AW2.Game
         public override string ToString()
         {
             return Name;
+        }
+
+        public void NotifyRepairPending()
+        {
+            if (Game.NetworkMode == NetworkMode.Client) return;
+            if (Game.GameTime.TotalGameTime < _lastRepairPendingNotify + Dock.UNDAMAGED_TIME_REQUIRED) return;
+            _lastRepairPendingNotify = Game.GameTime.TotalGameTime;
+            Messages.Add(new PlayerMessage("Repair pending due to recent damage", PlayerMessage.DEFAULT_COLOR));
         }
 
         #endregion General public methods
@@ -511,21 +489,43 @@ namespace AW2.Game
                 default: throw new ApplicationException("Unexpected DeathType " + coroner.DeathType);
                 case Coroner.DeathTypeType.Kill:
                     CreateKillMessage(coroner.ScoringPlayer, Ship.Pos);
-                    coroner.ScoringPlayer.Messages.Add(new PlayerMessage(coroner.MessageToScoringPlayer, KILL_COLOR));
-                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, DEATH_COLOR));
+                    coroner.ScoringPlayer.Messages.Add(new PlayerMessage(coroner.MessageToScoringPlayer, PlayerMessage.KILL_COLOR));
+                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.DEATH_COLOR));
                     break;
                 case Coroner.DeathTypeType.Suicide:
                     CreateSuicideMessage(this, Ship.Pos);
-                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, SUICIDE_COLOR));
+                    Messages.Add(new PlayerMessage(coroner.MessageToCorpse, PlayerMessage.SUICIDE_COLOR));
                     break;
             }
-            var bystanderMessage = new PlayerMessage(coroner.MessageToBystander, DEFAULT_COLOR);
+            var bystanderMessage = new PlayerMessage(coroner.MessageToBystander, PlayerMessage.DEFAULT_COLOR);
             foreach (var plr in coroner.GetBystanders(Game.DataEngine.Players)) plr.Messages.Add(bystanderMessage);
             if (coroner.SpecialMessage != null)
             {
-                var specialMessage = new PlayerMessage(coroner.SpecialMessage, SPECIAL_KILL_COLOR);
+                var specialMessage = new PlayerMessage(coroner.SpecialMessage, PlayerMessage.SPECIAL_KILL_COLOR);
                 foreach (var plr in Game.DataEngine.Players) plr.Messages.Add(specialMessage);
             }
+        }
+
+        private void CreateSuicideMessage(Player perpetrator, Vector2 pos)
+        {
+            CreateDeathMessage(perpetrator, pos, "b_icon_take_life");
+        }
+
+        private void CreateKillMessage(Player perpetrator, Vector2 pos)
+        {
+            CreateDeathMessage(perpetrator, pos, "b_icon_add_kill");
+        }
+
+        private void CreateDeathMessage(Player perpetrator, Vector2 Pos, string iconName)
+        {
+            Gob.CreateGob<ArenaMessage>(Game, (CanonicalString)"deathmessage", gob =>
+            {
+                gob.ResetPos(Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
+                gob.Message = perpetrator.Name;
+                gob.IconName = iconName;
+                gob.DrawColor = perpetrator.PlayerColor;
+                Game.DataEngine.Arena.Gobs.Add(gob);
+            });
         }
 
         /// <summary>

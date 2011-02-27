@@ -78,7 +78,7 @@ namespace AW2.Graphics.OverlayComponents
                 var textSize = _chatBoxFont.MeasureString(item.Message.Text);
                 var preTextPos = new Vector2((Dimensions.X - textSize.X - preTextSize.X) / 2, messageY);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
-                DrawText(spriteBatch, item.Message.PreText, preTextPos.Round(), Player.PRETEXT_COLOR, alpha);
+                DrawText(spriteBatch, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR, alpha);
                 DrawText(spriteBatch, item.Message.Text, textPos.Round(), item.Message.TextColor, alpha);
                 messageY += _chatBoxFont.LineSpacing;
             }

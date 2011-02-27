@@ -54,7 +54,7 @@ namespace AW2.Menu.Equip
             {
                 var preTextSize = Font.MeasureString(item.Message.PreText);
                 var textPos = preTextPos + new Vector2(preTextSize.X, 0);
-                spriteBatch.DrawString(Font, item.Message.PreText, preTextPos.Round(), Player.PRETEXT_COLOR);
+                spriteBatch.DrawString(Font, item.Message.PreText, preTextPos.Round(), PlayerMessage.PRETEXT_COLOR);
                 spriteBatch.DrawString(Font, item.Message.Text, textPos.Round(), item.Message.TextColor);
                 preTextPos -= lineDelta;
             }

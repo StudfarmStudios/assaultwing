@@ -136,7 +136,14 @@ namespace AW2.Net.Connections
             get
             {
                 if (IsDisposed) throw new InvalidOperationException("This connection has been disposed");
-                return _remoteUDPEndPoint != null ? _remoteUDPEndPoint.Address : _tcpSocket.RemoteEndPoint.Address;
+                // FIXME: One of the lines below may occasionally throw NullReferenceException.
+                // The reason is unknown but is likely a thread-related timing issue.
+                // If the exception is caught in a debugger, all related values are non-null
+                // on inspection, which suggests that the null value was set to non-null right after
+                // the exception was thrown.
+                if (_remoteUDPEndPoint != null)
+                    return _remoteUDPEndPoint.Address;
+                return _tcpSocket.RemoteEndPoint.Address;
             }
         }
 

@@ -121,7 +121,7 @@ namespace AW2.Menu
             if (!okToStart) return;
             MenuEngine.Deactivate();
             if (MenuEngine.Game.NetworkMode == NetworkMode.Client)
-                AssaultWingCore.Instance.StartArena(); // arena prepared in MainMenuItemCollections.HandleStartGameMessage
+                AssaultWingCore.Instance.StartArena(); // arena prepared in MessageHandlers.HandleStartGameMessage
             else
                 MenuEngine.ProgressBarAction(
                     () => MenuEngine.Game.PrepareArena(MenuEngine.Game.SelectedArenaName),

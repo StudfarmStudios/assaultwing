@@ -295,7 +295,6 @@ namespace AW2.Core
             PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             DataEngine.StartArena();
             DataEngine.RearrangeViewports();
-            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
             Log.Write("...started arena " + DataEngine.Arena.Info.Name);
         }
 

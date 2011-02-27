@@ -171,13 +171,13 @@ namespace AW2.Core
 
         public override void EndRun()
         {
-            GameState = Core.GameState.Initializing;
+            GameState = GameState.Initializing;
             base.EndRun();
         }
 
         public void StartArenaButStayInMenu()
         {
-            if (NetworkMode != Core.NetworkMode.Client) throw new InvalidOperationException("Only client can start arena on background");
+            if (NetworkMode != NetworkMode.Client) throw new InvalidOperationException("Only client can start arena on background");
             base.StartArena();
             GameState = GameState.GameAndMenu;
         }
@@ -192,9 +192,10 @@ namespace AW2.Core
                 DataEngine.Arena.GobAdded += gob => { if (gob.IsRelevant) _addedGobs.Add(gob); };
                 DataEngine.Arena.GobRemoved += GobRemovedFromArenaHandler;
             }
-            if (GameState != Core.GameState.GameAndMenu) base.StartArena();
+            if (GameState != GameState.GameAndMenu) base.StartArena();
             PostFrameLogicEngine.DoEveryFrame += AfterEveryFrame;
             GameState = GameState.Gameplay;
+            SoundEngine.PlayMusic(DataEngine.Arena.BackgroundMusic);
         }
 
         /// <summary>

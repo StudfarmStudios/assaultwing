@@ -31,14 +31,14 @@ namespace AW2.Sound
 
         public override void SetVolume(float vol)
         {
-            Debug.Assert(!_instance.IsDisposed);
+            Trace.Assert(!_instance.IsDisposed);
 
             _instance.Volume = _baseVolume * vol * AssaultWingCore.Instance.Settings.Sound.SoundVolume;
         }
 
         public override void Play()
         {
-            Debug.Assert(!_instance.IsDisposed);
+            Trace.Assert(!_instance.IsDisposed);
 
             if (_emitter != null)
             {
@@ -49,7 +49,7 @@ namespace AW2.Sound
         }
         public override void Stop()
         {
-            Debug.Assert(!_instance.IsDisposed);
+            Trace.Assert(!_instance.IsDisposed);
             _instance.Stop();
         }
 
@@ -82,7 +82,7 @@ namespace AW2.Sound
                     
         public override void EnsureIsPlaying()
         {
-            Debug.Assert(!_instance.IsDisposed);
+            Trace.Assert(!_instance.IsDisposed);
             if (_instance.State != SoundState.Playing)
             {
                 _instance.Play();

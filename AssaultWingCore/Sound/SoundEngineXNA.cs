@@ -176,7 +176,11 @@ namespace AW2.Sound
                     }
                     foreach (var instance in _createdInstances)
                     {
-                        ((SoundInstanceXNA)instance.Target).UpdateSpatial(listenerArray);
+                        SoundInstanceXNA soundInstance = (SoundInstanceXNA)instance.Target;
+                        if (soundInstance != null)
+                        {
+                            soundInstance.UpdateSpatial(listenerArray);
+                        }
                     }
                 }
             }

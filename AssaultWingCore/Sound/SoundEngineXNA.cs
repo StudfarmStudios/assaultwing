@@ -8,6 +8,7 @@ using AW2.Core;
 using AW2.Game;
 using AW2.Helpers;
 using System.Globalization;
+using System.Threading;
 
 namespace AW2.Sound
 {
@@ -44,6 +45,7 @@ namespace AW2.Sound
         
         List<SoundInstanceXNA> _playingInstances = new List<SoundInstanceXNA>(); // One-off sounds
         List<WeakReference> _createdInstances = new List<WeakReference>(); // Sound instances with owner
+        List<KeyValuePair<int, SoundInstanceXNA>> _finishedInstances = new List<KeyValuePair<int, SoundInstanceXNA>>();
 
 
         AudioListener _listener = new AudioListener();
@@ -129,33 +131,51 @@ namespace AW2.Sound
             }
         }
 
+        private const int RELEASE_DELAY = 500; // 0.5 sec
+
         public override void Update()
         {
-            if (_volumeFadeAction != null) _volumeFadeAction();
-            if (_music != null) _music.Volume = ActualMusicVolume;
-
-            _playingInstances.RemoveAll(instance => instance.IsFinished());
-            _createdInstances.RemoveAll(instance => instance.Target == null);
-
-            var listeners =
-                from player in Game.DataEngine.Players
-                where !player.IsRemote
-                let move = player.Ship != null ? player.Ship.Move : Vector2.Zero
-                select new AudioListener
-                {
-                    Position = new Vector3(player.LookAtPos, 0),
-                    Velocity = new Vector3(move, 0),
-                };
-            if (listeners.Count() > 0) 
+            lock (this)
             {
-                var listenerArray = listeners.ToArray();
-                foreach (var instance in _playingInstances)
+                if (_volumeFadeAction != null) _volumeFadeAction();
+                if (_music != null) _music.Volume = ActualMusicVolume;
+
+                // Remove expired instances
+                int ticks = Environment.TickCount;
+                _finishedInstances.RemoveAll(instance => instance.Key < ticks);
+
+                // Move finished instances to separate list
+                foreach (SoundInstanceXNA instance in _playingInstances)
                 {
-                    instance.UpdateSpatial(listenerArray);
+                    if (instance.IsFinished())
+                    {
+                        _finishedInstances.Add(new KeyValuePair<int, SoundInstanceXNA>(ticks + RELEASE_DELAY, instance));
+                    }
                 }
-                foreach (var instance in _createdInstances)
+
+                _playingInstances.RemoveAll(instance => instance.IsFinished());
+                _createdInstances.RemoveAll(instance => instance.Target == null);
+
+                var listeners =
+                    from player in Game.DataEngine.Players
+                    where !player.IsRemote
+                    let move = player.Ship != null ? player.Ship.Move : Vector2.Zero
+                    select new AudioListener
+                    {
+                        Position = new Vector3(player.LookAtPos, 0),
+                        Velocity = new Vector3(move, 0),
+                    };
+                if (listeners.Count() > 0)
                 {
-                    ((SoundInstanceXNA)instance.Target).UpdateSpatial(listenerArray);
+                    var listenerArray = listeners.ToArray();
+                    foreach (var instance in _playingInstances)
+                    {
+                        instance.UpdateSpatial(listenerArray);
+                    }
+                    foreach (var instance in _createdInstances)
+                    {
+                        ((SoundInstanceXNA)instance.Target).UpdateSpatial(listenerArray);
+                    }
                 }
             }
         }
@@ -240,28 +260,33 @@ namespace AW2.Sound
             SoundEffectInstance instance = soundEffect.CreateInstance();
 
             instance.IsLooped = cue._loop;
-            //Console.WriteLine("Setting vol " + cue._volume + " for " + soundName);
             
             return new SoundInstanceXNA(instance, parentGob, cue._volume, cue._distanceScale);
         }
 
         public override SoundInstance CreateSound(string soundName, Gob parentGob)
         {
-            SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
-            _createdInstances.Add(new WeakReference(instance));
-            return instance;
+            lock (this)
+            {
+                SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
+                _createdInstances.Add(new WeakReference(instance));
+                return instance;
+            }
         }
 
         public override SoundInstance PlaySound(string soundName, Gob parentGob)
         {
-            SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
-
-            if (instance != null)
+            lock (this)
             {
-                instance.Play();                
+                SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
+
+                if (instance != null)
+                {
+                    instance.Play();
+                }
+                _playingInstances.Add(instance);
+                return instance;
             }
-            _playingInstances.Add(instance);
-            return instance;
         }
 
 

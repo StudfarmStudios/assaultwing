@@ -46,6 +46,8 @@ namespace AW2.Sound
         List<SoundInstanceXNA> _playingInstances = new List<SoundInstanceXNA>(); // One-off sounds
         List<WeakReference> _createdInstances = new List<WeakReference>(); // Sound instances with owner
         List<KeyValuePair<int, SoundInstanceXNA>> _finishedInstances = new List<KeyValuePair<int, SoundInstanceXNA>>();
+        private object _lock = new object();
+
 
 
         AudioListener _listener = new AudioListener();
@@ -135,7 +137,7 @@ namespace AW2.Sound
 
         public override void Update()
         {
-            lock (this)
+            lock (_lock)
             {
                 if (_volumeFadeAction != null) _volumeFadeAction();
                 if (_music != null) _music.Volume = ActualMusicVolume;
@@ -266,7 +268,7 @@ namespace AW2.Sound
 
         public override SoundInstance CreateSound(string soundName, Gob parentGob)
         {
-            lock (this)
+            lock (_lock)
             {
                 SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
                 _createdInstances.Add(new WeakReference(instance));
@@ -276,7 +278,7 @@ namespace AW2.Sound
 
         public override SoundInstance PlaySound(string soundName, Gob parentGob)
         {
-            lock (this)
+            lock (_lock)
             {
                 SoundInstanceXNA instance = (SoundInstanceXNA)CreateSoundInternal(soundName, parentGob);
 

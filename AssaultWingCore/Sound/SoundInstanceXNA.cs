@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
 using AW2.Core;
+using System.Diagnostics;
 
 namespace AW2.Sound
 {
@@ -30,11 +31,15 @@ namespace AW2.Sound
 
         public override void SetVolume(float vol)
         {
+            Debug.Assert(!_instance.IsDisposed);
+
             _instance.Volume = _baseVolume * vol * AssaultWingCore.Instance.Settings.Sound.SoundVolume;
         }
 
         public override void Play()
         {
+            Debug.Assert(!_instance.IsDisposed);
+
             if (_emitter != null)
             {
                 _instance.Apply3D(new AudioListener(), _emitter);
@@ -44,6 +49,7 @@ namespace AW2.Sound
         }
         public override void Stop()
         {
+            Debug.Assert(!_instance.IsDisposed);
             _instance.Stop();
         }
 
@@ -62,7 +68,7 @@ namespace AW2.Sound
 
         public void UpdateSpatial(AudioListener[] listeners)
         {
-            if (_gob != null)
+            if (_gob != null && !_instance.IsDisposed)
             {
                 _emitter.Position = new Vector3(_gob.Pos.X, _gob.Pos.Y, 0);
                 _emitter.Velocity = new Vector3(_gob.Move.X, _gob.Move.Y, 0);
@@ -76,6 +82,7 @@ namespace AW2.Sound
                     
         public override void EnsureIsPlaying()
         {
+            Debug.Assert(!_instance.IsDisposed);
             if (_instance.State != SoundState.Playing)
             {
                 _instance.Play();

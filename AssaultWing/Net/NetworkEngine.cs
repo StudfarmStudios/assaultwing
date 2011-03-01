@@ -444,21 +444,14 @@ namespace AW2.Net
         private void HandleUDPSocketErrors()
         {
             if (UDPSocket == null) return;
-            bool errorsFound = false;
             UDPSocket.Errors.Do(queue =>
             {
                 while (queue.Count > 0)
                 {
-                    errorsFound = true;
                     var errorMessage = queue.Dequeue();
                     Log.Write("Error occurred with UDP socket: " + errorMessage);
                 }
             });
-            if (errorsFound)
-            {
-                Log.Write("Closing network connections due to errors");
-                _game.CutNetworkConnections();
-            }
         }
 
         private void DisposeGameServerConnection()

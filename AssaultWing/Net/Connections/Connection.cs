@@ -88,16 +88,13 @@ namespace AW2.Net.Connections
         /// Has the connection handshake been completed. Sending UDP messages is not possible before the
         /// handshaking is complete.
         /// </summary>
-        public bool IsHandshaken
-        {
-            get
-            {
-                // TODO: If RemoteUDPEndPoint stays null for a long time (5 seconds), cut the connection.
-                // TODO: Also, TryInitializeRemoteUDPEndPoint() need not be called but at relaxed intervals (each second).
-                if (RemoteUDPEndPoint == null) TryInitializeRemoteUDPEndPoint();
-                return RemoteUDPEndPoint != null;
-            }
-        }
+        public bool IsHandshaken { get { return RemoteUDPEndPoint != null; } }
+
+        /// <summary>
+        /// In real time seconds.
+        /// </summary>
+        public TimeSpan FirstHandshakeAttempt { get; set; }
+        public TimeSpan PreviousHandshakeAttempt { get; set; }
 
         public bool IsDisposed { get { return _isDisposed > 0; } }
 
@@ -142,7 +139,7 @@ namespace AW2.Net.Connections
                 // on inspection, which suggests that the null value was set to non-null right after
                 // the exception was thrown.
                 if (_remoteUDPEndPoint != null)
-                    return _remoteUDPEndPoint.Address;
+                    return _remoteUDPEndPoint.Address; // FIXME: _remoteUDPEndPoint may be null here (maybe FIXED on 2011-03-01?)
                 return _tcpSocket.RemoteEndPoint.Address;
             }
         }
@@ -296,8 +293,7 @@ namespace AW2.Net.Connections
 
         public void HandleMessage(Message message, IPEndPoint remoteEndPoint)
         {
-            if (!TryHandleMessageInternally(message, remoteEndPoint))
-                Messages.Do(queue => queue.Enqueue(message));
+            Messages.Do(queue => queue.Enqueue(message));
         }
 
         public static void HandleNewConnection(Result<Connection> result)
@@ -382,38 +378,6 @@ namespace AW2.Net.Connections
             // UDP is an unreliable protocol, so let's just dump the message silently in that case.
             if (!IsHandshaken) return;
             Game.NetworkEngine.UDPSocket.Send(writeData, RemoteUDPEndPoint);
-        }
-
-        /// <summary>
-        /// Returns true if message was interpreted internally by the <see cref="Connection"/>
-        /// and needs not be added to the public message queue.
-        /// </summary>
-        private bool TryHandleMessageInternally(Message mess, IPEndPoint remoteEndPoint)
-        {
-            // HACK: All we want is, on the game server, to read the sender's (which is a game client)
-            // UDP end point from the message. We happen to know that PingRequestMessage is sent via UDP.
-            lock (_lock)
-            {
-                if (!IsHandshaken && mess is PingRequestMessage)
-                    RemoteUDPEndPoint = remoteEndPoint;
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Try to find the remote UDP end point from received <see cref="ClientJoinMessage"/>s.
-        /// Relevant only on a game server for game client connections.
-        /// </summary>
-        private void TryInitializeRemoteUDPEndPoint()
-        {
-            if (Game.NetworkMode != NetworkMode.Server) return;
-            if (RemoteUDPEndPoint != null) throw new InvalidOperationException("RemoteUDPEndPoint already initialized");
-            var matchingEndPoints = Game.NetworkEngine.ClientUDPEndPointPool
-                .FirstOrDefault(endPoints => endPoints.Any(ep => ep.Address.Equals(RemoteIPAddress)));
-            if (matchingEndPoints == null) return;
-            RemoteUDPEndPoint = matchingEndPoints.First(ep => ep.Address.Equals(RemoteIPAddress));
-            Game.NetworkEngine.ClientUDPEndPointPool.Remove(matchingEndPoints);
-            // TODO: Remove old items from Game.NetworkEngine.ClientUDPEndPointPool
         }
 
         public static void ReportResult(Result<Connection> result)

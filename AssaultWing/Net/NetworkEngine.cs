@@ -60,6 +60,8 @@ namespace AW2.Net
         public const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
         private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
+        private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan HANDSHAKE_ATTEMPT_INTERVAL = TimeSpan.FromSeconds(1);
 
         private AssaultWing _game;
 
@@ -375,6 +377,8 @@ namespace AW2.Net
             foreach (var handler in MessageHandlers.ToList()) // enumerate over a copy to allow adding MessageHandlers during enumeration
                 if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
+            HandleConnectionHandshaking();
+            // TODO: Remove old items (over 30 seconds) from ClientUDPEndPointPool
             HandleErrors();
             RemoveClosedConnections();
             PurgeUnhandledMessages();
@@ -590,6 +594,25 @@ namespace AW2.Net
             MessageHandlers = MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
         }
 
+        private void HandleConnectionHandshaking()
+        {
+            foreach (var connection in GameClientConnections)
+            {
+                if (connection.FirstHandshakeAttempt == TimeSpan.Zero)
+                    connection.FirstHandshakeAttempt = Game.GameTime.TotalRealTime;
+                if (!connection.IsHandshaken && Game.GameTime.TotalRealTime > connection.PreviousHandshakeAttempt + HANDSHAKE_ATTEMPT_INTERVAL)
+                {
+                    connection.PreviousHandshakeAttempt = Game.GameTime.TotalRealTime;
+                    TryInitializeRemoteUDPEndPoint(connection);
+                }
+                if (!connection.IsHandshaken && Game.GameTime.TotalRealTime > connection.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT)
+                {
+                    connection.Send(new ConnectionClosingMessage { Info = "Handshake failed" });
+                    DropClient(connection.ID, true);
+                }
+            }
+        }
+
         private void RemoveClosedConnections()
         {
             foreach (var connection in _removedClientConnections)
@@ -603,6 +626,21 @@ namespace AW2.Net
             if (_gameServerConnection != null && _gameServerConnection.IsDisposed)
                 _gameServerConnection = null;
             _gameClientConnections.RemoveAll(c => c.IsDisposed);
+        }
+
+        /// <summary>
+        /// Try to find the remote UDP end point from received <see cref="ClientJoinMessage"/>s.
+        /// Relevant only on a game server for game client connections.
+        /// </summary>
+        private void TryInitializeRemoteUDPEndPoint(Connection connection)
+        {
+            if (Game.NetworkMode != NetworkMode.Server) return;
+            if (connection.RemoteUDPEndPoint != null) throw new InvalidOperationException("RemoteUDPEndPoint already initialized");
+            var matchingEndPoints = ClientUDPEndPointPool
+                .FirstOrDefault(endPoints => endPoints.Any(ep => ep.Address.Equals(connection.RemoteIPAddress)));
+            if (matchingEndPoints == null) return;
+            connection.RemoteUDPEndPoint = matchingEndPoints.First(ep => ep.Address.Equals(connection.RemoteIPAddress));
+            ClientUDPEndPointPool.Remove(matchingEndPoints);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

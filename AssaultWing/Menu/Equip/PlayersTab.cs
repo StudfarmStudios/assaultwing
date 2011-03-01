@@ -40,7 +40,8 @@ namespace AW2.Menu.Equip
             DrawLargeStatusBackground(view, spriteBatch);
             DrawPlayerListDisplay(view, spriteBatch);
             DrawPlayerListCursor(view, spriteBatch);
-            DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(PlayerListCursorIndex));
+            if (MenuEngine.Game.DataEngine.Players.Any())
+                DrawPlayerInfoDisplay(view, spriteBatch, MenuEngine.Game.DataEngine.Players.ElementAt(PlayerListCursorIndex));
         }
 
         private void DrawPlayerInfoDisplay(Vector2 view, SpriteBatch spriteBatch, Player player)

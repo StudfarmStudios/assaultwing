@@ -25,7 +25,7 @@ namespace AW2.Menu.Equip
         {
             get
             {
-                _playerListIndex = _playerListIndex.Clamp(0, MenuEngine.Game.DataEngine.Players.Count() - 1);
+                _playerListIndex = _playerListIndex.Clamp(0, Math.Max(0, MenuEngine.Game.DataEngine.Players.Count() - 1));
                 return _playerListIndex;
             }
             set { _playerListIndex = value; }

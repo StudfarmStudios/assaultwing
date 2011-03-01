@@ -261,75 +261,66 @@ namespace AW2.Menu.Equip
 
         private void DrawShipInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone &&
-                MenuPanePlayers.ElementAt(0) != null &&
-                _currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Ship)
-            {
-                var player = MenuPanePlayers.ElementAt(0).Item1;
-                var ship = (Ship)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ShipName);
-                var info = ship.ShipInfo;
+            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone || !MenuPanePlayers.Any()) return;
+            if (_currentItems[MenuPanePlayers.ElementAt(0).Item2] != EquipMenuItem.Ship) return;
+            var player = MenuPanePlayers.ElementAt(0).Item1;
+            var ship = (Ship)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ShipName);
+            var info = ship.ShipInfo;
 
-                var shipPicture = MenuEngine.Game.Content.Load<Texture2D>(info.PictureName);
-                var shipTitlePicture = MenuEngine.Game.Content.Load<Texture2D>(info.TitlePictureName);
-                var infoHeaders = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_shipinfo_headers");
+            var shipPicture = MenuEngine.Game.Content.Load<Texture2D>(info.PictureName);
+            var shipTitlePicture = MenuEngine.Game.Content.Load<Texture2D>(info.TitlePictureName);
+            var infoHeaders = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_shipinfo_headers");
 
-                spriteBatch.Draw(shipPicture, InfoDisplayPos - view + new Vector2(-6, 0), Color.White);
-                spriteBatch.Draw(shipTitlePicture, InfoDisplayPos - view + new Vector2(190, 18), Color.White);
-                spriteBatch.Draw(infoHeaders, InfoDataPos - view, Color.White);
+            spriteBatch.Draw(shipPicture, InfoDisplayPos - view + new Vector2(-6, 0), Color.White);
+            spriteBatch.Draw(shipTitlePicture, InfoDisplayPos - view + new Vector2(190, 18), Color.White);
+            spriteBatch.Draw(infoHeaders, InfoDataPos - view, Color.White);
 
-                DrawInfoValue(view, spriteBatch, 0, info.Hull);
-                DrawInfoValue(view, spriteBatch, 1, info.Armor);
-                DrawInfoValue(view, spriteBatch, 2, info.Speed);
-                DrawInfoValue(view, spriteBatch, 3, info.Steering);
-                DrawInfoValue(view, spriteBatch, 4, info.ModEnergy);
-                DrawInfoValue(view, spriteBatch, 5, info.SpecialEnergy);
-                spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
-            }
+            DrawInfoValue(view, spriteBatch, 0, info.Hull);
+            DrawInfoValue(view, spriteBatch, 1, info.Armor);
+            DrawInfoValue(view, spriteBatch, 2, info.Speed);
+            DrawInfoValue(view, spriteBatch, 3, info.Steering);
+            DrawInfoValue(view, spriteBatch, 4, info.ModEnergy);
+            DrawInfoValue(view, spriteBatch, 5, info.SpecialEnergy);
+            spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
         }
 
         private void DrawShipDeviceInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone &&
-                MenuPanePlayers.ElementAt(0) != null &&
-                (_currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Weapon2 ||
-                _currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Extra))
-            {
-                var player = MenuPanePlayers.ElementAt(0).Item1;
+            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone || !MenuPanePlayers.Any()) return;
+            var currentItem = _currentItems[MenuPanePlayers.ElementAt(0).Item2];
+            if (currentItem != EquipMenuItem.Weapon2 && currentItem != EquipMenuItem.Extra) return;
+            var player = MenuPanePlayers.ElementAt(0).Item1;
 
-                var device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
-                if (_currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Weapon2) device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
+            var device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.ExtraDeviceName);
+            if (currentItem == EquipMenuItem.Weapon2) device = (ShipDevice)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
 
-                var info = device.DeviceInfo;
+            var info = device.DeviceInfo;
 
-                var devicePicture = MenuEngine.Game.Content.Load<Texture2D>(info.PictureName);
-                var deviceTitlePicture = MenuEngine.Game.Content.Load<Texture2D>(info.TitlePictureName);
-                var deviceHeaders = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_deviceinfo_headers");
+            var devicePicture = MenuEngine.Game.Content.Load<Texture2D>(info.PictureName);
+            var deviceTitlePicture = MenuEngine.Game.Content.Load<Texture2D>(info.TitlePictureName);
+            var deviceHeaders = MenuEngine.Game.Content.Load<Texture2D>("menu_equip_deviceinfo_headers");
 
-                spriteBatch.Draw(devicePicture, InfoDisplayPos - view + new Vector2(-6, 0), Color.White);
-                spriteBatch.Draw(deviceTitlePicture, InfoDisplayPos - view + new Vector2(190, 18), Color.White);
-                spriteBatch.Draw(deviceHeaders, InfoDataPos - view, Color.White);
+            spriteBatch.Draw(devicePicture, InfoDisplayPos - view + new Vector2(-6, 0), Color.White);
+            spriteBatch.Draw(deviceTitlePicture, InfoDisplayPos - view + new Vector2(190, 18), Color.White);
+            spriteBatch.Draw(deviceHeaders, InfoDataPos - view, Color.White);
 
-                DrawInfoValue(view, spriteBatch, 0, info.ReloadSpeed);
-                DrawInfoValue(view, spriteBatch, 1, info.EnergyUsage);
-                DrawInfoValue(view, spriteBatch, 2, info.UsageType);
-                spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
-            }
+            DrawInfoValue(view, spriteBatch, 0, info.ReloadSpeed);
+            DrawInfoValue(view, spriteBatch, 1, info.EnergyUsage);
+            DrawInfoValue(view, spriteBatch, 2, info.UsageType);
+            spriteBatch.DrawString(Content.FontSmall, info.InfoText, (GetInfoTextPos(info.InfoText) - view).Round(), new Color(218, 159, 33));
         }
 
         private void DrawWeaponInfoDisplay(Vector2 view, SpriteBatch spriteBatch)
         {
-            if (MenuEngine.Game.NetworkMode != NetworkMode.Standalone &&
-                MenuPanePlayers.ElementAt(0) != null &&
-                _currentItems[MenuPanePlayers.ElementAt(0).Item2] == EquipMenuItem.Weapon2)
-            {
-                var player = MenuPanePlayers.ElementAt(0).Item1;
-                var weapon = (Weapon)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
-                var info = weapon.WeaponInfo;
-                spriteBatch.Draw(Content.WeaponHeaders, InfoDataPos + new Vector2(0, 64) - view, Color.White);
-                DrawInfoValue(view, spriteBatch, 3, info.SingleShotDamage);
-                DrawInfoValue(view, spriteBatch, 4, info.ShotSpeed);
-                DrawInfoValue(view, spriteBatch, 5, info.RecoilMomentum);
-            }
+            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone || !MenuPanePlayers.Any()) return;
+            if (_currentItems[MenuPanePlayers.ElementAt(0).Item2] != EquipMenuItem.Weapon2) return;
+            var player = MenuPanePlayers.ElementAt(0).Item1;
+            var weapon = (Weapon)MenuEngine.Game.DataEngine.GetTypeTemplate(player.Weapon2Name);
+            var info = weapon.WeaponInfo;
+            spriteBatch.Draw(Content.WeaponHeaders, InfoDataPos + new Vector2(0, 64) - view, Color.White);
+            DrawInfoValue(view, spriteBatch, 3, info.SingleShotDamage);
+            DrawInfoValue(view, spriteBatch, 4, info.ShotSpeed);
+            DrawInfoValue(view, spriteBatch, 5, info.RecoilMomentum);
         }
 
         private void DrawNameChangeInfo(Vector2 view, SpriteBatch spriteBatch)

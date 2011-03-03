@@ -34,12 +34,7 @@ namespace AW2.Net.ConnectionUtils
                 }
                 catch (Exception e)
                 {
-                    if (e is ObjectDisposedException && ((ObjectDisposedException)e).ObjectName == "System.Net.Sockets.Socket")
-                    {
-                        // This accept callback was triggered by the closing server socket.
-                    }
-                    else
-                        result = new Result<Connection>(e);
+                    result = new Result<Connection>(e);
                 }
             }
             return result;

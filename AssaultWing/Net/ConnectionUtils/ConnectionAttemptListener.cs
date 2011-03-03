@@ -105,8 +105,12 @@ namespace AW2.Net.ConnectionUtils
                     _mappedUdpPort = 0;
                 }
             }
-            if (_serverSocket != null) _serverSocket.Close();
-            _serverSocket = null;
+            if (_serverSocket != null)
+            {
+                var serverSocketToClose = _serverSocket;
+                _serverSocket = null; // now AcceptCallback() knows that listening has ended
+                serverSocketToClose.Close();
+            }
             _listenResult = null;
         }
 
@@ -139,6 +143,7 @@ namespace AW2.Net.ConnectionUtils
 
         private void AcceptCallback(IAsyncResult asyncResult)
         {
+            if (_serverSocket == null) return; // Not listening anymore. Calling EndAccept would throw ObjectDisposedException
             var result = ConnectAsyncState.ConnectionAttemptCallback(asyncResult, () => CreateClientConnection(asyncResult));
             Connection.HandleNewConnection(result);
         }

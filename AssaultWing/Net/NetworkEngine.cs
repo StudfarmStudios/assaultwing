@@ -420,14 +420,18 @@ namespace AW2.Net
                     switch (Game.NetworkMode)
                     {
                         case NetworkMode.Client:
-                            if (_gameServerConnection != null) break; // silently ignore extra server connection attempts
-                            if (result.Successful) _gameServerConnection = result.Value;
-                            _startClientConnectionHandler(result);
+                            if (_gameServerConnection != null)
+                            {
+                                // Silently ignore extra server connection attempts.
+                                if (result.Successful) result.Value.Dispose();
+                            }
+                            else
+                            {
+                                if (result.Successful) _gameServerConnection = result.Value;
+                                _startClientConnectionHandler(result);
+                            }
                             break;
                         case NetworkMode.Server:
-                            // Silently ignore extra server connection attempts.
-                            // Note: This will only allow one game client behind any one NAT.
-                            if (_gameClientConnections.Any(conn => conn.RemoteIPAddress.Equals(result.Value.RemoteIPAddress))) break;
                             if (result.Successful) _gameClientConnections.Add((GameClientConnection)result.Value);
                             _startServerConnectionHandler(result);
                             break;

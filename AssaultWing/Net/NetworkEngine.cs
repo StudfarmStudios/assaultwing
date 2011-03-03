@@ -205,7 +205,7 @@ namespace AW2.Net
             ClientUDPEndPointPool = new List<IPEndPoint[]>();
             _startServerConnectionHandler = connectionHandler;
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
-            _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT);
+            _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT, UDPSocket.PrivateLocalEndPoint.Port);
             RegisterServerToManagementServer();
             _game.UpdateGameServerInfoToManagementServer();
         }

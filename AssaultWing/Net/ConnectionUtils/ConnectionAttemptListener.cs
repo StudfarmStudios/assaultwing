@@ -25,6 +25,7 @@ namespace AW2.Net.ConnectionUtils
         /// <c>null</c> if not in use.
         /// </summary>
         private Socket _serverSocket;
+        private int _mappedTcpPort, _mappedUdpPort;
 
         private IAsyncResult _listenResult;
         private AssaultWing _game;
@@ -41,29 +42,33 @@ namespace AW2.Net.ConnectionUtils
         /// To be called from the main thread only.
         /// Each connection attempt results in a new item in <see cref="ConnectionResults"/>.
         /// </summary>
-        /// <param name="port">The port at which to listen for incoming connections.</param>
-        public void StartListening(int port)
+        /// <param name="tcpPort">The port at which to listen for incoming connections.</param>
+        /// <param name="udpPort">UDP port for traffic with established connections.</param>
+        public void StartListening(int tcpPort, int udpPort)
         {
             try
             {
                 CheckThread();
                 if (_serverSocket != null) throw new InvalidOperationException("Already listening to incoming connections");
-                CreateServerSocket(port);
+                CreateServerSocket(tcpPort);
                 if (StaticPortMapper.IsSupported)
                 {
-                    Log.Write("Mapping server connection port with UPnP");
-                    StaticPortMapper.EnsurePortMapped(port, "TCP");
+                    Log.Write("Mapping server ports with UPnP");
+                    StaticPortMapper.EnsurePortMapped(tcpPort, "TCP");
+                    _mappedTcpPort = tcpPort;
+                    StaticPortMapper.EnsurePortMapped(udpPort, "UDP");
+                    _mappedUdpPort = udpPort;
                 }
                 else
                 {
-                    Log.Write("UPnP not supported, make sure the server port " + port
-                        + " is forwarded to your computer in your local network");
+                    Log.Write("UPnP not supported, make sure that TCP port " + tcpPort
+                        + " and UDP port " + udpPort + " are forwarded to your computer in your local network");
                 }
                 ListenOneConnection(_game);
             }
             catch (Exception)
             {
-                StopListeningImpl(port);
+                StopListening();
                 throw;
             }
         }
@@ -80,31 +85,27 @@ namespace AW2.Net.ConnectionUtils
         public void StopListening()
         {
             CheckThread();
-            if (_serverSocket == null) throw new InvalidOperationException("Already not listening for incoming connections");
-            StopListeningImpl();
-        }
-
-        private void StopListeningImpl()
-        {
-            int port = ((IPEndPoint)_serverSocket.LocalEndPoint).Port;
-            StopListeningImpl(port);
-        }
-
-        private void StopListeningImpl(int port)
-        {
             if (StaticPortMapper.IsSupported)
             {
-                Log.Write("Removing previous UPnP port mapping");
+                Log.Write("Removing previous UPnP port mappings");
                 try
                 {
-                    StaticPortMapper.RemovePortMapping(port, "TCP");
+                    if (_mappedTcpPort != 0)
+                        StaticPortMapper.RemovePortMapping(_mappedTcpPort, "TCP");
+                    if (_mappedUdpPort != 0)
+                        StaticPortMapper.RemovePortMapping(_mappedUdpPort, "UDP");
                 }
                 catch (Exception e)
                 {
                     Log.Write("Error while removing previous UPnP port mapping: " + e);
                 }
+                finally
+                {
+                    _mappedTcpPort = 0;
+                    _mappedUdpPort = 0;
+                }
             }
-            _serverSocket.Close();
+            if (_serverSocket != null) _serverSocket.Close();
             _serverSocket = null;
             _listenResult = null;
         }

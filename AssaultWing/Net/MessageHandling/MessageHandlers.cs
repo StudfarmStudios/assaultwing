@@ -79,15 +79,16 @@ namespace AW2.Net.MessageHandling
         {
             if (!result.Successful)
                 Log.Write("Some client failed to connect: " + result.Error);
+            else if (allowNewConnection())
+            {
+                AssaultWing.Instance.NetworkEngine.GameClientConnections.Add((GameClientConnection)result.Value);
+                Log.Write("Server obtained connection from " + result.Value.RemoteTCPEndPoint);
+            }
             else
             {
-                Log.Write("Server obtained connection from " + result.Value.RemoteTCPEndPoint);
-                if (!allowNewConnection())
-                {
-                    var mess = new ConnectionClosingMessage { Info = "Game server doesn't allow joining right now" };
-                    result.Value.Send(mess);
-                    AssaultWing.Instance.NetworkEngine.DropClient(result.Value.ID, false);
-                }
+                var mess = new ConnectionClosingMessage { Info = "Game server doesn't allow joining right now" };
+                result.Value.Send(mess);
+                Log.Write("Server refused connection from " + result.Value.RemoteTCPEndPoint);
             }
         }
 
@@ -100,7 +101,7 @@ namespace AW2.Net.MessageHandling
             {
                 DeactivateHandlers(GetStandaloneMenuHandlers(null));
                 game.SoundEngine.PlaySound("MenuChangeItem");
-                game.StartClient(mess.GameServerEndPoints, ClientConnectedCallback);
+                game.StartClient(mess.GameServerEndPoints, ConnectionResultOnClientCallback);
             }
             else
             {
@@ -321,28 +322,39 @@ namespace AW2.Net.MessageHandling
                 () => game.PrepareArena(game.SelectedArenaName),
                 () =>
                 {
-                    MessageHandlers.ActivateHandlers(MessageHandlers.GetClientGameplayHandlers(game.HandleGobCreationMessage));
+                    ActivateHandlers(GetClientGameplayHandlers(game.HandleGobCreationMessage));
                     game.IsClientAllowedToStartArena = true;
                     game.StartArenaButStayInMenu();
                 });
         }
 
-        private static void ClientConnectedCallback(Result<Connection> result)
+        private static void ConnectionResultOnClientCallback(Result<Connection> result)
         {
+            var net = AssaultWing.Instance.NetworkEngine;
+            if (net.GameServerConnection != null)
+            {
+                // Silently ignore extra server connection attempts.
+                if (result.Successful) result.Value.Dispose();
+                return;
+            }
+
             if (!result.Successful)
             {
                 Log.Write("Failed to connect to server: " + result.Error);
                 AssaultWing.Instance.StopClient("Failed to connect to server");
-                return;
             }
-            MessageHandlers.ActivateHandlers(MessageHandlers.GetClientMenuHandlers());
+            else
+            {
+                net.GameServerConnection = result.Value;
+                ActivateHandlers(GetClientMenuHandlers());
 
-            // HACK: Force one local player.
-            AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
+                // HACK: Force one local player.
+                AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
 
-            var joinRequest = new GameServerHandshakeRequest { CanonicalStrings = CanonicalString.CanonicalForms };
-            AssaultWing.Instance.NetworkEngine.GameServerConnection.Send(joinRequest);
-            AssaultWing.Instance.MenuEngine.ActivateComponent(AW2.Menu.MenuComponentType.Equip);
+                var joinRequest = new GameServerHandshakeRequest { CanonicalStrings = CanonicalString.CanonicalForms };
+                net.GameServerConnection.Send(joinRequest);
+                AssaultWing.Instance.MenuEngine.ActivateComponent(AW2.Menu.MenuComponentType.Equip);
+            }
         }
     }
 }

@@ -58,7 +58,8 @@ namespace AW2.Net
         #region Fields
 
         public const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
-        public const int UDP_CONNECTION_PORT = 'A' * 256 + 'W';
+        public const int UDP_CONNECTION_PORT_FIRST = 'A' * 256 + 'W';
+        public const int UDP_CONNECTION_PORT_LAST = UDP_CONNECTION_PORT_FIRST + 9;
         private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
         private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
@@ -492,7 +493,18 @@ namespace AW2.Net
 
         private void InitializeUDPSocket()
         {
-            UDPSocket = new AWUDPSocket(UDP_CONNECTION_PORT, HandleUDPMessage);
+            for (int udpPort = UDP_CONNECTION_PORT_FIRST; UDPSocket == null && udpPort <= UDP_CONNECTION_PORT_LAST; udpPort++)
+                try
+                {
+                    UDPSocket = new AWUDPSocket(udpPort, HandleUDPMessage);
+                }
+                catch (SocketException)
+                {
+                }
+            if (UDPSocket != null)
+                Log.Write("Using UDP port " + UDPSocket.PrivateLocalEndPoint.Port);
+            else
+                Log.Write("Failed to obtain UDP port. Cannot play on the network.");
         }
 
         private void DisposeUDPSocket()

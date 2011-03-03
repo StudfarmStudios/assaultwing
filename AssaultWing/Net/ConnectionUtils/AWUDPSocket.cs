@@ -8,6 +8,9 @@ namespace AW2.Net.ConnectionUtils
 {
     public class AWUDPSocket : AWSocket
     {
+        /// <summary>
+        /// Throws SocketException on error.
+        /// </summary>
         public AWUDPSocket(int port, MessageHandler messageHandler)
             : base(CreateSocket(port), messageHandler)
         {

@@ -8,8 +8,8 @@ namespace AW2.Net.ConnectionUtils
 {
     public class AWUDPSocket : AWSocket
     {
-        public AWUDPSocket(MessageHandler messageHandler)
-            : base(CreateSocket(), messageHandler)
+        public AWUDPSocket(int port, MessageHandler messageHandler)
+            : base(CreateSocket(port), messageHandler)
         {
         }
 
@@ -28,10 +28,10 @@ namespace AW2.Net.ConnectionUtils
             });
         }
 
-        private static Socket CreateSocket()
+        private static Socket CreateSocket(int port)
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            var localEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            var localEndPoint = new IPEndPoint(IPAddress.Any, port);
             socket.Bind(localEndPoint);
             return socket;
         }

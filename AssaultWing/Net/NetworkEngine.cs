@@ -58,6 +58,7 @@ namespace AW2.Net
         #region Fields
 
         public const int TCP_CONNECTION_PORT = 'A' * 256 + 'W';
+        public const int UDP_CONNECTION_PORT = 'A' * 256 + 'W';
         private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
         private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
@@ -491,7 +492,7 @@ namespace AW2.Net
 
         private void InitializeUDPSocket()
         {
-            UDPSocket = new AWUDPSocket(HandleUDPMessage);
+            UDPSocket = new AWUDPSocket(UDP_CONNECTION_PORT, HandleUDPMessage);
         }
 
         private void DisposeUDPSocket()

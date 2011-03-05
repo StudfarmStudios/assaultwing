@@ -61,19 +61,6 @@ namespace AW2.UI.WPF
             }
         }
 
-        public GobSelectionPopup GobSelector
-        {
-            get
-            {
-                if (_gobSelector == null || !_gobSelector.IsLoaded)
-                {
-                    _gobSelector = new GobSelectionPopup { Owner = this };
-                    _gobSelector.GobList.SelectionChanged += (sender, args) => SelectedGob = args.AddedItems.Cast<Gob>().FirstOrDefault();
-                }
-                return _gobSelector;
-            }
-        }
-
         private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }
@@ -411,8 +398,12 @@ namespace AW2.UI.WPF
             if (potentialGobsByLayer.Any())
             {
                 SelectedGob = potentialGobsByLayer.First().Gobs.FirstOrDefault();
-                GobSelector.SetGobs(potentialGobsByLayer.SelectMany(lay => lay.Gobs));
-                if (potentialGobsByLayer.Count() > 1) _gobSelector.Show();
+                var potentialGobs = potentialGobsByLayer.SelectMany(lay => lay.Gobs);
+                if (potentialGobs.Count() > 1)
+                {
+                    EnsureGobSelectorVisible();
+                    _gobSelector.SetGobs(potentialGobs);
+                }
             }
             else
             {
@@ -491,6 +482,14 @@ namespace AW2.UI.WPF
             viewport.ZoomRatio = (float)ZoomRatio;
             if (CircleGobs.IsChecked.HasValue)
                 viewport.IsCirclingSmallAndInvisibleGobs = CircleGobs.IsChecked.Value;
+        }
+
+        private void EnsureGobSelectorVisible()
+        {
+            if (_gobSelector != null && _gobSelector.IsLoaded) return;
+            _gobSelector = new GobSelectionPopup { Owner = this };
+            _gobSelector.GobList.SelectionChanged += (sender, args) => SelectedGob = args.AddedItems.Cast<Gob>().FirstOrDefault();
+            _gobSelector.Show();
         }
 
         #endregion Helpers

@@ -165,7 +165,7 @@ namespace AW2.Game
             if (initializeForPlaying) newArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, newArena.BinFilename));
             newArena.IsForPlaying = initializeForPlaying;
             Game.LoadArenaContent(newArena);
-            _progressBar.SetSubtaskCount(newArena.Gobs.OfType<Wall>().Count());
+            ProgressBar.SetSubtaskCount(newArena.Gobs.OfType<Wall>().Count());
             newArena.Reset(); // this usually takes several seconds
             Arena = newArena;
         }

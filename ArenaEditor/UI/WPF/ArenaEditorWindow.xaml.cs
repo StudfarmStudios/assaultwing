@@ -113,10 +113,7 @@ namespace AW2.UI.WPF
             {
                 Cursor = Cursors.Wait;
                 var data = _game.DataEngine;
-                data.ProgressBar.Task = () => data.InitializeFromArena(arenaFilename, false);
-                data.ProgressBar.StartTask();
-                while (!data.ProgressBar.TaskCompleted) System.Threading.Thread.Sleep(100);
-                data.ProgressBar.FinishTask();
+                data.InitializeFromArena(arenaFilename, false);
                 _game.StartArena();
                 UpdateControlsFromArena();
                 ApplyViewSettingsToAllViewports();

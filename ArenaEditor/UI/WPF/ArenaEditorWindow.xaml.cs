@@ -64,6 +64,7 @@ namespace AW2.UI.WPF
         private EditorSpectator Spectator { get { return (EditorSpectator)_game.DataEngine.Spectators.First(); } }
         private double ZoomRatio { get { return Math.Pow(0.5, ZoomSlider.Value); } }
         private ArenaLayer SelectedLayer { get { return (ArenaLayer)LayerNames.SelectedValue; } }
+        private bool IsGobSelectorVisible { get { return _gobSelector != null && _gobSelector.IsLoaded; } }
         private IEnumerable<EditorViewport> EditorViewports
         {
             get { return _game.DataEngine.Viewports.OfType<EditorViewport>(); }
@@ -388,27 +389,16 @@ namespace AW2.UI.WPF
 
         private void ClickViewport(AWViewport viewport, Vector2 pointInViewport)
         {
-            var visibleLayers = LayerNames.Items
+            var potentialGobs = LayerNames.Items
                 .Cast<LayerReference>()
                 .Where(layref => layref.Visible)
-                .Reverse();
-            var potentialGobsByLayer = visibleLayers
-                .Select(lay => new { Layer = lay, Gobs = FindGobs(viewport, pointInViewport, lay.Value) })
-                .Where(lay => lay.Gobs.Any());
-            if (potentialGobsByLayer.Any())
-            {
-                SelectedGob = potentialGobsByLayer.First().Gobs.FirstOrDefault();
-                var potentialGobs = potentialGobsByLayer.SelectMany(lay => lay.Gobs);
-                if (potentialGobs.Count() > 1)
-                {
-                    EnsureGobSelectorVisible();
-                    _gobSelector.SetGobs(potentialGobs);
-                }
-            }
+                .Reverse()
+                .SelectMany(lay => FindGobs(viewport, pointInViewport, lay.Value));
+            if (potentialGobs.Count() > 1) EnsureGobSelectorVisible();
+            if (!IsGobSelectorVisible)
+                SelectedGob = potentialGobs.FirstOrDefault();
             else
-            {
-                SelectedGob = null;
-            }
+                _gobSelector.SetGobs(potentialGobs);
         }
 
         private IEnumerable<Gob> FindGobs(AWViewport viewport, Vector2 pointInViewport, ArenaLayer layer)
@@ -486,7 +476,7 @@ namespace AW2.UI.WPF
 
         private void EnsureGobSelectorVisible()
         {
-            if (_gobSelector != null && _gobSelector.IsLoaded) return;
+            if (IsGobSelectorVisible) return;
             _gobSelector = new GobSelectionPopup { Owner = this };
             _gobSelector.GobList.SelectionChanged += (sender, args) => SelectedGob = args.AddedItems.Cast<Gob>().FirstOrDefault();
             _gobSelector.Show();

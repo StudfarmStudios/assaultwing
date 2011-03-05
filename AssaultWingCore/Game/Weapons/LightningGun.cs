@@ -14,13 +14,17 @@ namespace AW2.Game.Weapons
     /// </summary>
     public class LightningGun : Weapon
     {
+        private const int LIGHTNING_CHAIN_LENGTH_MAX = 3;
+
         /// <summary>
         /// Maximum distance the lightning can carry, in meters.
         /// </summary>
         [TypeParameter]
         private float _range;
 
+        /// <summary>
         /// This constructor is only for serialisation.
+        /// </summary>
         public LightningGun()
         {
             _range = 500;
@@ -35,28 +39,51 @@ namespace AW2.Game.Weapons
         {
             var potentialTargets =
                 from player in Owner.Game.DataEngine.Players
-                where player.Ship != null
+                where player.Ship != null && player.Ship != Owner
                 select player.Ship;
-            FireAtTarget(TargetSelection.ChooseTarget(potentialTargets, Owner, _range));
+            FireAtTargets(FindTargets(potentialTargets));
         }
 
         protected override void CreateVisualsImpl()
         {
         }
 
-        private void FireAtTarget(Gob target)
+        public IEnumerable<Gob> FindTargets(IEnumerable<Gob> potentialTargets)
         {
-            ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(target, index));
+            Gob current = Owner;
+            var direction = Owner.Rotation;
+            for (int i = 0; i < LIGHTNING_CHAIN_LENGTH_MAX; i++)
+            {
+                var target = TargetSelection.ChooseTarget(potentialTargets, current, direction, _range);
+                if (target == null)
+                {
+                    if (i == 0) yield return null;
+                    break;
+                }
+                yield return target;
+                direction = (target.Pos - current.Pos).Angle();
+                current = target;
+            }
         }
 
-        private void CreateShot(Gob target, int boneIndex)
+        private void FireAtTargets(IEnumerable<Gob> targets)
+        {
+            ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(Owner, index, targets.First()));
+            Gob previous = targets.First();
+            foreach (var target in targets.Skip(1))
+            {
+                CreateShot(previous, 0, target);
+                previous = target;
+            }
+        }
+
+        private void CreateShot(Gob source, int sourceBoneIndex, Gob target)
         {
             Gob.CreateGob<Lightning>(Owner.Game, shotTypeName, shot =>
             {
-                shot.Owner = Owner.Owner;
-                shot.ResetPos(Owner.GetNamedPosition(boneIndex), Vector2.Zero, Owner.Rotation);
-                shot.Shooter = Owner;
-                shot.ShooterBoneIndex = boneIndex;
+                shot.Owner = source.Owner;
+                shot.Shooter = source;
+                shot.ShooterBoneIndex = sourceBoneIndex;
                 shot.Target = target;
                 Arena.Gobs.Add(shot);
             });

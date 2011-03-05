@@ -16,13 +16,13 @@ namespace AW2.Game.GobUtils
         /// 2. straight ahead, and
         /// 3. close
         /// </summary>
-        public static Gob ChooseTarget(IEnumerable<Gob> candidates, Gob source, float maxRange)
+        public static Gob ChooseTarget(IEnumerable<Gob> candidates, Gob source, float direction, float maxRange)
         {
             var targets =
                 from gob in candidates
-                where gob.IsDamageable && !gob.Disabled && gob != source
+                where !gob.Disabled && gob != source
                 let ownerWeight = gob.Owner == source.Owner ? 5f : gob.Owner == null ? 1f : 0.5f
-                let relativePos = (gob.Pos - source.Pos).Rotate(-source.Rotation)
+                let relativePos = (gob.Pos - source.Pos).Rotate(-direction)
                 let distanceSquared = relativePos.LengthSquared()
                 where distanceSquared <= maxRange * maxRange && relativePos.X >= 0
                 orderby ownerWeight * (relativePos.X + 5 * Math.Abs(relativePos.Y)) ascending

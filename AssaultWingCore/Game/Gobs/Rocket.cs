@@ -209,7 +209,7 @@ namespace AW2.Game.Gobs
                 from player in Game.DataEngine.Players
                 where player.Ship != null
                 select player.Ship;
-            var newBestTarget = TargetSelection.ChooseTarget(potentialTargets, this, _findTargetRange);
+            var newBestTarget = TargetSelection.ChooseTarget(potentialTargets, this, this.Rotation, _findTargetRange);
             if (newBestTarget != null &&
                 (newBestTarget.Owner == null || newBestTarget.Owner == Owner) &&
                 RandomHelper.GetRandomFloat() < 0.9)

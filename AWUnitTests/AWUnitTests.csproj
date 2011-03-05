@@ -46,6 +46,7 @@
     <Compile Include="Game\GobUtils\CoronerTest.cs" />
     <Compile Include="Game\GobUtils\DamageInfoTest.cs" />
     <Compile Include="Game\GobUtils\ShipLocationPredicterTest.cs" />
+    <Compile Include="Game\Weapons\LightningGunTest.cs" />
     <Compile Include="Graphics\AWViewportCollectionTest.cs" />
     <Compile Include="Helpers\AWMathHelperTest.cs" />
     <Compile Include="Helpers\Geometric\GeometryTest.cs" />

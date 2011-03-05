@@ -168,11 +168,7 @@ namespace AW2.Menu.Main
             foreach (var server in mess.GameServers)
             {
                 var menuItemText = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers);
-                var joinRequest = new JoinGameServerRequest
-                {
-                    GameServerManagementID = server.ManagementID,
-                    PrivateUDPEndPoint = _menuEngine.Game.NetworkEngine.UDPSocket.PrivateLocalEndPoint,
-                };
+                var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
                 NetworkItems.Add(new MainMenuItem(_menuEngine,
                     () => menuItemText,
                     component =>

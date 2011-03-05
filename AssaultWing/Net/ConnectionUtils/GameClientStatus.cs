@@ -19,6 +19,11 @@
         /// </summary>
         public bool IsPlayingArena { get; set; }
 
+        /// <summary>
+        /// A unique identifier of the client, provided by the client.
+        /// </summary>
+        public byte[] ClientKey { get; set; }
+
         public bool IsDropped { get; set; }
     }
 }

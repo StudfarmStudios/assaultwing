@@ -11,16 +11,14 @@ namespace AW2.Net.ManagementMessages
     public class JoinGameServerRequest : ManagementMessage
     {
         public int GameServerManagementID { get; set; }
-        public IPEndPoint PrivateUDPEndPoint { get; set; }
 
         protected override string[] Parameters
         {
             get
             {
-                return new string[]
+                return new[]
                 {
                     "serverid=" + GameServerManagementID,
-                    "privateudpendpoint=" + PrivateUDPEndPoint,
                 };
             }
         }

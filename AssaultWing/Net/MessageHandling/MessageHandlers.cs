@@ -37,7 +37,6 @@ namespace AW2.Net.MessageHandling
             yield return new MessageHandler<JoinGameServerReply>(false, IMessageHandler.SourceType.Management, HandleJoinGameServerReply);
 
             // These messages only game servers receive
-            yield return new MessageHandler<ClientJoinMessage>(false, IMessageHandler.SourceType.Management, HandleClientJoinMessage);
             yield return new MessageHandler<PingMessage>(false, IMessageHandler.SourceType.Management, HandlePingMessage);
         }
 
@@ -65,7 +64,7 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
         {
-            yield return new MessageHandler<GameServerHandshakeRequest>(false, IMessageHandler.SourceType.Client, HandleGameServerHandshakeRequest);
+            yield return new MessageHandler<GameServerHandshakeRequestTCP>(false, IMessageHandler.SourceType.Client, HandleGameServerHandshakeRequestTCP);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Client, HandlePlayerSettingsRequestOnServer);
             yield return new MessageHandler<PlayerMessageMessage>(false, IMessageHandler.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
@@ -110,11 +109,6 @@ namespace AW2.Net.MessageHandling
                     new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu));
                 game.ShowDialog(dialogData);
             }
-        }
-
-        private static void HandleClientJoinMessage(ClientJoinMessage mess)
-        {
-            AssaultWing.Instance.NetworkEngine.ClientUDPEndPointPool.Add(mess.ClientUDPEndPoints);
         }
 
         private static void HandlePingMessage(PingMessage mess)
@@ -220,11 +214,12 @@ namespace AW2.Net.MessageHandling
             mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
         }
 
-        private static void HandleGameServerHandshakeRequest(GameServerHandshakeRequest mess)
+        private static void HandleGameServerHandshakeRequestTCP(GameServerHandshakeRequestTCP mess)
         {
             string clientDiff, serverDiff;
             int diffIndex;
             bool differ = MiscHelper.FirstDifference(mess.CanonicalStrings, CanonicalString.CanonicalForms, out clientDiff, out serverDiff, out diffIndex);
+            var connection = AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID);
             if (differ)
             {
                 var mismatchInfo = string.Format("First mismatch is index: {0}, client: {1}, server: {2}",
@@ -236,8 +231,12 @@ namespace AW2.Net.MessageHandling
                 {
                     Info = "Assault Wing version mismatch\nin canonical strings."
                 };
-                AssaultWing.Instance.NetworkEngine.GetGameClientConnection(mess.ConnectionID).Send(reply);
+                connection.Send(reply);
                 AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
+            }
+            else
+            {
+                connection.ConnectionStatus.ClientKey = mess.GameClientKey;
             }
         }
 
@@ -351,7 +350,11 @@ namespace AW2.Net.MessageHandling
                 // HACK: Force one local player.
                 AssaultWing.Instance.DataEngine.Spectators.Remove(player => AssaultWing.Instance.DataEngine.Spectators.Count > 1);
 
-                var joinRequest = new GameServerHandshakeRequest { CanonicalStrings = CanonicalString.CanonicalForms };
+                var joinRequest = new GameServerHandshakeRequestTCP
+                {
+                    CanonicalStrings = CanonicalString.CanonicalForms,
+                    GameClientKey = net.GetAssaultWingInstanceKey(),
+                };
                 net.GameServerConnection.Send(joinRequest);
                 AssaultWing.Instance.MenuEngine.ActivateComponent(AW2.Menu.MenuComponentType.Equip);
             }

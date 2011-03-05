@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
@@ -63,7 +64,7 @@ namespace AW2.Net
         private const int MANAGEMENT_SERVER_PORT_DEFAULT = 'A' * 256 + 'W';
         private const string NETWORK_TRACE_FILE = "AWnetwork.log";
         private static readonly TimeSpan HANDSHAKE_TIMEOUT = TimeSpan.FromSeconds(5);
-        private static readonly TimeSpan HANDSHAKE_ATTEMPT_INTERVAL = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan HANDSHAKE_ATTEMPT_INTERVAL = TimeSpan.FromSeconds(0.9);
 
         private AssaultWing _game;
 
@@ -151,11 +152,27 @@ namespace AW2.Net
         /// </summary>
         public AWUDPSocket UDPSocket { get; private set; }
 
-        /// <summary>
-        /// A temporary storage of game client UDP end points. Items come from <see cref="ClientJoinMessage"/> 
-        /// and are read and removed by game client connections themselves.
-        /// </summary>
-        public IList<IPEndPoint[]> ClientUDPEndPointPool { get; private set; }
+        public byte[] GetMACAddress(IPAddress nicIP)
+        {
+            var addresses =
+                from nic in NetworkInterface.GetAllNetworkInterfaces()
+                where nic.GetIPProperties().UnicastAddresses.Any(addr => addr.Address.Equals(nicIP))
+                select nic.GetPhysicalAddress().GetAddressBytes();
+            return addresses.First();
+        }
+
+        public byte[] GetAssaultWingInstanceKey()
+        {
+            // Mix MAC address with local UDP port to get a unique ID across different computers
+            // and across different Assault Wing instances running on the same computer.
+            var macAddress = GetMACAddress(UDPSocket.PrivateLocalEndPoint.Address);
+            var port = UDPSocket.PrivateLocalEndPoint.Port;
+            var clientKey = new byte[macAddress.Length + 2];
+            clientKey[0] = (byte)port;
+            clientKey[1] = (byte)(port >> 8);
+            Array.Copy(macAddress, 0, clientKey, 2, macAddress.Length);
+            return clientKey;
+        }
 
         /// <summary>
         /// Finds a management server and initialises <see cref="ManagementServerConnection"/>.
@@ -184,7 +201,6 @@ namespace AW2.Net
         public void StartServer(Action<Result<Connection>> connectionHandler)
         {
             Log.Write("Server starts listening");
-            ClientUDPEndPointPool = new List<IPEndPoint[]>();
             _startServerConnectionHandler = connectionHandler;
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
             _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT, UDPSocket.PrivateLocalEndPoint.Port);
@@ -203,7 +219,6 @@ namespace AW2.Net
             UnregisterServerFromManagementServer();
             _connectionAttemptListener.StopListening();
             _connectionAttemptListener = null;
-            ClientUDPEndPointPool = null;
             DisposeGameClientConnections();
             FlushUnhandledUDPMessages();
         }
@@ -361,8 +376,8 @@ namespace AW2.Net
             foreach (var handler in MessageHandlers.ToList()) // enumerate over a copy to allow adding MessageHandlers during enumeration
                 if (!handler.Disposed) handler.HandleMessages();
             RemoveDisposedMessageHandlers();
-            HandleConnectionHandshaking();
-            // TODO: Remove old items (over 30 seconds) from ClientUDPEndPointPool
+            if (Game.NetworkMode == NetworkMode.Server) HandleConnectionHandshakingOnServer();
+            if (Game.NetworkMode == NetworkMode.Client) HandleConnectionHandshakingOnClient();
             HandleErrors();
             RemoveClosedConnections();
             PurgeUnhandledMessages();
@@ -500,7 +515,18 @@ namespace AW2.Net
             var message = remoteEndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint)
                 ? ManagementMessage.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime)
                 : Message.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime);
-            _udpMessagesToHandle.Do(list => list.Add(Tuple.Create(message, remoteEndPoint)));
+            if (Game.NetworkMode == NetworkMode.Server && message is GameServerHandshakeRequestUDP)
+                HandleGameServerHandshakeRequestUDP((GameServerHandshakeRequestUDP)message, remoteEndPoint);
+            else
+                _udpMessagesToHandle.Do(list => list.Add(Tuple.Create(message, remoteEndPoint)));
+        }
+
+        private void HandleGameServerHandshakeRequestUDP(GameServerHandshakeRequestUDP mess, IPEndPoint remoteEndPoint)
+        {
+            foreach (var conn in GameClientConnections)
+                if (conn.ConnectionStatus.ClientKey.SequenceEqual(mess.GameClientKey))
+                    if (conn.RemoteUDPEndPoint == null)
+                        conn.RemoteUDPEndPoint = remoteEndPoint;
         }
 
         private void HandleUDPMessages()
@@ -583,22 +609,31 @@ namespace AW2.Net
             MessageHandlers = MessageHandlers.Except(MessageHandlers.Where(handler => handler.Disposed)).ToList();
         }
 
-        private void HandleConnectionHandshaking()
+        private void HandleConnectionHandshakingOnServer()
         {
-            foreach (var connection in GameClientConnections)
+            foreach (var conn in GameClientConnections)
             {
-                if (connection.FirstHandshakeAttempt == TimeSpan.Zero)
-                    connection.FirstHandshakeAttempt = Game.GameTime.TotalRealTime;
-                if (!connection.IsHandshaken && Game.GameTime.TotalRealTime > connection.PreviousHandshakeAttempt + HANDSHAKE_ATTEMPT_INTERVAL)
+                if (conn.FirstHandshakeAttempt == TimeSpan.Zero)
+                    conn.FirstHandshakeAttempt = Game.GameTime.TotalRealTime;
+                if (!conn.IsHandshaken && Game.GameTime.TotalRealTime > conn.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT)
                 {
-                    connection.PreviousHandshakeAttempt = Game.GameTime.TotalRealTime;
-                    TryInitializeRemoteUDPEndPoint(connection);
+                    conn.Send(new ConnectionClosingMessage { Info = "Handshake failed" });
+                    DropClient(conn.ID, true);
                 }
-                if (!connection.IsHandshaken && Game.GameTime.TotalRealTime > connection.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT)
-                {
-                    connection.Send(new ConnectionClosingMessage { Info = "Handshake failed" });
-                    DropClient(connection.ID, true);
-                }
+            }
+        }
+
+        private void HandleConnectionHandshakingOnClient()
+        {
+            if (GameServerConnection == null) return;
+            if (GameServerConnection.PreviousHandshakeAttempt == TimeSpan.Zero)
+                GameServerConnection.FirstHandshakeAttempt = GameServerConnection.PreviousHandshakeAttempt = Game.GameTime.TotalRealTime;
+            if (Game.GameTime.TotalRealTime > GameServerConnection.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT) return;
+            if (Game.GameTime.TotalRealTime > GameServerConnection.PreviousHandshakeAttempt + HANDSHAKE_ATTEMPT_INTERVAL)
+            {
+                GameServerConnection.PreviousHandshakeAttempt = Game.GameTime.TotalRealTime;
+                var handshake = new GameServerHandshakeRequestUDP { GameClientKey = GetAssaultWingInstanceKey() };
+                GameServerConnection.Send(handshake);
             }
         }
 
@@ -615,21 +650,6 @@ namespace AW2.Net
             if (GameServerConnection != null && GameServerConnection.IsDisposed)
                 GameServerConnection = null;
             GameClientConnections.RemoveAll(c => c.IsDisposed);
-        }
-
-        /// <summary>
-        /// Try to find the remote UDP end point from received <see cref="ClientJoinMessage"/>s.
-        /// Relevant only on a game server for game client connections.
-        /// </summary>
-        private void TryInitializeRemoteUDPEndPoint(Connection connection)
-        {
-            if (Game.NetworkMode != NetworkMode.Server) return;
-            if (connection.RemoteUDPEndPoint != null) throw new InvalidOperationException("RemoteUDPEndPoint already initialized");
-            var matchingEndPoints = ClientUDPEndPointPool
-                .FirstOrDefault(endPoints => endPoints.Any(ep => ep.Address.Equals(connection.RemoteIPAddress)));
-            if (matchingEndPoints == null) return;
-            connection.RemoteUDPEndPoint = matchingEndPoints.First(ep => ep.Address.Equals(connection.RemoteIPAddress));
-            ClientUDPEndPointPool.Remove(matchingEndPoints);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

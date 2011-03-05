@@ -28,9 +28,10 @@ namespace AW2.Game.Gobs
             }
         }
 
-        private List<Segment> _segments;
-        private Texture2D _texture;
+        private static readonly VertexPositionTexture ZERO_VERTEX = new VertexPositionTexture(Vector3.Zero, Vector2.Zero);
+        private static readonly VertexPositionTexture[] EMPTY_MESH = new[] { ZERO_VERTEX, ZERO_VERTEX, ZERO_VERTEX };
         private static BasicEffect g_effect;
+        private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
 
         private bool _damageDealt;
@@ -126,14 +127,14 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            CreateMesh();
+            _vertexData = CreateMesh();
             _damageDealt = false;
         }
 
         public override void Update()
         {
             base.Update();
-            CreateMesh();
+            _vertexData = CreateMesh();
             if (!_damageDealt)
             {
                 var target = Target.GetValue();
@@ -192,51 +193,45 @@ namespace AW2.Game.Gobs
 
         #region Private methods
 
-        private void CreateMesh()
+        private VertexPositionTexture[] CreateMesh()
         {
-            if (Shooter.GetValue() == null)
-            {
-                // This will happen if 'Shooter' cannot be found by its gob ID
-                _vertexData = new VertexPositionTexture[] {
-                    new VertexPositionTexture(Vector3.Zero, Vector2.Zero),
-                    new VertexPositionTexture(Vector3.Zero, Vector2.Zero),
-                    new VertexPositionTexture(Vector3.Zero, Vector2.Zero)
-                };
-                return;
-            }
-            var start = Shooter.GetValue().GetNamedPosition(ShooterBoneIndex);
-            if (Target.GetValue() != null)
-            {
-                _segments = new List<Segment> { new Segment(start, Target.GetValue().Pos) };
-            }
-            else
-            {
-                Gob shooter = Shooter;
-                var drawRotation = shooter.Rotation + shooter.DrawRotationOffset;
-                var middle1 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation - MathHelper.PiOver4, drawRotation);
-                var middle2 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation, drawRotation + MathHelper.PiOver4);
-                _segments = new List<Segment>
-                {
-                    new Segment(start, middle1),
-                    new Segment(middle1, middle2),
-                    new Segment(middle2, start)
-                };
-            }
-            FineSegments(wildness, fineness);
-            CreateVertexData(thickness);
+            Gob shooter = Shooter;
+            Gob target = Target;
+            if (shooter == null) return EMPTY_MESH;
+            var segments = GetInitialSegments(shooter, ShooterBoneIndex, target);
+            segments = FineSegments(segments, wildness, fineness);
+            return CreateVertexData(segments, _texture.Width * thickness, _texture.Height * thickness);
         }
 
-        private void FineSegments(float wildness, float fineness)
+        private static List<Segment> GetInitialSegments(Gob shooter, int shooterBoneIndex, Gob target)
         {
-            for (int i = 0; i < 7 && Fine(fineness, wildness, ref _segments); ++i) ;
+            var start = shooter.GetNamedPosition(shooterBoneIndex);
+            if (target != null) return new List<Segment> { new Segment(start, target.Pos) };
+            var drawRotation = shooter.Rotation + shooter.DrawRotationOffset;
+            var middle1 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation - MathHelper.PiOver4, drawRotation);
+            var middle2 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation, drawRotation + MathHelper.PiOver4);
+            return new List<Segment>
+            {
+                new Segment(start, middle1),
+                new Segment(middle1, middle2),
+                new Segment(middle2, start)
+            };
         }
 
-        /// <summary>
-        /// Divides segments longer than given limit. Returns <c>true</c> if divisions were made.
-        /// </summary>
-        private static bool Fine(float fineness, float wildness, ref List<Segment> segments)
+        private static List<Segment> FineSegments(List<Segment> segments, float wildness, float fineness)
         {
-            bool divided = false;
+            var workSegments = segments;
+            for (int i = 0; i < 7; ++i)
+            {
+                int previousCount = workSegments.Count;
+                workSegments = Fine(workSegments, wildness, fineness);
+                if (workSegments.Count == previousCount) break;
+            }
+            return workSegments;
+        }
+
+        private static List<Segment> Fine(List<Segment> segments, float wildness, float fineness)
+        {
             var newSegments = new List<Segment>();
             foreach (var segment in segments)
             {
@@ -247,45 +242,42 @@ namespace AW2.Game.Gobs
                     var middle = Vector2.Lerp(segment.StartPoint, segment.EndPoint, 0.5f) + randomFront + randomSide;
                     newSegments.Add(new Segment(segment.StartPoint, middle));
                     newSegments.Add(new Segment(middle, segment.EndPoint));
-                    divided = true;
                 }
                 else
                     newSegments.Add(segment);
             }
-            segments = newSegments;
-            return divided;
+            return newSegments;
         }
 
-        private void CreateVertexData(float thickness)
+        private static VertexPositionTexture[] CreateVertexData(List<Segment> segments, float width, float height)
         {
-            var vertices = new List<VertexPositionTexture>(_segments.Count * 2 + 2);
+            var vertices = new List<VertexPositionTexture>(segments.Count * 2 + 2);
             float lastX = 0;
             Vector2 lastLeft, lastRight;
-            ComputeExtrusionPoints(_segments.First().StartPoint, _segments.First().Vector, _segments.First().Vector,
-                thickness, out lastLeft, out lastRight);
+            var firstSegment = segments.First();
+            ComputeExtrusionPoints(firstSegment.StartPoint, firstSegment.Vector, firstSegment.Vector, height, out lastLeft, out lastRight);
             vertices.Add(new VertexPositionTexture(new Vector3(lastRight, 0), new Vector2(lastX, 0)));
             vertices.Add(new VertexPositionTexture(new Vector3(lastLeft, 0), new Vector2(lastX, 1)));
-            for (int i = 0; i < _segments.Count; ++i)
+            for (int i = 0; i < segments.Count; ++i)
             {
-                float x = lastX + _segments[i].Length / (_texture.Width * thickness);
-                var inSegment = _segments[i];
-                var outSegment = _segments[i < _segments.Count - 1 ? i + 1 : i];
+                float x = lastX + segments[i].Length / width;
+                var inSegment = segments[i];
+                var outSegment = segments[i < segments.Count - 1 ? i + 1 : i];
                 Vector2 left, right;
-                ComputeExtrusionPoints(inSegment.EndPoint, inSegment.Vector, outSegment.Vector,
-                    thickness, out left, out right);
+                ComputeExtrusionPoints(inSegment.EndPoint, inSegment.Vector, outSegment.Vector, height, out left, out right);
                 vertices.Add(new VertexPositionTexture(new Vector3(right, 0), new Vector2(x, 0)));
                 vertices.Add(new VertexPositionTexture(new Vector3(left, 0), new Vector2(x, 1)));
                 lastX = x;
                 lastLeft = left;
                 lastRight = right;
             }
-            _vertexData = vertices.ToArray();
+            return vertices.ToArray();
         }
 
-        private void ComputeExtrusionPoints(Vector2 middle, Vector2 @in, Vector2 @out, float thickness, out Vector2 left, out Vector2 right)
+        private static void ComputeExtrusionPoints(Vector2 middle, Vector2 @in, Vector2 @out, float height, out Vector2 left, out Vector2 right)
         {
             var unit = Vector2.Normalize(@in + @out);
-            var extrusion = unit.Rotate90() * thickness * _texture.Height / 2;
+            var extrusion = unit.Rotate90() * height / 2;
             left = middle + extrusion;
             right = middle - extrusion;
         }

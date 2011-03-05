@@ -30,7 +30,6 @@ namespace AW2.Game.Gobs
 
         private static readonly VertexPositionTexture ZERO_VERTEX = new VertexPositionTexture(Vector3.Zero, Vector2.Zero);
         private static readonly VertexPositionTexture[] EMPTY_MESH = new[] { ZERO_VERTEX, ZERO_VERTEX, ZERO_VERTEX };
-        private static BasicEffect g_effect;
         private Texture2D _texture;
         private VertexPositionTexture[] _vertexData;
 
@@ -80,7 +79,7 @@ namespace AW2.Game.Gobs
 
         public override IEnumerable<CanonicalString> TextureNames
         {
-            get { return base.TextureNames.Concat(new CanonicalString[] { textureName }); }
+            get { return base.TextureNames.Concat(new[] { textureName }); }
         }
 
         /// <summary>
@@ -114,14 +113,6 @@ namespace AW2.Game.Gobs
         {
             base.LoadContent();
             _texture = Game.Content.Load<Texture2D>(textureName);
-            var gfx = Game.GraphicsDeviceService.GraphicsDevice;
-            g_effect = g_effect ?? new BasicEffect(gfx);
-            g_effect.World = Matrix.Identity;
-            g_effect.Texture = _texture;
-            g_effect.TextureEnabled = true;
-            g_effect.VertexColorEnabled = false;
-            g_effect.LightingEnabled = false;
-            g_effect.FogEnabled = false;
         }
 
         public override void Activate()
@@ -150,10 +141,12 @@ namespace AW2.Game.Gobs
         {
             var gfx = Game.GraphicsDeviceService.GraphicsDevice;
             gfx.BlendState = AW2.Graphics.GraphicsEngineImpl.AdditiveBlendPremultipliedAlpha;
-            g_effect.Projection = projection;
-            g_effect.View = view;
-            g_effect.Alpha = Alpha;
-            foreach (var pass in g_effect.CurrentTechnique.Passes)
+            var effect = Game.GraphicsEngine.GameContent.LightningEffect;
+            effect.Projection = projection;
+            effect.View = view;
+            effect.Alpha = Alpha;
+            effect.Texture = _texture;
+            foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 gfx.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, _vertexData, 0, _vertexData.Length - 2);

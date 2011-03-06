@@ -17,6 +17,8 @@ namespace AW2.Menu.Main
     /// </summary>
     public class MainMenuItemCollections
     {
+        private const string NO_SERVERS_FOUND = "No servers found"; 
+
         private MenuEngineImpl _menuEngine;
         private TimeSpan _lastNetworkItemsUpdate;
 
@@ -150,7 +152,8 @@ namespace AW2.Menu.Main
         {
             _lastNetworkItemsUpdate = _menuEngine.Game.GameTime.TotalRealTime;
             NetworkItems.Clear();
-            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Play as Server",
+            NetworkItems.Add(new MainMenuItem(_menuEngine, () => NO_SERVERS_FOUND, component => { }));
+            NetworkItems.Add(new MainMenuItem(_menuEngine, () => "Create a server",
                 component =>
                 {
                     if (_menuEngine.Game.NetworkMode != NetworkMode.Standalone) return;
@@ -167,9 +170,10 @@ namespace AW2.Menu.Main
         {
             foreach (var server in mess.GameServers)
             {
+                if (NetworkItems[0].Name() == NO_SERVERS_FOUND) NetworkItems.RemoveAt(0);
                 var menuItemText = string.Format("Connect to {0} [{1}/{2}]", server.Name, server.CurrentPlayers, server.MaxPlayers);
                 var joinRequest = new JoinGameServerRequest { GameServerManagementID = server.ManagementID };
-                NetworkItems.Add(new MainMenuItem(_menuEngine,
+                NetworkItems.Insert(0, new MainMenuItem(_menuEngine,
                     () => menuItemText,
                     component =>
                     {

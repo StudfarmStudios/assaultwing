@@ -25,8 +25,20 @@ namespace AW2.Menu.Main
 
         public void Add(MainMenuItem item)
         {
-            item.ItemIndex = _menuItems.Count;
             _menuItems.Add(item);
+            UpdateItemIndices();
+        }
+
+        public void Insert(int index, MainMenuItem item)
+        {
+            _menuItems.Insert(index, item);
+            UpdateItemIndices();
+        }
+
+        public void RemoveAt(int index)
+        {
+            _menuItems.RemoveAt(index);
+            UpdateItemIndices();
         }
 
         public void Clear()
@@ -42,6 +54,12 @@ namespace AW2.Menu.Main
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        private void UpdateItemIndices()
+        {
+            for (int i = 0; i < _menuItems.Count; i++)
+                _menuItems[i].ItemIndex = i;
         }
     }
 }

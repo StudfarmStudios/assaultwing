@@ -24,6 +24,7 @@ namespace AW2.Core.GameComponents
 
         private Color TypingColor { get { return Color.White; } }
         private bool IsTyping { get { return _message != null; } }
+        private Player ChatPlayer { get { return Game.DataEngine.Players.First(plr => !plr.IsRemote); } }
 
         public PlayerChat(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
@@ -50,10 +51,10 @@ namespace AW2.Core.GameComponents
             {
                 if (IsTyping)
                 {
-                    _game.SendMessageToAllPlayers(_message.Content, _game.DataEngine.Players.First(plr => !plr.IsRemote));
+                    if (ChatPlayer != null) _game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
                     _message = null;
                 }
-                else
+                else if (ChatPlayer != null)
                     _message = new EditableText("", 40, EditableText.Keysets.All);
             }
             if (IsTyping) _message.Update(() => { });
@@ -62,7 +63,8 @@ namespace AW2.Core.GameComponents
         public override void Draw()
         {
             if (!IsTyping) return;
-            var text = string.Format("{0}>{1}<", Game.DataEngine.Players.First(plr => !plr.IsRemote).Name, _message.Content);
+            var chatName = ChatPlayer != null ? ChatPlayer.Name : "???";
+            var text = string.Format("{0}>{1}<", chatName, _message.Content);
             _spriteBatch.Begin();
             _spriteBatch.DrawString(_typingFont, text, GetTypingPos(text).Round(), TypingColor);
             _spriteBatch.End();

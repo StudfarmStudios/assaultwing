@@ -192,18 +192,22 @@ namespace AW2.Net.MessageHandling
             }
             else
             {
-                var player = AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
-                if (player.IsRemote)
-                    AssaultWing.Instance.NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(mess);
-                else
-                    HandlePlayerMessageMessageOnClient(mess);
+                var player = AssaultWingCore.Instance.DataEngine.Players.FirstOrDefault(plr => plr.ID == mess.PlayerID);
+                if (player != null)
+                {
+                    if (player.IsRemote)
+                        AssaultWing.Instance.NetworkEngine.GetGameClientConnection(player.ConnectionID).Send(mess);
+                    else
+                        HandlePlayerMessageMessageOnClient(mess);
+                }
             }
         }
 
         private static void HandlePlayerMessageMessageOnClient(PlayerMessageMessage mess)
         {
             if (mess.AllPlayers) throw new NotImplementedException("Client cannot broadcast player text messages");
-            AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID).Messages.Add(mess.Message);
+            var player = AssaultWingCore.Instance.DataEngine.Players.First(plr => plr.ID == mess.PlayerID);
+            if (player != null) player.Messages.Add(mess.Message);
         }
 
         private static void HandlePlayerUpdateMessage(PlayerUpdateMessage mess)

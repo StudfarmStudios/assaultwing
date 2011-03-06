@@ -15,8 +15,16 @@ namespace AW2.Menu.Equip
         private EditableText _message;
 
         public override Texture2D TabTexture { get { return Content.TabChatTexture; } }
-        public ChatContainer Messages { get { return MenuEngine.Game.DataEngine.Players.First(p => !p.IsRemote).Messages; } }
+        public ChatContainer Messages
+        {
+            get
+            {
+                if (ChatPlayer == null) return new ChatContainer();
+                return ChatPlayer.Messages;
+            }
+        }
 
+        private Player ChatPlayer { get { return MenuEngine.Game.DataEngine.Players.FirstOrDefault(plr => !plr.IsRemote); } }
         private SpriteFont Font { get { return Content.FontSmall; } }
         private Vector2 TypingPos { get { return StatusPanePos + new Vector2(30, Content.StatusPaneTexture.Height - 44); } }
 
@@ -30,9 +38,9 @@ namespace AW2.Menu.Equip
         public override void Update()
         {
             _message.Update(() => { });
-            if (_sendControl.Pulse)
+            if (_sendControl.Pulse && ChatPlayer != null)
             {
-                MenuEngine.Game.SendMessageToAllPlayers(_message.Content, MenuEngine.Game.DataEngine.Players.First(plr => !plr.IsRemote));
+                MenuEngine.Game.SendMessageToAllPlayers(_message.Content, ChatPlayer);
                 _message.Clear();
             }
         }
@@ -47,7 +55,7 @@ namespace AW2.Menu.Equip
 
         private void DrawChatMessages(Vector2 view, SpriteBatch spriteBatch)
         {
-            var visibleLines = (Content.StatusPaneTexture.Height - 70 ) / Font.LineSpacing;
+            var visibleLines = (Content.StatusPaneTexture.Height - 70) / Font.LineSpacing;
             var lineDelta = new Vector2(0, Font.LineSpacing);
             var preTextPos = TypingPos - view - lineDelta;
             foreach (var item in Messages.Reversed().Take(visibleLines))
@@ -62,7 +70,8 @@ namespace AW2.Menu.Equip
 
         private void DrawChatTextInputBox(Vector2 view, SpriteBatch spriteBatch)
         {
-            var text = string.Format("{0}>{1}<", MenuEngine.Game.DataEngine.Players.First(plr => !plr.IsRemote).Name, _message.Content);
+            if (ChatPlayer == null) return;
+            var text = string.Format("{0}>{1}<", ChatPlayer.Name, _message.Content);
             var x = _message.CaretPosition;
             spriteBatch.DrawString(Font, text, (TypingPos - view).Round(), Color.White);
         }

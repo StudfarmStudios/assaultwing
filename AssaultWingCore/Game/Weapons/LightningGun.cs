@@ -52,9 +52,10 @@ namespace AW2.Game.Weapons
         {
             Gob current = Owner;
             var direction = Owner.Rotation;
+            var range = _range;
             for (int i = 0; i < LIGHTNING_CHAIN_LENGTH_MAX; i++)
             {
-                var target = TargetSelection.ChooseTarget(potentialTargets, current, direction, _range);
+                var target = TargetSelection.ChooseTarget(potentialTargets, current, direction, range);
                 if (target == null)
                 {
                     if (i == 0) yield return null;
@@ -63,6 +64,7 @@ namespace AW2.Game.Weapons
                 yield return target;
                 direction = (target.Pos - current.Pos).Angle();
                 current = target;
+                range /= 2;
             }
         }
 

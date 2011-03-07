@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Helpers;
 
 namespace AW2.Graphics
 {
@@ -112,19 +113,56 @@ namespace AW2.Graphics
         private static Viewport LimitViewport(Viewport viewport)
         {
             var clientBounds = AssaultWingCore.Instance.Window.ClientBounds;
-            if (viewport.X < clientBounds.X)
-            {
-                viewport.Width -= clientBounds.X - viewport.X;
-                viewport.X = clientBounds.X;
-            }
-            if (viewport.Y < clientBounds.Y)
-            {
-                viewport.Height -= clientBounds.Y - viewport.Y;
-                viewport.Y = clientBounds.Y;
-            }
-            viewport.Width = Math.Min(viewport.Width, clientBounds.Right - viewport.X);
-            viewport.Height = Math.Min(viewport.Height, clientBounds.Bottom - viewport.Y);
+            var x_width = LimitViewportAxis(viewport.X, viewport.Width, clientBounds.X, clientBounds.Right);
+            viewport.X = x_width.Item1;
+            viewport.Width = x_width.Item2;
+            var y_height = LimitViewportAxis(viewport.Y, viewport.Height, clientBounds.Y, clientBounds.Bottom);
+            viewport.Y = y_height.Item1;
+            viewport.Height = y_height.Item2;
+
+            //if (viewport.X < clientBounds.X)
+            //{
+            //    viewport.Width -= clientBounds.X - viewport.X;
+            //    viewport.X = clientBounds.X;
+            //}
+            //if (viewport.X < clientBounds.Right)
+            //    viewport.Width = viewport.Width.Clamp(0, Math.Max(0, clientBounds.Right - viewport.X));
+            //else
+            //{
+            //    viewport.X = clientBounds.Right - 1;
+            //    viewport.Width = 1; // 0 is not allowed by GraphicsDevice.Viewport
+            //}
+
+            //if (viewport.Y < clientBounds.Y)
+            //{
+            //    viewport.Height -= clientBounds.Y - viewport.Y;
+            //    viewport.Y = clientBounds.Y;
+            //}
+            //if (viewport.Y < clientBounds.Bottom)
+            //    viewport.Height = viewport.Height.Clamp(0, Math.Max(0, clientBounds.Bottom - viewport.Y));
+            //else
+            //{
+            //    viewport.Y = clientBounds.Bottom - 1;
+            //    viewport.Height = 1; // 0 is not allowed by GraphicsDevice.Viewport
+            //}
             return viewport;
+        }
+
+        private static Tuple<int, int> LimitViewportAxis(int start, int size, int min, int max)
+        {
+            if (start < min)
+            {
+                size -= min - start;
+                start = min;
+            }
+            if (start < max)
+                size = size.Clamp(0, Math.Max(0, max - start));
+            else
+            {
+                start = max;
+                size = 1; // 0 is not allowed by GraphicsDevice.Viewport
+            }
+            return Tuple.Create(start, size);
         }
 
         /// <summary>

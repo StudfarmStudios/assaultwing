@@ -34,6 +34,7 @@ namespace AW2.Game.Weapons
         public LightningGun()
         {
             _range = 500;
+            _chainLinkRangeMultiplier = 0.8f;
         }
 
         public LightningGun(CanonicalString typeName)

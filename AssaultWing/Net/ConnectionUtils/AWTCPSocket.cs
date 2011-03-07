@@ -62,7 +62,7 @@ namespace AW2.Net.ConnectionUtils
             catch (Exception e)
             {
                 var message = string.Format("{0} in ReceiveCompleted: {1}", e.GetType().ToString(),
-                    e is SocketException ? ((SocketException)e).SocketErrorCode.ToString() : e.Message);
+                    e is SocketException ? ((SocketException)e).SocketErrorCode.ToString() : e.ToString());
                 Errors.Do(queue => queue.Enqueue(message));
                 Dispose();
             }

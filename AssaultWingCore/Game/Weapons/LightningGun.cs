@@ -23,6 +23,12 @@ namespace AW2.Game.Weapons
         private float _range;
 
         /// <summary>
+        /// Ratio of range of a lightning chain link compared to the previous link.
+        /// </summary>
+        [TypeParameter]
+        private float _chainLinkRangeMultiplier;
+
+        /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
         public LightningGun()
@@ -64,7 +70,7 @@ namespace AW2.Game.Weapons
                 yield return target;
                 direction = (target.Pos - current.Pos).Angle();
                 current = target;
-                range /= 2;
+                range *= _chainLinkRangeMultiplier;
             }
         }
 

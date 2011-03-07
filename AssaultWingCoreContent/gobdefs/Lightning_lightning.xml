@@ -6,7 +6,7 @@
     <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <impactDamage>75</impactDamage>
+  <impactDamage>70</impactDamage>
   <wildness>0.3</wildness>
   <fineness>20</fineness>
   <thickness>0.5</thickness>

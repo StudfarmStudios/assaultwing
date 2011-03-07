@@ -156,8 +156,10 @@ namespace AW2.Menu
 
         private void BackToMainMenu()
         {
-            MenuEngine.Game.CutNetworkConnections();
-            MenuEngine.ActivateComponent(MenuComponentType.Main);
+            _readyPressed = false;
+            var progressBar = MenuEngine.Game.DataEngine.ProgressBar;
+            if (progressBar.TaskRunning) progressBar.AbortTask();
+            MenuEngine.Game.ShowMenu();
         }
 
         #region Drawing methods

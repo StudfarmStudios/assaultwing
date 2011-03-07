@@ -17,7 +17,7 @@ namespace AW2.Menu.Main
     /// </summary>
     public class MainMenuItemCollections
     {
-        private const string NO_SERVERS_FOUND = "No servers found"; 
+        private const string NO_SERVERS_FOUND = "No servers found";
 
         private MenuEngineImpl _menuEngine;
         private TimeSpan _lastNetworkItemsUpdate;
@@ -79,13 +79,13 @@ namespace AW2.Menu.Main
                     component.SetItems(SetupItems);
                     menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
                 }));
-                    
+
             StartItems.Add(new MainMenuItem(menuEngine, () => "Quit",
                 component =>
-                    {
-                        AssaultWingProgram.Instance.Exit();
-                        menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
-                    }));
+                {
+                    AssaultWingProgram.Instance.Exit();
+                    menuEngine.Game.SoundEngine.PlaySound("MenuChangeItem");
+                }));
         }
 
         private void RefreshSetupItems(MenuEngineImpl menuEngine)
@@ -95,7 +95,7 @@ namespace AW2.Menu.Main
                 component => _menuEngine.Game.ShowDialog(new CustomOverlayDialogData(_menuEngine.Game,
                     "Are you sure to reset all settings\nto their defaults? (Yes/No)",
                     new TriggeredCallback(TriggeredCallback.GetYesControl(), menuEngine.Game.Settings.Reset),
-                    new TriggeredCallback(TriggeredCallback.GetNoControl(), () => {})))));
+                    new TriggeredCallback(TriggeredCallback.GetNoControl(), () => { })))));
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => GetSetupItem(menuEngine,
                 () => string.Format("{0} {1:0} %", name, get() * 100),
                 Enumerable.Range(0, 21).Select(x => x * 0.05f),

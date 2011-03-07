@@ -431,7 +431,7 @@ namespace AW2.Game.Gobs
             var oldRotation = Rotation;
             var oldDrawRotationOffset = DrawRotationOffset;
             base.Deserialize(reader, mode, framesAgo);
-            if (Owner != null && Owner.Ship != this) Owner.Ship = this;
+            if (Owner != null) Owner.SeizeShip(this);
 
             // HACK to avoid null references:
             //   - ForwardShot using Ship.Model before LoadContent() is called

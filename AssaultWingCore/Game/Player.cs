@@ -320,7 +320,7 @@ namespace AW2.Game
 
         #endregion Constructors
 
-        #region General public methods
+        #region Public methods
 
         public override void Update()
         {
@@ -390,17 +390,13 @@ namespace AW2.Game
             Messages.Add(new PlayerMessage("Repair pending due to recent damage", PlayerMessage.DEFAULT_COLOR));
         }
 
-        #endregion General public methods
+        public void SeizeShip(Ship ship)
+        {
+            if (Ship == ship) return;
+            ship.Death += ShipDeathHandler;
+            Ship = ship;
+        }
 
-        #region Methods related to serialisation
-
-        /// <summary>
-        /// Serialises the gob to a binary writer.
-        /// </summary>
-        /// Subclasses should call the base implementation
-        /// before performing their own serialisation.
-        /// <param name="writer">The writer where to write the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to serialise.</param>
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
             base.Serialize(writer, mode);
@@ -449,17 +445,21 @@ namespace AW2.Game
             }
         }
 
-        #endregion Methods related to serialisation
+        #endregion Public methods
 
         #region Private methods
 
         private void ShipDeathHandler(Coroner coroner)
         {
-            Die_HandleCounters(coroner);
-            Die_SendMessages(coroner);
+            if (Game.NetworkMode != NetworkMode.Client)
+            {
+                Die_HandleCounters(coroner);
+                Die_SendMessages(coroner);
+                _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
+                MustUpdateToClients = true;
+            }
+            BonusActions.Clear();
             Ship = null;
-            _shipSpawnTime = Game.DataEngine.ArenaTotalTime + TimeSpan.FromSeconds(MOURNING_DELAY);
-            if (Game.NetworkMode == NetworkMode.Server) MustUpdateToClients = true;
         }
 
         private void Die_HandleCounters(Coroner coroner)
@@ -479,7 +479,6 @@ namespace AW2.Game
             }
             Lives--;
             KillsWithoutDying = 0;
-            BonusActions.Clear();
         }
 
         private void Die_SendMessages(Coroner coroner)
@@ -564,14 +563,13 @@ namespace AW2.Game
             if (Ship != null) throw new InvalidOperationException("Player already has a ship");
             Gob.CreateGob<Ship>(Game, ShipName, newShip =>
             {
+                SeizeShip(newShip);
                 newShip.Owner = this;
-                newShip.Death += ShipDeathHandler;
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
                 PositionNewShip(newShip);
                 Game.DataEngine.Arena.Gobs.Add(newShip);
-                Ship = newShip;
             });
         }
 

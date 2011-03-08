@@ -151,7 +151,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandlePlayerDeletionMessage(PlayerDeletionMessage mess)
         {
-            AssaultWingCore.Instance.DataEngine.Spectators.Remove(spec => spec.ID == mess.PlayerID);
+            AssaultWingCore.Instance.DataEngine.Spectators.Remove(spec => spec.IsRemote && spec.ID == mess.PlayerID);
         }
 
         private static void HandleGameSettingsRequest(GameSettingsRequest mess)

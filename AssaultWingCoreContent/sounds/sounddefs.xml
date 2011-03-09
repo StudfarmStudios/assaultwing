@@ -34,7 +34,7 @@
 	<sound name="missile" volume="0.3"/>
   <sound name="missileHit" volume="1.0"/>
 	<sound name="newCraft" volume="1.0"/>
-	<sound name="playermessage" volume="1.0"/>
+	<sound name="playermessage" volume="0.18"/>
 	<sound name="shipCollision" volume="0.3"/>
   <sound name="talon" volume="0.1"/>
 	<sound name="weaponFail" volume="0.3"/>

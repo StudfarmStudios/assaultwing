@@ -140,10 +140,7 @@ namespace AW2.Menu
             _controlBack = new KeyboardKey(Keys.Escape);
             _controlUp = new KeyboardKey(Keys.Up);
             _controlDown = new KeyboardKey(Keys.Down);
-            var controlSelect = new MultiControl();
-            controlSelect.Add(new KeyboardKey(Keys.Enter));
-            controlSelect.Add(new KeyboardKey(Keys.Right));
-            _controlSelect = controlSelect;
+            _controlSelect = new MultiControl { new KeyboardKey(Keys.Enter), new KeyboardKey(Keys.Right) };
             _controlSelectLeft = new KeyboardKey(Keys.Left);
         }
     }

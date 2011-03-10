@@ -10,13 +10,47 @@
     /// </remarks>
     public abstract class Control
     {
-        protected static InputState OldState { get; private set; }
-        protected static InputState NewState { get; private set; }
+        private static int g_nextTimestamp;
+        private static int g_globalStateTimestamp;
+        private static InputState g_oldGlobalState;
+        private static InputState g_newGlobalState;
 
-        public static void SetState(ref InputState oldState, ref InputState newState)
+        private int _localStateTimestamp;
+        private InputState _oldLocalState;
+        private InputState _newLocalState;
+
+        protected InputState OldState
         {
-            OldState = oldState;
-            NewState = newState;
+            get
+            {
+                if (g_globalStateTimestamp < _localStateTimestamp) return _oldLocalState;
+                _oldLocalState = _newLocalState = null;
+                return g_oldGlobalState;
+            }
+        }
+
+        protected InputState NewState
+        {
+            get
+            {
+                if (g_globalStateTimestamp < _localStateTimestamp) return _newLocalState;
+                _oldLocalState = _newLocalState = null;
+                return g_newGlobalState;
+            }
+        }
+
+        public static void SetGlobalState(InputState oldState, InputState newState)
+        {
+            g_globalStateTimestamp = g_nextTimestamp++;
+            g_oldGlobalState = oldState;
+            g_newGlobalState = newState;
+        }
+
+        public virtual void SetLocalState(InputState oldState, InputState newState)
+        {
+            _localStateTimestamp = g_nextTimestamp++;
+            _oldLocalState = oldState;
+            _newLocalState = newState;
         }
 
         /// <summary>

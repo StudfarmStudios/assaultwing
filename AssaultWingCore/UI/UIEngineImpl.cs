@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework.Input;
 using AW2.Core;
 
 namespace AW2.UI
@@ -17,6 +20,8 @@ namespace AW2.UI
         /// </summary>
         private bool _eatMouse;
 
+        private Stack<IEnumerable<Control>> _exclusiveControls;
+
         /// <summary>
         /// If mouse input is being consumed for the purposes of using the mouse
         /// for game controls. Such consumption prevents other programs from using
@@ -29,18 +34,38 @@ namespace AW2.UI
         {
             _oldState = InputState.GetState();
             _eatMouse = false;
+            _exclusiveControls = new Stack<IEnumerable<Control>>();
         }
 
         public override void Update()
         {
-            var newState = InputState.GetState();
-
-            // Reset mouse cursor to the middle of the game window.
             if (_eatMouse)
-                Microsoft.Xna.Framework.Input.Mouse.SetPosition(Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height / 2);
+            {
+                // Reset mouse cursor to the middle of the game window.
+                var viewport = Game.GraphicsDeviceService.GraphicsDevice.Viewport;
+                Mouse.SetPosition(viewport.Width / 2, viewport.Height / 2);
+            }
 
-            Control.SetState(ref _oldState, ref newState);
+            var newState = InputState.GetState();
+            if (_exclusiveControls.Any())
+            {
+                Control.SetGlobalState(InputState.EMPTY, InputState.EMPTY);
+                foreach (var control in _exclusiveControls.Peek())
+                    control.SetLocalState(_oldState, newState);
+            }
+            else
+                Control.SetGlobalState(_oldState, newState);
             _oldState = newState;
+        }
+
+        public void PushExclusiveControls(IEnumerable<Control> controls)
+        {
+            _exclusiveControls.Push(controls);
+        }
+
+        public void PopExclusiveControls()
+        {
+            _exclusiveControls.Pop();
         }
     }
 }

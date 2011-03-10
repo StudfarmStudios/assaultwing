@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Graphics;
@@ -18,6 +19,8 @@ namespace AW2.Core.OverlayDialogs
         /// Dimensions are meaningless because our alignments are Stretch.
         /// </summary>
         public override Point Dimensions { get { return new Point(1, 1); } }
+
+        public IEnumerable<Control> Controls { get { return _actions.Select(action => action.Control); } }
 
         /// <summary>
         /// The triggered callbacks for the dialog.

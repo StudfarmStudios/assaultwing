@@ -9,36 +9,37 @@ namespace AW2.UI
     /// The subcontrol with the strongest signal will determine the
     /// state of the multicontrol.
     /// </summary>
-    /// Useful for grouping several alternative controls into one
-    /// bunch that is easier to handle.
-    /// Note: A multicontrol isn't responsible for Release()ing its subcontrols.
-    public class MultiControl : Control
+    public class MultiControl : Control, IEnumerable<Control>
     {
-        List<Control> controls;
+        private List<Control> _controls;
 
-        public override bool Pulse { get { return controls.Any(control => control.Pulse); } }
-        public override float Force { get { return controls.Max(control => control.Force); } }
+        public override bool Pulse { get { return _controls.Any(control => control.Pulse); } }
+        public override float Force { get { return _controls.Max(control => control.Force); } }
 
         public MultiControl()
         {
-            controls = new List<Control>();
+            _controls = new List<Control>();
         }
 
-        /// <summary>
-        /// Adds a previously created control as a subcontrol to the multicontrol.
-        /// </summary>
+        public override void SetLocalState(InputState oldState, InputState newState)
+        {
+            base.SetLocalState(oldState, newState);
+            foreach (var control in _controls) control.SetLocalState(oldState, newState);
+        }
+
         public void Add(Control control)
         {
-            controls.Add(control);
+            _controls.Add(control);
         }
 
-        /// <summary>
-        /// Removes all previously added subcontrols from the multicontrol.
-        /// </summary>
-        /// Note: This method doesn't <see cref="Dispose"/> the subcontrols.
-        public void Clear()
+        public IEnumerator<Control> GetEnumerator()
         {
-            controls.Clear();
+            return _controls.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return _controls.GetEnumerator();
         }
     }
 }

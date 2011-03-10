@@ -77,7 +77,7 @@ namespace AW2.Core
         private IntroEngine IntroEngine { get; set; }
         private OverlayDialog OverlayDialog { get; set; }
         private PlayerChat PlayerChat { get; set; }
-        private UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
+        public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
 
         public AssaultWing(GraphicsDeviceService graphicsDeviceService)
@@ -119,18 +119,12 @@ namespace AW2.Core
         public void ShowDialog(OverlayDialogData dialogData)
         {
             if (!AllowDialogs) return;
-            OverlayDialog.Data.Enqueue(dialogData);
-            if (!OverlayDialog.Enabled) SoundEngine.PlaySound("EscPause");
-            OverlayDialog.Enabled = OverlayDialog.Visible = true;
+            OverlayDialog.Show(dialogData);
         }
 
         public void HideDialog()
         {
-            OverlayDialog.Data.Dequeue();
-            if (OverlayDialog.Data.Any())
-                SoundEngine.PlaySound("EscPause");
-            else
-                OverlayDialog.Enabled = OverlayDialog.Visible = false;
+            OverlayDialog.Dismiss();
         }
 
         /// <summary>
@@ -271,7 +265,7 @@ namespace AW2.Core
             {
                 var dialogData = new CustomOverlayDialogData(this,
                     errorOrNull + "\nPress Enter to return to Main Menu",
-                    new TriggeredCallback(TriggeredCallback.GetProceedControl(), ShowMenu));
+                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMenu));
                 ShowDialog(dialogData);
             }
         }
@@ -434,12 +428,12 @@ namespace AW2.Core
                 var dialogData = NetworkMode == NetworkMode.Server
                     ? new CustomOverlayDialogData(this,
                         "Finish Arena? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.GetYesControl(), FinishArena),
-                        new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay))
+                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, FinishArena),
+                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, ResumePlay))
                     : new CustomOverlayDialogData(this,
                         "Quit to Main Menu? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.GetYesControl(), ShowMenu),
-                        new TriggeredCallback(TriggeredCallback.GetNoControl(), ResumePlay));
+                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMenu),
+                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, ResumePlay));
                 ShowDialog(dialogData);
             }
         }

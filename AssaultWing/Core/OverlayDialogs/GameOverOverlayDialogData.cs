@@ -14,7 +14,7 @@ namespace AW2.Core.OverlayDialogs
         private SpriteFont _fontHuge, _fontBig, _fontSmall;
 
         public GameOverOverlayDialogData(AssaultWing game)
-            : base(game, new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu))
+            : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMenu))
         {
         }
 

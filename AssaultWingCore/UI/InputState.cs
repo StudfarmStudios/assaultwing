@@ -7,8 +7,18 @@ namespace AW2.UI
     /// <summary>
     /// The state of all input controls, including keyboard, mouse and Xbox 360 Controllers.
     /// </summary>
-    public struct InputState
+    public class InputState
     {
+        public static readonly InputState EMPTY = new InputState
+        {
+            Keyboard = new KeyboardState(),
+            Mouse = new MouseState(),
+            GamePad1 = new GamePadState(),
+            GamePad2 = new GamePadState(),
+            GamePad3 = new GamePadState(),
+            GamePad4 = new GamePadState(),
+        };
+
         public KeyboardState Keyboard { get; private set; }
         public MouseState Mouse { get; private set; }
         public GamePadState GamePad1 { get; private set; }

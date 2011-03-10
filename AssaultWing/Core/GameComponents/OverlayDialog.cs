@@ -3,38 +3,57 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core.OverlayDialogs;
-using AW2.Graphics.OverlayComponents;
 
 namespace AW2.Core.GameComponents
 {
     /// <summary>
     /// Game overlay dialog. It displays text on top of the game display.
     /// </summary>
-    /// Call <c>Prepare(OverlayDialogData)</c> to set up the dialog before making it visible.
-    /// This sets up the visual contents of the dialog and sets which controls perform
-    /// which actions.
     /// <seealso cref="OverlayDialogData"/>
     public class OverlayDialog : AWGameComponent
     {
-        private AssaultWing _game;
         private SpriteBatch _spriteBatch;
         private Texture2D _dialogTexture;
+        private Queue<OverlayDialogData> _data;
 
-        /// <summary>
-        /// The dialog's actions and visual contents.
-        /// </summary>
-        public Queue<OverlayDialogData> Data { get; private set; }
+        public new AssaultWing Game { get; private set; }
 
         public OverlayDialog(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
         {
-            _game = game;
-            Data = new Queue<OverlayDialogData>();
+            Game = game;
+            _data = new Queue<OverlayDialogData>();
+        }
+
+        public void Show(OverlayDialogData dialogData)
+        {
+            _data.Enqueue(dialogData);
+            if (!Enabled)
+            {
+                Game.UIEngine.PushExclusiveControls(dialogData.Controls);
+                Game.SoundEngine.PlaySound("EscPause");
+            }
+            Enabled = Visible = true;
+        }
+
+        public void Dismiss()
+        {
+            _data.Dequeue();
+            Game.UIEngine.PopExclusiveControls();
+            if (_data.Any())
+            {
+                Game.UIEngine.PushExclusiveControls(_data.First().Controls);
+                Game.SoundEngine.PlaySound("EscPause");
+            }
+            else
+            {
+                Enabled = Visible = false;
+            }
         }
 
         public override void Update()
         {
-            Data.First().Update();
+            _data.First().Update();
             base.Update();
         }
 
@@ -70,7 +89,7 @@ namespace AW2.Core.GameComponents
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _spriteBatch.Draw(_dialogTexture, Vector2.Zero, Color.White);
             _spriteBatch.End();
-            Data.First().Draw(_spriteBatch);
+            _data.First().Draw(_spriteBatch);
 
             gfx.Viewport = oldViewport;
         }

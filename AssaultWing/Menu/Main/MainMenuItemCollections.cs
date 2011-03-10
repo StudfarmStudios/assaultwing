@@ -94,8 +94,8 @@ namespace AW2.Menu.Main
             SetupItems.Add(GetSetupItemBase(menuEngine, () => "Reset all settings to defaults",
                 component => _menuEngine.Game.ShowDialog(new CustomOverlayDialogData(_menuEngine.Game,
                     "Are you sure to reset all settings\nto their defaults? (Yes/No)",
-                    new TriggeredCallback(TriggeredCallback.GetYesControl(), menuEngine.Game.Settings.Reset),
-                    new TriggeredCallback(TriggeredCallback.GetNoControl(), () => { })))));
+                    new TriggeredCallback(TriggeredCallback.YES_CONTROL, menuEngine.Game.Settings.Reset),
+                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })))));
             Func<string, Func<float>, Action<float>, MainMenuItem> getVolumeSetupItem = (name, get, set) => GetSetupItem(menuEngine,
                 () => string.Format("{0} {1:0} %", name, get() * 100),
                 Enumerable.Range(0, 21).Select(x => x * 0.05f),

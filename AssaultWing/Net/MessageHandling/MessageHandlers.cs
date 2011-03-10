@@ -106,7 +106,7 @@ namespace AW2.Net.MessageHandling
             {
                 Log.Write("Couldn't connect to server: " + mess.FailMessage);
                 var dialogData = new CustomOverlayDialogData(game, "Couldn't connect to server:\n" + mess.FailMessage,
-                    new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu));
+                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMenu));
                 game.ShowDialog(dialogData);
             }
         }
@@ -312,7 +312,7 @@ namespace AW2.Net.MessageHandling
             var game = AssaultWing.Instance;
             Log.Write("Server is going to close the connection, reason: " + mess.Info);
             var dialogData = new CustomOverlayDialogData(game, "Server closed connection.\n" + mess.Info,
-                new TriggeredCallback(TriggeredCallback.GetProceedControl(), game.ShowMenu));
+                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMenu));
             game.ShowDialog(dialogData);
         }
 

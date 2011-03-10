@@ -20,17 +20,17 @@ namespace AW2.Core.GameComponents
         private SpriteBatch _spriteBatch;
         private Texture2D _dialogTexture;
 
+        /// <summary>
+        /// The dialog's actions and visual contents.
+        /// </summary>
+        public Queue<OverlayDialogData> Data { get; private set; }
+
         public OverlayDialog(AssaultWing game, int updateOrder)
             : base(game, updateOrder)
         {
             _game = game;
             Data = new Queue<OverlayDialogData>();
         }
-
-        /// <summary>
-        /// The dialog's actions and visual contents.
-        /// </summary>
-        public Queue<OverlayDialogData> Data { get; private set; }
 
         public override void Update()
         {

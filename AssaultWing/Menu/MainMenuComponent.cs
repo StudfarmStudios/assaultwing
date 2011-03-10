@@ -23,8 +23,7 @@ namespace AW2.Menu
         /// </summary>
         private int _currentItem = 0;
 
-        private MultiControl _controlUp, _controlDown, _controlSelect, _controlSelectLeft;
-        private Control _controlBack;
+        private Control _controlUp, _controlDown, _controlSelect, _controlSelectLeft, _controlBack;
         private TriggeredCallbackCollection _commonCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
 
@@ -138,32 +137,14 @@ namespace AW2.Menu
         /// </summary>
         private void InitializeControls()
         {
-            if (_controlUp != null) _controlUp.Dispose();
-            if (_controlDown != null) _controlDown.Dispose();
-            if (_controlSelect != null) _controlSelect.Dispose();
-            if (_controlSelectLeft != null) _controlSelectLeft.Dispose();
-            if (_controlBack != null) _controlBack.Dispose();
-
             _controlBack = new KeyboardKey(Keys.Escape);
-            _controlUp = new MultiControl();
-            _controlUp.Add(new KeyboardKey(Keys.Up));
-            _controlDown = new MultiControl();
-            _controlDown.Add(new KeyboardKey(Keys.Down));
-            _controlSelect = new MultiControl();
-            _controlSelect.Add(new KeyboardKey(Keys.Enter));
-            _controlSelect.Add(new KeyboardKey(Keys.Right));
-            _controlSelectLeft = new MultiControl();
-            _controlSelectLeft.Add(new KeyboardKey(Keys.Left));
-
-            foreach (var player in MenuEngine.Game.DataEngine.Spectators)
-            {
-                if (player.IsRemote) continue;
-                _controlUp.Add(player.Controls.Thrust);
-                _controlDown.Add(player.Controls.Down);
-                _controlSelect.Add(player.Controls.Fire1);
-                _controlSelect.Add(player.Controls.Right);
-                _controlSelectLeft.Add(player.Controls.Left);
-            }
+            _controlUp = new KeyboardKey(Keys.Up);
+            _controlDown = new KeyboardKey(Keys.Down);
+            var controlSelect = new MultiControl();
+            controlSelect.Add(new KeyboardKey(Keys.Enter));
+            controlSelect.Add(new KeyboardKey(Keys.Right));
+            _controlSelect = controlSelect;
+            _controlSelectLeft = new KeyboardKey(Keys.Left);
         }
     }
 }

@@ -115,6 +115,10 @@ namespace AW2.Game
             ID = UNINITIALIZED_ID;
         }
 
+        public virtual void Dispose()
+        {
+        }
+
         #region INetworkSerializable
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
@@ -134,20 +138,5 @@ namespace AW2.Game
         }
 
         #endregion INetworkSerializable
-
-        #region IDisposable Members
-
-        public virtual void Dispose()
-        {
-            Controls.Thrust.Dispose();
-            Controls.Left.Dispose();
-            Controls.Right.Dispose();
-            Controls.Down.Dispose();
-            Controls.Fire1.Dispose();
-            Controls.Fire2.Dispose();
-            Controls.Extra.Dispose();
-        }
-
-        #endregion
     }
 }

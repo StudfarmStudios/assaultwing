@@ -20,8 +20,7 @@ namespace AW2.Menu
     {
         private const int MENU_ITEM_COUNT = 8; // number of items that fit in the menu at once
 
-        private Control _controlBack, _controlDone;
-        private MultiControl _controlUp, _controlDown;
+        private Control _controlBack, _controlDone, _controlUp, _controlDown;
         private TriggeredCallbackCollection _controlCallbacks;
         private Vector2 _pos; // position of the component's background texture in menu system coordinates
         private Texture2D _backgroundTexture, _cursorTexture, _highlightTexture, _tagTexture, _infoBackgroundTexture;
@@ -216,23 +215,10 @@ namespace AW2.Menu
         /// </summary>
         private void InitializeControls()
         {
-            if (_controlDone != null) _controlDone.Dispose();
-            if (_controlBack != null) _controlBack.Dispose();
-            if (_controlUp != null) _controlUp.Dispose();
-            if (_controlDown != null) _controlDown.Dispose();
-
             _controlDone = new KeyboardKey(Keys.Enter);
             _controlBack = new KeyboardKey(Keys.Escape);
-            _controlUp = new MultiControl();
-            _controlUp.Add(new KeyboardKey(Keys.Up));
-            _controlDown = new MultiControl();
-            _controlDown.Add(new KeyboardKey(Keys.Down));
-
-            foreach (var player in MenuEngine.Game.DataEngine.Spectators)
-            {
-                _controlUp.Add(player.Controls.Thrust);
-                _controlDown.Add(player.Controls.Down);
-            }
+            _controlUp = new KeyboardKey(Keys.Up);
+            _controlDown = new KeyboardKey(Keys.Down);
         }
     }
 }

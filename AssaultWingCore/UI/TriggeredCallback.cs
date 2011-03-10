@@ -15,14 +15,13 @@ namespace AW2.UI
         #region Static members
 
         // These static controls are for public use through the public static methods.
-        // These are never Release()d.
-        private static Control enterControl = new KeyboardKey(Keys.Enter);
-        private static Control escapeControl = new KeyboardKey(Keys.Escape);
-        private static Control yControl = new KeyboardKey(Keys.Y);
-        private static Control nControl = new KeyboardKey(Keys.N);
-        private static MultiControl proceedControl = new MultiControl();
-        private static MultiControl yesControl = new MultiControl();
-        private static MultiControl noControl = new MultiControl();
+        private static Control g_enterControl = new KeyboardKey(Keys.Enter);
+        private static Control g_escapeControl = new KeyboardKey(Keys.Escape);
+        private static Control g_yControl = new KeyboardKey(Keys.Y);
+        private static Control g_nControl = new KeyboardKey(Keys.N);
+        private static MultiControl g_proceedControl = new MultiControl();
+        private static MultiControl g_yesControl = new MultiControl();
+        private static MultiControl g_noControl = new MultiControl();
 
         /// <summary>
         /// Returns a new control that is handy for triggering the proceeding of a paused thing.
@@ -32,12 +31,12 @@ namespace AW2.UI
         {
             // At each call, we hand out the same copy of the control
             // and refresh the control according to the latest player controls.
-            proceedControl.Clear();
-            proceedControl.Add(enterControl);
-            proceedControl.Add(escapeControl);
+            g_proceedControl.Clear();
+            g_proceedControl.Add(g_enterControl);
+            g_proceedControl.Add(g_escapeControl);
             foreach (var player in AssaultWingCore.Instance.DataEngine.Spectators)
-                proceedControl.Add(player.Controls.Fire1);
-            return proceedControl;
+                g_proceedControl.Add(player.Controls.Fire1);
+            return g_proceedControl;
         }
 
         /// <summary>
@@ -47,9 +46,9 @@ namespace AW2.UI
         public static Control GetYesControl()
         {
             // At each call, we hand out the same copy of the control.
-            yesControl.Clear();
-            yesControl.Add(yControl);
-            return yesControl;
+            g_yesControl.Clear();
+            g_yesControl.Add(g_yControl);
+            return g_yesControl;
         }
 
         /// <summary>
@@ -59,9 +58,9 @@ namespace AW2.UI
         public static Control GetNoControl()
         {
             // At each call, we hand out the same copy of the control.
-            noControl.Clear();
-            noControl.Add(nControl);
-            return noControl;
+            g_noControl.Clear();
+            g_noControl.Add(g_nControl);
+            return g_noControl;
         }
 
         #endregion Static members
@@ -86,16 +85,6 @@ namespace AW2.UI
             if (!_control.Pulse) return false;
             _callback();
             return true;
-        }
-
-        public void Dispose()
-        {
-            _control.Dispose();
-        }
-
-        ~TriggeredCallback()
-        {
-            Dispose();
         }
     }
 }

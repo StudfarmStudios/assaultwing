@@ -33,12 +33,6 @@ namespace AW2.Core.GameComponents
             _chatControl = new KeyboardKey(Keys.Enter);
         }
 
-        public override void Dispose()
-        {
-            _chatControl.Dispose();
-            base.Dispose();
-        }
-
         public override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(Game.GraphicsDeviceService.GraphicsDevice);

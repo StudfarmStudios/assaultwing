@@ -512,7 +512,7 @@ namespace AW2.Net
 
         private void HandleUDPMessage(ArraySegment<byte> messageHeaderAndBody, IPEndPoint remoteEndPoint)
         {
-            var message = remoteEndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint)
+            var message = IsConnectedToManagementServer && remoteEndPoint.Equals(ManagementServerConnection.RemoteUDPEndPoint)
                 ? ManagementMessage.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime)
                 : Message.Deserialize(messageHeaderAndBody, Game.GameTime.TotalRealTime);
             if (Game.NetworkMode == NetworkMode.Server && message is GameServerHandshakeRequestUDP)
@@ -524,7 +524,7 @@ namespace AW2.Net
         private void HandleGameServerHandshakeRequestUDP(GameServerHandshakeRequestUDP mess, IPEndPoint remoteEndPoint)
         {
             foreach (var conn in GameClientConnections)
-                if (conn.ConnectionStatus.ClientKey.SequenceEqual(mess.GameClientKey))
+                if (conn.ConnectionStatus.ClientKey != null && conn.ConnectionStatus.ClientKey.SequenceEqual(mess.GameClientKey))
                     if (conn.RemoteUDPEndPoint == null)
                         conn.RemoteUDPEndPoint = remoteEndPoint;
         }

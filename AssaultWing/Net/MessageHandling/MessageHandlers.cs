@@ -214,7 +214,7 @@ namespace AW2.Net.MessageHandling
         {
             var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(mess);
             var player = AssaultWingCore.Instance.DataEngine.Spectators.FirstOrDefault(plr => plr.ID == mess.PlayerID);
-            if (player == null) throw new NetworkException("Update for unknown player ID " + mess.PlayerID);
+            if (player == null) return; // Silently ignoring update for an unknown player
             mess.Read(player, SerializationModeFlags.VaryingData, framesAgo);
         }
 

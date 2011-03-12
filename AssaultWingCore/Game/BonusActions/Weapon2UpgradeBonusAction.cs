@@ -33,8 +33,20 @@ namespace AW2.Game.BonusActions
 
         private void SetActionMessage()
         {
-            BonusText = Player.Ship.Weapon2Name;
-            BonusIconName = Player.Ship.Weapon2.IconName;
+            if (Player.Ship != null)
+            {
+                BonusText = Player.Ship.Weapon2Name;
+                BonusIconName = Player.Ship.Weapon2.IconName;
+            }
+            else
+            {
+                // This should happen only when a client receives an update of a remote player
+                // during arena loading, before the player's ship is created. The values don't matter
+                // because the client won't use them for anything.
+                var weapon2 = (Weapon)AssaultWingCore.Instance.DataEngine.GetTypeTemplate(Player.Weapon2Name);
+                BonusText = weapon2.TypeName;
+                BonusIconName = weapon2.IconName;
+            }
         }
     }
 }

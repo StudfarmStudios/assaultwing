@@ -19,12 +19,13 @@
       <parallaxName>parallax_icy_flakes_2</parallaxName>
       <gobs />
     </Item>
+	<!--
     <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>-960.7843</z>
       <parallaxName>parallax_icy_flakes</parallaxName>
       <gobs />
-    </Item>
+    </Item>-->
     <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>false</isGameplayLayer>
       <z>0</z>

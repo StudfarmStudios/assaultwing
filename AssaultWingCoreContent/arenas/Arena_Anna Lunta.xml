@@ -29,7 +29,96 @@
       <isGameplayLayer>false</isGameplayLayer>
       <z>0</z>
       <parallaxName></parallaxName>
-      <gobs />
+      <gobs>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect occupied</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect occupied</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect occupied</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect occupied</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.Peng">
+          <input>0</input>
+          <particles />
+          <staticID>0</staticID>
+          <pos>
+            <X>NaN</X>
+            <Y>NaN</Y>
+          </pos>
+          <rotation>NaN</rotation>
+          <typeName>dockeffect</typeName>
+        </Item>
+      </gobs>
     </Item>
     <Item type="AW2.Game.Arenas.ArenaLayer">
       <isGameplayLayer>true</isGameplayLayer>
@@ -39,7 +128,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>501</staticID>
+          <staticID>514</staticID>
           <pos>
             <X>100</X>
             <Y>200</Y>
@@ -50,7 +139,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>502</staticID>
+          <staticID>515</staticID>
           <pos>
             <X>0</X>
             <Y>545</Y>
@@ -61,7 +150,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>503</staticID>
+          <staticID>516</staticID>
           <pos>
             <X>400</X>
             <Y>0</Y>
@@ -72,7 +161,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>504</staticID>
+          <staticID>517</staticID>
           <pos>
             <X>800</X>
             <Y>150</Y>
@@ -83,7 +172,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>505</staticID>
+          <staticID>518</staticID>
           <pos>
             <X>800</X>
             <Y>540</Y>
@@ -94,7 +183,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>506</staticID>
+          <staticID>519</staticID>
           <pos>
             <X>500</X>
             <Y>550</Y>
@@ -105,7 +194,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>507</staticID>
+          <staticID>520</staticID>
           <pos>
             <X>1130</X>
             <Y>60</Y>
@@ -116,7 +205,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>508</staticID>
+          <staticID>521</staticID>
           <pos>
             <X>1440</X>
             <Y>110</Y>
@@ -127,7 +216,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>509</staticID>
+          <staticID>522</staticID>
           <pos>
             <X>1880</X>
             <Y>70</Y>
@@ -138,7 +227,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_10</wallModelName>
           <destructible>true</destructible>
-          <staticID>510</staticID>
+          <staticID>523</staticID>
           <pos>
             <X>1930</X>
             <Y>360</Y>
@@ -149,7 +238,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>511</staticID>
+          <staticID>524</staticID>
           <pos>
             <X>1830</X>
             <Y>760</Y>
@@ -160,7 +249,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>512</staticID>
+          <staticID>525</staticID>
           <pos>
             <X>1970</X>
             <Y>1160</Y>
@@ -171,7 +260,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_1</wallModelName>
           <destructible>true</destructible>
-          <staticID>513</staticID>
+          <staticID>526</staticID>
           <pos>
             <X>1960</X>
             <Y>1530</Y>
@@ -182,7 +271,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>514</staticID>
+          <staticID>527</staticID>
           <pos>
             <X>1890</X>
             <Y>1930</Y>
@@ -193,7 +282,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>515</staticID>
+          <staticID>528</staticID>
           <pos>
             <X>1530</X>
             <Y>1965</Y>
@@ -204,7 +293,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_2</wallModelName>
           <destructible>true</destructible>
-          <staticID>516</staticID>
+          <staticID>529</staticID>
           <pos>
             <X>1150</X>
             <Y>1975</Y>
@@ -215,7 +304,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_6</wallModelName>
           <destructible>true</destructible>
-          <staticID>517</staticID>
+          <staticID>530</staticID>
           <pos>
             <X>680</X>
             <Y>1805</Y>
@@ -226,7 +315,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>518</staticID>
+          <staticID>531</staticID>
           <pos>
             <X>310</X>
             <Y>1970</Y>
@@ -237,7 +326,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_5</wallModelName>
           <destructible>true</destructible>
-          <staticID>519</staticID>
+          <staticID>532</staticID>
           <pos>
             <X>40</X>
             <Y>1860</Y>
@@ -248,7 +337,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_3</wallModelName>
           <destructible>true</destructible>
-          <staticID>520</staticID>
+          <staticID>533</staticID>
           <pos>
             <X>30</X>
             <Y>1473</Y>
@@ -259,7 +348,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_8</wallModelName>
           <destructible>true</destructible>
-          <staticID>521</staticID>
+          <staticID>534</staticID>
           <pos>
             <X>30</X>
             <Y>1025</Y>
@@ -270,7 +359,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_4</wallModelName>
           <destructible>true</destructible>
-          <staticID>522</staticID>
+          <staticID>535</staticID>
           <pos>
             <X>330</X>
             <Y>1025</Y>
@@ -281,7 +370,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>523</staticID>
+          <staticID>536</staticID>
           <pos>
             <X>400</X>
             <Y>1625</Y>
@@ -292,7 +381,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_11</wallModelName>
           <destructible>true</destructible>
-          <staticID>524</staticID>
+          <staticID>537</staticID>
           <pos>
             <X>970</X>
             <Y>1325</Y>
@@ -303,7 +392,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_12</wallModelName>
           <destructible>true</destructible>
-          <staticID>525</staticID>
+          <staticID>538</staticID>
           <pos>
             <X>1270</X>
             <Y>1025</Y>
@@ -314,7 +403,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_7</wallModelName>
           <destructible>true</destructible>
-          <staticID>526</staticID>
+          <staticID>539</staticID>
           <pos>
             <X>1470</X>
             <Y>1525</Y>
@@ -325,7 +414,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_9</wallModelName>
           <destructible>true</destructible>
-          <staticID>527</staticID>
+          <staticID>540</staticID>
           <pos>
             <X>1510</X>
             <Y>520</Y>
@@ -336,7 +425,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snowman</wallModelName>
           <destructible>true</destructible>
-          <staticID>528</staticID>
+          <staticID>541</staticID>
           <pos>
             <X>250</X>
             <Y>10</Y>
@@ -347,7 +436,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snowman</wallModelName>
           <destructible>true</destructible>
-          <staticID>529</staticID>
+          <staticID>542</staticID>
           <pos>
             <X>840</X>
             <Y>740</Y>
@@ -358,7 +447,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snowman</wallModelName>
           <destructible>true</destructible>
-          <staticID>530</staticID>
+          <staticID>543</staticID>
           <pos>
             <X>1840</X>
             <Y>1420</Y>
@@ -369,7 +458,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_iglu</wallModelName>
           <destructible>true</destructible>
-          <staticID>531</staticID>
+          <staticID>544</staticID>
           <pos>
             <X>865</X>
             <Y>673.0001</Y>
@@ -380,7 +469,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_sledge</wallModelName>
           <destructible>true</destructible>
-          <staticID>532</staticID>
+          <staticID>545</staticID>
           <pos>
             <X>817</X>
             <Y>531.000061</Y>
@@ -391,7 +480,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_shovel</wallModelName>
           <destructible>true</destructible>
-          <staticID>533</staticID>
+          <staticID>546</staticID>
           <pos>
             <X>1452</X>
             <Y>525.000061</Y>
@@ -402,7 +491,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_skis</wallModelName>
           <destructible>true</destructible>
-          <staticID>534</staticID>
+          <staticID>547</staticID>
           <pos>
             <X>1574</X>
             <Y>409.000061</Y>
@@ -413,7 +502,7 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_birds</wallModelName>
           <destructible>true</destructible>
-          <staticID>535</staticID>
+          <staticID>548</staticID>
           <pos>
             <X>1507</X>
             <Y>567.000061</Y>
@@ -424,12 +513,23 @@
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_tree</wallModelName>
           <destructible>true</destructible>
-          <staticID>536</staticID>
+          <staticID>549</staticID>
           <pos>
             <X>1591</X>
             <Y>525.000061</Y>
           </pos>
           <rotation>5.96244049</rotation>
+          <typeName>wall model</typeName>
+        </Item>
+        <Item type="AW2.Game.Gobs.WallModel">
+          <wallModelName>snow_hockeystick</wallModelName>
+          <destructible>true</destructible>
+          <staticID>550</staticID>
+          <pos>
+            <X>682</X>
+            <Y>388.000061</Y>
+          </pos>
+          <rotation>0.782596767</rotation>
           <typeName>wall model</typeName>
         </Item>
         <Item type="AW2.Game.Gobs.Dock">

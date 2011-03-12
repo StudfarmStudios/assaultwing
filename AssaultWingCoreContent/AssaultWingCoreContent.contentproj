@@ -1731,6 +1731,11 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\snow_skipoles.X">
+      <Name>snow_skipoles</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng_airstreaks.xml">
       <Name>Peng_airstreaks</Name>
       <Importer>XmlImporter</Importer>

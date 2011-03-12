@@ -32,7 +32,7 @@ namespace AW2.Core.GameComponents
         {
             _introVideo.Stop();
             Log.Write("Entering menus");
-            Game.ShowMenu();
+            Game.ShowMainMenuAndResetGameplay();
         }
 
         public override void Initialize()

@@ -6,6 +6,7 @@ namespace AW2.Menu
 {
     public class MenuContent
     {
+        public SpriteFont FontHuge { get; private set; }
         public SpriteFont FontBig { get; private set; }
         public SpriteFont FontSmall { get; private set; }
         public Texture2D MainCursor { get; private set; }
@@ -39,6 +40,7 @@ namespace AW2.Menu
         {
             var content = AssaultWingCore.Instance.Content;
 
+            FontHuge = content.Load<SpriteFont>("MenuFontHuge");
             FontBig = content.Load<SpriteFont>("MenuFontBig");
             FontSmall = content.Load<SpriteFont>("MenuFontSmall");
             MainCursor = content.Load<Texture2D>("menu_main_cursor");

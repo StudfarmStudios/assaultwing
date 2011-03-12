@@ -11,22 +11,23 @@ namespace AW2.Core.OverlayDialogs
     /// </summary>
     public class GameOverOverlayDialogData : OverlayDialogData
     {
-        private SpriteFont _fontHuge, _fontBig, _fontSmall;
-
         public GameOverOverlayDialogData(AssaultWing game)
-            : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMenu))
+            : base(game, new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, () => { }))
         {
         }
 
         protected override void DrawContent(SpriteBatch spriteBatch)
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
+            var fontHuge = Game.MenuEngine.MenuContent.FontHuge;
+            var fontSmall = Game.MenuEngine.MenuContent.FontSmall;
             var textLeftEdge = 100f; // left edge of left-aligned text
             var textCenter = new Vector2(gfx.Viewport.Width / 2, 50); // text line top center
-            var titleSize = _fontHuge.MeasureString("Game Over");
+            var titleText = "Game Over";
+            var titleSize = fontHuge.MeasureString(titleText);
             var titlePos = textCenter - new Vector2(titleSize.X / 2, 0);
-            spriteBatch.DrawString(_fontHuge, "Game Over", titlePos.Round(), Color.White);
-            textCenter += new Vector2(0, 2 * _fontHuge.LineSpacing);
+            spriteBatch.DrawString(fontHuge, titleText, titlePos.Round(), Color.White);
+            textCenter += new Vector2(0, 2 * fontHuge.LineSpacing);
 
             var data = AssaultWingCore.Instance.DataEngine;
             var standings = data.GameplayMode.GetStandings(data.Players);
@@ -37,23 +38,16 @@ namespace AW2.Core.OverlayDialogs
                 var column1Pos = new Vector2(textLeftEdge, textCenter.Y);
                 var column2Pos = column1Pos + new Vector2(250, 0);
                 var scoreText = string.Format("{0} = {1}-{2}", entry.Score, entry.Kills, entry.Suicides);
-                spriteBatch.DrawString(_fontSmall, line + ". " + entry.Name, column1Pos.Round(), Color.White);
-                spriteBatch.DrawString(_fontSmall, scoreText, column2Pos.Round(), Color.White);
-                textCenter += new Vector2(0, _fontSmall.LineSpacing);
+                spriteBatch.DrawString(fontSmall, line + ". " + entry.Name, column1Pos.Round(), Color.White);
+                spriteBatch.DrawString(fontSmall, scoreText, column2Pos.Round(), Color.White);
+                textCenter += new Vector2(0, fontSmall.LineSpacing);
             }
-            
-            textCenter += new Vector2(0, 2 * _fontSmall.LineSpacing);
-            var infoSize = _fontSmall.MeasureString("Press Enter to return to Main Menu");
-            var infoPos = textCenter - new Vector2(infoSize.X / 2, 0);
-            spriteBatch.DrawString(_fontSmall, "Press Enter to return to Main Menu", infoPos.Round(), Color.White);
-        }
 
-        public override void LoadContent()
-        {
-            var content = AssaultWingCore.Instance.Content;
-            _fontHuge = content.Load<SpriteFont>("MenuFontHuge");
-            _fontBig = content.Load<SpriteFont>("MenuFontBig");
-            _fontSmall = content.Load<SpriteFont>("MenuFontSmall");
+            textCenter += new Vector2(0, 2 * fontSmall.LineSpacing);
+            var infoText = "Press Enter";
+            var infoSize = fontSmall.MeasureString(infoText);
+            var infoPos = textCenter - new Vector2(infoSize.X / 2, 0);
+            spriteBatch.DrawString(fontSmall, infoText, infoPos.Round(), Color.White);
         }
     }
 }

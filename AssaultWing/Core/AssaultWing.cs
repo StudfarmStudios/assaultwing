@@ -127,14 +127,21 @@ namespace AW2.Core
             OverlayDialog.Dismiss();
         }
 
-        /// <summary>
-        /// Displays the main menu and stops any ongoing gameplay.
-        /// </summary>
-        public void ShowMenu()
+        public void ShowMainMenuAndResetGameplay()
         {
             CutNetworkConnections();
             DataEngine.ClearGameState();
             MenuEngine.Activate();
+            GameState = GameState.Menu;
+        }
+
+        public void ShowEquipMenu()
+        {
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetClientGameplayHandlers(null));
+            MessageHandlers.DeactivateHandlers(MessageHandlers.GetServerGameplayHandlers()); 
+            DataEngine.ClearGameState();
+            MenuEngine.Activate();
+            MenuEngine.ActivateComponent(MenuComponentType.Equip);
             GameState = GameState.Menu;
         }
 
@@ -265,7 +272,7 @@ namespace AW2.Core
             {
                 var dialogData = new CustomOverlayDialogData(this,
                     errorOrNull + "\nPress Enter to return to Main Menu",
-                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMenu));
+                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, ShowMainMenuAndResetGameplay));
                 ShowDialog(dialogData);
             }
         }
@@ -410,15 +417,9 @@ namespace AW2.Core
 
         protected override void FinishArenaImpl()
         {
+            IsClientAllowedToStartArena = false;
+            ShowEquipMenu();
             ShowDialog(new GameOverOverlayDialogData(this));
-        }
-
-        /// <summary>
-        /// Resumes playing the current arena, closing the dialog if it's visible.
-        /// </summary>
-        private void ResumePlay()
-        {
-            GameState = GameState.Gameplay;
         }
 
         private void UpdateSpecialKeys()
@@ -429,11 +430,11 @@ namespace AW2.Core
                     ? new CustomOverlayDialogData(this,
                         "Finish Arena? (Yes/No)",
                         new TriggeredCallback(TriggeredCallback.YES_CONTROL, FinishArena),
-                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, ResumePlay))
+                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }))
                     : new CustomOverlayDialogData(this,
                         "Quit to Main Menu? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMenu),
-                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, ResumePlay));
+                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMainMenuAndResetGameplay),
+                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
                 ShowDialog(dialogData);
             }
         }

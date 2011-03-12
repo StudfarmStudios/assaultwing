@@ -106,7 +106,7 @@ namespace AW2.Net.MessageHandling
             {
                 Log.Write("Couldn't connect to server: " + mess.FailMessage);
                 var dialogData = new CustomOverlayDialogData(game, "Couldn't connect to server:\n" + mess.FailMessage,
-                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMenu));
+                    new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMainMenuAndResetGameplay));
                 game.ShowDialog(dialogData);
             }
         }
@@ -139,6 +139,30 @@ namespace AW2.Net.MessageHandling
                 mess.Read(tempPlayer, SerializationModeFlags.ConstantData, 0);
                 if (spectator is Player) ((Player)spectator).PlayerColor = tempPlayer.PlayerColor;
             }
+        }
+
+        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
+        {
+            var game = AssaultWing.Instance;
+            Log.Write("Server is going to close the connection, reason: " + mess.Info);
+            var dialogData = new CustomOverlayDialogData(game, "Server closed connection.\n" + mess.Info,
+                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMainMenuAndResetGameplay));
+            game.ShowDialog(dialogData);
+        }
+
+        private static void HandleStartGameMessage(StartGameMessage mess)
+        {
+            var game = AssaultWing.Instance;
+            if (game.IsLoadingArena) return;
+            game.SelectedArenaName = mess.ArenaToPlay;
+            game.MenuEngine.ProgressBarAction(
+                () => game.PrepareArena(game.SelectedArenaName),
+                () =>
+                {
+                    ActivateHandlers(GetClientGameplayHandlers(game.HandleGobCreationMessage));
+                    game.IsClientAllowedToStartArena = true;
+                    game.StartArenaButStayInMenu();
+                });
         }
 
         private static void HandlePlayerSettingsReply(PlayerSettingsReply mess)
@@ -305,30 +329,6 @@ namespace AW2.Net.MessageHandling
             mess.Read(newPlayer, SerializationModeFlags.ConstantData, 0);
             AssaultWingCore.Instance.DataEngine.Spectators.Add(newPlayer);
             return newPlayer;
-        }
-
-        private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
-        {
-            var game = AssaultWing.Instance;
-            Log.Write("Server is going to close the connection, reason: " + mess.Info);
-            var dialogData = new CustomOverlayDialogData(game, "Server closed connection.\n" + mess.Info,
-                new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMenu));
-            game.ShowDialog(dialogData);
-        }
-
-        private static void HandleStartGameMessage(StartGameMessage mess)
-        {
-            var game = AssaultWing.Instance;
-            if (game.IsLoadingArena) return;
-            game.SelectedArenaName = mess.ArenaToPlay;
-            game.MenuEngine.ProgressBarAction(
-                () => game.PrepareArena(game.SelectedArenaName),
-                () =>
-                {
-                    ActivateHandlers(GetClientGameplayHandlers(game.HandleGobCreationMessage));
-                    game.IsClientAllowedToStartArena = true;
-                    game.StartArenaButStayInMenu();
-                });
         }
 
         private static void ConnectionResultOnClientCallback(Result<Connection> result)

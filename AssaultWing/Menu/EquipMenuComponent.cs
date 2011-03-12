@@ -159,7 +159,7 @@ namespace AW2.Menu
             _readyPressed = false;
             var progressBar = MenuEngine.Game.DataEngine.ProgressBar;
             if (progressBar.TaskRunning) progressBar.AbortTask();
-            MenuEngine.Game.ShowMenu();
+            MenuEngine.Game.ShowMainMenuAndResetGameplay();
         }
 
         #region Drawing methods

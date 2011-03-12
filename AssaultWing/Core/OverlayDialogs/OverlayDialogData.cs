@@ -12,8 +12,9 @@ namespace AW2.Core.OverlayDialogs
     /// <seealso cref="OverlayDialog"/>
     public abstract class OverlayDialogData : OverlayComponent
     {
-        private AssaultWing _game;
         private TriggeredCallback[] _actions;
+
+        public AssaultWing Game { get; private set; }
 
         /// <summary>
         /// Dimensions are meaningless because our alignments are Stretch.
@@ -30,7 +31,7 @@ namespace AW2.Core.OverlayDialogs
         public OverlayDialogData(AssaultWing game, params TriggeredCallback[] actions)
             : base(null, HorizontalAlignment.Stretch, VerticalAlignment.Stretch)
         {
-            _game = game;
+            Game = game;
             _actions = actions;
         }
 
@@ -44,7 +45,7 @@ namespace AW2.Core.OverlayDialogs
 
         public void Hide()
         {
-            _game.HideDialog();
+            Game.HideDialog();
         }
     }
 }

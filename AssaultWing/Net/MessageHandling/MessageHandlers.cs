@@ -159,6 +159,8 @@ namespace AW2.Net.MessageHandling
                 () => game.PrepareArena(game.SelectedArenaName),
                 () =>
                 {
+                    // The network connection may have been cut during arena loading.
+                    if (game.NetworkMode != NetworkMode.Client) return;
                     ActivateHandlers(GetClientGameplayHandlers(game.HandleGobCreationMessage));
                     game.IsClientAllowedToStartArena = true;
                     game.StartArenaButStayInMenu();

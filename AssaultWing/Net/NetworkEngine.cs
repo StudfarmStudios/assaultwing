@@ -103,7 +103,7 @@ namespace AW2.Net
             GameClientConnections = new List<GameClientConnection>();
             _removedClientConnections = new List<GameClientConnection>();
             _udpMessagesToHandle = new ThreadSafeWrapper<List<Tuple<Message, IPEndPoint>>>(new List<Tuple<Message, IPEndPoint>>());
-            MessageHandlers = new List<IMessageHandler>();
+            MessageHandlers = new List<MessageHandlerBase>();
             InitializeUDPSocket();
         }
 
@@ -114,7 +114,7 @@ namespace AW2.Net
         /// <summary>
         /// The handlers of network messages.
         /// </summary>
-        public List<IMessageHandler> MessageHandlers { get; private set; }
+        public List<MessageHandlerBase> MessageHandlers { get; private set; }
 
         /// <summary>
         /// Are we connected to a game server.

@@ -174,7 +174,7 @@
     <Compile Include="Net\Message.cs" />
     <Compile Include="Net\MessageException.cs" />
     <Compile Include="Net\MessageHandling\GameplayMessageHandler.cs" />
-    <Compile Include="Net\MessageHandling\IMessageHandler.cs" />
+    <Compile Include="Net\MessageHandling\MessageHandlerBase.cs" />
     <Compile Include="Net\MessageHandling\MessageHandler.cs" />
     <Compile Include="Net\MessageHeaderFlags.cs" />
     <Compile Include="Net\MessageSendType.cs" />

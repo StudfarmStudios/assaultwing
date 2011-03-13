@@ -18,12 +18,12 @@ namespace AW2.Net.MessageHandling
 {
     public static class MessageHandlers
     {
-        public static void ActivateHandlers(IEnumerable<IMessageHandler> handlers)
+        public static void ActivateHandlers(IEnumerable<MessageHandlerBase> handlers)
         {
             AssaultWing.Instance.NetworkEngine.MessageHandlers.AddRange(handlers);
         }
 
-        public static void DeactivateHandlers(IEnumerable<IMessageHandler> handlers)
+        public static void DeactivateHandlers(IEnumerable<MessageHandlerBase> handlers)
         {
             var net = AssaultWing.Instance.NetworkEngine;
             var handlerTypesToRemove = handlers.Select(handler => handler.GetType());
@@ -31,46 +31,47 @@ namespace AW2.Net.MessageHandling
                 if (handlerTypesToRemove.Contains(handler.GetType())) handler.Dispose();
         }
 
-        public static IEnumerable<IMessageHandler> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply)
+        public static IEnumerable<MessageHandlerBase> GetStandaloneMenuHandlers(Action<GameServerListReply> handleGameServerListReply)
         {
-            yield return new MessageHandler<GameServerListReply>(IMessageHandler.SourceType.Management, handleGameServerListReply);
-            yield return new MessageHandler<JoinGameServerReply>(IMessageHandler.SourceType.Management, HandleJoinGameServerReply);
+            yield return new MessageHandler<GameServerListReply>(MessageHandlerBase.SourceType.Management, handleGameServerListReply);
+            yield return new MessageHandler<JoinGameServerReply>(MessageHandlerBase.SourceType.Management, HandleJoinGameServerReply);
 
             // These messages only game servers receive
-            yield return new MessageHandler<PingMessage>(IMessageHandler.SourceType.Management, HandlePingMessage);
+            yield return new MessageHandler<PingMessage>(MessageHandlerBase.SourceType.Management, HandlePingMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientMenuHandlers()
+        public static IEnumerable<MessageHandlerBase> GetClientMenuHandlers()
         {
-            yield return new MessageHandler<ConnectionClosingMessage>(IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
-            yield return new MessageHandler<StartGameMessage>(IMessageHandler.SourceType.Server, HandleStartGameMessage);
-            yield return new MessageHandler<PlayerSettingsReply>(IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
-            yield return new MessageHandler<PlayerSettingsRequest>(IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
-            yield return new MessageHandler<PlayerDeletionMessage>(IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
-            yield return new MessageHandler<GameSettingsRequest>(IMessageHandler.SourceType.Server, HandleGameSettingsRequest);
-            yield return new MessageHandler<PlayerMessageMessage>(IMessageHandler.SourceType.Server, HandlePlayerMessageMessageOnClient);
+            yield return new MessageHandler<ConnectionClosingMessage>(MessageHandlerBase.SourceType.Server, HandleConnectionClosingMessage);
+            yield return new MessageHandler<StartGameMessage>(MessageHandlerBase.SourceType.Server, HandleStartGameMessage);
+            yield return new MessageHandler<PlayerSettingsReply>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsReply);
+            yield return new MessageHandler<PlayerSettingsRequest>(MessageHandlerBase.SourceType.Server, HandlePlayerSettingsRequestOnClient);
+            yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
+            yield return new MessageHandler<GameSettingsRequest>(MessageHandlerBase.SourceType.Server, HandleGameSettingsRequest);
+            yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerMessageMessageOnClient);
         }
 
-        public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
+        public static IEnumerable<MessageHandlerBase> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
-            yield return new MessageHandler<ArenaFinishMessage>(IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
-            yield return new MessageHandler<PlayerUpdateMessage>(IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
-            yield return new MessageHandler<PlayerDeletionMessage>(IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
-            yield return new GameplayMessageHandler<GobCreationMessage>(IMessageHandler.SourceType.Server, handleGobCreationMessage);
-            yield return new GameplayMessageHandler<GobUpdateMessage>(IMessageHandler.SourceType.Server, HandleGobUpdateMessage);
-            yield return new GameplayMessageHandler<GobDeletionMessage>(IMessageHandler.SourceType.Server, HandleGobDeletionMessage);
+            var networkEngine = AssaultWing.Instance.NetworkEngine;
+            yield return new MessageHandler<ArenaFinishMessage>(MessageHandlerBase.SourceType.Server, HandleArenaFinishMessage);
+            yield return new MessageHandler<PlayerUpdateMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerUpdateMessage);
+            yield return new MessageHandler<PlayerDeletionMessage>(MessageHandlerBase.SourceType.Server, HandlePlayerDeletionMessage);
+            yield return new GameplayMessageHandler<GobCreationMessage>(MessageHandlerBase.SourceType.Server, networkEngine, handleGobCreationMessage);
+            yield return new GameplayMessageHandler<GobUpdateMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobUpdateMessage);
+            yield return new GameplayMessageHandler<GobDeletionMessage>(MessageHandlerBase.SourceType.Server, networkEngine, HandleGobDeletionMessage);
         }
 
-        public static IEnumerable<IMessageHandler> GetServerMenuHandlers()
+        public static IEnumerable<MessageHandlerBase> GetServerMenuHandlers()
         {
-            yield return new MessageHandler<GameServerHandshakeRequestTCP>(IMessageHandler.SourceType.Client, HandleGameServerHandshakeRequestTCP);
-            yield return new MessageHandler<PlayerSettingsRequest>(IMessageHandler.SourceType.Client, HandlePlayerSettingsRequestOnServer);
-            yield return new MessageHandler<PlayerMessageMessage>(IMessageHandler.SourceType.Client, HandlePlayerMessageMessageOnServer);
+            yield return new MessageHandler<GameServerHandshakeRequestTCP>(MessageHandlerBase.SourceType.Client, HandleGameServerHandshakeRequestTCP);
+            yield return new MessageHandler<PlayerSettingsRequest>(MessageHandlerBase.SourceType.Client, HandlePlayerSettingsRequestOnServer);
+            yield return new MessageHandler<PlayerMessageMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerMessageMessageOnServer);
         }
 
-        public static IEnumerable<IMessageHandler> GetServerGameplayHandlers()
+        public static IEnumerable<MessageHandlerBase> GetServerGameplayHandlers()
         {
-            yield return new MessageHandler<PlayerControlsMessage>(IMessageHandler.SourceType.Client, HandlePlayerControlsMessage);
+            yield return new MessageHandler<PlayerControlsMessage>(MessageHandlerBase.SourceType.Client, HandlePlayerControlsMessage);
         }
 
         public static void IncomingConnectionHandlerOnServer(Result<AW2.Net.Connections.Connection> result, Func<bool> allowNewConnection)

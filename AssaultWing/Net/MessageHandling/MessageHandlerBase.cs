@@ -5,15 +5,32 @@ using AW2.Net.Connections;
 
 namespace AW2.Net.MessageHandling
 {
-    public abstract class IMessageHandler
+    public abstract class MessageHandlerBase
     {
         public enum SourceType { Client, Server, Management };
 
-        public abstract bool Disposed { get; protected set; }
-        public abstract void Dispose();
-        public abstract void HandleMessages();
+        public bool Disposed { get; private set; }
+        private SourceType Source { get; set; }
 
-        protected static IEnumerable<Connection> GetConnections(SourceType source)
+        public MessageHandlerBase(SourceType source)
+        {
+            Source = source;
+        }
+
+        public void Dispose()
+        {
+            Disposed = true;
+        }
+
+        public void HandleMessages()
+        {
+            if (Disposed) throw new ObjectDisposedException("MessageHandlerBase");
+            foreach (var connection in GetConnections(Source)) HandleMessagesImpl(connection);
+        }
+
+        protected abstract void HandleMessagesImpl(Connection connection);
+
+        private static IEnumerable<Connection> GetConnections(SourceType source)
         {
             switch (source)
             {

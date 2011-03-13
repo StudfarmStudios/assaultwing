@@ -59,7 +59,7 @@ namespace AW2.Core
         public virtual string SettingsDirectory { get { return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); } }
         public int ManagedThreadID { get; private set; }
         public AWSettings Settings { get; private set; }
-        public CommandLineOptions CommandLineOptions { get; set; }
+        public CommandLineOptions CommandLineOptions { get; private set; }
         public PhysicsEngine PhysicsEngine { get; private set; }
         public DataEngine DataEngine { get; private set; }
         public PreFrameLogicEngine PreFrameLogicEngine { get; private set; }
@@ -121,11 +121,12 @@ namespace AW2.Core
 
         #endregion
 
-        public AssaultWingCore(GraphicsDeviceService graphicsDeviceService)
+        public AssaultWingCore(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
             : base(graphicsDeviceService)
         {
             Log.Write("Assault Wing version " + Version);
             ManagedThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            CommandLineOptions = args;
 
             Log.Write("Loading settings from " + SettingsDirectory);
             Settings = AWSettings.FromFile(SettingsDirectory);
@@ -152,7 +153,9 @@ namespace AW2.Core
             PreFrameLogicEngine = new PreFrameLogicEngine(this, 2);
             LogicEngine = new LogicEngine(this, 3);
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
-            SoundEngine = new SoundEngineXNA(this, 5);
+            SoundEngine = CommandLineOptions.UseXACTSounds
+                ? (SoundEngine)new SoundEngineXACT(this, 5)
+                : new SoundEngineXNA(this, 5);
             GraphicsEngine = new GraphicsEngineImpl(this, 6);
 
             Components.Add(PreFrameLogicEngine);

@@ -12,6 +12,7 @@ namespace AW2.Core
         public bool SaveTemplates { get; set; }
         public bool DeleteTemplates { get; set; }
         public string ArenaFilename { get; set; }
+        public bool UseXACTSounds { get; set; }
 
         public CommandLineOptions(string[] commandLineArgs)
         {
@@ -19,6 +20,7 @@ namespace AW2.Core
             SaveTemplates = commandLineArgs.Contains("--save_templates");
             DeleteTemplates = commandLineArgs.Contains("--delete_templates");
             ArenaFilename = GetArgValue(commandLineArgs, "--arena");
+            UseXACTSounds = commandLineArgs.Contains("--xact");
         }
 
         private string GetArgValue(string[] commandLineArgs, string argName)

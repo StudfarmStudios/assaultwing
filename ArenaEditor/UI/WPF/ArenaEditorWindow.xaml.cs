@@ -286,7 +286,7 @@ namespace AW2.UI.WPF
 
         private void InitializeGame(string[] args)
         {
-            _game = new AssaultWingCore(_graphicsDeviceService);
+            _game = new AssaultWingCore(_graphicsDeviceService, new CommandLineOptions(args));
             _game.Window = new Core.Window(
                 getTitle: () => Title,
                 setTitle: text => Dispatcher.Invoke((Action)(() => Title = text)),
@@ -298,7 +298,6 @@ namespace AW2.UI.WPF
                 enableVerticalSync: () => { },
                 disableVerticalSync: () => { });
             AssaultWingCore.Instance = _game; // HACK: support oldschool singleton usage
-            _game.CommandLineOptions = new CommandLineOptions(args);
             _game.SoundEngine.Enabled = false;
             _game.AllowDialogs = false;
 

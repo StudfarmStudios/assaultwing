@@ -81,8 +81,8 @@ namespace AW2.Core
         public UIEngineImpl UIEngine { get { return (UIEngineImpl)Components.First(c => c is UIEngineImpl); } }
         public NetworkEngine NetworkEngine { get; private set; }
 
-        public AssaultWing(GraphicsDeviceService graphicsDeviceService)
-            : base(graphicsDeviceService)
+        public AssaultWing(GraphicsDeviceService graphicsDeviceService, CommandLineOptions args)
+            : base(graphicsDeviceService, args)
         {
             StartupScreen = new StartupScreen(this, -1);
             NetworkEngine = new NetworkEngine(this, 0);

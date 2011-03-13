@@ -23,6 +23,8 @@ namespace AW2.Net.Messages
         /// </summary>
         private List<int> _layerIndices = new List<int>();
 
+        public int GobCount { get { return _gobTypeNames.Count; } }
+
         public void AddGob(Gob gob)
         {
             _gobTypeNames.Add(gob.TypeName);

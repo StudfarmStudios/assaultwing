@@ -590,8 +590,17 @@ namespace AW2.Net
             conn.Send(new StartGameMessage { ArenaToPlay = arenaName });
             var gobCreationMessage = new GobCreationMessage();
             foreach (var gob in Game.DataEngine.Arena.Gobs.Where(g => g.IsRelevant))
+            {
                 gobCreationMessage.AddGob(gob);
-            conn.Send(gobCreationMessage);
+                // HACK: Split gobs into small messages so that a client initializing its arena
+                // has chances to draw its progress bar.
+                if (gobCreationMessage.GobCount == 3)
+                {
+                    conn.Send(gobCreationMessage);
+                    gobCreationMessage = new GobCreationMessage();
+                }
+            }
+            if (gobCreationMessage.GobCount > 0) conn.Send(gobCreationMessage);
             conn.ConnectionStatus.CurrentArenaName = arenaName;
         }
 

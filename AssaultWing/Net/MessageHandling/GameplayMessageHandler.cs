@@ -14,6 +14,8 @@ namespace AW2.Net.MessageHandling
         private NetworkEngine _networkEngine;
         private GameplayMessageAction _action;
 
+        public bool OneMessageAtATime { get; set; }
+
         public GameplayMessageHandler(SourceType source, NetworkEngine networkEngine, GameplayMessageAction action)
             : base(source)
         {
@@ -28,6 +30,7 @@ namespace AW2.Net.MessageHandling
             {
                 var framesAgo = _networkEngine.GetMessageAge(message, connection);
                 _action(message, framesAgo);
+                if (OneMessageAtATime) break;
             }
         }
     }

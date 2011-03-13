@@ -7,21 +7,13 @@ namespace AW2.Net.MessageHandling
     /// </summary>
     public class MessageHandler<T> : IMessageHandler where T : Message
     {
-        private bool OnlyOneMessage { get; set; }
         private Action<T> Action { get; set; }
         private SourceType Source { get; set; }
 
         public override bool Disposed { get; protected set; }
 
-        /// <summary>
-        /// Creates a new MessageHander&lt;T&gt;.
-        /// </summary>
-        /// <param name="onlyOneMessage">Should the handler disactive itself after receiving one message.</param>
-        /// <param name="source">The type of source to receive messages from.</param>
-        /// <param name="action">What to do for each received message.</param>
-        public MessageHandler(bool onlyOneMessage, SourceType source, Action<T> action)
+        public MessageHandler(SourceType source, Action<T> action)
         {
-            OnlyOneMessage = onlyOneMessage;
             Source = source;
             Action = action;
         }
@@ -40,11 +32,6 @@ namespace AW2.Net.MessageHandling
                 while ((message = connection.TryDequeueMessage<T>()) != null)
                 {
                     Action(message);
-                    if (OnlyOneMessage)
-                    {
-                        Disposed = true;
-                        break;
-                    }
                 }
             }
         }

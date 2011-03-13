@@ -10,21 +10,13 @@ namespace AW2.Net.MessageHandling
     {
         public delegate void GameplayMessageAction(T message, int framesAgo);
 
-        private bool OnlyOneMessage { get; set; }
         private GameplayMessageAction Action { get; set; }
         private SourceType Source { get; set; }
 
         public override bool Disposed { get; protected set; }
 
-        /// <summary>
-        /// Creates a new <see cref="GameplayMessageHandler&lt;T&gt;"/>
-        /// </summary>
-        /// <param name="onlyOneMessage">Should the handler disactive itself after receiving one message.</param>
-        /// <param name="source">The type of source to receive messages from.</param>
-        /// <param name="action">What to do for each received message, given the age of the message.</param>
-        public GameplayMessageHandler(bool onlyOneMessage, SourceType source, GameplayMessageAction action)
+        public GameplayMessageHandler(SourceType source, GameplayMessageAction action)
         {
-            OnlyOneMessage = onlyOneMessage;
             Source = source;
             Action = action;
         }
@@ -45,11 +37,6 @@ namespace AW2.Net.MessageHandling
                 {
                     var framesAgo = AssaultWing.Instance.NetworkEngine.GetMessageAge(message, connection);
                     Action(message, framesAgo);
-                    if (OnlyOneMessage)
-                    {
-                        Disposed = true;
-                        break;
-                    }
                 }
             }
         }

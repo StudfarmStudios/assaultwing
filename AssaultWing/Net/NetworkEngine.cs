@@ -200,7 +200,7 @@ namespace AW2.Net
         /// <param name="connectionHandler">Handler of connection result.</param>
         public void StartServer(Action<Result<Connection>> connectionHandler)
         {
-            Log.Write("Server starts listening");
+            Log.Write("Starting game server");
             _startServerConnectionHandler = connectionHandler;
             _connectionAttemptListener = new ConnectionAttemptListener(_game);
             _connectionAttemptListener.StartListening(TCP_CONNECTION_PORT, UDPSocket.PrivateLocalEndPoint.Port);
@@ -214,11 +214,13 @@ namespace AW2.Net
         /// </summary>
         public void StopServer()
         {
-            Log.Write("Server stops listening");
+            Log.Write("Stopping game server");
             MessageHandlers.Clear();
             UnregisterServerFromManagementServer();
             _connectionAttemptListener.StopListening();
             _connectionAttemptListener = null;
+            var shutdownNotice = new ConnectionClosingMessage { Info = "server shut down" };
+            foreach (var conn in GameClientConnections) conn.Send(shutdownNotice);
             DisposeGameClientConnections();
             FlushUnhandledUDPMessages();
         }
@@ -617,7 +619,7 @@ namespace AW2.Net
                     conn.FirstHandshakeAttempt = Game.GameTime.TotalRealTime;
                 if (!conn.IsHandshaken && Game.GameTime.TotalRealTime > conn.FirstHandshakeAttempt + HANDSHAKE_TIMEOUT)
                 {
-                    conn.Send(new ConnectionClosingMessage { Info = "Handshake failed" });
+                    conn.Send(new ConnectionClosingMessage { Info = "handshake failed" });
                     DropClient(conn.ID, true);
                 }
             }

@@ -42,7 +42,7 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetClientMenuHandlers()
         {
-            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
+            yield return new MessageHandler<ConnectionClosingMessage>(false, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<StartGameMessage>(false, IMessageHandler.SourceType.Server, HandleStartGameMessage);
             yield return new MessageHandler<PlayerSettingsReply>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsReply);
             yield return new MessageHandler<PlayerSettingsRequest>(false, IMessageHandler.SourceType.Server, HandlePlayerSettingsRequestOnClient);
@@ -53,7 +53,6 @@ namespace AW2.Net.MessageHandling
 
         public static IEnumerable<IMessageHandler> GetClientGameplayHandlers(GameplayMessageHandler<GobCreationMessage>.GameplayMessageAction handleGobCreationMessage)
         {
-            yield return new MessageHandler<ConnectionClosingMessage>(true, IMessageHandler.SourceType.Server, HandleConnectionClosingMessage);
             yield return new MessageHandler<ArenaFinishMessage>(false, IMessageHandler.SourceType.Server, HandleArenaFinishMessage);
             yield return new MessageHandler<PlayerUpdateMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerUpdateMessage);
             yield return new MessageHandler<PlayerDeletionMessage>(false, IMessageHandler.SourceType.Server, HandlePlayerDeletionMessage);
@@ -85,7 +84,7 @@ namespace AW2.Net.MessageHandling
             }
             else
             {
-                var mess = new ConnectionClosingMessage { Info = "Game server doesn't allow joining right now" };
+                var mess = new ConnectionClosingMessage { Info = "game server refused joining" };
                 result.Value.Send(mess);
                 Log.Write("Server refused connection from " + result.Value.RemoteTCPEndPoint);
             }
@@ -144,8 +143,8 @@ namespace AW2.Net.MessageHandling
         private static void HandleConnectionClosingMessage(ConnectionClosingMessage mess)
         {
             var game = AssaultWing.Instance;
-            Log.Write("Server is going to close the connection, reason: " + mess.Info);
-            var dialogData = new CustomOverlayDialogData(game, "Server closed connection.\n" + mess.Info,
+            Log.Write("Server is going to close the connection because {0}.", mess.Info);
+            var dialogData = new CustomOverlayDialogData(game, "Server closed connection because\n" + mess.Info + ".",
                 new TriggeredCallback(TriggeredCallback.PROCEED_CONTROL, game.ShowMainMenuAndResetGameplay));
             game.ShowDialog(dialogData);
         }
@@ -257,10 +256,7 @@ namespace AW2.Net.MessageHandling
                 var extraInfo = diffIndex == 0 ? "" : string.Format(", client previous: {0}, server previous: {1}",
                     mess.CanonicalStrings[diffIndex - 1], CanonicalString.CanonicalForms[diffIndex - 1]);
                 Log.Write("Client's CanonicalStrings don't match ours. " + mismatchInfo + extraInfo);
-                var reply = new ConnectionClosingMessage
-                {
-                    Info = "Assault Wing version mismatch\nin canonical strings."
-                };
+                var reply = new ConnectionClosingMessage { Info = "of version mismatch (canonical strings)." };
                 connection.Send(reply);
                 AssaultWing.Instance.NetworkEngine.DropClient(mess.ConnectionID, false);
             }

@@ -146,6 +146,13 @@ namespace AW2.Core
             GameState = GameState.Menu;
         }
 
+        public void ShowEquipMenuWhileKeepingGameRunning()
+        {
+            MenuEngine.Activate();
+            MenuEngine.ActivateComponent(MenuComponentType.Equip);
+            GameState = GameState.GameAndMenu;
+        }
+
         /// <summary>
         /// Called after all components are initialized but before the first update in the game loop. 
         /// </summary>
@@ -446,15 +453,29 @@ namespace AW2.Core
         {
             if (GameState == GameState.Gameplay && _escapeControl.Pulse && !OverlayDialog.Enabled)
             {
-                var dialogData = NetworkMode == NetworkMode.Server
-                    ? new CustomOverlayDialogData(this,
-                        "Finish Arena? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, FinishArena),
-                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }))
-                    : new CustomOverlayDialogData(this,
-                        "Quit to Main Menu? (Yes/No)",
-                        new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMainMenuAndResetGameplay),
-                        new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
+                OverlayDialogData dialogData;
+                switch (NetworkMode)
+                {
+                    case NetworkMode.Server:
+                        dialogData = new CustomOverlayDialogData(this,
+                            "Finish Arena? (Yes/No)",
+                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, FinishArena),
+                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
+                        break;
+                    case NetworkMode.Client:
+                        dialogData = new CustomOverlayDialogData(this,
+                            "Pop by to equip your ship? (Yes/No)",
+                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowEquipMenuWhileKeepingGameRunning),
+                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
+                        break;
+                    case NetworkMode.Standalone:
+                        dialogData = new CustomOverlayDialogData(this,
+                            "Quit to Main Menu? (Yes/No)",
+                            new TriggeredCallback(TriggeredCallback.YES_CONTROL, ShowMainMenuAndResetGameplay),
+                            new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { }));
+                        break;
+                    default: throw new ApplicationException();
+                }
                 ShowDialog(dialogData);
             }
         }

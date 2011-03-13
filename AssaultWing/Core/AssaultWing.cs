@@ -69,6 +69,7 @@ namespace AW2.Core
             }
         }
         public bool IsClientAllowedToStartArena { get; set; }
+        public bool IsLoadingArena { get { return MenuEngine.ArenaLoadTask.TaskRunning; } }
 
         public event Action<GameState> GameStateChanged;
         public string SelectedArenaName { get; set; }
@@ -277,16 +278,6 @@ namespace AW2.Core
             }
         }
 
-        private void StopGameplay()
-        {
-            switch (GameState)
-            {
-                case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
-                case GameState.GameAndMenu: GameState = GameState.Menu; break;
-            }
-            MenuEngine.DeactivateComponentsExceptMainMenu();
-        }
-
         public void CutNetworkConnections()
         {
             switch (NetworkMode)
@@ -322,18 +313,44 @@ namespace AW2.Core
             }
         }
 
+        public void HandleGobCreationMessage(GobCreationMessage message, int framesAgo)
+        {
+            message.ReadGobs(framesAgo,
+                (typeName, layerIndex) =>
+                {
+                    var gob = (Gob)Clonable.Instantiate(typeName);
+                    gob.Game = this;
+                    gob.Layer = DataEngine.Arena.Layers[layerIndex];
+                    return gob;
+                },
+                DataEngine.Arena.Gobs.Add);
+        }
+
         protected override string GetStatusText()
         {
             string myStatusText = "";
             if (NetworkMode == NetworkMode.Client && NetworkEngine.IsConnectedToGameServer)
                 myStatusText = string.Format(" [{0} ms lag]",
                     (int)NetworkEngine.ServerPingTime.TotalMilliseconds);
-
             if (NetworkMode == NetworkMode.Server)
                 myStatusText = string.Join(" ", NetworkEngine.GameClientConnections
                     .Select(conn => string.Format(" [#{0}: {1} ms lag]", conn.ID, (int)conn.PingInfo.PingTime.TotalMilliseconds)
                     ).ToArray());
             return base.GetStatusText() + myStatusText;
+        }
+
+        protected override void FinishArenaImpl()
+        {
+            IsClientAllowedToStartArena = false;
+            ShowEquipMenu();
+            ShowDialog(new GameOverOverlayDialogData(this));
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            if (MenuEngine.ArenaLoadTask.TaskRunning)
+                MenuEngine.ArenaLoadTask.AbortTask();
+            base.OnExiting(sender, args);
         }
 
         private void EnableGameState(GameState value)
@@ -415,11 +432,14 @@ namespace AW2.Core
             }
         }
 
-        protected override void FinishArenaImpl()
+        private void StopGameplay()
         {
-            IsClientAllowedToStartArena = false;
-            ShowEquipMenu();
-            ShowDialog(new GameOverOverlayDialogData(this));
+            switch (GameState)
+            {
+                case GameState.Gameplay: GameState = GameState.GameplayStopped; break;
+                case GameState.GameAndMenu: GameState = GameState.Menu; break;
+            }
+            MenuEngine.DeactivateComponentsExceptMainMenu();
         }
 
         private void UpdateSpecialKeys()
@@ -475,7 +495,7 @@ namespace AW2.Core
                 if (keys.IsKeyDown(Keys.E) && keys.IsKeyDown(Keys.A))
                 {
                     // E + A = end arena
-                    if (!DataEngine.ProgressBar.TaskRunning) FinishArena();
+                    if (!MenuEngine.ArenaLoadTask.TaskRunning) FinishArena();
                 }
             }
         }
@@ -490,7 +510,7 @@ namespace AW2.Core
 
         private void SendGobCreationMessage()
         {
-            if (DataEngine.ProgressBar.TaskRunning) return; // wait for arena load completion
+            if (MenuEngine.ArenaLoadTask.TaskRunning) return; // wait for arena load completion
             if (NetworkMode == NetworkMode.Server && _addedGobs.Any())
             {
                 var message = new GobCreationMessage();
@@ -498,19 +518,6 @@ namespace AW2.Core
                 _addedGobs.Clear();
                 NetworkEngine.SendToGameClients(message);
             }
-        }
-
-        public void HandleGobCreationMessage(GobCreationMessage message, int framesAgo)
-        {
-            message.ReadGobs(framesAgo,
-                (typeName, layerIndex) =>
-                {
-                    var gob = (Gob)Clonable.Instantiate(typeName);
-                    gob.Game = this;
-                    gob.Layer = DataEngine.Arena.Layers[layerIndex];
-                    return gob;
-                },
-                DataEngine.Arena.Gobs.Add);
         }
 
         private void DeactivateAllMessageHandlers()

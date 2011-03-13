@@ -83,8 +83,6 @@ namespace AW2.Core
         /// </summary>
         public bool AllowDialogs { get; set; }
 
-        public bool IsLoadingArena { get { return DataEngine.ProgressBar.TaskRunning; } }
-
         public Window Window { get; set; }
 
         #endregion AssaultWing properties
@@ -413,15 +411,6 @@ namespace AW2.Core
                 newStatusText += string.Format(" [frame {0}]", DataEngine.ArenaFrameCount);
 #endif
             return newStatusText;
-        }
-
-        protected override void OnExiting(object sender, EventArgs args)
-        {
-            // If progress bar is running, kill its thread.
-            if (DataEngine.ProgressBar.TaskRunning)
-                DataEngine.ProgressBar.AbortTask();
-
-            base.OnExiting(sender, args);
         }
 
         protected virtual void FinishArenaImpl() { }

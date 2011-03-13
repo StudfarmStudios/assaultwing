@@ -34,8 +34,7 @@ namespace AW2.Menu
         private MenuComponent[] _components;
         private bool _activeComponentActivatedOnce, _activeComponentSoundPlayedOnce;
         private bool _showProgressBar;
-        private string _helpText;
-        private Action _finishAction; // what to do when progress bar finishes
+        private Action _arenaLoadTaskFinishAction;
         private Vector2 _view; // center of menu view in menu system coordinates
         private Vector2 _viewTarget;
         private MovementCurve _viewCurve;
@@ -53,18 +52,8 @@ namespace AW2.Menu
 
         public new AssaultWing Game { get { return (AssaultWing)base.Game; } }
         public MenuContent MenuContent { get; private set; }
-
-        /// <summary>
-        /// Is the help text visible.
-        /// </summary>
-        /// <seealso cref="HelpText"/>
         public bool IsHelpTextVisible { get; set; }
-
-        /// <summary>
-        /// The help text. Assigning <c>null</c> will restore the default help text.
-        /// </summary>
-        /// <seealso cref="IsHelpTextVisible"/>
-        public string HelpText { get { return _helpText; } set { _helpText = value ?? "Enter to proceed, Esc to return to previous"; } }
+        public string HelpText { get; set; }
 
         /// <summary>
         /// Is the progress bar visible.
@@ -79,6 +68,7 @@ namespace AW2.Menu
                 if (value)
                 {
                     var progressBar = Game.DataEngine.ProgressBar;
+                    progressBar.SetSubtaskCount(10); // until someone sets the correct value
                     progressBar.HorizontalAlignment = HorizontalAlignment.Center;
                     progressBar.VerticalAlignment = VerticalAlignment.Bottom;
                     progressBar.CustomAlignment = new Vector2(0, -2);
@@ -86,6 +76,7 @@ namespace AW2.Menu
             }
         }
 
+        public BackgroundTask ArenaLoadTask { get; private set; }
         private int ViewportWidth { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Width; } }
         private int ViewportHeight { get { return Game.GraphicsDeviceService.GraphicsDevice.Viewport.Height; } }
 
@@ -104,10 +95,9 @@ namespace AW2.Menu
         {
             MenuContent = new MenuContent();
             _components = new MenuComponent[Enum.GetValues(typeof(MenuComponentType)).Length];
-            // The components are created in Initialize() when other resources are ready.
-
-            HelpText = null; // initialises helpText to default value
-            IsHelpTextVisible = true;
+            // Items in _components are created in Initialize() when other resources are ready.
+            HelpText = "Enter to proceed, Esc to return to previous";
+            ArenaLoadTask = new BackgroundTask();
         }
 
         public float GetCursorFade()
@@ -179,6 +169,8 @@ namespace AW2.Menu
         {
             ActivateComponent(MenuComponentType.Main);
             Game.SoundEngine.PlayMusic("menu music", 1);
+            IsProgressBarVisible = false;
+            IsHelpTextVisible = true;
         }
 
         public void Deactivate()
@@ -235,23 +227,25 @@ namespace AW2.Menu
         /// when the asynchronous action completes.</param>
         public void ProgressBarAction(Action asyncAction, Action finishAction)
         {
-            var data = Game.DataEngine;
-            _finishAction = finishAction;
+            _arenaLoadTaskFinishAction = finishAction;
             IsHelpTextVisible = false;
             IsProgressBarVisible = true;
-            data.ProgressBar.Task = asyncAction;
-            data.ProgressBar.SetSubtaskCount(10); // just something until someone else sets the real value
-            data.ProgressBar.StartTask();
+            ArenaLoadTask.Task = asyncAction;
+            ArenaLoadTask.StartTask();
         }
 
         public override void Update()
         {
-            if (IsProgressBarVisible && Game.DataEngine.ProgressBar.TaskCompleted)
+            if (ArenaLoadTask.TaskCompleted)
             {
-                Game.DataEngine.ProgressBar.FinishTask();
+                ArenaLoadTask.FinishTask();
+                if (_arenaLoadTaskFinishAction != null) _arenaLoadTaskFinishAction();
+                _arenaLoadTaskFinishAction = null;
+            }
+            if (IsProgressBarVisible && Game.DataEngine.ProgressBar.TaskProgress == 1)
+            {
                 IsProgressBarVisible = false;
                 IsHelpTextVisible = true;
-                _finishAction();
             }
             _view = _viewCurve.Evaluate(Game.GameTime.TotalRealTime);
 
@@ -381,9 +375,9 @@ namespace AW2.Menu
             if (IsHelpTextVisible)
             {
                 var helpTextPos = new Vector2(
-                    (int)(((float)ViewportWidth - MenuContent.FontSmall.MeasureString(_helpText).X) / 2),
+                    (int)(((float)ViewportWidth - MenuContent.FontSmall.MeasureString(HelpText).X) / 2),
                     ViewportHeight - MenuContent.FontSmall.LineSpacing);
-                _spriteBatch.DrawString(MenuContent.FontSmall, _helpText, helpTextPos.Round(), Color.White);
+                _spriteBatch.DrawString(MenuContent.FontSmall, HelpText, helpTextPos.Round(), Color.White);
             }
             var copyrightText = "Studfarm Studios";
             var copyrightTextPos = new Vector2(

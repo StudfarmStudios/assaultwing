@@ -102,6 +102,7 @@
     <Compile Include="Core\AWGameComponentCollection.cs" />
     <Compile Include="Core\AWGameRunner.cs" />
     <Compile Include="Core\AWGameTime.cs" />
+    <Compile Include="Core\BackgroundTask.cs" />
     <Compile Include="Core\CommandLineOptions.cs" />
     <Compile Include="Core\GameComponents\PostFrameLogicEngine.cs" />
     <Compile Include="Core\GameComponents\PreFrameLogicEngine.cs" />

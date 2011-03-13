@@ -157,8 +157,7 @@ namespace AW2.Menu
         private void BackToMainMenu()
         {
             _readyPressed = false;
-            var progressBar = MenuEngine.Game.DataEngine.ProgressBar;
-            if (progressBar.TaskRunning) progressBar.AbortTask();
+            if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
             MenuEngine.Game.ShowMainMenuAndResetGameplay();
         }
 

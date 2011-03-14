@@ -51,14 +51,6 @@ namespace AW2.Menu.Main
             RefreshSetupItems(menuEngine);
         }
 
-        private static IEnumerable<Tuple<int, int>> GetDisplayModes()
-        {
-            var goodAspectRatio = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.AspectRatio;
-            return GraphicsAdapter.DefaultAdapter.SupportedDisplayModes[SurfaceFormat.Color]
-                .Where(mode => mode.Height >= 600 && mode.Width >= 1024 && Math.Abs(goodAspectRatio - mode.AspectRatio) < 0.1)
-                .Select(mode => Tuple.Create(mode.Width, mode.Height));
-        }
-
         private void InitializeStartItems(MenuEngineImpl menuEngine)
         {
             StartItems = new MainMenuItemCollection("Start Menu");
@@ -110,7 +102,7 @@ namespace AW2.Menu.Main
             Func<int> curHeight = () => menuEngine.Game.Settings.Graphics.FullscreenHeight;
             SetupItems.Add(GetSetupItem(menuEngine,
                 () => string.Format("Fullscreen resolution {0}x{1}", curWidth(), curHeight()),
-                GetDisplayModes(),
+                GraphicsSettings.GetDisplayModes(),
                 () => Tuple.Create(curWidth(), curHeight()),
                 size =>
                 {

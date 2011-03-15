@@ -562,12 +562,8 @@ namespace AW2.Net
         /// </summary>
         private Connection GetConnection(IPEndPoint remoteUDPEndPoint)
         {
-            // Compare IP address from TCP end point because UDP end point may still
-            // be unknown. IP address should be the same in both end points.
-            // Note: This limits us to one game client behind each NAT except the NAT
-            // of the game server. This can be fixed by making the management server pass
-            // the game client's UDP end point to the game server.
-            return AllConnections.FirstOrDefault(conn => conn.RemoteIPAddress.Equals(remoteUDPEndPoint.Address));
+            return AllConnections.FirstOrDefault(conn =>
+                conn.RemoteUDPEndPoint != null && conn.RemoteUDPEndPoint.Equals(remoteUDPEndPoint));
         }
 
         private void HandleClientState()

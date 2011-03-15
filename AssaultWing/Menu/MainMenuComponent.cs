@@ -43,7 +43,7 @@ namespace AW2.Menu
             }
         }
 
-        public override Vector2 Center { get { return _pos + new Vector2(700, 495); } }
+        public override Vector2 Center { get { return _pos + new Vector2(700, 455); } }
 
         private MainMenuItem CurrentItem
         {

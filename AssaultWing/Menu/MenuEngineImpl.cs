@@ -284,8 +284,11 @@ namespace AW2.Menu
         {
             var alphaCurve = new Curve(); // value of alpha as a function of distance in pixels from shadow origin
             alphaCurve.Keys.Add(new CurveKey(0, 0));
-            alphaCurve.Keys.Add(new CurveKey(500, 0.47f));
-            alphaCurve.Keys.Add(new CurveKey(1000, 1));
+            alphaCurve.Keys.Add(new CurveKey(300, 0.07f));
+            alphaCurve.Keys.Add(new CurveKey(500, 0.32f));
+            alphaCurve.Keys.Add(new CurveKey(700, 0.65f));
+            alphaCurve.Keys.Add(new CurveKey(900, 0.91f));
+            alphaCurve.Keys.Add(new CurveKey(1200, 0.97f));
             alphaCurve.PreLoop = CurveLoopType.Constant;
             alphaCurve.PostLoop = CurveLoopType.Constant;
             alphaCurve.ComputeTangents(CurveTangent.Smooth);
@@ -293,7 +296,7 @@ namespace AW2.Menu
             _shadowSize = new Point(ViewportWidth, ViewportHeight);
             // The shadow is a rectangle that spans a grid of vertices, each
             // of them black but with different levels of alpha.
-            // The origin of the shadow 3D model is at the top center.
+            // The origin of the shadow 3D model is at the view center.
             var shadowDimensions = new Vector2(ViewportWidth, ViewportHeight);
             int gridWidth = (int)shadowDimensions.X / 30;
             int gridHeight = (int)shadowDimensions.Y / 30;
@@ -303,25 +306,25 @@ namespace AW2.Menu
                 for (int x = 0; x < gridWidth; ++x)
                 {
                     var posInShadow = shadowDimensions *
-                        new Vector2((float)x / (gridWidth - 1) - 0.5f, (float)-y / (gridHeight - 1));
-                    float distance = posInShadow.Length();
+                        new Vector2((float)x / (gridWidth - 1) - 0.5f, (float)y / (gridHeight - 1) - 0.5f);
+                    float curvePos = (posInShadow * new Vector2(1, 1.5f)).Length();
                     vertexData.Add(new VertexPositionColor(
                         new Vector3(posInShadow, 0),
-                        Color.Multiply(Color.Black, alphaCurve.Evaluate(distance))));
+                        Color.Multiply(Color.Black, alphaCurve.Evaluate(curvePos))));
                     if (y > 0)
                         checked
                         {
                             if (x > 0)
                             {
                                 indexData.Add((short)(y * gridWidth + x));
-                                indexData.Add((short)(y * gridWidth + x - 1));
                                 indexData.Add((short)((y - 1) * gridWidth + x));
+                                indexData.Add((short)(y * gridWidth + x - 1));
                             }
                             if (x < gridWidth - 1)
                             {
                                 indexData.Add((short)(y * gridWidth + x));
-                                indexData.Add((short)((y - 1) * gridWidth + x));
                                 indexData.Add((short)((y - 1) * gridWidth + x + 1));
+                                indexData.Add((short)((y - 1) * gridWidth + x));
                             }
                         }
                 }
@@ -354,7 +357,7 @@ namespace AW2.Menu
                 InitializeShadow();
             _effect.Projection = Matrix.CreateOrthographicOffCenter(
                 -ViewportWidth / 2, ViewportWidth / 2,
-                -ViewportHeight, 0,
+                -ViewportHeight / 2, ViewportHeight / 2,
                 1, 500);
             foreach (var pass in _effect.CurrentTechnique.Passes)
             {

@@ -568,32 +568,9 @@ namespace AW2.Game
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
-                PositionNewShip(newShip);
                 Game.DataEngine.Arena.Gobs.Add(newShip);
+                SpawnPlayer.PositionNewShip(newShip);
             });
-        }
-
-        private void PositionNewShip(Ship ship)
-        {
-            var arena = Game.DataEngine.Arena;
-
-            // Use player spawn areas if there's any. Otherwise just randomise a position.
-            var spawns =
-                from g in arena.Gobs
-                let spawn = g as SpawnPlayer
-                where spawn != null
-                let threat = spawn.GetThreat(this)
-                orderby threat ascending
-                select spawn;
-            var bestSpawn = spawns.FirstOrDefault();
-            if (bestSpawn == null)
-            {
-                var newShipPos = arena.GetFreePosition(ship,
-                    new AW2.Helpers.Geometric.Rectangle(Vector2.Zero, arena.Dimensions));
-                ship.ResetPos(newShipPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-            }
-            else
-                bestSpawn.Spawn(ship);
         }
 
         /// <summary>

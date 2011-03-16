@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers;
 using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
+using Point = AW2.Helpers.Geometric.Point;
+using Rectangle = AW2.Helpers.Geometric.Rectangle;
 
 namespace AW2.Game.Gobs
 {
@@ -37,28 +40,46 @@ namespace AW2.Game.Gobs
         }
 
         /// <summary>
-        /// Returns an estimate of imminent threat of spawning a player's ship
-        /// to this spawn area.
+        /// Positions a ship using any of the spawn areas in the arena that contains the ship.
         /// </summary>
-        /// Threat is not measured in any specific units. Returned values are mutually comparable;
-        /// the larger the return value, the more dangerous the spawn area is.
-        public float GetThreat(Player player)
+        public static void PositionNewShip(Ship ship)
         {
-            const float SAFE_DISTANCE = 1000;
-            var threats =
-                from gob in Arena.Gobs
-                where gob.Owner != null && gob.Owner != player
-                let distance = Geometry.Distance(new AW2.Helpers.Geometric.Point(gob.Pos), _spawnArea)
-                select Math.Max(0, SAFE_DISTANCE - distance);
-            return threats.Sum();
+            var arena = ship.Arena;
+            Func<IGeomPrimitive, int, IEnumerable<Vector2>> getRandomPoses = (area, count) =>
+                Enumerable.Range(0, count)
+                .Select(x => arena.GetFreePosition(ship, area));
+            var spawnPoses = arena.Gobs.OfType<SpawnPlayer>()
+                .SelectMany(spawn => getRandomPoses(spawn._spawnArea, 5));
+            var poses = spawnPoses.Any()
+                ? spawnPoses
+                : getRandomPoses(new Rectangle(Vector2.Zero, arena.Dimensions), 20);
+            var posesWithThreats = poses
+                .Select(pos => new { pos, threat = GetThreat(ship, pos) })
+                .ToList()
+                .OrderBy(x => x.threat)
+                .ToList();
+            var leastThreat = posesWithThreats[0].threat;
+            var bestSpawns = posesWithThreats.TakeWhile(x => x.threat == leastThreat).ToList();
+            var bestPos = bestSpawns[RandomHelper.GetRandomInt(bestSpawns.Count)].pos;
+            ship.ResetPos(bestPos, Vector2.Zero, Gob.DEFAULT_ROTATION);
         }
 
         /// <summary>
-        /// Positions a player's ship in the spawn as if it has just been born.
+        /// Returns an estimate of imminent threat to a gob at a position.
+        /// Threat is not measured in any specific units. Returned values are mutually comparable;
+        /// the larger the return value, the more dangerous the position is.
         /// </summary>
-        public void Spawn(Ship ship)
+        private static float GetThreat(Gob gob, Vector2 pos)
         {
-            ship.ResetPos(Arena.GetFreePosition(ship, _spawnArea), Vector2.Zero, Gob.DEFAULT_ROTATION);
+            const float SAFE_DISTANCE = 2000;
+            var testPoint = new Point(pos);
+            var threats =
+                from plr in gob.Game.DataEngine.Players
+                let ship = plr.Ship
+                where plr != gob.Owner && ship != null
+                let distance = Geometry.Distance(testPoint, new Point(ship.Pos))
+                select Math.Max(0, SAFE_DISTANCE - distance);
+            return threats.Sum();
         }
     }
 }

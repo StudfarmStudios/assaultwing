@@ -279,8 +279,10 @@ namespace AW2.Core
             _arenaFinished = false;
             foreach (var player in DataEngine.Spectators)
                 player.InitializeForGameSession();
-            var arenaFilename = DataEngine.ArenaInfos.Single(info => info.Name == arenaName).FileName;
-            DataEngine.InitializeFromArena(arenaFilename, true);
+            var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)arenaName);
+            // Note: Must create a new Arena instance and not use the existing template
+            // because playing an arena will modify it.
+            DataEngine.InitializeFromArena(arenaTemplate.Info.FileName, true);
         }
 
         /// <summary>

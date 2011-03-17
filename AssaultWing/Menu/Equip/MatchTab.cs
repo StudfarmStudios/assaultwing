@@ -119,7 +119,7 @@ you to create your own gametype settings'.";
             var lineHeight = new Vector2(0, 20);
             var infoWidth = new Vector2(320, 0);
             var arenaName = MenuEngine.Game.SelectedArenaName;
-            var arenaInfo = MenuEngine.Game.DataEngine.ArenaInfos.FirstOrDefault(info => info.Name == arenaName);
+            var arenaInfo = ((AW2.Game.Arena)MenuEngine.Game.DataEngine.GetTypeTemplate((CanonicalString)arenaName)).Info;
             var content = MenuEngine.Game.Content;
             string previewName = content.Exists<Texture2D>(arenaInfo.PreviewName) ? arenaInfo.PreviewName : "no_preview";
             var previewTexture = content.Load<Texture2D>(previewName);

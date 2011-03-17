@@ -57,26 +57,26 @@ namespace AW2.Graphics
 
             // Loop through gob types and load all the 3D models and textures they need.
             // The purpose of this is to load from disk here and cache the content for fast access later.
-            data.ForEachTypeTemplate<Gob>(gobTemplate =>
+            foreach (var gobTemplate in data.GetTypeTemplates<Gob>())
             {
                 foreach (var modelName in gobTemplate.ModelNames)
                     Game.Content.Load<Model>(modelName);
                 foreach (var textureName in gobTemplate.TextureNames)
                     Game.Content.Load<Texture2D>(textureName);
-            });
+            }
 
             // Load all textures that each weapon needs.
             // The purpose of this is to load from disk here and cache the content for fast access later.
-            data.ForEachTypeTemplate<Weapon>(weaponTemplate =>
+            foreach (var weaponTemplate in data.GetTypeTemplates<Weapon>())
             {
                 foreach (var textureName in weaponTemplate.TextureNames)
                     Game.Content.Load<Texture2D>(textureName);
-            });
+            }
 
             // Load arena previews.
             // The purpose of this is to load from disk here and cache the content for fast access later.
             Game.Content.Load<Texture2D>("no_preview");
-            foreach (var arenaInfo in data.ArenaInfos)
+            foreach (var arenaInfo in data.GetTypeTemplates<Arena>().Select(a => a.Info))
                 try { Game.Content.Load<Texture2D>(arenaInfo.PreviewName); }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException) { }
 

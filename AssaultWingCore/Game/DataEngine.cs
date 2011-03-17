@@ -138,11 +138,6 @@ namespace AW2.Game
         /// Y is down.
         public Matrix ArenaToRadarTransform { get { return _arenaToRadarTransform; } }
 
-        /// <summary>
-        /// Information about all available arenas.
-        /// </summary>
-        public List<ArenaInfo> ArenaInfos { get; set; }
-
         public void StartArena()
         {
             // Clear old stuff from previous arena, if any.
@@ -196,16 +191,9 @@ namespace AW2.Game
             return result;
         }
 
-        /// <summary>
-        /// Performs the specified action on each user-defined type template
-        /// that was stored under the given base class.
-        /// </summary>
-        /// <seealso cref="DataEngine.AddTypeTemplate"/>
-        /// <typeparam name="T">Base class of templates to loop through.</typeparam>
-        /// <param name="action">The Action delegate to perform on each template.</param>
-        public void ForEachTypeTemplate<T>(Action<T> action)
+        public IEnumerable<T> GetTypeTemplates<T>()
         {
-            foreach (var template in _templates.Values.OfType<T>()) action((T)template);
+            return _templates.Values.OfType<T>();
         }
 
         #endregion type templates

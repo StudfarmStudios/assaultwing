@@ -39,14 +39,13 @@ namespace AW2.Menu
         /// Index of currently highlighted arena in the arena name list.
         /// </summary>
         private int _currentArena;
-        private Arena _selectedArena;
 
         /// <summary>
         /// Index of first arena in the arena name list that is visible on screen.
         /// </summary>
         private int _arenaListStart;
 
-        private List<ArenaInfo> ArenaInfos { get { return MenuEngine.Game.DataEngine.ArenaInfos; } }
+        private List<ArenaInfo> ArenaInfos { get; set; }
         private Vector2 ArenaPreviewPos { get { return _pos + new Vector2(430, 232); } }
         private Vector2 InfoBoxPos { get { return ArenaPreviewPos + new Vector2(-3, 188); } }
         private Vector2 InfoBoxHeaderPos { get { return InfoBoxPos + new Vector2(20, 20); } }
@@ -66,6 +65,7 @@ namespace AW2.Menu
                 {
                     InitializeControls();
                     InitializeControlCallbacks();
+                    ArenaInfos = MenuEngine.Game.DataEngine.GetTypeTemplates<Arena>().Select(a => a.Info).ToList();
                 }
             }
         }
@@ -110,8 +110,6 @@ namespace AW2.Menu
             var oldCurrentArena = _currentArena;
             _controlCallbacks.Update();
             _currentArena = _currentArena.Clamp(0, ArenaInfos.Count - 1);
-            if (oldCurrentArena != _currentArena)
-                _selectedArena = (Arena)TypeLoader.LoadTemplate(ArenaInfos[_currentArena].FileName, typeof(Arena), typeof(TypeParameterAttribute), false);
             _arenaListStart = _arenaListStart.Clamp(_currentArena - MENU_ITEM_COUNT + 1, _currentArena);
         }
 
@@ -144,10 +142,9 @@ namespace AW2.Menu
             var highlightPos = _pos - view + new Vector2(124, 223) + (_currentArena - _arenaListStart) * lineDeltaPos;
             var cursorPos = highlightPos + new Vector2(2, 1);
             var infoBoxColumnWidth = new Vector2(220, 0);
-            var info = _selectedArena.Info;
-            var content = MenuEngine.Game.Content;
-            var previewName = content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
-            var previewTexture = content.Load<Texture2D>(previewName);
+            var info = ArenaInfos[_currentArena];
+            var previewName = MenuEngine.Game.Content.Exists<Texture2D>(info.PreviewName) ? info.PreviewName : "no_preview";
+            var previewTexture = MenuEngine.Game.Content.Load<Texture2D>(previewName);
             spriteBatch.Draw(_highlightTexture, highlightPos, Color.White);
             spriteBatch.Draw(_cursorTexture, cursorPos, Color.Multiply(Color.White, _cursorFade.Evaluate((float)MenuEngine.Game.GameTime.TotalRealTime.TotalSeconds)));
 

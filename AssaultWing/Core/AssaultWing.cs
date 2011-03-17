@@ -160,7 +160,7 @@ namespace AW2.Core
         {
             Log.Write("Assault Wing begins to run");
 
-            SelectedArenaName = DataEngine.ArenaInfos.First().Name;
+            SelectedArenaName = DataEngine.GetTypeTemplates<Arena>().First().Info.Name;
 
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };

@@ -116,7 +116,7 @@ namespace AW2.Menu
         private void CheckArenaStart()
         {
             bool okToStart = MenuEngine.Game.NetworkMode == NetworkMode.Client
-                ? MenuEngine.Game.IsClientAllowedToStartArena && _readyPressed
+                ? MenuEngine.Game.IsClientAllowedToStartArena && _readyPressed && MenuEngine.Game.DataEngine.ProgressBar.TaskProgress == 1
                 : _readyPressed;
             if (!okToStart) return;
             MenuEngine.Deactivate();

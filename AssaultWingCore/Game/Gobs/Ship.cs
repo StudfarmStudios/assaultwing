@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using AW2.Core;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -371,6 +372,7 @@ namespace AW2.Game.Gobs
             foreach (Gob gob in _temporarilyDisabledGobs) gob.Enable();
             _temporarilyDisabledGobs.Clear();
 
+            UpdateThrustOnClient();
             UpdateExhaustEngines();
             UpdateCoughEngines();
             UpdateCharges();
@@ -418,7 +420,7 @@ namespace AW2.Game.Gobs
             }
             if ((shipMode & SerializationModeFlags.VaryingData) != 0)
             {
-                writer.Write((Half)_visualThrustForce);
+                writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
                 _visualThrustForce = 0;
             }
             Weapon1.Serialize(writer, shipMode);
@@ -467,9 +469,7 @@ namespace AW2.Game.Gobs
             }
             if ((shipMode & SerializationModeFlags.VaryingData) != 0)
             {
-                float thrustForce = reader.ReadHalf();
-                if (thrustForce > 0)
-                    Thrust(thrustForce, Game.GameTime.ElapsedGameTime, Rotation);
+                _visualThrustForce = reader.ReadByte() / 255f;
             }
             Weapon1.Deserialize(reader, shipMode, framesAgo);
             Weapon2.Deserialize(reader, shipMode, framesAgo);
@@ -665,6 +665,15 @@ namespace AW2.Game.Gobs
             if (!_rollAngleGoalUpdated)
                 _rollAngle.Target = 0;
             _rollAngleGoalUpdated = false;
+        }
+
+        private void UpdateThrustOnClient()
+        {
+            if (Game.NetworkMode != NetworkMode.Client) return;
+            if (_visualThrustForce > 0)
+                Thrust(_visualThrustForce, Game.GameTime.ElapsedGameTime, Rotation);
+            _visualThrustForce *= 0.977f;
+            if (_visualThrustForce < 0.5f) _visualThrustForce = 0;
         }
 
         private void UpdateExhaustEngines()

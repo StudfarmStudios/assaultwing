@@ -4,9 +4,11 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
+using AW2.Core.OverlayDialogs;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Menu.Equip;
+using AW2.UI;
 
 namespace AW2.Menu
 {
@@ -156,9 +158,19 @@ namespace AW2.Menu
 
         private void BackToMainMenu()
         {
-            _readyPressed = false;
-            if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
-            MenuEngine.Game.ShowMainMenuAndResetGameplay();
+            Action backToMainMenuImpl = () =>
+            {
+                _readyPressed = false;
+                if (MenuEngine.ArenaLoadTask.TaskRunning) MenuEngine.ArenaLoadTask.AbortTask();
+                MenuEngine.Game.ShowMainMenuAndResetGameplay();
+            };
+            if (MenuEngine.Game.NetworkMode == NetworkMode.Standalone)
+                backToMainMenuImpl();
+            else
+                MenuEngine.Game.ShowDialog(new CustomOverlayDialogData(MenuEngine.Game,
+                    "Quit network game? (Yes/No)",
+                    new TriggeredCallback(TriggeredCallback.YES_CONTROL, backToMainMenuImpl),
+                    new TriggeredCallback(TriggeredCallback.NO_CONTROL, () => { })));
         }
 
         #region Drawing methods

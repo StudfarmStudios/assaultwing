@@ -568,6 +568,7 @@ namespace AW2.Game
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.PrimaryWeapon, Weapon1Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.SecondaryWeapon, Weapon2Name);
                 newShip.SetDeviceType(ShipDevice.OwnerHandleType.ExtraDevice, ExtraDeviceName);
+                newShip.Rotation = Gob.DEFAULT_ROTATION; // must initialize rotation for SnakeShip.InitializeTailState()
                 Game.DataEngine.Arena.Gobs.Add(newShip);
                 SpawnPlayer.PositionNewShip(newShip);
             });

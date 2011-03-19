@@ -235,7 +235,7 @@ namespace AW2.UI
                     else
                         _gameView.BeginInvoke((Action)_gameView.Invalidate);
                 },
-                gameTime => _gameView.BeginInvoke((Action)(() => _game.Update(gameTime))));
+                gameTime => _gameView.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
         }
 
         private void ApplyGraphicsSettings()

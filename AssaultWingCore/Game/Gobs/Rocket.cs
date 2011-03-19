@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
 using AW2.Graphics.OverlayComponents;
 using AW2.Helpers;
-using AW2.Helpers.Geometric;
 using AW2.Helpers.Serialization;
 
 namespace AW2.Game.Gobs

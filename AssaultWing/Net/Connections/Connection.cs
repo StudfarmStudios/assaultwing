@@ -1,7 +1,5 @@
-//#define DEBUG_SENT_BYTE_COUNT // dumps to log an itemised count of sent bytes every second
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -10,7 +8,6 @@ using AW2.Helpers;
 using AW2.Helpers.Collections;
 using AW2.Helpers.Serialization;
 using AW2.Net.ConnectionUtils;
-using AW2.Net.Messages;
 
 namespace AW2.Net.Connections
 {
@@ -62,11 +59,6 @@ namespace AW2.Net.Connections
 
         private IPEndPoint _remoteUDPEndPoint;
         private object _lock = new object();
-
-#if DEBUG_SENT_BYTE_COUNT
-        private static TimeSpan _lastPrintTime = new TimeSpan(-1);
-        private static Dictionary<Type, int> _messageSizes = new Dictionary<Type, int>();
-#endif
 
         #endregion Fields
 
@@ -209,7 +201,6 @@ namespace AW2.Net.Connections
         /// Sends a message to the remote host. The message is sent asynchronously,
         /// so there is no guarantee when the transmission will be finished.
         /// </summary>
-        /// <param name="message">The message to send.</param>
         public virtual void Send(Message message)
         {
             if (IsDisposed) return;
@@ -221,21 +212,6 @@ namespace AW2.Net.Connections
                     case MessageSendType.UDP: SendViaUDP(message.Serialize); break;
                     default: throw new MessageException("Unknown send type " + message.SendType);
                 }
-#if DEBUG_SENT_BYTE_COUNT
-                if (_lastPrintTime + TimeSpan.FromSeconds(1) < Game.GameTime.TotalRealTime)
-                {
-                    _lastPrintTime = Game.GameTime.TotalRealTime;
-                    AW2.Helpers.Log.Write("------ SENT_BYTE_COUNT dump");
-                    foreach (var pair in _messageSizes)
-                        AW2.Helpers.Log.Write(pair.Key.Name + ": " + pair.Value + " bytes");
-                    AW2.Helpers.Log.Write("Total " + _messageSizes.Sum(pair => pair.Value) + " bytes");
-                    _messageSizes.Clear();
-                }
-                if (!_messageSizes.ContainsKey(message.GetType()))
-                    _messageSizes.Add(message.GetType(), data.Length);
-                else
-                    _messageSizes[message.GetType()] += data.Length;
-#endif
             }
             catch (SocketException e)
             {

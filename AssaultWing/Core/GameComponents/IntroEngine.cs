@@ -59,6 +59,12 @@ namespace AW2.Core.GameComponents
             base.UnloadContent();
         }
 
+        public override void Dispose()
+        {
+            UnloadContent();
+            base.Dispose();
+        }
+
         public override void Update()
         {
             if (_skipControl.Pulse || _introVideo.IsFinished) EndIntro();

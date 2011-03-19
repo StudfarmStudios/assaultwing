@@ -13,16 +13,12 @@ namespace AW2.Sound
     /// </summary>
     public class SoundEngineXACT : SoundEngine
     {
-        #region Private fields
-
-        AudioEngine _audioEngine;
-        WaveBank _waveBank;
-        SoundBank _soundBank;
-        AudioCategory _soundEffectCategory;
-        AWMusic _music;
-        Action _volumeFadeAction;
-
-        #endregion
+        private AudioEngine _audioEngine;
+        private WaveBank _waveBank;
+        private SoundBank _soundBank;
+        private AudioCategory _soundEffectCategory;
+        private AWMusic _music;
+        private Action _volumeFadeAction;
 
         public SoundEngineXACT(AssaultWingCore game, int updateOrder)
             : base(game, updateOrder)
@@ -54,6 +50,21 @@ namespace AW2.Sound
             if (_music != null) _music.Volume = ActualMusicVolume;
             _audioEngine.Update();
             _soundEffectCategory.SetVolume(Game.Settings.Sound.SoundVolume);
+        }
+
+        public override void Dispose()
+        {
+            if (_music != null)
+            {
+                _music.Dispose();
+                _music = null;
+            }
+            if (_audioEngine != null)
+            {
+                _audioEngine.Dispose();
+                _audioEngine = null;
+            }
+            base.Dispose();
         }
 
         #endregion

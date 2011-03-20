@@ -16,11 +16,14 @@ namespace AW2.Settings
         private GraphicsSettings _graphics;
         [TypeParameter]
         private ControlsSettings _controls;
+        [TypeParameter]
+        private SystemSettings _system;
 
         public SoundSettings Sound { get { return _sound; } private set { _sound = value; } }
         public NetSettings Net { get { return _net; } private set { _net = value; } }
         public GraphicsSettings Graphics { get { return _graphics; } private set { _graphics = value; } }
         public ControlsSettings Controls { get { return _controls; } private set { _controls = value; } }
+        public SystemSettings System { get { return _system; } private set { _system = value; } }
 
         private string Filename { get; set; }
 
@@ -51,6 +54,7 @@ namespace AW2.Settings
             Net = new NetSettings();
             Graphics = new GraphicsSettings();
             Controls = new ControlsSettings();
+            System = new SystemSettings();
         }
 
         public void ToFile()
@@ -64,6 +68,7 @@ namespace AW2.Settings
             Net.Reset();
             Graphics.Reset();
             Controls.Reset();
+            System.Reset();
         }
     }
 }

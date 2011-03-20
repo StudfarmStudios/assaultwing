@@ -130,11 +130,13 @@ namespace AW2.UI.WPF
                 CheckFileExists = true,
                 DefaultExt = ".xml",
                 Filter = "Assault Wing Arenas (*.xml)|*.xml|All Files (*.*)|*.*",
-                InitialDirectory = Environment.CurrentDirectory,
+                InitialDirectory = _game.Settings.System.ArenaEditorDefaultDirectory,
                 Title = "Open an Existing Arena for Editing",
             };
             bool? success = fileDialog.ShowDialog();
             if (success.HasValue && !success.Value) return;
+            _game.Settings.System.ArenaEditorDefaultDirectory = System.IO.Path.GetDirectoryName(fileDialog.FileName);
+            _game.Settings.ToFile();
             LoadArena(fileDialog.FileName);
         }
 
@@ -147,12 +149,14 @@ namespace AW2.UI.WPF
             {
                 DefaultExt = ".xml",
                 Filter = "Assault Wing Arenas (*.xml)|*.xml|All Files (*.*)|*.*",
-                InitialDirectory = Environment.CurrentDirectory,
+                InitialDirectory = _game.Settings.System.ArenaEditorDefaultDirectory,
                 Title = "Save the Arena to File",
                 FileName = arena.Info.Name + ".xml",
             };
             bool? success = fileDialog.ShowDialog();
             if (success.HasValue && !success.Value) return;
+            _game.Settings.System.ArenaEditorDefaultDirectory = System.IO.Path.GetDirectoryName(fileDialog.FileName);
+            _game.Settings.ToFile();
             var oldCursor = Cursor;
             try
             {

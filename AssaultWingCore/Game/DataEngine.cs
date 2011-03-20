@@ -35,7 +35,6 @@ namespace AW2.Game
         private Vector2 _arenaDimensionsOnRadar;
         private Matrix _arenaToRadarTransform;
         private TimeSpan _lastArenaRadarSilhouetteUpdate;
-        private ProgressBar _progressBar;
         private IndexedItemCollection<Spectator> _spectators;
 
         /// <summary>
@@ -52,32 +51,11 @@ namespace AW2.Game
             }
         }
 
-        /// <summary>
-        /// Players of the game session.
-        /// </summary>
-        public IEnumerable<Player> Players
-        {
-            get { return Spectators.Where(p => p is Player).Cast<Player>(); }
-        }
-
-        /// <summary>
-        /// Weapons that are active in the game session.
-        /// </summary>
+        public IEnumerable<Player> Players { get { return Spectators.OfType<Player>(); } }
         public IndexedItemCollection<ShipDevice> Devices { get; private set; }
-
-        /// <summary>
-        /// The currently active arena.
-        /// </summary>
-        /// Use <see cref="InitializeFromArena(string)"/> to change the active arena.
-        public Arena Arena { get; private set; }
-
+        public Arena Arena { get; set; }
         public TimeSpan ArenaTotalTime { get { return Arena == null ? TimeSpan.Zero : Arena.TotalTime; } }
         public int ArenaFrameCount { get { return Arena == null ? 0 : Arena.FrameNumber; } }
-
-        /// <summary>
-        /// Called when a new <see cref="Arena"/> is instantiated.
-        /// </summary>
-        public event Action<Arena> NewArena;
 
         public event Action<Spectator> SpectatorAdded;
         public event Action<Spectator> SpectatorRemoved;
@@ -145,24 +123,6 @@ namespace AW2.Game
             _lastArenaRadarSilhouetteUpdate = TimeSpan.Zero;
             foreach (var player in Spectators) player.ResetForArena();
             Game.GobsCounter.SetRawValue(Arena.Gobs.Count);
-        }
-
-        /// <summary>
-        /// Prepares the game data for playing an arena.
-        /// When the playing really should start, call <see cref="StartArena"/>.
-        /// </summary>
-        /// <param name="initializeForPlaying">Should the arena be initialised
-        /// for playing. If not, some initialisations are skipped.</param>
-        public void InitializeFromArena(string arenaFilename, bool initializeForPlaying)
-        {
-            var newArena = Arena.FromFile(Game, arenaFilename);
-            if (NewArena != null) NewArena(newArena);
-            if (initializeForPlaying) newArena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, newArena.BinFilename));
-            newArena.IsForPlaying = initializeForPlaying;
-            Game.LoadArenaContent(newArena);
-            ProgressBar.SetSubtaskCount(newArena.Gobs.OfType<Wall>().Count());
-            newArena.Reset(); // this usually takes several seconds
-            Arena = newArena;
         }
 
         #endregion arenas
@@ -235,24 +195,7 @@ namespace AW2.Game
 
         #region miscellaneous
 
-        /// <summary>
-        /// The current mode of gameplay.
-        /// </summary>
         public GameplayMode GameplayMode { get; set; }
-
-        /// <summary>
-        /// The progress bar.
-        /// </summary>
-        /// Anybody can tell the progress bar that their tasks are completed.
-        /// This way the progress bar knows how its running task is progressing.
-        public ProgressBar ProgressBar
-        {
-            get
-            {
-                if (_progressBar == null) _progressBar = new ProgressBar();
-                return _progressBar;
-            }
-        }
 
         /// <summary>
         /// Clears all data about the state of the game session that is not

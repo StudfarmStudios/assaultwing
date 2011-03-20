@@ -4,7 +4,7 @@ using System.Deployment.Application;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 using AW2.Core.GameComponents;
-using AW2.Core.OverlayDialogs;
+using AW2.Core.OverlayComponents;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -184,11 +184,51 @@ namespace AW2.Core
             base.EndRun();
         }
 
+        /// <summary>
+        /// Prepares a new play session to start from an arena.
+        /// Call <see cref="StartArena"/> after this method returns to start
+        /// playing the arena.
+        /// This method usually takes a long time to run. It's therefore a good
+        /// idea to make it run in a background thread.
+        /// </summary>
+        public void PrepareArena(string arenaName)
+        {
+            foreach (var player in DataEngine.Spectators)
+                player.InitializeForGameSession();
+            var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)arenaName);
+            // Note: Must create a new Arena instance and not use the existing template
+            // because playing an arena will modify it.
+            InitializeFromArena(arenaTemplate.Info.FileName);
+        }
+
+        /// <summary>
+        /// Prepares the game data for playing an arena.
+        /// When the playing really should start, call <see cref="StartArena"/>.
+        /// </summary>
+        /// <param name="initializeForPlaying">Should the arena be initialised
+        /// for playing. If not, some initialisations are skipped.</param>
+        private void InitializeFromArena(string arenaFilename)
+        {
+            var arena = Arena.FromFile(this, arenaFilename);
+            arena.Bin.Load(System.IO.Path.Combine(Paths.ARENAS, arena.BinFilename));
+            arena.IsForPlaying = true;
+            LoadArenaContent(arena);
+            // Note: Client starts progressbar when receiving StartGameMessage.
+            if (NetworkMode != NetworkMode.Client) MenuEngine.ProgressBar.Start(arena.Gobs.OfType<AW2.Game.Gobs.Wall>().Count());
+            arena.Reset(); // this usually takes several seconds
+            DataEngine.Arena = arena;
+        }
+
         public void StartArenaButStayInMenu()
         {
             if (NetworkMode != NetworkMode.Client) throw new InvalidOperationException("Only client can start arena on background");
             base.StartArena();
             GameState = GameState.GameAndMenu;
+        }
+
+        public override void ProgressBarSubtaskCompleted()
+        {
+            MenuEngine.ProgressBar.SubtaskCompleted();
         }
 
         public override void StartArena()

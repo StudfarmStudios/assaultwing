@@ -5,7 +5,7 @@ using System.Net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
-using AW2.Core.OverlayDialogs;
+using AW2.Core.OverlayComponents;
 using AW2.Game;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -155,6 +155,7 @@ namespace AW2.Net.MessageHandling
             var game = AssaultWing.Instance;
             if (game.IsLoadingArena) return;
             game.SelectedArenaName = mess.ArenaToPlay;
+            game.MenuEngine.ProgressBar.Start(mess.WallCount);
             game.MenuEngine.ProgressBarAction(
                 () => game.PrepareArena(game.SelectedArenaName),
                 () =>

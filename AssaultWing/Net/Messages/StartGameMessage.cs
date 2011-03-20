@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using AW2.Game;
-using AW2.Helpers.Serialization;
+﻿using AW2.Helpers.Serialization;
 
 namespace AW2.Net.Messages
 {
@@ -16,22 +10,26 @@ namespace AW2.Net.Messages
     public class StartGameMessage : Message
     {
         public string ArenaToPlay { get; set; }
+        public int WallCount { get; set; }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
             // Start game (request) message structure:
             // variable-length string: name of arena to play
+            // int: number of wall objects in the arena
             writer.Write((string)ArenaToPlay);
+            writer.Write((int)WallCount);
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             ArenaToPlay = reader.ReadString();
+            WallCount = reader.ReadInt32();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [" + ArenaToPlay + "]";
+            return base.ToString() + " [" + ArenaToPlay + ", " + WallCount + " walls]";
         }
     }
 }

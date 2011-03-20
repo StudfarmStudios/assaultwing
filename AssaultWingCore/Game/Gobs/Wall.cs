@@ -125,7 +125,7 @@ namespace AW2.Game.Gobs
 #endif
                 _drawBounds = BoundingSphere.CreateFromPoints(_vertexData.Select(v => v.Position));
             }
-            Game.DataEngine.ProgressBar.SubtaskCompleted();
+            Game.ProgressBarSubtaskCompleted();
         }
 
         public override void Update()

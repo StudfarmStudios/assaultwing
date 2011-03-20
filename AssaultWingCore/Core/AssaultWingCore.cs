@@ -268,29 +268,12 @@ namespace AW2.Core
         #region Methods for game components
 
         /// <summary>
-        /// Prepares a new play session to start from an arena.
-        /// Call <see cref="StartArena"/> after this method returns to start
-        /// playing the arena.
-        /// This method usually takes a long time to run. It's therefore a good
-        /// idea to make it run in a background thread.
-        /// </summary>
-        public void PrepareArena(string arenaName)
-        {
-            _arenaFinished = false;
-            foreach (var player in DataEngine.Spectators)
-                player.InitializeForGameSession();
-            var arenaTemplate = (Arena)DataEngine.GetTypeTemplate((CanonicalString)arenaName);
-            // Note: Must create a new Arena instance and not use the existing template
-            // because playing an arena will modify it.
-            DataEngine.InitializeFromArena(arenaTemplate.Info.FileName, true);
-        }
-
-        /// <summary>
         /// Starts playing a previously prepared arena.
         /// </summary>
         public virtual void StartArena()
         {
             Log.Write("Starting arena");
+            _arenaFinished = false;
             LogicEngine.Reset();
             PreFrameLogicEngine.Reset();
             PostFrameLogicEngine.Reset();
@@ -332,6 +315,8 @@ namespace AW2.Core
         {
             GraphicsEngine.LoadArenaContent(arena);
         }
+
+        public virtual void ProgressBarSubtaskCompleted() { }
 
         #endregion Methods for game components
 

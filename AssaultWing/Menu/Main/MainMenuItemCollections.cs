@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
-using AW2.Core.OverlayDialogs;
+using AW2.Core.OverlayComponents;
 using AW2.Helpers;
 using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;

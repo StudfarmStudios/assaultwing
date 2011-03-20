@@ -215,7 +215,6 @@
     <Compile Include="Graphics\OverlayComponents\GobTrackerOverlay.cs" />
     <Compile Include="Graphics\OverlayComponents\MiniStatusOverlay.cs" />
     <Compile Include="Graphics\OverlayComponents\PlayerStatusOverlay.cs" />
-    <Compile Include="Graphics\OverlayComponents\ProgressBar.cs" />
     <Compile Include="Graphics\OverlayComponents\RadarOverlay.cs" />
     <Compile Include="Graphics\OverlayComponents\ScoreOverlay.cs" />
     <Compile Include="Graphics\PlayerViewport.cs" />

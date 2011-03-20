@@ -100,8 +100,10 @@ namespace AW2.UI.WPF
             try
             {
                 Cursor = Cursors.Wait;
-                var data = _game.DataEngine;
-                data.InitializeFromArena(arenaFilename, false);
+                var arena = Arena.FromFile(_game, arenaFilename);
+                _game.LoadArenaContent(arena);
+                arena.Reset();
+                _game.DataEngine.Arena = arena;
                 _game.StartArena();
                 UpdateControlsFromArena();
                 ApplyViewSettingsToAllViewports();

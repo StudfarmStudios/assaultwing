@@ -16,17 +16,11 @@ namespace AW2.Core
 
         public bool TaskRunning { get { return _taskWorkItem != null; } }
         public bool TaskCompleted { get { return _taskWorkItem == null ? false : ((TaskStatus)_taskWorkItem.State).IsCompleted; } }
-        public Action Task
-        {
-            set
-            {
-                if (_taskWorkItem != null) throw new InvalidOperationException("Cannot change background task while it's running");
-                _task = value;
-            }
-        }
 
-        public void StartTask()
+        public void StartTask(Action task)
         {
+            if (_taskWorkItem != null) throw new InvalidOperationException("Cannot change background task while it's running");
+            _task = task;
             _taskWorkItem = AbortableThreadPool.QueueUserWorkItem(RunTask, new TaskStatus());
         }
 

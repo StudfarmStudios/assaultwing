@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using AW2.Core.OverlayDialogs;
+using AW2.Core.OverlayComponents;
 
 namespace AW2.Core.GameComponents
 {

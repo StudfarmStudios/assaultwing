@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using AW2.Helpers;
 using AW2.UI;
 
-namespace AW2.Core.OverlayDialogs
+namespace AW2.Core.OverlayComponents
 {
     /// <summary>
     /// Content and action data for an overlay dialog displaying custom data.

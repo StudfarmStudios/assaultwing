@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Input;
 
-namespace AW2.Core.OverlayDialogs
+namespace AW2.Core.OverlayComponents
 {
     /// <summary>
     /// Content and action data for an overlay dialog asking for a keypress.

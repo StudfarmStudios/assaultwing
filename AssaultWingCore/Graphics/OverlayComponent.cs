@@ -119,32 +119,6 @@ namespace AW2.Graphics
             var y_height = LimitViewportAxis(viewport.Y, viewport.Height, clientBounds.Y, clientBounds.Bottom);
             viewport.Y = y_height.Item1;
             viewport.Height = y_height.Item2;
-
-            //if (viewport.X < clientBounds.X)
-            //{
-            //    viewport.Width -= clientBounds.X - viewport.X;
-            //    viewport.X = clientBounds.X;
-            //}
-            //if (viewport.X < clientBounds.Right)
-            //    viewport.Width = viewport.Width.Clamp(0, Math.Max(0, clientBounds.Right - viewport.X));
-            //else
-            //{
-            //    viewport.X = clientBounds.Right - 1;
-            //    viewport.Width = 1; // 0 is not allowed by GraphicsDevice.Viewport
-            //}
-
-            //if (viewport.Y < clientBounds.Y)
-            //{
-            //    viewport.Height -= clientBounds.Y - viewport.Y;
-            //    viewport.Y = clientBounds.Y;
-            //}
-            //if (viewport.Y < clientBounds.Bottom)
-            //    viewport.Height = viewport.Height.Clamp(0, Math.Max(0, clientBounds.Bottom - viewport.Y));
-            //else
-            //{
-            //    viewport.Y = clientBounds.Bottom - 1;
-            //    viewport.Height = 1; // 0 is not allowed by GraphicsDevice.Viewport
-            //}
             return viewport;
         }
 

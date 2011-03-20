@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using AW2.Core;
-using AW2.Core.OverlayDialogs;
+using AW2.Core.OverlayComponents;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Menu.Equip;
@@ -118,7 +118,7 @@ namespace AW2.Menu
         private void CheckArenaStart()
         {
             bool okToStart = MenuEngine.Game.NetworkMode == NetworkMode.Client
-                ? MenuEngine.Game.IsClientAllowedToStartArena && _readyPressed && MenuEngine.Game.DataEngine.ProgressBar.TaskProgress == 1
+                ? MenuEngine.Game.IsClientAllowedToStartArena && _readyPressed && MenuEngine.ProgressBar.IsFinished
                 : _readyPressed;
             if (!okToStart) return;
             MenuEngine.Deactivate();

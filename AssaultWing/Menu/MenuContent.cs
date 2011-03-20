@@ -23,6 +23,10 @@ namespace AW2.Menu
         public Texture2D TabChatTexture { get; private set; }
         public Texture2D TabHilite { get; private set; }
 
+        public Texture2D ProgressBarBackgroundTexture { get; private set; }
+        public Texture2D ProgressBarBarTexture { get; private set; }
+        public Texture2D ProgressBarFlowTexture { get; private set; }
+
         #region Equip tab
 
         public Texture2D StatusPaneTexture { get; private set; }
@@ -65,6 +69,10 @@ namespace AW2.Menu
             WeaponHeaders = content.Load<Texture2D>("menu_equip_weaponinfo_headers");
             ListTextCursorTexture = content.Load<Texture2D>("menu_equip_player_name_textcursor");
             CursorMainTexture = content.Load<Texture2D>("menu_equip_cursor_large");
+
+            ProgressBarBackgroundTexture = content.Load<Texture2D>("menu_progressbar_bg");
+            ProgressBarBarTexture = content.Load<Texture2D>("menu_progressbar_fill");
+            ProgressBarFlowTexture = content.Load<Texture2D>("menu_progressbar_advancer");
         }
     }
 }

@@ -120,10 +120,11 @@
     <Compile Include="Core\GameComponents\PlayerChat.cs" />
     <Compile Include="Core\GameComponents\StartupScreen.cs" />
     <Compile Include="Core\GameState.cs" />
-    <Compile Include="Core\OverlayDialogs\KeypressOverlayDialogData.cs" />
-    <Compile Include="Core\OverlayDialogs\CustomOverlayDialogData.cs" />
-    <Compile Include="Core\OverlayDialogs\GameOverOverlayDialogData.cs" />
-    <Compile Include="Core\OverlayDialogs\OverlayDialogData.cs" />
+    <Compile Include="Core\OverlayComponents\KeypressOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayComponents\CustomOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayComponents\GameOverOverlayDialogData.cs" />
+    <Compile Include="Core\OverlayComponents\OverlayDialogData.cs" />
+    <Compile Include="Core\OverlayComponents\ProgressBar.cs" />
     <Compile Include="Menu\ArenaMenuComponent.cs" />
     <Compile Include="Menu\EquipmentSelector.cs" />
     <Compile Include="Menu\EquipMenuComponent.cs" />

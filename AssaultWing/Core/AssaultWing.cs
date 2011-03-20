@@ -664,6 +664,7 @@ namespace AW2.Core
                     if (gob.NetworkUpdatePeriod == TimeSpan.Zero) continue;
                     if (gob.LastNetworkUpdate + gob.NetworkUpdatePeriod > now) continue;
                 }
+                gob.ForcedNetworkUpdate = false;
                 gob.LastNetworkUpdate = now;
                 gobMessage.AddGob(gob.ID, gob, AW2.Helpers.Serialization.SerializationModeFlags.VaryingData);
             }

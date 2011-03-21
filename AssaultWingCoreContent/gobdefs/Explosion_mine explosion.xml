@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GobType type="AW2.Game.Gobs.Explosion, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
   <typeName>mine explosion</typeName>
-   <networkUpdatePeriod>
-      <ticks>10000000</ticks>
-   </networkUpdatePeriod>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
   <impactHoleRadius>32</impactHoleRadius>
   <particleEngineNames>
-      <Item>fragments</Item>
-      <Item>explo shockwave</Item>
-      <!--<Item>shockwave</Item>-->
-      <Item>explo white flash</Item>
-      <Item>mine explo center</Item>
-      <Item>large fragments</Item>
-      <Item>explo smoke</Item>
-      <Item>explo dots</Item>
+    <Item>fragments</Item>
+    <Item>explo shockwave</Item>
+    <!--<Item>shockwave</Item>-->
+    <Item>explo white flash</Item>
+    <Item>mine explo center</Item>
+    <Item>large fragments</Item>
+    <Item>explo smoke</Item>
+    <Item>explo dots</Item>
   </particleEngineNames>
   <sound>Explosion</sound>
   <depthLayer2D>0.5</depthLayer2D>
   <drawMode2D>
-      <type>None</type>
+    <type>None</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <movable>false</movable>
@@ -33,94 +33,97 @@
   <deathGobTypes>
   </deathGobTypes>
   <collisionAreas>
-      <Item>
-         <type>Receptor</type>
-         <collidesAgainst>PhysicalDamageable</collidesAgainst>
-         <cannotOverlap>None</cannotOverlap>
-         <collisionMaterial>Regular</collisionMaterial>
-         <name>Hit</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <center>
-               <X>0</X>
-               <Y>0</Y>
-            </center>
-            <radius>150</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
-      </Item>
-      <Item>
-         <type>Receptor</type>
-         <collidesAgainst>PhysicalMovable</collidesAgainst>
-         <cannotOverlap>None</cannotOverlap>
-         <collisionMaterial>Regular</collisionMaterial>
-         <name>Force</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <center>
-               <X>0</X>
-               <Y>0</Y>
-            </center>
-            <radius>170</radius>
-            <boundingBox>
-               <min>
-                  <X>0</X>
-                  <Y>0</Y>
-               </min>
-               <max>
-                  <X>0</X>
-                  <Y>0</Y>
-               </max>
-            </boundingBox>
-         </area>
-      </Item>
+    <Item>
+      <type>Receptor</type>
+      <collidesAgainst>PhysicalDamageable</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Hit</name>
+      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>150</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
+    <Item>
+      <type>Receptor</type>
+      <collidesAgainst>PhysicalMovable</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Force</name>
+      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>170</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </Item>
   </collisionAreas>
   <inflictDamage>
-      <preLoop>Constant</preLoop>
-      <postLoop>Constant</postLoop>
-      <keys>
-         <Item>
-            <position>0</position>
-            <internalValue>65</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-         <Item>
-            <position>150</position>
-            <internalValue>0</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>-65</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-      </keys>
+    <preLoop>Constant</preLoop>
+    <postLoop>Constant</postLoop>
+    <keys>
+      <Item>
+        <position>0</position>
+        <internalValue>65</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>0</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>150</position>
+        <internalValue>0</internalValue>
+        <tangentOut>0</tangentOut>
+        <tangentIn>-65</tangentIn>
+        <continuity>Smooth</continuity>
+      </Item>
+    </keys>
   </inflictDamage>
-  <flowTime>0.25</flowTime>
-  <flowSpeed>
+  <radialFlow>
+    <dragMagnitude>0.003</dragMagnitude>
+    <flowTime>0.25</flowTime>
+    <flowSpeed>
       <preLoop>Constant</preLoop>
       <postLoop>Constant</postLoop>
       <keys>
-         <Item>
-            <position>0</position>
-            <internalValue>2000</internalValue>
-            <tangentOut>-2000</tangentOut>
-            <tangentIn>0</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
-         <Item>
-            <position>170</position>
-            <internalValue>0</internalValue>
-            <tangentOut>0</tangentOut>
-            <tangentIn>-2000</tangentIn>
-            <continuity>Smooth</continuity>
-         </Item>
+        <Item>
+          <position>0</position>
+          <internalValue>2000</internalValue>
+          <tangentOut>-2000</tangentOut>
+          <tangentIn>0</tangentIn>
+          <continuity>Smooth</continuity>
+        </Item>
+        <Item>
+          <position>170</position>
+          <internalValue>0</internalValue>
+          <tangentOut>0</tangentOut>
+          <tangentIn>-2000</tangentIn>
+          <continuity>Smooth</continuity>
+        </Item>
       </keys>
-  </flowSpeed>
+    </flowSpeed>
+  </radialFlow>
 </GobType>

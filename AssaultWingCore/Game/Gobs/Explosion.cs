@@ -11,8 +11,6 @@ namespace AW2.Game.Gobs
     /// </summary>
     public class Explosion : Gob
     {
-        #region Explosion fields
-
         /// <summary>
         /// Amount of damage to inflict as a function of distance from the explosion.
         /// </summary>
@@ -20,24 +18,10 @@ namespace AW2.Game.Gobs
         private Curve _inflictDamage;
 
         /// <summary>
-        /// Speed of gas flow away from the explosion's center, measured in
-        /// meters per second as a function of the distance from the explosion's
-        /// center. Gas flow affects the movement of gobs.
-        /// </summary>
-        [TypeParameter, ShallowCopy]
-        private Curve _flowSpeed;
-
-        /// <summary>
-        /// Time, in seconds of game time, of how long there is a gas flow away
-        /// from the center of the explosion.
+        /// Radial medium flow from the center of the explosion. Pushes gobs away.
         /// </summary>
         [TypeParameter]
-        private float _flowTime;
-
-        /// <summary>
-        /// Time of gas flow end, in game time.
-        /// </summary>
-        private TimeSpan _flowEndTime;
+        private RadialFlow _radialFlow;
 
         /// <summary>
         /// The radius of the hole to make on impact to walls.
@@ -60,10 +44,7 @@ namespace AW2.Game.Gobs
         private TimeSpan? _damageTime;
         private bool _collisionAreaRemoved;
 
-        #endregion Explosion fields
-
         public override bool Cold { get { return false; } }
-
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
 
         /// <summary>
@@ -76,12 +57,7 @@ namespace AW2.Game.Gobs
             _inflictDamage.PostLoop = CurveLoopType.Constant;
             _inflictDamage.Keys.Add(new CurveKey(0, 200, 0, 0, CurveContinuity.Smooth));
             _inflictDamage.Keys.Add(new CurveKey(300, 0, -3, -3, CurveContinuity.Smooth));
-            _flowSpeed = new Curve();
-            _flowSpeed.PreLoop = CurveLoopType.Constant;
-            _flowSpeed.PostLoop = CurveLoopType.Constant;
-            _flowSpeed.Keys.Add(new CurveKey(0, 6000, 0, 0, CurveContinuity.Smooth));
-            _flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
-            _flowTime = 0.5f;
+            _radialFlow = new RadialFlow();
             _impactHoleRadius = 100;
             _particleEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
             _sound = "Explosion";
@@ -97,7 +73,7 @@ namespace AW2.Game.Gobs
             Game.SoundEngine.PlaySound(_sound.ToString(), this);
 
             CreateParticleEngines();
-            _flowEndTime = Arena.TotalTime + TimeSpan.FromSeconds(_flowTime);
+            _radialFlow.Activate(Game.PhysicsEngine, Arena.TotalTime);
             Arena.MakeHole(Pos, _impactHoleRadius);
             base.Activate();
         }
@@ -110,8 +86,7 @@ namespace AW2.Game.Gobs
                 RemoveCollisionAreas(area => area.Name != "Force");
                 _collisionAreaRemoved = true;
             }
-            if (Arena.TotalTime >= _flowEndTime)
-                Die();
+            if (_radialFlow.IsFinished(Arena.TotalTime)) Die();
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
@@ -121,11 +96,7 @@ namespace AW2.Game.Gobs
             // "Force" is assumed to collide only against movables.
             if (myArea.Name == "Force")
             {
-                Vector2 difference = theirArea.Owner.Pos - this.Pos;
-                float differenceLength = difference.Length();
-                Vector2 flow = difference / differenceLength *
-                    _flowSpeed.Evaluate(differenceLength);
-                Game.PhysicsEngine.ApplyDrag(theirArea.Owner, flow, 0.003f);
+                _radialFlow.Apply(Pos, theirArea.Owner);
             }
             else if (myArea.Name == "Hit" && (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime))
             {

@@ -107,25 +107,28 @@
       </Item>
     </keys>
   </inflictDamage>
-  <flowTime>0.35</flowTime>
-  <flowSpeed>
-    <preLoop>Constant</preLoop>
-    <postLoop>Constant</postLoop>
-    <keys>
-      <Item>
-        <position>0</position>
-        <internalValue>2000</internalValue>
-        <tangentOut>-2000</tangentOut>
-        <tangentIn>0</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>250</position>
-        <internalValue>0</internalValue>
-        <tangentOut>0</tangentOut>
-        <tangentIn>-2000</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-    </keys>
-  </flowSpeed>
+  <radialFlow>
+    <dragMagnitude>0.003</dragMagnitude>
+    <flowTime>0.35</flowTime>
+    <flowSpeed>
+      <preLoop>Constant</preLoop>
+      <postLoop>Constant</postLoop>
+      <keys>
+        <Item>
+          <position>0</position>
+          <internalValue>2000</internalValue>
+          <tangentOut>-2000</tangentOut>
+          <tangentIn>0</tangentIn>
+          <continuity>Smooth</continuity>
+        </Item>
+        <Item>
+          <position>250</position>
+          <internalValue>0</internalValue>
+          <tangentOut>0</tangentOut>
+          <tangentIn>-2000</tangentIn>
+          <continuity>Smooth</continuity>
+        </Item>
+      </keys>
+    </flowSpeed>
+  </radialFlow>
 </GobType>

@@ -78,7 +78,7 @@ namespace AW2.Game.Weapons
         private void FireAtTargets(IEnumerable<Gob> targets)
         {
             ForEachShipBarrel(ShipBarrelTypes.Middle, (index, rotation) => CreateShot(Owner, index, targets.First()));
-            Gob previous = targets.First();
+            var previous = targets.First();
             foreach (var target in targets.Skip(1))
             {
                 CreateShot(previous, 0, target);
@@ -90,7 +90,7 @@ namespace AW2.Game.Weapons
         {
             Gob.CreateGob<Lightning>(Owner.Game, shotTypeName, shot =>
             {
-                shot.Owner = source.Owner;
+                shot.Owner = Owner.Owner;
                 shot.Shooter = source;
                 shot.ShooterBoneIndex = sourceBoneIndex;
                 shot.Target = target;

@@ -10,7 +10,7 @@ extra-dimensional conduit. As a
 safety this device wont allow you to
 blink inside a wall</infoText>
 	<reloadSpeed>High</reloadSpeed>
-	<energyUsage>Low</energyUsage>
+	<energyUsage>Average</energyUsage>
 	<usageType>Single</usageType>
     <iconEquipName>menu_equip_mod_blink</iconEquipName>
   </deviceInfo>

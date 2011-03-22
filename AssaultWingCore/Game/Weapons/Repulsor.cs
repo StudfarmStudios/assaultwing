@@ -16,6 +16,13 @@ namespace AW2.Game.Weapons
     {
         [TypeParameter]
         private RadialFlow _radialFlow;
+        [TypeParameter, ShallowCopy]
+        private CanonicalString[] _particleEngineNames;
+
+        /// <summary>
+        /// Game time when repelling ends.
+        /// </summary>
+        private TimeSpan _repelEndTime;
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -23,6 +30,7 @@ namespace AW2.Game.Weapons
         public Repulsor()
         {
             _radialFlow = new RadialFlow();
+            _particleEngineNames = new[] { (CanonicalString)"dummypeng" };
         }
 
         public Repulsor(CanonicalString typeName)
@@ -32,18 +40,20 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            _radialFlow.Activate(Owner.Game.PhysicsEngine, Arena.TotalTime);
+            _radialFlow.Activate(Owner, Arena.TotalTime);
         }
 
         protected override void CreateVisualsImpl()
         {
+            GobHelper.CreatePengs(_particleEngineNames, Owner);
         }
 
         public override void Update()
         {
             base.Update();
-            foreach (var gob in Arena.Gobs.GameplayLayer.Gobs)
-                _radialFlow.Apply(Owner.Pos, gob);
+            if (!_radialFlow.IsFinished(Arena.TotalTime))
+                foreach (var gob in Arena.Gobs.GameplayLayer.Gobs.Where(g => g.Movable))
+                    _radialFlow.Apply(gob);
         }
     }
 }

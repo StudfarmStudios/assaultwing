@@ -59,7 +59,7 @@ namespace AW2.Game.Gobs
             _inflictDamage.Keys.Add(new CurveKey(300, 0, -3, -3, CurveContinuity.Smooth));
             _radialFlow = new RadialFlow();
             _impactHoleRadius = 100;
-            _particleEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
+            _particleEngineNames = new[] { (CanonicalString)"dummypeng" };
             _sound = "Explosion";
         }
 
@@ -71,9 +71,8 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             Game.SoundEngine.PlaySound(_sound.ToString(), this);
-
-            CreateParticleEngines();
-            _radialFlow.Activate(Game.PhysicsEngine, Arena.TotalTime);
+            GobHelper.CreateGobs(_particleEngineNames, Arena, Pos);
+            _radialFlow.Activate(this, Arena.TotalTime);
             Arena.MakeHole(Pos, _impactHoleRadius);
             base.Activate();
         }
@@ -96,7 +95,7 @@ namespace AW2.Game.Gobs
             // "Force" is assumed to collide only against movables.
             if (myArea.Name == "Force")
             {
-                _radialFlow.Apply(Pos, theirArea.Owner);
+                _radialFlow.Apply(theirArea.Owner);
             }
             else if (myArea.Name == "Hit" && (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime))
             {
@@ -104,18 +103,6 @@ namespace AW2.Game.Gobs
                 float distance = theirArea.Area.DistanceTo(this.Pos);
                 float damage = _inflictDamage.Evaluate(distance);
                 theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
-            }
-        }
-
-        private void CreateParticleEngines()
-        {
-            foreach (var pengName in _particleEngineNames)
-            {
-                Gob.CreateGob<Gob>(Game, pengName, gob =>
-                {
-                    gob.ResetPos(this.Pos, Vector2.Zero, Gob.DEFAULT_ROTATION);
-                    Arena.Gobs.Add(gob);
-                });
             }
         }
     }

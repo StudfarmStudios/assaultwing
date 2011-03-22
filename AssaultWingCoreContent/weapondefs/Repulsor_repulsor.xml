@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.Repulsor">
+
+  <deviceInfo>
+    <pictureName>menu_equip_devicepicture_repulsor</pictureName>
+    <titlePictureName>menu_equip_devicename_repulsor</titlePictureName>
+    <infoText>Repulsor(tm) repels all moving obstacles
+from its way. Great help for clearing some
+room whether you're fighting for survival or
+crushing weaker opponents for sport.</infoText>
+    <reloadSpeed>Average</reloadSpeed>
+    <energyUsage>Low</energyUsage>
+    <usageType>Single</usageType>
+    <iconEquipName>menu_equip_mod_repulsor</iconEquipName>
+  </deviceInfo>
+
+  <weaponInfo>
+    <singleShotDamage>Poor</singleShotDamage>
+    <shotSpeed>Poor</shotSpeed>
+    <recoilMomentum>Poor</recoilMomentum>
+  </weaponInfo>
+
+  <typeName>repulsor</typeName>
+  <radialFlow>
+    <dragMagnitude>0.007</dragMagnitude>
+    <flowTime>1.15</flowTime>
+    <flowSpeed>
+      <preLoop>Constant</preLoop>
+      <postLoop>Constant</postLoop>
+      <keys>
+        <Item>
+          <position>0</position>
+          <internalValue>900</internalValue>
+          <tangentIn>0</tangentIn>
+          <tangentOut>0</tangentOut>
+          <continuity>Smooth</continuity>
+        </Item>
+        <Item>
+          <position>450</position>
+          <internalValue>0</internalValue>
+          <tangentIn>-900</tangentIn>
+          <tangentOut>0</tangentOut>
+          <continuity>Smooth</continuity>
+        </Item>
+      </keys>
+    </flowSpeed>
+  </radialFlow>
+  <particleEngineNames>
+    <Item>electric shockwave</Item>
+  </particleEngineNames>
+  <fireSound>DropMines</fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+  <upgradeNames>
+  </upgradeNames>
+  <iconName>dummytexture</iconName>
+  <loadTime>3</loadTime>
+  <fireCharge>350</fireCharge>
+  <fireChargePerSecond>500</fireChargePerSecond>
+  <recoilMomentum>0</recoilMomentum>
+  <shotTypeName>dummygob</shotTypeName>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+</ShipDeviceType>

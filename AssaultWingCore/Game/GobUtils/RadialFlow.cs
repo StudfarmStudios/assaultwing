@@ -40,7 +40,7 @@ namespace AW2.Game.GobUtils
         /// </summary>
         private TimeSpan _flowEndTime;
 
-        private PhysicsEngine _physicsEngine;
+        private Gob _radiator;
 
         /// <summary>
         /// Only for serialization.
@@ -56,18 +56,22 @@ namespace AW2.Game.GobUtils
             _dragMagnitude = 0.003f;
         }
 
-        public void Activate(PhysicsEngine physicsEngine, TimeSpan now)
+        public void Activate(Gob radiator, TimeSpan now)
         {
-            _physicsEngine = physicsEngine;
+            _radiator = radiator;
             _flowEndTime = now + TimeSpan.FromSeconds(_flowTime);
         }
 
-        public void Apply(Vector2 center, Gob gob)
+        public void Apply(Gob gob)
         {
-            var difference = gob.Pos - center;
+            var difference = gob.Pos - _radiator.Pos;
             var differenceLength = difference.Length();
-            var flow = difference / differenceLength * _flowSpeed.Evaluate(differenceLength);
-            _physicsEngine.ApplyDrag(gob, flow, _dragMagnitude);
+            var differenceUnit = differenceLength > 0 ? difference / differenceLength : Vector2.Zero;
+            var flow = differenceUnit * _flowSpeed.Evaluate(differenceLength);
+            var moveBoost = _radiator.Move == Vector2.Zero
+                ? Vector2.Zero
+                : Vector2.Normalize(_radiator.Move) * Vector2.Dot(_radiator.Move, differenceUnit);
+            _radiator.Game.PhysicsEngine.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
         }
 
         public bool IsFinished(TimeSpan now)

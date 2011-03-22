@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using AW2.Game.Gobs;
+﻿using System.Linq;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
@@ -18,11 +14,6 @@ namespace AW2.Game.Weapons
         private RadialFlow _radialFlow;
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _particleEngineNames;
-
-        /// <summary>
-        /// Game time when repelling ends.
-        /// </summary>
-        private TimeSpan _repelEndTime;
 
         /// <summary>
         /// This constructor is only for serialisation.

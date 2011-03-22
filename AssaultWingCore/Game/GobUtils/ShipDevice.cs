@@ -275,10 +275,8 @@ namespace AW2.Game.GobUtils
 
         public virtual void Update()
         {
-            _visualsCreatedThisFrame = false;
-            _soundPlayedThisFrame = false;
-            bool shootOnceAFrame = _shotSpacing <= 0;
-            bool shotThisFrame = false;
+            var shootOnceAFrame = _shotSpacing <= 0;
+            var shotThisFrame = false;
             while (FiringOperator.IsItTimeToShoot && !(shootOnceAFrame && shotThisFrame))
             {
                 shotThisFrame = true;
@@ -305,6 +303,8 @@ namespace AW2.Game.GobUtils
                     if (_visualsCreatedThisFrame) data |= 0x40;
                     if (_soundPlayedThisFrame) data |= 0x80;
                     writer.Write((byte)data);
+                    _visualsCreatedThisFrame = false;
+                    _soundPlayedThisFrame = false;
                 }
             }
         }

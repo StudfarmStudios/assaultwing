@@ -9,28 +9,28 @@ from its way. Great help for clearing some
 room whether you're fighting for survival or
 crushing weaker opponents for sport.</infoText>
     <reloadSpeed>Average</reloadSpeed>
-    <energyUsage>Low</energyUsage>
+    <energyUsage>High</energyUsage>
     <usageType>Single</usageType>
     <iconEquipName>menu_equip_mod_repulsor</iconEquipName>
   </deviceInfo>
 
   <weaponInfo>
-    <singleShotDamage>Poor</singleShotDamage>
-    <shotSpeed>Poor</shotSpeed>
-    <recoilMomentum>Poor</recoilMomentum>
+    <singleShotDamage>Low</singleShotDamage>
+    <shotSpeed>Low</shotSpeed>
+    <recoilMomentum>Low</recoilMomentum>
   </weaponInfo>
 
   <typeName>repulsor</typeName>
   <radialFlow>
-    <dragMagnitude>0.007</dragMagnitude>
-    <flowTime>1.15</flowTime>
+    <dragMagnitude>0.01</dragMagnitude>
+    <flowTime>1.0</flowTime>
     <flowSpeed>
       <preLoop>Constant</preLoop>
       <postLoop>Constant</postLoop>
       <keys>
         <Item>
           <position>0</position>
-          <internalValue>900</internalValue>
+          <internalValue>1400</internalValue>
           <tangentIn>0</tangentIn>
           <tangentOut>0</tangentOut>
           <continuity>Smooth</continuity>
@@ -38,7 +38,7 @@ crushing weaker opponents for sport.</infoText>
         <Item>
           <position>450</position>
           <internalValue>0</internalValue>
-          <tangentIn>-900</tangentIn>
+          <tangentIn>-1400</tangentIn>
           <tangentOut>0</tangentOut>
           <continuity>Smooth</continuity>
         </Item>
@@ -54,7 +54,7 @@ crushing weaker opponents for sport.</infoText>
   </upgradeNames>
   <iconName>dummytexture</iconName>
   <loadTime>3</loadTime>
-  <fireCharge>350</fireCharge>
+  <fireCharge>650</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <recoilMomentum>0</recoilMomentum>
   <shotTypeName>dummygob</shotTypeName>

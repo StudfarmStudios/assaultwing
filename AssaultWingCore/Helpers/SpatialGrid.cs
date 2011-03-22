@@ -127,35 +127,9 @@ namespace AW2.Helpers
         }
 
         /// <summary>
-        /// Returns all elements that intersect a rectangular area.
+        /// Returns elements that intersect a rectangular area.
         /// </summary>
-        /// <param name="area">The rectangular area.</param>
         public IEnumerable<T> GetElements(Rectangle area)
-        {
-            int gridMinX, gridMinY, gridMaxX, gridMaxY;
-            bool outOfBounds;
-            ConvertArea(area, out gridMinX, out gridMinY, out gridMaxX, out gridMaxY, out outOfBounds);
-            
-            var matches = new List<T>();
-            if (outOfBounds)
-                foreach (var element in _outerCell)
-                    matches.Add(element.Value);
-            for (int y = gridMinY; y < gridMaxY; ++y)
-                for (int x = gridMinX; x < gridMaxX; ++x)
-                    foreach (var element in _cells[y, x])
-                        if (Geometry.Intersect(element.BoundingBox, area))
-                            matches.Add(element.Value);
-            return matches;
-        }
-
-        /// <summary>
-        /// Performs an action on each element that intersects a rectangular area.
-        /// If the action returns <c>true</c> then the iteration will break.
-        /// </summary>
-        /// <param name="area">The rectangular area.</param>
-        /// <param name="action">The action to perform. If it returns <c>true</c>,
-        /// the iteration will break.</param>
-        public void ForEachElement(Rectangle area, Predicate<T> action)
         {
             int gridMinX, gridMinY, gridMaxX, gridMaxY;
             bool outOfBounds;
@@ -166,7 +140,7 @@ namespace AW2.Helpers
                 {
                     var cellElement = _outerCell[i];
                     if (!Geometry.Intersect(cellElement.BoundingBox, area)) continue;
-                    if (action(cellElement.Value)) return;
+                    yield return cellElement.Value;
                 }
             for (int y = gridMinY; y < gridMaxY; y++)
                 for (int x = gridMinX; x < gridMaxX; x++)
@@ -177,24 +151,21 @@ namespace AW2.Helpers
                     {
                         var cellElement = cell[i];
                         if (!Geometry.Intersect(cellElement.BoundingBox, area)) continue;
-                        if (action(cellElement.Value)) return;
+                        yield return cellElement.Value;
                     }
                 }
         }
 
         /// <summary>
-        /// Performs an action on each element in the grid. If the action returns
-        /// <c>true</c> then the iteration will break.
+        /// Returns all the elements.
         /// </summary>
-        /// <param name="action">The action to perform. If it returns <c>true</c>,
-        /// the iteration will break.</param>
-        public void ForEachElement(Predicate<T> action)
+        public IEnumerable<T> GetElements()
         {
             for (int i = 0; i < _outerCell.Count; ++i)
-                if (action(_outerCell[i].Value)) return;
+                yield return _outerCell[i].Value;
             foreach (var cell in _cells)
                 for (int i = 0; i < cell.Count; ++i)
-                    if (action(cell[i].Value)) return;
+                    yield return cell[i].Value;
         }
 
         /// <summary>

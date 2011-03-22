@@ -417,7 +417,7 @@ namespace AW2.Game
 
         private void UninitializeAmbientSounds()
         {
-            foreach (SoundInstance sound in _ambientSounds)
+            foreach (var sound in _ambientSounds)
             {
                 if (sound != null)
                     sound.Stop();
@@ -435,13 +435,13 @@ namespace AW2.Game
 
             // HACK! (Add sound property on objects or sound source gob)
 
-            CanonicalString goldObjectId = new CanonicalString("amazon_chest_1");
-            CanonicalString shovelObjectId  = new CanonicalString("amazon_shovel_1");
+            var goldObjectId = new CanonicalString("amazon_chest_1");
+            var shovelObjectId  = new CanonicalString("amazon_shovel_1");
             foreach (var layer in _layers)
             {
                 foreach (var gob in layer.Gobs)
                 {
-                    CanonicalString[] names = gob.ModelNames.ToArray();
+                    var names = gob.ModelNames.ToArray();
 
                     if (names.Contains(goldObjectId))
                     {
@@ -455,7 +455,7 @@ namespace AW2.Game
                     gob.Layer = layer;
                 }
             }
-            foreach (SoundInstance sound in _ambientSounds)
+            foreach (var sound in _ambientSounds)
             {
                 if (sound != null)
                     sound.Play();
@@ -479,20 +479,20 @@ namespace AW2.Game
         {
             if (!gob.Movable) return;
             if (gob.Disabled) return;
-            CollisionArea gobPhysical = gob.PhysicalArea;
+            var gobPhysical = gob.PhysicalArea;
             if (gobPhysical != null) Unregister(gobPhysical);
 
             if (allowSideEffects)
             {
                 // If the gob is stuck, let it resolve the situation.
                 if (gobPhysical != null)
-                    ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, delegate(CollisionArea area2)
+                    foreach (var area2 in GetOverlappers(gobPhysical, gobPhysical.CannotOverlap))
                     {
                         gob.Collide(gobPhysical, area2, true);
                         area2.Owner.Collide(area2, gobPhysical, true);
                         // No need for a physical collision -- the gobs are stuck.
-                        return gob.Dead;
-                    });
+                        if (gob.Dead) break;
+                    }
                 if (gob.Dead) return;
             }
 
@@ -539,15 +539,9 @@ namespace AW2.Game
             {
                 var container = _collisionAreas[bitIndex];
                 if (container != null && _collisionAreaMayCollide[bitIndex])
-                    container.ForEachElement(area =>
-                    {
-                        ForEachOverlapper(area, area.CollidesAgainst, area2 =>
-                        {
+                    foreach (var area in container.GetElements())
+                        foreach (var area2 in GetOverlappers(area, area.CollidesAgainst))
                             area.Owner.Collide(area, area2, false);
-                            return false;
-                        });
-                        return false;
-                    });
             }
         }
 
@@ -668,7 +662,7 @@ namespace AW2.Game
             var wallCheckArea = new CollisionArea("", new Circle(Vector2.Zero, checkRadiusGobCoords), gob,
                 gob.PhysicalArea.Type, gob.PhysicalArea.CollidesAgainst, gob.PhysicalArea.CannotOverlap, CollisionMaterialType.Regular);
             gob.Pos = position;
-            bool result = ArenaBoundaryLegal(gob) && !ForEachOverlapper(wallCheckArea, wallCheckArea.CannotOverlap, null);
+            bool result = ArenaBoundaryLegal(gob) && !GetOverlappers(wallCheckArea, wallCheckArea.CannotOverlap).Any();
 
             // Restore old values
             gob.Pos = oldPos;
@@ -683,11 +677,8 @@ namespace AW2.Game
             var boundingBox = new Rectangle(holePos.X - holeRadius, holePos.Y - holeRadius,
                 holePos.X + holeRadius, holePos.Y + holeRadius);
             int wallBoundsIndex = AWMathHelper.LogTwo((int)CollisionAreaType.WallBounds);
-            _collisionAreas[wallBoundsIndex].ForEachElement(boundingBox, area =>
-            {
+            foreach (var area in _collisionAreas[wallBoundsIndex].GetElements(boundingBox))
                 ((Gobs.Wall)area.Owner).MakeHole(holePos, holeRadius);
-                return false;
-            });
         }
 
         public void PrepareEffect(BasicEffect effect)
@@ -765,7 +756,7 @@ namespace AW2.Game
                 firstIteration = false;
                 gob.Pos = LerpGobPos(oldPos, oldMove, moveTry);
                 bool overlapperFound = gobPhysical == null ? false
-                    : ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, null);
+                    : GetOverlappers(gobPhysical, gobPhysical.CannotOverlap).Any();
                 if (ArenaBoundaryLegal(gob) && !overlapperFound)
                 {
                     moveGood = moveTry;
@@ -785,7 +776,7 @@ namespace AW2.Game
                 gob.Pos = LerpGobPos(oldPos, oldMove, moveBad);
                 if (badDueToOverlappers)
                 {
-                    var physicalColliders = GetPhysicalColliders(gob, gobPhysical);
+                    var physicalColliders = GetPhysicalColliders(gobPhysical);
                     colliders.AddRange(physicalColliders);
                     foreach (var collider in colliders) PerformCollision(gobPhysical, collider, allowSideEffects);
                 }
@@ -803,56 +794,37 @@ namespace AW2.Game
             return startPos + move * (float)moveTime.TotalSeconds;
         }
 
-        private IEnumerable<CollisionArea> GetPhysicalColliders(Gob gob, CollisionArea gobPhysical)
+        private IEnumerable<CollisionArea> GetPhysicalColliders(CollisionArea gobPhysical)
         {
-            var colliders = new List<CollisionArea>();
-            ForEachOverlapper(gobPhysical, gobPhysical.CannotOverlap, area2 => { colliders.Add(area2); return false;});
-            return colliders;
+            return GetOverlappers(gobPhysical, gobPhysical.CannotOverlap);
         }
 
         /// <summary>
-        /// Performs an action on each collision area of certain types that overlap a collision area,
-        /// or just finds out if there are any overlappers.
+        /// Returns collision areas of certain types that overlap a collision area.
         /// </summary>
-        /// <param name="area">The collision area to check overlap against.</param>
-        /// <param name="types">The types of collision areas to consider.</param>
-        /// <param name="action">The action to perform on each overlapper, or if <b>null</b>
-        /// then the method will return on first found overlapper.
-        /// If the action returns <b>true</b>, the iteration will break.</param>
-        /// <returns><b>true</b> if an overlapper was found, <b>false</b> otherwise.</returns>
-        private bool ForEachOverlapper(CollisionArea area, CollisionAreaType types,
-            Predicate<CollisionArea> action)
+        private IEnumerable<CollisionArea> GetOverlappers(CollisionArea area, CollisionAreaType types)
         {
             var areaArea = area.Area;
             var boundingBox = areaArea.BoundingBox;
-            bool overlapperFound = false;
-            Gob areaOwner = area.Owner;
-            bool areaOwnerCold = areaOwner.Cold;
-            Player areaOwnerOwner = areaOwner.Owner;
-            bool breakOut = false;
+            var areaOwner = area.Owner;
+            var areaOwnerCold = areaOwner.Cold;
+            var areaOwnerOwner = areaOwner.Owner;
             for (int typeBit = 0; typeBit < _collisionAreas.Length; ++typeBit)
             {
                 if (((1 << typeBit) & (int)types) == 0) continue;
-                _collisionAreas[typeBit].ForEachElement(boundingBox, delegate(CollisionArea area2)
+                foreach (var area2 in _collisionAreas[typeBit].GetElements(boundingBox))
                 {
-                    if (!Geometry.Intersect(areaArea, area2.Area)) return false;
+                    if (!Geometry.Intersect(areaArea, area2.Area)) continue;
                     Gob area2Owner = area2.Owner;
-                    if (areaOwner == area2Owner) return false;
-                    if (area2Owner.Disabled) return false;
+                    if (areaOwner == area2Owner) continue;
+                    if (area2Owner.Disabled) continue;
                     if ((areaOwnerCold || area2Owner.Cold) &&
                         areaOwnerOwner != null &&
                         areaOwnerOwner == area2Owner.Owner)
-                        return false;
-
-                    // All checks passed.
-                    overlapperFound = true;
-                    if (action == null || action(area2))
-                        breakOut = true;
-                    return breakOut;
-                });
-                if (breakOut) break;
+                        continue;
+                    yield return area2;
+                }
             }
-            return overlapperFound;
         }
 
         /// <summary>

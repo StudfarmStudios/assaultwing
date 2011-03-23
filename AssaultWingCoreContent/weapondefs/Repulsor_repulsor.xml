@@ -4,10 +4,12 @@
   <deviceInfo>
     <pictureName>menu_equip_devicepicture_repulsor</pictureName>
     <titlePictureName>menu_equip_devicename_repulsor</titlePictureName>
-    <infoText>Repulsor(tm) repels all moving obstacles
-from its way. Great help for clearing some
-room whether you're fighting for survival or
-crushing weaker opponents for sport.</infoText>
+    <infoText>
+      Repulsor(tm) repels all moving obstacles
+      from its way. Great help for clearing some
+      room whether you're fighting for survival or
+      crushing weaker opponents for sport.
+    </infoText>
     <reloadSpeed>Average</reloadSpeed>
     <energyUsage>High</energyUsage>
     <usageType>Single</usageType>
@@ -44,6 +46,30 @@ crushing weaker opponents for sport.</infoText>
         </Item>
       </keys>
     </flowSpeed>
+    <collisionArea>
+      <type>Receptor</type>
+      <collidesAgainst>PhysicalMovable</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Force</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>7500</radius> <!-- 450 / 0.06 = 7500; 0.06 is common ship scale -->
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </collisionArea>
   </radialFlow>
   <particleEngineNames>
     <Item>electric shockwave</Item>
@@ -54,7 +80,7 @@ crushing weaker opponents for sport.</infoText>
   </upgradeNames>
   <iconName>dummytexture</iconName>
   <loadTime>3</loadTime>
-  <fireCharge>650</fireCharge>
+  <fireCharge>300</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <recoilMomentum>0</recoilMomentum>
   <shotTypeName>dummygob</shotTypeName>

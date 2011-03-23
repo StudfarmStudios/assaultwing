@@ -727,7 +727,7 @@ namespace AW2.Game
             LoadContent();
             if (Arena.IsForPlaying)
             {
-                TransformUnmovableCollisionAreas();
+                TransformUnmovableCollisionAreas(_collisionAreas);
                 CreateBirthGobs();
                 CreateModelBirthGobs();
                 CreateExhaustEngines();
@@ -1291,11 +1291,14 @@ namespace AW2.Game
         /// <summary>
         /// Pretransforms the gob's collision areas if the gob is unmovable.
         /// </summary>
-        private void TransformUnmovableCollisionAreas()
+        public void TransformUnmovableCollisionAreas(IEnumerable<CollisionArea> collisionAreas)
         {
             if (Movable) return;
-            foreach (var area in _collisionAreas)
+            foreach (var area in collisionAreas)
+            {
+                if (area.Owner != this) throw new ApplicationException("Trying to transform area to a non-owner");
                 area.AreaGob = area.AreaGob.Transform(WorldMatrix);
+            }
         }
 
         public void SelfDestruct(CanonicalString[] deathGobTypes)

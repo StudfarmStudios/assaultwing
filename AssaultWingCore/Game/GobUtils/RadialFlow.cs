@@ -36,6 +36,12 @@ namespace AW2.Game.GobUtils
         private float _dragMagnitude;
 
         /// <summary>
+        /// Area of effect of the medium flow.
+        /// </summary>
+        [TypeParameter]
+        private CollisionArea _collisionArea;
+
+        /// <summary>
         /// Time of medium flow end, in game time.
         /// </summary>
         private TimeSpan _flowEndTime;
@@ -54,15 +60,29 @@ namespace AW2.Game.GobUtils
             _flowSpeed.Keys.Add(new CurveKey(300, 0, -1.5f, -1.5f, CurveContinuity.Smooth));
             _flowTime = 0.5f;
             _dragMagnitude = 0.003f;
+            _collisionArea = new CollisionArea();
         }
 
         public void Activate(Gob radiator, TimeSpan now)
         {
             _radiator = radiator;
+            _collisionArea.Owner = radiator;
+            radiator.TransformUnmovableCollisionAreas(new[] { _collisionArea });
             _flowEndTime = now + TimeSpan.FromSeconds(_flowTime);
         }
 
-        public void Apply(Gob gob)
+        public void Update()
+        {
+            foreach (var gob in _radiator.Arena.GetOverlappingGobs(_collisionArea, _collisionArea.CollidesAgainst))
+                Apply(gob);
+        }
+
+        public bool IsFinished(TimeSpan now)
+        {
+            return now >= _flowEndTime;
+        }
+
+        private void Apply(Gob gob)
         {
             var difference = gob.Pos - _radiator.Pos;
             var differenceLength = difference.Length();
@@ -72,11 +92,6 @@ namespace AW2.Game.GobUtils
                 ? Vector2.Zero
                 : Vector2.Normalize(_radiator.Move) * Vector2.Dot(_radiator.Move, differenceUnit);
             _radiator.Game.PhysicsEngine.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
-        }
-
-        public bool IsFinished(TimeSpan now)
-        {
-            return now >= _flowEndTime;
         }
     }
 }

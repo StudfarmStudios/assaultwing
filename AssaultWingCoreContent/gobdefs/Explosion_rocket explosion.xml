@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.Explosion, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.Explosion">
   <typeName>rocket explosion</typeName>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
@@ -56,30 +56,6 @@
         </boundingBox>
       </area>
     </Item>
-    <Item>
-      <type>Receptor</type>
-      <collidesAgainst>PhysicalMovable</collidesAgainst>
-      <cannotOverlap>None</cannotOverlap>
-      <collisionMaterial>Regular</collisionMaterial>
-      <name>Force</name>
-      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <center>
-          <X>0</X>
-          <Y>0</Y>
-        </center>
-        <radius>140</radius>
-        <boundingBox>
-          <min>
-            <X>0</X>
-            <Y>0</Y>
-          </min>
-          <max>
-            <X>0</X>
-            <Y>0</Y>
-          </max>
-        </boundingBox>
-      </area>
-    </Item>
   </collisionAreas>
   <inflictDamage>
     <preLoop>Constant</preLoop>
@@ -124,5 +100,29 @@
         </Item>
       </keys>
     </flowSpeed>
+    <collisionArea>
+      <type>Receptor</type>
+      <collidesAgainst>PhysicalMovable</collidesAgainst>
+      <cannotOverlap>None</cannotOverlap>
+      <collisionMaterial>Regular</collisionMaterial>
+      <name>Force</name>
+      <area type="AW2.Helpers.Geometric.Circle">
+        <center>
+          <X>0</X>
+          <Y>0</Y>
+        </center>
+        <radius>140</radius>
+        <boundingBox>
+          <min>
+            <X>0</X>
+            <Y>0</Y>
+          </min>
+          <max>
+            <X>0</X>
+            <Y>0</Y>
+          </max>
+        </boundingBox>
+      </area>
+    </collisionArea>
   </radialFlow>
 </GobType>

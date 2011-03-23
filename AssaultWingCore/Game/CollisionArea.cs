@@ -129,7 +129,7 @@ namespace AW2.Game
         {
             get
             {
-                if (!_owner.Movable)
+                if (_owner == null || !_owner.Movable)
                     return _area;
                 if (!_owner.WorldMatrix.Equals(_oldWorldMatrix))
                 {

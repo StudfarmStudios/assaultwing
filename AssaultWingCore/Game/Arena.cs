@@ -599,6 +599,11 @@ namespace AW2.Game
             area.CollisionData = null;
         }
 
+        public IEnumerable<Gob> GetOverlappingGobs(CollisionArea area, CollisionAreaType types)
+        {
+            return GetOverlappers(area, types).Select(area2 => area2.Owner);
+        }
+
         /// <summary>
         /// Tries to return a position in an area of the game world 
         /// where a gob is overlap consistent (e.g. not inside a wall).
@@ -807,8 +812,8 @@ namespace AW2.Game
             var areaArea = area.Area;
             var boundingBox = areaArea.BoundingBox;
             var areaOwner = area.Owner;
-            var areaOwnerCold = areaOwner.Cold;
-            var areaOwnerOwner = areaOwner.Owner;
+            var areaOwnerCold = areaOwner != null && areaOwner.Cold;
+            var areaOwnerOwner = areaOwner == null ? null : areaOwner.Owner;
             for (int typeBit = 0; typeBit < _collisionAreas.Length; ++typeBit)
             {
                 if (((1 << typeBit) & (int)types) == 0) continue;

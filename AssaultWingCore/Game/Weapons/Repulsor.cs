@@ -43,8 +43,7 @@ namespace AW2.Game.Weapons
         {
             base.Update();
             if (!_radialFlow.IsFinished(Arena.TotalTime))
-                foreach (var gob in Arena.Gobs.GameplayLayer.Gobs.Where(g => g.Movable))
-                    _radialFlow.Apply(gob);
+                _radialFlow.Update();
         }
     }
 }

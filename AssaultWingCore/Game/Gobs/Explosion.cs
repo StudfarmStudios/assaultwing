@@ -82,25 +82,19 @@ namespace AW2.Game.Gobs
             base.Update();
             if (!_collisionAreaRemoved)
             {
-                RemoveCollisionAreas(area => area.Name != "Force");
+                RemoveCollisionAreas(area => true);
                 _collisionAreaRemoved = true;
             }
             if (_radialFlow.IsFinished(Arena.TotalTime)) Die();
+            _radialFlow.Update();
         }
 
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
-            // We assume we have only these collision areas, all receptors with specific names:
-            // "Hit" is assumed to collide only against damageables;
-            // "Force" is assumed to collide only against movables.
-            if (myArea.Name == "Force")
-            {
-                _radialFlow.Apply(theirArea.Owner);
-            }
-            else if (myArea.Name == "Hit" && (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime))
+            if (!_damageTime.HasValue || _damageTime.Value == Game.GameTime.TotalGameTime)
             {
                 _damageTime = Game.GameTime.TotalGameTime;
-                float distance = theirArea.Area.DistanceTo(this.Pos);
+                float distance = theirArea.Area.DistanceTo(Pos);
                 float damage = _inflictDamage.Evaluate(distance);
                 theirArea.Owner.InflictDamage(damage, new DamageInfo(this));
             }

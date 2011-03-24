@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.Cloak">
+
+  <deviceInfo>
+    <pictureName>menu_equip_devicepicture_blink</pictureName>
+    <titlePictureName>menu_equip_devicename_blink</titlePictureName>
+    <infoText>
+      Cloak lets light pierce your ship's
+      hull safely, effectively hiding you from opponents.
+      While cloaked, you can easily sneak to close
+      range and launch a surprise attack. Note that
+      using your weapons will rupture the light
+      reflection field, rendering you fully visible.
+    </infoText>
+    <reloadSpeed>High</reloadSpeed>
+    <energyUsage>Low</energyUsage>
+    <usageType>Continuous</usageType>
+    <iconEquipName>menu_equip_mod_blink</iconEquipName>
+  </deviceInfo>
+
+  <typeName>cloak</typeName>
+  <cloakStrength>0.9</cloakStrength>
+  <fireSound>Blink</fireSound>
+  <fireSoundType>Once</fireSoundType>
+  <iconName>menu_equip_mod_blink</iconName>
+  <loadTime>1</loadTime>
+  <fireCharge>500</fireCharge>
+  <fireChargePerSecond>100</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>1</shotSpacing>
+</ShipDeviceType>

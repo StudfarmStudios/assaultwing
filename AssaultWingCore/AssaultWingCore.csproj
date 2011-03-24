@@ -196,6 +196,9 @@
     <Compile Include="Game\PostprocessEffectNameContainer.cs" />
     <Compile Include="Game\Spectator.cs" />
     <Compile Include="Game\Weapons\Blink.cs" />
+    <Compile Include="Game\Weapons\Cloak.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Game\Weapons\Repulsor.cs" />
     <Compile Include="Game\Weapons\ForwardShot.cs" />
     <Compile Include="Game\Weapons\LightningGun.cs" />

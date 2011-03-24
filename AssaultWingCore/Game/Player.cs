@@ -236,6 +236,15 @@ namespace AW2.Game
 
         #endregion Player properties about statistics
 
+        #region Events
+
+        /// <summary>
+        /// Called after the primary or secondary weapon of the player's ship is fired.
+        /// </summary>
+        public event Action WeaponFired;
+
+        #endregion Events
+
         #region Constructors
 
         static Player()
@@ -544,13 +553,18 @@ namespace AW2.Game
             if (Controls.Right.Force > 0)
                 Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
             if (Controls.Right.Force == 0 && Controls.Left.Force == 0)
-            {
                 Ship.StopTurning();
-            }
             if (Controls.Fire1.Pulse || Controls.Fire1.Force > 0)
+            {
                 Ship.Weapon1.Fire(Controls.Fire1.State);
+                if (WeaponFired != null) WeaponFired();
+            }
             if (Controls.Fire2.Pulse || Controls.Fire2.Force > 0)
+            {
                 Ship.Weapon2.Fire(Controls.Fire2.State);
+                if (WeaponFired != null) WeaponFired();
+            }
+
             if (Controls.Extra.Pulse || Controls.Extra.Force > 0)
                 Ship.ExtraDevice.Fire(Controls.Extra.State);
         }

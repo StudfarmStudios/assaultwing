@@ -34,7 +34,7 @@ namespace AW2.Game.GobUtils
             if (!CanFire) return true;
             if (!base.TryFire()) return false;
             _fireThisFrame = true;
-            Device.Charge -= Device.FireChargePerSecond * (float)Device.Owner.Game.GameTime.ElapsedGameTime.TotalSeconds;
+            UseChargeForOneFrame();
             return true;
         }
 
@@ -42,6 +42,11 @@ namespace AW2.Game.GobUtils
         {
             base.Update();
             _fireThisFrame = false;
+        }
+
+        public void UseChargeForOneFrame()
+        {
+            Device.Charge -= Device.FireChargePerSecond * (float)Device.Owner.Game.GameTime.ElapsedGameTime.TotalSeconds;
         }
     }
 }

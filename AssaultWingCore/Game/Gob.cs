@@ -178,11 +178,6 @@ namespace AW2.Game
         private float _scale;
 
         /// <summary>
-        /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
-        /// </summary>
-        private float _alpha;
-
-        /// <summary>
         /// Types of gobs to create on birth.
         /// </summary>
         [TypeParameter, ShallowCopy]
@@ -476,7 +471,7 @@ namespace AW2.Game
         /// <summary>
         /// Amount of alpha to use when drawing the gob's 3D model, between 0 and 1.
         /// </summary>
-        public float Alpha { get { return _alpha; } set { _alpha = value; } }
+        public float Alpha { get; set; }
 
         public float AgeInGameSeconds { get { return _birthTime.SecondsAgoGameTime(); } }
 
@@ -623,7 +618,7 @@ namespace AW2.Game
             Gravitating = true;
             ResetPos(new Vector2(float.NaN), Vector2.Zero, float.NaN); // resets Pos and Rotation smoothing on game clients
             _exhaustEngines = new Gob[0];
-            _alpha = 1;
+            Alpha = 1;
             _previousBleach = -1;
         }
 

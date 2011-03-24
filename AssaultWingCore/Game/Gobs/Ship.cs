@@ -511,26 +511,6 @@ namespace AW2.Game.Gobs
             Turn(-force, duration);
         }
 
-        /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>
-        private void Turn(float force, TimeSpan duration)
-        {
-            force = MathHelper.Clamp(force, -1f, 1f);
-            float deltaRotation = Game.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
-            Rotation += deltaRotation;
-
-            Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
-            float moveLength = Move.Length();
-            float headingFactor = // fancy roll
-                moveLength == 0 ? 0 :
-                moveLength <= _maxSpeed ? Vector2.Dot(headingNormal, Move / _maxSpeed) :
-                Vector2.Dot(headingNormal, Move / moveLength);
-            //float headingFactor = 1.0f; // naive roll
-            _rollAngle.Target = -_rollMax * force * headingFactor;
-            _rollAngleGoalUpdated = true;
-            
-            _turning = true;
-        }
-
         #endregion Ship public methods
 
         private SpriteFont playerNameFont;
@@ -656,6 +636,26 @@ namespace AW2.Game.Gobs
         {
             device.AttachTo(this, ownerHandle);
             device.Owner.Game.DataEngine.Devices.Add(device);
+        }
+
+        /// <param name="force">Force of turn; (0,1] for a left turn, or [-1,0) for a right turn.</param>
+        private void Turn(float force, TimeSpan duration)
+        {
+            force = MathHelper.Clamp(force, -1f, 1f);
+            float deltaRotation = Game.PhysicsEngine.ApplyChange(force * _turnSpeed, duration);
+            Rotation += deltaRotation;
+
+            Vector2 headingNormal = Vector2.Transform(Vector2.UnitX, Matrix.CreateRotationZ(Rotation));
+            float moveLength = Move.Length();
+            float headingFactor = // fancy roll
+                moveLength == 0 ? 0 :
+                moveLength <= _maxSpeed ? Vector2.Dot(headingNormal, Move / _maxSpeed) :
+                Vector2.Dot(headingNormal, Move / moveLength);
+            //float headingFactor = 1.0f; // naive roll
+            _rollAngle.Target = -_rollMax * force * headingFactor;
+            _rollAngleGoalUpdated = true;
+
+            _turning = true;
         }
 
         private void UpdateRoll()

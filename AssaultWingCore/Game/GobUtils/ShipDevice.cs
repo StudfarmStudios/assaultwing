@@ -51,8 +51,6 @@ namespace AW2.Game.GobUtils
 
         #region Fields
 
-        private const string FIRING_FAIL_SOUND = "WeaponFail";
-
         /// <summary>
         /// Name of the icon of the weapon, to be displayed in weapon selection 
         /// and bonus display.
@@ -262,12 +260,12 @@ namespace AW2.Game.GobUtils
                     }
                     else
                     {
-                        PlayerOwner.Game.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
+                        PlayFiringFailedSound();
                     }
                     break;
                 case FiringPermissionAnswer.Blocked: break;
                 case FiringPermissionAnswer.Disallowed:
-                    PlayerOwner.Game.SoundEngine.PlaySound(FIRING_FAIL_SOUND);
+                    PlayFiringFailedSound();
                     break;
                 default: throw new ApplicationException("Unknown FiringPermissionAnswer");
             }
@@ -335,6 +333,12 @@ namespace AW2.Game.GobUtils
             if (PlayerOwner.Game.NetworkMode == NetworkMode.Client) return;
             CreateVisualsImpl();
             _visualsCreatedThisFrame = true;
+        }
+
+        private void PlayFiringFailedSound()
+        {
+            if (PlayerOwner != null && !PlayerOwner.IsRemote)
+                PlayerOwner.Game.SoundEngine.PlaySound("WeaponFail");
         }
 
         private void PlayFiringSound()

@@ -733,6 +733,10 @@ namespace AW2.Game
                 CreateExhaustEngines();
             }
 
+            foreach (var mesh in Model.Meshes)
+                foreach (BasicEffect be in mesh.Effects)
+                    Arena.PrepareEffect(be);
+
             // Create draw bounding volume
             VertexPositionNormalTexture[] vertexData;
             short[] indexData;
@@ -805,94 +809,15 @@ namespace AW2.Game
             IsDisposed = true;
         }
 
-        /// <summary>
-        /// Draws the gob's 3D graphics.
-        /// </summary>
-        /// <param name="view">The view matrix.</param>
-        /// <param name="projection">The projection matrix.</param>
         public virtual void Draw(Matrix view, Matrix projection)
         {
-            var world = WorldMatrix;
-
-            // Draw each mesh in the 3D model.
-            foreach (var mesh in Model.Meshes)
-            {
-                // Apply alpha.
-                float oldAlpha = 1;
-                if (_alpha < 1)
-                {
-                    // For now we assume only one ModelMeshPart. (Laziness.)
-                    if (mesh.Effects.Count > 1)
-                        throw new ApplicationException("Error: Several effects on a gob with alpha effect. Programmer must use arrays for saving BasicEffect state.");
-                    var be = (BasicEffect)mesh.Effects[0];
-                    oldAlpha = be.Alpha;
-                    be.Alpha = _alpha;
-
-                    // Modify render state.
-                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-                }
-
-                foreach (BasicEffect be in mesh.Effects)
-                {
-                    Arena.PrepareEffect(be);
-                    be.Projection = projection;
-                    be.View = view;
-                    be.World = ModelPartTransforms[mesh.ParentBone.Index] * world;
-                }
-                mesh.Draw();
-
-                // Undo alpha application.
-                if (_alpha < 1)
-                {
-                    // For now we assume only one ModelMeshPart. (Laziness.)
-                    var be = (BasicEffect)mesh.Effects[0];
-                    be.Alpha = oldAlpha;
-
-                    // Restore render state.
-                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.Opaque;
-                }
-
-                // Blend towards white if required.
-                float bleachFactor = GetBleach();
-                if (bleachFactor > 0)
-                {
-                    // For now we assume only one ModelMeshPart. (Laziness.)
-                    if (mesh.Effects.Count > 1)
-                        throw new Exception("Error: Several effects on a flashing gob. Programmer must use arrays for saving BasicEffect state.");
-                    var be = (BasicEffect)mesh.Effects[0];
-
-                    // Modify render state.
-                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-                    Game.GraphicsDeviceService.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-
-                    // Save effect state.
-                    bool oldLightingEnabled = be.LightingEnabled;
-                    bool oldTextureEnabled = be.TextureEnabled;
-                    bool oldVertexColorEnabled = be.VertexColorEnabled;
-                    var oldDiffuseColor = be.DiffuseColor;
-                    oldAlpha = be.Alpha;
-
-                    // Set effect state to bleach.
-                    be.LightingEnabled = false;
-                    be.TextureEnabled = false;
-                    be.VertexColorEnabled = false;
-                    be.DiffuseColor = Vector3.One;
-                    be.Alpha = bleachFactor;
-
-                    mesh.Draw();
-
-                    // Restore original effect state.
-                    be.LightingEnabled = oldLightingEnabled;
-                    be.TextureEnabled = oldTextureEnabled;
-                    be.VertexColorEnabled = oldVertexColorEnabled;
-                    be.DiffuseColor = oldDiffuseColor;
-                    be.Alpha = oldAlpha;
-
-                    // Restore render state.
-                    Game.GraphicsDeviceService.GraphicsDevice.BlendState = BlendState.Opaque;
-                    Game.GraphicsDeviceService.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                }
-            }
+            float bleachFactor = GetBleach();
+            if (bleachFactor > 0)
+                ModelRenderer.DrawBleached(Model, WorldMatrix, view, projection, ModelPartTransforms, bleachFactor);
+            else if (Alpha < 1)
+                ModelRenderer.DrawTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, Alpha);
+            else
+                ModelRenderer.Draw(Model, WorldMatrix, view, projection, ModelPartTransforms);
         }
 
         /// <summary>

@@ -211,6 +211,7 @@
     <Compile Include="Graphics\DrawMode2D.cs" />
     <Compile Include="Graphics\GraphicsEngineImpl.cs" />
     <Compile Include="Graphics\HorizontalAlignment.cs" />
+    <Compile Include="Graphics\ModelRenderer.cs" />
     <Compile Include="Graphics\OverlayComponent.cs" />
     <Compile Include="Graphics\OverlayComponents\BonusListOverlay.cs" />
     <Compile Include="Graphics\OverlayComponents\ChatBoxOverlay.cs" />

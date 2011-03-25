@@ -339,7 +339,7 @@ namespace AW2.Game.Gobs
         {
             Gob.CreateGob<Peng>(Game, (CanonicalString)"playerglow", gob =>
             {
-                gob.Owner = Owner;
+                gob.OwnerProxy = OwnerProxy;
                 gob.Leader = this;
                 Game.DataEngine.Arena.Gobs.Add(gob);
             });

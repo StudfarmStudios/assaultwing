@@ -448,8 +448,8 @@ namespace AW2.Game
         /// <summary>
         /// The player who owns the gob. Can be null for impartial gobs.
         /// </summary>
-        public Player Owner { get { return _ownerProxy != null ? _ownerProxy.GetValue() : null; } set { _ownerProxy = value; } }
-        private LazyProxy<int, Player> _ownerProxy;
+        public Player Owner { get { return OwnerProxy != null ? OwnerProxy.GetValue() : null; } set { OwnerProxy = value; } }
+        public LazyProxy<int, Player> OwnerProxy { get; set; }
 
         /// <summary>
         /// Arena layer of the gob, or <c>null</c> if uninitialised. Set by <see cref="Arena"/>.
@@ -902,8 +902,8 @@ namespace AW2.Game
                 byte flags = reader.ReadByte();
                 if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
                 int ownerID = reader.ReadSByte();
-                _ownerProxy = new LazyProxy<int, Player>(FindPlayer);
-                _ownerProxy.SetData(ownerID);
+                OwnerProxy = new LazyProxy<int, Player>(FindPlayer);
+                OwnerProxy.SetData(ownerID);
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {

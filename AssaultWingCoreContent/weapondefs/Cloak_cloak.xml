@@ -20,12 +20,38 @@
   </deviceInfo>
 
   <typeName>cloak</typeName>
-  <cloakStrength>0.9</cloakStrength>
+  <cloakStrengthForVelocity>
+    <preLoop>Constant</preLoop>
+    <postLoop>Constant</postLoop>
+    <keys>
+      <Item>
+        <position>0.0</position>
+        <internalValue>0.99</internalValue>
+        <tangentIn>0</tangentIn>
+        <tangentOut>-0.04</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>100</position>
+        <internalValue>0.95</internalValue>
+        <tangentIn>-0.06</tangentIn>
+        <tangentOut>-0.18</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+      <Item>
+        <position>400</position>
+        <internalValue>0.75</internalValue>
+        <tangentIn>-0.2</tangentIn>
+        <tangentOut>0</tangentOut>
+        <continuity>Smooth</continuity>
+      </Item>
+    </keys>
+  </cloakStrengthForVelocity>
   <fireSound>Blink</fireSound>
   <fireSoundType>Once</fireSoundType>
   <iconName>menu_equip_mod_catmoflage</iconName>
-  <loadTime>1</loadTime>
-  <fireCharge>500</fireCharge>
+  <loadTime>0.5</loadTime>
+  <fireCharge>0</fireCharge>
   <fireChargePerSecond>100</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>1</shotSpacing>

@@ -54,5 +54,10 @@ namespace AW2.Game.GobUtils
         {
             _nextShot += TimeSpan.FromSeconds(Device.ShotSpacing);
         }
+
+        public void UseChargeForOneFrame()
+        {
+            Device.Charge -= Device.FireChargePerSecond * (float)Device.Owner.Game.GameTime.ElapsedGameTime.TotalSeconds;
+        }
     }
 }

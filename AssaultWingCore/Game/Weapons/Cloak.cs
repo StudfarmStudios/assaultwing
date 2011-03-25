@@ -17,6 +17,7 @@ namespace AW2.Game.Weapons
         private float _cloakStrength;
 
         private bool _active;
+        private bool _weaponFiredHandlerAdded;
 
         private new FiringOperatorContinuous FiringOperator {
             get { return (FiringOperatorContinuous)base.FiringOperator; }
@@ -39,7 +40,6 @@ namespace AW2.Game.Weapons
         public override void Activate()
         {
             FiringOperator = new FiringOperatorContinuous(this);
-            PlayerOwner.WeaponFired += WeaponFiredHandler;
         }
 
         public override void Dispose()
@@ -70,6 +70,8 @@ namespace AW2.Game.Weapons
 
         private void ActivateCloak()
         {
+            if (!_weaponFiredHandlerAdded) PlayerOwner.WeaponFired += WeaponFiredHandler;
+            _weaponFiredHandlerAdded = true;
             _active = true;
             Owner.Alpha = 1 - _cloakStrength; // TODO: Alter ship alpha based on ship velocity
         }

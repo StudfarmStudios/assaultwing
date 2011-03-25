@@ -49,6 +49,8 @@ namespace AW2.Game.GobUtils
             Disallowed,
         }
 
+        private enum SerializationState { DontSerialize, SerializeNextAvailableFrame, SerializedThisFrame };
+
         #region Fields
 
         /// <summary>
@@ -113,8 +115,8 @@ namespace AW2.Game.GobUtils
 
         private ChargeProvider _chargeProvider;
         private float _charge;
-        private bool _visualsCreatedThisFrame;
-        private bool _soundPlayedThisFrame;
+        private SerializationState _visualsCreatedThisFrame;
+        private SerializationState _soundPlayedThisFrame;
 
         #endregion
 
@@ -284,6 +286,10 @@ namespace AW2.Game.GobUtils
                 FiringOperator.ShotFired();
             }
             FiringOperator.Update();
+            if (_soundPlayedThisFrame == SerializationState.SerializedThisFrame)
+                _soundPlayedThisFrame = SerializationState.DontSerialize;
+            if (_visualsCreatedThisFrame == SerializationState.SerializedThisFrame)
+                _visualsCreatedThisFrame = SerializationState.DontSerialize;
         }
 
         /// <summary>
@@ -298,11 +304,11 @@ namespace AW2.Game.GobUtils
                 if ((mode & SerializationModeFlags.VaryingData) != 0)
                 {
                     byte data = (byte)(0x3f * Charge / ChargeMax);
-                    if (_visualsCreatedThisFrame) data |= 0x40;
-                    if (_soundPlayedThisFrame) data |= 0x80;
+                    if (_visualsCreatedThisFrame != SerializationState.DontSerialize) data |= 0x40;
+                    if (_soundPlayedThisFrame != SerializationState.DontSerialize) data |= 0x80;
                     writer.Write((byte)data);
-                    _visualsCreatedThisFrame = false;
-                    _soundPlayedThisFrame = false;
+                    _visualsCreatedThisFrame = SerializationState.SerializedThisFrame;
+                    _soundPlayedThisFrame = SerializationState.SerializedThisFrame;
                 }
             }
         }
@@ -332,7 +338,7 @@ namespace AW2.Game.GobUtils
         {
             if (PlayerOwner.Game.NetworkMode == NetworkMode.Client) return;
             CreateVisualsImpl();
-            _visualsCreatedThisFrame = true;
+            _visualsCreatedThisFrame = SerializationState.SerializeNextAvailableFrame;
         }
 
         private void PlayFiringFailedSound()
@@ -345,7 +351,7 @@ namespace AW2.Game.GobUtils
         {
             if (PlayerOwner.Game.NetworkMode == NetworkMode.Client) return;
             PlayFiringSoundImpl();
-            _soundPlayedThisFrame = true;
+            _soundPlayedThisFrame = SerializationState.SerializeNextAvailableFrame;
         }
 
         private void PlayFiringSoundImpl()

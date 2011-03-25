@@ -159,6 +159,7 @@ namespace AW2.Game.Gobs
         #region Ship fields for signalling visual things over the network
 
         private float _visualThrustForce;
+        private bool _visualThrustForceSerializedThisFrame;
 
         #endregion Ship fields for signalling visual things over the network
 
@@ -372,7 +373,7 @@ namespace AW2.Game.Gobs
             foreach (Gob gob in _temporarilyDisabledGobs) gob.Enable();
             _temporarilyDisabledGobs.Clear();
 
-            UpdateThrustOnClient();
+            UpdateThrustInNetworkGame();
             UpdateExhaustEngines();
             UpdateCoughEngines();
             UpdateCharges();
@@ -421,7 +422,7 @@ namespace AW2.Game.Gobs
             if ((shipMode & SerializationModeFlags.VaryingData) != 0)
             {
                 writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
-                _visualThrustForce = 0;
+                _visualThrustForceSerializedThisFrame = true;
             }
             Weapon1.Serialize(writer, shipMode);
             Weapon2.Serialize(writer, shipMode);
@@ -667,13 +668,24 @@ namespace AW2.Game.Gobs
             _rollAngleGoalUpdated = false;
         }
 
-        private void UpdateThrustOnClient()
+        private void UpdateThrustInNetworkGame()
         {
-            if (Game.NetworkMode != NetworkMode.Client) return;
-            if (_visualThrustForce > 0)
-                Thrust(_visualThrustForce, Game.GameTime.ElapsedGameTime, Rotation);
-            _visualThrustForce *= 0.977f;
-            if (_visualThrustForce < 0.5f) _visualThrustForce = 0;
+            switch (Game.NetworkMode)
+            {
+                case NetworkMode.Client:
+                    if (_visualThrustForce > 0)
+                        Thrust(_visualThrustForce, Game.GameTime.ElapsedGameTime, Rotation);
+                    _visualThrustForce *= 0.977f;
+                    if (_visualThrustForce < 0.5f) _visualThrustForce = 0;
+                    break;
+                case NetworkMode.Server:
+                    if (_visualThrustForceSerializedThisFrame)
+                    {
+                        _visualThrustForceSerializedThisFrame = false;
+                        _visualThrustForce = 0;
+                    }
+                    break;
+            }
         }
 
         private void UpdateExhaustEngines()

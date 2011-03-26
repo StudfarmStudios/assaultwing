@@ -753,100 +753,7 @@
           <rotation>0</rotation>
           <typeName>dock</typeName>
         </Item>
-        <Item type="AW2.Game.Gobs.Gravity">
-          <force>
-            <X>0</X>
-            <Y>-30</Y>
-          </force>
-          <staticID>0</staticID>
-          <pos>
-            <X>0</X>
-            <Y>0</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>uniform gravity</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.SpawnGob">
-          <spawnArea type="AW2.Helpers.Geometric.Circle">
-            <center>
-              <X>1340</X>
-              <Y>170</Y>
-            </center>
-            <radius>30</radius>
-            <boundingBox>
-              <min>
-                <X>1310</X>
-                <Y>140</Y>
-              </min>
-              <max>
-                <X>1370</X>
-                <Y>200</Y>
-              </max>
-            </boundingBox>
-          </spawnArea>
-          <spawnInterval>20</spawnInterval>
-          <spawnTypes>
-            <Item type="AW2.Game.Gobs.SpawnType">
-              <weight>2</weight>
-              <spawnTypeName>upgradeweapon2</spawnTypeName>
-            </Item>
-          </spawnTypes>
-          <staticID>0</staticID>
-          <pos>
-            <X>0</X>
-            <Y>0</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>bonus spawn</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer">
-          <spawnArea type="AW2.Helpers.Geometric.Polygon">
-            <vertices>
-              <Item type="Microsoft.Xna.Framework.Vector2">
-                <X>1700</X>
-                <Y>1700</Y>
-              </Item>
-              <Item type="Microsoft.Xna.Framework.Vector2">
-                <X>1700</X>
-                <Y>1100</Y>
-              </Item>
-              <Item type="Microsoft.Xna.Framework.Vector2">
-                <X>1800</X>
-                <Y>1800</Y>
-              </Item>
-              <Item type="Microsoft.Xna.Framework.Vector2">
-                <X>1100</X>
-                <Y>1700</Y>
-              </Item>
-            </vertices>
-          </spawnArea>
-          <staticID>0</staticID>
-          <pos>
-            <X>0</X>
-            <Y>0</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>player spawn</typeName>
-        </Item>
-        <Item type="AW2.Game.Gobs.SpawnPlayer">
-          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
-            <min>
-              <X>0</X>
-              <Y>0</Y>
-            </min>
-            <max>
-              <X>600</X>
-              <Y>200</Y>
-            </max>
-          </spawnArea>
-          <staticID>0</staticID>
-          <pos>
-            <X>0</X>
-            <Y>0</Y>
-          </pos>
-          <rotation>0</rotation>
-          <typeName>player spawn</typeName>
-        </Item>
+
         <Item type="AW2.Game.Gobs.WallModel">
           <wallModelName>snow_wall_2</wallModelName>
           <destructible>true</destructible>
@@ -1562,6 +1469,424 @@
           <rotation>4.54008245</rotation>
           <typeName>wall model</typeName>
         </Item>
+		
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>340</X>
+              <Y>80</Y>
+            </min>
+            <max>
+              <X>650</X>
+              <Y>150</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+		
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>150</X>
+              <Y>420</Y>
+            </min>
+            <max>
+              <X>240</X>
+              <Y>630</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+		
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>90</X>
+              <Y>810</Y>
+            </min>
+            <max>
+              <X>165</X>
+              <Y>1040</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1600</X>
+              <Y>880</Y>
+            </min>
+            <max>
+              <X>1750</X>
+              <Y>980</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1830</X>
+              <Y>1080</Y>
+            </min>
+            <max>
+              <X>1915</X>
+              <Y>1250</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>		
+
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1850</X>
+              <Y>330</Y>
+            </min>
+            <max>
+              <X>1930</X>
+              <Y>482</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>	
+		
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1880</X>
+              <Y>1630</Y>
+            </min>
+            <max>
+              <X>1930</X>
+              <Y>1715</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1630</X>
+              <Y>1800</Y>
+            </min>
+            <max>
+              <X>1780</X>
+              <Y>1840</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1330</X>
+              <Y>1850</Y>
+            </min>
+            <max>
+              <X>1470</X>
+              <Y>1890</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1120</X>
+              <Y>1850</Y>
+            </min>
+            <max>
+              <X>1230</X>
+              <Y>1900</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+		
+		<Item type="AW2.Game.Gobs.SpawnPlayer">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>280</X>
+              <Y>1905</Y>
+            </min>
+            <max>
+              <X>360</X>
+              <Y>1950</Y>
+            </max>
+          </spawnArea>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>player spawn</typeName>
+        </Item>
+
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>80</X>
+              <Y>270</Y>
+            </min>
+            <max>
+              <X>100</X>
+              <Y>290</Y>
+            </max>
+          </spawnArea>
+          <spawnInterval>30</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+		
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1320</X>
+              <Y>100</Y>
+            </min>
+            <max>
+              <X>1340</X>
+              <Y>120</Y>
+            </max>
+          </spawnArea>
+          <spawnInterval>38</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>10</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>3</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>1780</X>
+              <Y>610</Y>
+            </min>
+            <max>
+              <X>1800</X>
+              <Y>630</Y>
+            </max>
+          </spawnArea>
+          <spawnInterval>30</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>700</X>
+              <Y>1720</Y>
+            </min>
+            <max>
+              <X>720</X>
+              <Y>1740</Y>
+            </max>
+          </spawnArea>
+          <spawnInterval>38</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>10</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>3</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>kamikaze</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+
+        <Item type="AW2.Game.Gobs.SpawnGob">
+          <spawnArea type="AW2.Helpers.Geometric.Rectangle">
+            <min>
+              <X>105</X>
+              <Y>1120</Y>
+            </min>
+            <max>
+              <X>125</X>
+              <Y>1140</Y>
+            </max>
+          </spawnArea>
+          <spawnInterval>30</spawnInterval>
+          <spawnTypes>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>4</weight>
+              <spawnTypeName>upgradeweapon2</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>6</weight>
+              <spawnTypeName>repairsystem</spawnTypeName>
+            </Item>
+            <Item type="AW2.Game.Gobs.SpawnType">
+              <weight>1</weight>
+              <spawnTypeName>upgradeweapon1loadtime</spawnTypeName>
+            </Item>
+          </spawnTypes>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>bonus spawn</typeName>
+        </Item>
+        
+		<Item type="AW2.Game.Gobs.Gravity">
+          <force>
+            <X>0</X>
+            <Y>-30</Y>
+          </force>
+          <staticID>0</staticID>
+          <pos>
+            <X>0</X>
+            <Y>0</Y>
+          </pos>
+          <rotation>0</rotation>
+          <typeName>uniform gravity</typeName>
+        </Item>
+		
       </gobs>
     </Item>
   </layers>

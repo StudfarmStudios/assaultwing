@@ -37,145 +37,62 @@
       <expected>8.88</expected>
       <variance>3.08</variance>
     </particleAge>
-    <accelerationInputScale>0</accelerationInputScale>
-    <acceleration type="AW2.Game.Pengs.CurveLerp, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <min>-1000</min>
-      <max>1000</max>
+    <accelerationInputScale>0</accelerationInputScale>	
+	<acceleration type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <randomAmplitude>15</randomAmplitude>
       <randomMixer>1</randomMixer>
-      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <Item type="AW2.Game.Pengs.CurveLerpKey, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <input>0</input>
-            <curve>
-              <preLoop>Constant</preLoop>
-              <postLoop>Constant</postLoop>
-              <keys>
-                <Item>
-                  <position>0</position>
-                  <internalValue>20</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.2</position>
-                  <internalValue>8</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>1</position>
-                  <internalValue>-5</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-              </keys>
-            </curve>
-          </Item>
-        </keys>
+      <keys>
+        <Item>20</Item>
+        <Item>16</Item>
+        <Item>8</Item>
+        <Item>7</Item>
+        <Item>6</Item>
+        <Item>5</Item>
+        <Item>3</Item>
+        <Item>1</Item>
+        <Item>-1</Item>
+        <Item>-3</Item>
+        <Item>-5</Item>
       </keys>
     </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
     <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <value>-0.5</value>
     </rotationSpeed>
-    <scaleInputScale>0</scaleInputScale>
-    <scale type="AW2.Game.Pengs.CurveLerp, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <min>0.001</min>
-      <max>1000</max>
+    <scaleInputScale>0</scaleInputScale>	
+	<scale type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <randomAmplitude>0.15</randomAmplitude>
       <randomMixer>3</randomMixer>
-      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <Item type="AW2.Game.Pengs.CurveLerpKey, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <input>0</input>
-            <curve>
-              <preLoop>Constant</preLoop>
-              <postLoop>Constant</postLoop>
-              <keys>
-                <Item>
-                  <position>0</position>
-                  <internalValue>0.01</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.15</position>
-                  <internalValue>0.55</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.7</position>
-                  <internalValue>0.5</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>1</position>
-                  <internalValue>0.01</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-              </keys>
-            </curve>
-          </Item>
-        </keys>
+      <keys>
+        <Item>0.01</Item>
+        <Item>0.55</Item>
+        <Item>0.54</Item>
+        <Item>0.53</Item>
+        <Item>0.52</Item>
+        <Item>0.51</Item>
+        <Item>0.515</Item>
+        <Item>0.5</Item>
+        <Item>0.3</Item>
+        <Item>0.1</Item>
+        <Item>0.01</Item>
       </keys>
     </scale>
     <alphaInputScale>0</alphaInputScale>
-    <alpha type="AW2.Game.Pengs.CurveLerp, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <min>0</min>
-      <max>1</max>
+	<alpha type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <randomAmplitude>0.3</randomAmplitude>
       <randomMixer>4</randomMixer>
-      <keys type="AW2.Game.Pengs.CurveLerpKeyCollection, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <keys type="System.Collections.Generic.List`1[[AW2.Game.Pengs.CurveLerpKey, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <Item type="AW2.Game.Pengs.CurveLerpKey, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <input>0</input>
-            <curve>
-              <preLoop>Constant</preLoop>
-              <postLoop>Constant</postLoop>
-              <keys>
-                <Item>
-                  <position>0</position>
-                  <internalValue>0.1</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.1</position>
-                  <internalValue>0.4</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>0.6</position>
-                  <internalValue>0.4</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-                <Item>
-                  <position>1</position>
-                  <internalValue>0</internalValue>
-                  <tangentOut>0</tangentOut>
-                  <tangentIn>0</tangentIn>
-                  <continuity>Smooth</continuity>
-                </Item>
-              </keys>
-            </curve>
-          </Item>
-        </keys>
+      <keys>
+        <Item>0.1</Item>
+        <Item>0.4</Item>
+        <Item>0.4</Item>
+        <Item>0.4</Item>
+        <Item>0.4</Item>
+        <Item>0.4</Item>
+        <Item>0.4</Item>
+        <Item>0.3</Item>
+        <Item>0.2</Item>
+        <Item>0.1</Item>
+        <Item>0.0</Item>
       </keys>
     </alpha>
   </updater>

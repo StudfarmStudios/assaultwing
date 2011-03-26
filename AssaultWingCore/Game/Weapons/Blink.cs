@@ -18,26 +18,28 @@ namespace AW2.Game.Weapons
         private static readonly CanonicalString EFFECT_NAME = (CanonicalString)"gaussian_blur";
 
         /// <summary>
-        /// Target area of blink, relative to ship position and rotation.
+        /// Distance of blink in meters (pixels).
         /// </summary>
         [TypeParameter]
-        private IGeomPrimitive blinkArea;
+        private float _blinkDistance;
 
         /// <summary>
         /// Move speed during blink, in meters per second.
         /// </summary>
         [TypeParameter]
-        private float blinkMoveSpeed;
+        private float _blinkMoveSpeed;
 
         private Vector2? _targetPos;
+
+        private Vector2 BlinkTarget { get { return Owner.Pos + AWMathHelper.GetUnitVector2(Owner.Rotation) * _blinkDistance; } }
 
         /// <summary>
         /// Only for serialization.
         /// </summary>
         public Blink()
         {
-            blinkArea = new Circle(Vector2.UnitX * 500, 50);
-            blinkMoveSpeed = 1200;
+            _blinkDistance = 500;
+            _blinkMoveSpeed = 1200;
         }
 
         public Blink(CanonicalString typeName)
@@ -50,7 +52,7 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_targetPos.HasValue)
             {
-                float blinkMoveStep = Owner.Game.PhysicsEngine.ApplyChange(blinkMoveSpeed, Owner.Game.GameTime.ElapsedGameTime);
+                float blinkMoveStep = Owner.Game.PhysicsEngine.ApplyChange(_blinkMoveSpeed, Owner.Game.GameTime.ElapsedGameTime);
                 var pos = AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, blinkMoveStep);
                 Owner.ResetPos(pos, Owner.Move, Owner.Rotation);
                 if (pos == _targetPos.Value)
@@ -74,22 +76,15 @@ namespace AW2.Game.Weapons
             if (Owner.Game.NetworkMode == NetworkMode.Client) return FiringPermissionAnswer.Disallowed;
 
             if (!canFire) return FiringPermissionAnswer.Disallowed;
-            var transform =
-                Matrix.CreateRotationZ(Owner.Rotation) *
-                Matrix.CreateTranslation(new Vector3(Owner.Pos, 0));
-            var targetArea = blinkArea.Transform(transform);
-            Vector2 newPos;
-            var success = Arena.GetFreePosition(Owner, targetArea, out newPos);
-            if (success)
-            {
-                _targetPos = newPos;
-                Owner.Disable(); // re-enabled in Update()
-            }
-            return success ? FiringPermissionAnswer.Allowed : FiringPermissionAnswer.Disallowed;
+            return Arena.IsFreePosition(Owner, BlinkTarget)
+                ? FiringPermissionAnswer.Allowed
+                : FiringPermissionAnswer.Disallowed;
         }
 
         protected override void ShootImpl()
         {
+            _targetPos = BlinkTarget;
+            Owner.Disable(); // re-enabled in Update()
         }
 
         protected override void CreateVisualsImpl()

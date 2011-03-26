@@ -164,11 +164,11 @@ namespace AW2.Core
 
             DataEngine.GameplayMode = new GameplayMode();
             DataEngine.GameplayMode.ShipTypes = new[] { "Windlord", "Bugger", "Plissken" };
-            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "reverse thruster", "blink", "repulsor", "cloak" };
+            DataEngine.GameplayMode.ExtraDeviceTypes = new[] { "reverse thruster", "blink", "repulsor", "catmoflage" };
             DataEngine.GameplayMode.Weapon2Types = new[] { "bazooka", "rockets", "mines" };
 
             DataEngine.Spectators.Add(new Player(this, "Newbie",
-                (CanonicalString)"Plissken", (CanonicalString)"mines", (CanonicalString)"cloak",
+                (CanonicalString)"Plissken", (CanonicalString)"mines", (CanonicalString)"catmoflage",
                 PlayerControls.FromSettings(Settings.Controls.Player1)));
             DataEngine.Spectators.Add(new Player(this, "Lamer",
                 (CanonicalString)"Bugger", (CanonicalString)"bazooka", (CanonicalString)"repulsor",

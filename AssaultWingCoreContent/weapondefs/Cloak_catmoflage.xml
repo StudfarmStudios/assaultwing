@@ -19,7 +19,7 @@
     <iconEquipName>menu_equip_mod_catmoflage</iconEquipName>
   </deviceInfo>
 
-  <typeName>cloak</typeName>
+  <typeName>catmoflage</typeName>
   <cloakStrengthForVelocity>
     <preLoop>Constant</preLoop>
     <postLoop>Constant</postLoop>

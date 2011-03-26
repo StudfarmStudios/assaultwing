@@ -70,15 +70,11 @@ namespace AW2.Game.Weapons
             base.Dispose();
         }
 
-        protected override FiringPermissionAnswer PermissionToFire(bool canFire)
+        protected override bool PermissionToFire()
         {
             // Blink is totally controlled by the server because of complex visual effects.
-            if (Owner.Game.NetworkMode == NetworkMode.Client) return FiringPermissionAnswer.Disallowed;
-
-            if (!canFire) return FiringPermissionAnswer.Disallowed;
-            return Arena.IsFreePosition(Owner, BlinkTarget)
-                ? FiringPermissionAnswer.Allowed
-                : FiringPermissionAnswer.Disallowed;
+            if (Owner.Game.NetworkMode == NetworkMode.Client) return false;
+            return Arena.IsFreePosition(Owner, BlinkTarget);
         }
 
         protected override void ShootImpl()

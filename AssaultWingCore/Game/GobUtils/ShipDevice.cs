@@ -31,19 +31,6 @@ namespace AW2.Game.GobUtils
             EveryShot
         }
 
-        protected enum FiringPermissionAnswer
-        {
-            /// <summary>
-            /// Firing is allowed.
-            /// </summary>
-            Allowed,
-
-            /// <summary>
-            /// Firing is not allowed.
-            /// </summary>
-            Disallowed,
-        }
-
         private enum SerializationState { DontSerialize, SerializeNextAvailableFrame, SerializedThisFrame };
 
         #region Fields
@@ -154,7 +141,7 @@ namespace AW2.Game.GobUtils
         public OwnerHandleType OwnerHandle { get; protected set; }
 
         public float LoadTimeMultiplier { get { return _loadTimeMultiplier; } set { _loadTimeMultiplier = value; } }
-        
+
         /// <summary>
         /// The time in seconds that it takes for the weapon to fire again 
         /// after being fired once.
@@ -248,23 +235,12 @@ namespace AW2.Game.GobUtils
         {
             if (Owner.Disabled) return;
             if (!FiringOperator.IsFirePressed(triggerState)) return;
-            switch (PermissionToFire(FiringOperator.CanFire))
+            if (PermissionToFire() && FiringOperator.TryFire())
             {
-                case FiringPermissionAnswer.Allowed:
-                    if (FiringOperator.TryFire())
-                    {
-                        if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
-                    }
-                    else
-                    {
-                        PlayFiringFailedSound();
-                    }
-                    break;
-                case FiringPermissionAnswer.Disallowed:
-                    PlayFiringFailedSound();
-                    break;
-                default: throw new ApplicationException("Unknown FiringPermissionAnswer");
+                if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
             }
+            else
+                PlayFiringFailedSound();
         }
 
         public virtual void Update()
@@ -326,7 +302,7 @@ namespace AW2.Game.GobUtils
 
         protected abstract void CreateVisualsImpl();
         protected abstract void ShootImpl();
-        protected virtual FiringPermissionAnswer PermissionToFire(bool canFire) { return FiringPermissionAnswer.Allowed; }
+        protected virtual bool PermissionToFire() { return true; }
 
         private void CreateVisuals()
         {

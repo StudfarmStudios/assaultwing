@@ -1730,6 +1730,21 @@
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
+    <Compile Include="models\lumipesu_bg_wall1.X">
+      <Name>lumipesu_bg_wall1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\lumipesu_bg_wall2.X">
+      <Name>lumipesu_bg_wall2</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="models\lumipesu_bg_wall3.X">
+      <Name>lumipesu_bg_wall3</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
     <None Include="particledefs\Peng_airstreaks.xml">
       <Name>Peng_airstreaks</Name>
       <Importer>XmlImporter</Importer>

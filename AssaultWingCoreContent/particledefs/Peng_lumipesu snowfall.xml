@@ -105,14 +105,14 @@
                 </Item>
                 <Item>
                   <position>0.15</position>
-                  <internalValue>0.5</internalValue>
+                  <internalValue>0.55</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
                 </Item>
                 <Item>
                   <position>0.7</position>
-                  <internalValue>0.45</internalValue>
+                  <internalValue>0.5</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
@@ -153,14 +153,14 @@
                 </Item>
                 <Item>
                   <position>0.1</position>
-                  <internalValue>0.3</internalValue>
+                  <internalValue>0.4</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>
                 </Item>
                 <Item>
                   <position>0.6</position>
-                  <internalValue>0.3</internalValue>
+                  <internalValue>0.4</internalValue>
                   <tangentOut>0</tangentOut>
                   <tangentIn>0</tangentIn>
                   <continuity>Smooth</continuity>

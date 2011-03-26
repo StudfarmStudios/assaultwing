@@ -17,40 +17,21 @@ namespace AW2.Game.Weapons
         /// If true, thrust the ship backward, otherwise thrust the ship forward.
         /// </summary>
         [TypeParameter]
-        private bool reverse;
+        private bool _reverse;
 
         /// <summary>
         /// Thrust force factor, relative to the owning ship's thrust force.
         /// </summary>
         [TypeParameter]
-        private float thrustForceFactor;
-
-        /// <summary>
-        /// Seconds of game time the thruster must be unused for the extra force charge
-        /// to reset to its maximum. Should be greater than <see cref="extraForceChargeSecondsMaximum"/>.
-        /// </summary>
-        [TypeParameter]
-        private float extraForceChargeDelay;
-
-        /// <summary>
-        /// Number of seconds in game time the thruster boosts with extra force,
-        /// when the extra force has been charged.
-        /// </summary>
-        [TypeParameter]
-        private float extraForceChargeSeconds;
-
-        private TimeSpan _extraForceReady;
-        private TimeSpan _extraForceEnd;
+        private float _thrustForceFactor;
 
         /// <summary>
         /// Only for serialization.
         /// </summary>
         public Thruster()
         {
-            reverse = true;
-            thrustForceFactor = 1;
-            extraForceChargeDelay = 3;
-            extraForceChargeSeconds = 1;
+            _reverse = true;
+            _thrustForceFactor = 1;
         }
 
         public Thruster(CanonicalString typeName)
@@ -63,22 +44,11 @@ namespace AW2.Game.Weapons
             FiringOperator = new FiringOperatorContinuous(this);
         }
 
-        protected override FiringPermissionAnswer PermissionToFire(bool canFire)
-        {
-            if (_extraForceReady <= Arena.TotalTime)
-                _extraForceEnd = Arena.TotalTime + TimeSpan.FromSeconds(extraForceChargeSeconds);
-            _extraForceReady = Arena.TotalTime + TimeSpan.FromSeconds(extraForceChargeDelay);
-            return FiringPermissionAnswer.Allowed;
-        }
-
         protected override void ShootImpl()
         {
             var duration = Owner.Game.GameTime.ElapsedGameTime;
-            float direction = reverse ? Owner.Rotation + MathHelper.Pi : Owner.Rotation;
-            float thrustForce = _extraForceEnd > Arena.TotalTime
-                ? thrustForceFactor * 2
-                : thrustForceFactor;
-            Owner.Thrust(thrustForce, duration, direction);
+            float direction = _reverse ? Owner.Rotation + MathHelper.Pi : Owner.Rotation;
+            Owner.Thrust(_thrustForceFactor, duration, direction);
         }
 
         protected override void CreateVisualsImpl()

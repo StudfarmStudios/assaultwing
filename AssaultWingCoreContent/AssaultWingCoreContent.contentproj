@@ -2595,8 +2595,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
-    <None Include="weapondefs\Thruster_reverse thruster.xml">
-      <Name>Thruster_reverse thruster</Name>
+    <None Include="weapondefs\Thruster_ram and reverse.xml">
+      <Name>Thruster_ram and reverse</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

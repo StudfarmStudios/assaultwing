@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShipDeviceType type="AW2.Game.Weapons.Thruster">
+
+  <deviceInfo>
+    <pictureName>menu_equip_devicepicture_revthrust</pictureName>
+    <titlePictureName>menu_equip_devicename_revthrust</titlePictureName>
+    <infoText>
+      Go berserk and ram into your buddies
+      to give them the bruises and juicy
+      damage they deserve. Your adrenaline
+      boost protects you from little
+      scratches in collisions. Also
+      enjoy freedom of movement with reverse
+      engines. Pro pilots love this!
+    </infoText>
+    <reloadSpeed>Great</reloadSpeed>
+    <energyUsage>Average</energyUsage>
+    <usageType>Continuous</usageType>
+    <iconEquipName>menu_equip_mod_revthrust</iconEquipName>
+  </deviceInfo>
+
+  <typeName>ram &amp; reverse</typeName>
+  <reverse>true</reverse>
+  <thrustForceFactor>1.0</thrustForceFactor>
+  <iconName>menu_equip_mod_revthrust</iconName>
+  <loadTime>0</loadTime>
+  <fireCharge>100</fireCharge>
+  <fireChargePerSecond>260</fireChargePerSecond>
+  <shotCount>1</shotCount>
+  <shotSpacing>0</shotSpacing>
+  <fireSound></fireSound>
+  <fireSoundType>EveryShot</fireSoundType>
+</ShipDeviceType>

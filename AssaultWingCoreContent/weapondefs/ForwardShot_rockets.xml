@@ -23,8 +23,7 @@ eventually run out of juice.</infoText>
   </weaponInfo>
   
   <typeName>rockets</typeName>
-  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right</gunBarrels>
-  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
+  <gunBarrels>Left, Right</gunBarrels>
   <upgradeNames>
     <Item>berserkers</Item>
   </upgradeNames>

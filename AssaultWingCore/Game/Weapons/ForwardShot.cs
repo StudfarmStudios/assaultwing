@@ -9,28 +9,6 @@ using AW2.Helpers.Serialization;
 namespace AW2.Game.Weapons
 {
     /// <summary>
-    /// What to do when firing a weapon.
-    /// </summary>
-    public enum FireAction
-    {
-        /// <summary>
-        /// Always just produce new shots.
-        /// </summary>
-        Shoot,
-
-        /// <summary>
-        /// If old shots are alive, kill all of them.
-        /// Otherwise produce new shots.
-        /// </summary>
-        KillAll,
-
-        /// <summary>
-        /// Always shoot and don't wait for reload. Uses charge per second.
-        /// </summary>
-        ShootContinuously,
-    }
-
-    /// <summary>
     /// A weapon that shoots gobs forward.
     /// Each firing can consist of a number of shots being fired.
     /// The shots are shot at even temporal intervals in a random
@@ -45,113 +23,72 @@ namespace AW2.Game.Weapons
         /// The ship gun barrels this weapon uses.
         /// </summary>
         [TypeParameter]
-        private ShipBarrelTypes gunBarrels;
+        private ShipBarrelTypes _gunBarrels;
 
         /// <summary>
         /// Names of muzzle fire engine types.
         /// </summary>
         [TypeParameter]
-        private CanonicalString[] muzzleFireEngineNames;
+        private CanonicalString[] _muzzleFireEngineNames;
 
         /// <summary>
         /// How fast the shots leave the weapon barrel,
         /// in meters per second.
         /// </summary>
         [TypeParameter]
-        private float shotSpeed;
+        private float _shotSpeed;
 
         /// <summary>
         /// Difference of the maximum and the minimum of a shot's random angle
         /// relative to the general shot direction.
         /// </summary>
         [TypeParameter]
-        private float shotAngleVariation;
+        private float _shotAngleVariation;
 
         /// <summary>
         /// Difference of the maximum and the minimum of a shot's random speed
         /// relative to the general shot speed.
         /// </summary>
         [TypeParameter]
-        private float shotSpeedVariation;
-
-        /// <summary>
-        /// What to do when firing the weapon.
-        /// </summary>
-        [TypeParameter]
-        private FireAction fireAction;
-
-        /// <summary>
-        /// Shots produced by this weapon that are still alive.
-        /// </summary>
-        [RuntimeState]
-        private List<Gob> liveShots;
+        private float _shotSpeedVariation;
 
         #endregion ForwardShot fields
 
         /// This constructor is only for serialisation.
         public ForwardShot()
         {
-            gunBarrels = ShipBarrelTypes.Middle | ShipBarrelTypes.Left | ShipBarrelTypes.Right | ShipBarrelTypes.Rear;
-            muzzleFireEngineNames = new CanonicalString[] { (CanonicalString)"dummypeng" };
-            shotSpeed = 300f;
-            shotAngleVariation = 0.3f;
-            shotSpeedVariation = 20f;
-            fireAction = FireAction.Shoot;
-            liveShots = new List<Gob>();
+            _gunBarrels = ShipBarrelTypes.Middle | ShipBarrelTypes.Left | ShipBarrelTypes.Right | ShipBarrelTypes.Rear;
+            _muzzleFireEngineNames = new[] { (CanonicalString)"dummypeng" };
+            _shotSpeed = 300f;
+            _shotAngleVariation = 0.3f;
+            _shotSpeedVariation = 20f;
         }
 
         public ForwardShot(CanonicalString typeName)
             : base(typeName)
         {
-            liveShots = new List<Gob>();
         }
 
         public override void Activate()
         {
-            switch (fireAction)
-            {
-                case FireAction.ShootContinuously:
-                    FiringOperator = new FiringOperatorContinuous(this);
-                    break;
-                case FireAction.Shoot:
-                case FireAction.KillAll:
-                    FiringOperator = new FiringOperatorSingle(this);
-                    break;
-                default: throw new ApplicationException("Unknown FireAction " + fireAction);
-            }
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            RemoveOldShots();
-        }
-
-        protected override FiringPermissionAnswer PermissionToFire(bool canFire)
-        {
-            if (fireAction == FireAction.KillAll && liveShots.Count > 0)
-            {
-                foreach (var gob in liveShots) gob.Die();
-                return FiringPermissionAnswer.Blocked;
-            }
-            return FiringPermissionAnswer.Allowed;
+            FiringOperator = new FiringOperatorSingle(this);
         }
 
         protected override void ShootImpl()
         {
-            ForEachShipBarrel(gunBarrels, CreateShot);
+            ForEachShipBarrel(_gunBarrels, CreateShot);
             ApplyRecoil();
         }
 
         protected override void CreateVisualsImpl()
         {
-            ForEachShipBarrel(gunBarrels, CreateMuzzleFire);
+            ForEachShipBarrel(_gunBarrels, CreateMuzzleFire);
         }
 
         private void CreateShot(int boneIndex, float barrelRotation)
         {
-            float direction = barrelRotation + Owner.Rotation + shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
-            float kickSpeed = shotSpeed + shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            float direction = barrelRotation + Owner.Rotation + _shotAngleVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
+            float kickSpeed = _shotSpeed + _shotSpeedVariation * RandomHelper.GetRandomFloat(-0.5f, 0.5f);
             Vector2 kick = kickSpeed * AWMathHelper.GetUnitVector2(direction);
             Gob.CreateGob<Gob>(Owner.Game, shotTypeName, shot =>
             {
@@ -159,13 +96,12 @@ namespace AW2.Game.Weapons
                 shot.ResetPos(Owner.GetNamedPosition(boneIndex), Owner.Move + kick,
                     Owner.Rotation);  // 'owner.Rotation' could also be 'direction'
                 Arena.Gobs.Add(shot);
-                liveShots.Add(shot);
             });
         }
 
         private void CreateMuzzleFire(int barrelBoneIndex, float barrelRotation)
         {
-            foreach (var engineName in muzzleFireEngineNames)
+            foreach (var engineName in _muzzleFireEngineNames)
             {
                 Gob.CreateGob<Peng>(Owner.Game, engineName, fireEngine =>
                 {
@@ -174,23 +110,6 @@ namespace AW2.Game.Weapons
                     fireEngine.LeaderBone = barrelBoneIndex;
                     Arena.Gobs.Add(fireEngine);
                 });
-            }
-        }
-
-        private void RemoveOldShots()
-        {
-            for (int i = liveShots.Count - 1; i >= 0; --i)
-                if (liveShots[i].Dead)
-                    liveShots.RemoveAt(i);
-        }
-
-        public override void Dispose()
-        {
-            // Kill existing shots if any exist and there is danger that 
-            // they won't die soon by themselves.
-            if (fireAction == FireAction.KillAll && liveShots.Count > 0)
-            {
-                foreach (Gob gob in liveShots) gob.Die();
             }
         }
     }

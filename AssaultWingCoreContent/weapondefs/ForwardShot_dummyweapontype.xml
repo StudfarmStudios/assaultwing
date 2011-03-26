@@ -18,8 +18,7 @@
   </weaponInfo>  
  
   <typeName>dummyweapontype</typeName>
-  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Middle, Left, Right, Rear</gunBarrels>
-  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
+  <gunBarrels>Middle, Left, Right, Rear</gunBarrels>
   <shotSpeed>300</shotSpeed>
   <shotTypeName>dummygobtype</shotTypeName>
   <loadTime>0.5</loadTime>

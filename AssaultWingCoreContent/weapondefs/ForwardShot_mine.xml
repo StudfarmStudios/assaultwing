@@ -20,8 +20,7 @@ Unloads 5 mines into a random formation</infoText>
   </weaponInfo>
   
   <typeName>mines</typeName>
-  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Rear</gunBarrels>
-  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Shoot</fireAction>
+  <gunBarrels>Rear</gunBarrels>
   <upgradeNames>
      <Item>minespewer</Item>
   </upgradeNames>

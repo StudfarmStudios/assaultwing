@@ -18,8 +18,7 @@
   </weaponInfo>
 
   <typeName>trizooka</typeName>
-  <gunBarrels type="AW2.Game.Weapons.ShipBarrelTypes, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">Left, Right, Middle</gunBarrels>
-  <fireAction type="AW2.Game.Weapons.FireAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">KillAll</fireAction>
+  <gunBarrels>Left, Right, Middle</gunBarrels>
   <upgradeNames>
   </upgradeNames>
   <iconName>b_icon_bouncegun</iconName>

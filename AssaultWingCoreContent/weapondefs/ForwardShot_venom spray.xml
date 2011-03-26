@@ -19,7 +19,6 @@
 
   <typeName>venom spray</typeName>
   <gunBarrels>Left, Right</gunBarrels>
-  <fireAction>Shoot</fireAction>
   <upgradeNames>
   </upgradeNames>
   <iconName>b_icon_berserkers</iconName>

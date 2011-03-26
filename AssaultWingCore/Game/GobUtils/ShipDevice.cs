@@ -39,11 +39,6 @@ namespace AW2.Game.GobUtils
             Allowed,
 
             /// <summary>
-            /// Firing is not allowed. Instead, the device did something else.
-            /// </summary>
-            Blocked,
-
-            /// <summary>
             /// Firing is not allowed.
             /// </summary>
             Disallowed,
@@ -265,7 +260,6 @@ namespace AW2.Game.GobUtils
                         PlayFiringFailedSound();
                     }
                     break;
-                case FiringPermissionAnswer.Blocked: break;
                 case FiringPermissionAnswer.Disallowed:
                     PlayFiringFailedSound();
                     break;

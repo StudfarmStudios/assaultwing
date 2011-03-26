@@ -9,7 +9,7 @@
     <type>Additive</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
-  <coordinateSystem>Game</coordinateSystem>
+  <coordinateSystem>Peng</coordinateSystem>
   <playerRelated>false</playerRelated>
   <emitter>
     <emissionFrequency>30</emissionFrequency>

@@ -65,15 +65,20 @@ namespace AW2.Graphics.OverlayComponents
             int width = (int)Math.Ceiling(relativeHealth * _barFillTexture.Width);
             var healthBarRect = new Rectangle(0, 0, width, _barFillTexture.Height);
             spriteBatch.Draw(_barBackgroundTexture, Vector2.Zero, color);
-            spriteBatch.Draw(_barFillTexture, Vector2.One, healthBarRect, color);
+            spriteBatch.Draw(_barFillTexture, new Vector2(4, 3), healthBarRect, color);
         }
 
         private Color DrawHealthPercentage(SpriteBatch spriteBatch, float relativeHealth, float alpha)
         {
-            var halfColor = Color.Multiply(Color.White, alpha * 0.5f);
+            var halfColor = Color.Multiply(Color.White, alpha * 1f);
+            var halfBlackColor = Color.Multiply(Color.Black, alpha * 0.6f);
             var healthText = ((int)Math.Ceiling(relativeHealth * 100)).ToString() + "%";
             var textSize = _healthFont.MeasureString(healthText);
-            var textPos = new Vector2((Dimensions.X - textSize.X) / 2, _barBackgroundTexture.Height);
+            var textPos = new Vector2((Dimensions.X - textSize.X) / 2, (_barBackgroundTexture.Height / 2) - (textSize.Y / 2) + 1);
+            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() - Vector2.One, halfBlackColor);
+            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() + new Vector2(1, -1), halfBlackColor);
+            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() + Vector2.One, halfBlackColor);
+            spriteBatch.DrawString(_healthFont, healthText, textPos.Round() + new Vector2(-1, 1), halfBlackColor);
             spriteBatch.DrawString(_healthFont, healthText, textPos.Round(), halfColor);
             return halfColor;
         }

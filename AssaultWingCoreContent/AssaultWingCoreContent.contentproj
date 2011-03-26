@@ -54,10 +54,6 @@
       <Name>Arena_Amazonas</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="arenas\Arena_Anna Lunta.bin">
-      <Name>Arena_Anna Lunta</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="arenas\Arena_Blood Bowl.bin">
       <Name>Arena_Blood Bowl</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1410,12 +1406,6 @@
   <ItemGroup>
     <None Include="arenas\Arena_Amazonas.xml">
       <Name>Arena_Amazonas</Name>
-      <Importer>XmlImporter</Importer>
-      <Processor>PassThroughProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="arenas\Arena_Anna Lunta.xml">
-      <Name>Arena_Anna Lunta</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

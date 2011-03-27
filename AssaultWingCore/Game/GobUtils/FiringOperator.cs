@@ -4,8 +4,7 @@ using AW2.Core;
 namespace AW2.Game.GobUtils
 {
     /// <summary>
-    /// Controls firing of a <see cref="ShipDevice"/>. Successful firing requires
-    /// that the device is loaded and it has enough charge.
+    /// Manages load time, charge usage, and timing of multiple shots of a <see cref="ShipDevice"/>.
     /// </summary>
     public class FiringOperator
     {
@@ -15,11 +14,11 @@ namespace AW2.Game.GobUtils
         private TimeSpan _loadedTime;
         private ShipDevice _device;
 
-        public bool Loaded { get { return _loadedTime <= _device.Arena.TotalTime; } }
-        public bool CanFire { get { return Loaded && _device.FireCharge <= _device.Charge; } }
         public bool IsItTimeToShoot { get { return _nextShot <= _device.Arena.TotalTime && _shotsLeft > 0; } }
         public float VisualChargeUsage { get { return _device.FireCharge; } }
         public TimeSpan LoadedTime { get { return _loadedTime; } }
+        public bool Loaded { get { return _loadedTime <= _device.Arena.TotalTime; } }
+        public bool Charged { get { return _device.FireCharge <= _device.Charge; } }
 
         public FiringOperator(ShipDevice device)
         {
@@ -27,18 +26,12 @@ namespace AW2.Game.GobUtils
             _previousCanFire = true;
         }
 
-        /// <summary>
-        /// Returns true on successful firing.
-        /// Returns false if firing failed.
-        /// </summary>
-        public bool TryFire()
+        public void StartFiring()
         {
-            if (!CanFire) return false;
             if (_nextShot < _device.Arena.TotalTime) _nextShot = _device.Arena.TotalTime; // Load time doesn't pile up
             _device.Charge -= _device.FireCharge;
             _loadedTime = TimeSpan.MaxValue; // Make the weapon unloaded for eternity until someone calls DoneFiring()
             _shotsLeft = _device.ShotCount;
-            return true;
         }
 
         public void Update()
@@ -46,13 +39,13 @@ namespace AW2.Game.GobUtils
             if (_device.Owner.Game.NetworkMode != NetworkMode.Client &&
                 _device.OwnerHandle != ShipDevice.OwnerHandleType.PrimaryWeapon)
             {
-                if (CanFire && !_previousCanFire)
+                if (Loaded && Charged && !_previousCanFire)
                     _device.PlayerOwner.Messages.Add(new PlayerMessage(_device.TypeName + " ready to use", PlayerMessage.PLAYER_STATUS_COLOR));
-                _previousCanFire = CanFire;
+                _previousCanFire = Loaded && Charged;
             }
         }
 
-        public virtual void ShotFired()
+        public void ShotFired()
         {
             _nextShot += TimeSpan.FromSeconds(_device.ShotSpacing);
             --_shotsLeft;

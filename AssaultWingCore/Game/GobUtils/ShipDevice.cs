@@ -235,8 +235,9 @@ namespace AW2.Game.GobUtils
         {
             if (Owner.Disabled) return;
             if (!triggerState.Pulse) return;
-            if (PermissionToFire() && FiringOperator.TryFire())
+            if (PermissionToFire() && FiringOperator.Charged && FiringOperator.Loaded)
             {
+                FiringOperator.StartFiring();
                 if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
             }
             else

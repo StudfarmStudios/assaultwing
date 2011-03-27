@@ -12,8 +12,8 @@
   <coordinateSystem>FixedToPeng</coordinateSystem>
   <playerRelated>true</playerRelated>
   <emitter>
-    <emissionFrequency>3</emissionFrequency>
-    <numberToCreate>1</numberToCreate>
+    <emissionFrequency>1</emissionFrequency>
+    <numberToCreate>-1</numberToCreate>
     <radius>0</radius>
     <sprayAngle>0.0</sprayAngle>
     <facingType>Directed</facingType>
@@ -22,31 +22,40 @@
     </textureNames>
     <gobTypeNames>
     </gobTypeNames>
-    <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue">
       <value>0</value>
     </initialVelocity>
   </emitter>
   <updater>
-    <areParticlesImmortal>true</areParticlesImmortal>
+    <areParticlesImmortal>false</areParticlesImmortal>
     <drag>0.0</drag>
-    <particleAge type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <value>0.1</value>
+    <particleAge type="AW2.Game.Pengs.ConstantValue">
+      <value>1.2</value>
     </particleAge>
     <accelerationInputScale>0</accelerationInputScale>
-    <acceleration type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <acceleration type="AW2.Game.Pengs.ConstantValue">
       <value>0</value>
     </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
-    <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
       <value>0</value>
     </rotationSpeed>
     <scaleInputScale>0</scaleInputScale>
-    <scale type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <scale type="AW2.Game.Pengs.ConstantValue">
       <value>1.2</value>
     </scale>
     <alphaInputScale>0</alphaInputScale>
-    <alpha type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <value>0.78</value>
+    <alpha type="AW2.Game.Pengs.SimpleCurve">
+      <randomAmplitude>0</randomAmplitude>
+      <randomMixer>1</randomMixer>
+      <keys>
+        <Item>0.2</Item>
+        <Item>0.78</Item>
+        <Item>0.78</Item>
+        <Item>0.78</Item>
+        <Item>0.78</Item>
+        <Item>0.2</Item>
+      </keys>
     </alpha>
   </updater>
   <birthGobTypes/>

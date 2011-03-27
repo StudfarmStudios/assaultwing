@@ -44,6 +44,7 @@ namespace AW2.Game.Gobs
         private SoundInstance _chargingSound, _dockSound;
         private List<Peng> _dockIdleEffects;
         private List<Peng> _dockActiveEffects;
+        private bool _effectStateActive; // true = active; false = idle
 
         #endregion Dock fields
 
@@ -140,6 +141,8 @@ namespace AW2.Game.Gobs
                 createEffect(_dockActiveEffectName, boneIndex.Item2, _dockActiveEffects);
                 createEffect(_dockIdleEffectName, boneIndex.Item2, _dockIdleEffects);
             }
+            foreach (var activeEffect in _dockActiveEffects)
+                activeEffect.Emitter.Pause();
         }
 
         private void EnsureDockSoundPlaying()
@@ -151,14 +154,22 @@ namespace AW2.Game.Gobs
         private void EnsureEffectActive()
         {
             _lastDockEffectTime = Arena.TotalTime;
-            foreach (var peng in _dockIdleEffects) peng.Paused = true;
-            foreach (var peng in _dockActiveEffects) peng.Paused = false;
+            if (!_effectStateActive)
+            {
+                foreach (var peng in _dockIdleEffects) peng.Emitter.Pause();
+                foreach (var peng in _dockActiveEffects) peng.Emitter.Resume();
+            }
+            _effectStateActive = true;
         }
 
         private void EnsureEffectIdle()
         {
-            foreach (var peng in _dockIdleEffects) peng.Paused = false;
-            foreach (var peng in _dockActiveEffects) peng.Paused = true;
+            if (_effectStateActive)
+            {
+                foreach (var peng in _dockIdleEffects) peng.Emitter.Resume();
+                foreach (var peng in _dockActiveEffects) peng.Emitter.Pause();
+            }
+            _effectStateActive = false;
         }
 
         private bool CanRepair(Ship ship)

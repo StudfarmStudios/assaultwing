@@ -161,11 +161,6 @@ namespace AW2.Game.Gobs
         public float Input { get { return _input; } set { _input = value; } }
 
         /// <summary>
-        /// If <c>true</c>, the peng won't emit new particles.
-        /// </summary>
-        public bool Paused { get { return _emitter.Paused; } set { _emitter.Paused = value; } }
-
-        /// <summary>
         /// The coordinate system in which to interpret the <c>pos</c> field of
         /// the particles of this peng.
         /// </summary>
@@ -195,18 +190,14 @@ namespace AW2.Game.Gobs
         /// The world matrix of the peng, i.e. the transformation from
         /// peng coordinates to game coordinates.
         /// </summary>
-        public override Matrix WorldMatrix
-        {
-            get
-            {
-                return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationOffset, Pos);
-            }
-        }
+        public override Matrix WorldMatrix { get { return AWMathHelper.CreateWorldMatrix(1, Rotation + DrawRotationOffset, Pos); } }
 
         /// <summary>
         /// Bounding volume of the 3D visuals of the gob, in world coordinates.
         /// </summary>
         public override BoundingSphere DrawBounds { get { return new BoundingSphere(); } }
+
+        public SprayEmitter Emitter { get { return _emitter; } }
 
         #endregion Peng properties
 

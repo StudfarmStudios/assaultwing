@@ -589,8 +589,6 @@ namespace AW2.Game
                 Ship.TurnLeft(Controls.Left.Force, Game.GameTime.ElapsedGameTime);
             if (Controls.Right.Force > 0)
                 Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
-            if (Controls.Right.Force == 0 && Controls.Left.Force == 0)
-                Ship.StopTurning();
             if (Game.NetworkMode != NetworkMode.Client) // client shoots only when the server says so
             {
                 TryFireWeapon1();

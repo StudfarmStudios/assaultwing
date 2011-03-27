@@ -125,7 +125,6 @@ namespace AW2.Game.Gobs
 
             base.Update();
 
-            // Manage exhaust engines.
             if (Arena.TotalTime >= _thrustEndTime)
                 SetExhaustEffectsEnabled(false);
         }

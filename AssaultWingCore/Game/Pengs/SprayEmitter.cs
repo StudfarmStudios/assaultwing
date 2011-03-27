@@ -52,9 +52,6 @@ namespace AW2.Game.Pengs
         [TypeParameter]
         private CanonicalString[] _gobTypeNames;
 
-        [RuntimeState]
-        private bool _paused;
-
         [ExcludeFromDeepCopy]
         private Peng _peng;
 
@@ -98,7 +95,7 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// Number of particles to create, or negative for no limit.
         /// </summary>
-        [TypeParameter, RuntimeState]
+        [TypeParameter]
         private int _numberToCreate;
 
         /// <summary>
@@ -107,6 +104,7 @@ namespace AW2.Game.Pengs
         private TimeSpan _nextBirth;
 
         private int _numberCreated;
+        private int _pausedCount;
 
         #endregion SprayEmitter fields
 
@@ -135,21 +133,7 @@ namespace AW2.Game.Pengs
         /// <summary>
         /// If <c>true</c>, no particles will be emitted.
         /// </summary>
-        public bool Paused
-        {
-            get { return _paused; }
-            set
-            {
-                if (_paused && !value)
-                {
-                    // Forget about creating particles whose creation was due 
-                    // while we were paused.
-                    if (_nextBirth < Peng.Arena.TotalTime)
-                        _nextBirth = Peng.Arena.TotalTime;
-                }
-                _paused = value;
-            }
-        }
+        public bool Paused { get { return _pausedCount > 0; } }
 
         /// <summary>
         /// <c>true</c> if emitting has finished for good, <c>false</c> otherwise.
@@ -165,7 +149,6 @@ namespace AW2.Game.Pengs
         {
             _textureNames = new[] { (CanonicalString)"dummytexture" };
             _gobTypeNames = new[] { (CanonicalString)"dummygob" };
-            _paused = false;
             _radius = 15;
             _sprayAngle = MathHelper.PiOver4;
             _facingType = FacingType.Random;
@@ -186,13 +169,28 @@ namespace AW2.Game.Pengs
         {
         }
 
+        public void Pause()
+        {
+            _pausedCount++;
+        }
+
+        public void Resume()
+        {
+            if (_pausedCount <= 0) throw new ApplicationException("Cannot resume when not paused");
+            // Forget about creating particles whose creation was due 
+            // while we were paused.
+            if (_nextBirth < Peng.Arena.TotalTime)
+                _nextBirth = Peng.Arena.TotalTime;
+            _pausedCount--;
+        }
+
         /// <summary>
         /// Returns created particles, adds created gobs to <c>DataEngine</c>.
         /// Returns <c>null</c> if no particles were created.
         /// </summary>
         public IEnumerable<Particle> Emit()
         {
-            if (_paused) return null;
+            if (Paused) return null;
             if (Finished) return null;
             List<Particle> particles = null;
 

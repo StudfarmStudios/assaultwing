@@ -112,8 +112,8 @@ namespace AW2.Game.Gobs
 
         [TypeParameter, ShallowCopy]
         private CanonicalString[] _coughEngineNames;
-
         private List<Peng> _coughEngines;
+        private bool _coughEnginesEnabled;
 
         #endregion Ship fields related to coughing
 
@@ -149,8 +149,6 @@ namespace AW2.Game.Gobs
         private List<Gob> _temporarilyDisabledGobs;
 
         private bool _isBirthFlashing;
-
-        private bool _turning;
 
         private float _turnSoundBlend;
 
@@ -328,7 +326,7 @@ namespace AW2.Game.Gobs
             {
                 Gob.CreateGob<Peng>(Game, name, gob =>
                 {
-                    gob.Paused = true;
+                    gob.Emitter.Pause();
                     gob.Leader = this;
                     Arena.Gobs.Add(gob);
                     _coughEngines.Add(gob);
@@ -653,11 +651,8 @@ namespace AW2.Game.Gobs
                 moveLength == 0 ? 0 :
                 moveLength <= _maxSpeed ? Vector2.Dot(headingNormal, Move / _maxSpeed) :
                 Vector2.Dot(headingNormal, Move / moveLength);
-            //float headingFactor = 1.0f; // naive roll
             _rollAngle.Target = -_rollMax * force * headingFactor;
             _rollAngleGoalUpdated = true;
-
-            _turning = true;
         }
 
         private void UpdateRoll()
@@ -696,11 +691,7 @@ namespace AW2.Game.Gobs
             _exhaustAmountUpdated = false;
 
             // Update thruster sound volumes
-            float turnBlendTarget = Move.Length() / _maxSpeed;//  _turning ? 1 : 0);
-            if (turnBlendTarget < 0)
-                turnBlendTarget = 0;
-            if (turnBlendTarget > 1)
-                turnBlendTarget = 1;
+            float turnBlendTarget = MathHelper.Clamp(Move.Length() / _maxSpeed, 0, 1);
             if (_turnSoundBlend < turnBlendTarget)
             {
                 _turnSoundBlend = Math.Min(turnBlendTarget, _turnSoundBlend + (float)Game.TargetElapsedTime.TotalSeconds);
@@ -716,12 +707,17 @@ namespace AW2.Game.Gobs
 
         private void UpdateCoughEngines()
         {
-            float coughArgument = (DamageLevel / MaxDamageLevel - 0.8f) / 0.2f;
+            const float RELATIVE_COUGH_TRESHOLD = 0.8f;
+            float coughArgument = (DamageLevel / MaxDamageLevel - RELATIVE_COUGH_TRESHOLD) / (1 - RELATIVE_COUGH_TRESHOLD);
             coughArgument = MathHelper.Clamp(coughArgument, 0, 1);
+            var mustEnable = !_coughEnginesEnabled && coughArgument > 0;
+            var mustDisable = _coughEnginesEnabled && coughArgument == 0;
+            _coughEnginesEnabled = coughArgument > 0;
             foreach (var coughEngine in _coughEngines)
             {
                 coughEngine.Input = coughArgument;
-                coughEngine.Paused = coughArgument == 0;
+                if (mustEnable) coughEngine.Emitter.Resume();
+                if (mustDisable) coughEngine.Emitter.Pause();
             }
         }
 
@@ -755,11 +751,6 @@ namespace AW2.Game.Gobs
                 Rotation = Rotation,
                 ControlStates = GetControlStates(),
             });
-        }
-
-        public void StopTurning()
-        {
-            _turning = false;
         }
     }
 }

@@ -247,6 +247,8 @@ namespace AW2.Game
         /// </summary>
         private Gob[] _exhaustEngines;
 
+        private bool _exhaustEffectsEnabled = true;
+
         #endregion Fields for gobs with thrusters
 
         #region Fields for collisions
@@ -1057,8 +1059,13 @@ namespace AW2.Game
 
         protected virtual void SetExhaustEffectsEnabled(bool active)
         {
+            if (active == _exhaustEffectsEnabled) return;
+            _exhaustEffectsEnabled = active;
             foreach (var exhaustEngine in _exhaustEngines.OfType<Gobs.Peng>())
-                exhaustEngine.Paused = !active;
+                if (active)
+                    exhaustEngine.Emitter.Resume();
+                else
+                    exhaustEngine.Emitter.Pause();
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
+using System.Collections.Generic;
 
 namespace AW2.Game.Weapons
 {
@@ -20,6 +21,8 @@ namespace AW2.Game.Weapons
 
         private bool _active;
         private bool _weaponFiredHandlerAdded;
+
+        private IEnumerable<Gobs.Peng> OwnersPengs { get { return Owner.Arena.Gobs.OfType<Gobs.Peng>().Where(p => p.Leader == Owner); } }
 
         /// <summary>
         /// This constructor is only for serialisation.
@@ -72,6 +75,7 @@ namespace AW2.Game.Weapons
             if (!_weaponFiredHandlerAdded) PlayerOwner.WeaponFired += WeaponFiredHandler;
             _weaponFiredHandlerAdded = true;
             _active = true;
+            foreach (var peng in OwnersPengs) peng.Emitter.Pause();
             if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
                 PlayerOwner.Messages.Add(new PlayerMessage("Activ8td", PlayerMessage.DEFAULT_COLOR));
         }
@@ -79,6 +83,7 @@ namespace AW2.Game.Weapons
         private void DeactivateCloak()
         {
             _active = false;
+            foreach (var peng in OwnersPengs) peng.Emitter.Resume();
             Owner.Alpha = 1;
         }
 

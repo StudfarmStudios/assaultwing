@@ -564,7 +564,6 @@ namespace AW2.Game
                 Ship.Weapon2.Fire(Controls.Fire2.State);
                 if (WeaponFired != null) WeaponFired();
             }
-
             if (Controls.Extra.Pulse || Controls.Extra.Force > 0)
                 Ship.ExtraDevice.Fire(Controls.Extra.State);
         }

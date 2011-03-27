@@ -231,7 +231,7 @@ namespace AW2.Game.GobUtils
         /// <summary>
         /// Fires (uses) the device.
         /// </summary>
-        public void Fire(AW2.UI.ControlState triggerState)
+        public virtual void Fire(AW2.UI.ControlState triggerState)
         {
             if (Owner.Disabled) return;
             if (!FiringOperator.IsFirePressed(triggerState)) return;

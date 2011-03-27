@@ -164,7 +164,6 @@
     <Compile Include="Game\GobUtils\Coroner.cs" />
     <Compile Include="Game\GobUtils\EquipInfo.cs" />
     <Compile Include="Game\GobUtils\FiringOperator.cs" />
-    <Compile Include="Game\GobUtils\FiringOperatorContinuous.cs" />
     <Compile Include="Game\GobUtils\FiringOperatorSingle.cs" />
     <Compile Include="Game\GobUtils\GameAction.cs" />
     <Compile Include="Game\GobUtils\GameActionAttribute.cs" />

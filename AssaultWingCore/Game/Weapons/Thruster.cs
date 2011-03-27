@@ -39,9 +39,10 @@ namespace AW2.Game.Weapons
         {
         }
 
-        public override void Activate()
+        public override void Fire(AW2.UI.ControlState triggerState)
         {
-            FiringOperator = new FiringOperatorContinuous(this);
+            var thrustForce = triggerState.Force * _thrustForceFactor * (_reverse ? -1 : 1);
+            Owner.Thrust(thrustForce, Owner.Game.GameTime.ElapsedGameTime, Owner.Rotation);
         }
 
         protected override void ShootImpl()

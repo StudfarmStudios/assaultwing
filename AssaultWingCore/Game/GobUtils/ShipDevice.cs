@@ -223,9 +223,9 @@ namespace AW2.Game.GobUtils
         /// Called when the device is added to a game. Subclasses can initialize here things
         /// that couldn't be initialized in the constructor e.g. due to lack of data.
         /// </summary>
-        public virtual void Activate()
+        public void Activate()
         {
-            FiringOperator = new FiringOperatorSingle(this);
+            FiringOperator = new FiringOperator(this);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace AW2.Game.GobUtils
         public virtual void Fire(AW2.UI.ControlState triggerState)
         {
             if (Owner.Disabled) return;
-            if (!FiringOperator.IsFirePressed(triggerState)) return;
+            if (!triggerState.Pulse) return;
             if (PermissionToFire() && FiringOperator.TryFire())
             {
                 if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();

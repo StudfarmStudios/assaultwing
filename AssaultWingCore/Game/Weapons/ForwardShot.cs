@@ -69,11 +69,6 @@ namespace AW2.Game.Weapons
         {
         }
 
-        public override void Activate()
-        {
-            FiringOperator = new FiringOperatorSingle(this);
-        }
-
         protected override void ShootImpl()
         {
             ForEachShipBarrel(_gunBarrels, CreateShot);

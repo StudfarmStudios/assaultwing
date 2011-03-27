@@ -21,15 +21,15 @@ with its ship-ripping claws</infoText>
   </shipInfo>  
   
   <mass>500</mass>
-  <maxDamage>2000</maxDamage>
+  <maxDamage>1750</maxDamage>
   <weapon1TypeName>talon swoop</weapon1TypeName>
-  <extraDeviceChargeMax>800</extraDeviceChargeMax>
+  <extraDeviceChargeMax>850</extraDeviceChargeMax>
   <weapon2ChargeMax>1150</weapon2ChargeMax>
-  <extraDeviceChargeSpeed>40</extraDeviceChargeSpeed>
+  <extraDeviceChargeSpeed>48</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>48</weapon2ChargeSpeed>
-  <thrustForce>145000</thrustForce>
-  <maxSpeed>230</maxSpeed>
-  <turnSpeed>2.8</turnSpeed>
+  <thrustForce>125000</thrustForce>
+  <maxSpeed>300</maxSpeed>
+  <turnSpeed>2.95</turnSpeed>
   <rollMax>0.5</rollMax>
   <rollSpeed>3.0</rollSpeed>
   <modelName>windlord</modelName>

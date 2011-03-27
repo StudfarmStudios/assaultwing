@@ -28,7 +28,7 @@ without missing its target</infoText>
   <extraDeviceChargeSpeed>60</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>60</weapon2ChargeSpeed>
   <thrustForce>120000</thrustForce>
-  <maxSpeed>300</maxSpeed>
+  <maxSpeed>260</maxSpeed>
   <turnSpeed>4.5</turnSpeed>
   <rollMax>0.7</rollMax>
   <rollSpeed>2.1</rollSpeed>

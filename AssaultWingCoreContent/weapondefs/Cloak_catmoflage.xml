@@ -52,7 +52,7 @@
   <iconName>menu_equip_mod_catmoflage</iconName>
   <loadTime>0.5</loadTime>
   <fireCharge>0</fireCharge>
-  <fireChargePerSecond>65</fireChargePerSecond>
+  <fireChargePerSecond>85</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>1</shotSpacing>
 </ShipDeviceType>

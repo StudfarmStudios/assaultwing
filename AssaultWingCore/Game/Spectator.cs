@@ -57,6 +57,7 @@ namespace AW2.Game
         /// The human-readable name of the spectator.
         /// </summary>
         public string Name { get; set; }
+        public bool ShowName { get; set; } // HACK for Cloak !!!
 
         /// <summary>
         /// The controls the player uses in menus and in game.

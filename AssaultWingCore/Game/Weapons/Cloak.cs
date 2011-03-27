@@ -75,6 +75,7 @@ namespace AW2.Game.Weapons
             if (!_weaponFiredHandlerAdded) PlayerOwner.WeaponFired += WeaponFiredHandler;
             _weaponFiredHandlerAdded = true;
             _active = true;
+            Owner.Owner.ShowName = false;
             foreach (var peng in OwnersPengs) peng.Emitter.Pause();
             if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
                 PlayerOwner.Messages.Add(new PlayerMessage("Activ8td", PlayerMessage.DEFAULT_COLOR));
@@ -83,6 +84,7 @@ namespace AW2.Game.Weapons
         private void DeactivateCloak()
         {
             _active = false;
+            Owner.Owner.ShowName = true;
             foreach (var peng in OwnersPengs) peng.Emitter.Resume();
             Owner.Alpha = 1;
         }

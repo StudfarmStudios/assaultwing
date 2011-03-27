@@ -26,15 +26,15 @@
     <keys>
       <Item>
         <position>0.0</position>
-        <internalValue>0.99</internalValue>
+        <internalValue>1</internalValue>
         <tangentIn>0</tangentIn>
         <tangentOut>-0.04</tangentOut>
         <continuity>Smooth</continuity>
       </Item>
       <Item>
         <position>100</position>
-        <internalValue>0.95</internalValue>
-        <tangentIn>-0.06</tangentIn>
+        <internalValue>1</internalValue>
+        <tangentIn>0</tangentIn>
         <tangentOut>-0.18</tangentOut>
         <continuity>Smooth</continuity>
       </Item>

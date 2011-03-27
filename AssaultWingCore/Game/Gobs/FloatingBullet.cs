@@ -71,7 +71,7 @@ namespace AW2.Game.Gobs
                         MoveTowards(theirArea.Owner.Pos, _attractionForce);
                     break;
                 case "Spread":
-                    if (collidedWithFriend)
+                    if (collidedWithFriend && theirArea.Owner is FloatingBullet)
                         MoveTowards(theirArea.Owner.Pos, -_spreadingForce);
                     break;
                 default:

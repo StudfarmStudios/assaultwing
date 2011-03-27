@@ -9,8 +9,8 @@
     <iconEquipName>menu_equip_ship_snake</iconEquipName>
 	<pictureName>menu_equip_shippicture_snake</pictureName>
 	<titlePictureName>menu_equip_shipname_snake</titlePictureName> 
-	<armor>High</armor>
-	<hull>High</hull>
+	<armor>Average</armor>
+	<hull>Great</hull>
 	<speed>Low</speed>
 	<steering>Average</steering>
   	<modEnergy>Low</modEnergy>

@@ -9,12 +9,12 @@
     <iconEquipName>menu_equip_ship_hyperion</iconEquipName>
 	<pictureName>menu_equip_shippicture_windlord</pictureName>
 	<titlePictureName>menu_equip_shipname_windlord</titlePictureName>
-	<armor>Average</armor>
-	<hull>Great</hull>
-	<speed>Average</speed>
+	<armor>Great</armor>
+	<hull>High</hull>
+	<speed>Great</speed>
 	<steering>Low</steering>
   	<modEnergy>Average</modEnergy>
-	<specialEnergy>High</specialEnergy>
+	<specialEnergy>Average</specialEnergy>
 	<infoText>Dangerous ship especially
 when used in close range combat
 with its ship-ripping claws</infoText>
@@ -23,7 +23,7 @@ with its ship-ripping claws</infoText>
   <mass>500</mass>
   <maxDamage>1750</maxDamage>
   <weapon1TypeName>talon swoop</weapon1TypeName>
-  <extraDeviceChargeMax>850</extraDeviceChargeMax>
+  <extraDeviceChargeMax>900</extraDeviceChargeMax>
   <weapon2ChargeMax>1150</weapon2ChargeMax>
   <extraDeviceChargeSpeed>48</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>48</weapon2ChargeSpeed>

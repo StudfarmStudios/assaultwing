@@ -9,12 +9,12 @@
     <iconEquipName>menu_equip_ship_prowler</iconEquipName>
 	<pictureName>menu_equip_shippicture_bugger</pictureName>
 	<titlePictureName>menu_equip_shipname_bugger</titlePictureName>
-	<armor>Poor</armor>
+	<armor>Low</armor>
 	<hull>Low</hull>
-	<speed>Great</speed>
-	<steering>High</steering>
+	<speed>High</speed>
+	<steering>Great</steering>
   	<modEnergy>Great</modEnergy>
-	<specialEnergy>Average</specialEnergy>
+	<specialEnergy>Low</specialEnergy>
 	<infoText>Lightweight, fast fighter that can
 shoot lightning through walls
 without missing its target</infoText>
@@ -23,7 +23,7 @@ without missing its target</infoText>
   <mass>350</mass>
   <maxDamage>1400</maxDamage>
   <weapon1TypeName>lightning gun</weapon1TypeName>
-  <extraDeviceChargeMax>1100</extraDeviceChargeMax>
+  <extraDeviceChargeMax>1150</extraDeviceChargeMax>
   <weapon2ChargeMax>900</weapon2ChargeMax>
   <extraDeviceChargeSpeed>60</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>60</weapon2ChargeSpeed>

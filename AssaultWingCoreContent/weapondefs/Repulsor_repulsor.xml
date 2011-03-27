@@ -80,7 +80,7 @@
   </upgradeNames>
   <iconName>dummytexture</iconName>
   <loadTime>6</loadTime>
-  <fireCharge>455</fireCharge>
+  <fireCharge>500</fireCharge>
   <fireChargePerSecond>500</fireChargePerSecond>
   <recoilMomentum>0</recoilMomentum>
   <shotTypeName>dummygob</shotTypeName>

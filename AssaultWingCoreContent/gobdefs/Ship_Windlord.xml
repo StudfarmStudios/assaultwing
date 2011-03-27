@@ -25,8 +25,8 @@ with its ship-ripping claws</infoText>
   <weapon1TypeName>talon swoop</weapon1TypeName>
   <extraDeviceChargeMax>900</extraDeviceChargeMax>
   <weapon2ChargeMax>1150</weapon2ChargeMax>
-  <extraDeviceChargeSpeed>48</extraDeviceChargeSpeed>
-  <weapon2ChargeSpeed>48</weapon2ChargeSpeed>
+  <extraDeviceChargeSpeed>47</extraDeviceChargeSpeed>
+  <weapon2ChargeSpeed>47</weapon2ChargeSpeed>
   <thrustForce>125000</thrustForce>
   <maxSpeed>300</maxSpeed>
   <turnSpeed>2.95</turnSpeed>

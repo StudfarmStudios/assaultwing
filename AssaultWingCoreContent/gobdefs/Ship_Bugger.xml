@@ -25,8 +25,8 @@ without missing its target</infoText>
   <weapon1TypeName>lightning gun</weapon1TypeName>
   <extraDeviceChargeMax>1150</extraDeviceChargeMax>
   <weapon2ChargeMax>900</weapon2ChargeMax>
-  <extraDeviceChargeSpeed>60</extraDeviceChargeSpeed>
-  <weapon2ChargeSpeed>60</weapon2ChargeSpeed>
+  <extraDeviceChargeSpeed>54</extraDeviceChargeSpeed>
+  <weapon2ChargeSpeed>54</weapon2ChargeSpeed>
   <thrustForce>120000</thrustForce>
   <maxSpeed>260</maxSpeed>
   <turnSpeed>4.5</turnSpeed>

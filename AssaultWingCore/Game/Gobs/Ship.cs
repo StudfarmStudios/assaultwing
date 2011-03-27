@@ -487,6 +487,7 @@ namespace AW2.Game.Gobs
         /// <param name="force">Thrust force factor relative to ship's maximum thrust.</param>
         public void Thrust(float force, TimeSpan duration, float direction)
         {
+            System.Diagnostics.Debug.Assert(force >= 0 && force <= 1);
             if (Disabled) return;
             Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * _thrustForce;
             Game.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed, duration);

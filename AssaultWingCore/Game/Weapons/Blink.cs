@@ -72,8 +72,6 @@ namespace AW2.Game.Weapons
 
         protected override bool PermissionToFire()
         {
-            // Blink is totally controlled by the server because of complex visual effects.
-            if (Owner.Game.NetworkMode == NetworkMode.Client) return false;
             return Arena.IsFreePosition(Owner, BlinkTarget);
         }
 

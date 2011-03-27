@@ -18,6 +18,18 @@ namespace AW2.Game
     [System.Diagnostics.DebuggerDisplay("ID:{ID} Name:{Name} ShipName:{ShipName}")]
     public class Player : Spectator
     {
+        [Flags]
+        private enum DeviceUsages
+        {
+            None = 0x00,
+            Weapon1Success = 0x01,
+            Weapon1Failure = 0x02,
+            Weapon2Success = 0x04,
+            Weapon2Failure = 0x08,
+            ExtraDeviceSuccess = 0x10,
+            ExtraDeviceFailure = 0x20,
+        }
+
         /// <summary>
         /// Time between death of player's ship and birth of a new ship,
         /// measured in seconds.
@@ -42,7 +54,7 @@ namespace AW2.Game
         /// Used in attenuating shake.
         private static readonly Curve g_shakeAttenuationInverseCurve;
 
-        #region Player fields about general things
+        #region Fields
 
         /// <summary>
         /// Time at which the player's ship is born, measured in game time.
@@ -70,10 +82,7 @@ namespace AW2.Game
 
         private Vector2 _lastLookAtPos;
         private TimeSpan _lastRepairPendingNotify;
-
-        #endregion Player fields about general things
-
-        #region Player fields about statistics
+        private DeviceUsages _deviceUsages;
 
         /// <summary>
         /// Number of opposing players' ships this player has killed.
@@ -86,7 +95,7 @@ namespace AW2.Game
         /// </summary>
         private int _suicides;
 
-        #endregion Player fields about statistics
+        #endregion Fields
 
         #region Player properties
 
@@ -333,6 +342,10 @@ namespace AW2.Game
 
         public override void Update()
         {
+            // Assumption: When _deviceUsages is set, also MustUpdateToClients is set,
+            // and serialization is done during the same frame.
+            _deviceUsages = DeviceUsages.None;
+
             foreach (var action in BonusActions)
             {
                 action.Update();
@@ -408,23 +421,27 @@ namespace AW2.Game
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+            checked
             {
-                writer.Write((CanonicalString)ShipName);
-                writer.Write((CanonicalString)Weapon2Name);
-                writer.Write((CanonicalString)ExtraDeviceName);
-                writer.Write((Color)PlayerColor);
-            }
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
-            {
-                writer.Write((short)Lives);
-                writer.Write((short)_kills);
-                writer.Write((short)_suicides);
-                writer.Write((byte)PostprocessEffectNames.Count);
-                foreach (var effectName in PostprocessEffectNames)
-                    writer.Write((CanonicalString)effectName);
-                BonusActions.Serialize(writer, mode);
+                base.Serialize(writer, mode);
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    writer.Write((CanonicalString)ShipName);
+                    writer.Write((CanonicalString)Weapon2Name);
+                    writer.Write((CanonicalString)ExtraDeviceName);
+                    writer.Write((Color)PlayerColor);
+                }
+                if ((mode & SerializationModeFlags.VaryingData) != 0)
+                {
+                    writer.Write((byte)_deviceUsages);
+                    writer.Write((short)Lives);
+                    writer.Write((short)_kills);
+                    writer.Write((short)_suicides);
+                    writer.Write((byte)PostprocessEffectNames.Count);
+                    foreach (var effectName in PostprocessEffectNames)
+                        writer.Write((CanonicalString)effectName);
+                    BonusActions.Serialize(writer, mode);
+                }
             }
         }
 
@@ -443,6 +460,26 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
+                var deviceUsages = (DeviceUsages)reader.ReadByte();
+                if ((deviceUsages & DeviceUsages.Weapon1Success) != 0)
+                {
+                    Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
+                    if (WeaponFired != null) WeaponFired();
+                }
+                if ((deviceUsages & DeviceUsages.Weapon1Failure) != 0) Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
+                if ((deviceUsages & DeviceUsages.Weapon2Success) != 0)
+                {
+                    Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
+                    if (WeaponFired != null) WeaponFired();
+                }
+                if ((deviceUsages & DeviceUsages.Weapon2Failure) != 0) Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
+                if ((deviceUsages & DeviceUsages.ExtraDeviceSuccess) != 0)
+                {
+                    Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
+                    // Note: Not raising WeaponFired because as of 2011-03-27, only Cloak hooks the event and it wants to know only of Weapon1 and Weapon2.
+                }
+                if ((deviceUsages & DeviceUsages.ExtraDeviceFailure) != 0) Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
+
                 Lives = reader.ReadInt16();
                 _kills = reader.ReadInt16();
                 _suicides = reader.ReadInt16();
@@ -554,18 +591,63 @@ namespace AW2.Game
                 Ship.TurnRight(Controls.Right.Force, Game.GameTime.ElapsedGameTime);
             if (Controls.Right.Force == 0 && Controls.Left.Force == 0)
                 Ship.StopTurning();
-            if (Controls.Fire1.Pulse || Controls.Fire1.Force > 0)
+            if (Game.NetworkMode != NetworkMode.Client) // client shoots only when the server says so
             {
-                Ship.Weapon1.Fire(Controls.Fire1.State);
-                if (WeaponFired != null) WeaponFired();
+                TryFireWeapon1();
+                TryFireWeapon2();
+                TryFireExtraDevice();
             }
-            if (Controls.Fire2.Pulse || Controls.Fire2.Force > 0)
+        }
+
+        private void TryFireWeapon1()
+        {
+            if (!Controls.Fire1.HasSignal) return;
+            var result = Ship.Weapon1.TryFire(Controls.Fire1.State);
+            switch (result)
             {
-                Ship.Weapon2.Fire(Controls.Fire2.State);
-                if (WeaponFired != null) WeaponFired();
+                case ShipDevice.FiringResult.Success:
+                    _deviceUsages |= DeviceUsages.Weapon1Success;
+                    if (WeaponFired != null) WeaponFired();
+                    break;
+                case ShipDevice.FiringResult.Failure:
+                    _deviceUsages |= DeviceUsages.Weapon1Failure;
+                    break;
             }
-            if (Controls.Extra.Pulse || Controls.Extra.Force > 0)
-                Ship.ExtraDevice.Fire(Controls.Extra.State);
+            MustUpdateToClients = true;
+        }
+
+        private void TryFireWeapon2()
+        {
+            if (!Controls.Fire2.HasSignal) return;
+            var result = Ship.Weapon2.TryFire(Controls.Fire2.State);
+            switch (result)
+            {
+                case ShipDevice.FiringResult.Success:
+                    _deviceUsages |= DeviceUsages.Weapon2Success;
+                    if (WeaponFired != null) WeaponFired();
+                    break;
+                case ShipDevice.FiringResult.Failure:
+                    _deviceUsages |= DeviceUsages.Weapon2Failure;
+                    break;
+            }
+            MustUpdateToClients = true;
+        }
+
+        private void TryFireExtraDevice()
+        {
+            if (!Controls.Extra.HasSignal) return;
+            var result = Ship.ExtraDevice.TryFire(Controls.Extra.State);
+            switch (result)
+            {
+                case ShipDevice.FiringResult.Success:
+                    _deviceUsages |= DeviceUsages.ExtraDeviceSuccess;
+                    // Note: Not raising WeaponFired. Only Cloak is hooked to it (2011-03-27) and it needs to know only of Weapon1 and Weapon2.
+                    break;
+                case ShipDevice.FiringResult.Failure:
+                    _deviceUsages |= DeviceUsages.ExtraDeviceFailure;
+                    break;
+            }
+            MustUpdateToClients = true;
         }
 
         /// <summary>

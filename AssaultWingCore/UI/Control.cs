@@ -63,6 +63,8 @@
         /// </summary>
         public abstract float Force { get; }
 
+        public bool HasSignal { get { return Pulse || Force > 0; } }
+
         /// <summary>
         /// Returns the state of the control.
         /// </summary>

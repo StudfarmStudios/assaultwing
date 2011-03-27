@@ -17,6 +17,7 @@ namespace AW2.Game.GobUtils
     public abstract class ShipDevice : Clonable, INetworkSerializable
     {
         public enum OwnerHandleType { PrimaryWeapon = 1, SecondaryWeapon = 2, ExtraDevice = 3 }
+        public enum FiringResult { Success, Failure, Void };
 
         public enum FiringSoundType
         {
@@ -30,8 +31,6 @@ namespace AW2.Game.GobUtils
             /// </summary>
             EveryShot
         }
-
-        private enum SerializationState { DontSerialize, SerializeNextAvailableFrame, SerializedThisFrame };
 
         #region Fields
 
@@ -97,8 +96,6 @@ namespace AW2.Game.GobUtils
 
         private ChargeProvider _chargeProvider;
         private float _charge;
-        private SerializationState _visualsCreatedThisFrame;
-        private SerializationState _soundPlayedThisFrame;
 
         #endregion
 
@@ -228,20 +225,30 @@ namespace AW2.Game.GobUtils
             FiringOperator = new FiringOperator(this);
         }
 
-        /// <summary>
-        /// Fires (uses) the device.
-        /// </summary>
-        public virtual void Fire(AW2.UI.ControlState triggerState)
+        public virtual FiringResult TryFire(AW2.UI.ControlState triggerState)
         {
-            if (Owner.Disabled) return;
-            if (!triggerState.Pulse) return;
-            if (PermissionToFire() && FiringOperator.Charged && FiringOperator.Loaded)
+            var result = Owner.Disabled || !triggerState.Pulse ? FiringResult.Void
+                : !FiringOperator.Loaded || !FiringOperator.Charged || !PermissionToFire() ? FiringResult.Failure
+                : FiringResult.Success;
+            ExecuteFiring(result);
+            return result;
+        }
+
+        public void ExecuteFiring(FiringResult result)
+        {
+            switch (result)
             {
-                FiringOperator.StartFiring();
-                if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
+                case FiringResult.Success:
+                    FiringOperator.StartFiring();
+                    if (_fireSoundType == FiringSoundType.Once) PlayFiringSound();
+                    break;
+                case FiringResult.Failure:
+                    PlayFiringFailedSound();
+                    break;
+                case FiringResult.Void:
+                    break;
+                default: throw new ApplicationException();
             }
-            else
-                PlayFiringFailedSound();
         }
 
         public virtual void Update()
@@ -257,10 +264,6 @@ namespace AW2.Game.GobUtils
                 FiringOperator.ShotFired();
             }
             FiringOperator.Update();
-            if (_soundPlayedThisFrame == SerializationState.SerializedThisFrame)
-                _soundPlayedThisFrame = SerializationState.DontSerialize;
-            if (_visualsCreatedThisFrame == SerializationState.SerializedThisFrame)
-                _visualsCreatedThisFrame = SerializationState.DontSerialize;
         }
 
         /// <summary>
@@ -274,12 +277,7 @@ namespace AW2.Game.GobUtils
             {
                 if ((mode & SerializationModeFlags.VaryingData) != 0)
                 {
-                    byte data = (byte)(0x3f * Charge / ChargeMax);
-                    if (_visualsCreatedThisFrame != SerializationState.DontSerialize) data |= 0x40;
-                    if (_soundPlayedThisFrame != SerializationState.DontSerialize) data |= 0x80;
-                    writer.Write((byte)data);
-                    _visualsCreatedThisFrame = SerializationState.SerializedThisFrame;
-                    _soundPlayedThisFrame = SerializationState.SerializedThisFrame;
+                    writer.Write((byte)(byte.MaxValue * Charge / ChargeMax));
                 }
             }
         }
@@ -289,11 +287,7 @@ namespace AW2.Game.GobUtils
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 var data = reader.ReadByte();
-                _charge = (data & 0x3f) * ChargeMax / 0x3f;
-                bool mustCreateVisuals = (data & 0x40) != 0;
-                bool mustPlaySound = (data & 0x80) != 0;
-                if (mustCreateVisuals) CreateVisualsImpl();
-                if (mustPlaySound) PlayFiringSoundImpl();
+                _charge = data * ChargeMax / byte.MaxValue;
             }
         }
 
@@ -307,9 +301,7 @@ namespace AW2.Game.GobUtils
 
         private void CreateVisuals()
         {
-            if (PlayerOwner.Game.NetworkMode == NetworkMode.Client) return;
             CreateVisualsImpl();
-            _visualsCreatedThisFrame = SerializationState.SerializeNextAvailableFrame;
         }
 
         private void PlayFiringFailedSound()
@@ -320,9 +312,7 @@ namespace AW2.Game.GobUtils
 
         private void PlayFiringSound()
         {
-            if (PlayerOwner.Game.NetworkMode == NetworkMode.Client) return;
             PlayFiringSoundImpl();
-            _soundPlayedThisFrame = SerializationState.SerializeNextAvailableFrame;
         }
 
         private void PlayFiringSoundImpl()

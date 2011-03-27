@@ -39,21 +39,15 @@ namespace AW2.Game.Weapons
         {
         }
 
-        public override void Fire(AW2.UI.ControlState triggerState)
+        public override FiringResult TryFire(AW2.UI.ControlState triggerState)
         {
-            var thrustForce = triggerState.Force * _thrustForceFactor * (_reverse ? -1 : 1);
-            Owner.Thrust(thrustForce, Owner.Game.GameTime.ElapsedGameTime, Owner.Rotation);
+            var thrustForce = triggerState.Force * _thrustForceFactor;
+            var direction = _reverse ? Owner.Rotation + MathHelper.Pi : Owner.Rotation;
+            Owner.Thrust(thrustForce, Owner.Game.GameTime.ElapsedGameTime, direction);
+            return FiringResult.Void;
         }
 
-        protected override void ShootImpl()
-        {
-            var duration = Owner.Game.GameTime.ElapsedGameTime;
-            float direction = _reverse ? Owner.Rotation + MathHelper.Pi : Owner.Rotation;
-            Owner.Thrust(_thrustForceFactor, duration, direction);
-        }
-
-        protected override void CreateVisualsImpl()
-        {
-        }
+        protected override void ShootImpl() { }
+        protected override void CreateVisualsImpl() { }
     }
 }

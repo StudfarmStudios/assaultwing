@@ -72,7 +72,8 @@ namespace AW2.Game.Weapons
             if (!_weaponFiredHandlerAdded) PlayerOwner.WeaponFired += WeaponFiredHandler;
             _weaponFiredHandlerAdded = true;
             _active = true;
-            PlayerOwner.Messages.Add(new PlayerMessage("Activ8td", PlayerMessage.DEFAULT_COLOR));
+            if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
+                PlayerOwner.Messages.Add(new PlayerMessage("Activ8td", PlayerMessage.DEFAULT_COLOR));
         }
 
         private void DeactivateCloak()

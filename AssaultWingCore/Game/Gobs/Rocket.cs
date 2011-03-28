@@ -101,12 +101,8 @@ namespace AW2.Game.Gobs
 
         public override void Update()
         {
-            if (Target != null && Target.Dead) Target = null;
-            if (_lastFindTarget + FIND_TARGET_INTERVAL <= Arena.TotalTime)
-            {
-                _lastFindTarget = Arena.TotalTime;
-                UpdateTarget();
-            }
+            CheckLoseTarget();
+            UpdateTarget();
             if (Arena.TotalTime < _thrustEndTime)
             {
                 if (Target != null)
@@ -199,8 +195,16 @@ namespace AW2.Game.Gobs
                 Game.GameTime.ElapsedGameTime);
         }
 
+        private void CheckLoseTarget()
+        {
+            if (Target == null) return;
+            if (Target.Dead || (Target.Owner != null && Target.Owner.IsHidden)) Target = null;
+        }
+
         private void UpdateTarget()
         {
+            if (_lastFindTarget + FIND_TARGET_INTERVAL > Arena.TotalTime) return;
+            _lastFindTarget = Arena.TotalTime;
             var oldTarget = Target;
             var potentialTargets =
                 from player in Game.DataEngine.Players

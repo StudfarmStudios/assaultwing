@@ -219,6 +219,11 @@ namespace AW2.Game
 
         public Func<bool> IsAllowedToCreateShip { get; set; }
 
+        /// <summary>
+        /// Is the player hidden from other players.
+        /// </summary>
+        public bool IsHidden { get; set; }
+
         private bool IsTimeToCreateShip
         {
             get

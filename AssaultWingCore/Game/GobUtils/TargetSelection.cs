@@ -20,7 +20,7 @@ namespace AW2.Game.GobUtils
         {
             var targets =
                 from gob in candidates
-                where !gob.Disabled && gob != source
+                where !gob.Disabled && gob != source && (gob.Owner == null || !gob.Owner.IsHidden)
                 let ownerWeight = gob.Owner == source.Owner ? 5f : gob.Owner == null ? 1f : 0.5f
                 let relativePos = (gob.Pos - source.Pos).Rotate(-direction)
                 let distanceSquared = relativePos.LengthSquared()

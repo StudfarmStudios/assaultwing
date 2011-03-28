@@ -809,7 +809,7 @@ namespace AW2.Game
         public virtual void Draw(Matrix view, Matrix projection)
         {
             float bleachFactor = GetBleach();
-            if (bleachFactor > 0)
+            if (bleachFactor > 0.01f)
                 ModelRenderer.DrawBleached(Model, WorldMatrix, view, projection, ModelPartTransforms, bleachFactor);
             else if (Alpha < 1)
                 ModelRenderer.DrawTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, Alpha);

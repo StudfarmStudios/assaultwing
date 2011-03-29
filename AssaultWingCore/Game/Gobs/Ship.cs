@@ -520,7 +520,7 @@ namespace AW2.Game.Gobs
             var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);
 
             // Draw player name
-            if (Owner != null && Owner.IsRemote && Owner.IsHidden)
+            if (Owner != null && Owner.IsRemote && !Owner.IsHidden)
             {
                 var playerNameSize = playerNameFont.MeasureString(Owner.Name);
                 var playerNamePos = new Vector2(screenPos.X - playerNameSize.X / 2, screenPos.Y + 35);

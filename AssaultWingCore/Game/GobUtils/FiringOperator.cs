@@ -17,8 +17,10 @@ namespace AW2.Game.GobUtils
         public bool IsItTimeToShoot { get { return _nextShot <= _device.Arena.TotalTime && _shotsLeft > 0; } }
         public float VisualChargeUsage { get { return _device.FireCharge; } }
         public TimeSpan LoadedTime { get { return _loadedTime; } }
-        public bool Loaded { get { return _loadedTime <= _device.Arena.TotalTime; } }
-        public bool Charged { get { return _device.FireCharge <= _device.Charge; } }
+        public bool Loaded { get { return NextFireSkipsLoadAndCharge || _loadedTime <= _device.Arena.TotalTime; } }
+        public bool Charged { get { return NextFireSkipsLoadAndCharge || _device.FireCharge <= _device.Charge; } }
+        public bool NextFireSkipsLoadAndCharge { get; set; }
+        public bool ThisFireSkipsLoadReset { get; set; }
 
         public FiringOperator(ShipDevice device)
         {
@@ -29,9 +31,13 @@ namespace AW2.Game.GobUtils
         public void StartFiring()
         {
             if (_nextShot < _device.Arena.TotalTime) _nextShot = _device.Arena.TotalTime; // Load time doesn't pile up
-            _device.Charge -= _device.FireCharge;
-            _loadedTime = TimeSpan.MaxValue; // Make the weapon unloaded for eternity until someone calls DoneFiring()
+            if (!NextFireSkipsLoadAndCharge)
+            {
+                _device.Charge -= _device.FireCharge;
+                _loadedTime = TimeSpan.MaxValue; // Make the weapon unloaded for eternity until someone calls DoneFiring()
+            }
             _shotsLeft = _device.ShotCount;
+            NextFireSkipsLoadAndCharge = false;
         }
 
         public void Update()
@@ -59,7 +65,9 @@ namespace AW2.Game.GobUtils
 
         private void DoneFiring()
         {
-            _loadedTime = _device.Arena.TotalTime + TimeSpan.FromSeconds(_device.LoadTime * _device.LoadTimeMultiplier);
+            if (!ThisFireSkipsLoadReset)
+                _loadedTime = _device.Arena.TotalTime + TimeSpan.FromSeconds(_device.LoadTime * _device.LoadTimeMultiplier);
+            ThisFireSkipsLoadReset = false;
         }
     }
 }

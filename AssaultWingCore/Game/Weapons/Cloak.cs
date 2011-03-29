@@ -51,8 +51,13 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl()
         {
-            if (_active) DeactivateCloak();
-            else ActivateCloak();
+            if (_active)
+            {
+                DeactivateCloak();
+                FiringOperator.ThisFireSkipsLoadReset = true;
+            }
+            else
+                ActivateCloak();
         }
 
         protected override void CreateVisualsImpl()
@@ -78,7 +83,8 @@ namespace AW2.Game.Weapons
             Owner.Owner.IsHidden = true;
             foreach (var peng in OwnersPengs) peng.Emitter.Pause();
             if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
-                PlayerOwner.Messages.Add(new PlayerMessage("Activ8td", PlayerMessage.DEFAULT_COLOR));
+                PlayerOwner.Messages.Add(new PlayerMessage("Aktv8td", PlayerMessage.DEFAULT_COLOR));
+            FiringOperator.NextFireSkipsLoadAndCharge = true;
         }
 
         private void DeactivateCloak()
@@ -87,6 +93,7 @@ namespace AW2.Game.Weapons
             Owner.Owner.IsHidden = false;
             foreach (var peng in OwnersPengs) peng.Emitter.Resume();
             Owner.Alpha = 1;
+            FiringOperator.NextFireSkipsLoadAndCharge = false;
         }
 
         private void WeaponFiredHandler()

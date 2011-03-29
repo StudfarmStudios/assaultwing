@@ -57,7 +57,7 @@
   <fireSound>Blink</fireSound>
   <fireSoundType>Once</fireSoundType>
   <iconName>menu_equip_mod_catmoflage</iconName>
-  <loadTime>0.5</loadTime>
+  <loadTime>10</loadTime>
   <fireCharge>0</fireCharge>
   <fireChargePerSecond>85</fireChargePerSecond>
   <shotCount>1</shotCount>

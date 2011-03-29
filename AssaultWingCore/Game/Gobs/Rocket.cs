@@ -183,8 +183,13 @@ namespace AW2.Game.Gobs
 
         private void RotateTowards(Vector2 direction, float rotationSpeed)
         {
-            float rotationGoal = AWMathHelper.Angle(direction);
-            Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationGoal,
+            // Rotation is limited by rocket movement so that the rocket can only turn
+            // in a small angle from the direction it is currently moving towards.
+            var rotationGoal = direction.Angle();
+            var moveDirection = Move.Angle();
+            const float TURN_LIMIT = MathHelper.PiOver4;
+            var rotationLimitedByMove = rotationGoal.ClampAngle(moveDirection - TURN_LIMIT, moveDirection + TURN_LIMIT);
+            Rotation = AWMathHelper.InterpolateTowardsAngle(Rotation, rotationLimitedByMove,
                 Game.PhysicsEngine.ApplyChange(rotationSpeed, Game.GameTime.ElapsedGameTime));
         }
 

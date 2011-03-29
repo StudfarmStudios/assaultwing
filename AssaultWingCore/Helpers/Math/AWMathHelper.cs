@@ -338,6 +338,22 @@ namespace AW2.Helpers
         }
 
         /// <summary>
+        /// Clamps the angle value between two angle values, inclusive.
+        /// </summary>
+        public static float ClampAngle(this float angle, float minAngle, float maxAngle)
+        {
+            if (minAngle > maxAngle) throw new ArgumentException("Minimum angle cannot be greater than maximum angle");
+            if (maxAngle > minAngle + MathHelper.TwoPi) throw new ArgumentException("Clamp supports only ranges up to full circle");
+            var minAngleNormalized = GetMinimalPositiveEqualAngle(minAngle);
+            var angleNormalized = GetMinimalPositiveEqualAngle(angle);
+            var equalAngleAboveMinAngle = angleNormalized + minAngle - minAngleNormalized +
+                (angleNormalized < minAngleNormalized ? MathHelper.TwoPi : 0);
+            if (minAngle <= equalAngleAboveMinAngle && equalAngleAboveMinAngle <= maxAngle) return equalAngleAboveMinAngle;
+            var middleInvertRange = (maxAngle + minAngle + MathHelper.TwoPi) / 2;
+            return equalAngleAboveMinAngle < middleInvertRange ? maxAngle : minAngle;
+        }
+
+        /// <summary>
         /// Returns the smallest non-negative value congruent to a value.
         /// The returned value will be between <c>0</c> and <c>modulus - 1</c>, inclusive.
         /// This is different from the expression <c>value % modulus</c> 

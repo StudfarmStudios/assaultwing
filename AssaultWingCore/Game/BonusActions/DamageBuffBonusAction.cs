@@ -51,6 +51,7 @@ namespace AW2.Game.BonusActions
             {
                 writer.Write(_buffName);
                 writer.Write(_bonusIconName);
+                writer.Write(_damagePerSecond);
             }
         }
 
@@ -61,6 +62,7 @@ namespace AW2.Game.BonusActions
             {
                 _buffName = reader.ReadString();
                 _bonusIconName = reader.ReadCanonicalString();
+                _damagePerSecond = reader.ReadSingle();
             }
         }
 

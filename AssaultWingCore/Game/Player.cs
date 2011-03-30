@@ -461,25 +461,7 @@ namespace AW2.Game
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
                 var deviceUsages = (DeviceUsages)reader.ReadByte();
-                if ((deviceUsages & DeviceUsages.Weapon1Success) != 0)
-                {
-                    Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
-                    if (WeaponFired != null) WeaponFired();
-                }
-                if ((deviceUsages & DeviceUsages.Weapon1Failure) != 0) Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
-                if ((deviceUsages & DeviceUsages.Weapon2Success) != 0)
-                {
-                    Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
-                    if (WeaponFired != null) WeaponFired();
-                }
-                if ((deviceUsages & DeviceUsages.Weapon2Failure) != 0) Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
-                if ((deviceUsages & DeviceUsages.ExtraDeviceSuccess) != 0)
-                {
-                    Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
-                    // Note: Not raising WeaponFired because as of 2011-03-27, only Cloak hooks the event and it wants to know only of Weapon1 and Weapon2.
-                }
-                if ((deviceUsages & DeviceUsages.ExtraDeviceFailure) != 0) Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
-
+                if (Ship != null) ApplyDeviceUsages(deviceUsages);
                 Lives = reader.ReadInt16();
                 _kills = reader.ReadInt16();
                 _suicides = reader.ReadInt16();
@@ -494,6 +476,28 @@ namespace AW2.Game
         #endregion Public methods
 
         #region Private methods
+
+        private void ApplyDeviceUsages(DeviceUsages deviceUsages)
+        {
+            if ((deviceUsages & DeviceUsages.Weapon1Success) != 0)
+            {
+                Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Success);
+                if (WeaponFired != null) WeaponFired();
+            }
+            if ((deviceUsages & DeviceUsages.Weapon1Failure) != 0) Ship.Weapon1.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.Weapon2Success) != 0)
+            {
+                Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Success);
+                if (WeaponFired != null) WeaponFired();
+            }
+            if ((deviceUsages & DeviceUsages.Weapon2Failure) != 0) Ship.Weapon2.ExecuteFiring(ShipDevice.FiringResult.Failure);
+            if ((deviceUsages & DeviceUsages.ExtraDeviceSuccess) != 0)
+            {
+                Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Success);
+                // Note: Not raising WeaponFired because as of 2011-03-27, only Cloak hooks the event and it wants to know only of Weapon1 and Weapon2.
+            }
+            if ((deviceUsages & DeviceUsages.ExtraDeviceFailure) != 0) Ship.ExtraDevice.ExecuteFiring(ShipDevice.FiringResult.Failure);
+        }
 
         private void ShipDeathHandler(Coroner coroner)
         {

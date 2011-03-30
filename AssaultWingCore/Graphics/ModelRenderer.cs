@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using AW2.Core;
-using System.Diagnostics;
 
 namespace AW2.Graphics
 {

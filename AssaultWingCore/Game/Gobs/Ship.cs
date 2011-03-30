@@ -12,6 +12,7 @@ using AW2.Helpers;
 using AW2.Helpers.Serialization;
 using AW2.Sound;
 using AW2.UI;
+using AW2.Graphics;
 
 namespace AW2.Game.Gobs
 {
@@ -514,6 +515,27 @@ namespace AW2.Game.Gobs
         #endregion Ship public methods
 
         private SpriteFont playerNameFont;
+
+        public override void Draw(Matrix view, Matrix projection)
+        {
+            if (Owner == null || !Owner.IsHidden || Owner.IsRemote)
+            {
+                base.Draw(view, projection);
+                return;
+            }
+            foreach (var mesh in Model.Meshes)
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.DirectionalLight0.Direction = Vector3.UnitX;
+                    effect.DirectionalLight1.Direction = Vector3.UnitY;
+                    effect.DirectionalLight2.Direction = -Vector3.One;
+                }
+            Alpha = 1;
+            base.Draw(view, projection);
+            foreach (var mesh in Model.Meshes)
+                foreach (BasicEffect effect in mesh.Effects)
+                    Arena.PrepareEffect(effect);
+        }
 
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {

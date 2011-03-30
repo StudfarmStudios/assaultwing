@@ -44,7 +44,7 @@ namespace AW2.Graphics.OverlayComponents
 
         public void Draw(SpriteBatch spriteBatch, Vector2 trackerPos, Func<float, Matrix> getGameToScreenTransform)
         {
-            if (Gob.Owner != null && Gob.Owner.IsHidden) return;
+            if (Gob.IsHidden) return;
 
             var gameToScreenTransform = getGameToScreenTransform(Gob.Layer.Z);
             var gobPosOnScreen = Vector2.Transform(Gob.Pos, gameToScreenTransform);

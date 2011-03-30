@@ -63,7 +63,7 @@ namespace AW2.Game.Gobs
         public override void Collide(CollisionArea myArea, CollisionArea theirArea, bool stuck)
         {
             var collidedWithFriend = theirArea.Owner.Owner == Owner;
-            var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.Owner.IsHidden;
+            var collidedWithNeutral = theirArea.Owner.Owner == null || theirArea.Owner.IsHidden;
             switch (myArea.Name)
             {
                 case "Magnet":

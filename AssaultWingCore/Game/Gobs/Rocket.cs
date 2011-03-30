@@ -203,7 +203,7 @@ namespace AW2.Game.Gobs
         private void CheckLoseTarget()
         {
             if (Target == null) return;
-            if (Target.Dead || (Target.Owner != null && Target.Owner.IsHidden)) Target = null;
+            if (Target.Dead || Target.IsHidden) Target = null;
         }
 
         private void UpdateTarget()

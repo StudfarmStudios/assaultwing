@@ -475,6 +475,11 @@ namespace AW2.Game
         /// </summary>
         public float Alpha { get; set; }
 
+        /// <summary>
+        /// Is the gob hidden from opposing players.
+        /// </summary>
+        public bool IsHidden { get; set; }
+
         public float AgeInGameSeconds { get { return _birthTime.SecondsAgoGameTime(); } }
 
         /// <summary>

@@ -516,27 +516,6 @@ namespace AW2.Game.Gobs
 
         private SpriteFont playerNameFont;
 
-        public override void Draw(Matrix view, Matrix projection)
-        {
-            if (!IsHidden || Owner == null || Owner.IsRemote)
-            {
-                base.Draw(view, projection);
-                return;
-            }
-            foreach (var mesh in Model.Meshes)
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.DirectionalLight0.Direction = Vector3.UnitX;
-                    effect.DirectionalLight1.Direction = Vector3.UnitY;
-                    effect.DirectionalLight2.Direction = -Vector3.One;
-                }
-            Alpha = 1;
-            base.Draw(view, projection);
-            foreach (var mesh in Model.Meshes)
-                foreach (BasicEffect effect in mesh.Effects)
-                    Arena.PrepareEffect(effect);
-        }
-
         public override void Draw2D(Matrix gameToScreen, SpriteBatch spriteBatch, float scale)
         {
             var screenPos = Vector2.Transform(Pos + DrawPosOffset, gameToScreen);

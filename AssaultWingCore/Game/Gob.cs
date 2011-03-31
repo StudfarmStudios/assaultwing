@@ -820,6 +820,8 @@ namespace AW2.Game
                 ModelRenderer.DrawTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, Alpha);
             else
                 ModelRenderer.Draw(Model, WorldMatrix, view, projection, ModelPartTransforms);
+            if (IsHidden && Owner != null && !Owner.IsRemote)
+                ModelRenderer.DrawOutline(Model, WorldMatrix, view, projection, ModelPartTransforms);
         }
 
         /// <summary>

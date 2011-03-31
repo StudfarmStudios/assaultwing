@@ -9,12 +9,30 @@ namespace AW2.Graphics
 {
     public static class ModelRenderer
     {
+        private const string OUTLINE_MESH_NAME_PREFIX = "mesh_Outline";
+
         private static GraphicsDevice GraphicsDevice { get { return AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice; } }
 
         public static void Draw(Model model, Matrix world, Matrix view, Matrix projection, Matrix[] modelPartTransforms)
         {
             foreach (var mesh in model.Meshes)
             {
+                if (mesh.Name.StartsWith(OUTLINE_MESH_NAME_PREFIX)) continue;
+                foreach (BasicEffect be in mesh.Effects)
+                {
+                    be.Projection = projection;
+                    be.View = view;
+                    be.World = modelPartTransforms[mesh.ParentBone.Index] * world;
+                }
+                mesh.Draw();
+            }
+        }
+
+        public static void DrawOutline(Model model, Matrix world, Matrix view, Matrix projection, Matrix[] modelPartTransforms)
+        {
+            foreach (var mesh in model.Meshes)
+            {
+                if (!mesh.Name.StartsWith(OUTLINE_MESH_NAME_PREFIX)) continue;
                 foreach (BasicEffect be in mesh.Effects)
                 {
                     be.Projection = projection;

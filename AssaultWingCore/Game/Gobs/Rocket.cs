@@ -69,6 +69,7 @@ namespace AW2.Game.Gobs
 
         #endregion Rocket fields
 
+        public float TargetTurnSpeed { get { return _targetTurnSpeed; } }
         private Gob Target { get { return _targetProxy != null ? _targetProxy.GetValue() : null; } set { _targetProxy = value; } }
         private LazyProxy<int, Gob> _targetProxy;
 

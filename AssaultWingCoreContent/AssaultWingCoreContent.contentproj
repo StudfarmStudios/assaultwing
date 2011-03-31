@@ -1591,6 +1591,7 @@
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="gobdefs\Ship_Bugger.xml">
       <Name>Ship_Bugger</Name>

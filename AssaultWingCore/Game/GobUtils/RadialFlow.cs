@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Helpers.Serialization;
+using AW2.Helpers;
 
 namespace AW2.Game.GobUtils
 {
@@ -74,7 +75,7 @@ namespace AW2.Game.GobUtils
         public void Update()
         {
             foreach (var gob in _radiator.Arena.GetOverlappingGobs(_collisionArea, _collisionArea.CollidesAgainst))
-                Apply(gob);
+                ApplyTo(gob);
         }
 
         public bool IsFinished(TimeSpan now)
@@ -82,7 +83,7 @@ namespace AW2.Game.GobUtils
             return now >= _flowEndTime;
         }
 
-        private void Apply(Gob gob)
+        private void ApplyTo(Gob gob)
         {
             var difference = gob.Pos - _radiator.Pos;
             var differenceLength = difference.Length();
@@ -92,6 +93,14 @@ namespace AW2.Game.GobUtils
                 ? Vector2.Zero
                 : Vector2.Normalize(_radiator.Move) * Vector2.Dot(_radiator.Move, differenceUnit);
             _radiator.Game.PhysicsEngine.ApplyDrag(gob, flow + moveBoost, _dragMagnitude);
+
+            // HACK to blow rockets away
+            var rocket = gob as Gobs.Rocket;
+            if (rocket != null)
+            {
+                var turnStep = (1 + rocket.TargetTurnSpeed) * (float)_radiator.Game.GameTime.ElapsedGameTime.TotalSeconds;
+                rocket.Rotation = AWMathHelper.InterpolateTowardsAngle(rocket.Rotation, difference.Angle(), turnStep);
+            }
         }
     }
 }

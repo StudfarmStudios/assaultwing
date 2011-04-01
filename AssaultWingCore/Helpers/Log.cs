@@ -104,7 +104,7 @@ namespace AW2.Helpers
             return Path.Combine(LogPath, filename);
         }
 
-        private static string LogPath
+        public static string LogPath
         {
             get
             {

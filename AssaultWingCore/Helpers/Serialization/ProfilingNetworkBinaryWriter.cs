@@ -122,8 +122,9 @@ namespace AW2.Helpers.Serialization
             if (currentStack == null)
                 return;
             
+            string statFile = AW2.Helpers.Log.LogPath + "\\network-stats-" + Process.GetCurrentProcess().Id + ".txt";
 
-            using (StreamWriter writer = new StreamWriter("network-stats-" + Process.GetCurrentProcess().Id + ".txt"))
+            using (StreamWriter writer = new StreamWriter(statFile))
             {
                 writer.WriteLine("=== SUMMARY PER TAG === ");
 

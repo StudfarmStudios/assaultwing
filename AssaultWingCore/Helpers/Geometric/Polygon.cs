@@ -327,13 +327,18 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write((int)vertices.Length);
-                foreach (var vertex in vertices)
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
-                    writer.Write((float)vertex.X);
-                    writer.Write((float)vertex.Y);
+                    writer.Write((int)vertices.Length);
+                    foreach (var vertex in vertices)
+                    {
+                        writer.Write((float)vertex.X);
+                        writer.Write((float)vertex.Y);
+                    }
                 }
             }
         }

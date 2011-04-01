@@ -56,16 +56,21 @@ namespace AW2.Game.GobUtils
         }
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-            checked
+        {            
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                if ((mode & SerializationModeFlags.VaryingData) != 0)
+                checked
                 {
-                    writer.Write((byte)_items.Count);
-                    foreach (var item in _items)
+                    if ((mode & SerializationModeFlags.VaryingData) != 0)
                     {
-                        writer.Write((byte)item.TypeID);
-                        item.Serialize(writer, SerializationModeFlags.All);
+                        writer.Write((byte)_items.Count);
+                        foreach (var item in _items)
+                        {
+                            writer.Write((byte)item.TypeID);
+                            item.Serialize(writer, SerializationModeFlags.All);
+                        }
                     }
                 }
             }

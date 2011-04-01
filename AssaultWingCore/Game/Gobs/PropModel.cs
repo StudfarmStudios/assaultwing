@@ -46,10 +46,15 @@ namespace AW2.Game.Gobs
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write((CanonicalString)_propModelName);
+                base.Serialize(writer, mode);
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    writer.Write((CanonicalString)_propModelName);
+                }
             }
         }
 

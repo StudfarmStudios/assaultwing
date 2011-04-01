@@ -421,26 +421,32 @@ namespace AW2.Game
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            checked
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                base.Serialize(writer, mode);
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+
+                checked
                 {
-                    writer.Write((CanonicalString)ShipName);
-                    writer.Write((CanonicalString)Weapon2Name);
-                    writer.Write((CanonicalString)ExtraDeviceName);
-                    writer.Write((Color)PlayerColor);
-                }
-                if ((mode & SerializationModeFlags.VaryingData) != 0)
-                {
-                    writer.Write((byte)_deviceUsages);
-                    writer.Write((short)Lives);
-                    writer.Write((short)_kills);
-                    writer.Write((short)_suicides);
-                    writer.Write((byte)PostprocessEffectNames.Count);
-                    foreach (var effectName in PostprocessEffectNames)
-                        writer.Write((CanonicalString)effectName);
-                    BonusActions.Serialize(writer, mode);
+                    base.Serialize(writer, mode);
+                    if ((mode & SerializationModeFlags.ConstantData) != 0)
+                    {
+                        writer.Write((CanonicalString)ShipName);
+                        writer.Write((CanonicalString)Weapon2Name);
+                        writer.Write((CanonicalString)ExtraDeviceName);
+                        writer.Write((Color)PlayerColor);
+                    }
+                    if ((mode & SerializationModeFlags.VaryingData) != 0)
+                    {
+                        writer.Write((byte)_deviceUsages);
+                        writer.Write((short)Lives);
+                        writer.Write((short)_kills);
+                        writer.Write((short)_suicides);
+                        writer.Write((byte)PostprocessEffectNames.Count);
+                        foreach (var effectName in PostprocessEffectNames)
+                            writer.Write((CanonicalString)effectName);
+                        BonusActions.Serialize(writer, mode);
+                    }
                 }
             }
         }

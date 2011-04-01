@@ -44,22 +44,27 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.SerializeBody(writer);
-            checked
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                // Gob creation (request) message structure:
-                // short: number of gobs to create, N
-                // N bytes: arena layer indices
-                // N ints: canonical forms of gob type names
-                // int: byte count of all gob data, K
-                // K bytes: serialised data of all gobs
-                var writeBytes = StreamedData;
-                if (_gobTypeNames.Count != _layerIndices.Count) throw new MessageException("_gobTypeNames.Count != _layerIndices.Count");
-                writer.Write((short)_gobTypeNames.Count);
-                foreach (byte layerIndex in _layerIndices) writer.Write((byte)layerIndex);
-                foreach (var typeName in _gobTypeNames) writer.Write((CanonicalString)typeName);
-                writer.Write((int)writeBytes.Length);
-                writer.Write(writeBytes, 0, writeBytes.Length);
+                base.SerializeBody(writer);
+                checked
+                {
+                    // Gob creation (request) message structure:
+                    // short: number of gobs to create, N
+                    // N bytes: arena layer indices
+                    // N ints: canonical forms of gob type names
+                    // int: byte count of all gob data, K
+                    // K bytes: serialised data of all gobs
+                    var writeBytes = StreamedData;
+                    if (_gobTypeNames.Count != _layerIndices.Count) throw new MessageException("_gobTypeNames.Count != _layerIndices.Count");
+                    writer.Write((short)_gobTypeNames.Count);
+                    foreach (byte layerIndex in _layerIndices) writer.Write((byte)layerIndex);
+                    foreach (var typeName in _gobTypeNames) writer.Write((CanonicalString)typeName);
+                    writer.Write((int)writeBytes.Length);
+                    writer.Write(writeBytes, 0, writeBytes.Length);
+                }
             }
         }
 

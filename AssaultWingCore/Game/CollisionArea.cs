@@ -232,14 +232,19 @@ namespace AW2.Game
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write((int)_type);
-                writer.Write((int)_collidesAgainst);
-                writer.Write((int)_cannotOverlap);
-                writer.Write((string)_name, 32, true);
-                writer.Write((byte)_collisionMaterial);
-                _area.Serialize(writer, SerializationModeFlags.All);
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    writer.Write((int)_type);
+                    writer.Write((int)_collidesAgainst);
+                    writer.Write((int)_cannotOverlap);
+                    writer.Write((string)_name, 32, true);
+                    writer.Write((byte)_collisionMaterial);
+                    _area.Serialize(writer, SerializationModeFlags.All);
+                }
             }
         }
 

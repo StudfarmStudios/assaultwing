@@ -82,10 +82,16 @@ namespace AW2.Game.GobUtils
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                var duration = EndTime - BeginTime;
-                writer.Write(duration);
+
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    var duration = EndTime - BeginTime;
+                    writer.Write(duration);
+                }
             }
         }
 

@@ -116,13 +116,18 @@ namespace AW2.Game.Gobs
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write((CanonicalString)wallModelName);
-                writer.Write((byte)wallCollisionAreas.Length);
-                foreach (var area in wallCollisionAreas)
-                    area.Serialize(writer, SerializationModeFlags.All);
+                base.Serialize(writer, mode);
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    writer.Write((CanonicalString)wallModelName);
+                    writer.Write((byte)wallCollisionAreas.Length);
+                    foreach (var area in wallCollisionAreas)
+                        area.Serialize(writer, SerializationModeFlags.All);
+                }
             }
         }
 

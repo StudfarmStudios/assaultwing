@@ -16,11 +16,16 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            checked
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                // Player deletion (request) message structure:
-                // int: player identifier
-                writer.Write((byte)PlayerID);
+                checked
+                {
+                    // Player deletion (request) message structure:
+                    // int: player identifier
+                    writer.Write((byte)PlayerID);
+                }
             }
         }
 

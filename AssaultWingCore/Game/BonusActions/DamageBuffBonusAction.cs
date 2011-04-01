@@ -46,12 +46,17 @@ namespace AW2.Game.BonusActions
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write(_buffName);
+                base.Serialize(writer, mode);
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                      writer.Write(_buffName);
                 writer.Write(_bonusIconName);
                 writer.Write(_damagePerSecond);
+                }
             }
         }
 

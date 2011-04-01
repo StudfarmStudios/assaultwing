@@ -28,7 +28,12 @@ namespace AW2.Net
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            writer.Write((int)FrameNumber);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                writer.Write((int)FrameNumber);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

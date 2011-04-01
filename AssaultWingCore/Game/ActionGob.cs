@@ -38,10 +38,15 @@ namespace AW2.Game
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write((string)actionGobName, 32, true);
+                base.Serialize(writer, mode);
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    writer.Write((string)actionGobName, 32, true);
+                }
             }
         }
 

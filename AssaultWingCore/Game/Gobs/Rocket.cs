@@ -145,11 +145,16 @@ namespace AW2.Game.Gobs
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                int targetID = Target != null ? Target.ID : Gob.INVALID_ID;
-                writer.Write((int)targetID);
+                base.Serialize(writer, mode);
+                if ((mode & SerializationModeFlags.VaryingData) != 0)
+                {
+                    int targetID = Target != null ? Target.ID : Gob.INVALID_ID;
+                    writer.Write((int)targetID);
+                }
             }
         }
 

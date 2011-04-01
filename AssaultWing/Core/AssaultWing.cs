@@ -15,6 +15,7 @@ using AW2.Net.ManagementMessages;
 using AW2.Net.MessageHandling;
 using AW2.Net.Messages;
 using AW2.UI;
+using System.IO;
 
 namespace AW2.Core
 {
@@ -639,15 +640,20 @@ namespace AW2.Core
 
         private void AfterEveryFrame()
         {
-            switch (NetworkMode)
+#if NETWORK_PROFILING
+            using(new NetworkProfilingScope(string.Format("Frame {0:0000}", DataEngine.Arena.FrameNumber)))
+#endif
             {
-                case NetworkMode.Server:
-                    SendGobUpdates();
-                    SendPlayerUpdatesOnServer();
-                    break;
-                case NetworkMode.Client:
-                    SendPlayerUpdatesOnClient();
-                    break;
+                switch (NetworkMode)
+                {
+                    case NetworkMode.Server:
+                        SendGobUpdates();
+                        SendPlayerUpdatesOnServer();
+                        break;
+                    case NetworkMode.Client:
+                        SendPlayerUpdatesOnClient();
+                        break;
+                }
             }
         }
 

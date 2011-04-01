@@ -83,13 +83,18 @@ namespace AW2.Game.Gobs
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-            if ((mode & SerializationModeFlags.VaryingData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                if (_hoverAroundPos.HasValue)
-                    writer.WriteHalf(_hoverAroundPos.Value);
-                else
-                    writer.WriteHalf(new Vector2(float.NaN));
+                base.Serialize(writer, mode);
+                if ((mode & SerializationModeFlags.VaryingData) != 0)
+                {
+                    if (_hoverAroundPos.HasValue)
+                        writer.WriteHalf(_hoverAroundPos.Value);
+                    else
+                        writer.WriteHalf(new Vector2(float.NaN));
+                }
             }
         }
 

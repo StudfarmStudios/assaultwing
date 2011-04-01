@@ -14,40 +14,110 @@ namespace AW2.Helpers.Serialization
     /// and supports writing strings in a specific encoding.
     /// Takes care of byte order.
     /// </summary>
-    public class NetworkBinaryWriter : BinaryWriter
+    public class NetworkBinaryWriter
     {
         /// <summary>
         /// Creates a new network binary writer that writes to an output stream.
         /// </summary>
         /// <param name="output">The stream to write to.</param>
-        public NetworkBinaryWriter(Stream output)
-            : base(output, Encoding.UTF8)
+        /// 
+        public static NetworkBinaryWriter Create(Stream output)
         {
+#if NETWORK_PROFILING
+            return new ProfilingNetworkBinaryWriter(output);
+#else
+            return new NetworkBinaryWriter(output);
+#endif
+        }
+        
+         public NetworkBinaryWriter(Stream output)
+        {
+            writer = new BinaryWriter(output, Encoding.UTF8);
+        }
+
+         public void Write(bool p)
+         {
+             Write(BitConverter.GetBytes(p));
+         }
+
+         public void Write(byte b)
+         {
+             Write(new byte[] { b });
+         }
+
+         public void Write(byte[] bytes)
+         {
+             WriteBytes(bytes, 0, bytes.Length);
+         }
+        public void Write(Char ch)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(new char[] { ch });
+            Write(bytes);
+        }
+
+        public void Write(Char[] chars)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(chars);
+            Write(bytes);
+        }
+
+        public void Write(Decimal d)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Write(double d)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Write(short value)
+        {
+            Write(BitConverter.GetBytes(value));
+        }
+
+        public void Write(int value)
+        {
+            Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value)));
+        }
+
+        public void Write(long value)
+        {
+            Write(BitConverter.GetBytes(value));
+        }
+
+        public void Write(sbyte b)
+        {
+            Write(new byte[] { unchecked((byte)b) });
         }
 
         /// <summary>
-        /// Writes an unsigned short.
+        /// Writes a length-prefixed string.
         /// </summary>
-        /// <param name="value">The value to write.</param>
-        public override void Write(ushort value)
+        /// <param name="value">The string to write.</param>
+        public void Write(string value)
         {
-            base.Write(IPAddress.HostToNetworkOrder(unchecked((short)value)));
+            Write((int)value.Length);
+            byte[] bytes = Encoding.UTF8.GetBytes((char[])value.ToCharArray());
+            Write(bytes);
         }
 
-        /// <summary>
-        /// Writes an int.
-        /// </summary>
-        /// <param name="value">The value to write.</param>
-        public override void Write(int value)
+        public void Write(ushort value)
         {
-            base.Write(IPAddress.HostToNetworkOrder(value));
+            Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(unchecked((short)value))));
         }
 
-        /// <summary>
-        /// Writes a float.
-        /// </summary>
-        /// <param name="value">The value to write.</param>
-        public override void Write(float value)
+        public void Write(uint value)
+        {
+            Write(BitConverter.GetBytes(unchecked((int)value)));
+        }
+
+        public void Write(ulong value)
+        {
+            Write(BitConverter.GetBytes(unchecked((long)value)));
+        }
+
+        public void Write(float value)
         {
             Write(Converter.FloatToInt(value));
         }
@@ -59,17 +129,27 @@ namespace AW2.Helpers.Serialization
         public void Write(Half value)
         {
             short half = Converter.HalfToShort(value);
-            Write((short)half);
+            Write(BitConverter.GetBytes((short)half));
         }
 
-        /// <summary>
-        /// Writes a length-prefixed string.
-        /// </summary>
-        /// <param name="value">The string to write.</param>
-        public override void Write(string value)
+        public void Flush()
         {
-            Write((int)value.Length);
-            Write((char[])value.ToCharArray());
+            writer.Flush();
+        }
+        
+        public void Close()
+        {
+            writer.Close();
+        }
+        
+        public long Seek(int offset, SeekOrigin origin)
+        {
+            return writer.Seek(offset, origin);
+        }
+
+        public Stream GetBaseStream()
+        {
+            return writer.BaseStream;
         }
 
         /// <summary>
@@ -110,10 +190,10 @@ namespace AW2.Helpers.Serialization
                         bytesNeeded = bytesNeededNow;
                     }
                 }
-                Write(encoding.GetBytes(valueChars, 0, goodCharCount), 0, bytesNeeded);
+                WriteBytes(encoding.GetBytes(valueChars, 0, goodCharCount), 0, bytesNeeded);
             }
             else
-                Write(encoding.GetBytes(value), 0, bytesNeeded);
+                WriteBytes(encoding.GetBytes(value), 0, bytesNeeded);
 
             // Pad with zero bytes.
             for (int i = bytesNeeded; i < byteCount; ++i)
@@ -192,5 +272,22 @@ namespace AW2.Helpers.Serialization
             WriteHalf((Vector3)vertex.Normal);
             WriteHalf((Vector2)vertex.TextureCoordinate);
         }
+
+        public void Write(byte[] writeBytes, int idx, int count)
+        {
+            WriteBytes(writeBytes, idx, count);
+        }
+        
+        // ONLY WriteBytes is allowed to call writer.Write methods!
+
+        protected virtual void WriteBytes(byte[] bytes, int index, int count)
+        {
+            writer.Write(bytes, index, count);
+        }
+
+        // Delegate to writer instead of inheriting, to prevent calling BinaryWriter methods.
+
+        private BinaryWriter writer;
+
     }
 }

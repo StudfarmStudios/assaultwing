@@ -402,30 +402,35 @@ namespace AW2.Game.Gobs
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            base.Serialize(writer, mode);
-
-            // HACK to avoid null references:
-            //   - ForwardShot using Ship.Model before LoadContent() is called
-            //   - Thrust() using _thrusterSound before Activate() is called
-            var shipMode = (mode & SerializationModeFlags.ConstantData) != 0
-                ? mode & ~SerializationModeFlags.VaryingData
-                : mode;
-
-            if ((shipMode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                if (Weapon2 != null) writer.Write(Weapon2.TypeName);
-                else writer.Write(CanonicalString.Null);
-                if (ExtraDevice != null) writer.Write(ExtraDevice.TypeName);
-                else writer.Write(CanonicalString.Null);
+                base.Serialize(writer, mode);
+
+                // HACK to avoid null references:
+                //   - ForwardShot using Ship.Model before LoadContent() is called
+                //   - Thrust() using _thrusterSound before Activate() is called
+                var shipMode = (mode & SerializationModeFlags.ConstantData) != 0
+                    ? mode & ~SerializationModeFlags.VaryingData
+                    : mode;
+
+                if ((shipMode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    if (Weapon2 != null) writer.Write(Weapon2.TypeName);
+                    else writer.Write(CanonicalString.Null);
+                    if (ExtraDevice != null) writer.Write(ExtraDevice.TypeName);
+                    else writer.Write(CanonicalString.Null);
+                }
+                if ((shipMode & SerializationModeFlags.VaryingData) != 0)
+                {
+                    writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
+                    _visualThrustForceSerializedThisFrame = true;
+                }
+                Weapon1.Serialize(writer, shipMode);
+                Weapon2.Serialize(writer, shipMode);
+                ExtraDevice.Serialize(writer, shipMode);
             }
-            if ((shipMode & SerializationModeFlags.VaryingData) != 0)
-            {
-                writer.Write((byte)MathHelper.Clamp(_visualThrustForce * 255, 0, 255));
-                _visualThrustForceSerializedThisFrame = true;
-            }
-            Weapon1.Serialize(writer, shipMode);
-            Weapon2.Serialize(writer, shipMode);
-            ExtraDevice.Serialize(writer, shipMode);
         }
 
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)

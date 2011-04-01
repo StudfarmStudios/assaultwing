@@ -14,11 +14,16 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            // Start game (request) message structure:
-            // variable-length string: name of arena to play
-            // int: number of wall objects in the arena
-            writer.Write((string)ArenaToPlay);
-            writer.Write((int)WallCount);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                // Start game (request) message structure:
+                // variable-length string: name of arena to play
+                // int: number of wall objects in the arena
+                writer.Write((string)ArenaToPlay);
+                writer.Write((int)WallCount);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

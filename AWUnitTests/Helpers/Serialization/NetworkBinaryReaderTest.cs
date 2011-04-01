@@ -56,7 +56,7 @@ namespace AW2.Helpers.Serialization
                 float.NaN, float.PositiveInfinity, float.NegativeInfinity,
             };
             var stream = new MemoryStream();
-            var writer = new NetworkBinaryWriter(stream);
+            var writer = NetworkBinaryWriter.Create(stream);
             foreach (float value in data)
                 writer.Write((Half)value);
             writer.Flush();

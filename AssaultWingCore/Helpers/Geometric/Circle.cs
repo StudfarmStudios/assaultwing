@@ -112,11 +112,17 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write((float)center.X);
-                writer.Write((float)center.Y);
-                writer.Write((float)radius);
+
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    writer.Write((float)center.X);
+                    writer.Write((float)center.Y);
+                    writer.Write((float)radius);
+                }
             }
         }
 

@@ -123,9 +123,15 @@ namespace AW2.Game
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                writer.Write(Name, 32, true);
+
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
+                    writer.Write(Name, 32, true);
+                }
             }
         }
 

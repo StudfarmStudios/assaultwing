@@ -81,7 +81,7 @@ namespace AW2.Net
                         break;
                     case DataModeType.SettingDataByWrite:
                         _writer.Flush();
-                        _writeBytes = ((MemoryStream)_writer.BaseStream).ToArray();
+                        _writeBytes = ((MemoryStream)_writer.GetBaseStream()).ToArray();
                         _writer.Close();
                         _writer = null;
                         break;
@@ -127,7 +127,7 @@ namespace AW2.Net
             switch (DataMode)
             {
                 case DataModeType.Uninitialized:
-                    _writer = new NetworkBinaryWriter(new MemoryStream());
+                    _writer = NetworkBinaryWriter.Create(new MemoryStream());
                     break;
                 case DataModeType.SettingDataByWrite:
                     break;

@@ -871,27 +871,32 @@ namespace AW2.Game
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
-            checked
+        {   
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                checked
                 {
-                    writer.Write((int)ID);
-                    byte flags = StaticID == 0 ? (byte)0x00 : (byte)0x01;
-                    writer.Write((byte)flags);
-                    if (StaticID != 0) writer.Write((int)StaticID);
-                    if (Owner != null)
-                        writer.Write((sbyte)Owner.ID);
-                    else
-                        writer.Write((sbyte)Spectator.UNINITIALIZED_ID);
-                }
-                if ((mode & SerializationModeFlags.VaryingData) != 0)
-                {
-                    writer.Write((Vector2)_pos);
-                    writer.WriteHalf((Vector2)Move);
-                    byte rotationAsByte = unchecked((byte)Math.Round(_rotation / MathHelper.TwoPi * 256));
-                    writer.Write((byte)rotationAsByte);
-                    if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
+                    if ((mode & SerializationModeFlags.ConstantData) != 0)
+                    {
+                        writer.Write((int)ID);
+                        byte flags = StaticID == 0 ? (byte)0x00 : (byte)0x01;
+                        writer.Write((byte)flags);
+                        if (StaticID != 0) writer.Write((int)StaticID);
+                        if (Owner != null)
+                            writer.Write((sbyte)Owner.ID);
+                        else
+                            writer.Write((sbyte)Spectator.UNINITIALIZED_ID);
+                    }
+                    if ((mode & SerializationModeFlags.VaryingData) != 0)
+                    {
+                        writer.Write((Vector2)_pos);
+                        writer.WriteHalf((Vector2)Move);
+                        byte rotationAsByte = unchecked((byte)Math.Round(_rotation / MathHelper.TwoPi * 256));
+                        writer.Write((byte)rotationAsByte);
+                        if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
+                    }
                 }
             }
         }

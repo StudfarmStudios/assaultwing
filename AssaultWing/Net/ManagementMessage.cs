@@ -84,7 +84,12 @@ namespace AW2.Net
 
         public override void Serialize(NetworkBinaryWriter writer)
         {
-            writer.Write(Encoding.ASCII.GetBytes(Text));
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                writer.Write(Encoding.ASCII.GetBytes(Text));
+            }
         }
 
         protected abstract void Deserialize(List<Dictionary<string, string>> tokenizedLines);

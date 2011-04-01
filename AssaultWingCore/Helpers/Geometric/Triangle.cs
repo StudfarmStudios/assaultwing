@@ -207,19 +207,24 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
 #if TRUSTED_VISIBILITY_BREACH
                 var p1 = P1;
                 var p2 = P2;
                 var p3 = P3;
 #endif
-                writer.Write((float)p1.X);
-                writer.Write((float)p1.Y);
-                writer.Write((float)p2.X);
-                writer.Write((float)p2.Y);
-                writer.Write((float)p3.X);
-                writer.Write((float)p3.Y);
+                    writer.Write((float)p1.X);
+                    writer.Write((float)p1.Y);
+                    writer.Write((float)p2.X);
+                    writer.Write((float)p2.Y);
+                    writer.Write((float)p3.X);
+                    writer.Write((float)p3.Y);
+                }
             }
         }
 

@@ -22,17 +22,22 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.SerializeBody(writer);
-            checked
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                // Player message (request) message structure:
-                // short: player ID
-                // word: data length, N
-                // N bytes: serialised message data
-                Write(Message, SerializationModeFlags.All);
-                writer.Write((short)PlayerID);
-                writer.Write((ushort)StreamedData.Length);
-                writer.Write(StreamedData, 0, StreamedData.Length);
+                base.SerializeBody(writer);
+                checked
+                {
+                    // Player message (request) message structure:
+                    // short: player ID
+                    // word: data length, N
+                    // N bytes: serialised message data
+                    Write(Message, SerializationModeFlags.All);
+                    writer.Write((short)PlayerID);
+                    writer.Write((ushort)StreamedData.Length);
+                    writer.Write(StreamedData, 0, StreamedData.Length);
+                }
             }
         }
 

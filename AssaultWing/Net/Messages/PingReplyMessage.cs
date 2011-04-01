@@ -32,13 +32,18 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            // Ping request message structure (during game):
-            // TimeSpan: timestamp originally sent in a ping request message
-            // TimeSpan: total game time when reply was sent, on the instance who sent the reply
-            // int: frame number when reply was sent, on the instance who sent the reply
-            writer.Write((TimeSpan)Timestamp);
-            writer.Write((TimeSpan)TotalGameTimeOnReply);
-            writer.Write((int)FrameNumberOnReply);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                // Ping request message structure (during game):
+                // TimeSpan: timestamp originally sent in a ping request message
+                // TimeSpan: total game time when reply was sent, on the instance who sent the reply
+                // int: frame number when reply was sent, on the instance who sent the reply
+                writer.Write((TimeSpan)Timestamp);
+                writer.Write((TimeSpan)TotalGameTimeOnReply);
+                writer.Write((int)FrameNumberOnReply);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

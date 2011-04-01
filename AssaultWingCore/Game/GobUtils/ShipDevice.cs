@@ -273,11 +273,17 @@ namespace AW2.Game.GobUtils
 
         public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            checked
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                if ((mode & SerializationModeFlags.VaryingData) != 0)
+
+                checked
                 {
-                    writer.Write((byte)(byte.MaxValue * Charge / ChargeMax));
+                    if ((mode & SerializationModeFlags.VaryingData) != 0)
+                    {
+                        writer.Write((byte)(byte.MaxValue * Charge / ChargeMax));
+                    }
                 }
             }
         }

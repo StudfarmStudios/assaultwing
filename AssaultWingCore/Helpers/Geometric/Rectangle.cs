@@ -151,16 +151,21 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
 #if TRUSTED_VISIBILITY_BREACH
                 var min = Min;
                 var max = Max;
 #endif
-                writer.Write((float)min.X);
-                writer.Write((float)min.Y);
-                writer.Write((float)max.X);
-                writer.Write((float)max.Y);
+                    writer.Write((float)min.X);
+                    writer.Write((float)min.Y);
+                    writer.Write((float)max.X);
+                    writer.Write((float)max.Y);
+                }
             }
         }
 

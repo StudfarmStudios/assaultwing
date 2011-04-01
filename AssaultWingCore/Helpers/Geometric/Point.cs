@@ -123,13 +123,19 @@ namespace AW2.Helpers.Geometric
         /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0)
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
+
+                if ((mode & SerializationModeFlags.ConstantData) != 0)
+                {
 #if TRUSTED_VISIBILITY_BREACH
                 var location = Location;
 #endif
-                writer.Write((float)location.X);
-                writer.Write((float)location.Y);
+                    writer.Write((float)location.X);
+                    writer.Write((float)location.Y);
+                }
             }
         }
 

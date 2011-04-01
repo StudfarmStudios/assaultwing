@@ -34,9 +34,14 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            // Ping request message structure (during game):
-            // long: ticks of the timestamp
-            writer.Write((long)Timestamp.Ticks);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                // Ping request message structure (during game):
+                // long: ticks of the timestamp
+                writer.Write((long)Timestamp.Ticks);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

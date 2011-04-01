@@ -25,17 +25,22 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            // Ga,e server handshake (TCP) request structure:
-            // int: number of canonical strings, K
-            // repeat K - 1 (all but the zero-indexed canonical string)
-            //   length-prefixed string: string value
-            // short: number of bytes, K
-            // K bytes: game client key
-            writer.Write((int)CanonicalStrings.Count());
-            foreach (var canonical in CanonicalStrings.Skip(1))
-                writer.Write((string)canonical);
-            writer.Write((short)GameClientKey.Length);
-            writer.Write(GameClientKey);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                // Ga,e server handshake (TCP) request structure:
+                // int: number of canonical strings, K
+                // repeat K - 1 (all but the zero-indexed canonical string)
+                //   length-prefixed string: string value
+                // short: number of bytes, K
+                // K bytes: game client key
+                writer.Write((int)CanonicalStrings.Count());
+                foreach (var canonical in CanonicalStrings.Skip(1))
+                    writer.Write((string)canonical);
+                writer.Write((short)GameClientKey.Length);
+                writer.Write(GameClientKey);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

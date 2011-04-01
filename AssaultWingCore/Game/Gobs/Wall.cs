@@ -181,7 +181,11 @@ namespace AW2.Game.Gobs
         #endregion Methods related to gobs' functionality in the game world
 
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {
+        {            
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
             // HACK to reduce network traffic
             var reducedMode = (mode & SerializationModeFlags.ConstantData) != 0
                 ? SerializationModeFlags.All
@@ -198,6 +202,7 @@ namespace AW2.Game.Gobs
                     foreach (short index in indices) writer.Write((short)index);
                     if ((mode & SerializationModeFlags.VaryingData) != 0) _removedTriangleIndicesToSerialize.Clear();
                 }
+            }
             }
         }
 

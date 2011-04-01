@@ -51,9 +51,15 @@ namespace AW2.Game
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
-            writer.Write((string)PreText);
-            writer.Write((string)Text);
-            writer.Write((Color)TextColor);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+
+                writer.Write((string)PreText);
+                writer.Write((string)Text);
+                writer.Write((Color)TextColor);
+            }
         }
 
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)

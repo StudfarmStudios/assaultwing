@@ -16,7 +16,7 @@ namespace AW2.Net.Messages
             ping.Timestamp = timestamp;
 
             var pingData = new byte[65536];
-            var pingWriter = new NetworkBinaryWriter(new MemoryStream(pingData));
+            var pingWriter = NetworkBinaryWriter.Create(new MemoryStream(pingData));
             ping.Serialize(pingWriter);
             var ping2 = (PingRequestMessage)Message.Deserialize(new ArraySegment<byte>(pingData), TimeSpan.Zero);
             var totalGameTime = new TimeSpan(23, 45, 67);
@@ -24,7 +24,7 @@ namespace AW2.Net.Messages
             var pong = ping2.GetPingReplyMessage(totalGameTime, frameNumber);
 
             var pongData = new byte[65536];
-            var pongWriter = new NetworkBinaryWriter(new MemoryStream(pongData));
+            var pongWriter = NetworkBinaryWriter.Create(new MemoryStream(pongData));
             pong.Serialize(pongWriter);
             var pong2 = (PingReplyMessage)Message.Deserialize(new ArraySegment<byte>(pongData), TimeSpan.Zero);
             Assert.AreEqual(timestamp, pong2.Timestamp);

@@ -92,10 +92,10 @@ namespace AW2.Net.ConnectionUtils
         {
             var sendArgs = GetSendArgs(remoteEndPoint);
             var stream = new MemoryStream(sendArgs.Buffer);
-            var writer = new NetworkBinaryWriter(stream);
+            var writer = NetworkBinaryWriter.Create(stream);
             writeData(writer);
-            DebugPrintSentByteCount(sendArgs.Buffer, (int)writer.BaseStream.Position);
-            sendArgs.SetBuffer(0, (int)writer.BaseStream.Position);
+            DebugPrintSentByteCount(sendArgs.Buffer, (int)writer.GetBaseStream().Position);
+            sendArgs.SetBuffer(0, (int)writer.GetBaseStream().Position);
             UseSocket(socket =>
             {
                 var isPending = socket.SendToAsync(sendArgs);

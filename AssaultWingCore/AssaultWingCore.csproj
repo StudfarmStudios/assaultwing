@@ -37,7 +37,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS;NO_TYPELOADER_DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WINDOWS;NO_TYPELOADER_DEBUG;NETWORK_PROFILING</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -266,6 +266,8 @@
     <Compile Include="Helpers\Serialization\MemberSerializationException.cs" />
     <Compile Include="Helpers\Serialization\NetworkBinaryReader.cs" />
     <Compile Include="Helpers\Serialization\NetworkBinaryWriter.cs" />
+    <Compile Include="Helpers\Serialization\NetworkProfilingScope.cs" />
+    <Compile Include="Helpers\Serialization\ProfilingNetworkBinaryWriter.cs" />
     <Compile Include="Helpers\Serialization\RuntimeStateAttribute.cs" />
     <Compile Include="Helpers\Serialization\Serialization.cs" />
     <Compile Include="Helpers\Serialization\SerializationModeFlags.cs" />

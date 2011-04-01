@@ -22,11 +22,16 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            // Player update reply structure:
-            // byte: local player identifier
-            // byte: non-local player identifier
-            writer.Write((byte)PlayerLocalID);
-            writer.Write((byte)PlayerID);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                // Player update reply structure:
+                // byte: local player identifier
+                // byte: non-local player identifier
+                writer.Write((byte)PlayerLocalID);
+                writer.Write((byte)PlayerID);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

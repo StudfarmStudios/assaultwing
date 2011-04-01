@@ -292,6 +292,9 @@ namespace AW2.Core
             if (_arenaFinished) return;
             _arenaFinished = true;
             FinishArenaImpl();
+#if NETWORK_PROFILING
+            AW2.Helpers.Serialization.ProfilingNetworkBinaryWriter.DumpStats();
+#endif
         }
 
         /// <summary>

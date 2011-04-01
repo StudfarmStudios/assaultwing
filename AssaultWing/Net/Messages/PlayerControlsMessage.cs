@@ -39,20 +39,26 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.SerializeBody(writer);
-            checked
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
             {
-                // Player controls (request) message structure:
-                // byte: player ID
-                // loop PlayerControls.CONTROL_COUNT times
-                //   byte: highest bit = control pulse; other bits = control force
-                writer.Write((byte)PlayerID);
-                foreach (var state in ControlStates)
+
+                base.SerializeBody(writer);
+                checked
                 {
-                    var force7Bit = (byte)(state.Force * 127);
-                    var pulseHighBit = state.Pulse ? (byte)0x80 : (byte)0x00;
-                    var value = (byte)(force7Bit | pulseHighBit);
-                    writer.Write((byte)value);
+                    // Player controls (request) message structure:
+                    // byte: player ID
+                    // loop PlayerControls.CONTROL_COUNT times
+                    //   byte: highest bit = control pulse; other bits = control force
+                    writer.Write((byte)PlayerID);
+                    foreach (var state in ControlStates)
+                    {
+                        var force7Bit = (byte)(state.Force * 127);
+                        var pulseHighBit = state.Pulse ? (byte)0x80 : (byte)0x00;
+                        var value = (byte)(force7Bit | pulseHighBit);
+                        writer.Write((byte)value);
+                    }
                 }
             }
         }

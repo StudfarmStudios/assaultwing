@@ -16,10 +16,15 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.SerializeBody(writer);
-            // Player controls (request) message structure:
-            // int: gob identifier
-            writer.Write((int)GobId);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                base.SerializeBody(writer);
+                // Player controls (request) message structure:
+                // int: gob identifier
+                writer.Write((int)GobId);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

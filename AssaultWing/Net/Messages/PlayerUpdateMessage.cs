@@ -16,15 +16,20 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.SerializeBody(writer);
-            // Player update (request) message structure:
-            // int: player identifier
-            // word: data length N
-            // N bytes: serialised data of the player
-            byte[] writeBytes = StreamedData;
-            writer.Write((byte)PlayerID);
-            writer.Write(checked((ushort)writeBytes.Length));
-            writer.Write(writeBytes, 0, writeBytes.Length);
+#if NETWORK_PROFILING
+            using (new NetworkProfilingScope(this))
+#endif
+            {
+                base.SerializeBody(writer);
+                // Player update (request) message structure:
+                // int: player identifier
+                // word: data length N
+                // N bytes: serialised data of the player
+                byte[] writeBytes = StreamedData;
+                writer.Write((byte)PlayerID);
+                writer.Write(checked((ushort)writeBytes.Length));
+                writer.Write(writeBytes, 0, writeBytes.Length);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

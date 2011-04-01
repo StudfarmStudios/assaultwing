@@ -139,6 +139,26 @@ namespace AW2.Helpers.Serialization
             return new Color { PackedValue = ReadUInt32() };
         }
 
+        public Vector2 ReadVector2Normalized16(float minNormalized, float maxNormalized)
+        {
+            var scale = (maxNormalized - minNormalized) / ushort.MaxValue;
+            return new Vector2
+            {
+                X = minNormalized + ReadUInt16() * scale,
+                Y = minNormalized + ReadUInt16() * scale
+            };
+        }
+
+        public Vector2 ReadVector2Normalized8(float minNormalized, float maxNormalized)
+        {
+            var scale = (maxNormalized - minNormalized) / byte.MaxValue;
+            return new Vector2
+            {
+                X = minNormalized + ReadByte() * scale,
+                Y = minNormalized + ReadByte() * scale
+            };
+        }
+
         /// <summary>
         /// Reads a Vector2 value given in half precision.
         /// </summary>

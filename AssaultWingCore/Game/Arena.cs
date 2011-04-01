@@ -180,7 +180,7 @@ namespace AW2.Game
         /// <summary>
         /// Distance outside the arena boundaries that we still allow some gobs to stay alive.
         /// </summary>
-        private const float ARENA_OUTER_BOUNDARY_THICKNESS = 1000;
+        public const float ARENA_OUTER_BOUNDARY_THICKNESS = 1000;
 
         /// <summary>
         /// Accuracy of finding the point of collision. Measured in game time.
@@ -267,6 +267,9 @@ namespace AW2.Game
         /// The width and height of the arena.
         /// </summary>
         public Vector2 Dimensions { get { return Info.Dimensions; } }
+
+        public float MinCoordinate { get { return -ARENA_OUTER_BOUNDARY_THICKNESS; } }
+        public float MaxCoordinate { get { return MathHelper.Max(Dimensions.X, Dimensions.Y) + ARENA_OUTER_BOUNDARY_THICKNESS; } }
 
         /// <summary>
         /// Filename of the arena's binary data container.

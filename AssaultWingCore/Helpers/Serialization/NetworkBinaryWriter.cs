@@ -244,6 +244,20 @@ namespace AW2.Helpers.Serialization
             Write((uint)color.PackedValue);
         }
 
+        public void WriteNormalized16(Vector2 vector, float minNormalized, float maxNormalized)
+        {
+            var scale = ushort.MaxValue / (maxNormalized - minNormalized);
+            Write((ushort)MathHelper.Clamp(((vector.X - minNormalized) * scale), 0, ushort.MaxValue));
+            Write((ushort)MathHelper.Clamp(((vector.Y - minNormalized) * scale), 0, ushort.MaxValue));
+        }
+
+        public void WriteNormalized8(Vector2 vector, float minNormalized, float maxNormalized)
+        {
+            var scale = byte.MaxValue / (maxNormalized - minNormalized);
+            Write((byte)MathHelper.Clamp(((vector.X - minNormalized) / scale), 0, byte.MaxValue));
+            Write((byte)MathHelper.Clamp(((vector.Y - minNormalized) / scale), 0, byte.MaxValue));
+        }
+
         /// <summary>
         /// Writes a Vector2 value using half precision.
         /// </summary>

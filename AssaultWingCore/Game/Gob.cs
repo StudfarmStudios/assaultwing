@@ -101,6 +101,12 @@ namespace AW2.Game
         /// </summary>
         public const float ROTATION_SMOOTHING_CUTOFF = MathHelper.PiOver2;
 
+        private const float MIN_GOB_COORDINATE = -Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
+        private const float MAX_GOB_COORDINATE = 16000 + Arena.ARENA_OUTER_BOUNDARY_THICKNESS;
+        private const float MIN_GOB_DELTA_COORDINATE = byte.MinValue / 8f;
+        private const float MAX_GOB_DELTA_COORDINATE = byte.MaxValue / 8f;
+        private static readonly TimeSpan FULL_NETWORK_UPDATE_INTERVAL = TimeSpan.FromSeconds(1);
+
         /// <summary>
         /// Least int that is known not to have been used as a gob identifier
         /// on this game instance.
@@ -216,6 +222,8 @@ namespace AW2.Game
         /// </summary>
         [TypeParameter]
         private TimeSpan _networkUpdatePeriod;
+        private TimeSpan _nextFullNetworkUdpateTime; // in game time
+        private Vector2 _lastNetworkUpdatePos;
 
         /// <summary>
         /// Access only through <see cref="ModelPartTransforms"/>.
@@ -870,8 +878,8 @@ namespace AW2.Game
         /// before performing their own serialisation.
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public virtual void  Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
-        {   
+        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        {
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope("GobBase"))
 #endif
@@ -881,7 +889,8 @@ namespace AW2.Game
                     if ((mode & SerializationModeFlags.ConstantData) != 0)
                     {
                         writer.Write((int)ID);
-                        byte flags = StaticID == 0 ? (byte)0x00 : (byte)0x01;
+                        byte flags = 0;
+                        if (StaticID != 0) flags |= (byte)0x01;
                         writer.Write((byte)flags);
                         if (StaticID != 0) writer.Write((int)StaticID);
                         if (Owner != null)
@@ -891,10 +900,22 @@ namespace AW2.Game
                     }
                     if ((mode & SerializationModeFlags.VaryingData) != 0)
                     {
-                        writer.Write((Vector2)_pos);
+                        var fullUpdate = true; // UNDONE because of bugs !!! _nextFullNetworkUdpateTime <= Game.GameTime.TotalGameTime;
+                        byte rotationAndFlags = unchecked((byte)(((int)Math.Round(_rotation / MathHelper.TwoPi * 128)) & 0x7f));
+                        if (fullUpdate)
+                        {
+                            rotationAndFlags |= 0x80;
+                            _nextFullNetworkUdpateTime = Game.GameTime.TotalGameTime + FULL_NETWORK_UPDATE_INTERVAL;
+                            writer.Write((byte)rotationAndFlags);
+                            writer.WriteNormalized16((Vector2)_pos, MIN_GOB_COORDINATE, MAX_GOB_COORDINATE);
+                        }
+                        else
+                        {
+                            writer.Write((byte)rotationAndFlags);
+                            writer.WriteNormalized8((Vector2)(_pos - _lastNetworkUpdatePos), MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
+                            _lastNetworkUpdatePos = _pos;
+                        }
                         writer.WriteHalf((Vector2)Move);
-                        byte rotationAsByte = unchecked((byte)Math.Round(_rotation / MathHelper.TwoPi * 256));
-                        writer.Write((byte)rotationAsByte);
                         if (IsDamageable) writer.Write((byte)(byte.MaxValue * DamageLevel / MaxDamageLevel));
                     }
                 }
@@ -921,20 +942,24 @@ namespace AW2.Game
             }
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
+                var oldRotation = _rotation;
+                byte rotationAndFlags = reader.ReadByte();
+                var fullUpdate = (rotationAndFlags & 0x80) != 0;
+                _rotation = (rotationAndFlags & 0x7f) * MathHelper.TwoPi / 128;
+                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
+                if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
+                    DrawRotationOffset = 0;
+
                 var oldPos = _pos;
-                var newPos = reader.ReadVector2();
+                var newPos = fullUpdate
+                    ? reader.ReadVector2Normalized16(MIN_GOB_COORDINATE, MAX_GOB_COORDINATE)
+                    : _lastNetworkUpdatePos + reader.ReadVector2Normalized8(MIN_GOB_DELTA_COORDINATE, MAX_GOB_DELTA_COORDINATE);
+                _lastNetworkUpdatePos = newPos;
                 var newMove = reader.ReadHalfVector2();
                 ExtrapolatePosAndMove(newPos, newMove, framesAgo);
                 DrawPosOffset += oldPos - _pos;
                 if (float.IsNaN(DrawPosOffset.X) || DrawPosOffset.LengthSquared() > POS_SMOOTHING_CUTOFF * POS_SMOOTHING_CUTOFF)
                     DrawPosOffset = Vector2.Zero;
-
-                var oldRotation = _rotation;
-                byte rotationAsByte = reader.ReadByte();
-                _rotation = rotationAsByte * MathHelper.TwoPi / 256;
-                DrawRotationOffset = AWMathHelper.GetAbsoluteMinimalEqualAngle(DrawRotationOffset + oldRotation - _rotation);
-                if (float.IsNaN(DrawRotationOffset) || Math.Abs(DrawRotationOffset) > ROTATION_SMOOTHING_CUTOFF)
-                    DrawRotationOffset = 0;
 
                 if (IsDamageable) DamageLevel = reader.ReadByte() / (float)byte.MaxValue * MaxDamageLevel;
             }

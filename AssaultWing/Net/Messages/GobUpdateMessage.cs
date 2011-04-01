@@ -53,25 +53,25 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
+            base.SerializeBody(writer);
+            // Gob update (request) message structure:
+            // int: number of gobs to update, K
+            // K ints: identifiers of the gobs
+            // K ushorts: byte count of gob data, M(k)
+            // repeat K times:
+            //   M(k) bytes: serialised data of a gob (content known only by the Gob subclass in question)
+            byte[] writeBytes = StreamedData;
 #if NETWORK_PROFILING
-            using (new NetworkProfilingScope(this))
+            using(new NetworkProfilingScope("GobUpdateMessageHeader"))
 #endif
             {
-                base.SerializeBody(writer);
-                // Gob update (request) message structure:
-                // int: number of gobs to update, K
-                // K ints: identifiers of the gobs
-                // K ushorts: byte count of gob data, M(k)
-                // repeat K times:
-                //   M(k) bytes: serialised data of a gob (content known only by the Gob subclass in question)
-                byte[] writeBytes = StreamedData;
-                writer.Write((int)_gobIds.Count);
-                foreach (int gobId in _gobIds)
-                    writer.Write((int)gobId);
-                foreach (ushort byteCount in _byteCounts)
-                    writer.Write((ushort)byteCount);
-                writer.Write(writeBytes, 0, writeBytes.Length);
+            writer.Write((int)_gobIds.Count);
+            foreach (int gobId in _gobIds)
+                writer.Write((int)gobId);
+            foreach (ushort byteCount in _byteCounts)
+                writer.Write((ushort)byteCount);
             }
+            writer.Write(writeBytes, 0, writeBytes.Length);
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

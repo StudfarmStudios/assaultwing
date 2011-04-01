@@ -870,10 +870,10 @@ namespace AW2.Game
         /// before performing their own serialisation.
         /// <param name="writer">The writer where to write the serialised data.</param>
         /// <param name="mode">Which parts of the gob to serialise.</param>
-        public virtual void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
+        public virtual void  Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {   
 #if NETWORK_PROFILING
-            using (new NetworkProfilingScope(this))
+            using (new NetworkProfilingScope("GobBase"))
 #endif
             {
                 checked

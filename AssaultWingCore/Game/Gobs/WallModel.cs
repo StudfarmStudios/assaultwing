@@ -90,18 +90,12 @@ namespace AW2.Game.Gobs
 
         #region Methods related to serialisation
 
-        /// <summary>
-        /// Serialises the gob for to a binary writer.
-        /// </summary>
-        /// <param name="writer">The writer where to write the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to serialise.</param>
         public override void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
             {
-
                 base.Serialize(writer, mode);
                 if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
@@ -110,17 +104,12 @@ namespace AW2.Game.Gobs
             }
         }
 
-        /// <summary>
-        /// Deserialises the gob from a binary writer.
-        /// </summary>
-        /// <param name="reader">The reader where to read the serialised data.</param>
-        /// <param name="mode">Which parts of the gob to deserialise.</param>
         public override void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                wallModelName = new CanonicalString(reader.ReadInt32());
+                wallModelName = reader.ReadCanonicalString();
                 var model = Game.Content.Load<Model>(wallModelName);
                 Effect = GetEffect(model);
                 Texture = GetTexture(model);

@@ -136,7 +136,7 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                ModelName = wallModelName = new CanonicalString(reader.ReadInt32());
+                ModelName = wallModelName = reader.ReadCanonicalString();
                 int collisionAreaCount = reader.ReadByte();
                 _collisionAreas = wallCollisionAreas = new CollisionArea[collisionAreaCount];
                 for (int i = 0; i < collisionAreaCount; ++i)

@@ -313,7 +313,7 @@ namespace AW2.Net.MessageHandling
 
         private static void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)
         {
-            AssaultWingCore.Instance.LogicEngine.GobsToKillOnClient.Add(mess.GobId);
+            AssaultWingCore.Instance.LogicEngine.GobsToKillOnClient.Add(mess.GobID);
         }
 
         #endregion

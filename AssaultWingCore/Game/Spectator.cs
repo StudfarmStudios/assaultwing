@@ -130,7 +130,7 @@ namespace AW2.Game
 
                 if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
-                    writer.Write(Name, 32, true);
+                    writer.Write((string)Name);
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace AW2.Game
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                Name = reader.ReadString(32);
+                Name = reader.ReadString();
             }
         }
 

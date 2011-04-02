@@ -143,8 +143,7 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                int canonical = reader.ReadInt32();
-                IconName = (CanonicalString)canonical;
+                IconName = reader.ReadCanonicalString();
                 DrawColor = reader.ReadColor();
                 Message = reader.ReadString();
             }

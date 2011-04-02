@@ -61,8 +61,6 @@ namespace AW2.Helpers.Serialization
             NetworkBinaryWriter writer1 = new NetworkBinaryWriter(ms1);
             NetworkBinaryWriter writer2 = new ProfilingNetworkBinaryWriter(ms1);
             
-            writer1.Write("Käy", 3, false); 
-            writer2.Write("Käy", 3, false);
             writer1.Write(new byte[] { 0xca, 0xfe, 0xd0 }, 1, 2);
             writer2.Write(new byte[] { 0xca, 0xfe, 0xd0 }, 1, 2);
 

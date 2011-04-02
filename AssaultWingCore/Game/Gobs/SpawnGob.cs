@@ -24,9 +24,6 @@ namespace AW2.Game.Gobs
         /// </summary>
         public CanonicalString spawnTypeName;
 
-        /// <summary>
-        /// Creates a new spawn type.
-        /// </summary>
         /// <param name="weight">The probability weight of this spawn type 
         /// relative to other spawn types.</param>
         /// <param name="spawnTypeName">Spawn type to be created in case this spawn type is chosen.</param>
@@ -35,8 +32,6 @@ namespace AW2.Game.Gobs
             this.weight = weight;
             this.spawnTypeName = spawnTypeName;
         }
-
-        #region INetworkSerializable Members
 
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
@@ -57,11 +52,9 @@ namespace AW2.Game.Gobs
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
                 weight = reader.ReadSingle();
-                spawnTypeName = (CanonicalString)reader.ReadInt32();
+                spawnTypeName = reader.ReadCanonicalString();
             }
         }
-
-        #endregion
     }
 
     /// <summary>
@@ -103,10 +96,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         public SpawnGob()
         {
-            _spawnArea = new Everything();
+            _spawnArea = new Circle(new Vector2(100, 100), 100);
             _spawnInterval = 20;
-            _spawnTypes = new SpawnType[1] { new SpawnType() };
-            _nextSpawn = new TimeSpan(0, 1, 2);
+            _spawnTypes = new[] { new SpawnType() };
         }
 
         public SpawnGob(CanonicalString typeName)
@@ -156,13 +148,13 @@ namespace AW2.Game.Gobs
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
+            checked
             {
                 base.Serialize(writer, mode);
                 if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
-                    // TODO: Serialise 'spawnArea'
                     writer.Write((float)_spawnInterval);
-                    writer.Write((int)_spawnTypes.Length);
+                    writer.Write((byte)_spawnTypes.Length);
                     foreach (var spawnType in _spawnTypes)
                         spawnType.Serialize(writer, SerializationModeFlags.ConstantData);
                 }
@@ -174,9 +166,8 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                // TODO: Deserialise 'spawnArea'
                 _spawnInterval = reader.ReadSingle();
-                int spawnTypesCount = reader.ReadInt32();
+                int spawnTypesCount = reader.ReadByte();
                 _spawnTypes = new SpawnType[spawnTypesCount];
                 for (int i = 0; i < spawnTypesCount; ++i)
                     _spawnTypes[i].Deserialize(reader, SerializationModeFlags.ConstantData, framesAgo);

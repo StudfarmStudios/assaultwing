@@ -591,7 +591,7 @@ namespace AW2.Core
         {
             if (!gob.IsRelevant) return;
             var message = new GobDeletionMessage();
-            message.GobId = gob.ID;
+            message.GobID = gob.ID;
             NetworkEngine.SendToGameClients(message);
         }
 

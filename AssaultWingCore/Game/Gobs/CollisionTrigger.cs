@@ -106,7 +106,7 @@ namespace AW2.Game.Gobs
                 base.Serialize(writer, mode);
                 if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
-                    writer.Write((string)actionGobName, 32, true);
+                    writer.Write((string)actionGobName);
                 }
             }
         }
@@ -119,7 +119,7 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                actionGobName = reader.ReadString(32);
+                actionGobName = reader.ReadString();
             }
         }
 

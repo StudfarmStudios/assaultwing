@@ -63,7 +63,7 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                _propModelName = new CanonicalString(reader.ReadInt32());
+                _propModelName = reader.ReadCanonicalString();
                 ModelName = _propModelName;
             }
         }

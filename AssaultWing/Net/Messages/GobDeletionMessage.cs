@@ -12,7 +12,7 @@ namespace AW2.Net.Messages
         /// <summary>
         /// Identifier of the gob to delete.
         /// </summary>
-        public int GobId { get; set; }
+        public int GobID { get; set; }
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
@@ -22,20 +22,20 @@ namespace AW2.Net.Messages
             {
                 base.SerializeBody(writer);
                 // Player controls (request) message structure:
-                // int: gob identifier
-                writer.Write((int)GobId);
+                // short: gob identifier
+                writer.Write((short)GobID);
             }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            GobId = reader.ReadInt32();
+            GobID = reader.ReadInt16();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " [GobId " + GobId + "]";
+            return base.ToString() + " [GobID " + GobID + "]";
         }
     }
 }

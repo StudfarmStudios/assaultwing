@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using System.IO;
 using System.Net;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace AW2.Helpers.Serialization
 {
@@ -15,8 +13,6 @@ namespace AW2.Helpers.Serialization
     /// </summary>
     public class NetworkBinaryReader : BinaryReader
     {
-        static char[] nullCharArray = new char[] { '\0' };
-
         /// <summary>
         /// Creates a new network binary reader that writes to an output stream.
         /// </summary>
@@ -26,28 +22,16 @@ namespace AW2.Helpers.Serialization
         {
         }
 
-        /// <summary>
-        /// Reads an unsigned short.
-        /// </summary>
-        /// <returns>The read value.</returns>
         public override ushort ReadUInt16()
         {
             return unchecked((ushort)IPAddress.NetworkToHostOrder(base.ReadInt16()));
         }
 
-        /// <summary>
-        /// Reads an int.
-        /// </summary>
-        /// <returns>The read value.</returns>
         public override int ReadInt32()
         {
             return IPAddress.NetworkToHostOrder(base.ReadInt32());
         }
 
-        /// <summary>
-        /// Reads a float.
-        /// </summary>
-        /// <returns>The read value.</returns>
         public override float ReadSingle()
         {
             return Converter.IntToFloat(ReadInt32());
@@ -56,7 +40,6 @@ namespace AW2.Helpers.Serialization
         /// <summary>
         /// Reads a 16-bit floating point value.
         /// </summary>
-        /// <returns>The read value.</returns>
         public Half ReadHalf()
         {
             short bits = ReadInt16();
@@ -68,32 +51,16 @@ namespace AW2.Helpers.Serialization
         /// </summary>
         public override string ReadString()
         {
-            int length = ReadInt32();
+            int length = ReadUInt16();
             var chars = ReadChars(length);
             return new string(chars);
         }
 
-        /// <summary>
-        /// Reads a given number of bytes containing a zero-terminated string.
-        /// The string will be read in UTF-8 encoding. 
-        /// </summary>
-        /// The same number of bytes will be read regardless of the length of the string.
-        /// <param name="byteCount">The number of bytes to read.</param>
-        /// <returns>The string.</returns>
-        public string ReadString(int byteCount)
-        {
-            byte[] bytes = base.ReadBytes(byteCount);
-            return Encoding.UTF8.GetString(bytes).TrimEnd(nullCharArray);
-        }
-
         public CanonicalString ReadCanonicalString()
         {
-            return (CanonicalString)ReadInt32();
+            return (CanonicalString)ReadInt16();
         }
 
-        /// <summary>
-        /// Reads a Vector2 value.
-        /// </summary>
         public Vector2 ReadVector2()
         {
             return new Vector2
@@ -103,9 +70,6 @@ namespace AW2.Helpers.Serialization
             };
         }
 
-        /// <summary>
-        /// Reads a Vector3 value.
-        /// </summary>
         public Vector3 ReadVector3()
         {
             return new Vector3
@@ -113,19 +77,6 @@ namespace AW2.Helpers.Serialization
                 X = ReadSingle(),
                 Y = ReadSingle(),
                 Z = ReadSingle()
-            };
-        }
-
-        /// <summary>
-        /// Reads a 3D model vertex.
-        /// </summary>
-        public VertexPositionNormalTexture ReadVertexPositionTextureNormal()
-        {
-            return new VertexPositionNormalTexture
-            {
-                Position = ReadVector3(),
-                Normal = ReadVector3(),
-                TextureCoordinate = ReadVector2()
             };
         }
 
@@ -181,19 +132,6 @@ namespace AW2.Helpers.Serialization
                 X = ReadHalf(),
                 Y = ReadHalf(),
                 Z = ReadHalf()
-            };
-        }
-
-        /// <summary>
-        /// Reads a 3D model vertex given in half precision.
-        /// </summary>
-        public VertexPositionNormalTexture ReadHalfVertexPositionTextureNormal()
-        {
-            return new VertexPositionNormalTexture
-            {
-                Position = ReadHalfVector3(),
-                Normal = ReadHalfVector3(),
-                TextureCoordinate = ReadHalfVector2()
             };
         }
     }

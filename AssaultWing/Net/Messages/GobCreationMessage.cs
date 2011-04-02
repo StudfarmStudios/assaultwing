@@ -55,14 +55,14 @@ namespace AW2.Net.Messages
                     // short: number of gobs to create, N
                     // N bytes: arena layer indices
                     // N ints: canonical forms of gob type names
-                    // int: byte count of all gob data, K
+                    // ushort: byte count of all gob data, K
                     // K bytes: serialised data of all gobs
                     var writeBytes = StreamedData;
                     if (_gobTypeNames.Count != _layerIndices.Count) throw new MessageException("_gobTypeNames.Count != _layerIndices.Count");
                     writer.Write((short)_gobTypeNames.Count);
                     foreach (byte layerIndex in _layerIndices) writer.Write((byte)layerIndex);
                     foreach (var typeName in _gobTypeNames) writer.Write((CanonicalString)typeName);
-                    writer.Write((int)writeBytes.Length);
+                    writer.Write((ushort)writeBytes.Length);
                     writer.Write(writeBytes, 0, writeBytes.Length);
                 }
             }
@@ -75,8 +75,8 @@ namespace AW2.Net.Messages
             _layerIndices = new List<int>(gobCount);
             _gobTypeNames = new List<CanonicalString>(gobCount);
             for (int i = 0; i < gobCount; ++i) _layerIndices.Add(reader.ReadByte());
-            for (int i = 0; i < gobCount; ++i) _gobTypeNames.Add((CanonicalString)reader.ReadInt32());
-            int byteCount = reader.ReadInt32();
+            for (int i = 0; i < gobCount; ++i) _gobTypeNames.Add(reader.ReadCanonicalString());
+            int byteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(byteCount);
         }
 

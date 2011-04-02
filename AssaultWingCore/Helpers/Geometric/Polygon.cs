@@ -320,45 +320,31 @@ namespace AW2.Helpers.Geometric
 
         #endregion
 
-        #region INetworkSerializable Members
-
-        /// <summary>
-        /// Serialises the object to a binary writer.
-        /// </summary>
         public void Serialize(NetworkBinaryWriter writer, SerializationModeFlags mode)
         {
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
+            checked
             {
                 if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
-                    writer.Write((int)vertices.Length);
-                    foreach (var vertex in vertices)
-                    {
-                        writer.Write((float)vertex.X);
-                        writer.Write((float)vertex.Y);
-                    }
+                    writer.Write((ushort)vertices.Length);
+                    foreach (var vertex in vertices) writer.Write((Vector2)vertex);
                 }
             }
         }
 
-        /// <summary>
-        /// Deserialises the object from a binary writer.
-        /// </summary>
         public void Deserialize(NetworkBinaryReader reader, SerializationModeFlags mode, int framesAgo)
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                int vertexCount = reader.ReadInt32();
+                int vertexCount = reader.ReadUInt16();
                 vertices = new Vector2[vertexCount];
-                for (int i = 0; i < vertexCount; ++i)
-                    vertices[i] = new Vector2 { X = reader.ReadSingle(), Y = reader.ReadSingle() };
+                for (int i = 0; i < vertexCount; i++) vertices[i] = reader.ReadVector2();
                 UpdateBoundingBox();
                 UpdateFaceStrips();
             }
         }
-
-        #endregion
     }
 }

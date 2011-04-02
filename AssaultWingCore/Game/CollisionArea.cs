@@ -241,7 +241,7 @@ namespace AW2.Game
                     writer.Write((int)_type);
                     writer.Write((int)_collidesAgainst);
                     writer.Write((int)_cannotOverlap);
-                    writer.Write((string)_name, 32, true);
+                    writer.Write((string)_name);
                     writer.Write((byte)_collisionMaterial);
                     _area.Serialize(writer, SerializationModeFlags.All);
                 }
@@ -255,7 +255,7 @@ namespace AW2.Game
                 _type = (CollisionAreaType)reader.ReadInt32();
                 _collidesAgainst = (CollisionAreaType)reader.ReadInt32();
                 _cannotOverlap = (CollisionAreaType)reader.ReadInt32();
-                _name = reader.ReadString(32);
+                _name = reader.ReadString();
                 _collisionMaterial = (CollisionMaterialType)reader.ReadByte();
                 _area.Deserialize(reader, SerializationModeFlags.All, framesAgo);
             }

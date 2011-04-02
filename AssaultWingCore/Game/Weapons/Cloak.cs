@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using AW2.Game.GobUtils;
 using AW2.Helpers;
 using AW2.Helpers.Serialization;
-using System.Collections.Generic;
+using AW2.Sound;
 
 namespace AW2.Game.Weapons
 {
@@ -19,8 +20,12 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private Curve _cloakStrengthForVelocity;
 
+        [TypeParameter]
+        private string _runningSoundName;
+
         private bool _active;
         private bool _weaponFiredHandlerAdded;
+        private SoundInstance _runningSound;
 
         private IEnumerable<Gobs.Peng> OwnersPengs { get { return Owner.Arena.Gobs.OfType<Gobs.Peng>().Where(p => p.Leader == Owner); } }
 
@@ -43,9 +48,20 @@ namespace AW2.Game.Weapons
         {
         }
 
+        public override void Activate()
+        {
+            base.Activate();
+            _runningSound = Owner.Game.SoundEngine.CreateSound(_runningSoundName);
+        }
+
         public override void Dispose()
         {
             PlayerOwner.WeaponFired -= WeaponFiredHandler;
+            if (_runningSound != null)
+            {
+                _runningSound.Dispose();
+                _runningSound = null;
+            }
             base.Dispose();
         }
 
@@ -85,6 +101,7 @@ namespace AW2.Game.Weapons
             if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
                 PlayerOwner.Messages.Add(new PlayerMessage("Aktv8td", PlayerMessage.DEFAULT_COLOR));
             FiringOperator.NextFireSkipsLoadAndCharge = true;
+            _runningSound.EnsureIsPlaying();
         }
 
         private void DeactivateCloak()
@@ -94,6 +111,7 @@ namespace AW2.Game.Weapons
             foreach (var peng in OwnersPengs) peng.Emitter.Resume();
             Owner.Alpha = 1;
             FiringOperator.NextFireSkipsLoadAndCharge = false;
+            _runningSound.Stop();
         }
 
         private void WeaponFiredHandler()

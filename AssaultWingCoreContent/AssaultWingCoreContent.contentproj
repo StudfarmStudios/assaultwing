@@ -2856,6 +2856,43 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="sounds\meow01.wav">
+      <Name>meow01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="sounds\meow02.wav">
+      <Name>meow02</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="sounds\meow03.wav">
+      <Name>meow03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="sounds\meow04.wav">
+      <Name>meow04</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="sounds\meow05.wav">
+      <Name>meow05</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="sounds\meow06.wav">
+      <Name>meow06</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="sounds\purpur01.wav">
+      <Name>purpur01</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="textures\menu_equip_readytofight.png">
       <Name>menu_equip_readytofight</Name>
       <Importer>TextureImporter</Importer>

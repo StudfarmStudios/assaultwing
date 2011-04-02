@@ -54,7 +54,8 @@
       </Item>
     </keys>
   </cloakStrengthForVelocity>
-  <fireSound>Blink</fireSound>
+  <runningSoundName>purpur</runningSoundName>
+  <fireSound>meow</fireSound>
   <fireSoundType>Once</fireSoundType>
   <iconName>menu_equip_mod_catmoflage</iconName>
   <loadTime>12</loadTime>

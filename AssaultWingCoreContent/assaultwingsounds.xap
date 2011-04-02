@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2485973594;
-    Last Modified High = 30081059;
+    Last Modified Low = 30081059;
+    Last Modified High = 2485973594;
 
     Category
     {
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::fc4ece5d-51d1-4f48-9816-8aa9471f2520;
+            Name = 1::7ca813d1-a333-4d48-9179-47075c7299be;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -255,7 +255,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::a07c6fe0-1c20-459c-a213-d761b14654c9;
+            Name = 1::6bbe8cd4-ea07-4e2c-8d7c-e529d3a23015;
             Property = 0;
             Sound = 0;
             Line Color = 4279846310;
@@ -295,7 +295,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::f9a1b2a4-4a43-406b-b1f8-3ab5766c4346;
+            Name = 1::f4b525a4-709f-464c-8e5a-a82cf09f5f46;
             Property = 0;
             Sound = 0;
             Line Color = 4286596879;
@@ -323,7 +323,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::ff1c3e65-fd5a-450e-8822-14f3a95eb60f;
+            Name = 1::17c6ce2a-da2c-4233-bd34-3305a1f4bf5a;
             Property = 0;
             Sound = 0;
             Line Color = 4289448844;
@@ -373,14 +373,8 @@ Wave Bank
     Windows Bank Path Edited = 1;
     Seek Tables = 1;
     Compression Preset Name = Compression Preset;
-    Xbox Bank Last Modified Low = 0;
-    Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 0;
-    PC Bank Last Modified High = 0;
-    Header Last Modified Low = 0;
-    Header Last Modified High = 0;
-    Bank Last Revised Low = 4182545829;
-    Bank Last Revised High = 30138770;
+    Bank Last Revised Low = 2426666448;
+    Bank Last Revised High = 30142838;
 
     Wave
     {
@@ -1243,16 +1237,16 @@ Wave Bank
         Cache
         {
             Format Tag = 0;
-            Channels = 2;
+            Channels = 1;
             Sampling Rate = 44100;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 209576;
+            Play Region Length = 104788;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2269568528;
-            Last Modified High = 30095532;
+            Last Modified Low = 2365786406;
+            Last Modified High = 30135779;
         }
     }
 
@@ -1772,16 +1766,16 @@ Wave Bank
         Cache
         {
             Format Tag = 0;
-            Channels = 2;
+            Channels = 1;
             Sampling Rate = 44100;
             Bits Per Sample = 1;
             Play Region Offset = 44;
-            Play Region Length = 185416;
+            Play Region Length = 16902;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 4212234656;
-            Last Modified High = 30095964;
+            Last Modified Low = 893183214;
+            Last Modified High = 30138015;
         }
     }
 
@@ -1872,8 +1866,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 1576708160;
-            Last Modified High = 30135601;
+            Last Modified Low = 2365786406;
+            Last Modified High = 30135779;
         }
     }
 
@@ -1895,8 +1889,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 915933171;
-            Last Modified High = 30135599;
+            Last Modified Low = 2365786406;
+            Last Modified High = 30135779;
         }
     }
 
@@ -1918,8 +1912,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 814137004;
-            Last Modified High = 30135183;
+            Last Modified Low = 2365786406;
+            Last Modified High = 30135779;
         }
     }
 
@@ -1941,8 +1935,8 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2556334583;
-            Last Modified High = 30135596;
+            Last Modified Low = 2365786406;
+            Last Modified High = 30135779;
         }
     }
 
@@ -1964,8 +1958,169 @@ Wave Bank
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 1612134998;
-            Last Modified High = 30134005;
+            Last Modified Low = 2365786406;
+            Last Modified High = 30135779;
+        }
+    }
+
+    Wave
+    {
+        Name = purpur01;
+        File = sounds\purpur01.wav;
+        Build Settings Last Modified Low = 2801423190;
+        Build Settings Last Modified High = 30142817;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 325898;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1173255648;
+            Last Modified High = 30142812;
+        }
+    }
+
+    Wave
+    {
+        Name = meow01;
+        File = sounds\meow01.wav;
+        Build Settings Last Modified Low = 2263937140;
+        Build Settings Last Modified High = 30142838;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 58638;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2907360240;
+            Last Modified High = 30142810;
+        }
+    }
+
+    Wave
+    {
+        Name = meow02;
+        File = sounds\meow02.wav;
+        Build Settings Last Modified Low = 2263957142;
+        Build Settings Last Modified High = 30142838;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 44280;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3962450240;
+            Last Modified High = 30142810;
+        }
+    }
+
+    Wave
+    {
+        Name = meow03;
+        File = sounds\meow03.wav;
+        Build Settings Last Modified Low = 2263967142;
+        Build Settings Last Modified High = 30142838;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 66360;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 112072944;
+            Last Modified High = 30142811;
+        }
+    }
+
+    Wave
+    {
+        Name = meow04;
+        File = sounds\meow04.wav;
+        Build Settings Last Modified Low = 2263967142;
+        Build Settings Last Modified High = 30142838;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 84920;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 649562944;
+            Last Modified High = 30142811;
+        }
+    }
+
+    Wave
+    {
+        Name = meow05;
+        File = sounds\meow05.wav;
+        Build Settings Last Modified Low = 2263987143;
+        Build Settings Last Modified High = 30142838;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 61632;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 1850482944;
+            Last Modified High = 30142811;
+        }
+    }
+
+    Wave
+    {
+        Name = meow06;
+        File = sounds\meow06.wav;
+        Build Settings Last Modified Low = 2263997144;
+        Build Settings Last Modified High = 30142838;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 1;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 44;
+            Play Region Length = 102176;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 3010682944;
+            Last Modified High = 30142811;
         }
     }
 }
@@ -1977,8 +2132,6 @@ Sound Bank
     Windows File = bin\x86\Debug\Sound Bank.xsb;
     Xbox Bank Path Edited = 1;
     Windows Bank Path Edited = 1;
-    Header Last Modified High = 0;
-    Header Last Modified Low = 0;
 
     Sound
     {
@@ -3781,7 +3934,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Dock loop;
-                RPC Curve Name = 1::fc4ece5d-51d1-4f48-9816-8aa9471f2520;
+                RPC Curve Name = 1::7ca813d1-a333-4d48-9179-47075c7299be;
             }
         }
     }
@@ -4168,7 +4321,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Lightning fadeout;
-                RPC Curve Name = 1::a07c6fe0-1c20-459c-a213-d761b14654c9;
+                RPC Curve Name = 1::6bbe8cd4-ea07-4e2c-8d7c-e529d3a23015;
             }
         }
     }
@@ -4791,13 +4944,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::f9a1b2a4-4a43-406b-b1f8-3ab5766c4346;
+                RPC Curve Name = 1::f4b525a4-709f-464c-8e5a-a82cf09f5f46;
             }
 
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::ff1c3e65-fd5a-450e-8822-14f3a95eb60f;
+                RPC Curve Name = 1::17c6ce2a-da2c-4233-bd34-3305a1f4bf5a;
             }
         }
     }
@@ -5265,6 +5418,336 @@ Sound Bank
                     Bank Index = 0;
                     Entry Name = lowengine01;
                     Entry Index = 68;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = purpur01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Loop Count = 255;
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = purpur01;
+                    Entry Index = 69;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = meow01;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = meow01;
+                    Entry Index = 70;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = meow02;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = meow02;
+                    Entry Index = 71;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = meow03;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = meow03;
+                    Entry Index = 72;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = meow04;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = meow04;
+                    Entry Index = 73;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = meow05;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = meow05;
+                    Entry Index = 74;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = meow06;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = effects;
+                    Bank Index = 0;
+                    Entry Name = meow06;
+                    Entry Index = 75;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -6192,6 +6675,86 @@ Sound Bank
         {
             Name = lowengine01;
             Index = 68;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = purpur;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = purpur01;
+            Index = 69;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = meow;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = meow01;
+            Index = 70;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = meow02;
+            Index = 71;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = meow03;
+            Index = 72;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = meow04;
+            Index = 73;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = meow05;
+            Index = 74;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+
+        Sound Entry
+        {
+            Name = meow06;
+            Index = 75;
             Weight Min = 0;
             Weight Max = 255;
         }

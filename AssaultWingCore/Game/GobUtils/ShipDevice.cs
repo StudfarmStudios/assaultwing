@@ -220,7 +220,7 @@ namespace AW2.Game.GobUtils
         /// Called when the device is added to a game. Subclasses can initialize here things
         /// that couldn't be initialized in the constructor e.g. due to lack of data.
         /// </summary>
-        public void Activate()
+        public virtual void Activate()
         {
             FiringOperator = new FiringOperator(this);
         }

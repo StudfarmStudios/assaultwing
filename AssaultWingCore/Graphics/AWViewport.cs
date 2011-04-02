@@ -200,12 +200,15 @@ namespace AW2.Graphics
         protected virtual void RenderGameWorld()
         {
             var gfx = AssaultWingCore.Instance.GraphicsDeviceService.GraphicsDevice;
-            var view = ViewMatrix;
+            //var view = ViewMatrix;
             if (AssaultWingCore.Instance.DataEngine.Arena == null) return; // workaround for ArenaEditor crash when window resized without arena being loaded first
+            int layerIndex = AssaultWingCore.Instance.DataEngine.Arena.Layers.Count();
+            gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
             foreach (var layer in AssaultWingCore.Instance.DataEngine.Arena.Layers)
             {
-                if (LayerDrawing != null && !LayerDrawing(layer)) continue;
-                gfx.Clear(ClearOptions.DepthBuffer, Color.Pink, 1, 0);
+                Matrix translationMatrix = Matrix.CreateTranslation(0, 0, -1024 * layerIndex--);
+                var view = Matrix.Multiply(ViewMatrix, translationMatrix);
+                if (LayerDrawing != null && !LayerDrawing(layer)) continue;               
                 float layerScale = GetScale(layer.Z);
                 var projection = GetProjectionMatrix(layer.Z);
 

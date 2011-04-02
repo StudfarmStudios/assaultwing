@@ -1787,7 +1787,7 @@ your end.</infoText>
       <Y>0.05</Y>
       <Z>0.3</Z>
     </fogColor>
-    <fogEnabled>true</fogEnabled>
+    <fogEnabled>false</fogEnabled>
     <fogEnd>1270.78711</fogEnd>
     <fogStart>1000</fogStart>
   </lighting>

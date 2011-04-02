@@ -15,7 +15,11 @@ namespace AW2.Helpers.Serialization
     
         public NetworkProfilingScope(object obj)
         {
-            if (obj is Gob)
+            if (obj == null)
+            {
+                ProfilingNetworkBinaryWriter.Push(null);
+            }
+            else if (obj is Gob)
             {
                 ProfilingNetworkBinaryWriter.Push("Gob: " + ((Gob)obj).TypeName);
             }

@@ -44,25 +44,33 @@ namespace AW2.Net.Messages
 
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
-            base.SerializeBody(writer);
-            // Gob update (request) message structure:
-            // byte: number of gobs to update, K
-            // K shorts: identifiers of the gobs
-            // ushort: total byte count of gob data
-            // repeat K times:
-            //   ??? bytes: serialised data of a gob (content known only by the Gob subclass in question)
-            byte[] writeBytes = StreamedData;
 #if NETWORK_PROFILING
-            using (new NetworkProfilingScope("GobUpdateMessageHeader"))
+            using (new NetworkProfilingScope(null))
 #endif
-                checked
-                {
-                    writer.Write((byte)_gobIds.Count);
-                    foreach (var gobId in _gobIds)
-                        writer.Write((short)gobId);
-                    writer.Write((ushort)writeBytes.Length);
-                }
-            writer.Write(writeBytes, 0, writeBytes.Length);
+            {
+                base.SerializeBody(writer);
+                // Gob update (request) message structure:
+                // byte: number of gobs to update, K
+                // K shorts: identifiers of the gobs
+                // ushort: total byte count of gob data
+                // repeat K times:
+                //   ??? bytes: serialised data of a gob (content known only by the Gob subclass in question)
+                byte[] writeBytes = StreamedData;
+#if NETWORK_PROFILING
+                using (new NetworkProfilingScope("GobUpdateMessageHeader"))
+#endif
+                    checked
+                    {
+                        writer.Write((byte)_gobIds.Count);
+                        foreach (var gobId in _gobIds)
+                            writer.Write((short)gobId);
+                        writer.Write((ushort)writeBytes.Length);
+
+                        //System.Diagnostics.Trace.Assert((ProfilingNetworkBinaryWriter.Peek().totalBytes - 6) % 4 == 0);
+                    }
+
+                writer.Write(writeBytes, 0, writeBytes.Length);
+            }
         }
 
         protected override void Deserialize(NetworkBinaryReader reader)

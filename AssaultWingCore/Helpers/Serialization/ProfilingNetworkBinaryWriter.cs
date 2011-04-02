@@ -14,7 +14,7 @@ namespace AW2.Helpers.Serialization
     //
     // Registering written bytes adds them to currently active Scope Tree Node
 
-    internal class ScopeTreeNode : IComparable
+    public class ScopeTreeNode : IComparable
     {
         public string name;
         public uint totalBytes;
@@ -33,7 +33,13 @@ namespace AW2.Helpers.Serialization
         {
             foreach (ScopeTreeNode child in children)
             {
-                if (child.name.Equals(name))
+                if (child.name == null)
+                {
+                    if (name == null)
+                    {
+                        return child;
+                    }
+                } else if (child.name.Equals(name))
                 {
                     return child;
                 }
@@ -60,15 +66,23 @@ namespace AW2.Helpers.Serialization
         {
             if (rootNode == null)
             {
-                currentStack = new Stack<ScopeTreeNode>();
-                rootNode = new ScopeTreeNode("ROOT");
-                currentStack.Push(rootNode);
+                Reset();
             }
+        }
+
+        public static void Reset()
+        {
+            currentStack = new Stack<ScopeTreeNode>();
+            rootNode = new ScopeTreeNode("ROOT");
+            currentStack.Push(rootNode);
         }
         
         protected override void WriteBytes(byte[] bytes, int index, int count)
         {
             base.WriteBytes(bytes, index, count);
+            
+            if (currentStack.Peek().name == null)
+                return;
             
             // Record byte count on current nodes
             foreach (ScopeTreeNode stackNode in currentStack)
@@ -147,17 +161,20 @@ namespace AW2.Helpers.Serialization
 
         private static void CollectPerTagInfo(ScopeTreeNode node, Dictionary<string, Counter> perTagInfo)
         {
-            if (perTagInfo.ContainsKey(node.name))
+            if (node.name != null)
             {
-                perTagInfo[node.name].Add(node.totalBytes);
-            }
-            else
-            {
-                Counter c = new Counter();
-                c.Add(node.totalBytes);
+                if (perTagInfo.ContainsKey(node.name))
+                {
+                    perTagInfo[node.name].Add(node.totalBytes);
+                }
+                else
+                {
+                    Counter c = new Counter();
+                    c.Add(node.totalBytes);
 
 
-                perTagInfo.Add(node.name, c);
+                    perTagInfo.Add(node.name, c);
+                }
             }
             foreach (ScopeTreeNode child in node.children)
             {
@@ -170,13 +187,19 @@ namespace AW2.Helpers.Serialization
             for (int i = 0; i < depth; i++)
                 writer.Write("    ");
             node.Sort();
-
-            writer.WriteLine(node.name + " (" + node.totalBytes + ")");
+            
+            if (node.name != null)
+                writer.WriteLine(node.name + " (" + node.totalBytes + ")");
 
             foreach (ScopeTreeNode child in node.children)
             {
                 Dump(child, writer, depth + 1);
             }
         }
+
+        public static ScopeTreeNode Peek()
+        {
+            return currentStack.Peek();
+        }    
     }
 }

@@ -17,7 +17,7 @@ namespace AW2.Net.Messages
         protected override void SerializeBody(NetworkBinaryWriter writer)
         {
 #if NETWORK_PROFILING
-            using (new NetworkProfilingScope(this))
+            using (new NetworkProfilingScope(null))
 #endif
             {
                 base.SerializeBody(writer);
@@ -26,8 +26,13 @@ namespace AW2.Net.Messages
                 // word: data length N
                 // N bytes: serialised data of the player
                 byte[] writeBytes = StreamedData;
-                writer.Write((byte)PlayerID);
-                writer.Write(checked((ushort)writeBytes.Length));
+#if NETWORK_PROFILING
+                using (new NetworkProfilingScope("PlayerUpdateMessageHeader"))
+#endif
+                {
+                    writer.Write((byte)PlayerID);
+                    writer.Write(checked((ushort)writeBytes.Length));
+                }
                 writer.Write(writeBytes, 0, writeBytes.Length);
             }
         }

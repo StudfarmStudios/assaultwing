@@ -641,6 +641,10 @@ namespace AW2.Core
         private void AfterEveryFrame()
         {
 #if NETWORK_PROFILING
+            if (DataEngine.Arena.FrameNumber == 1)
+            {
+                ProfilingNetworkBinaryWriter.Reset();
+            }
             using(new NetworkProfilingScope(string.Format("Frame {0:0000}", DataEngine.Arena.FrameNumber)))
 #endif
             {

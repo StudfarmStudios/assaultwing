@@ -565,7 +565,7 @@ namespace AW2.Game
 
         static Gob()
         {
-            g_unusedRelevantIDs = new Queue<int>(Enumerable.Range(1, short.MaxValue - 1)); 
+            g_unusedRelevantIDs = new Queue<int>(Enumerable.Range(1, short.MaxValue - 1));
             g_unusedIrrelevantIDs = new Queue<int>(Enumerable.Range(short.MinValue, -1 - short.MinValue));
             g_bleachCurve = new Curve();
             g_bleachCurve.PreLoop = CurveLoopType.Constant;
@@ -815,7 +815,10 @@ namespace AW2.Game
             else
                 ModelRenderer.Draw(Model, WorldMatrix, view, projection, ModelPartTransforms);
             if (IsHidden && Owner != null && !Owner.IsRemote)
-                ModelRenderer.DrawOutline(Model, WorldMatrix, view, projection, ModelPartTransforms);
+            {
+                var outlineAlpha = Alpha < 0.01f ? 1 : Math.Max(0.05f, 0.3f - Alpha);
+                ModelRenderer.DrawOutlineTransparent(Model, WorldMatrix, view, projection, ModelPartTransforms, outlineAlpha);
+            }
         }
 
         /// <summary>

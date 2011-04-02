@@ -28,8 +28,9 @@ namespace AW2.Graphics
             }
         }
 
-        public static void DrawOutline(Model model, Matrix world, Matrix view, Matrix projection, Matrix[] modelPartTransforms)
+        public static void DrawOutlineTransparent(Model model, Matrix world, Matrix view, Matrix projection, Matrix[] modelPartTransforms, float alpha)
         {
+            EnableTransparency(model, alpha);
             foreach (var mesh in model.Meshes)
             {
                 if (!mesh.Name.StartsWith(OUTLINE_MESH_NAME_PREFIX)) continue;
@@ -41,6 +42,7 @@ namespace AW2.Graphics
                 }
                 mesh.Draw();
             }
+            DisableTransparency(model);
         }
 
         public static void DrawTransparent(Model model, Matrix world, Matrix view, Matrix projection, Matrix[] modelPartTransforms, float alpha)

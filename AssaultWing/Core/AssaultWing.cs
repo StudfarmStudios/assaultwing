@@ -672,7 +672,7 @@ namespace AW2.Core
                 }
                 gob.ForcedNetworkUpdate = false;
                 gob.LastNetworkUpdate = now;
-                gobMessage.AddGob(gob.ID, gob, AW2.Helpers.Serialization.SerializationModeFlags.VaryingData);
+                gobMessage.AddGob(gob.ID, gob);
             }
             NetworkEngine.SendToGameClients(gobMessage);
         }

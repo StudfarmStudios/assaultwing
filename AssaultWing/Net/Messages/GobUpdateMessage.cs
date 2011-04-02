@@ -6,48 +6,39 @@ namespace AW2.Net.Messages
 {
     /// <summary>
     /// A message from a game server to a game client updating
-    /// the state of a gob.
+    /// the <see cref="SerializationModeFlags.VaryingData"/> state of a gob.
     /// </summary>
     [MessageType(0x24, false)]
     public class GobUpdateMessage : GameplayMessage
     {
         private List<int> _gobIds = new List<int>();
-        private List<ushort> _byteCounts = new List<ushort>();
-        private MessageSendType _sendType = MessageSendType.UDP;
 
-        public override MessageSendType SendType { get { return _sendType; } }
+        public override MessageSendType SendType { get { return MessageSendType.UDP; } }
 
-        /// <summary>
-        /// Adds a gob to the update message.
-        /// </summary>
-        /// <param name="gobId">Identifier of the gob.</param>
-        /// <param name="gob">The gob.</param>
-        /// <param name="mode">What to serialise of the gob.</param>
-        public void AddGob(int gobId, INetworkSerializable gob, SerializationModeFlags mode)
+        public void AddGob(int gobId, INetworkSerializable gob)
         {
-            if ((mode & SerializationModeFlags.ConstantData) != 0) _sendType = MessageSendType.TCP;
+            // Note: Data in GobUpdateMessage may get lost on client because of this case:
+            // Client doesn't have the gob at the moment the update message is received.
+            // Because the gob doesn't exist, the client doesn't know the type of the gob and
+            // therefore has no way of knowing how many bytes in the message are for that one gob.
+            // The only solution is to skip the remaining message, losing many gob updates.
+            // This is why GobUpdateMessage does not send SerializationModeFlags.ConstantData.
             _gobIds.Add(gobId);
-            ushort byteCount = checked((ushort)Write(gob, mode));
-            _byteCounts.Add(byteCount);
+            Write(gob, SerializationModeFlags.VaryingData);
         }
 
         /// <summary>
         /// Reads gob contents from the update message.
         /// </summary>
-        /// <param name="gobFinder">A method returning a gob for its identifier.
-        /// If it returns <c>null</c>, the corresponding serialised data is
-        /// skipped.</param>
-        /// <param name="mode">What to deserialise of the gobs.</param>
+        /// <param name="gobFinder">A method returning a gob for its identifier.</param>
         /// <param name="framesAgo">How long time ago was the message current.</param>
-        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, SerializationModeFlags mode, int framesAgo)
+        public void ReadGobs(Func<int, INetworkSerializable> gobFinder, int framesAgo)
         {
             for (int i = 0; i < _gobIds.Count; ++i)
             {
                 var gob = gobFinder(_gobIds[i]);
-                if (gob != null)
-                    Read(gob, mode, framesAgo);
-                else
-                    Skip(_byteCounts[i]);
+                if (gob == null) break;
+                Read(gob, SerializationModeFlags.VaryingData, framesAgo);
             }
         }
 
@@ -57,20 +48,20 @@ namespace AW2.Net.Messages
             // Gob update (request) message structure:
             // int: number of gobs to update, K
             // K ints: identifiers of the gobs
-            // K ushorts: byte count of gob data, M(k)
+            // ushort: total byte count of gob data
             // repeat K times:
-            //   M(k) bytes: serialised data of a gob (content known only by the Gob subclass in question)
+            //   ??? bytes: serialised data of a gob (content known only by the Gob subclass in question)
             byte[] writeBytes = StreamedData;
 #if NETWORK_PROFILING
-            using(new NetworkProfilingScope("GobUpdateMessageHeader"))
+            using (new NetworkProfilingScope("GobUpdateMessageHeader"))
 #endif
-            {
-            writer.Write((int)_gobIds.Count);
-            foreach (int gobId in _gobIds)
-                writer.Write((int)gobId);
-            foreach (ushort byteCount in _byteCounts)
-                writer.Write((ushort)byteCount);
-            }
+                checked
+                {
+                    writer.Write((int)_gobIds.Count);
+                    foreach (int gobId in _gobIds)
+                        writer.Write((int)gobId);
+                    writer.Write((ushort)writeBytes.Length);
+                }
             writer.Write(writeBytes, 0, writeBytes.Length);
         }
 
@@ -79,16 +70,9 @@ namespace AW2.Net.Messages
             base.Deserialize(reader);
             int gobCount = reader.ReadInt32();
             _gobIds.Clear();
-            _byteCounts.Clear();
             for (int i = 0; i < gobCount; ++i)
                 _gobIds.Add(reader.ReadInt32());
-            int totalByteCount = 0;
-            for (int i = 0; i < gobCount; ++i)
-            {
-                ushort byteCount = reader.ReadUInt16();
-                _byteCounts.Add(byteCount);
-                totalByteCount += byteCount;
-            }
+            var totalByteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(totalByteCount);
         }
 

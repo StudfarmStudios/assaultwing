@@ -308,7 +308,7 @@ namespace AW2.Net.MessageHandling
             {
                 var theGob = arena.Gobs.FirstOrDefault(gob => gob.ID == gobId);
                 return theGob == null || theGob.IsDisposed ? null : theGob;
-            }, SerializationModeFlags.VaryingData, framesAgo);
+            }, framesAgo);
         }
 
         private static void HandleGobDeletionMessage(GobDeletionMessage mess, int framesAgo)

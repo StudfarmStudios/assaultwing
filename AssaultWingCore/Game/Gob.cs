@@ -107,28 +107,8 @@ namespace AW2.Game
         private const float MAX_GOB_DELTA_COORDINATE = byte.MaxValue / 8f;
         private static readonly TimeSpan FULL_NETWORK_UPDATE_INTERVAL = TimeSpan.FromSeconds(1);
 
-        /// <summary>
-        /// Least int that is known not to have been used as a gob identifier
-        /// on this game instance.
-        /// </summary>
-        /// This field is used in obtaining identifiers for gobs that can be
-        /// shared among all participating game instances (this means
-        /// relevant gobs but this field may be used for irrelevant gobs, too).
-        /// Such identifiers are positive.
-        /// <seealso cref="Gob.ID"/>
-        /// <seealso cref="Gob.leastUnusedIrrelevantID"/>
-        private static int g_leastUnusedID = 1;
-
-        /// <summary>
-        /// Greatest int that is known not to have been used as a gob identifier
-        /// on this game instance.
-        /// </summary>
-        /// This field is used in obtaining identifiers for gobs that are 
-        /// local to one game instance (irrelevant gobs). Such identifiers
-        /// are negative.
-        /// <seealso cref="Gob.ID"/>
-        /// <seealso cref="Gob.leastUnusedID"/>
-        private static int g_leastUnusedIrrelevantID = -1;
+        private static Queue<int> g_unusedRelevantIDs;
+        private static Queue<int> g_unusedIrrelevantIDs;
 
         /// <summary>
         /// Drawing depth of 2D graphics of the gob, between 0 and 1.
@@ -585,6 +565,8 @@ namespace AW2.Game
 
         static Gob()
         {
+            g_unusedRelevantIDs = new Queue<int>(Enumerable.Range(1, short.MaxValue - 1)); 
+            g_unusedIrrelevantIDs = new Queue<int>(Enumerable.Range(short.MinValue, -1 - short.MinValue));
             g_bleachCurve = new Curve();
             g_bleachCurve.PreLoop = CurveLoopType.Constant;
             g_bleachCurve.PostLoop = CurveLoopType.Constant;
@@ -817,6 +799,10 @@ namespace AW2.Game
         {
             UnloadContent();
             IsDisposed = true;
+            if (ID > 0)
+                g_unusedRelevantIDs.Enqueue(ID);
+            else if (ID < 0)
+                g_unusedIrrelevantIDs.Enqueue(ID);
         }
 
         public virtual void Draw(Matrix view, Matrix projection)
@@ -888,11 +874,11 @@ namespace AW2.Game
                 {
                     if ((mode & SerializationModeFlags.ConstantData) != 0)
                     {
-                        writer.Write((int)ID);
+                        writer.Write((short)ID);
                         byte flags = 0;
                         if (StaticID != 0) flags |= (byte)0x01;
                         writer.Write((byte)flags);
-                        if (StaticID != 0) writer.Write((int)StaticID);
+                        if (StaticID != 0) writer.Write((short)StaticID);
                         if (Owner != null)
                             writer.Write((sbyte)Owner.ID);
                         else
@@ -933,9 +919,9 @@ namespace AW2.Game
         {
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                ID = reader.ReadInt32();
+                ID = reader.ReadInt16();
                 byte flags = reader.ReadByte();
-                if ((flags & 0x01) != 0) StaticID = reader.ReadInt32();
+                if ((flags & 0x01) != 0) StaticID = reader.ReadInt16();
                 int ownerID = reader.ReadSByte();
                 OwnerProxy = new LazyProxy<int, Player>(FindPlayer);
                 OwnerProxy.SetData(ownerID);
@@ -1320,8 +1306,8 @@ namespace AW2.Game
         {
             if (ID != INVALID_ID) return;
             ID = Game.NetworkMode == NetworkMode.Client
-                ? g_leastUnusedIrrelevantID--
-                : g_leastUnusedID++;
+                ? g_unusedIrrelevantIDs.Dequeue()
+                : g_unusedRelevantIDs.Dequeue();
         }
 
         #endregion

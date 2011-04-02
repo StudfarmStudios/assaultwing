@@ -175,15 +175,16 @@ namespace AW2.Game.Gobs
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
+            checked
             {
                 base.Serialize(writer, mode);
                 if ((mode & SerializationModeFlags.ConstantData) != 0)
                 {
-                    writer.Write((int)Shooter.GetValue().ID);
-                    writer.Write((int)ShooterBoneIndex);
+                    writer.Write((short)Shooter.GetValue().ID);
+                    writer.Write((byte)ShooterBoneIndex);
                     var target = Target.GetValue();
                     int targetID = target == null ? 0 : target.ID;
-                    writer.Write((int)targetID);
+                    writer.Write((short)targetID);
                 }
             }
         }
@@ -193,9 +194,9 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.ConstantData) != 0)
             {
-                Shooter.SetData(reader.ReadInt32());
-                ShooterBoneIndex = reader.ReadInt32();
-                int targetID = reader.ReadInt32();
+                Shooter.SetData(reader.ReadInt16());
+                ShooterBoneIndex = reader.ReadByte();
+                int targetID = reader.ReadInt16();
                 if (targetID != 0) Target.SetData(targetID);
             }
         }

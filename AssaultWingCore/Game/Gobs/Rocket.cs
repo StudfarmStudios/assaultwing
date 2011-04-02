@@ -148,12 +148,13 @@ namespace AW2.Game.Gobs
 #if NETWORK_PROFILING
             using (new NetworkProfilingScope(this))
 #endif
+            checked
             {
                 base.Serialize(writer, mode);
                 if ((mode & SerializationModeFlags.VaryingData) != 0)
                 {
                     int targetID = Target != null ? Target.ID : Gob.INVALID_ID;
-                    writer.Write((int)targetID);
+                    writer.Write((short)targetID);
                 }
             }
         }
@@ -163,7 +164,7 @@ namespace AW2.Game.Gobs
             base.Deserialize(reader, mode, framesAgo);
             if ((mode & SerializationModeFlags.VaryingData) != 0)
             {
-                int targetID = reader.ReadInt32();
+                int targetID = reader.ReadInt16();
                 _targetProxy = new LazyProxy<int, Gob>(FindGob);
                 _targetProxy.SetData(targetID);
                 UpdateGobTrackers();

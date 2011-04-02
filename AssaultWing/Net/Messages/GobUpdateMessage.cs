@@ -46,8 +46,8 @@ namespace AW2.Net.Messages
         {
             base.SerializeBody(writer);
             // Gob update (request) message structure:
-            // int: number of gobs to update, K
-            // K ints: identifiers of the gobs
+            // byte: number of gobs to update, K
+            // K shorts: identifiers of the gobs
             // ushort: total byte count of gob data
             // repeat K times:
             //   ??? bytes: serialised data of a gob (content known only by the Gob subclass in question)
@@ -57,9 +57,9 @@ namespace AW2.Net.Messages
 #endif
                 checked
                 {
-                    writer.Write((int)_gobIds.Count);
-                    foreach (int gobId in _gobIds)
-                        writer.Write((int)gobId);
+                    writer.Write((byte)_gobIds.Count);
+                    foreach (var gobId in _gobIds)
+                        writer.Write((short)gobId);
                     writer.Write((ushort)writeBytes.Length);
                 }
             writer.Write(writeBytes, 0, writeBytes.Length);
@@ -68,10 +68,10 @@ namespace AW2.Net.Messages
         protected override void Deserialize(NetworkBinaryReader reader)
         {
             base.Deserialize(reader);
-            int gobCount = reader.ReadInt32();
+            int gobCount = reader.ReadByte();
             _gobIds.Clear();
             for (int i = 0; i < gobCount; ++i)
-                _gobIds.Add(reader.ReadInt32());
+                _gobIds.Add(reader.ReadInt16());
             var totalByteCount = reader.ReadUInt16();
             StreamedData = reader.ReadBytes(totalByteCount);
         }

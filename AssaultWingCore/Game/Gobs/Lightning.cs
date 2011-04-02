@@ -28,6 +28,7 @@ namespace AW2.Game.Gobs
             }
         }
 
+        private const float BLANK_SHOT_RANGE = 100;
         private static readonly VertexPositionTexture ZERO_VERTEX = new VertexPositionTexture(Vector3.Zero, Vector2.Zero);
         private static readonly VertexPositionTexture[] EMPTY_MESH = new[] { ZERO_VERTEX, ZERO_VERTEX, ZERO_VERTEX };
         private Texture2D _texture;
@@ -80,6 +81,18 @@ namespace AW2.Game.Gobs
         public override IEnumerable<CanonicalString> TextureNames
         {
             get { return base.TextureNames.Concat(new[] { textureName }); }
+        }
+
+        public override BoundingSphere DrawBounds
+        {
+            get
+            {
+                var shooter = Shooter.GetValue();
+                if (shooter == null) return new BoundingSphere(Vector3.Zero, 0);
+                var target = Target.GetValue();
+                if (target == null) return new BoundingSphere(new Vector3(shooter.Pos, 0), BLANK_SHOT_RANGE);
+                return new BoundingSphere(new Vector3((shooter.Pos + target.Pos) / 2, 0), Vector2.Distance(shooter.Pos, target.Pos));
+            }
         }
 
         /// <summary>
@@ -206,8 +219,8 @@ namespace AW2.Game.Gobs
             var start = shooter.GetNamedPosition(shooterBoneIndex);
             if (target != null) return new List<Segment> { new Segment(start, target.Pos) };
             var drawRotation = shooter.Rotation + shooter.DrawRotationOffset;
-            var middle1 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation - MathHelper.PiOver4, drawRotation);
-            var middle2 = shooter.Pos + RandomHelper.GetRandomCirclePoint(100, drawRotation, drawRotation + MathHelper.PiOver4);
+            var middle1 = shooter.Pos + RandomHelper.GetRandomCirclePoint(BLANK_SHOT_RANGE, drawRotation - MathHelper.PiOver4, drawRotation);
+            var middle2 = shooter.Pos + RandomHelper.GetRandomCirclePoint(BLANK_SHOT_RANGE, drawRotation, drawRotation + MathHelper.PiOver4);
             return new List<Segment>
             {
                 new Segment(start, middle1),

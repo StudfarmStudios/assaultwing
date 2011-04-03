@@ -25,6 +25,9 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private float _thrustForceFactor;
 
+        [TypeParameter]
+        private float _collisionDamageToOthersMultiplier;
+
         /// <summary>
         /// Only for serialization.
         /// </summary>
@@ -32,11 +35,18 @@ namespace AW2.Game.Weapons
         {
             _reverse = true;
             _thrustForceFactor = 1;
+            _collisionDamageToOthersMultiplier = 5;
         }
 
         public Thruster(CanonicalString typeName)
             : base(typeName)
         {
+        }
+
+        public override void Activate()
+        {
+            base.Activate();
+            Owner.CollisionDamageToOthersMultiplier *= _collisionDamageToOthersMultiplier;
         }
 
         public override FiringResult TryFire(AW2.UI.ControlState triggerState)

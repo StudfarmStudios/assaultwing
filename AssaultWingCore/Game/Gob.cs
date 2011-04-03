@@ -318,6 +318,7 @@ namespace AW2.Game
             }
         }
         public bool IsVisible { get; set; }
+        public float CollisionDamageToOthersMultiplier { get; set; }
 
         /// <summary>
         /// Gob drawing bleach override, between 0 and 1. If null, normal bleach behaviour is used.
@@ -617,6 +618,7 @@ namespace AW2.Game
             _exhaustEngines = new Gob[0];
             Alpha = 1;
             _previousBleach = -1;
+            CollisionDamageToOthersMultiplier = 1;
         }
 
         /// <summary>

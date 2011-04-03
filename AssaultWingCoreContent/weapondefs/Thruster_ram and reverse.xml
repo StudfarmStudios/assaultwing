@@ -22,10 +22,11 @@
   <typeName>ram &amp; reverse</typeName>
   <reverse>true</reverse>
   <thrustForceFactor>1.0</thrustForceFactor>
+  <collisionDamageToOthersMultiplier>8</collisionDamageToOthersMultiplier>
   <iconName>menu_equip_mod_revthrust</iconName>
   <loadTime>0</loadTime>
   <fireCharge>100</fireCharge>
-  <fireChargePerSecond>260</fireChargePerSecond>
+  <fireChargePerSecond>0</fireChargePerSecond>
   <shotCount>1</shotCount>
   <shotSpacing>0</shotSpacing>
   <fireSound></fireSound>

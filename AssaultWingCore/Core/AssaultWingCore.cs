@@ -153,9 +153,16 @@ namespace AW2.Core
             PreFrameLogicEngine = new PreFrameLogicEngine(this, 2);
             LogicEngine = new LogicEngine(this, 3);
             PostFrameLogicEngine = new PostFrameLogicEngine(this, 4);
-            SoundEngine = CommandLineOptions.UseXACTSounds
-                ? (SoundEngine)new SoundEngineXACT(this, 5)
-                : new SoundEngineXNA(this, 5);
+            switch (Settings.Sound.AudioEngineType)
+            {
+                case SoundSettings.EngineType.XNA:
+                    SoundEngine = new SoundEngineXNA(this, 5);
+                    break;
+                case SoundSettings.EngineType.XACT:
+                    SoundEngine = new SoundEngineXACT(this, 5);
+                    break;
+                default: throw new ApplicationException("Unknown audio engine " + Settings.Sound.AudioEngineType);
+            }
             GraphicsEngine = new GraphicsEngineImpl(this, 6);
 
             Components.Add(PreFrameLogicEngine);

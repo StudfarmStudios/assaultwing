@@ -182,6 +182,11 @@ namespace AW2.Menu.Main
             items.Add(getVolumeSetupItem("Sound effect volume",
                 () => menuEngine.Game.Settings.Sound.SoundVolume,
                 volume => menuEngine.Game.Settings.Sound.SoundVolume = volume));
+            items.Add(GetSetupItem(menuEngine,
+                () => string.Format("Audio engine (needs restart) {0}", menuEngine.Game.Settings.Sound.AudioEngineType.ToString()),
+                Enum.GetValues(typeof(SoundSettings.EngineType)).Cast<SoundSettings.EngineType>(),
+                () => menuEngine.Game.Settings.Sound.AudioEngineType,
+                audioEngine => menuEngine.Game.Settings.Sound.AudioEngineType = audioEngine));
             return items;
         }
 

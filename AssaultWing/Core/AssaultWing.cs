@@ -65,6 +65,10 @@ namespace AW2.Core
                 EnableGameState(value);
                 var oldState = _gameState;
                 _gameState = value;
+                if (value == GameState.Gameplay || value == GameState.GameplayStopped)
+                    ApplyInGameGraphicsSettings();
+                else if (value != GameState.GameAndMenu)
+                    ApplyMenuGraphicsSettings();
                 if (GameStateChanged != null && _gameState != oldState)
                     GameStateChanged(_gameState);
             }
@@ -403,12 +407,14 @@ namespace AW2.Core
 
         private void ApplyMenuGraphicsSettings()
         {
+            if (Window == null) return;
             Window.EnableVerticalSync();
             Window.SetWindowed();
         }
 
         private void ApplyInGameGraphicsSettings()
         {
+            if (Window == null) return;
             if (Settings.Graphics.IsVerticalSynced)
                 Window.EnableVerticalSync();
             else
@@ -438,7 +444,6 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     GraphicsEngine.Visible = true;
                     if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
-                    ApplyInGameGraphicsSettings();
                     break;
                 case GameState.GameplayStopped:
                     GraphicsEngine.Visible = true;
@@ -478,7 +483,6 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = false;
                     GraphicsEngine.Visible = false;
                     PlayerChat.Enabled = PlayerChat.Visible = false;
-                    ApplyMenuGraphicsSettings();
                     break;
                 case GameState.GameplayStopped:
                     GraphicsEngine.Visible = false;

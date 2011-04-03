@@ -252,7 +252,7 @@ namespace AW2.Game
             SurfaceFormat selectedFormat;
             DepthFormat selectedDepthFormat;
             int selectedMultiSampleCount;
-            gfxAdapter.QueryRenderTargetFormat(GraphicsProfile.HiDef, SurfaceFormat.Color, DepthFormat.None, 1, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
+            gfxAdapter.QueryRenderTargetFormat(GraphicsProfile.Reach, SurfaceFormat.Color, DepthFormat.None, 1, out selectedFormat, out selectedDepthFormat, out selectedMultiSampleCount);
             var maskTarget = new RenderTarget2D(gfx, targetWidth, targetHeight, false, selectedFormat, selectedDepthFormat);
 
             // Set up draw matrices.

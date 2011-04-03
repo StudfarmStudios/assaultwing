@@ -29,6 +29,7 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private float _blinkMoveSpeed;
 
+        private Vector2 _queriedTargetPos;
         private Vector2? _targetPos;
 
         private Vector2 BlinkTarget { get { return Owner.Pos + AWMathHelper.GetUnitVector2(Owner.Rotation) * _blinkDistance; } }
@@ -72,12 +73,13 @@ namespace AW2.Game.Weapons
 
         protected override bool PermissionToFire()
         {
-            return Arena.IsFreePosition(Owner, BlinkTarget);
+            _queriedTargetPos = BlinkTarget;
+            return Arena.IsFreePosition(Owner, _queriedTargetPos);
         }
 
         protected override void ShootImpl()
         {
-            _targetPos = BlinkTarget;
+            _targetPos = _queriedTargetPos;
             Owner.Disable(); // re-enabled in Update()
         }
 

@@ -116,7 +116,7 @@ namespace AW2.Game.Gobs
                 if (LeaderBone == -1)
                     return Leader.Pos + Leader.DrawPosOffset;
                 else
-                    return Leader.GetNamedPosition(LeaderBone) + Leader.DrawPosOffset;
+                    return Leader.GetNamedPosition(LeaderBone);
             }
         }
 

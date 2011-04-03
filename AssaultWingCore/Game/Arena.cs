@@ -907,7 +907,7 @@ namespace AW2.Game
                     if ((movableArea.Type & CollisionAreaType.PhysicalDamageable) != 0)
                     {
                         if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                            movableGob.InflictDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier * unmovableGob.CollisionDamageToOthersMultiplier),
+                            movableGob.InflictCollisionDamage(CollisionDamage(movableGob, move1Delta, damageMultiplier * unmovableGob.CollisionDamageToOthersMultiplier),
                                 new DamageInfo(unmovableGob));
                     }
                     /* TODO: What if the unmovable gob wants to be damaged, too?
@@ -915,7 +915,7 @@ namespace AW2.Game
                     {
                         Vector2 move2Delta = Vector2.Zero;
                         if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                            unmovableGob.InflictDamage(CollisionDamage(unmovableGob, move2Delta, damageMultiplier));
+                            unmovableGob.InflictCollisionDamage(CollisionDamage(unmovableGob, move2Delta, damageMultiplier * movableGob.CollisionDamageToOthersMultiplier));
                     }
                     */
                     PlayWallCollisionSound(movableGob, move1Delta);
@@ -981,13 +981,13 @@ namespace AW2.Game
                     if ((movableArea1.Type & CollisionAreaType.PhysicalDamageable) != 0)
                     {
                         if (move1Delta.Length() > MINIMUM_COLLISION_DELTA)
-                            gob1.InflictDamage(CollisionDamage(gob1, move1Delta, damageMultiplier * gob2.CollisionDamageToOthersMultiplier),
+                            gob1.InflictCollisionDamage(CollisionDamage(gob1, move1Delta, damageMultiplier * gob2.CollisionDamageToOthersMultiplier),
                                 new DamageInfo(gob2));
                     }
                     if ((movableArea2.Type & CollisionAreaType.PhysicalDamageable) != 0)
                     {
                         if (move2after.Length() > MINIMUM_COLLISION_DELTA)
-                            gob2.InflictDamage(CollisionDamage(gob2, move2after, damageMultiplier * gob1.CollisionDamageToOthersMultiplier),
+                            gob2.InflictCollisionDamage(CollisionDamage(gob2, move2after, damageMultiplier * gob1.CollisionDamageToOthersMultiplier),
                                 new DamageInfo(gob1));
                     }
                     PlayGobCollisionSound(gob1, gob2, move1Delta, move2after);

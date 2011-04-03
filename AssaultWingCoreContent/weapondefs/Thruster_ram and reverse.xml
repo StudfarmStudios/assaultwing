@@ -22,7 +22,8 @@
   <typeName>ram &amp; reverse</typeName>
   <reverse>true</reverse>
   <thrustForceFactor>1.0</thrustForceFactor>
-  <collisionDamageToOthersMultiplier>8</collisionDamageToOthersMultiplier>
+  <collisionDamageToOthersMultiplier>6.5</collisionDamageToOthersMultiplier>
+  <energyUsagePerAbsorbedDamageUnit>6</energyUsagePerAbsorbedDamageUnit>
   <iconName>menu_equip_mod_revthrust</iconName>
   <loadTime>0</loadTime>
   <fireCharge>100</fireCharge>

@@ -28,6 +28,9 @@ namespace AW2.Game.Weapons
         [TypeParameter]
         private float _collisionDamageToOthersMultiplier;
 
+        [TypeParameter]
+        private float _energyUsagePerAbsorbedDamageUnit;
+
         /// <summary>
         /// Only for serialization.
         /// </summary>
@@ -36,6 +39,7 @@ namespace AW2.Game.Weapons
             _reverse = true;
             _thrustForceFactor = 1;
             _collisionDamageToOthersMultiplier = 5;
+            _energyUsagePerAbsorbedDamageUnit = 10;
         }
 
         public Thruster(CanonicalString typeName)
@@ -47,6 +51,7 @@ namespace AW2.Game.Weapons
         {
             base.Activate();
             Owner.CollisionDamageToOthersMultiplier *= _collisionDamageToOthersMultiplier;
+            Owner.CollisionDamageFilter = FilterDamage;
         }
 
         public override FiringResult TryFire(AW2.UI.ControlState triggerState)
@@ -59,5 +64,20 @@ namespace AW2.Game.Weapons
 
         protected override void ShootImpl() { }
         protected override void CreateVisualsImpl() { }
+
+        private float FilterDamage(float damageAmount)
+        {
+            var requiredCharge = damageAmount * _energyUsagePerAbsorbedDamageUnit;
+            if (requiredCharge <= Charge)
+            {
+                Charge -= requiredCharge;
+                return 0;
+            }
+            else
+            {
+                Charge = 0;
+                return damageAmount - Charge / _energyUsagePerAbsorbedDamageUnit;
+            }
+        }
     }
 }

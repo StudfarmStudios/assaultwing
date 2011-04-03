@@ -1168,9 +1168,26 @@ namespace AW2.Game
         /// </summary>
         public float MaxDamageLevel { get { return _maxDamage; } set { _maxDamage = value; } }
 
+        /// <summary>
+        /// Optional filter for processing damage from physical collisions (not explosions
+        /// and other active weapon damage). Parameter is damage about to be inflicted.
+        /// Return value is the remaining filtered damage.
+        /// </summary>
+        public Func<float, float> CollisionDamageFilter { get; set; }
+
+        public virtual void InflictCollisionDamage(float damageAmount, DamageInfo info)
+        {
+            if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
+            if (CollisionDamageFilter != null)
+                damageAmount = CollisionDamageFilter(damageAmount);
+            if (damageAmount > 0)
+                InflictDamage(damageAmount, info);
+        }
+
         public virtual void InflictDamage(float damageAmount, DamageInfo info)
         {
             if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
+            if (damageAmount == 0) return;
             var boundInfo = info.Bind(this, Arena.TotalTime);
             if (boundInfo.SourceType == BoundDamageInfo.SourceTypeType.EnemyPlayer)
             {

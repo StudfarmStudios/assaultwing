@@ -561,8 +561,9 @@ namespace AW2.Game.Gobs
 
         public override void InflictDamage(float damageAmount, DamageInfo cause)
         {
-            if (damageAmount > 0) LastDamageTaken = Game.DataEngine.ArenaTotalTime;
-            float realDamage = _armour.Evaluate(damageAmount);
+            var realDamage = _armour.Evaluate(damageAmount);
+            if (realDamage <= 0) return;
+            LastDamageTaken = Game.DataEngine.ArenaTotalTime;
             if (Owner != null) Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
         }

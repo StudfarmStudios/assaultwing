@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.BounceBullet, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.BounceBullet">
   <typeName>falling crate</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>2.0</rotationSpeed>
@@ -37,7 +37,7 @@
          <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
          <collisionMaterial>Bouncy</collisionMaterial>
          <name>General</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <area type="AW2.Helpers.Geometric.Circle">
             <center>
                <X>0</X>
                <Y>0</Y>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.Gravity, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.Gravity">
   <typeName>uniform gravity</typeName>
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
@@ -21,7 +21,7 @@
          <cannotOverlap>None</cannotOverlap>
          <collisionMaterial>Regular</collisionMaterial>
          <name>Force</name>
-         <area type="AW2.Helpers.Geometric.Everything, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+         <area type="AW2.Helpers.Geometric.Everything"/>
       </Item>
   </collisionAreas>
   <mass>1</mass>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.Rocket, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.Rocket">
   <impactDamage>140</impactDamage>
   <thrustForce>70000</thrustForce>
   <thrustDuration>3.5</thrustDuration>
@@ -38,7 +38,7 @@
       <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
-      <area type="AW2.Helpers.Geometric.Point, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <area type="AW2.Helpers.Geometric.Point">
         <location>
           <X>0</X>
           <Y>0</Y>

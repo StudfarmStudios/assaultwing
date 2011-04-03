@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.Ship, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.Ship">
   <typeName>Bugger</typeName>
    <networkUpdatePeriod>
       <ticks>500000</ticks>
@@ -62,7 +62,7 @@ without missing its target</infoText>
 	        <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
          <collisionMaterial>Regular</collisionMaterial>
          <name>General</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <area type="AW2.Helpers.Geometric.Circle">
             <center>
                <X>0</X>
                <Y>0</Y>

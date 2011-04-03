@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.Bonus.DefinedBonus, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.Bonus.DefinedBonus">
   <typeName>upgradeweapon1loadtime</typeName>
    <networkUpdatePeriod>
       <ticks>10000000</ticks>
@@ -13,7 +13,7 @@
   <drawMode2D>
       <type>None</type>
   </drawMode2D>
-  <gameAction type="AW2.Game.BonusActions.Weapon1UpgradeLoadTimeBonusAction, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <gameAction type="AW2.Game.BonusActions.Weapon1UpgradeLoadTimeBonusAction">
   </gameAction>
   <duration>60</duration>
   <layerPreference>Front</layerPreference>
@@ -34,7 +34,7 @@
          <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
          <collisionMaterial>Regular</collisionMaterial>
          <name>General</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <area type="AW2.Helpers.Geometric.Circle">
             <center>
                <X>0</X>
                <Y>0</Y>
@@ -58,7 +58,7 @@
          <cannotOverlap>None</cannotOverlap>
          <collisionMaterial>Regular</collisionMaterial>
          <name>Activate</name>
-         <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+         <area type="AW2.Helpers.Geometric.Circle">
             <center>
                <X>0</X>
                <Y>0</Y>

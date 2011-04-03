@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.Peng">
   <typeName>amazon steam</typeName>
   <networkUpdatePeriod>
     <ticks>10000000</ticks>
@@ -23,19 +23,19 @@
     </textureNames>
     <gobTypeNames>
     </gobTypeNames>
-    <initialVelocity type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <initialVelocity type="AW2.Game.Pengs.ConstantValue">
       <value>8.8</value>
     </initialVelocity>
   </emitter>
   <updater>
     <areParticlesImmortal>false</areParticlesImmortal>
     <drag>0.0</drag>
-    <particleAge type="AW2.Game.Pengs.ExpectedValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <particleAge type="AW2.Game.Pengs.ExpectedValue">
       <expected>10</expected>
       <variance>3</variance>
     </particleAge>
     <accelerationInputScale>0</accelerationInputScale>
-    <acceleration type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <acceleration type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>1</randomAmplitude>
       <randomMixer>0</randomMixer>
       <keys>
@@ -44,11 +44,11 @@
       </keys>
     </acceleration>
     <rotationSpeedInputScale>0</rotationSpeedInputScale>
-    <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <rotationSpeed type="AW2.Game.Pengs.ConstantValue">
       <value>-0.3</value>
     </rotationSpeed>
     <scaleInputScale>0</scaleInputScale>
-    <scale type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <scale type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>1.4</randomAmplitude>
       <randomMixer>3</randomMixer>
       <keys>
@@ -58,7 +58,7 @@
       </keys>
     </scale>
     <alphaInputScale>0</alphaInputScale>
-    <alpha type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <alpha type="AW2.Game.Pengs.SimpleCurve">
       <randomAmplitude>0.05</randomAmplitude>
       <randomMixer>4</randomMixer>
       <keys>

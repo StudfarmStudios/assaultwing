@@ -39,7 +39,7 @@
       <cannotOverlap>None</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
-      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <area type="AW2.Helpers.Geometric.Circle">
         <center>
           <X>0</X>
           <Y>0</Y>

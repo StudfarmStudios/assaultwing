@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GobType type="AW2.Game.Gobs.FloatingBullet, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.FloatingBullet">
   <typeName>mine</typeName>
   <isRotating>true</isRotating>
   <rotationSpeed>0.2</rotationSpeed>
@@ -41,7 +41,7 @@
       <cannotOverlap>PhysicalConsistencyCompromisable</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Hit</name>
-      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <area type="AW2.Helpers.Geometric.Circle">
         <center>
           <X>0</X>
           <Y>0</Y>
@@ -65,7 +65,7 @@
       <cannotOverlap>None</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Magnet</name>
-      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <area type="AW2.Helpers.Geometric.Circle">
         <center>
           <X>0</X>
           <Y>0</Y>
@@ -89,7 +89,7 @@
       <cannotOverlap>None</cannotOverlap>
       <collisionMaterial>Regular</collisionMaterial>
       <name>Spread</name>
-      <area type="AW2.Helpers.Geometric.Circle, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <area type="AW2.Helpers.Geometric.Circle">
         <center>
           <X>0</X>
           <Y>0</Y>

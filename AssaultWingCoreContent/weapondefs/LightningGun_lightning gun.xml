@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ShipDeviceType type="AW2.Game.Weapons.LightningGun, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<ShipDeviceType type="AW2.Game.Weapons.LightningGun">
 
   <deviceInfo>
     <pictureName>dummytexture</pictureName>

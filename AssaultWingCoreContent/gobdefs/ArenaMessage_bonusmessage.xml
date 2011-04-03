@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GobType type="AW2.Game.Gobs.ArenaMessage, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+<GobType type="AW2.Game.Gobs.ArenaMessage">
   <typeName>bonusmessage</typeName>
   <depthLayer2D>0.9</depthLayer2D>
   <drawMode2D>

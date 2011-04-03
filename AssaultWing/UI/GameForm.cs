@@ -124,7 +124,6 @@ namespace AW2.UI
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
-            ApplyGraphicsSettings();
             _runner.Run();
         }
 
@@ -236,18 +235,6 @@ namespace AW2.UI
                         _gameView.BeginInvoke((Action)_gameView.Invalidate);
                 },
                 gameTime => _gameView.BeginInvoke((Action<AWGameTime>)_game.Update, gameTime));
-        }
-
-        private void ApplyGraphicsSettings()
-        {
-            var gfxSetup = _game.Settings.Graphics;
-            if (gfxSetup.IsVerticalSynced)
-                _graphicsDeviceService.EnableVerticalSync();
-            else
-                _graphicsDeviceService.DisableVerticalSync();
-#if !DEBUG
-            SetFullScreen(gfxSetup.FullscreenWidth, gfxSetup.FullscreenHeight);
-#endif
         }
 
         private static FormParameters GetFullScreenFormParameters(int width, int height)

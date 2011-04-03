@@ -401,6 +401,24 @@ namespace AW2.Core
             base.OnExiting(sender, args);
         }
 
+        private void ApplyMenuGraphicsSettings()
+        {
+            Window.EnableVerticalSync();
+            Window.SetWindowed();
+        }
+
+        private void ApplyInGameGraphicsSettings()
+        {
+            if (Settings.Graphics.IsVerticalSynced)
+                Window.EnableVerticalSync();
+            else
+                Window.DisableVerticalSync();
+            if (Settings.Graphics.InGameFullscreen)
+                Window.SetFullScreen(Settings.Graphics.FullscreenWidth, Settings.Graphics.FullscreenHeight);
+            else
+                Window.SetWindowed();
+        }
+
         private void EnableGameState(GameState value)
         {
             switch (value)
@@ -420,6 +438,7 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = DataEngine.Arena.IsForPlaying;
                     GraphicsEngine.Visible = true;
                     if (NetworkMode != NetworkMode.Standalone) PlayerChat.Enabled = PlayerChat.Visible = true;
+                    ApplyInGameGraphicsSettings();
                     break;
                 case GameState.GameplayStopped:
                     GraphicsEngine.Visible = true;
@@ -459,6 +478,7 @@ namespace AW2.Core
                     PostFrameLogicEngine.Enabled = false;
                     GraphicsEngine.Visible = false;
                     PlayerChat.Enabled = PlayerChat.Visible = false;
+                    ApplyMenuGraphicsSettings();
                     break;
                 case GameState.GameplayStopped:
                     GraphicsEngine.Visible = false;

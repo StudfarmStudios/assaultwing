@@ -10,10 +10,12 @@ namespace AW2.Settings
         private int _fullscreenWidth;
         private int _fullscreenHeight;
         private bool _isVerticalSynced;
+        private bool _inGameFullscreen;
 
         public int FullscreenWidth { get { return _fullscreenWidth; } set { _fullscreenWidth = value; } }
         public int FullscreenHeight { get { return _fullscreenHeight; } set { _fullscreenHeight = value; } }
         public bool IsVerticalSynced { get { return _isVerticalSynced; } set { _isVerticalSynced = value; } }
+        public bool InGameFullscreen { get { return _inGameFullscreen; } set { _inGameFullscreen = value; } }
 
         public static IEnumerable<Tuple<int, int>> GetDisplayModes()
         {
@@ -38,6 +40,7 @@ namespace AW2.Settings
             FullscreenWidth = resolution.Item1;
             FullscreenHeight = resolution.Item2;
             IsVerticalSynced = false;
+            InGameFullscreen = true;
         }
 
         private static Tuple<int, int> GetDefaultFullscreenResolution()

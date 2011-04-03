@@ -196,6 +196,11 @@ namespace AW2.Menu.Main
             Func<int> curWidth = () => menuEngine.Game.Settings.Graphics.FullscreenWidth;
             Func<int> curHeight = () => menuEngine.Game.Settings.Graphics.FullscreenHeight;
             items.Add(GetSetupItem(menuEngine,
+                () => string.Format("In-game mode {0}", menuEngine.Game.Settings.Graphics.InGameFullscreen ? "Fullscreen" : "Windowed"),
+                new[] { false, true },
+                () => menuEngine.Game.Settings.Graphics.InGameFullscreen,
+                inGameFullscreen => menuEngine.Game.Settings.Graphics.InGameFullscreen = inGameFullscreen));
+            items.Add(GetSetupItem(menuEngine,
                 () => string.Format("Fullscreen resolution {0}x{1}", curWidth(), curHeight()),
                 GraphicsSettings.GetDisplayModes(),
                 () => Tuple.Create(curWidth(), curHeight()),

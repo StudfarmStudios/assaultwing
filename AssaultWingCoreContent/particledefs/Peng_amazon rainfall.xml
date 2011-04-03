@@ -16,7 +16,7 @@
     <numberToCreate>-1</numberToCreate>
     <radius>300</radius>
     <sprayAngle>0.45</sprayAngle>
-    <facingType>Directed</facingType>
+    <facingType>Forward</facingType>
     <textureNames>
       <Item>p_drop_1</Item>
     </textureNames>

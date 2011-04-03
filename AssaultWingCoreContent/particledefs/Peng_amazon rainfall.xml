@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GobType type="AW2.Game.Gobs.Peng, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+  <typeName>amazon rainfall</typeName>
+  <networkUpdatePeriod>
+    <ticks>10000000</ticks>
+  </networkUpdatePeriod>
+  <depthLayer2D>0.5</depthLayer2D>
+  <drawMode2D>
+    <type>Additive</type>
+  </drawMode2D>
+  <layerPreference>Front</layerPreference>
+  <coordinateSystem>Peng</coordinateSystem>
+  <playerRelated>false</playerRelated>
+  <emitter>
+    <emissionFrequency>65</emissionFrequency>
+    <numberToCreate>-1</numberToCreate>
+    <radius>300</radius>
+    <sprayAngle>0.45</sprayAngle>
+    <facingType>Directed</facingType>
+    <textureNames>
+      <Item>p_drop_1</Item>
+    </textureNames>
+    <gobTypeNames>
+    </gobTypeNames>
+    <initialVelocity type="AW2.Game.Pengs.ExpectedValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <variance>20</variance>
+      <expected>180</expected>
+    </initialVelocity>
+  </emitter>
+  <updater>
+    <areParticlesImmortal>false</areParticlesImmortal>
+    <drag>0.0</drag>
+    <particleAge type="AW2.Game.Pengs.ExpectedValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <expected>2</expected>
+      <variance>1.08</variance>
+    </particleAge>
+    <accelerationInputScale>0</accelerationInputScale>	
+	<acceleration type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <randomAmplitude>15</randomAmplitude>
+      <randomMixer>1</randomMixer>
+      <keys>
+        <Item>30</Item>
+        <Item>31</Item>
+        <Item>33</Item>
+        <Item>35</Item>
+        <Item>37</Item>
+        <Item>40</Item>
+        <Item>43</Item>
+        <Item>46</Item>
+        <Item>49</Item>
+        <Item>52</Item>
+        <Item>55</Item>
+      </keys>
+    </acceleration>
+    <rotationSpeedInputScale>0</rotationSpeedInputScale>
+    <rotationSpeed type="AW2.Game.Pengs.ConstantValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <value>0</value>
+    </rotationSpeed>
+    <scaleInputScale>0</scaleInputScale>	
+	<scale type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <randomAmplitude>0.15</randomAmplitude>
+      <randomMixer>3</randomMixer>
+      <keys>
+        <Item>0.01</Item>
+        <Item>0.25</Item>
+        <Item>0.24</Item>
+        <Item>0.27</Item>
+        <Item>0.32</Item>
+        <Item>0.41</Item>
+        <Item>0.415</Item>
+        <Item>0.3</Item>
+        <Item>0.2</Item>
+        <Item>0.1</Item>
+        <Item>0.01</Item>
+      </keys>
+    </scale>
+    <alphaInputScale>0</alphaInputScale>
+	<alpha type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <randomAmplitude>0.1</randomAmplitude>
+      <randomMixer>4</randomMixer>
+      <keys>
+        <Item>0.1</Item>
+        <Item>0.05</Item>
+        <Item>0.1</Item>
+        <Item>0.2</Item>
+        <Item>0.22</Item>
+        <Item>0.23</Item>
+        <Item>0.25</Item>
+        <Item>0.2</Item>
+        <Item>0.1</Item>
+        <Item>0.05</Item>
+        <Item>0.0</Item>
+      </keys>
+    </alpha>
+  </updater>
+  <birthGobTypes/>
+  <deathGobTypes/>
+  <movable>false</movable>
+  <exhaustEngineNames/>
+  <collisionAreas/>
+  <mass>1</mass>
+  <modelName>dummymodel</modelName>
+  <scale>1</scale>
+  <maxDamage>100</maxDamage>
+</GobType>

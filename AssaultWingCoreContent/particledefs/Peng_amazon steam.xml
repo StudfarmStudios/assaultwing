@@ -6,7 +6,7 @@
   </networkUpdatePeriod>
   <depthLayer2D>0.25</depthLayer2D>
   <drawMode2D>
-    <type>Transparent</type>
+    <type>Additive</type>
   </drawMode2D>
   <layerPreference>Front</layerPreference>
   <coordinateSystem>Game</coordinateSystem>
@@ -31,7 +31,7 @@
     <areParticlesImmortal>false</areParticlesImmortal>
     <drag>0.0</drag>
     <particleAge type="AW2.Game.Pengs.ExpectedValue, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <expected>12</expected>
+      <expected>10</expected>
       <variance>3</variance>
     </particleAge>
     <accelerationInputScale>0</accelerationInputScale>
@@ -49,27 +49,27 @@
     </rotationSpeed>
     <scaleInputScale>0</scaleInputScale>
     <scale type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <randomAmplitude>2.4</randomAmplitude>
+      <randomAmplitude>1.4</randomAmplitude>
       <randomMixer>3</randomMixer>
       <keys>
-        <Item>2.5</Item>
-        <Item>5.3</Item>
-        <Item>7</Item>
+        <Item>1.5</Item>
+        <Item>2.3</Item>
+        <Item>3</Item>
       </keys>
     </scale>
     <alphaInputScale>0</alphaInputScale>
     <alpha type="AW2.Game.Pengs.SimpleCurve, AssaultWingCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <randomAmplitude>0</randomAmplitude>
+      <randomAmplitude>0.05</randomAmplitude>
       <randomMixer>4</randomMixer>
       <keys>
         <Item>0.0</Item>
         <Item>0.07</Item>
         <Item>0.10</Item>
         <Item>0.15</Item>
+        <Item>0.22</Item>
+        <Item>0.25</Item>
+        <Item>0.28</Item>
         <Item>0.24</Item>
-        <Item>0.29</Item>
-        <Item>0.33</Item>
-        <Item>0.26</Item>
         <Item>0.20</Item>
         <Item>0.13</Item>
         <Item>0.0</Item>

@@ -50,7 +50,19 @@ namespace AW2.Core
                 IsFullScreen = false,
                 PresentationInterval = PresentInterval.Immediate,
             };
-            GraphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.Reach, _parameters);
+            
+            GraphicsAdapter useAdapter = GraphicsAdapter.DefaultAdapter;
+            foreach (GraphicsAdapter adapter in GraphicsAdapter.Adapters)
+            {
+                if (adapter.Description.Contains("PerfHUD"))
+                {
+                    useAdapter = adapter;
+                    GraphicsAdapter.UseReferenceDevice = true;
+                    break;
+                }
+            }
+
+            GraphicsDevice = new GraphicsDevice(useAdapter, GraphicsProfile.Reach, _parameters);
             if (DeviceCreated != null) DeviceCreated(this, EventArgs.Empty);
         }
 

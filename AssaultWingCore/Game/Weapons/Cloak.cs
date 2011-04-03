@@ -41,6 +41,7 @@ namespace AW2.Game.Weapons
             _cloakStrengthForVelocity.ComputeTangents(CurveTangent.Linear);
             _cloakStrengthForVelocity.PreLoop = CurveLoopType.Constant;
             _cloakStrengthForVelocity.PostLoop = CurveLoopType.Constant;
+            _runningSoundName = "dummysound";
         }
 
         public Cloak(CanonicalString typeName)
@@ -51,7 +52,7 @@ namespace AW2.Game.Weapons
         public override void Activate()
         {
             base.Activate();
-            _runningSound = Owner.Game.SoundEngine.CreateSound(_runningSoundName);
+            _runningSound = Owner.Game.SoundEngine.CreateSound(_runningSoundName, Owner);
         }
 
         public override void Dispose()

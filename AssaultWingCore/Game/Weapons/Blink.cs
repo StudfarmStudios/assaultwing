@@ -31,8 +31,10 @@ namespace AW2.Game.Weapons
 
         private Vector2 _queriedTargetPos;
         private Vector2? _targetPos;
+        private Vector2 _startPos;
+        private TimeSpan _safetyTimeout;
 
-        private Vector2 BlinkTarget { get { return Owner.Pos + AWMathHelper.GetUnitVector2(Owner.Rotation) * _blinkDistance; } }
+        private TimeSpan SafetyTimeoutInterval { get { return TimeSpan.FromSeconds(0.1f + _blinkDistance / _blinkMoveSpeed); } }
 
         /// <summary>
         /// Only for serialization.
@@ -53,13 +55,17 @@ namespace AW2.Game.Weapons
             base.Update();
             if (_targetPos.HasValue)
             {
+                // Client corrects its blink target estimate based on the most recent Owner update
+                if (Owner.Game.NetworkMode == NetworkMode.Client && Owner.Pos != _startPos)
+                    _targetPos = GetBlinkTarget(_startPos, Owner.Pos - _startPos);
                 float blinkMoveStep = Owner.Game.PhysicsEngine.ApplyChange(_blinkMoveSpeed, Owner.Game.GameTime.ElapsedGameTime);
                 var pos = AWMathHelper.InterpolateTowards(Owner.Pos, _targetPos.Value, blinkMoveStep);
                 Owner.ResetPos(pos, Owner.Move, Owner.Rotation);
-                if (pos == _targetPos.Value)
+                if (pos == _targetPos.Value || _safetyTimeout < Owner.Arena.TotalTime)
                 {
                     Owner.Enable();
                     _targetPos = null;
+                    _safetyTimeout = TimeSpan.Zero;
                     if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.Remove(EFFECT_NAME);
                 }
             }
@@ -73,19 +79,34 @@ namespace AW2.Game.Weapons
 
         protected override bool PermissionToFire()
         {
-            _queriedTargetPos = BlinkTarget;
+            _queriedTargetPos = GetBlinkTarget();
             return Arena.IsFreePosition(Owner, _queriedTargetPos);
         }
 
         protected override void ShootImpl()
         {
-            _targetPos = _queriedTargetPos;
+            // Client tries to guess where blink is going
+            _targetPos = Owner.Game.NetworkMode == NetworkMode.Client
+                ? GetBlinkTarget()
+                : _targetPos = _queriedTargetPos;
+            _safetyTimeout = Owner.Arena.TotalTime + SafetyTimeoutInterval;
+            _startPos = Owner.Pos;
             Owner.Disable(); // re-enabled in Update()
         }
 
         protected override void CreateVisualsImpl()
         {
             if (Owner.Owner != null) Owner.Owner.PostprocessEffectNames.EnsureContains(EFFECT_NAME);
+        }
+
+        private Vector2 GetBlinkTarget()
+        {
+            return GetBlinkTarget(Owner.Pos, AWMathHelper.GetUnitVector2(Owner.Rotation));
+        }
+
+        private Vector2 GetBlinkTarget(Vector2 from, Vector2 direction)
+        {
+            return from + Vector2.Normalize(direction) * _blinkDistance;
         }
     }
 }

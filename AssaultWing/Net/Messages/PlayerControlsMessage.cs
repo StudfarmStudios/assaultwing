@@ -22,6 +22,8 @@ namespace AW2.Net.Messages
         /// </summary>
         public IList<ControlState> ControlStates { get; private set; }
 
+        public override MessageSendType SendType { get { return MessageSendType.UDP; } }
+
         public ControlState GetControlState(PlayerControlType controlType)
         {
             return ControlStates[(int)controlType];

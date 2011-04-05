@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 30081059;
-    Last Modified High = 2485973594;
+    Last Modified Low = 2485973594;
+    Last Modified High = 30081059;
 
     Category
     {
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::7ca813d1-a333-4d48-9179-47075c7299be;
+            Name = 1::c37a1a5a-f8f5-4355-9644-e71a2383beab;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -255,7 +255,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::6bbe8cd4-ea07-4e2c-8d7c-e529d3a23015;
+            Name = 1::091c2cb4-005e-412e-b0c4-f15ba1a9e19a;
             Property = 0;
             Sound = 0;
             Line Color = 4279846310;
@@ -295,7 +295,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::f4b525a4-709f-464c-8e5a-a82cf09f5f46;
+            Name = 1::c970cc7e-5eeb-4a4e-a4e1-9ed21c6bf913;
             Property = 0;
             Sound = 0;
             Line Color = 4286596879;
@@ -323,7 +323,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::17c6ce2a-da2c-4233-bd34-3305a1f4bf5a;
+            Name = 1::d39eb745-2bf8-46ee-afc3-c209168ebb18;
             Property = 0;
             Sound = 0;
             Line Color = 4289448844;
@@ -2132,6 +2132,8 @@ Sound Bank
     Windows File = bin\x86\Debug\Sound Bank.xsb;
     Xbox Bank Path Edited = 1;
     Windows Bank Path Edited = 1;
+    Header Last Modified High = 0;
+    Header Last Modified Low = 0;
 
     Sound
     {
@@ -3934,7 +3936,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Dock loop;
-                RPC Curve Name = 1::7ca813d1-a333-4d48-9179-47075c7299be;
+                RPC Curve Name = 1::c37a1a5a-f8f5-4355-9644-e71a2383beab;
             }
         }
     }
@@ -4321,7 +4323,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Lightning fadeout;
-                RPC Curve Name = 1::6bbe8cd4-ea07-4e2c-8d7c-e529d3a23015;
+                RPC Curve Name = 1::091c2cb4-005e-412e-b0c4-f15ba1a9e19a;
             }
         }
     }
@@ -4944,13 +4946,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::f4b525a4-709f-464c-8e5a-a82cf09f5f46;
+                RPC Curve Name = 1::c970cc7e-5eeb-4a4e-a4e1-9ed21c6bf913;
             }
 
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::17c6ce2a-da2c-4233-bd34-3305a1f4bf5a;
+                RPC Curve Name = 1::d39eb745-2bf8-46ee-afc3-c209168ebb18;
             }
         }
     }
@@ -5193,7 +5195,7 @@ Sound Bank
     Sound
     {
         Name = homeBaseLoopLow;
-        Volume = -9600;
+        Volume = -6000;
         Pitch = 0;
         Priority = 0;
 
@@ -5209,6 +5211,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -5240,7 +5243,7 @@ Sound Bank
     Sound
     {
         Name = amazonasLeaves01;
-        Volume = -2620;
+        Volume = -6000;
         Pitch = 0;
         Priority = 0;
 
@@ -5256,6 +5259,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -5287,7 +5291,7 @@ Sound Bank
     Sound
     {
         Name = amazonasCoins01;
-        Volume = -2680;
+        Volume = -6000;
         Pitch = 0;
         Priority = 0;
 
@@ -5303,6 +5307,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -5334,7 +5339,7 @@ Sound Bank
     Sound
     {
         Name = amazonasAmbience01;
-        Volume = -2200;
+        Volume = -6000;
         Pitch = 0;
         Priority = 0;
 
@@ -5350,6 +5355,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -5397,6 +5403,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;

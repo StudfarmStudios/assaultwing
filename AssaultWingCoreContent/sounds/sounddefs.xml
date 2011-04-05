@@ -25,7 +25,6 @@
 	<sound name="amazonasAmbience" loop="true" volume="0.05"/>
 	<sound name="amazonasCoins" loop="true" distancescale="60" volume="0.75"/>
 	<sound name="amazonasLeaves" loop="true" distancescale="250" volume="0.3"/>
-	<sound name="amazonasWaterfall" loop="true" distancescale="50" volume="0.05"/>
 	<sound name="lightningWeapon" volume="1.0"/>
 	<sound name="menuBrowseItem" volume="0.3"/>
 	<sound name="menuChangeEnd" volume="0.4"/>

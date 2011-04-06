@@ -27,8 +27,6 @@ namespace AW2.Game.Weapons
         private bool _weaponFiredHandlerAdded;
         private SoundInstance _runningSound;
 
-        private IEnumerable<Gobs.Peng> OwnersPengs { get { return Owner.Arena.Gobs.OfType<Gobs.Peng>().Where(p => p.Leader == Owner); } }
-
         /// <summary>
         /// This constructor is only for serialisation.
         /// </summary>
@@ -98,7 +96,6 @@ namespace AW2.Game.Weapons
             _weaponFiredHandlerAdded = true;
             _active = true;
             Owner.IsHidden = true;
-            foreach (var peng in OwnersPengs) peng.Emitter.Pause();
             if (Owner.Game.NetworkMode != Core.NetworkMode.Client)
                 PlayerOwner.Messages.Add(new PlayerMessage("Aktv8td", PlayerMessage.DEFAULT_COLOR));
             FiringOperator.NextFireSkipsLoadAndCharge = true;
@@ -109,7 +106,6 @@ namespace AW2.Game.Weapons
         {
             _active = false;
             Owner.IsHidden = false;
-            foreach (var peng in OwnersPengs) peng.Emitter.Resume();
             Owner.Alpha = 1;
             FiringOperator.NextFireSkipsLoadAndCharge = false;
             _runningSound.Stop();

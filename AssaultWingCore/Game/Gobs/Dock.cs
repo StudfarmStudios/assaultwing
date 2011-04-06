@@ -16,6 +16,7 @@ namespace AW2.Game.Gobs
         private static readonly TimeSpan DOCK_SOUND_STOP_DELAY = TimeSpan.FromSeconds(0.5);
         private static readonly TimeSpan DOCK_EFFECT_STOP_DELAY = TimeSpan.FromSeconds(0);
         public static readonly TimeSpan UNDAMAGED_TIME_REQUIRED = TimeSpan.FromSeconds(5);
+        public static readonly TimeSpan PACIFIST_TIME_REQUIRED = TimeSpan.FromSeconds(5);
 
         /// <summary>
         /// Speed of repairing damageable gobs, measured in repaired damage/second.
@@ -174,7 +175,8 @@ namespace AW2.Game.Gobs
 
         private bool CanRepair(Ship ship)
         {
-            return Game.DataEngine.ArenaTotalTime - ship.LastDamageTaken > UNDAMAGED_TIME_REQUIRED;
+            return Game.DataEngine.ArenaTotalTime - ship.LastDamageTakenTime > UNDAMAGED_TIME_REQUIRED
+                && Game.DataEngine.ArenaTotalTime - ship.LastWeaponFiredTime > PACIFIST_TIME_REQUIRED;
         }
 
         private bool IsFullyRepaired(Ship ship)

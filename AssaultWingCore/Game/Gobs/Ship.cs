@@ -166,6 +166,9 @@ namespace AW2.Game.Gobs
 
         #region Ship properties
 
+        public TimeSpan LastDamageTakenTime { get; set; }
+        public TimeSpan LastWeaponFiredTime { get; set; }
+
         public override float DrawRotation
         {
             get
@@ -558,16 +561,11 @@ namespace AW2.Game.Gobs
             }
         }
 
-        /// <summary>
-        /// When the ship took damage previous time, measured in game time.
-        /// </summary>
-        public TimeSpan LastDamageTaken { get; set; }
-
         public override void InflictDamage(float damageAmount, DamageInfo cause)
         {
             var realDamage = _armour.Evaluate(damageAmount);
             if (realDamage <= 0) return;
-            LastDamageTaken = Game.DataEngine.ArenaTotalTime;
+            LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
             if (Owner != null) Owner.IncreaseShake(realDamage);
             base.InflictDamage(realDamage, cause);
         }

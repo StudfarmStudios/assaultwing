@@ -409,7 +409,7 @@ namespace AW2.Game
             if (Game.NetworkMode == NetworkMode.Client) return;
             if (Game.GameTime.TotalGameTime < _lastRepairPendingNotify + Dock.UNDAMAGED_TIME_REQUIRED) return;
             _lastRepairPendingNotify = Game.GameTime.TotalGameTime;
-            Messages.Add(new PlayerMessage("Repair pending due to recent damage", PlayerMessage.DEFAULT_COLOR));
+            Messages.Add(new PlayerMessage("Repair pending until you can behave!", PlayerMessage.DEFAULT_COLOR));
         }
 
         public void SeizeShip(Ship ship)
@@ -615,6 +615,7 @@ namespace AW2.Game
             {
                 case ShipDevice.FiringResult.Success:
                     _deviceUsages |= DeviceUsages.Weapon1Success;
+                    Ship.LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
                     if (WeaponFired != null) WeaponFired();
                     break;
                 case ShipDevice.FiringResult.Failure:
@@ -632,6 +633,7 @@ namespace AW2.Game
             {
                 case ShipDevice.FiringResult.Success:
                     _deviceUsages |= DeviceUsages.Weapon2Success;
+                    Ship.LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
                     if (WeaponFired != null) WeaponFired();
                     break;
                 case ShipDevice.FiringResult.Failure:

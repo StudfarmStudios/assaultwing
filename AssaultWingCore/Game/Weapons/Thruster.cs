@@ -45,6 +45,7 @@ namespace AW2.Game.Weapons
         public Thruster(CanonicalString typeName)
             : base(typeName)
         {
+            SendDeviceReadyMessages = false;
         }
 
         public override void Activate()

@@ -96,6 +96,7 @@ namespace AW2.Game.GobUtils
 
         private ChargeProvider _chargeProvider;
         private float _charge;
+        private bool _previousCanFire;
 
         #endregion
 
@@ -172,11 +173,9 @@ namespace AW2.Game.GobUtils
         public float FireChargePerSecond { get { return _fireChargePerSecond; } }
 
         public FiringOperator FiringOperator { get; set; }
-
-        // TODO: Move ShotCount and shotCount to FiringOperatorSingle
         public int ShotCount { get { return _shotCount; } }
-        // TODO: Move ShotSpacing and shotSpacing to FiringOperatorSingle
         public float ShotSpacing { get { return _shotSpacing; } }
+        protected bool SendDeviceReadyMessages { get; set; }
 
         #endregion Properties
 
@@ -202,6 +201,7 @@ namespace AW2.Game.GobUtils
             Owner = null;
             OwnerHandle = 0;
             _loadTimeMultiplier = 1;
+            SendDeviceReadyMessages = true;
         }
 
         #region Public methods
@@ -222,6 +222,7 @@ namespace AW2.Game.GobUtils
         /// </summary>
         public virtual void Activate()
         {
+            _previousCanFire = true;
             FiringOperator = new FiringOperator(this);
         }
 
@@ -263,7 +264,18 @@ namespace AW2.Game.GobUtils
                 ShootImpl();
                 FiringOperator.ShotFired();
             }
-            FiringOperator.Update();
+            CheckWeaponLoadedMessage();
+        }
+
+        private void CheckWeaponLoadedMessage()
+        {
+            if (!SendDeviceReadyMessages) return;
+            if (Owner.Game.NetworkMode == NetworkMode.Client) return;
+            if (OwnerHandle == ShipDevice.OwnerHandleType.PrimaryWeapon) return;
+            var canFire = FiringOperator.Loaded && FiringOperator.Charged;
+            if (canFire && !_previousCanFire)
+                PlayerOwner.Messages.Add(new PlayerMessage(TypeName + " ready to use", PlayerMessage.PLAYER_STATUS_COLOR));
+            _previousCanFire = canFire;
         }
 
         /// <summary>

@@ -10,7 +10,6 @@ namespace AW2.Game.GobUtils
     {
         private TimeSpan _nextShot;
         private int _shotsLeft;
-        private bool _previousCanFire;
         private TimeSpan _loadedTime;
         private ShipDevice _device;
 
@@ -25,7 +24,6 @@ namespace AW2.Game.GobUtils
         public FiringOperator(ShipDevice device)
         {
             _device = device;
-            _previousCanFire = true;
         }
 
         public void StartFiring()
@@ -38,17 +36,6 @@ namespace AW2.Game.GobUtils
             }
             _shotsLeft = _device.ShotCount;
             NextFireSkipsLoadAndCharge = false;
-        }
-
-        public void Update()
-        {
-            if (_device.Owner.Game.NetworkMode != NetworkMode.Client &&
-                _device.OwnerHandle != ShipDevice.OwnerHandleType.PrimaryWeapon)
-            {
-                if (Loaded && Charged && !_previousCanFire)
-                    _device.PlayerOwner.Messages.Add(new PlayerMessage(_device.TypeName + " ready to use", PlayerMessage.PLAYER_STATUS_COLOR));
-                _previousCanFire = Loaded && Charged;
-            }
         }
 
         public void ShotFired()

@@ -298,8 +298,6 @@ namespace AW2.Game
         /// </summary>
         public bool IsForPlaying { get; set; }
 
-        public bool IsFogOverrideDisabled { get; set; }
-
         /// <summary>
         /// Gobs in the arena. Reflects the data in <see cref="Layers"/>.
         /// </summary>
@@ -689,7 +687,6 @@ namespace AW2.Game
         public void PrepareEffect(BasicEffect effect)
         {
             _lighting.PrepareEffect(effect);
-            if (IsFogOverrideDisabled) effect.FogEnabled = false;
             effect.LightingEnabled = true;
         }
 

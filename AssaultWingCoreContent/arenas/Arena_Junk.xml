@@ -5281,13 +5281,5 @@ cleaning their mess away.</infoText>
       <Y>0.6</Y>
       <Z>0.4</Z>
     </light2SpecularColor>
-    <fogColor>
-      <X>0.06</X>
-      <Y>0.03</Y>
-      <Z>0.004</Z>
-    </fogColor>
-    <fogEnabled>false</fogEnabled>
-    <fogEnd>1470.78711</fogEnd>
-    <fogStart>1000</fogStart>
   </lighting>
 </ArenaType>

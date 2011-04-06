@@ -57,7 +57,6 @@
                     </DockPanel>
                     <Label x:Name="ZoomValue" HorizontalAlignment="Center">1:1</Label>
                     <ToggleButton x:Name="CircleGobs" IsChecked="True" Click="ApplyViewSettings" DockPanel.Dock="Top">Circle small/invisible gobs</ToggleButton>
-                    <ToggleButton x:Name="EnableFog" Click="ApplyViewSettings" DockPanel.Dock="Top">Enable arena fog</ToggleButton>
                 </StackPanel>
             </GroupBox>
 

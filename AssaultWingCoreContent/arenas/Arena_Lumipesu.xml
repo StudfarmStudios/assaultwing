@@ -1782,13 +1782,5 @@ your end.</infoText>
       <Y>0.5</Y>
       <Z>0.9</Z>
     </light2SpecularColor>
-    <fogColor>
-      <X>0</X>
-      <Y>0.05</Y>
-      <Z>0.3</Z>
-    </fogColor>
-    <fogEnabled>false</fogEnabled>
-    <fogEnd>1270.78711</fogEnd>
-    <fogStart>1000</fogStart>
   </lighting>
 </ArenaType>

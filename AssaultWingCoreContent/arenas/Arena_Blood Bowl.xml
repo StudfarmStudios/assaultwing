@@ -5084,13 +5084,5 @@ this place.</infoText>
       <Y>0.6</Y>
       <Z>0.1</Z>
     </light2SpecularColor>
-    <fogColor>
-      <X>0.33</X>
-      <Y>0.1</Y>
-      <Z>0</Z>
-    </fogColor>
-    <fogEnabled>false</fogEnabled>
-    <fogEnd>1300</fogEnd>
-    <fogStart>850</fogStart>
   </lighting>
 </ArenaType>

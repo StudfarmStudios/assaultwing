@@ -467,8 +467,6 @@ namespace AW2.UI.WPF
         {
             if (_game == null) return;
             var arena = _game.DataEngine.Arena;
-            if (arena != null && EnableFog.IsChecked.HasValue)
-                arena.IsFogOverrideDisabled = !EnableFog.IsChecked.Value;
             foreach (var viewport in EditorViewports) ApplyViewSettings(viewport);
         }
 

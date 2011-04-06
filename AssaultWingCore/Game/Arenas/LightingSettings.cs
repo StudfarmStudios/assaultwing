@@ -19,10 +19,6 @@ namespace AW2.Game.Arenas
         private Vector3 _light2Direction;
         private bool _light2Enabled;
         private Vector3 _light2SpecularColor;
-        private Vector3 _fogColor;
-        private bool _fogEnabled;
-        private float _fogEnd;
-        private float _fogStart;
 
         public Vector3 Light0DiffuseColor { get { return _light0DiffuseColor; } set { _light0DiffuseColor = value; } }
         public Vector3 Light0Direction { get { return _light0Direction; } set { _light0Direction = value; } }
@@ -36,10 +32,6 @@ namespace AW2.Game.Arenas
         public Vector3 Light2Direction { get { return _light2Direction; } set { _light2Direction = value; } }
         public bool Light2Enabled { get { return _light2Enabled; } set { _light2Enabled = value; } }
         public Vector3 Light2SpecularColor { get { return _light2SpecularColor; } set { _light2SpecularColor = value; } }
-        public Vector3 FogColor { get { return _fogColor; } set { _fogColor = value; } }
-        public bool FogEnabled { get { return _fogEnabled; } set { _fogEnabled = value; } }
-        public float FogEnd { get { return _fogEnd; } set { _fogEnd = value; } }
-        public float FogStart { get { return _fogStart; } set { _fogStart = value; } }
 
         public LightingSettings()
         {
@@ -55,10 +47,6 @@ namespace AW2.Game.Arenas
             Light2Direction = -Vector3.UnitZ;
             Light2Enabled = false;
             Light2SpecularColor = Vector3.Zero;
-            FogColor = Vector3.Zero;
-            FogEnabled = false;
-            FogEnd = 1.0f;
-            FogStart = 0.0f;
         }
 
         public void PrepareEffect(BasicEffect effect)
@@ -75,10 +63,7 @@ namespace AW2.Game.Arenas
             effect.DirectionalLight2.Direction = Light2Direction;
             effect.DirectionalLight2.Enabled = Light2Enabled;
             effect.DirectionalLight2.SpecularColor = Light2SpecularColor;
-            effect.FogColor = FogColor;
-            effect.FogEnabled = FogEnabled;
-            effect.FogEnd = FogEnd;
-            effect.FogStart = FogStart;
+            effect.FogEnabled = false;
         }
 
         public void MakeConsistent(Type limitationAttribute)
@@ -94,9 +79,6 @@ namespace AW2.Game.Arenas
                 Light2DiffuseColor = Vector3.Clamp(Light2DiffuseColor, Vector3.Zero, Vector3.One);
                 Light2Direction = Vector3.Normalize(Light2Direction);
                 Light2SpecularColor = Vector3.Clamp(Light2SpecularColor, Vector3.Zero, Vector3.One);
-                FogColor = Vector3.Clamp(FogColor, Vector3.Zero, Vector3.One);
-                FogEnd = MathHelper.Max(FogEnd, 0);
-                FogStart = MathHelper.Max(FogStart, 0);
             }
         }
     }

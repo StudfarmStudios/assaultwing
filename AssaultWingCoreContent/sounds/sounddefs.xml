@@ -14,12 +14,12 @@
 	<sound name="collision" volume="0.2"/>
 	<sound name="dropMines" volume="0.5"/>
 	<sound name="dummySound"/>
-	<sound name="engine" loop="true" volume="0.25"/>
-	<sound name="lowengine" loop="true" volume="0.25"/>
-	<sound name="escPause" volume="0.25"/>
+  <sound name="engine" loop="true" volume="0.25"/>
+  <sound name="lowengine" loop="true" volume="0.25"/>
+  <sound name="buggerEngine" loop="true" volume="0.9"/>
+  <sound name="escPause" volume="0.25"/>
 	<sound name="explosion" volume="0.5"/>
 	<sound name="good" volume="0.5"/>
-	<sound name="hisss"/>
 	<sound name="homeBaseLoop" loop="true" volume="0.15"/>
 	<sound name="homeBaseLoopLow" loop="true" distancescale="70"  volume="0.5"/>
 	<sound name="amazonasAmbience" loop="true" volume="0.05"/>

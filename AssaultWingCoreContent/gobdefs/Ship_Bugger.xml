@@ -29,6 +29,7 @@ without missing its target</infoText>
   <weapon2ChargeSpeed>54</weapon2ChargeSpeed>
   <thrustForce>120000</thrustForce>
   <maxSpeed>260</maxSpeed>
+  <thrusterSoundName>buggerEngine</thrusterSoundName>
   <turnSpeed>4.5</turnSpeed>
   <rollMax>0.7</rollMax>
   <rollSpeed>2.1</rollSpeed>

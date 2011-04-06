@@ -22,7 +22,6 @@ namespace AW2.Game.Gobs
     public class Ship : Gob
     {
         private const string SHIP_BIRTH_SOUND = "NewCraft";
-        private const string SHIP_THRUST_SOUND = "Engine";
         private const string SHIP_THRUST_TURN_SOUND = "LowEngine";
         private static readonly ControlState[] g_defaultControlStates;
 
@@ -45,6 +44,9 @@ namespace AW2.Game.Gobs
         /// </summary>
         [TypeParameter]
         private float _maxSpeed;
+
+        [TypeParameter]
+        private string _thrusterSoundName;
 
         private SoundInstance _thrusterSound;
         private SoundInstance _thrusterTurnSound;
@@ -274,6 +276,7 @@ namespace AW2.Game.Gobs
             _thrustForce = 100;
             _turnSpeed = 3;
             _maxSpeed = 200;
+            _thrusterSoundName = "dummysound";
             _rollMax = (float)MathHelper.PiOver4;
             _rollSpeed = (float)(MathHelper.TwoPi / 2.0);
             _weapon1TypeName = (CanonicalString)"dummyweapon";
@@ -352,7 +355,7 @@ namespace AW2.Game.Gobs
         public override void Activate()
         {
             base.Activate();
-            _thrusterSound = Game.SoundEngine.CreateSound(SHIP_THRUST_SOUND, this);
+            _thrusterSound = Game.SoundEngine.CreateSound(_thrusterSoundName, this);
             _thrusterTurnSound = Game.SoundEngine.CreateSound(SHIP_THRUST_TURN_SOUND, this);
             SetExhaustEffectsEnabled(false);
             _exhaustAmountUpdated = false;
@@ -374,6 +377,7 @@ namespace AW2.Game.Gobs
 
             UpdateThrustInNetworkGame();
             UpdateExhaustEngines();
+            UpdateThrusterSound();
             UpdateCoughEngines();
             UpdateCharges();
             UpdateFlashing();
@@ -495,7 +499,7 @@ namespace AW2.Game.Gobs
             if (Disabled) return;
             Vector2 forceVector = AWMathHelper.GetUnitVector2(direction) * force * _thrustForce;
             Game.PhysicsEngine.ApplyLimitedForce(this, forceVector, _maxSpeed, duration);
-            _visualThrustForce = force;            
+            _visualThrustForce = force;
             Thrusting(force);
             SetExhaustEffectsEnabled(true);
             _exhaustAmountUpdated = true;
@@ -696,18 +700,12 @@ namespace AW2.Game.Gobs
             if (!_exhaustAmountUpdated)
                 SetExhaustEffectsEnabled(false);
             _exhaustAmountUpdated = false;
+        }
 
-            // Update thruster sound volumes
-            float turnBlendTarget = MathHelper.Clamp(Move.Length() / _maxSpeed, 0, 1);
-            if (_turnSoundBlend < turnBlendTarget)
-            {
-                _turnSoundBlend = Math.Min(turnBlendTarget, _turnSoundBlend + (float)Game.TargetElapsedTime.TotalSeconds);
-            }
-            else
-            {
-                _turnSoundBlend = Math.Max(turnBlendTarget, _turnSoundBlend - (float)Game.TargetElapsedTime.TotalSeconds);
-            }
-
+        private void UpdateThrusterSound()
+        {
+            var turnBlendTarget = MathHelper.Clamp(Move.Length() / _maxSpeed, 0, 1);
+            _turnSoundBlend = AWMathHelper.InterpolateTowards(_turnSoundBlend, turnBlendTarget, (float)Game.TargetElapsedTime.TotalSeconds);
             _thrusterSound.SetVolume(_turnSoundBlend);
             _thrusterTurnSound.SetVolume(1 - _turnSoundBlend);
         }

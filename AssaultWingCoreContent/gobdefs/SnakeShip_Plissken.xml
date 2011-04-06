@@ -28,6 +28,7 @@ a venom that does damage over time</infoText>
   <extraDeviceChargeSpeed>40</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>40</weapon2ChargeSpeed>
   <thrustForce>145000</thrustForce>
+  <thrusterSoundName>engine</thrusterSoundName>
   <maxSpeed>200</maxSpeed>
   <turnSpeed>3.7</turnSpeed>
   <rollMax>0.9</rollMax>

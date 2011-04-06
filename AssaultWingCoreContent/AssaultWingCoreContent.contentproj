@@ -2260,12 +2260,6 @@
       <Processor>SoundEffectProcessor</Processor>
       <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
     </Compile>
-    <Compile Include="sounds\hisss01.wav">
-      <Name>hisss01</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-      <ProcessorParameters_Quality>Medium</ProcessorParameters_Quality>
-    </Compile>
     <Compile Include="sounds\homeBaseLoop01.wav">
       <Name>homeBaseLoop01</Name>
       <Importer>WavImporter</Importer>
@@ -2935,6 +2929,13 @@
     </Compile>
     <Compile Include="sounds\angry03.wav">
       <Name>angry03</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="sounds\buggerEngine01.wav">
+      <Name>buggerEngine01</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>

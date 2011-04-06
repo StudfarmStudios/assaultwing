@@ -28,6 +28,7 @@ with its ship-ripping claws</infoText>
   <extraDeviceChargeSpeed>47</extraDeviceChargeSpeed>
   <weapon2ChargeSpeed>47</weapon2ChargeSpeed>
   <thrustForce>125000</thrustForce>
+  <thrusterSoundName>engine</thrusterSoundName>
   <maxSpeed>300</maxSpeed>
   <turnSpeed>2.95</turnSpeed>
   <rollMax>0.5</rollMax>

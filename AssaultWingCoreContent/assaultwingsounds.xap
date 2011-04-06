@@ -17,8 +17,8 @@ Global Settings
     Header File = assaultwingsounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 2485973594;
-    Last Modified High = 30081059;
+    Last Modified Low = 30081059;
+    Last Modified High = 2485973594;
 
     Category
     {
@@ -222,7 +222,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::854ba6b4-24c6-4467-b4d7-e2b1586740f1;
+            Name = 1::0e55f167-5c38-40cf-bc43-db3d211010c3;
             Property = 0;
             Sound = 0;
             Line Color = 4286398414;
@@ -255,7 +255,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::e6df1d95-579d-4491-be46-206fa2050316;
+            Name = 1::e02a0219-4ae3-4309-9808-411c54f984c2;
             Property = 0;
             Sound = 0;
             Line Color = 4279846310;
@@ -295,7 +295,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::0c7635d0-b28a-4417-810e-b4337943fbcb;
+            Name = 1::8cbadc5c-2e9e-4f53-a7bb-6f1d4040ae6c;
             Property = 0;
             Sound = 0;
             Line Color = 4286596879;
@@ -323,7 +323,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::44844b36-d890-4cdf-a0b7-d17b79c48554;
+            Name = 1::776f6c46-f7d5-46ca-9309-bd31590f3820;
             Property = 0;
             Sound = 0;
             Line Color = 4289448844;
@@ -4026,7 +4026,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Dock loop;
-                RPC Curve Name = 1::854ba6b4-24c6-4467-b4d7-e2b1586740f1;
+                RPC Curve Name = 1::0e55f167-5c38-40cf-bc43-db3d211010c3;
             }
         }
     }
@@ -4413,7 +4413,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Lightning fadeout;
-                RPC Curve Name = 1::e6df1d95-579d-4491-be46-206fa2050316;
+                RPC Curve Name = 1::e02a0219-4ae3-4309-9808-411c54f984c2;
             }
         }
     }
@@ -5036,13 +5036,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::0c7635d0-b28a-4417-810e-b4337943fbcb;
+                RPC Curve Name = 1::8cbadc5c-2e9e-4f53-a7bb-6f1d4040ae6c;
             }
 
             RPC Curve Entry
             {
                 RPC Name = Thruster loop;
-                RPC Curve Name = 1::44844b36-d890-4cdf-a0b7-d17b79c48554;
+                RPC Curve Name = 1::776f6c46-f7d5-46ca-9309-bd31590f3820;
             }
         }
     }
@@ -5996,7 +5996,7 @@ Sound Bank
     Sound
     {
         Name = buggerEngine01;
-        Volume = -1200;
+        Volume = -500;
         Pitch = 0;
         Priority = 0;
 
@@ -6779,7 +6779,7 @@ Sound Bank
 
     Cue
     {
-        Name = Engine;
+        Name = engine;
 
         Variation
         {

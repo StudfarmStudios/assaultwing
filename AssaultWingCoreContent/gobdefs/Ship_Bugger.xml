@@ -82,26 +82,6 @@ without missing its target</infoText>
          </area>
       </Item>
   </collisionAreas>
-  <armour>
-    <preLoop>Linear</preLoop>
-    <postLoop>Linear</postLoop>
-    <keys>
-      <Item>
-        <position>0</position>
-        <internalValue>0</internalValue>
-        <tangentOut>1</tangentOut>
-        <tangentIn>1</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-      <Item>
-        <position>1</position>
-        <internalValue>1</internalValue>
-        <tangentOut>1</tangentOut>
-        <tangentIn>1</tangentIn>
-        <continuity>Smooth</continuity>
-      </Item>
-    </keys>
-  </armour>
   <birthAlpha>
       <preLoop>Constant</preLoop>
       <postLoop>Constant</postLoop>

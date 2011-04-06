@@ -123,14 +123,6 @@ namespace AW2.Game.Gobs
         #region Ship fields related to other things
 
         /// <summary>
-        /// Armour of the ship as a function that maps
-        /// the amount of damage delivered to the ship
-        /// to the amount of damage the ship actually receives.
-        /// </summary>
-        [TypeParameter, ShallowCopy]
-        private Curve _armour;
-
-        /// <summary>
         /// Alpha of the ship as a function that maps the age of the
         /// ship (in seconds) to the alpha value to draw the ship with.
         /// </summary>
@@ -287,11 +279,6 @@ namespace AW2.Game.Gobs
             _extraDeviceChargeSpeed = 500;
             _weapon2ChargeMax = 5000;
             _weapon2ChargeSpeed = 500;
-            _armour = new Curve();
-            _armour.PreLoop = CurveLoopType.Linear;
-            _armour.PostLoop = CurveLoopType.Linear;
-            _armour.Keys.Add(new CurveKey(0, 0, 1, 1, CurveContinuity.Smooth));
-            _armour.Keys.Add(new CurveKey(1, 1, 1, 1, CurveContinuity.Smooth));
             _birthAlpha = new Curve();
             _birthAlpha.PreLoop = CurveLoopType.Constant;
             _birthAlpha.PostLoop = CurveLoopType.Constant;
@@ -563,11 +550,11 @@ namespace AW2.Game.Gobs
 
         public override void InflictDamage(float damageAmount, DamageInfo cause)
         {
-            var realDamage = _armour.Evaluate(damageAmount);
-            if (realDamage <= 0) return;
+            if (damageAmount < 0) throw new ArgumentOutOfRangeException("damageAmount");
+            if (damageAmount == 0) return;
             LastDamageTakenTime = Game.DataEngine.ArenaTotalTime;
-            if (Owner != null) Owner.IncreaseShake(realDamage);
-            base.InflictDamage(realDamage, cause);
+            if (Owner != null) Owner.IncreaseShake(damageAmount);
+            base.InflictDamage(damageAmount, cause);
         }
 
         public ShipLocationPredicter LocationPredicter { get; private set; }
